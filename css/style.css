@@ -1,0 +1,207 @@
+#simple-jwt-login{
+    margin: 10px 0;
+}
+#simple-jwt-login * {
+    box-sizing: border-box;
+    font-size: 12px;
+}
+
+#simple-jwt-login .row {
+    max-width: 100%;
+}
+
+#simple-jwt-login hr{
+    margin-top:4px;
+}
+
+#simple-jwt-login .main-title{
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 20px;
+}
+#simple-jwt-login .section-title{
+    font-size: 14px;
+    font-weight: bold;
+}
+#simple-jwt-login a.nav-link{
+    color: #263544;
+}
+#simple-jwt-login a.nav-link.active
+{
+    background-color:#263544;
+    color: #fff;
+}
+#simple-jwt-login select {
+    height: 35px;
+}
+
+#simple-jwt-login .form-control,
+#simple-jwt-login .form-control option{
+    font-size:14px;
+}
+
+/**
+### Tab content design
+ */
+#simple-jwt-login-tab-content{
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    padding: 10px 10px 20px;
+    min-height: 400px;
+    border-radius: 0.3em;
+    background:#FFF;
+}
+/**
+### DASHBOARD
+ */
+#simple-jwt-login .card-shadow{
+    -webkit-box-shadow: 6px 6px 32px -10px rgba(51,45,51,0.33);
+    -moz-box-shadow: 6px 6px 32px -10px rgba(51,45,51,0.33);
+    box-shadow: 6px 6px 32px -10px rgba(51,45,51,0.33);
+}
+
+#simple-jwt-login .form-control.onOff{
+    max-width: 60px;
+}
+#simple-jwt-login .box-status{
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100%;
+    height: 20px;
+}
+#simple-jwt-login .box-status.box-status-on{
+    background-image:url('../images/correct.svg');
+}
+#simple-jwt-login .box-status.box-status-off{
+    background-image:url('../images/close.svg');
+}
+
+/**
+### Generate code
+ */
+#simple-jwt-login .generated-code{
+    min-height: 40px;
+    line-height: 40px;
+    display: inline-block;
+    background: #ccc;
+    padding: 5px 10px;
+    border-radius: 0.3em;
+    border: 1px solid #abb;
+    word-break: break-word;
+}
+#simple-jwt-login .generated-code .method {
+    font-weight: bold;
+    display: inline;
+    padding: 5px 10px;
+    background: #eee;
+    border-radius: 0.3em;
+    border: 1px solid #eee;
+}
+#simple-jwt-login .auth-code-delete-container,
+#simple-jwt-login .toggle_key_button{
+    width: 35px;
+    background: #263544;
+    height: 35px;
+    display: inline-block;
+    border-bottom-right-radius: 0.3em;
+    border-top-right-radius: 0.3em;
+    fill:#fff;
+}
+#simple-jwt-login .step-number{
+    background: #CCCCCC;
+    border-radius: 100%;
+    border: 1px solid #bbb;
+    color: #000;
+    width: 22px;
+    height: 22px;
+    display: inline-block;
+    text-align: center;
+    line-height: 22px;
+}
+
+/**
+### Toggle Key
+ */
+#simple-jwt-login .toggle_key_button .toggle-image{
+    background-image: url("../images/eye-visible.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 25px;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+#simple-jwt-login .toggle_key_button .toggle-image.toggle_visible{
+    background-image: url("../images/eye-not-visible.svg");
+}
+
+#simple-jwt-login span.beta{
+    background:#ff1111;
+    border:1px solid #EE0000;
+    color:#fff;
+    border-radius: 0.3em;
+    -moz-border-radius: 0.3em;
+    -webkit-border-radius: 0.3em;
+    padding: 2px 10px;
+}
+
+#simple-jwt-login .simple-jwt-error{
+    background:#dc3232;
+    border-radius: 3em;
+    padding: 0 5px;
+    color: #ffffff;
+}
+/**
+### Auth codes
+ */
+#simple-jwt-login .auth-code-delete-container a{
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+#simple-jwt-login .delete-auth-code{
+    background-image: url("../images/delete.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 25px;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/**
+### Authentication
+ */
+
+#simple-jwt-login .authentication_jwt_container {
+    background: #eee;
+    padding: 10px;
+    border-radius: 0.3em;
+    border: 1px solid #abb;
+}
+#simple-jwt-login .authentication_jwt_container  ul {
+    list-style: none;
+    margin-left:20px;
+}
+
+#simple-jwt-login .authentication_jwt_container  ul li{
+    font-weight: bold;
+}
+#simple-jwt-login .authentication_jwt_container ul li label{
+    font-weight: normal;
+}
+
+#simple-jwt-login .authentication_jwt_container .checkbox{
+    width:20px;
+    display: inline-block;
+}
+
+/**
+Fix tabs on some WorPress data
+ */
+#simple-jwt-login #simple-jwt-login-tab-content.tab-content>.tab-pane.active{
+    display:block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}

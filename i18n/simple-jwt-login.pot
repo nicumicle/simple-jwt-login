@@ -1,0 +1,620 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: en\n"
+
+# general-view.php
+
+msgid "JWT Decryption Key"
+msgstr ""
+
+msgid "JWT Decryption Key is base64 encoded"
+msgstr ""
+
+msgid "Toggle decryption key"
+msgstr ""
+
+msgid "JWT decryption signature | JWT Verify Signature"
+msgstr ""
+
+msgid "JWT decryption key here"
+msgstr ""
+
+msgid "JWT Login Settings"
+msgstr ""
+
+msgid "Delete User Config"
+msgstr ""
+
+msgid "Action"
+msgstr ""
+
+msgid "Log in by Email"
+msgstr ""
+
+msgid "Log in by WordPress User ID"
+msgstr ""
+
+msgid "Log in by WordPress Username"
+msgstr ""
+
+msgid "JWT parameter key | JWT payload data id ( key name where the option is saved )"
+msgstr ""
+
+msgid "The algorithm that should be used to verify the JWT signature."
+msgstr ""
+
+msgid "JWT Parameter here. Example: email"
+msgstr ""
+
+msgid "You can use `.` (dot) as a separator for sub-array values."
+msgstr ""
+
+msgid "Example: Use `user.id` for getting key `id` from array `user`"
+msgstr ""
+
+msgid "JWT Decrypt Algorithm"
+msgstr ""
+
+msgid "Default route namespace"
+msgstr ""
+
+msgid "Route Namespace"
+msgstr ""
+
+msgid "If the JWT is present in multiple places, the higher number of the option overwrites the smaller number."
+msgstr ""
+
+msgid "On"
+msgstr ""
+
+msgid "Off"
+msgstr ""
+
+msgid "You have to have at least on option enabled in 'Get JWT token From'"
+msgstr ""
+
+#auth-codes-view.php
+msgid "Authorization Codes"
+msgstr ""
+
+msgid "Add authorization codes for authentication to this WordPress"
+msgstr ""
+
+msgid "One of this codes should be added in the request parameters for each API request"
+msgstr ""
+
+msgid "For security reasons please use some random strings"
+msgstr ""
+
+msgid "Example: THISISMySpeCiaLAUthCode"
+msgstr ""
+
+msgid "Config"
+msgstr ""
+
+msgid "Auth Code URL Key"
+msgstr ""
+
+msgid "Auth Code Key"
+msgstr ""
+
+msgid "Add Auth Code"
+msgstr ""
+
+msgid "Authentication Key"
+msgstr ""
+
+msgid "delete"
+msgstr ""
+
+msgid "WordPress new user Role ( when new users are created )"
+msgstr ""
+
+msgid "Expiration date: YYYY-MM-DD HH:MM:SS ( Example: 2020-12-23 23:34:59)"
+msgstr ""
+
+msgid "%sAuthentication Key%s: This is the actual code that you have to add in the request."
+msgstr ""
+
+msgid "%sWordPress new User Role%s: can be used when you want to create multiple user types with the create user endpoint. If you leave it blank, the value configured in the 'Register Settings' will be used."
+msgstr ""
+
+msgid "%sExpiration Date%s: This allows you to set an expiration date for you auth codes. The format is `Y-M-D H:m:s'. Example : 2020-12-24 23:00:00. If you leave it blank, it will never expired."
+msgstr ""
+
+#login-view.php
+msgid "Allow Auto-Login"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "URL Example"
+msgstr ""
+
+msgid "JWT"
+msgstr ""
+
+msgid "AUTH_KEY_VALUE"
+msgstr ""
+
+msgid "Copy"
+msgstr ""
+
+msgid "Auto-Login Requires Auth Code"
+msgstr ""
+
+msgid "Redirect after Auto-Login"
+msgstr ""
+
+msgid "Dashboard"
+msgstr ""
+
+msgid "Homepage"
+msgstr ""
+
+msgid "Custom"
+msgstr ""
+
+msgid "Example"
+msgstr ""
+
+msgid "Allow Auto-Login only from the following IP addresses"
+msgstr ""
+
+msgid "Enter IP here"
+msgstr ""
+
+msgid "If you want to add more IP's, separate them by comma"
+msgstr ""
+
+msgid "Leave blank to allow all IP addresses"
+msgstr ""
+
+msgid "You can also send the JWT in Authorization header. Example:"
+msgstr ""
+
+#register-view.php
+
+msgid "Allow Register"
+msgstr ""
+
+msgid "NEW_USER_EMAIL"
+msgstr ""
+
+msgid "NEW_USER_PASSWORD"
+msgstr ""
+
+msgid "Register Requires Auth Code"
+msgstr ""
+
+msgid "Warning! It's not recommended to allow register without Auth Codes"
+msgstr ""
+
+msgid "New User profile slug"
+msgstr ""
+
+msgid "More details"
+msgstr ""
+
+msgid "New user profile name"
+msgstr ""
+
+msgid "Allow Register only from the following IP addresses"
+msgstr ""
+
+msgid "Enter IP here"
+msgstr ""
+
+msgid "If you want to add more IP's, separate them by comma"
+msgstr ""
+
+msgid "Leave blank to allow all IP addresses"
+msgstr ""
+
+msgid "Allow Register only for specific email domains"
+msgstr ""
+
+msgid "For example, if you want to allow registration only for users that use their gmail account, add `gmail.com`"
+msgstr ""
+
+msgid "For multiple domains, separate them by comma"
+msgstr ""
+
+msgid "Leave blank to allow all domains"
+msgstr ""
+
+msgid "Generate a random password when a new user is created"
+msgstr ""
+
+msgid "If this option is selected, the password is no more required when a new user is created."
+msgstr ""
+
+msgid "Initialize force login after register"
+msgstr ""
+
+msgid "If user registration is completed, the user will continue on the flow configured on login config. If auto-login is disabled, this feature will not work."
+msgstr ""
+
+msgid "New User available properties"
+msgstr ""
+
+msgid "This properties can be passed in the request when the new user is created."
+msgstr ""
+
+msgid "Revoke JWT URL Example"
+msgstr ""
+
+msgid "This endpoint revokes a JWT. If it is valid, it will be marked as invalid."
+msgstr ""
+
+msgid "Allowed user_meta keys on create user"
+msgstr ""
+
+msgid "Separate user_meta keys by comma. If no user_meta is specified, then users will not be able to add user_meta via register user."
+msgstr ""
+
+msgid "Example"
+msgstr ""
+
+#simple-jwt-login-main-page.php
+
+msgid "Settings successfully saved"
+msgstr ""
+
+msgid "Simple JWT Login Settings"
+msgstr ""
+
+msgid "General"
+msgstr ""
+
+msgid "Auth Codes"
+msgstr ""
+
+msgid "Login Config"
+msgstr ""
+
+msgid "Register Config"
+msgstr ""
+
+msgid "Add Authentication Key here"
+msgstr ""
+
+#SimpleJWTLoginService
+msgid "Auto-login is not enabled on this website."
+msgstr ""
+
+msgid "Wrong Request."
+msgstr ""
+
+msgid "Invalid Auth Code ( %s ) provided."
+msgstr ""
+
+msgid "This IP[ %s] is not allowed to auto-login."
+msgstr ""
+
+msgid "User not found."
+msgstr ""
+
+msgid "Unable to find user %s property in JWT.( Settings: %s )"
+msgstr ""
+
+msgid "Unable to find user %s property in JWT."
+msgstr ""
+
+msgid "Register is not allowed."
+msgstr ""
+
+msgid "Invalid Auth Code ( %s ) provided."
+msgstr ""
+
+msgid "This IP[%s] is not allowed to register users."
+msgstr ""
+
+msgid "Missing email or password."
+msgstr ""
+
+msgid "Invalid email address."
+msgstr ""
+
+msgid "This website does not allows users from this domain."
+msgstr ""
+
+msgid "User was successfully created."
+msgstr ""
+
+msgid "User already exists."
+msgstr ""
+
+msgid "WordPress User not found."
+msgstr ""
+
+msgid "Jwt is invalid."
+msgstr ""
+
+#SimpleJWTLoginSettings
+
+msgid "Missing Auth Codes. Please add at least one Auth Code."
+msgstr ""
+
+msgid "Invalid custom URL provided"
+msgstr ""
+
+#JWT.php
+msgid "Key may not be empty"
+msgstr ""
+
+msgid "Wrong number of segments"
+msgstr ""
+
+msgid "Invalid header encoding"
+msgstr ""
+
+msgid "Invalid claims encoding"
+msgstr ""
+
+msgid "Invalid signature encoding"
+msgstr ""
+
+msgid "Empty algorithm"
+msgstr ""
+
+msgid "Algorithm not supported"
+msgstr ""
+
+msgid "Algorithm not allowed"
+msgstr ""
+
+msgid "`kid` invalid, unable to lookup correct key"
+msgstr ""
+
+msgid "`kid` empty, unable to lookup correct key"
+msgstr ""
+
+msgid "Signature verification failed"
+msgstr ""
+
+msgid "Cannot handle token prior to %s"
+msgstr ""
+
+msgid "Expired token"
+msgstr ""
+
+msgid "Algorithm not supported"
+msgstr ""
+
+msgid "OpenSSL unable to sign data"
+msgstr ""
+
+msgid "Unsupported sign function"
+msgstr ""
+
+msgid "OpenSSL error: %s"
+msgstr ""
+
+msgid "Null result with non-null input"
+msgstr ""
+
+msgid "Maximum stack depth exceeded"
+msgstr ""
+
+msgid "Invalid or malformed JSON"
+msgstr ""
+
+msgid "Unexpected control character found"
+msgstr ""
+
+msgid "Syntax error, malformed JSON"
+msgstr ""
+
+msgid "Malformed UTF-8 characters"
+msgstr ""
+
+msgid "Unknown JSON error: %s"
+msgstr ""
+
+msgid "JWT Decryption key is required."
+msgstr ""
+
+msgid "JWT Decryption public and private key are required."
+msgstr ""
+
+msgid "JWT Parameter key from Login Config is missing"
+msgstr ""
+
+# Delete user
+
+msgid "The `jwt` parameter is missing."
+msgstr ""
+
+msgid "Delete is not enabled."
+msgstr ""
+
+msgid "Missing AUTH KEY ( %s )."
+msgstr ""
+
+msgid "Invalid method for this route."
+msgstr ""
+
+msgid "Allow Delete"
+msgstr ""
+
+msgid "Delete User Requires Auth Code"
+msgstr ""
+
+msgid "Warning! It's not recommended to allow delete users without Auth Codes"
+msgstr ""
+
+msgid "JWT Delete User Config"
+msgstr ""
+
+msgid "Delete User by Email"
+msgstr ""
+
+msgid "Delete User by WordPress User ID"
+msgstr ""
+
+msgid "Allow Delete user only from the following IP addresses"
+msgstr ""
+
+#hooks
+msgid "Hooks"
+msgstr ""
+
+msgid "Enabled"
+msgstr ""
+
+msgid "Hook Name"
+msgstr ""
+
+msgid "Hook Type"
+msgstr ""
+
+msgid "Parameters"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "This hook is called after the user is logged in."
+msgstr ""
+
+msgid "This hook is called before the user is redirected to the page he specified in the login section."
+msgstr ""
+
+msgid "This hook is called after a new user is created."
+msgstr ""
+
+msgid "This hook is called right after the user was deleted."
+msgstr ""
+
+msgid "Make sure that the hook you are trying to use is enabled. Otherwise, the hook will not be called."
+msgstr ""
+
+#Authentication
+msgid "Allow Authentication"
+msgstr ""
+
+msgid "Authentication Example URL"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "AUTH_KEY_VALUE"
+msgstr ""
+
+msgid "JWT Header parameters"
+msgstr ""
+
+msgid "JWT Payload parameters"
+msgstr ""
+
+msgid "Verify Signature"
+msgstr ""
+
+msgid "Specify the length of time (in minutes) that the token will be valid for."
+msgstr ""
+
+msgid "JWT time to live"
+msgstr ""
+
+msgid "Refresh time to live"
+msgstr ""
+
+msgid "Specify the length of time (in minutes) that the token can be refreshed within. I.E. The user can refresh their token within a 2 week window of the original token being created until they must re-authenticate.Defaults to 2 weeks"
+msgstr ""
+
+msgid "Number of minutes"
+msgstr ""
+
+msgid "JWT can be sent via URL, SESSION, COOKIE or HEADER. Please enable the ones you want in the 'General' section."
+msgstr ""
+
+msgid "Authentication is not enabled."
+msgstr ""
+
+msgid "The email or username parameter is missing from request."
+msgstr ""
+
+msgid "The password parameter is missing from request."
+msgstr ""
+
+msgid "Wrong user credentials."
+msgstr ""
+
+msgid "JWT is missing."
+msgstr ""
+
+msgid "There was an error with your JWT and we can not refresh it."
+msgstr ""
+
+msgid "JWT is too old to be refreshed."
+msgstr ""
+
+msgid "Authentication payload data can not be empty. Please choose the ones you want to be added in the JWT."
+msgstr ""
+
+msgid "Authentication JWT time to live should be greater than zero."
+msgstr ""
+
+msgid "Authentication JWT Refresh time to live should be greater than zero."
+msgstr ""
+
+msgid "Validate JWT URL Example"
+msgstr ""
+
+msgid "This endpoint validates a JWT. If it is valid,it will return the WordPress user details and some JWT details."
+msgstr ""
+
+
+#dashboard
+msgid "Routes Status"
+msgstr ""
+
+msgid "Login status"
+msgstr ""
+
+msgid "Register Status"
+msgstr ""
+
+msgid "Delete Status"
+msgstr ""
+
+msgid "Authentication Status"
+msgstr ""
+
+msgid "This route allows you to generate a JWT based on your WordPress Email ( or WordPress username ) and Password."
+msgstr ""
+
+msgid "This route is for refreshing expired tokens. It accept as a parameter an expired token, and returns a new valid JWT."
+msgstr ""
+
+msgid "Allow CORS"
+msgstr ""
+
+msgid "CORS Headers"
+msgstr ""
+
+msgid "'Read more"
+msgstr ""
+
+msgid "Include request parameters used for login link in the REDIRECT URL"
+msgstr ""
+
+msgid "CORS Status"
+msgstr ""
+
+msgid "Number of active hooks"
+msgstr ""
+
+msgid "Cors is enabled but no option is checked. Please check at least one option."
+msgstr ""

@@ -1,0 +1,21 @@
+<phpunit bootstrap="phpunit_bootstrap.php"
+         backupGlobals="false"
+         backupStaticAttributes="false"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false"
+>
+    <coverage>
+        <include>
+            <directory suffix=".php">simple-jwt-login/src/</directory>
+        </include>
+    </coverage>
+    <testsuites>
+        <testsuite name="SimpleJwtLogin Test Suite">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

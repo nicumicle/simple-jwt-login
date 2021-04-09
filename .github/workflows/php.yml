@@ -1,4 +1,4 @@
-name: Simple Jwt Login Tests
+name: PHP Composer
 
 on:
   push:
@@ -32,9 +32,5 @@ jobs:
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
 
-    - name: PHPUnit tests
-      uses: php-actions/phpunit@v2
-      with:
-         configuration: custom/path/to/phpunit.xml
-         memory_limit: 256M
-      run: vendor/bin/phpunit tests/
+    - name: Run test suite
+    - run: vendor/bin/phpunit tests/

@@ -38,7 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             <span class="code">
                 <?php
                 $sampleUrlParams = [
-                    'jwt' => __( 'JWT', 'simple-jwt-login' ),
+                    $jwtSettings->getRequestKeyUrl() => __( 'JWT', 'simple-jwt-login' ),
                 ];
                 if ( $jwtSettings->getRequireDeleteAuthKey() ) {
                     $sampleUrlParams[ $jwtSettings->getAuthCodeKey() ] = __( 'AUTH_KEY_VALUE', 'simple-jwt-login' );

@@ -96,9 +96,10 @@ class SimpleJWTLoginService {
 		return $user;
 	}
 
-	/**
-	 * @throws Exception
-	 */
+    /**
+     * @return WP_REST_Response|null
+     * @throws Exception
+     */
 	public function doLogin() {
 		$this->validateDoLogin();
 		$login_parameter = $this->validateJWTAndGetUserValueFromPayload();
@@ -117,8 +118,7 @@ class SimpleJWTLoginService {
 			$this->wordPressData->triggerAction( SimpleJWTLoginHooks::LOGIN_ACTION_NAME, $user );
 		}
 
-		$this->redirectAfterLogin();
-
+		return $this->redirectAfterLogin($user);
 	}
 
 	/**
@@ -151,10 +151,11 @@ class SimpleJWTLoginService {
 
 		if ( $this->jwt_settings->getJwtFromHeaderEnabled() ) {
 			$headers = array_change_key_case( $this->getallheaders(), CASE_LOWER );
-			if ( isset( $headers['authorization'] ) ) {
+			$headerKey = strtolower($this->jwt_settings->getRequestKeyHeader());
+			if ( isset( $headers[$headerKey] ) ) {
 				preg_match(
 					'/^(?:Bearer)?[\s]*(.*)$/mi',
-					$headers['authorization'],
+					$headers[$headerKey],
 					$matches
 				);
 
@@ -165,21 +166,23 @@ class SimpleJWTLoginService {
 		}
 		if ( $this->jwt_settings->getJwtFromCookieEnabled() ) {
 
-			if ( isset( $this->cookie['simple-jwt-login-token'] ) ) {
-				return $this->cookie['simple-jwt-login-token'];
+			if ( isset( $this->cookie[$this->jwt_settings->getRequestKeyCookie()] ) ) {
+				return $this->cookie[$this->jwt_settings->getRequestKeyCookie()];
 			}
 		}
 
 		if ( $this->jwt_settings->getJwtFromSessionEnabled() ) {
-			if ( isset( $this->session['simple-jwt-login-token'] ) ) {
-				return $this->session['simple-jwt-login-token'];
+			if ( isset( $this->session[$this->jwt_settings->getRequestKeySession()] ) ) {
+				return $this->session[$this->jwt_settings->getRequestKeySession()];
 			}
 		}
 
 		$request = array_change_key_case( $this->request, CASE_LOWER );
 
-		return $this->jwt_settings->getJwtFromURLEnabled() && isset( $request['jwt'] )
-			? $request['jwt']
+		$requestUrlKey = strtolower($this->jwt_settings->getRequestKeyUrl());
+
+		return $this->jwt_settings->getJwtFromURLEnabled() && isset( $request[$requestUrlKey] )
+			? $request[$requestUrlKey]
 			: null;
 	}
 
@@ -229,10 +232,13 @@ class SimpleJWTLoginService {
 		}
 	}
 
-	/**
-	 * Do the actual redirect after login
-	 */
-	private function redirectAfterLogin() {
+    /**
+     * Do the actual redirect after login
+     *
+     * @param WP_User $user
+     * @return WP_REST_Response|null
+     */
+	private function redirectAfterLogin($user) {
 		$redirect = $this->jwt_settings->getRedirect();
 
 		switch ( $redirect ) {
@@ -248,6 +254,10 @@ class SimpleJWTLoginService {
 				break;
 		}
 
+		if($this->jwt_settings->isRedirectParameterAllowed() && isset($this->request['redirectUrl'])){
+			$url = $this->request['redirectUrl'];
+		}
+
 		if ( $this->jwt_settings->getShouldIncludeRequestParameters() ) {
 			$requestParams = $this->request;
 			$dangerousKeys = [
@@ -256,6 +266,7 @@ class SimpleJWTLoginService {
 				'JWT',
 				'email',
 				'password',
+				'redirectUrl',
 				$this->jwt_settings->getAuthCodeKey()
 			];
 			foreach ( $dangerousKeys as $key ) {
@@ -271,12 +282,43 @@ class SimpleJWTLoginService {
 			$this->wordPressData->triggerAction( SimpleJWTLoginHooks::LOGIN_REDIRECT_NAME, $url, $this->request );
 		}
 
-		$this->wordPressData->redirect( $url );
+		$url = $this->replaceVariables($url, $user);
+
+        if ($redirect === SimpleJWTLoginSettings::NO_REDIRECT) {
+            $response = [
+                'success' => true,
+                'message' => __('User was logged in.', 'simple-jwt-login'),
+            ];
+            if($this->jwt_settings->isHookEnable(SimpleJWTLoginHooks::NO_REDIRECT_RESPONSE)) {
+                $response = $this->wordPressData->triggerFilter(
+                    SimpleJWTLoginHooks::NO_REDIRECT_RESPONSE,
+                    $response,
+                    $this->request
+                );
+            }
+            return $this->wordPressData->createResponse($response);
+        } else {
+            $this->wordPressData->redirect($url);
+        }
+
+        return null;
 	}
 
+	private function replaceVariables($url, $user){
+		$replace = [
+			'{{site_url}}'	=> site_url(),
+			'{{user_id}}'  => $user->get('id'),
+			'{{user_email}}' => $user->get('user_email'),
+			'{{user_login}}' => $user->get('user_login'),
+			'{{user_first_name}}' => $user->get('first_name'),
+			'{{user_last_name}}' => $user->get('last_name'),
+			'{{user_nicename}}'  => $user->get('user_nicename'),
+		];
+
+		return str_replace( array_keys($replace), array_values($replace), $url);
+	}
 
 	/**
-	 * @param $parameter
 	 *
 	 * @return mixed|string
 	 * @throws Exception
@@ -453,13 +495,14 @@ class SimpleJWTLoginService {
 			if ( $this->jwt_settings->isHookEnable( SimpleJWTLoginHooks::LOGIN_ACTION_NAME ) ) {
 				$this->wordPressData->triggerAction( SimpleJWTLoginHooks::LOGIN_ACTION_NAME, $userId );
 			}
-			$this->redirectAfterLogin();
+			$this->redirectAfterLogin($user);
 		}
 
 		$userArray = $this->wordPressData->wordpressUserToArray($user);
 		if(isset($userArray['user_pass'])) {
 			unset( $userArray['user_pass'] );
 		}
+
 		return $this->wordPressData->createResponse( [
 			'success' => true,
 			'id'      => $userId,

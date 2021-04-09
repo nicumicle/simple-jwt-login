@@ -63,9 +63,7 @@ class RouteService {
 	public function makeAction( $routeName, $method ) {
 		switch ( $routeName ) {
 			case self::LOGIN_ROUTE:
-				$this->jwtService->doLogin();
-
-				return;
+				return $this->jwtService->doLogin();
 				break;
 			case self::USER_ROUTE:
 				switch ( $method ) {

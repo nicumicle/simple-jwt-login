@@ -172,7 +172,10 @@ if (!defined('ABSPATH')) {
         <h3 class="section-title">
             <?php
             echo isset($errorCode)
-            && SettingsErrors::generateCode(SettingsErrors::PREFIX_GENERAL, SettingsErrors::ERR_GENERAL_GET_JWT_FROM) === $errorCode
+            && (
+                    SettingsErrors::generateCode(SettingsErrors::PREFIX_GENERAL, SettingsErrors::ERR_GENERAL_GET_JWT_FROM) === $errorCode
+                  || SettingsErrors::generateCode(SettingsErrors::PREFIX_GENERAL, SettingsErrors::ERR_GENERAL_REQUEST_KEYS) === $errorCode
+            )
                 ? '<span class="simple-jwt-error">!</span>'
                 : ''
             ?>
@@ -182,10 +185,11 @@ if (!defined('ABSPATH')) {
 </div>
 
 <div class="row">
-    <div class="col-md-3">
-        1. URL
+    <div class="col-md-5">
+        1. <span class="simple-jwt-request-parameter-label">URL parameter</span>
+        <input type="text" name="request_keys[url]" required="required" style="display: inline-block"  placeholder="Parameter name" value="<?php echo $jwtSettings->getRequestKeyUrl();?>"/>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <select name="request_jwt_url" class="form-control onOff">
             <option value="0" <?php echo $jwtSettings->getJwtFromURLEnabled() === false ? "selected" : ""; ?> >
                 <?php echo __('Off', 'simple-jwt-login'); ?>
@@ -195,16 +199,17 @@ if (!defined('ABSPATH')) {
             </option>
         </select>
     </div>
-    <div class="col-md-6">
-        <div class="code">&jwt=<b>YOUR JWT HERE</b></div>
+    <div class="col-md-5">
+        <div class="code">&<?php echo $jwtSettings->getRequestKeyUrl();?>=<b>YOUR JWT HERE</b></div>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-md-3">
-        2. SESSION
+    <div class="col-md-5">
+        2. <span class="simple-jwt-request-parameter-label">SESSION</span>
+        <input type="text" name="request_keys[session]" required="required"  style="display: inline-block"  placeholder="Parameter name" value="<?php echo $jwtSettings->getRequestKeySession();?>" />
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <select name="request_jwt_session" class="form-control onOff">
             <option value="0" <?php echo $jwtSettings->getJwtFromSessionEnabled() === false ? "selected" : ""; ?>>
                 <?php echo __('Off', 'simple-jwt-login'); ?>
@@ -214,16 +219,17 @@ if (!defined('ABSPATH')) {
             </option>
         </select>
     </div>
-    <div class="col-md-6">
-        <div class="code">$_SESSION['<b>simple-jwt-login-token</b>']</div>
+    <div class="col-md-5">
+        <div class="code">$_SESSION['<b><?php echo $jwtSettings->getRequestKeySession();?></b>']</div>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-md-3">
-        3. COOKIE
+    <div class="col-md-5">
+        3. <span class="simple-jwt-request-parameter-label">COOKIE</span>
+        <input type="text" name="request_keys[cookie]" required="required" style="display: inline-block" placeholder="Parameter name" value="<?php echo $jwtSettings->getRequestKeyCookie();?>"/>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <select name="request_jwt_cookie" class="form-control onOff">
             <option value="0" <?php echo $jwtSettings->getJwtFromCookieEnabled() === false ? "selected" : ""; ?>>
                 <?php echo __('Off', 'simple-jwt-login'); ?>
@@ -233,16 +239,17 @@ if (!defined('ABSPATH')) {
             </option>
         </select>
     </div>
-    <div class="col-md-6">
-        <div class="code">$_COOKIE['<b>simple-jwt-login-token</b>']</div>
+    <div class="col-md-5">
+        <div class="code">$_COOKIE['<b><?php echo $jwtSettings->getRequestKeyCookie();?></b>']</div>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-md-3">
-        4. Header
+    <div class="col-md-5">
+        4. <span class="simple-jwt-request-parameter-label">Header</span>
+        <input type="text" name="request_keys[header]" required="required" placeholder="Parameter name" style="display: inline-block" value="<?php echo $jwtSettings->getRequestKeyHeader();?>"/>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <select name="request_jwt_header" class="form-control onOff">
             <option value="0" <?php echo $jwtSettings->getJwtFromHeaderEnabled() === false ? "selected" : ""; ?>>
                 <?php echo __('Off', 'simple-jwt-login'); ?>
@@ -252,8 +259,8 @@ if (!defined('ABSPATH')) {
             </option>
         </select>
     </div>
-    <div class="col-md-6">
-        <div class="code">Authorisation: Bearer <b>YOUR_JWT_HERE</b></div>
+    <div class="col-md-5">
+        <div class="code"><?php echo $jwtSettings->getRequestKeyHeader();?>: Bearer <b>YOUR_JWT_HERE</b></div>
     </div>
 </div>
 

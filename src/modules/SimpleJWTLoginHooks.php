@@ -8,6 +8,7 @@ class SimpleJWTLoginHooks {
 	const REGISTER_ACTION_NAME = 'simple_jwt_login_register_hook';
 	const DELETE_USER_ACTION_NAME = 'simple_jwt_login_delete_user_hook';
     const JWT_PAYLOAD_ACTION_NAME  = 'simple_jwt_login_jwt_payload_auth';
+    const NO_REDIRECT_RESPONSE = 'simple_jwt_login_no_redirect_message';
 
     const HOOK_TYPE_ACTION = 'action';
     const HOOK_TYPE_FILTER = 'filter';
@@ -57,6 +58,19 @@ class SimpleJWTLoginHooks {
                 ],
                 'return' => 'array $payload',
                 'description' => __('This hook is called on /auth endpoint. Here you can modify payload parameters.','simple-jwt-login')
+            ],
+            [
+                'name' => self::NO_REDIRECT_RESPONSE,
+                'type' => self::HOOK_TYPE_FILTER,
+                'parameters' => [
+                    'array $response',
+                    'array $request'
+                ],
+                'return' => 'array $response',
+                'description' => __(
+                    'This hook is called on /autologin endpoint when the option `No Redirect` is selected. You can customize the message and add parameters.',
+                    'simple-jwt-login'
+                )
             ],
 		];
 	}

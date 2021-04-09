@@ -28,6 +28,7 @@ class SettingsErrors extends \Exception
     const ERR_GENERAL_MISSING_PRIVATE_AND_PUBLIC_KEY = 4;
     const ERR_GENERAL_DECRYPTION_KEY_REQUIRED = 5;
     const ERR_GENERAL_GET_JWT_FROM = 7;
+    const ERR_GENERAL_REQUEST_KEYS = 8;
 
     #auth-codes
     const ERR_EMPTY_AUTH_CODES = 1;

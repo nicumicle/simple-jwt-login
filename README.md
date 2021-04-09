@@ -4,7 +4,7 @@ Contributors: nicu_m
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PK9BCD6AYF58Y&source=url
 Tags: jwt, API, auto login, register users, tokens, REST, auth, generate jwt, refresh jwt
 Requires at least: 4.4.0
-Tested up to: 5.4
+Tested up to: 5.5
 Requires PHP: 5.3
 Stable tag: trunk
 License: GPLv2 or later
@@ -12,7 +12,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Description ==
 
-This plugin allows you to login or register to a WordPress website using a JWT.
+This plugin allows you to login or register to a WordPress website using a JWT. 
 
 == Some awesome features ==
 
@@ -47,11 +47,31 @@ If the JWT is present in multiple places ( like URL and Header), the JWT will be
 
 This plugin supports multiple JWT Decryption algorithms, like: HS256, HS512, HS384, RS256,RS384 and RS512.
 
-After the user is loggedin you can automatically redirect the user to a page like:
+After the user is logged in you can automatically redirect the user to a page like:
 
 - Dashboard 
 - Homepage
 - or any other custom Page ( this is mainly used for redirecting users to a landing page)
+
+You can attach to your redirect a URL parameter `redirectUrl` that will be used for redirect instead of the defined ones. 
+In order to use this, you have to enable it by checking the option `Allow redirect to a specific URL`.
+
+Also, redirect after login offers some variables that you can use in the customURL and redirectUrl.
+Here are the variables which you can use in your URL:
+- {{site_url}} : Site URL
+- {{user_id}} : Logged in user ID
+- {{user_email}} : Logged in user email
+- {{user_login}} : Logged in username
+- {{user_first_name}} : User first name
+- {{user_last_name}} : User last name
+- {{user_nicename}} : User nice name
+ 
+You can generate dynamic URLs with these variables, and, before the redirect, the specific value will be replaced.
+
+Here is an example:
+```
+    http://yourdomain.com?param1={{user_id}}&param2={{user_login}}
+``` 
  
 Also, this plugin allows you to limit the auto-login based on the client IP address. 
 If you are concerned about security, you can limit the auto-login only from some IP addresses.  
@@ -139,7 +159,7 @@ This will generate a response with a new JWT, similar to the one that `/auth` ge
 
 If you want to get some details about a JWT, and validate that JWT, you can call `/auth/validate`. If you have a valid JWT, details about the available WordPress user will be returned, and some JWT details.
 
-If you want to revoke a JWT, access `/auth/revoke` and send the `jwt` as a paramter.
+If you want to revoke a JWT, access `/auth/revoke` and send the `jwt` as a parameter.
 
 The plugin auto-generates the example URL you might need to test these scenarios.
 
@@ -185,7 +205,13 @@ Currently, available hooks are:
   - parameters: array $payload, array $request
   - return: array $payload
   - description: This hook is called on /auth endpoint. Here you can modify payload parameters. 
- 
+
+- simple_jwt_login_no_redirect_message 
+  - type: filter
+  - parameters: array $payload, array $request
+  - return: array $payload
+  - description: This hook is called on /autologin endpoint when the option `No Redirect` is selected. You can customize the message and add parameters.
+
 == CORS == 
   The CORS standard it is needed because it allows servers to specify who can access its assets and how the assets can be accessed. 
   Cross-origin requests are made using the standard HTTP request methods like GET, POST, PUT, DELETE, etc.
@@ -289,18 +315,51 @@ Yes. The main feature of this plugin is to automatically log in users into a Wor
        }, 10, 2);
 ``
 
+Here is an example on how you can overwrite the "No Redirect" response after autologin:
+``
+    add_filter('simple_jwt_login_no_redirect_message',function($response, $request){
+        $response['userId'] = get_current_user_id();
+        $response['userDetails'] = wp_get_current_user();
+        return $response;
+    },10, 2);
+``
+
 = I cannot get the JWT from session. Where should I store the JWT? =
 The plugin searches for the JWT in:
  - URL ( &jwt=YOUR JWT HERE)
  - SESSION (  ` $_SESSION['simple-jwt-login-token'] `)
  - COOKIE ( ` $_COOKIE['simple-jwt-login-token'] ` )
- - Header ( ` Authorisation: Bearer YOUR_JWT_HERE `)
+ - Header ( ` Authorization: Bearer YOUR_JWT_HERE `)
+
+Also, the key name for each parameter, can be changed in the general section. 
  
 = I would like to create users with different roles. It is possible? =
 Yes. In order to be able to create different users with different roles, first you have to create some AUTH Codes, and set the desired roles for each Auth Code.
 After that, for the create user route, simply add the AUTH code in the request, and the role from 'Register User' will be overwritten with the one from Auth Code.
 
 == Changelog ==
+= 2.6.0 (08.12.2020) =
+- Add `No Redirect` option for autologin and respond with a json on this endpoint
+- Add Hook for `No redirect` in order to customize the autologin response
+
+= 2.5.2 (27.11.2020) =
+- Add permission callback to api routes
+- Use session start only when session token has been activated
+
+= 2.5.1 (16.11.2020) =
+- Fix Authorization header
+
+= 2.5.0 (15.11.2020) =
+- Add key change for URL, Session, Cookie and Header parameters
+
+= 2.4.1 (21.10.2020) =
+- Add more variables for `redirectUrl` 
+
+= 2.4.0 (20.10.2020) =
+- Add `redirectUrl` parameter
+- Add variables for URLs
+- Fix session start warning
+
 = 2.3.1 (01.09.2020) =
 - Highlight Settings errors and display section
 - fix PHP warning for session_start()

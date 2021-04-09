@@ -271,7 +271,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             <span class="code">
                 <?php
                 $sampleUrlParams = [
-	                'JWT' => 'YOUR_JWT',
+	                $jwtSettings->getRequestKeyUrl() => 'YOUR_JWT',
                 ];
                 echo $jwtSettings->generateExampleLink( RouteService::AUTHENTICATION_REFRESH_ROUTE, $sampleUrlParams );
                 ?>
@@ -310,7 +310,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             <span class="code">
                 <?php
                 $sampleUrlParams = [
-	                'jwt' => 'YOUR_JWT',
+	                $jwtSettings->getRequestKeyUrl() => 'YOUR_JWT',
                 ];
                 echo $jwtSettings->generateExampleLink( RouteService::AUTHENTICATION_VALIDATE_ROUTE, $sampleUrlParams );
                 ?>
@@ -348,7 +348,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             <span class="code">
                 <?php
                 $sampleUrlParams = [
-                    'jwt' => 'YOUR_JWT',
+                    $jwtSettings->getRequestKeyUrl() => 'YOUR_JWT',
                 ];
                 echo $jwtSettings->generateExampleLink( RouteService::AUTHENTICATION_REVOKE, $sampleUrlParams );
                 ?>

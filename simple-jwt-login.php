@@ -7,7 +7,7 @@
     Author URI: https://profiles.wordpress.org/nicu_m/
     Text Domain: simple-jwt-login
     Domain Path: /i18n
-    Version: 2.3.1
+    Version: 2.6.0
 */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -94,9 +94,9 @@ function simple_jwt_plugin_uninstall() {
 	delete_option( SimpleJWTLogin\Modules\SimpleJWTLoginSettings::OPTIONS_KEY );
 }
 
-add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'add_plugin_action_links');
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'simple_jwt_login_add_plugin_action_links');
 
-function add_plugin_action_links($links)
+function simple_jwt_login_add_plugin_action_links($links)
 {
 
     $links['donate'] = sprintf(

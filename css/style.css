@@ -197,6 +197,13 @@
     display: inline-block;
 }
 
+
+#simple-jwt-login .simple-jwt-request-parameter-label{
+    min-width: 90px;
+    display: inline-block;
+    font-weight: 400;
+}
+
 /**
 Fix tabs on some WorPress data
  */

@@ -10,10 +10,12 @@ class SimpleJWTLoginSettings {
 	const OPTIONS_KEY = 'simple_jwt_login_settings';
 	const DEFAULT_AUTH_CODE_KEY = 'AUTH_KEY';
 	const DEFAULT_USER_PROFILE = 'subscriber';
+	const REDIRECT_URL_PARAMETER = 'redirectUrl';
 
 	const REDIRECT_DASHBOARD = 0;
 	const REDIRECT_HOMEPAGE = 1;
 	const REDIRECT_CUSTOM = 9;
+	const NO_REDIRECT = 10;
 
 	const JWT_LOGIN_BY_EMAIL = 0;
 	const JWT_LOGIN_BY_WORDPRESS_USER_ID = 1;
@@ -163,7 +165,11 @@ class SimpleJWTLoginSettings {
 		$this->assignSettingsPropertyFromPost( null,'request_jwt_cookie', null,'request_jwt_cookie', self::SETTINGS_TYPE_INT );
 		$this->assignSettingsPropertyFromPost( null,'request_jwt_header', null,'request_jwt_header', self::SETTINGS_TYPE_INT );
 		$this->assignSettingsPropertyFromPost( null,'request_jwt_session', null,'request_jwt_session', self::SETTINGS_TYPE_INT );
-		$this->assignSettingsPropertyFromPost( 'api_middleware','enabled', 'api_middleware','enabled', self::SETTINGS_TYPE_BOL,false );
+        $this->assignSettingsPropertyFromPost( 'api_middleware','enabled', 'api_middleware','enabled', self::SETTINGS_TYPE_BOL,false );
+        $this->assignSettingsPropertyFromPost( 'request_keys','url', 'request_keys','url', self::SETTINGS_TYPE_STRING );
+        $this->assignSettingsPropertyFromPost( 'request_keys','session', 'request_keys','session', self::SETTINGS_TYPE_STRING );
+        $this->assignSettingsPropertyFromPost( 'request_keys','cookie', 'request_keys','cookie', self::SETTINGS_TYPE_STRING );
+        $this->assignSettingsPropertyFromPost( 'request_keys','header', 'request_keys','header', self::SETTINGS_TYPE_STRING );
 	}
 
 	/**
@@ -177,6 +183,19 @@ class SimpleJWTLoginSettings {
                 SettingsErrors::generateCode(SettingsErrors::PREFIX_GENERAL, SettingsErrors::ERR_GENERAL_EMPTY_NAMESPACE)
             );
 		}
+		if(isset($this->post['request_keys'])){
+		    if(
+		        empty($this->post['request_keys']['url'])
+		        || empty($this->post['request_keys']['session'])
+		        || empty($this->post['request_keys']['cookie'])
+		        || empty($this->post['request_keys']['header'])
+            ){
+                throw new \Exception(
+                    __( 'Request Keys are required', 'simple-jwt-login' ),
+                    SettingsErrors::generateCode(SettingsErrors::PREFIX_GENERAL, SettingsErrors::ERR_GENERAL_REQUEST_KEYS)
+                );
+            }
+        }
 	    if(!empty($this->post['jwt_algorithm'])){
             if(isset($this->post['decryption_source']) && $this->post['decryption_source'] === self::DECRYPTION_SOURCE_CODE){
                 if(strpos($this->post['jwt_algorithm'],'RS')!==false
@@ -281,6 +300,7 @@ class SimpleJWTLoginSettings {
 
 		$this->assignSettingsPropertyFromPost( null,'require_login_auth',null, 'require_login_auth', self::SETTINGS_TYPE_BOL );
 		$this->assignSettingsPropertyFromPost( null,'include_login_request_parameters',null, 'include_login_request_parameters', self::SETTINGS_TYPE_BOL, false );
+		$this->assignSettingsPropertyFromPost( null,'allow_usage_redirect_parameter',null, 'allow_usage_redirect_parameter', self::SETTINGS_TYPE_BOL, false );
 	}
 
 	/**
@@ -333,14 +353,15 @@ class SimpleJWTLoginSettings {
         }
     }
 
-	/**
-	 * @param null|string $settingsPropertyGroup
-	 * @param string     $settingsProperty
-	 * @param null|string     $postKeyGroup
-	 * @param string     $postKey
-	 * @param string     $type
-	 * @param null|mixed $defaultValue
-	 */
+    /**
+     * @param null|string $settingsPropertyGroup
+     * @param string $settingsProperty
+     * @param null|string $postKeyGroup
+     * @param string $postKey
+     * @param string $type
+     * @param null|mixed $defaultValue
+     * @param bool $base64Encode
+     */
 	private function assignSettingsPropertyFromPost(
 		$settingsPropertyGroup,
 		$settingsProperty,
@@ -679,6 +700,15 @@ class SimpleJWTLoginSettings {
 			: '';
 	}
 
+	/**
+	 * @return boolean
+	 */
+	public function isRedirectParameterAllowed(){
+		return isset( $this->settings['allow_usage_redirect_parameter'] )
+			? (bool) $this->settings['allow_usage_redirect_parameter']
+			: false;
+	}
+
 	private function initDeleteUserConfigFromPost() {
 		$this->assignSettingsPropertyFromPost( null,'allow_delete', null,'allow_delete', self::SETTINGS_TYPE_BOL );
 		$this->assignSettingsPropertyFromPost( null,'require_delete_auth',null, 'require_delete_auth', self::SETTINGS_TYPE_BOL );
@@ -756,6 +786,42 @@ class SimpleJWTLoginSettings {
 			? (bool) $this->settings['request_jwt_session']
 			: false;
 	}
+
+    /**
+     * @return string
+     */
+	public function getRequestKeyUrl(){
+        return isset( $this->settings['request_keys']) && isset($this->settings['request_keys']['url'])
+            ? esc_html($this->settings['request_keys']['url'])
+            : 'JWT';
+    }
+
+    /**
+     * @return string
+     */
+    public function getRequestKeySession(){
+        return isset( $this->settings['request_keys']) && isset($this->settings['request_keys']['session'])
+            ? esc_html($this->settings['request_keys']['session'])
+            : 'simple-jwt-login-token';
+    }
+
+    /**
+     * @return string
+     */
+    public function getRequestKeyCookie(){
+        return isset( $this->settings['request_keys']) && isset($this->settings['request_keys']['cookie'])
+            ? esc_html($this->settings['request_keys']['cookie'])
+            : 'simple-jwt-login-token';
+    }
+
+    /**
+     * @return string
+     */
+    public function getRequestKeyHeader(){
+        return isset( $this->settings['request_keys']) && isset($this->settings['request_keys']['header'])
+            ? esc_html($this->settings['request_keys']['header'])
+            : 'Authorization';
+    }
 
 	/**
 	 * @return bool

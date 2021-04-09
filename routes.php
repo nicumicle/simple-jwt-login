@@ -11,9 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 } // Exit if accessed directly
 
 require_once( ABSPATH . 'wp-admin/includes/user.php' );
-if(empty(session_id())){
-    session_start();
-}
 
 add_action( 'rest_api_init', function () {
 	$jwtService = new SimpleJWTLoginService();
@@ -21,7 +18,13 @@ add_action( 'rest_api_init', function () {
 	$jwtService->withSettings( $jwtSettings );
 	$jwtService->withRequest($_REQUEST);
 	$jwtService->withCookie( $_COOKIE );
-	$jwtService->withSession( $_SESSION );
+
+	if($jwtSettings->getJwtFromSessionEnabled()){
+        if( empty(session_id()) && !headers_sent()) {
+            @session_start();
+        }
+        $jwtService->withSession( $_SESSION );
+    }
 
 	$corsService = new CorsService($jwtSettings);
 	if($corsService->isCorsEnabled()) {
@@ -98,8 +101,9 @@ add_action( 'rest_api_init', function () {
 
 						return false;
 					}
-				}
-			]
+				},
+                'permission_callback' => '__return_true',
+            ]
 		);
 	}
 } );

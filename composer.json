@@ -2,6 +2,7 @@
     "name": "nicumicle/simple-jwt-login",
     "description": "Simple JWT Login WordPress plugin",
     "require": {},
+    "license": ["GPL-2.0-or-later"],
     "require-dev": {
         "friendsofphp/php-cs-fixer": "*",
         "phpunit/phpunit": "*",

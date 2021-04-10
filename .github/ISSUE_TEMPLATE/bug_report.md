@@ -21,7 +21,7 @@ What did you expect to happen? What actually happened?
 | Simple-JWT-Login plugin version   | x.y.z
 
 ## Other installed plugins (optional)
-<-- 
+<!-- 
  Create a list with the installed plugins along with version. For example:
  - Plugin name : 1.2.3
  - Another Plugin : 2.0.0

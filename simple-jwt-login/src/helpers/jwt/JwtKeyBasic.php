@@ -3,19 +3,21 @@
 
 namespace SimpleJWTLogin\Helpers\Jwt;
 
-
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
-class JwtKeyBasic {
-	protected $settings;
+class JwtKeyBasic
+{
+    /**
+     * @var SimpleJWTLoginSettings
+     */
+    protected $settings;
 
-	/**
-	 * JwtKeyBasic constructor.
-	 *
-	 * @param SimpleJWTLoginSettings $settings
-	 */
-	public function __construct($settings) {
+    /**
+     * @param SimpleJWTLoginSettings $settings
+     */
+    public function __construct($settings)
+    {
 
-		$this->settings = $settings;
-	}
+        $this->settings = $settings;
+    }
 }

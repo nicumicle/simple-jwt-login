@@ -3,10 +3,8 @@
 
 namespace SimpleJWTLogin\Helpers\Jwt;
 
-
-class JwtKeyWpConfig  extends JwtKeyBasic implements  JwtKeyInterface
+class JwtKeyWpConfig extends JwtKeyBasic implements JwtKeyInterface
 {
-
     const SIMPLE_JWT_PRIVATE_KEY = 'SIMPLE_JWT_PRIVATE_KEY';
     const SIMPLE_JWT_PUBLIC_KEY = 'SIMPLE_JWT_PUBLIC_KEY';
 
@@ -15,7 +13,7 @@ class JwtKeyWpConfig  extends JwtKeyBasic implements  JwtKeyInterface
      */
     public function getPublicKey()
     {
-        if(strpos($this->settings->getJWTDecryptAlgorithm(),'HS')!== false){
+        if (strpos($this->settings->getJWTDecryptAlgorithm(), 'HS') !== false) {
             return $this->getPrivateKey();
         }
 

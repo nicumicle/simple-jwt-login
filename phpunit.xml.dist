@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <phpunit bootstrap="phpunit_bootstrap.php"
          backupGlobals="false"
          backupStaticAttributes="false"
@@ -5,14 +6,13 @@
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
-         processIsolation="false"
-         stopOnFailure="false"
->
-    <coverage>
-        <include>
-            <directory suffix=".php">simple-jwt-login/src/</directory>
-        </include>
-    </coverage>
+         processIsolation="true"
+         stopOnFailure="false">
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./simple-jwt-login/src</directory>
+        </whitelist>
+    </filter>
     <testsuites>
         <testsuite name="SimpleJwtLogin Test Suite">
             <directory>tests</directory>

@@ -1,21 +1,33 @@
 {
-    "name": "nicumicle/simple-jwt-login",
-    "description": "Simple JWT Login WordPress plugin",
-    "require": {},
-    "license": ["GPL-2.0-or-later"],
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "*",
-        "phpunit/phpunit": "*",
-        "phpstan/phpstan": "*",
-        "squizlabs/php_codesniffer": "*"
-    },
-    "autoload": {
-        "psr-4": {
-            "SimpleJwtLoginTests\\" : "tests",
-            "SimpleJWTLogin\\": "simple-jwt-login/src"
-        }
-    },
-    "config": {
-        "sort-packages": true
+  "name": "nicumicle/simple-jwt-login",
+  "description": "Simple JWT Login WordPress plugin",
+  "require": {
+    "phpmd/phpmd": "^2.9"
+  },
+  "license": [
+    "GPL-2.0-or-later"
+  ],
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "*",
+    "phpcompatibility/phpcompatibility-wp": "^2.1",
+    "phpstan/phpstan": "*",
+    "phpunit/phpunit": "*",
+    "squizlabs/php_codesniffer": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "SimpleJwtLoginTests\\": "tests",
+      "SimpleJWTLogin\\": "simple-jwt-login/src"
     }
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "scripts": {
+    "tests": "vendor/bin/phpunit tests/",
+    "phpcs": "vendor/bin/phpcs simple-jwt-login/src",
+    "phpmd-cleancode": "vendor/bin/phpmd simple-jwt-login/src/ text cleancode",
+    "phpmd-naming": "vendor/bin/phpmd simple-jwt-login/src/ text naming",
+    "phpmd-controversial": " vendor/bin/phpmd simple-jwt-login/src/ text controversial"
+  }
 }

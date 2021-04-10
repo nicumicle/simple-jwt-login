@@ -37,3 +37,8 @@ jobs:
       with:
          configuration: phpunit.xml.dist
          memory_limit: 256M
+    - name: PHP Code Style (phpcs)
+      uses: chindit/actions-phpcs@master
+      with:
+          # Folder to check code style
+          dir: simple-jwt-login/src

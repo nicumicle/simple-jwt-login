@@ -15,7 +15,10 @@ if (!defined('ABSPATH')) {
         <h3 class="section-title">
             <?php
             echo isset($errorCode)
-            && SettingsErrors::generateCode(SettingsErrors::PREFIX_GENERAL, SettingsErrors::ERR_GENERAL_EMPTY_NAMESPACE) === $errorCode
+            && SettingsErrors::generateCode(
+                SettingsErrors::PREFIX_GENERAL,
+                SettingsErrors::ERR_GENERAL_EMPTY_NAMESPACE
+            ) === $errorCode
                 ? '<span class="simple-jwt-error">!</span>'
                 : ''
             ?>
@@ -43,13 +46,20 @@ if (!defined('ABSPATH')) {
             <select id="decryption_source" name="decryption_source" class="form-control">
                 <option
                     value="<?php echo SimpleJWTLoginSettings::DECRYPTION_SOURCE_SETTINGS;?>"
-                    <?php echo $jwtSettings->getDecryptionSource() === SimpleJWTLoginSettings::DECRYPTION_SOURCE_SETTINGS ? 'selected' : ''?>
+                    <?php
+                    echo $jwtSettings->getDecryptionSource() === SimpleJWTLoginSettings::DECRYPTION_SOURCE_SETTINGS
+                        ? 'selected'
+                        : ''
+                    ?>
                 >
                     Plugin Settings
                 </option>
                 <option
                     value="<?php echo SimpleJWTLoginSettings::DECRYPTION_SOURCE_CODE;?>"
-                    <?php echo $jwtSettings->getDecryptionSource() === SimpleJWTLoginSettings::DECRYPTION_SOURCE_CODE ? 'selected' : ''?>
+                    <?php echo $jwtSettings->getDecryptionSource() === SimpleJWTLoginSettings::DECRYPTION_SOURCE_CODE
+                        ? 'selected'
+                        : ''
+                    ?>
                 >
                     Code
                 </option>
@@ -60,9 +70,15 @@ if (!defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><span class="step-number">2</span> <?php echo __('JWT Decrypt Algorithm', 'simple-jwt-login'); ?></h3>
-        <div class="info"><?php echo __('The algorithm that should be used to verify the JWT signature.',
-                'simple-jwt-login'); ?></div>
+        <h3 class="section-title">
+            <span class="step-number">2</span>
+            <spam> </spam>
+            <?php echo __('JWT Decrypt Algorithm', 'simple-jwt-login'); ?>
+        </h3>
+        <div class="info"><?php echo __(
+            'The algorithm that should be used to verify the JWT signature.',
+            'simple-jwt-login'
+        ); ?></div>
         <div class="form-group">
             <select name="jwt_algorithm" class="form-control" id="simple-jwt-login-jwt-algorithm">
                 <?php
@@ -85,10 +101,22 @@ if (!defined('ABSPATH')) {
             <?php
             echo isset($errorCode)
             && (
-                    SettingsErrors::generateCode(SettingsErrors::PREFIX_GENERAL, SettingsErrors::ERR_GENERAL_PRIVATE_KEY_MISSING_FROM_CODE_RS) === $errorCode
-                    || SettingsErrors::generateCode(SettingsErrors::PREFIX_GENERAL, SettingsErrors::ERR_GENERAL_PRIVATE_KEY_NOT_PRESENT_IN_CODE_HS) === $errorCode
-                    || SettingsErrors::generateCode(SettingsErrors::PREFIX_GENERAL, SettingsErrors::ERR_GENERAL_MISSING_PRIVATE_AND_PUBLIC_KEY) === $errorCode
-                    || SettingsErrors::generateCode(SettingsErrors::PREFIX_GENERAL, SettingsErrors::ERR_GENERAL_DECRYPTION_KEY_REQUIRED) === $errorCode
+                SettingsErrors::generateCode(
+                    SettingsErrors::PREFIX_GENERAL,
+                    SettingsErrors::ERR_GENERAL_PRIVATE_KEY_MISSING_FROM_CODE_RS
+                ) === $errorCode
+                    || SettingsErrors::generateCode(
+                        SettingsErrors::PREFIX_GENERAL,
+                        SettingsErrors::ERR_GENERAL_PRIVATE_KEY_NOT_PRESENT_IN_CODE_HS
+                    ) === $errorCode
+                    || SettingsErrors::generateCode(
+                        SettingsErrors::PREFIX_GENERAL,
+                        SettingsErrors::ERR_GENERAL_MISSING_PRIVATE_AND_PUBLIC_KEY
+                    ) === $errorCode
+                    || SettingsErrors::generateCode(
+                        SettingsErrors::PREFIX_GENERAL,
+                        SettingsErrors::ERR_GENERAL_DECRYPTION_KEY_REQUIRED
+                    ) === $errorCode
             )
                 ? '<span class="simple-jwt-error">!</span>'
                 : '';
@@ -111,7 +139,9 @@ if (!defined('ABSPATH')) {
                     <a href="javascript:void(0)"
                        onclick="showDecryptionKey()"
                        class="toggle_key_button"
-                       title="<?php echo __('Toggle decryption key', 'simple-jwt-login'); ?>"
+                       title="<?php
+						echo __('Toggle decryption key', 'simple-jwt-login');
+						?>"
                     >
                         <i class="toggle-image" aria-hidden="true"></i>
                     </a>
@@ -173,8 +203,14 @@ if (!defined('ABSPATH')) {
             <?php
             echo isset($errorCode)
             && (
-                    SettingsErrors::generateCode(SettingsErrors::PREFIX_GENERAL, SettingsErrors::ERR_GENERAL_GET_JWT_FROM) === $errorCode
-                  || SettingsErrors::generateCode(SettingsErrors::PREFIX_GENERAL, SettingsErrors::ERR_GENERAL_REQUEST_KEYS) === $errorCode
+                SettingsErrors::generateCode(
+                    SettingsErrors::PREFIX_GENERAL,
+                    SettingsErrors::ERR_GENERAL_GET_JWT_FROM
+                ) === $errorCode
+                  || SettingsErrors::generateCode(
+                      SettingsErrors::PREFIX_GENERAL,
+                      SettingsErrors::ERR_GENERAL_REQUEST_KEYS
+                  ) === $errorCode
             )
                 ? '<span class="simple-jwt-error">!</span>'
                 : ''
@@ -187,7 +223,14 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-5">
         1. <span class="simple-jwt-request-parameter-label">URL parameter</span>
-        <input type="text" name="request_keys[url]" required="required" style="display: inline-block"  placeholder="Parameter name" value="<?php echo $jwtSettings->getRequestKeyUrl();?>"/>
+        <input
+                type="text"
+                name="request_keys[url]"
+                required="required"
+                style="display: inline-block"
+                placeholder="Parameter name"
+                value="<?php echo $jwtSettings->getRequestKeyUrl();?>"
+        />
     </div>
     <div class="col-md-2">
         <select name="request_jwt_url" class="form-control onOff">
@@ -207,7 +250,14 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-5">
         2. <span class="simple-jwt-request-parameter-label">SESSION</span>
-        <input type="text" name="request_keys[session]" required="required"  style="display: inline-block"  placeholder="Parameter name" value="<?php echo $jwtSettings->getRequestKeySession();?>" />
+        <input
+                type="text"
+                name="request_keys[session]"
+                required="required"
+                style="display: inline-block"
+                placeholder="Parameter name"
+                value="<?php echo $jwtSettings->getRequestKeySession();?>"
+        />
     </div>
     <div class="col-md-2">
         <select name="request_jwt_session" class="form-control onOff">
@@ -227,7 +277,14 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-5">
         3. <span class="simple-jwt-request-parameter-label">COOKIE</span>
-        <input type="text" name="request_keys[cookie]" required="required" style="display: inline-block" placeholder="Parameter name" value="<?php echo $jwtSettings->getRequestKeyCookie();?>"/>
+        <input
+                type="text"
+                name="request_keys[cookie]"
+                required="required"
+                style="display: inline-block"
+                placeholder="Parameter name"
+                value="<?php echo $jwtSettings->getRequestKeyCookie();?>"
+        />
     </div>
     <div class="col-md-2">
         <select name="request_jwt_cookie" class="form-control onOff">
@@ -247,7 +304,14 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-5">
         4. <span class="simple-jwt-request-parameter-label">Header</span>
-        <input type="text" name="request_keys[header]" required="required" placeholder="Parameter name" style="display: inline-block" value="<?php echo $jwtSettings->getRequestKeyHeader();?>"/>
+        <input
+                type="text"
+                name="request_keys[header]"
+                required="required"
+                placeholder="Parameter name"
+                style="display: inline-block"
+                value="<?php echo $jwtSettings->getRequestKeyHeader();?>"
+        />
     </div>
     <div class="col-md-2">
         <select name="request_jwt_header" class="form-control onOff">
@@ -267,8 +331,11 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <p class="text-muted">
-            * <?php echo __('If the JWT is present in multiple places, the higher number of the option overwrites the smaller number.',
-                'simple-jwt-login'); ?>
+            * <?php echo __(
+                'If the JWT is present in multiple places,'
+                . ' the higher number of the option overwrites the smaller number.',
+                'simple-jwt-login'
+            ); ?>
         </p>
     </div>
 </div>

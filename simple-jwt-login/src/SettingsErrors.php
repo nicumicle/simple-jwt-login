@@ -51,7 +51,8 @@ class SettingsErrors extends \Exception
      * @param int $code
      * @return float|int
      */
-    public static function generateCode($sectionPrefix, $code){
+    public static function generateCode($sectionPrefix, $code)
+    {
         return (self::PREFIX_LEEWAY * $sectionPrefix) + $code;
     }
 
@@ -59,13 +60,12 @@ class SettingsErrors extends \Exception
      * @param int $errorCode
      * @return int
      */
-    public static function getSectionFromErrorCode($errorCode){
-
-        if(empty($errorCode)){
+    public static function getSectionFromErrorCode($errorCode)
+    {
+        if (empty($errorCode)) {
             return 0;
         }
 
         return intval($errorCode / self::PREFIX_LEEWAY);
     }
-
 }

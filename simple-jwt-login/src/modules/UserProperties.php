@@ -10,7 +10,7 @@ class UserProperties
      *
      * @return array
      */
-    public static function build($userProperties, $extraParameters)
+    public function build($userProperties, $extraParameters)
     {
         $diff = array_diff_key($extraParameters, $userProperties);
 

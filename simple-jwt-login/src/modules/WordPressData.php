@@ -13,7 +13,7 @@ class WordPressData implements WordPressDataInterface
     /**
      * @param int $userID
      *
-     * @return bool|\WP_User
+     * @return bool|WP_User
      */
     public function getUserDetailsById($userID)
     {
@@ -23,7 +23,7 @@ class WordPressData implements WordPressDataInterface
     /**
      * @param string $emailAddress
      *
-     * @return bool|\WP_User
+     * @return bool|WP_User
      */
     public function getUserDetailsByEmail($emailAddress)
     {
@@ -52,6 +52,7 @@ class WordPressData implements WordPressDataInterface
     }
 
     /**
+     * @SuppressWarnings(ExitExpression)
      * @param string $url
      */
     public function redirect($url)
@@ -105,7 +106,7 @@ class WordPressData implements WordPressDataInterface
             'user_email' => $email,
         ];
 
-        $userParameters = UserProperties::build($userParameters, $extraParameters);
+        $userParameters = (new UserProperties())->build($userParameters, $extraParameters);
 
         $result = wp_insert_user($userParameters);
         if (!is_int($result)) {
@@ -117,7 +118,7 @@ class WordPressData implements WordPressDataInterface
             );
         }
 
-        $user   = new \WP_User($result);
+        $user   = new WP_User($result);
         $user->set_role($role);
 
         return $user;
@@ -189,7 +190,7 @@ class WordPressData implements WordPressDataInterface
     }
 
     /**
-     * @param \WP_User $user
+     * @param WP_User $user
      *
      * @return bool|int
      */
@@ -252,24 +253,22 @@ class WordPressData implements WordPressDataInterface
     /**
      * @param int $userId
      * @param string $metaKey
-     * @param bool $single
      * @return mixed
      */
-    public function getUserMeta($userId, $metaKey, $single = false)
+    public function getUserMeta($userId, $metaKey)
     {
-        return get_user_meta($userId, $metaKey, $single);
+        return get_user_meta($userId, $metaKey, false);
     }
 
     /**
      * @param int $userId
      * @param string $metaKey
      * @param string $value
-     * @param bool $unique
      * @return false|int
      */
-    public function addUserMeta($userId, $metaKey, $value, $unique = false)
+    public function addUserMeta($userId, $metaKey, $value)
     {
-        return add_user_meta($userId, $metaKey, $value, $unique);
+        return add_user_meta($userId, $metaKey, $value, false);
     }
 
     /**

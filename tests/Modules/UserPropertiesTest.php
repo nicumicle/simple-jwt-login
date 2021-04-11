@@ -17,7 +17,7 @@ class UserPropertiesTest extends TestCase
      */
     public function testBuildMethod($expected, $userProperties, $extraParameters)
     {
-        $result = UserProperties::build(
+        $result = (new UserProperties())->build(
             $userProperties,
             $extraParameters
         );

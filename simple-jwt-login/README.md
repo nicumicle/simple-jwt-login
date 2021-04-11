@@ -14,6 +14,8 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 This plugin allows you to login or register to a WordPress website using a JWT. 
 
+Plugin Documentation Site [Here](https://github.com/nicumicle/simple-jwt-login/wiki).
+
 == Some awesome features ==
 
 * Auto-login using JWT and AUTH_KEY

@@ -82,19 +82,22 @@ class JWT
             );
         }
         list($headb64, $bodyb64, $cryptob64) = $tks;
-        if (null === ($header = static::jsonDecode(static::urlsafeB64Decode($headb64)))) {
+        $header = static::jsonDecode(static::urlsafeB64Decode($headb64));
+        if ($header === null) {
             throw new Exception(
                 __('Invalid header encoding', 'simple-jwt-login'),
                 ErrorCodes::ERR_INVALID_HEADER_ENCODING
             );
         }
-        if (null === $payload = static::jsonDecode(static::urlsafeB64Decode($bodyb64))) {
+        $payload = static::jsonDecode(static::urlsafeB64Decode($bodyb64));
+        if ($payload === null) {
             throw new Exception(
                 __('Invalid claims encoding', 'simple-jwt-login'),
                 ErrorCodes::ERR_INVALID_CLAIMS_ENCODING
             );
         }
-        if (false === ($sig = static::urlsafeB64Decode($cryptob64))) {
+        $sig = static::urlsafeB64Decode($cryptob64);
+        if ($sig === null) {
             throw new Exception(
                 __('Invalid signature encoding', 'simple-jwt-login'),
                 ErrorCodes::ERR_INVALID_SIGNATURE_ENCODING
@@ -119,20 +122,20 @@ class JWT
             );
         }
         if (is_array($key) || $key instanceof ArrayAccess) {
-            if (isset($header->kid)) {
-                if (! isset($key[ $header->kid ])) {
-                    throw new Exception(
-                        __('`kid` invalid, unable to lookup correct key', 'simple-jwt-login'),
-                        ErrorCodes::ERR_INVALID_KID
-                    );
-                }
-                $key = $key[ $header->kid ];
-            } else {
+            if (!isset($header->kid)) {
                 throw new Exception(
                     __('`kid` empty, unable to lookup correct key', 'simple-jwt-login'),
                     ErrorCodes::ERR_EMPTY_KID
                 );
             }
+
+            if (! isset($key[ $header->kid ])) {
+                throw new Exception(
+                    __('`kid` invalid, unable to lookup correct key', 'simple-jwt-login'),
+                    ErrorCodes::ERR_INVALID_KID
+                );
+            }
+            $key = $key[ $header->kid ];
         }
         // Check the signature
         if (! static::verify("$headb64.$bodyb64", $sig, $key, $header->alg)) {
@@ -237,15 +240,15 @@ class JWT
                 return hash_hmac($algorithm, $msg, $key, true);
             case 'openssl':
                 $signature = '';
-                $success   = @openssl_sign($msg, $signature, $key, $algorithm);
+                $success   = openssl_sign($msg, $signature, $key, $algorithm);
                 if (! $success) {
                     throw new Exception(
                         __("OpenSSL unable to sign data", 'simple-jwt-login'),
                         ErrorCodes::ERR_OPENSSL_SIGN
                     );
-                } else {
-                    return $signature;
                 }
+
+                return $signature;
         }
 
         throw new Exception(
@@ -279,7 +282,7 @@ class JWT
         list($function, $algorithm) = static::$supported_algs[ $alg ];
         switch ($function) {
             case 'openssl':
-                $success = @openssl_verify($msg, $signature, $key, $algorithm);
+                $success = openssl_verify($msg, $signature, $key, $algorithm);
                 if ($success === 1) {
                     return true;
                 } elseif ($success === 0) {
@@ -321,23 +324,13 @@ class JWT
      */
     public static function jsonDecode($input)
     {
-        if (version_compare(PHP_VERSION, '5.4.0', '>=') && ! (defined('JSON_C_VERSION') && PHP_INT_SIZE > 4)) {
-            /** In PHP >=5.4.0, json_decode() accepts an options parameter, that allows you
-             * to specify that large ints (like Steam Transaction IDs) should be treated as
-             * strings, rather than the PHP default behaviour of converting them to floats.
-             */
-            $obj = json_decode($input, false, 512, JSON_BIGINT_AS_STRING);
-        } else {
-            /** Not all servers will support that, however, so for older versions we must
-             * manually detect large ints in the JSON string and quote them (thus converting
-             *them to strings) before decoding, hence the preg_replace() call.
-             */
-            $max_int_length       = strlen((string) PHP_INT_MAX) - 1;
-            $json_without_bigints = preg_replace('/:\s*(-?\d{' . $max_int_length . ',})/', ': "$1"', $input);
-            $obj                  = json_decode($json_without_bigints);
-        }
-        if (function_exists('json_last_error') && $errno = json_last_error()) {
-            static::handleJsonError($errno);
+        $obj = self::getCorrectImplementationForJsonDecode($input);
+      
+        if (function_exists('json_last_error')) {
+            $errno = json_last_error();
+            if ($errno) {
+                static::handleJsonError($errno);
+            }
         } elseif ($obj === null && $input !== 'null') {
             throw new Exception(
                 __('Null result with non-null input', 'simple-jwt-login'),
@@ -347,6 +340,29 @@ class JWT
 
         return $obj;
     }
+
+    /**
+     * @param mixed $input
+     * @return object|null
+     */
+    private static function getCorrectImplementationForJsonDecode($input)
+    {
+		if (version_compare(PHP_VERSION, '5.4.0', '>=') && ! (defined('JSON_C_VERSION') && PHP_INT_SIZE > 4)) {
+            /** In PHP >=5.4.0, json_decode() accepts an options parameter, that allows you
+             * to specify that large ints (like Steam Transaction IDs) should be treated as
+             * strings, rather than the PHP default behaviour of converting them to floats.
+             */
+            return json_decode($input, false, 512, JSON_BIGINT_AS_STRING);
+		}
+
+         /** Not all servers will support that, however, so for older versions we must
+         * manually detect large ints in the JSON string and quote them (thus converting
+         *them to strings) before decoding, hence the preg_replace() call.
+         */
+        $max_int_length       = strlen((string) PHP_INT_MAX) - 1;
+        $json_without_bigints = preg_replace('/:\s*(-?\d{' . $max_int_length . ',})/', ': "$1"', $input);
+        return json_decode($json_without_bigints);
+	}
 
     /**
      * Encode a PHP object into a JSON string.
@@ -360,8 +376,11 @@ class JWT
     public static function jsonEncode($input)
     {
         $json = json_encode($input);
-        if (function_exists('json_last_error') && $errno = json_last_error()) {
-            static::handleJsonError($errno);
+        if (function_exists('json_last_error')) {
+            $errno = json_last_error();
+            if ($errno) {
+                static::handleJsonError($errno);
+            }
         } elseif ($json === 'null' && $input !== null) {
             throw new Exception(
                 __('Null result with non-null input', 'simple-jwt-login'),

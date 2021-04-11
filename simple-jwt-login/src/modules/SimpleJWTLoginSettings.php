@@ -2,6 +2,7 @@
 
 namespace SimpleJWTLogin\Modules;
 
+use Exception;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyWpConfig;
 use SimpleJWTLogin\SettingsErrors;
 
@@ -89,7 +90,7 @@ class SimpleJWTLoginSettings
      * @param array $post
      *
      * @return bool|void
-     * @throws \Exception
+     * @throws Exception
      */
     public function watchForUpdates($post)
     {
@@ -131,10 +132,14 @@ class SimpleJWTLoginSettings
         );
     }
 
+    /**
+     * @SuppressWarnings(StaticAccess)
+     * @throws Exception
+     */
     private function validateAuthenticationConfigFromPost()
     {
         if ((int)$this->post['allow_authentication'] === 1 && (empty($this->post['jwt_payload']))) {
-            throw new \Exception(
+            throw new Exception(
                 __(
                     'Authentication payload data can not be empty.'
                     . ' Please choose the ones you want to be added in the JWT.',
@@ -148,7 +153,7 @@ class SimpleJWTLoginSettings
         }
 
         if (empty((int)$this->post['jwt_auth_ttl']) || (int)$this->post['jwt_auth_ttl'] < 0) {
-            throw new \Exception(
+            throw new Exception(
                 __(
                     'Authentication JWT time to live should be greater than zero.',
                     'simple-jwt-login'
@@ -161,7 +166,7 @@ class SimpleJWTLoginSettings
         }
 
         if (empty((int)$this->post['jwt_auth_refresh_ttl']) || (int)$this->post['jwt_auth_refresh_ttl'] < 0) {
-            throw new \Exception(
+            throw new Exception(
                 __(
                     'Authentication JWT Refresh time to live should be greater than zero.',
                     'simple-jwt-login'
@@ -309,7 +314,8 @@ class SimpleJWTLoginSettings
     }
 
     /**
-     * @throws \Exception
+     * @SuppressWarnings(StaticAccess)
+     * @throws Exception
      */
     private function validateGeneralSettingsFromPost()
     {
@@ -319,7 +325,7 @@ class SimpleJWTLoginSettings
                 $this->post['route_namespace'],
                 ' /'
             ))) {
-            throw new \Exception(
+            throw new Exception(
                 __('Route namespace could not be empty.', 'simple-jwt-login'),
                 SettingsErrors::generateCode(
                     SettingsErrors::PREFIX_GENERAL,
@@ -333,7 +339,7 @@ class SimpleJWTLoginSettings
                 || empty($this->post['request_keys']['cookie'])
                 || empty($this->post['request_keys']['header'])
             ) {
-                throw new \Exception(
+                throw new Exception(
                     __('Request Keys are required', 'simple-jwt-login'),
                     SettingsErrors::generateCode(
                         SettingsErrors::PREFIX_GENERAL,
@@ -350,7 +356,7 @@ class SimpleJWTLoginSettings
                     && (!defined(JwtKeyWpConfig::SIMPLE_JWT_PUBLIC_KEY)
                         || !defined(JwtKeyWpConfig::SIMPLE_JWT_PRIVATE_KEY))
                 ) {
-                    throw new \Exception(
+                    throw new Exception(
                         __('Public or private key is not defined in code.', 'simple-jwt-login'),
                         SettingsErrors::generateCode(
                             SettingsErrors::PREFIX_GENERAL,
@@ -358,7 +364,7 @@ class SimpleJWTLoginSettings
                         )
                     );
                 } elseif (!defined(JwtKeyWpConfig::SIMPLE_JWT_PRIVATE_KEY)) {
-                    throw new \Exception(
+                    throw new Exception(
                         __('Private key is not defined in code.', 'simple-jwt-login'),
                         SettingsErrors::generateCode(
                             SettingsErrors::PREFIX_GENERAL,
@@ -366,32 +372,29 @@ class SimpleJWTLoginSettings
                         )
                     );
                 }
-            } else {
-                if (strpos($this->post['jwt_algorithm'], 'RS') !== false) {
-                    if (!isset($this->post['decryption_key_public'])
-                        || empty(trim($this->post['decryption_key_public']))
-                        || !isset($this->post['decryption_key_private'])
-                        || empty(trim($this->post['decryption_key_private']))
-                    ) {
-                        throw  new \Exception(
-                            __('JWT Decryption public and private key are required.', 'simple-jwt-login'),
-                            SettingsErrors::generateCode(
-                                SettingsErrors::PREFIX_GENERAL,
-                                SettingsErrors::ERR_GENERAL_MISSING_PRIVATE_AND_PUBLIC_KEY
-                            )
-                        );
-                    }
-                } else {
-                    if (!isset($this->post['decryption_key']) || empty(trim($this->post['decryption_key']))) {
-                        throw  new \Exception(
-                            __('JWT Decryption key is required.', 'simple-jwt-login'),
-                            SettingsErrors::generateCode(
-                                SettingsErrors::PREFIX_GENERAL,
-                                SettingsErrors::ERR_GENERAL_DECRYPTION_KEY_REQUIRED
-                            )
-                        );
-                    }
+            }
+            if (strpos($this->post['jwt_algorithm'], 'RS') !== false) {
+                if (!isset($this->post['decryption_key_public'])
+                    || empty(trim($this->post['decryption_key_public']))
+                    || !isset($this->post['decryption_key_private'])
+                    || empty(trim($this->post['decryption_key_private']))
+                ) {
+                    throw  new Exception(
+                        __('JWT Decryption public and private key are required.', 'simple-jwt-login'),
+                        SettingsErrors::generateCode(
+                            SettingsErrors::PREFIX_GENERAL,
+                            SettingsErrors::ERR_GENERAL_MISSING_PRIVATE_AND_PUBLIC_KEY
+                        )
+                    );
                 }
+            } elseif (!isset($this->post['decryption_key']) || empty(trim($this->post['decryption_key']))) {
+                throw  new Exception(
+                    __('JWT Decryption key is required.', 'simple-jwt-login'),
+                    SettingsErrors::generateCode(
+                        SettingsErrors::PREFIX_GENERAL,
+                        SettingsErrors::ERR_GENERAL_DECRYPTION_KEY_REQUIRED
+                    )
+                );
             }
         }
 
@@ -400,7 +403,7 @@ class SimpleJWTLoginSettings
             && empty($this->post['request_jwt_header'])
             && empty($this->post['request_jwt_session'])
         ) {
-            throw new \Exception(
+            throw new Exception(
                 __('You have to have at least on option enabled in \'Get JWT token From\'', 'simple-jwt-login'),
                 SettingsErrors::generateCode(SettingsErrors::PREFIX_GENERAL, SettingsErrors::ERR_GENERAL_GET_JWT_FROM)
             );
@@ -434,7 +437,8 @@ class SimpleJWTLoginSettings
     }
 
     /**
-     * @throws \Exception
+     * @SuppressWarnings(StaticAccess)
+     * @throws Exception
      */
     private function validateAuthCodesFromPost()
     {
@@ -444,7 +448,7 @@ class SimpleJWTLoginSettings
             || !empty($this->settings['require_delete_auth']) && !empty($this->settings['allow_delete'])
         ) {
             if (empty($this->settings['auth_codes'])) {
-                throw new \Exception(
+                throw new Exception(
                     __('Missing Auth Codes. Please add at least one Auth Code.', 'simple-jwt-login'),
                     SettingsErrors::generateCode(
                         SettingsErrors::PREFIX_AUTH_CODES,
@@ -512,14 +516,15 @@ class SimpleJWTLoginSettings
     }
 
     /**
-     * @throws \Exception
+     * @SuppressWarnings(StaticAccess)
+     * @throws Exception
      */
     private function validateLoginConfigFromPost()
     {
         if (isset($this->post['allow_autologin']) && (int)$this->post['allow_autologin'] === 1
             && (!isset($this->post['jwt_login_by_parameter']) || empty(trim($this->post['jwt_login_by_parameter'])))
         ) {
-            throw  new \Exception(
+            throw  new Exception(
                 __('JWT Parameter key from Login Config is missing.', 'simple-jwt-login'),
                 SettingsErrors::generateCode(
                     SettingsErrors::PREFIX_LOGIN,
@@ -535,7 +540,7 @@ class SimpleJWTLoginSettings
                 !filter_var($this->post['redirect_url'], FILTER_VALIDATE_URL)
             )
         ) {
-            throw new \Exception(
+            throw new Exception(
                 __('Invalid custom URL provided', 'simple-jwt-login'),
                 SettingsErrors::generateCode(SettingsErrors::PREFIX_LOGIN, SettingsErrors::ERR_LOGIN_INVALID_CUSTOM_URL)
             );
@@ -596,12 +601,13 @@ class SimpleJWTLoginSettings
     }
 
     /**
-     * @throws \Exception
+     * @SuppressWarnings(StaticAccess)
+     * @throws Exception
      */
     private function validateRegisterUser()
     {
         if (empty($this->post['new_user_profile'])) {
-            throw new \Exception(
+            throw new Exception(
                 __('New User profile slug can not be empty.', 'simple-jwt-login'),
                 SettingsErrors::generateCode(
                     SettingsErrors::PREFIX_REGISTER,
@@ -618,7 +624,7 @@ class SimpleJWTLoginSettings
      * @param string $postKey
      * @param string $type
      * @param null|mixed $defaultValue
-     * @param bool $base64Encode
+     * @param null|bool $base64Encode
      */
     private function assignSettingsPropertyFromPost(
         $settingsPropertyGroup,
@@ -627,7 +633,7 @@ class SimpleJWTLoginSettings
         $postKey,
         $type = null,
         $defaultValue = null,
-        $base64Encode = false
+        $base64Encode = null
     ) {
         $posTKeyExists = $postKeyGroup !== null
             ? isset($this->post[$postKeyGroup]) && isset($this->post[$postKeyGroup][$postKey])
@@ -663,7 +669,7 @@ class SimpleJWTLoginSettings
             }
             if ($settingsPropertyGroup !== null) {
                 $this->settings[$settingsPropertyGroup][$settingsProperty] = $value;
-            } else {
+            } elseif ($settingsPropertyGroup === null) {
                 $this->settings[$settingsProperty] = $value;
             }
         } elseif ($defaultValue !== null) {
@@ -672,7 +678,7 @@ class SimpleJWTLoginSettings
                 : $defaultValue;
             if ($settingsPropertyGroup !== null) {
                 $this->settings[$settingsPropertyGroup][$settingsProperty] = $defaultValue;
-            } else {
+            } elseif ($settingsPropertyGroup === null) {
                 $this->settings[$settingsProperty] = $defaultValue;
             }
         }
@@ -680,7 +686,7 @@ class SimpleJWTLoginSettings
 
     /**
      * Save Data
-     * @throws \Exception
+     * @throws Exception
      */
     private function saveSettingsInDatabase()
     {
@@ -693,10 +699,10 @@ class SimpleJWTLoginSettings
         $this->validateCorsFromPost();
 
         if ($this->needUpdateOnOptions) {
-            $this->wordPressData->update_option(self::OPTIONS_KEY, json_encode($this->settings));
-        } else {
-            $this->wordPressData->add_option(self::OPTIONS_KEY, json_encode($this->settings));
+            return $this->wordPressData->update_option(self::OPTIONS_KEY, json_encode($this->settings));
         }
+
+        return $this->wordPressData->add_option(self::OPTIONS_KEY, json_encode($this->settings));
     }
 
     /**
@@ -1059,7 +1065,8 @@ class SimpleJWTLoginSettings
     }
 
     /**
-     * @throws \Exception
+     * @SuppressWarnings(StaticAccess)
+     * @throws Exception
      */
     private function validateDeleteUserConfigFromPost()
     {
@@ -1069,7 +1076,7 @@ class SimpleJWTLoginSettings
                 || empty(trim($this->post['jwt_delete_by_parameter']))
             )
         ) {
-            throw new \Exception(
+            throw new Exception(
                 __('Missing JWT parameter for Delete User.', 'simple-jwt-login'),
                 SettingsErrors::generateCode(
                     SettingsErrors::PREFIX_DELETE,
@@ -1338,6 +1345,10 @@ class SimpleJWTLoginSettings
         );
     }
 
+    /**
+     * @SuppressWarnings(StaticAccess)
+     * @throws Exception
+     */
     private function validateCorsFromPost()
     {
         if (!empty($this->post['cors']['enabled'])
@@ -1347,7 +1358,7 @@ class SimpleJWTLoginSettings
                 && empty($this->settings['cors']['allow_headers_enabled'])
             )
         ) {
-            throw  new \Exception(
+            throw  new Exception(
                 __(
                     'Cors is enabled but no option is checked. Please check at least one option.',
                     'simple-jwt-login'

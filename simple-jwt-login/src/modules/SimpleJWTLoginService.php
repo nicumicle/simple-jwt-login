@@ -160,6 +160,7 @@ class SimpleJWTLoginService
             $headers = array_change_key_case($this->getallheaders(), CASE_LOWER);
             $headerKey = strtolower($this->jwt_settings->getRequestKeyHeader());
             if (isset($headers[$headerKey])) {
+                $matches = [];
                 preg_match(
                     '/^(?:Bearer)?[\s]*(.*)$/mi',
                     $headers[$headerKey],
@@ -311,9 +312,9 @@ class SimpleJWTLoginService
                 );
             }
             return $this->wordPressData->createResponse($response);
-        } else {
-            $this->wordPressData->redirect($url);
         }
+
+        $this->wordPressData->redirect($url);
 
         return null;
     }
@@ -334,7 +335,7 @@ class SimpleJWTLoginService
     }
 
     /**
-     *
+     * @SuppressWarnings(StaticAccess)
      * @return mixed|string
      * @throws Exception
      */
@@ -452,6 +453,7 @@ class SimpleJWTLoginService
     }
 
     /**
+     * @SuppressWarnings(StaticAccess)
      * @return WP_REST_Response
      * @throws Exception
      */
@@ -600,7 +602,7 @@ class SimpleJWTLoginService
             $allowedIps = explode(',', $allowedIpsString);
             $clientIp   = $this->getClientIP();
             if (! empty($allowedIps) && ! in_array($clientIp, $allowedIps)) {
-                throw new \Exception(
+                throw new Exception(
                     sprintf(
                         __('You are not allowed to delete users from this IP: %s', 'simple-jwt-login'),
                         $clientIp
@@ -669,6 +671,7 @@ class SimpleJWTLoginService
     }
 
     /**
+     * @SuppressWarnings(StaticAccess)
      * @return WP_REST_Response
      * @throws Exception
      */
@@ -768,6 +771,7 @@ class SimpleJWTLoginService
     }
 
     /**
+     * @SuppressWarnings(StaticAccess)
      * @return WP_REST_Response
      * @throws Exception
      */
@@ -796,7 +800,7 @@ class SimpleJWTLoginService
                 JwtKeyFactory::getFactory($this->jwt_settings)->getPublicKey(),
                 [ $this->jwt_settings->getJWTDecryptAlgorithm() ]
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             if ($e->getCode() !== ErrorCodes::ERR_TOKEN_EXPIRED) {
                 throw new Exception($e->getMessage(), $e->getCode());
             }
@@ -860,7 +864,7 @@ class SimpleJWTLoginService
     {
         $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
         if (empty($this->jwt)) {
-            throw new \Exception(
+            throw new Exception(
                 __('The `jwt` parameter is missing.', 'simple-jwt-login'),
                 ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE
             );
@@ -885,8 +889,8 @@ class SimpleJWTLoginService
         $jwtParameters = [];
         $jwtParameters['token'] = $this->jwt;
         list($header, $payload) = explode('.', $this->jwt);
-        $jwtParameters['header'] = @json_decode(base64_decode($header), true);
-        $jwtParameters['payload'] = @json_decode(base64_decode($payload), true);
+        $jwtParameters['header'] = json_decode(base64_decode($header), true);
+        $jwtParameters['payload'] = json_decode(base64_decode($payload), true);
         if (isset($jwtParameters['payload']['exp'])) {
             $jwtParameters['expire_in'] = $jwtParameters['payload']['exp'] - time();
         }
@@ -909,7 +913,7 @@ class SimpleJWTLoginService
     {
         $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
         if (empty($this->jwt)) {
-            throw new \Exception(
+            throw new Exception(
                 __('The `jwt` parameter is missing.', 'simple-jwt-login'),
                 ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE
             );
@@ -1047,9 +1051,7 @@ class SimpleJWTLoginService
             $array = explode('.', $parameter);
             foreach ($array as $value) {
                 $payload = (array) $payload;
-                if (isset($payload[ $value ])) {
-                    $payload = $payload[ $value ];
-                } else {
+                if (!isset($payload[ $value ])) {
                     throw new Exception(
                         sprintf(
                             __('Unable to find user %s property in JWT.( Settings: %s )', 'simple-jwt-login'),
@@ -1059,6 +1061,7 @@ class SimpleJWTLoginService
                         ErrorCodes::ERR_UNABLE_TO_FIND_PROPERTY_FOR_USER_IN_JWT
                     );
                 }
+                $payload = $payload[ $value ];
             }
 
             return (string) $payload;

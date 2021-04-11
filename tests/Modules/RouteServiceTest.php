@@ -15,11 +15,18 @@ class RouteServiceTest extends TestCase
         $this->assertTrue(!empty($routeService->getAllRoutes()));
     }
 
-    public function testRouteServiceUsersEndointInvalidAction()
+    public function testRouteServiceUsersEndpointInvalidMethod()
     {
         $this->expectExceptionMessage('Invalid method for this route.');
         $routeService = new RouteService();
         $routeService->makeAction(RouteService::USER_ROUTE, 'UNEXISTING_METHING');
+    }
+
+    public function testRouteServiceUsersEndpointInvalidEndpoint()
+    {
+        $this->expectExceptionMessage('Invalid route name.');
+        $routeService = new RouteService();
+        $routeService->makeAction('some-invalid-endpoint', 'POST');
     }
 
     public function testMakeAction()

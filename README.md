@@ -1,7 +1,5 @@
 <p align="center">
-    <a href="https://woocommerce.com/">
-        <img src="https://ps.w.org/simple-jwt-login/assets/banner-772x250.png?rev=2106097" alt="WooCommerce">
-    </a>
+    <img src="https://ps.w.org/simple-jwt-login/assets/banner-772x250.png?rev=2106097">
 </p>
 <p>
 Welcome to the Simple-JWT-Login repository on GitHub. Here you can browse the source, look at open issues and keep track of development.

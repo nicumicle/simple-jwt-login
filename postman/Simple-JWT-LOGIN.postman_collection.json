@@ -1,0 +1,372 @@
+{
+	"info": {
+		"_postman_id": "42652974-2eb2-4e38-b801-8d6dc450b11f",
+		"name": "Simple-JWT-LOGIN",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{site}}/?rest_route=/simple-jwt-login/v1/autologin&JWT={{JWT}}&AUTH_KEY={{AUTH_KEY_VALUE}}",
+					"host": [
+						"{{site}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "rest_route",
+							"value": "/simple-jwt-login/v1/autologin"
+						},
+						{
+							"key": "JWT",
+							"value": "{{JWT}}"
+						},
+						{
+							"key": "AUTH_KEY",
+							"value": "{{AUTH_KEY_VALUE}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "{{email}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "text"
+						},
+						{
+							"key": "user_login",
+							"value": "{{user_login}}",
+							"description": "Optional: Username",
+							"type": "text"
+						},
+						{
+							"key": "user_nicename",
+							"value": "{{user_nicename}}",
+							"description": "The URL-friendly user name.",
+							"type": "text"
+						},
+						{
+							"key": "user_url",
+							"value": "{{user_url}}",
+							"description": "The user URL.",
+							"type": "text"
+						},
+						{
+							"key": "display_name",
+							"value": "{{display_name}}",
+							"description": "The user's display name. Default is the user's username.",
+							"type": "text"
+						},
+						{
+							"key": "nickname",
+							"value": "{{nickname}}",
+							"description": "The user's nickname. Default is the user's username.",
+							"type": "text"
+						},
+						{
+							"key": "first_name",
+							"value": "{{first_name}}",
+							"description": "The user's first name. For new users, will be used to build the first part of the user's display name if $display_name is not specified.",
+							"type": "text"
+						},
+						{
+							"key": "last_name",
+							"value": "{{last_name}}",
+							"description": "The user's last name. For new users, will be used to build the second part of the user's display name if $display_name is not specified.",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "{{description}}",
+							"description": "The user's biographical description.",
+							"type": "text"
+						},
+						{
+							"key": "rich_editing",
+							"value": "{{rich_editing}}",
+							"description": "Whether to enable the rich-editor for the user. Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'.",
+							"type": "text"
+						},
+						{
+							"key": "syntax_highlighting",
+							"value": "{{syntax_highlighting}}",
+							"description": "Whether to enable the rich code editor for the user. Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'.",
+							"type": "text"
+						},
+						{
+							"key": "comment_shortcuts",
+							"value": "{{comment_shortcuts}}",
+							"description": "Whether to enable comment moderation keyboard shortcuts for the user. Accepts 'true' or 'false' as a string literal, not boolean. Default 'false'.",
+							"type": "text"
+						},
+						{
+							"key": "admin_color",
+							"value": "{{admin_color}}",
+							"description": "(string) Admin color scheme for the user. Default 'fresh'.",
+							"type": "text"
+						},
+						{
+							"key": "use_ssl",
+							"value": "{{use_ssl}}",
+							"description": "Whether the user should always access the admin over https. Default false.",
+							"type": "text"
+						},
+						{
+							"key": "user_registered",
+							"value": "{{user_registered}}",
+							"description": "Date the user registered. Format is 'Y-m-d H:m:s'.",
+							"type": "text"
+						},
+						{
+							"key": "user_activation_key",
+							"value": "{{user_activation_key}}",
+							"description": "Password reset key. Default empty.",
+							"type": "text"
+						},
+						{
+							"key": "spam",
+							"value": "{{spam}}",
+							"description": "Multisite only. Whether the user is marked as spam. Default false.",
+							"type": "text"
+						},
+						{
+							"key": "show_admin_bar_front",
+							"value": "{{show_admin_bar_front}}",
+							"description": "Whether to display the Admin Bar for the user on the site's front end. Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'.",
+							"type": "text"
+						},
+						{
+							"key": "locale",
+							"value": "{{locale}}",
+							"description": "User's locale. Default empty.",
+							"type": "text"
+						},
+						{
+							"key": "user_meta",
+							"value": "{\"metaKey\":\"meta_value\"}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{site}}/?rest_route=/simple-jwt-login/v1/users",
+					"host": [
+						"{{site}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "rest_route",
+							"value": "/simple-jwt-login/v1/users"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "JWT",
+							"value": "{{JWT}}",
+							"type": "text"
+						},
+						{
+							"key": "AUTH_KEY",
+							"value": "{{AUTH_KEY}}",
+							"description": "Can be optional",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{site}}/?rest_route=/simple-jwt-login/v1/users",
+					"host": [
+						"{{site}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "rest_route",
+							"value": "/simple-jwt-login/v1/users"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Authenticate",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "{{email}}",
+							"description": "You can also authenticate with the username",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{site}}/?rest_route=/simple-jwt-login/v1/auth",
+					"host": [
+						"{{site}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "rest_route",
+							"value": "/simple-jwt-login/v1/auth"
+						}
+					]
+				},
+				"description": "This route allows you to generate a JWT based on your WordPress email ( or WordPress username ) and Password."
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh Token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "JWT",
+							"value": "{{JWT}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{site}}/?rest_route=/simple-jwt-login/v1/auth/refresh",
+					"host": [
+						"{{site}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "rest_route",
+							"value": "/simple-jwt-login/v1/auth/refresh"
+						}
+					]
+				},
+				"description": "This route is for refreshing expired tokens. It accept as a parameter an expired token, and returns a new valid JWT."
+			},
+			"response": []
+		},
+		{
+			"name": "Validate Token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "JWT",
+							"value": "{{JWT}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{site}}/?rest_route=/simple-jwt-login/v1/auth/validate",
+					"host": [
+						"{{site}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "rest_route",
+							"value": "/simple-jwt-login/v1/auth/validate"
+						}
+					]
+				},
+				"description": "This endpoint validates a JWT. If it is valid,it will return the WordPress user details and some JWT details."
+			},
+			"response": []
+		},
+		{
+			"name": "Revoke Token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "JWT",
+							"value": "{{JWT}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{site}}/?rest_route=/simple-jwt-login/v1/auth/revoke",
+					"host": [
+						"{{site}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "rest_route",
+							"value": "/simple-jwt-login/v1/auth/revoke"
+						}
+					]
+				},
+				"description": "This endpoint revokes a JWT. If it is valid, it will be marked as invalid."
+			},
+			"response": []
+		}
+	]
+}

@@ -7,9 +7,9 @@ Welcome to the Simple-JWT-Login repository on GitHub. Here you can browse the so
 
 <p align="center">
 
-   [Rating](https://img.shields.io/wordpress/plugin/stars/simple-jwt-login)
-   [Downloads](https://img.shields.io/wordpress/plugin/dt/simple-jwt-login)
-   [Active installs](https://img.shields.io/wordpress/plugin/installs/simple-jwt-login)
+   <img src="https://img.shields.io/wordpress/plugin/stars/simple-jwt-login" alt="Rating" />
+   <img src="https://img.shields.io/wordpress/plugin/dt/simple-jwt-login" alt="Total Downloads" />
+   <img src="https://img.shields.io/wordpress/plugin/installs/simple-jwt-login" alt="Active installs" />
 
 </p>
 

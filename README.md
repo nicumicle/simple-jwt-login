@@ -1,9 +1,6 @@
 <p align="center">
     <img src="https://ps.w.org/simple-jwt-login/assets/banner-772x250.png?rev=2106097">
 </p>
-<p>
-Welcome to the Simple-JWT-Login repository on GitHub. Here you can browse the source, look at open issues and keep track of development.
-</p>
 
 <p align="center">
 
@@ -11,6 +8,10 @@ Welcome to the Simple-JWT-Login repository on GitHub. Here you can browse the so
    <img src="https://img.shields.io/wordpress/plugin/dt/simple-jwt-login" alt="Total Downloads" />
    <img src="https://img.shields.io/wordpress/plugin/installs/simple-jwt-login" alt="Active installs" />
 
+</p>
+
+<p>
+Welcome to the Simple-JWT-Login repository on GitHub. Here you can browse the source, look at open issues and keep track of development.
 </p>
 
 If you are not a developer, please use the [Simple-JWT-Login plugin page](https://wordpress.org/plugins/simple-jwt-login/) on WordPress.org.

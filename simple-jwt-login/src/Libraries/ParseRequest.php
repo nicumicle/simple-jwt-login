@@ -7,7 +7,7 @@ class ParseRequest
 
     public static function process($server)
     {
-        $serverContentType = $server['CONTENT_TYPE']
+        $serverContentType = isset($server['CONTENT_TYPE'])
             ? $server['CONTENT_TYPE']
             : 'application/x-www-form-urlencoded';
 

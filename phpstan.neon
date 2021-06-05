@@ -1,0 +1,11 @@
+parameters:
+  level: 5
+  paths:
+    - simple-jwt-login
+    - tests
+  bootstrapFiles:
+    - phpstan_bootstrap.php
+  ignoreErrors:
+    -
+       message: '#Method SimpleJWTLogin\\Modules\\WordPressDataInterface::(triggerFilter|triggerAction)\(\) invoked with .* parameters, 0 required.#'
+       path: simple-jwt-login/src

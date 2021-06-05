@@ -2,6 +2,7 @@
   "name": "nicumicle/simple-jwt-login",
   "description": "Simple JWT Login WordPress plugin",
   "require": {
+    "php": ">=7.0",
     "phpmd/phpmd": "^2.9"
   },
   "license": [
@@ -9,7 +10,6 @@
   ],
   "require-dev": {
     "friendsofphp/php-cs-fixer": "*",
-    "phpcompatibility/phpcompatibility-wp": "^2.1",
     "phpstan/phpstan": "*",
     "phpunit/phpunit": "*",
     "squizlabs/php_codesniffer": "*"
@@ -28,6 +28,19 @@
     "phpcs": "vendor/bin/phpcs simple-jwt-login/src",
     "phpmd-cleancode": "vendor/bin/phpmd simple-jwt-login/src/ text cleancode",
     "phpmd-naming": "vendor/bin/phpmd simple-jwt-login/src/ text naming",
-    "phpmd-controversial": " vendor/bin/phpmd simple-jwt-login/src/ text controversial"
+    "phpmd-controversial": "vendor/bin/phpmd simple-jwt-login/src/ text controversial",
+    "check-plugin": [
+        "vendor/bin/phpcs simple-jwt-login/src",
+        "vendor/bin/phpmd simple-jwt-login/src/ text design",
+        "vendor/bin/phpmd simple-jwt-login/src/ text cleancode",
+        "vendor/bin/phpmd simple-jwt-login/ text unusedcode",
+        "vendor/bin/phpmd simple-jwt-login/ text naming",
+        "vendor/bin/phpmd simple-jwt-login/ text controversial",
+        "vendor/bin/phpstan analyse simple-jwt-login/src",
+        "vendor/bin/phpunit tests/"
+    ]
+  },
+  "scripts-descriptions": {
+    "check-plugin": "Check plugin code and run tests"
   }
 }

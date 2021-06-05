@@ -32,19 +32,29 @@ jobs:
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
 
+    - name: Run PHPCS design on plugin
+      run: vendor/bin/phpcs simple-jwt-login/src
+
+    - name: Run PHPMD design on plugin
+      run: vendor/bin/phpmd simple-jwt-login/src text design
+
+    - name: Run PHPMD cleancode on plugin
+      run: vendor/bin/phpmd simple-jwt-login/src text cleancode
+
+    - name: Run PHPMD unusedcode on plugin
+      run: vendor/bin/phpmd simple-jwt-login/ text unusedcode
+
+    - name: Run PHPMD naming on plugin
+      run: vendor/bin/phpmd simple-jwt-login/ text naming
+
+    - name: Run PHPMD controversial on plugin
+      run: vendor/bin/phpmd simple-jwt-login/ text controversial
+
+    - name: Run phpstan on plugin
+      run: vendor/bin/phpstan analyse simple-jwt-login/src
+
     - name: PHPUnit tests
       uses: php-actions/phpunit@v2
       with:
-         configuration: phpunit.xml.dist
-         memory_limit: 256M
-    - name: PHP Code Style (phpcs)
-      uses: chindit/actions-phpcs@master
-      with:
-          # Folder to check code style
-          dir: simple-jwt-login/src
-          
-    - name: Run PHPMD cleancode on plugin
-      run: vendor/bin/phpmd simple-jwt-login/ text cleancode
-      
-    - name: Run PHPMD design on plugin
-      run: vendor/bin/phpmd simple-jwt-login/ text design
+        configuration: phpunit.xml.dist
+        memory_limit: 256M

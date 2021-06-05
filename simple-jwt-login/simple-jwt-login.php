@@ -7,14 +7,16 @@
     Author URI: https://profiles.wordpress.org/nicu_m/
     Text Domain: simple-jwt-login
     Domain Path: /i18n
-    Version: 2.6.1
+    Version: 3.0.0
 */
+
+use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
 if (! defined('ABSPATH')) {
     exit;
 } // Exit if accessed directly
 
-include_once 'src/autoload.php';
+include_once 'autoload.php';
 
 // it inserts the entry in the admin menu
 add_action('admin_menu', 'simple_jwt_login_plugin_create_menu_entry');
@@ -67,14 +69,14 @@ function simple_jwt_login_plugin_show_main_page()
     );
     wp_enqueue_style(
         'simple-jwt-login-style',
-        $pluginDirUrl .'css/style.css',
+        $pluginDirUrl . 'css/style.css',
         [],
         $pluginVersion
     );
 
     wp_enqueue_script(
         'simple-jwt-bootstrap-min',
-        $pluginDirUrl .'vendor/bootstrap/bootstrap.min.js',
+        $pluginDirUrl . 'vendor/bootstrap/bootstrap.min.js',
         [ 'jquery' ],
         $pluginVersion,
         $loadScriptsInFooter
@@ -89,7 +91,7 @@ function simple_jwt_login_plugin_show_main_page()
     );
 
 
-    require_once('src/views/simple-jwt-new-main-page.php');
+    require_once('views/layout.php');
 }
 
 // plugin deactivation
@@ -101,7 +103,7 @@ register_uninstall_hook(__FILE__, 'simple_jwt_plugin_uninstall');
  */
 function simple_jwt_plugin_uninstall()
 {
-    delete_option(SimpleJWTLogin\Modules\SimpleJWTLoginSettings::OPTIONS_KEY);
+    delete_option(SimpleJWTLoginSettings::OPTIONS_KEY);
 }
 
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'simple_jwt_login_add_plugin_action_links');
@@ -118,4 +120,4 @@ function simple_jwt_login_add_plugin_action_links($links)
 }
 
 //REST API ROUTES
-include_once 'routes.php';
+include_once 'routes/api.php';

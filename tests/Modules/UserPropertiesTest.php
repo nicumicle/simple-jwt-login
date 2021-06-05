@@ -118,9 +118,7 @@ class UserPropertiesTest extends TestCase
                 'request' => [],
             ],
             1 => [
-                'expected' => [
-                    'password' => 1
-                ],
+                'expected' => [],
                 'request' => [
                     '123' => 1,
                     'password' => 1,
@@ -128,7 +126,6 @@ class UserPropertiesTest extends TestCase
             ],
             2 => [
                 'expected' => [
-                    'password' => 1,
                     'user_nicename' => 1,
                     'nickname' => 1,
                 ],

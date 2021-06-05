@@ -12,9 +12,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Description ==
 
-This plugin allows you to login or register to a WordPress website using a JWT. 
+This plugin allows you to login or register to a WordPress website using a JWT.
 
-Plugin Documentation Site [Here](https://github.com/nicumicle/simple-jwt-login/wiki).
+Plugin Documentation Site: [Documentation](https://simplejwtlogin.com?utm_source=readme)
 
 == Some awesome features ==
 
@@ -340,33 +340,47 @@ Yes. In order to be able to create different users with different roles, first y
 After that, for the create user route, simply add the AUTH code in the request, and the role from 'Register User' will be overwritten with the one from Auth Code.
 
 == Changelog ==
-= 2.6.0 (08.12.2020) =
+
+= 3.0.0 (05 June 2021) =
+- Plugin code refactor
+- Rewrite file auto-loaded
+- Improve parse request parameters
+- Add support for JSON body requests
+- Fix user_meta URL encoded
+
+= 2.6.2 (29 April 2021)
+- Update documentation link with plugin webiste URL
+
+= 2.6.1 (10 April 2021)
+- Add documentation link
+
+= 2.6.0 (08 December 2020) =
 - Add `No Redirect` option for autologin and respond with a json on this endpoint
 - Add Hook for `No redirect` in order to customize the autologin response
 
-= 2.5.2 (27.11.2020) =
+= 2.5.2 (27 November 2020) =
 - Add permission callback to api routes
 - Use session start only when session token has been activated
 
-= 2.5.1 (16.11.2020) =
+= 2.5.1 (16 November 2020) =
 - Fix Authorization header
 
-= 2.5.0 (15.11.2020) =
+= 2.5.0 (15 November 2020) =
 - Add key change for URL, Session, Cookie and Header parameters
 
-= 2.4.1 (21.10.2020) =
+= 2.4.1 (21 November 2020) =
 - Add more variables for `redirectUrl` 
 
-= 2.4.0 (20.10.2020) =
+= 2.4.0 (20 October 2020) =
 - Add `redirectUrl` parameter
 - Add variables for URLs
 - Fix session start warning
 
-= 2.3.1 (01.09.2020) =
+= 2.3.1 (01 September 2020) =
 - Highlight Settings errors and display section
 - fix PHP warning for session_start()
 
-= 2.3.0 (25.08.2020) =
+= 2.3.0 (25 August 2020) =
 - Add support for revoke token: /auth/revoke
 - Allow adding extra parameters in payload on /auth endpoint
 - Add filter on /auth in order to allow payload modification

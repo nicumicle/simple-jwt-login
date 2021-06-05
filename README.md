@@ -45,4 +45,11 @@ After that, run:
     vendor/bin/phpcs simple-jwt-login/src
 ```
 
+### Check plugin
+This will run php-md, php-cs and the phpunit tests
+
+```
+    composer check-plugin
+```
+
  

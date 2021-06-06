@@ -26,6 +26,7 @@ add_action('rest_api_init', function () {
     $routeService->withSettings($jwtSettings);
     $routeService->withRequest($request);
     $routeService->withCookies($_COOKIE);
+    $routeService->withServerHelper(new ServerHelper($_SERVER));
 
     if ($jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
         if (empty(session_id()) && !headers_sent()) {

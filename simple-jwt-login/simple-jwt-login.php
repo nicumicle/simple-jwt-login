@@ -116,6 +116,12 @@ function simple_jwt_login_add_plugin_action_links($links)
         'Buy me a coffee'
     );
 
+    $links['documentation'] = sprintf(
+        '<a href="%1$s" target="_blank" style="color: #42b983; font-weight: bold;">%2$s</a>',
+        'https://simplejwtlogin.com?utm_source=plugin_page',
+        'Documentation'
+    );
+
     return $links;
 }
 

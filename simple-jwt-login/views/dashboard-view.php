@@ -145,4 +145,24 @@ if (! defined('ABSPATH')) {
             </div>
         </div>
     </div>
+    <div class="col-lg-3 col-md-6 col-xs-12">
+        <div class="card card-shadow">
+            <div class="card-body text-center">
+                <h5 class="card-title">
+                    <?php echo __('Number of Auth Codes', 'simple-jwt-login'); ?>
+                </h5>
+                <div class="box-status  box-status-<?php
+                echo count($jwtSettings->getAuthCodesSettings()->getAuthCodes()) > 0
+                    ? "on"
+                    : 'off'
+                ?>">
+                </div>
+                <div class="text-center">
+                    <?php
+                    echo count($jwtSettings->getAuthCodesSettings()->getAuthCodes());
+                    ?>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

@@ -24,6 +24,16 @@ class AuthenticateService extends BaseService implements ServiceInterface
      */
     public function makeAction($actionName = null)
     {
+        $allowedIpsString = trim($this->jwtSettings->getAuthenticationSettings()->getAllowedIps());
+        if (!empty($allowedIpsString) && !$this->serverHelper->isClientIpInList($allowedIpsString)) {
+            throw new Exception(
+                sprintf(
+                    __('You are not allowed to Authenticate from this IP: %s', 'simple-jwt-login'),
+                    $this->serverHelper->getClientIP()
+                ),
+                ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP
+            );
+        }
 
         switch ($actionName) {
             case self::ACTION_NAME_AUTHENTICATE:

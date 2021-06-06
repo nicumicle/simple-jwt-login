@@ -42,6 +42,13 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             'jwt_auth_refresh_ttl',
             BaseSettings::SETTINGS_TYPE_STRING
         );
+        $this->assignSettingsPropertyFromPost(
+            null,
+            'auth_ip',
+            null,
+            'auth_ip',
+            BaseSettings::SETTINGS_TYPE_STRING
+        );
     }
 
     public function validateSettings()
@@ -142,5 +149,15 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
         return isset($this->settings['jwt_auth_refresh_ttl'])
             ? (int)$this->settings['jwt_auth_refresh_ttl']
             : 20160;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAllowedIps()
+    {
+        return isset($this->settings['auth_ip'])
+            ? (string) $this->settings['auth_ip']
+            : '';
     }
 }

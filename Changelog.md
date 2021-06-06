@@ -7,6 +7,8 @@
 - Add support for JSON body requests
 - Fix user_meta URL encoded
 - Add support for Force Login plugin
+- Add Auth codes to dashboard
+- Add IP limitation for Authentication
 
 ## 2.6.2 (29 April 2021)
 - Update documentation link with the plugin website URL

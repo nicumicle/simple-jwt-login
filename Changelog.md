@@ -9,6 +9,7 @@
 - Add support for Force Login plugin
 - Add Auth codes to dashboard
 - Add IP limitation for Authentication
+- Add support for Delete user by username
 
 ## 2.6.2 (29 April 2021)
 - Update documentation link with the plugin website URL

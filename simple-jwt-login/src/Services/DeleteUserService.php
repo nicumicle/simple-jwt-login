@@ -67,12 +67,24 @@ class DeleteUserService extends BaseService implements ServiceInterface
             );
         }
 
-
-        $registerParameter = $this->validateJWTAndGetUserValueFromPayload();
         $getUserBy = $this->jwtSettings->getDeleteUserSettings()->getDeleteUserBy();
-        $user = $getUserBy === DeleteUserSettings::DELETE_USER_BY_ID
-            ? $this->wordPressData->getUserDetailsById($registerParameter)
-            : $this->wordPressData->getUserDetailsByEmail($registerParameter);
+        $registerParameter = $this->validateJWTAndGetUserValueFromPayload(
+            $this->jwtSettings->getDeleteUserSettings()->getJwtDeleteByParameter()
+        );
+
+        switch ($getUserBy) {
+            case DeleteUserSettings::DELETE_USER_BY_EMAIL:
+                $user = $this->wordPressData->getUserDetailsByEmail($registerParameter);
+                break;
+            case DeleteUserSettings::DELETE_USER_BY_ID:
+                $user = $this->wordPressData->getUserDetailsById($registerParameter);
+                break;
+            case DeleteUserSettings::DELETE_USER_BY_USER_LOGIN:
+                $user = $this->wordPressData->getUserByUserLogin($registerParameter);
+                break;
+            default:
+                $user = false;
+        }
 
         if ($user === false) {
             throw new Exception(

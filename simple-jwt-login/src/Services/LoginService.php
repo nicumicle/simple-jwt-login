@@ -25,7 +25,9 @@ class LoginService extends BaseService implements ServiceInterface
             throw new Exception('Invalid action name.');
         }
         $this->validateDoLogin();
-        $loginParameter = $this->validateJWTAndGetUserValueFromPayload();
+        $loginParameter = $this->validateJWTAndGetUserValueFromPayload(
+            $this->jwtSettings->getLoginSettings()->getJwtLoginByParameter()
+        );
 
         /** @var WP_User|null $user */
         $user = $this->getUserDetails($loginParameter);

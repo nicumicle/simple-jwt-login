@@ -7,6 +7,7 @@ class DeleteUserSettings extends BaseSettings implements SettingsInterface
 {
     const DELETE_USER_BY_EMAIL = 0;
     const DELETE_USER_BY_ID = 1;
+    const DELETE_USER_BY_USER_LOGIN = 2;
 
     public function initSettingsFromPost()
     {

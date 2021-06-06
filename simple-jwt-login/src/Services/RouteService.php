@@ -85,7 +85,9 @@ class RouteService extends BaseService
     public function getUserIdFromJWT($jwt)
     {
         $this->jwt = $jwt;
-        $userValue = $this->validateJWTAndGetUserValueFromPayload();
+        $userValue = $this->validateJWTAndGetUserValueFromPayload(
+            $this->jwtSettings->getLoginSettings()->getJwtLoginByParameter()
+        );
         $user = $this->getUserDetails($userValue);
         if ($user === null) {
             throw new Exception(

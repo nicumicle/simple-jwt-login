@@ -137,6 +137,13 @@ if (! defined('ABSPATH')) {
                     : ''
                 ?>
             ><?php echo __('Delete User by WordPress User ID', 'simple-jwt-login'); ?></option>
+            <option value="2"
+                <?php
+                echo $jwtSettings->getDeleteUserSettings()->getDeleteUserBy() === DeleteUserSettings::DELETE_USER_BY_USER_LOGIN
+                    ? 'selected'
+                    : ''
+                ?>
+            ><?php echo __('Delete User by WordPress Username', 'simple-jwt-login'); ?></option>
         </select>
     </div>
     <div class="col-md-4">

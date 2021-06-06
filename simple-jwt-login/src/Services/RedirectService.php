@@ -69,7 +69,9 @@ class RedirectService extends BaseService implements ServiceInterface
         }
 
         if ($this->jwtSettings->getLoginSettings()->isRedirectParameterAllowed()
-            && isset($this->request['redirectUrl'])) {
+            && isset($this->request['redirectUrl'])
+            && !empty($this->request['redirectUrl'])
+        ) {
             $url = $this->request['redirectUrl'];
         }
 

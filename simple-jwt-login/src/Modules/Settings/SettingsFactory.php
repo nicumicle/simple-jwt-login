@@ -49,7 +49,6 @@ class SettingsFactory
     public function getAll()
     {
         return [
-            self::AUTH_CODES_SETTINGS => new AuthenticationSettings(),
             self::AUTHENTICATION_SETTINGS => new AuthenticationSettings(),
             self::CORS_SETTINGS => new CorsSettings(),
             self::DELETE_USER_SETTINGS => new DeleteUserSettings(),
@@ -57,6 +56,7 @@ class SettingsFactory
             self::HOOKS_SETTINGS => new HooksSettings(),
             self::LOGIN_SETTINGS => new LoginSettings(),
             self::REGISTER_SETTINGS => new RegisterSettings(),
+            self::AUTH_CODES_SETTINGS => new AuthCodesSettings(),
         ];
     }
 }

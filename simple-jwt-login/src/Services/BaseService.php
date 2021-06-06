@@ -113,12 +113,13 @@ abstract class BaseService
 
     /**
      * @param array $payload
+     * @param string $parameter
+     *
      * @return mixed|string
      * @throws Exception
      */
-    protected function getUserParameterValueFromPayload($payload)
+    protected function getUserParameterValueFromPayload($payload, $parameter)
     {
-        $parameter = $this->jwtSettings->getLoginSettings()->getJwtLoginByParameter();
         if (strpos($parameter, '.') !== false) {
             $array = explode('.', $parameter);
             foreach ($array as $value) {
@@ -220,10 +221,12 @@ abstract class BaseService
 
     /**
      * @SuppressWarnings(StaticAccess)
+     * @param string $parameter
+     *
      * @return mixed|string
      * @throws Exception
      */
-    protected function validateJWTAndGetUserValueFromPayload()
+    protected function validateJWTAndGetUserValueFromPayload($parameter)
     {
         JWT::$leeway = self::JWT_LEEVAY;
         $decoded = (array)JWT::decode(
@@ -232,7 +235,7 @@ abstract class BaseService
             [$this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm()]
         );
 
-        return $this->getUserParameterValueFromPayload($decoded);
+        return $this->getUserParameterValueFromPayload($decoded, $parameter);
     }
 
     /**

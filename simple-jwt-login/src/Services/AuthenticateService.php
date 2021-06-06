@@ -195,7 +195,10 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
         }
 
-        $result = $this->getUserParameterValueFromPayload($payload);
+        $result = $this->getUserParameterValueFromPayload(
+            $payload,
+            $this->jwtSettings->getLoginSettings()->getJwtLoginByParameter()
+        );
 
         $user = $this->getUserDetails($result);
         if ($user !== null) {
@@ -249,7 +252,9 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
         }
 
-        $loginParameter = $this->validateJWTAndGetUserValueFromPayload();
+        $loginParameter = $this->validateJWTAndGetUserValueFromPayload(
+            $this->jwtSettings->getLoginSettings()->getJwtLoginByParameter()
+        );
         $user = $this->getUserDetails($loginParameter);
         if ($user === null) {
             throw new Exception(
@@ -293,7 +298,9 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
         }
 
-        $loginParameter = $this->validateJWTAndGetUserValueFromPayload();
+        $loginParameter = $this->validateJWTAndGetUserValueFromPayload(
+            $this->jwtSettings->getLoginSettings()->getJwtLoginByParameter()
+        );
 
         $user = $this->getUserDetails($loginParameter);
         if ($user === null) {

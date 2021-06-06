@@ -415,3 +415,23 @@ if (! defined('ABSPATH')) {
     </div>
 </div>
 <hr/>
+
+<div class="row">
+    <div class="col-md-12">
+        <h3 class="section-title"><?php echo __(
+                'Allow Authentication only from the following IP addresses',
+                'simple-jwt-login'
+            ); ?>:</h3>
+        <div class="form-group">
+            <input type="text" id="auth_ip" name="auth_ip" class="form-control"
+                   value="<?php echo $jwtSettings->getAuthenticationSettings()->getAllowedIps(); ?>"
+                   placeholder="<?php echo __('Enter IP here', 'simple-jwt-login'); ?>"/>
+            <small>
+                <?php echo __("If you want to add more IP's, separate them by comma", 'simple-jwt-login'); ?>.
+                <br/>
+                <?php echo __('Leave blank to allow all IP addresses', 'simple-jwt-login'); ?>.
+            </small>
+        </div>
+    </div>
+</div>
+<hr />

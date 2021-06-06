@@ -180,6 +180,7 @@ if (! defined('ABSPATH')) {
                                     ?>
                                     <input
                                             type="checkbox"
+                                            id="jwt_payload_<?php echo $parameter;?>"
                                             name="jwt_payload[]"
                                             value="<?php echo $parameter; ?>"
                                          <?php
@@ -192,10 +193,12 @@ if (! defined('ABSPATH')) {
 	                                <?php
                                 } ?>
                             </span>
+                            <label class="bold" for="jwt_payload_<?php echo $parameter;?>">
                                 <span class="key">"<?php echo $parameter; ?>"</span>
                                 <span class="delimiter">:</span>
                                 <span class="value">"<?php echo $sampleValue; ?>"</span>
                                 <span class="line-separator"><?php echo $lineSeparator; ?></span>
+                            </label>
                             </li>
 							<?php
                         }

@@ -197,7 +197,8 @@
     margin-left: 20px;
 }
 
-#simple-jwt-login .authentication_jwt_container ul li {
+#simple-jwt-login .authentication_jwt_container ul li,
+#simple-jwt-login .authentication_jwt_container ul li .bold{
     font-weight: bold;
 }
 

@@ -127,3 +127,4 @@ function simple_jwt_login_add_plugin_action_links($links)
 
 //REST API ROUTES
 include_once 'routes/api.php';
+include_once '3rd-party/force_login.php';

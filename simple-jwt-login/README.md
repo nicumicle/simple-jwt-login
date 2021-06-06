@@ -347,6 +347,7 @@ After that, for the create user route, simply add the AUTH code in the request, 
 - Improve parse request parameters
 - Add support for JSON body requests
 - Fix user_meta URL encoded
+- Add support for Force Login plugin
 
 = 2.6.2 (29 April 2021)
 - Update documentation link with plugin webiste URL

@@ -23,7 +23,7 @@ As with all WordPress projects, we want to ensure a welcoming environment for ev
 
 ## Development
 
-### Installation
+### Dev Installation
 
 Clone this repository in your WordPress `/wp-content/plugins` folder.
 
@@ -32,7 +32,15 @@ After that, run:
     composer install
 ```
 
+Plugin code in is the folder `simple-jwt-login`.
 
+### Install on a WordPress Website
+
+If you want to upload the simple-jwt-login plugin to your website:
+- clone this repository 
+- create a zip folder for the `simple-jwt-login` folder 
+- upload the zip file into your WordPress
+ 
 ### Running tests
 
 ```
@@ -46,10 +54,11 @@ After that, run:
 ```
 
 ### Check plugin
-This will run php-md, php-cs and the phpunit tests
+This will check the plugin build, and it will run php-md, php-cs and the phpunit tests.
 
 ```
     composer check-plugin
 ```
+
 
  

@@ -138,4 +138,71 @@ class ServerHelperTest extends TestCase
             ]
         ];
     }
+
+    /**
+     * @dataProvider providerWildIps
+     */
+    public function testIsClientIpInListWildCard($ipList, $expectedResult)
+    {
+        $serverHelper = new ServerHelper(['REMOTE_ADDR' => '127.0.0.1']);
+        $this->assertSame($expectedResult, $serverHelper->isClientIpInList($ipList));
+    }
+
+    public function providerWildIps()
+    {
+        return [
+            [
+                '127.0.0.1',
+                true,
+            ],
+            [
+                '127.0.0.2',
+                false,
+            ],
+            [
+                '127.0.0.*',
+                true
+            ],
+            [
+                '127.0.*.*',
+                true
+            ],
+            [
+                '127.*.*.*',
+                true
+            ],
+            [
+                '127.*.*.1',
+                true
+            ],
+            [
+                '*.*.*.*',
+                true
+            ],
+            [
+                '127.*.*.2',
+                false
+            ],
+            [
+                '127.*.1.*',
+                false
+            ],
+            [
+                '127.2.*.*',
+                false
+            ],
+            [
+                '*.*.*.2',
+                false
+            ],
+            [
+                '127.*.*.2, 127.2.*.*',
+                false
+            ],
+            [
+                '127.0.0.1',
+                true
+            ]
+        ];
+    }
 }

@@ -61,13 +61,25 @@ class ServerHelper
      */
     public function isClientIpInList($ipList)
     {
-        return in_array(
-            $this->getClientIP(),
-            array_map(
-                'trim',
-                explode(',', $ipList)
-            )
-        );
+        $clientIp = $this->getClientIP();
+        foreach (explode(',', $ipList) as $ip) {
+            if ($clientIp === trim($ip)) {
+                return true;
+            }
+            if (strpos($ip, '*') !== false) {
+                $clientIpParts = explode('.', $clientIp);
+                $ipParts = explode('.', trim($ip));
+                $equalParts = 0;
+                foreach ($clientIpParts as $key => $ipPart) {
+                    if ($ipPart === $ipParts[$key] || $ipParts[$key] === '*') {
+                        $equalParts++;
+                    }
+                }
+                return $equalParts === 4;
+            }
+        }
+
+        return false;
     }
 
     /**

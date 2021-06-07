@@ -51,8 +51,14 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
         );
     }
 
+    /**
+     * @throws Exception
+     */
     public function validateSettings()
     {
+        if (!isset($this->post['allow_authentication'])) {
+            return;
+        }
         if ((int)$this->post['allow_authentication'] === 1
             && empty($this->post['jwt_payload'])
         ) {
@@ -69,7 +75,8 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             );
         }
 
-        if (empty((int)$this->post['jwt_auth_ttl'])
+        if (isset($this->post['jwt_auth_ttl'])
+            && empty((int)$this->post['jwt_auth_ttl'])
             || (int)$this->post['jwt_auth_ttl'] < 0
         ) {
             throw new Exception(
@@ -84,7 +91,9 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             );
         }
 
-        if (empty((int)$this->post['jwt_auth_refresh_ttl']) || (int)$this->post['jwt_auth_refresh_ttl'] < 0) {
+        if (!isset($this->post['jwt_auth_refresh_ttl'])
+            || empty((int)$this->post['jwt_auth_refresh_ttl'])
+            || (int)$this->post['jwt_auth_refresh_ttl'] < 0) {
             throw new Exception(
                 __(
                     'Authentication JWT Refresh time to live should be greater than zero.',
@@ -103,7 +112,8 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
      */
     public function isAuthenticationEnabled()
     {
-        return !empty($this->settings['allow_authentication']);
+        return isset($this->settings['allow_authentication'])
+         && !empty($this->settings['allow_authentication']);
     }
 
     /**

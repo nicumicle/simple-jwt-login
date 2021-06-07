@@ -218,12 +218,4 @@ class SimpleJWTLoginSettings
 
         return $url;
     }
-
-    /**
-     * @return array
-     */
-    public function getSettingsAsArray()
-    {
-        return $this->settings;
-    }
 }

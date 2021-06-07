@@ -29,7 +29,9 @@ $hooks = SimpleJWTLoginHooks::getHooksDetails();
             <tr>
                 <th scope="col">
                     <input type="checkbox" id="toggleHooks" />
-                    <?php echo __('Enabled', 'simple-jwt-login'); ?>
+                    <label for="toggleHooks">
+                        <?php echo __('Enabled', 'simple-jwt-login'); ?>
+                    </label>
                 </th>
                 <th scope="col"><?php echo __('Hook Name', 'simple-jwt-login'); ?></th>
                 <th scope="col"><?php echo __('Hook Type', 'simple-jwt-login'); ?></th>

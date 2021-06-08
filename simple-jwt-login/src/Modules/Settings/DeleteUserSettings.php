@@ -73,10 +73,10 @@ class DeleteUserSettings extends BaseSettings implements SettingsInterface
 
     public function validateSettings()
     {
-        if (!empty($this->post['allow_delete'])
+        if (!empty($this->settings['allow_delete'])
             && (
-                !isset($this->post['jwt_delete_by_parameter'])
-                || empty(trim($this->post['jwt_delete_by_parameter']))
+                !isset($this->settings['jwt_delete_by_parameter'])
+                || empty(trim($this->settings['jwt_delete_by_parameter']))
             )
         ) {
             throw new Exception(

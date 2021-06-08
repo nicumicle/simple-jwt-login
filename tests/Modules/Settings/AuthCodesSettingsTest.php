@@ -1,5 +1,4 @@
 <?php
-
 namespace SimpleJWTLoginTest\Settings;
 
 use Exception;

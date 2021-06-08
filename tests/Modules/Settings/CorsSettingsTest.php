@@ -16,11 +16,11 @@ class CorsSettingsTest extends TestCase
         $this->wordPressData = $this->getMockBuilder(WordPressDataInterface::class)
                                     ->getMock();
         $this->wordPressData->method('sanitizeTextField')
-                            ->willReturnCallback(
-                                function ($parameter) {
-                                    return $parameter;
-                                }
-                            );
+            ->willReturnCallback(
+                function ($parameter) {
+                    return $parameter;
+                }
+            );
     }
 
     public function testProperties(){

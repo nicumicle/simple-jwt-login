@@ -69,7 +69,7 @@ class CorsSettings extends BaseSettings implements SettingsInterface
 
     public function validateSettings()
     {
-        if (!empty($this->post['cors']['enabled'])
+        if (!empty($this->settings['cors']['enabled'])
             && (
                 empty($this->settings['cors']['allow_origin_enabled'])
                 && empty($this->settings['cors']['allow_methods_enabled'])

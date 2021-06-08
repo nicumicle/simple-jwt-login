@@ -75,8 +75,8 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             );
         }
 
-        if (isset($this->post['jwt_auth_ttl'])
-            && empty((int)$this->post['jwt_auth_ttl'])
+        if (!isset($this->post['jwt_auth_ttl'])
+            || empty((int)$this->post['jwt_auth_ttl'])
             || (int)$this->post['jwt_auth_ttl'] < 0
         ) {
             throw new Exception(

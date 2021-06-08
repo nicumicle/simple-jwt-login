@@ -5,7 +5,6 @@ namespace SimpleJWTLoginTest\Settings;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\AuthCodesSettings;
-use SimpleJWTLogin\Modules\WordPressData;
 use SimpleJWTLogin\Modules\WordPressDataInterface;
 
 class AuthCodesSettingsTest extends TestCase
@@ -16,13 +15,13 @@ class AuthCodesSettingsTest extends TestCase
     {
         parent::setUp();
         $this->wordPressData = $this->getMockBuilder(WordPressDataInterface::class)
-                                    ->getMock();
+            ->getMock();
         $this->wordPressData->method('sanitizeTextField')
-                            ->willReturnCallback(
-                                function ($parameter) {
-                                    return $parameter;
-                                }
-                            );
+            ->willReturnCallback(
+                function ($parameter) {
+                    return $parameter;
+                }
+            );
     }
 
     public function testAssignCodesFromPost()

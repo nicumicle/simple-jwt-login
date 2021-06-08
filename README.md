@@ -7,7 +7,10 @@
    <img src="https://img.shields.io/wordpress/plugin/stars/simple-jwt-login" alt="Rating" />
    <img src="https://img.shields.io/wordpress/plugin/dt/simple-jwt-login" alt="Total Downloads" />
    <img src="https://img.shields.io/wordpress/plugin/installs/simple-jwt-login" alt="Active installs" />
-
+</p>
+<p align="center">
+    <img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/php.yml/badge.svg" />
+    <img src="https://codecov.io/gh/nicumicle/simple-jwt-login/branch/master/graph/badge.svg?token=dVOwuGQoY3"/>
 </p>
 
 <p>

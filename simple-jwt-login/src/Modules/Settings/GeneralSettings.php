@@ -159,7 +159,7 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
                 || empty($this->post['request_keys']['header'])
             ) {
                 throw new Exception(
-                    __('Request Keys are required', 'simple-jwt-login'),
+                    __('Request Keys are required.', 'simple-jwt-login'),
                     $this->settingsErrors->generateCode(
                         SettingsErrors::PREFIX_GENERAL,
                         SettingsErrors::ERR_GENERAL_REQUEST_KEYS
@@ -206,7 +206,9 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
                         )
                     );
                 }
-            } elseif (!isset($this->post['decryption_key']) || empty(trim($this->post['decryption_key']))) {
+            } elseif (!isset($this->post['decryption_key'])
+                      || empty(trim($this->post['decryption_key']))
+            ) {
                 throw  new Exception(
                     __('JWT Decryption key is required.', 'simple-jwt-login'),
                     $this->settingsErrors->generateCode(

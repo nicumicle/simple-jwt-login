@@ -1,5 +1,5 @@
 <?php
-namespace SimpleJWTLoginTest\Settings;
+namespace SimpleJWTLoginTests\Modules\Settings;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
@@ -8,6 +8,9 @@ use SimpleJWTLogin\Modules\WordPressDataInterface;
 
 class AuthCodesSettingsTest extends TestCase
 {
+    /**
+     * @var WordPressDataInterface
+     */
     private $wordPressData;
 
     public function setUp(): void
@@ -25,7 +28,7 @@ class AuthCodesSettingsTest extends TestCase
 
     public function testAssignCodesFromPost()
     {
-        $authCodesSettigs = (new AuthCodesSettings())
+        $authCodesSettings = (new AuthCodesSettings())
             ->withSettings([])
             ->withPost(
                 [
@@ -45,9 +48,9 @@ class AuthCodesSettingsTest extends TestCase
                 ]
             )
             ->withWordPressData($this->wordPressData);
-        $authCodesSettigs->initSettingsFromPost();
-        $authCodesSettigs->validateSettings();
-        $codes = $authCodesSettigs->getAuthCodes();
+        $authCodesSettings->initSettingsFromPost();
+        $authCodesSettings->validateSettings();
+        $codes = $authCodesSettings->getAuthCodes();
 
         $this->assertSame(
             [
@@ -61,7 +64,7 @@ class AuthCodesSettingsTest extends TestCase
         );
         $this->assertSame(
             'AUTH_CODE_KEY',
-            $authCodesSettigs->getAuthCodeKey()
+            $authCodesSettings->getAuthCodeKey()
         );
     }
 

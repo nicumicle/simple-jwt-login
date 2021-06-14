@@ -69,6 +69,14 @@ class LoginSettings extends BaseSettings implements SettingsInterface
             BaseSettings::SETTINGS_TYPE_BOL,
             false
         );
+
+        $this->assignSettingsPropertyFromPost(
+            null,
+            'login_ip',
+            null,
+            'login_ip',
+            BaseSettings::SETTINGS_TYPE_STRING
+        );
     }
 
     public function validateSettings()
@@ -93,7 +101,7 @@ class LoginSettings extends BaseSettings implements SettingsInterface
             )
         ) {
             throw new Exception(
-                __('Invalid custom URL provided', 'simple-jwt-login'),
+                __('Invalid custom URL provided.', 'simple-jwt-login'),
                 $this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_LOGIN,
                     SettingsErrors::ERR_LOGIN_INVALID_CUSTOM_URL

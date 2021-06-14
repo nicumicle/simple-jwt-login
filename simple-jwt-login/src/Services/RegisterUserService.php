@@ -58,7 +58,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
                 $authCodeBuilder = new AuthCodeBuilder($code);
                 $authCodeKey = $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey();
                 if ($authCodeBuilder->getCode() === $this->request[$authCodeKey]
-                    && $authCodeBuilder->getRole() !== null
+                    && !empty($authCodeBuilder->getRole())
                 ) {
                     $newUserRole = $authCodeBuilder->getRole();
                 }

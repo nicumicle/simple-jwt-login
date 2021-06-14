@@ -32,13 +32,7 @@ class DeleteUserSettings extends BaseSettings implements SettingsInterface
             'delete_ip',
             BaseSettings::SETTINGS_TYPE_STRING
         );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'allowed_user_meta',
-            null,
-            'allowed_user_meta',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
+
         $this->assignSettingsPropertyFromPost(
             null,
             'delete_user_by',
@@ -52,22 +46,6 @@ class DeleteUserSettings extends BaseSettings implements SettingsInterface
             null,
             'jwt_delete_by_parameter',
             BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'random_password',
-            null,
-            'random_password',
-            BaseSettings::SETTINGS_TYPE_BOL,
-            false
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'register_force_login',
-            null,
-            'register_force_login',
-            BaseSettings::SETTINGS_TYPE_BOL,
-            false
         );
     }
 

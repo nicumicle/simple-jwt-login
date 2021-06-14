@@ -1,8 +1,5 @@
 <?php
-
-
 namespace SimpleJwtLoginTests\Modules\Settings;
-
 
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\ErrorCodes;

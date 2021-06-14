@@ -23,13 +23,7 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
             'new_user_profile',
             BaseSettings::SETTINGS_TYPE_STRING
         );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'login_ip',
-            null,
-            'login_ip',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
+
         $this->assignSettingsPropertyFromPost(
             null,
             'register_ip',
@@ -53,10 +47,28 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'allowed',
+            'random_password',
             null,
-            'require_register_auth',
-            BaseSettings::SETTINGS_TYPE_BOL
+            'random_password',
+            BaseSettings::SETTINGS_TYPE_BOL,
+            false
+        );
+
+        $this->assignSettingsPropertyFromPost(
+            null,
+            'register_force_login',
+            null,
+            'register_force_login',
+            BaseSettings::SETTINGS_TYPE_BOL,
+            false
+        );
+
+        $this->assignSettingsPropertyFromPost(
+            null,
+            'allowed_user_meta',
+            null,
+            'allowed_user_meta',
+            BaseSettings::SETTINGS_TYPE_STRING
         );
     }
 

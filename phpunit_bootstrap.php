@@ -11,6 +11,11 @@ if (! function_exists('__')) {
         return $text;
     }
 }
+if (! function_exists('esc_html')) {
+    function esc_html($text) {
+        return $text;
+    }
+}
 
 require_once "simple-jwt-login/autoload.php";
 require_once "vendor/autoload.php";

@@ -8,9 +8,15 @@
          convertWarningsToExceptions="true"
          processIsolation="true"
          stopOnFailure="false">
+    <php>
+        <ini name="memory_limit" value="512M" />
+    </php>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">./simple-jwt-login/src</directory>
+            <exclude>
+                <file>./simple-jwt-login/src/Modules/WordPressData.php</file>
+            </exclude>
         </whitelist>
     </filter>
     <testsuites>

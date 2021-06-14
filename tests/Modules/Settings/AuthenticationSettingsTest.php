@@ -1,6 +1,5 @@
 <?php
-namespace SimpleJWTLoginTest\Settings;
-
+namespace SimpleJWTLoginTests\Modules\Settings;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
@@ -9,13 +8,16 @@ use SimpleJWTLogin\Modules\WordPressDataInterface;
 
 class AuthenticationSettingsTest extends TestCase
 {
+    /**
+     * @var WordPressDataInterface
+     */
     private $wordPressData;
 
     public function setUp(): void
     {
         parent::setUp();
         $this->wordPressData = $this->getMockBuilder(WordPressDataInterface::class)
-                                    ->getMock();
+            ->getMock();
         $this->wordPressData->method('sanitizeTextField')
             ->willReturnCallback(
                 function ($parameter) {

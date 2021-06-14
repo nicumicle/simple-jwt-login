@@ -11,6 +11,7 @@
 - Add IP limitation for Authentication
 - Add support for Delete user by username
 - Add support for `*` in IP restrictions
+- Fix user role `None` when empty role in Auth Codes
 
 ## 2.6.2 (29 April 2021)
 - Update documentation link with the plugin website URL

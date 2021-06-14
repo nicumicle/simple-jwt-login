@@ -8,13 +8,16 @@ use SimpleJWTLogin\Modules\WordPressDataInterface;
 
 class DeleteUserSettingsTest extends TestCase
 {
+    /**
+     * @var WordPressDataInterface
+     */
     private $wordPressData;
 
     public function setUp(): void
     {
         parent::setUp();
         $this->wordPressData = $this->getMockBuilder(WordPressDataInterface::class)
-                                    ->getMock();
+            ->getMock();
         $this->wordPressData->method('sanitizeTextField')
             ->willReturnCallback(
                 function ($parameter) {
@@ -32,8 +35,6 @@ class DeleteUserSettingsTest extends TestCase
             'allowed_user_meta' => 'meta1',
             'delete_user_by' => '1',
             'jwt_delete_by_parameter' => 'id',
-            'random_password' => '1',
-            'register_force_login' => '1'
         ];
         $deleteUserSetings = (new DeleteUserSettings())
             ->withSettings([])

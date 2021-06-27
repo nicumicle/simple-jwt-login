@@ -166,4 +166,41 @@ interface WordPressDataInterface
      * @return mixed
      */
     public function wordpressUserToArray($user);
+
+    /**
+     * @param string $password
+     * @param string $dbPassword
+     *
+     * @return boolean
+     */
+    public function checkPassword($password, $dbPassword);
+
+    /**
+     * @param WP_User $user
+     *
+     * @return string
+     */
+    public function getUserPassword($user);
+
+    /**
+     * @param WP_User $user
+     * @param string $propertyName
+     *
+     * @return mixed
+     */
+    public function getUserProperty($user, $propertyName);
+
+    /**
+     * @param mixed $user
+     *
+     * @return bool
+     */
+    public function isInstanceOfuser($user);
+
+    /**
+     * @param WP_User $user
+     *
+     * @return array
+     */
+    public function convertUserToArray($user);
 }

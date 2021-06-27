@@ -116,7 +116,7 @@ add_action('rest_api_init', function () {
                             }
                             $service->withSession($_SESSION);
                         }
-                        return $service->makeAction($route['action']);
+                        return $service->makeAction();
                     } catch (Exception $e) {
                         @header('Content-Type: application/json; charset=UTF-8');
                         wp_send_json_error(

@@ -29,49 +29,41 @@ class RouteService extends BaseService
                 'name' => self::LOGIN_ROUTE,
                 'method' => self::METHOD_GET,
                 'service' => LoginService::class,
-                'action' => LoginService::ACTION_NAME_LOGIN_USER
             ],
             [
                 'name' => self::REGISTER_ROUTE_OLD,
                 'method' => self::METHOD_POST,
                 'service' => RegisterUserService::class,
-                'action'  => RegisterUserService::ACTION_NAME_CREATE_USER,
             ],
             [
                 'name' => self::USER_ROUTE,
                 'method' => self::METHOD_POST,
                 'service' => RegisterUserService::class,
-                'action'  => RegisterUserService::ACTION_NAME_CREATE_USER,
             ],
             [
                 'name' => self::USER_ROUTE,
                 'method' => self::METHOD_DELETE,
                 'service' => DeleteUserService::class,
-                'action'  => DeleteUserService::ACTION_NAME_DELETE_USER,
             ],
             [
                 'name' => self::AUTHENTICATION_ROUTE,
                 'method' => self::METHOD_POST,
                 'service' => AuthenticateService::class,
-                'action'  => AuthenticateService::ACTION_NAME_AUTHENTICATE,
             ],
             [
                 'name' => self::AUTHENTICATION_REFRESH_ROUTE,
                 'method' => self::METHOD_POST,
-                'service' => AuthenticateService::class,
-                'action'  => AuthenticateService::ACTION_NAME_REFRESH_JWT,
+                'service' => RefreshTokenService::class,
             ],
             [
                 'name' => self::AUTHENTICATION_VALIDATE_ROUTE,
                 'method' => self::METHOD_GET,
-                'service' => AuthenticateService::class,
-                'action'  => AuthenticateService::ACTION_NAME_VALIDATE_JWT,
+                'service' => ValidateTokenService::class,
             ],
             [
                 'name' => self::AUTHENTICATION_REVOKE,
                 'method' => self::METHOD_POST,
-                'service' => AuthenticateService::class,
-                'action'  => AuthenticateService::ACTION_NAME_REVOKE_JWT,
+                'service' => RevokeTokenService::class,
             ],
         ];
     }
@@ -95,6 +87,6 @@ class RouteService extends BaseService
                 ErrorCodes::ERR_GET_USER_ID_FROM_JWT
             );
         }
-        return (int)$user->get('id');
+        return (int) $this->wordPressData->getUserProperty($user, 'id');
     }
 }

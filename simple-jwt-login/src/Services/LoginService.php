@@ -12,18 +12,12 @@ use WP_User;
 
 class LoginService extends BaseService implements ServiceInterface
 {
-    const ACTION_NAME_LOGIN_USER = 1;
-
     /**
-     * @param int|null $actionName
      * @return WP_REST_Response|null
      * @throws Exception
      */
-    public function makeAction($actionName = null)
+    public function makeAction()
     {
-        if ($actionName !== self::ACTION_NAME_LOGIN_USER) {
-            throw new Exception('Invalid action name.');
-        }
         $this->validateDoLogin();
         $loginParameter = $this->validateJWTAndGetUserValueFromPayload(
             $this->jwtSettings->getLoginSettings()->getJwtLoginByParameter()
@@ -38,7 +32,10 @@ class LoginService extends BaseService implements ServiceInterface
             );
         }
 
-        $this->validateJwtRevoked($user->get('id'), $this->jwt);
+        $this->validateJwtRevoked(
+            $this->wordPressData->getUserProperty($user, 'id'),
+            $this->jwt
+        );
         $this->wordPressData->loginUser($user);
         if ($this->jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::LOGIN_ACTION_NAME)) {
             $this->wordPressData->triggerAction(SimpleJWTLoginHooks::LOGIN_ACTION_NAME, $user);
@@ -51,7 +48,7 @@ class LoginService extends BaseService implements ServiceInterface
             ->withRequest($this->request)
             ->withUser($user)
             ->withServerHelper($this->serverHelper)
-            ->makeAction(RedirectService::ACTION_NAME_REDIRECT);
+            ->makeAction();
     }
 
     /**

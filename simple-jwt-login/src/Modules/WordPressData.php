@@ -279,4 +279,46 @@ class WordPressData implements WordPressDataInterface
     {
         return delete_user_meta($userId, $metaKey, $metaValue);
     }
+
+    /**
+     * @param string $password
+     * @param string $dbPassword
+     *
+     * @return bool
+     */
+    public function checkPassword($password, $dbPassword)
+    {
+        return wp_check_password($password, $dbPassword);
+    }
+
+    /**
+     * @param WP_User $user
+     *
+     * @return string
+     */
+    public function getUserPassword($user)
+    {
+        return $user->get('user_pass');
+    }
+
+    /**
+     * @param WP_User $user
+     * @param string $propertyName
+     *
+     * @return mixed
+     */
+    public function getUserProperty($user, $propertyName)
+    {
+        return $user->get($propertyName);
+    }
+
+    public function isInstanceOfuser($user)
+    {
+        return $user instanceof WP_User;
+    }
+
+    public function convertUserToArray($user)
+    {
+        return $user->to_array();
+    }
 }

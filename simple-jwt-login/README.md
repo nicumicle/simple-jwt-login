@@ -337,10 +337,10 @@ Also, the key name for each parameter, can be changed in the general section.
  
 = I would like to create users with different roles. It is possible? =
 Yes. In order to be able to create different users with different roles, first you have to create some AUTH Codes, and set the desired roles for each Auth Code.
-After that, for the create user route, simply add the AUTH code in the request, and the role from 'Register User' will be overwritten with the one from Auth Code.
+After that, for the `create user` route, simply add the AUTH code in the request, and the role from 'Register User' will be overwritten with the one from Auth Code.
 
 == Changelog ==
 
-The [Changelog](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md) can be found in the github repository https://github.com/nicumicle/simple-jwt-login
+The [Changelog](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md) can be found in the GitHub repository https://github.com/nicumicle/simple-jwt-login
 
 Also, here you can find the beta version of the plugin, before it is released

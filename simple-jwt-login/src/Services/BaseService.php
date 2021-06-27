@@ -258,7 +258,7 @@ abstract class BaseService
                 break;
         }
 
-        if ($user instanceof WP_User === false) {
+        if ($this->wordPressData->isInstanceOfuser($user) === false) {
             return null;
         }
 
@@ -288,5 +288,17 @@ abstract class BaseService
         }
 
         return false;
+    }
+
+    /**
+     * @param string $jwt
+     * @return array|null
+     */
+    protected function getPayloadFromJWT($jwt)
+    {
+        $jwtParts = explode('.', $jwt);
+        return isset($jwtParts[1])
+            ? json_decode(base64_decode($jwtParts[1]), true)
+            : null;
     }
 }

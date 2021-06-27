@@ -1,6 +1,7 @@
 <?php
 namespace SimpleJWTLogin\Services;
 
+use Exception;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
@@ -37,8 +38,8 @@ interface ServiceInterface
     public function withServerHelper(ServerHelper $serverHelper);
 
     /**
-     * @param int|null $actionName
      * @return mixed
+     * @throws Exception
      */
-    public function makeAction($actionName = null);
+    public function makeAction();
 }

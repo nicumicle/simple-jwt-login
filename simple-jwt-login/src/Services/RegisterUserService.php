@@ -13,15 +13,11 @@ class RegisterUserService extends BaseService implements ServiceInterface
     const ACTION_NAME_CREATE_USER = 1;
 
     /**
-     * @param null|int $actionName
      * @return WP_REST_Response|null
      * @throws Exception
      */
-    public function makeAction($actionName = null)
+    public function makeAction()
     {
-        if ($actionName !== self::ACTION_NAME_CREATE_USER) {
-            throw new Exception('Invalid action provided.');
-        }
         $this->validateRegisterUser();
 
         return $this->createUser();
@@ -116,7 +112,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
                 ->withSession($this->session)
                 ->withSettings($this->jwtSettings)
                 ->withUser($user)
-                ->makeAction(RedirectService::ACTION_NAME_REDIRECT);
+                ->makeAction();
         }
 
         $userArray = $this->wordPressData->wordpressUserToArray($user);

@@ -8,18 +8,12 @@ use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 
 class DeleteUserService extends BaseService implements ServiceInterface
 {
-    const ACTION_NAME_DELETE_USER = 1;
-
     /**
-     * @param null|int $actionName
      * @return mixed|\WP_REST_Response
      * @throws Exception
      */
-    public function makeAction($actionName = null)
+    public function makeAction()
     {
-        if ($actionName !== self::ACTION_NAME_DELETE_USER) {
-            throw  new Exception('Action not implemented.');
-        }
         return $this->deleteUser();
     }
 
@@ -93,7 +87,10 @@ class DeleteUserService extends BaseService implements ServiceInterface
             );
         }
 
-        $this->validateJwtRevoked($user->get('id'), $this->jwt);
+        $this->validateJwtRevoked(
+            $this->wordPressData->getUserProperty($user, 'id'),
+            $this->jwt
+        );
 
         $result = $this->wordPressData->deleteUser($user);
 

@@ -171,7 +171,7 @@ class ParseRequest
 
             foreach (explode(';', $headers['content-type']) as $part) {
                 if (strpos($part, 'charset') !== false) {
-                    $part = explode($part, '=');
+                    $part = explode('=', $part);
                     if (isset($part[1])) {
                         $encoding = $part[1];
                     }

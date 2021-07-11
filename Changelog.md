@@ -1,6 +1,8 @@
 # Changelog - Releases
 
-##  3.0.0 (Unreleased)
+## (Unreleased)
+
+##  3.0.0 (11 July 2021)
 - Plugin code refactor
 - Rewrite file auto-loaded
 - Improve parse request parameters

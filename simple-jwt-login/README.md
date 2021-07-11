@@ -121,7 +121,7 @@ These properties can be passed in the request when the new user is created.
 - *comment_shortcuts* : (string) Whether to enable comment moderation keyboard shortcuts for the user. Accepts 'true' or 'false' as a string literal, not boolean. Default 'false'.
 - *admin_color* : (string) Admin color scheme for the user. Default 'fresh'.
 - *use_ssl* : (bool) Whether the user should always access the admin over https. Default false.
-- *user_registered* : (string) Date the user registered. Format is 'Y-m-d H:m:s'.
+- *user_registered* : (string) Date the user registered. Format is `Y-m-d H:m:s`.
 - *user_activation_key* : (string) Password reset key. Default empty.
 - *spam* : (bool) Multisite only. Whether the user is marked as spam. Default false.
 - *show_admin_bar_front* : (string) Whether to display the Admin Bar for the user on the site's front end. Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'.
@@ -173,7 +173,7 @@ This feature allows you to add a layer of protection to your API routes.
 The Auth codes contains 3 parts:
   1. Authentication Key: This is the actual code that you have to add in the request.
   2. WordPress new User Role: can be used when you want to create multiple user types with the create user endpoint. If you leave it blank, the value configured in the 'Register Settings' will be used.
-  3. Expiration Date: This allows you to set an expiration date for you auth codes. The format is `Y-M-D H:m:s'. Example : 2020-12-24 23:00:00. If you leave it blank, it will never expired.
+  3. Expiration Date: This allows you to set an expiration date for you auth codes. The format is `Y-M-D H:m:s`. Example : 2020-12-24 23:00:00. If you leave it blank, it will never expired.
 
 Expiration date format: year-month-day hours:minutes:seconds
 

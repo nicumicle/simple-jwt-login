@@ -18,6 +18,17 @@ class AuthenticateService extends BaseService implements ServiceInterface
      */
     public function makeAction()
     {
+        if ($this->jwtSettings->getAuthenticationSettings()->isAuthKeyRequired()
+            && $this->validateAuthKey() === false
+        ) {
+            throw  new Exception(
+                sprintf(
+                    __('Invalid Auth Code ( %s ) provided.', 'simple-jwt-login'),
+                    $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()
+                ),
+                ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED
+            );
+        }
         $this->checkAuthenticationEnabled();
         $this->checkAllowedIPAddress();
 

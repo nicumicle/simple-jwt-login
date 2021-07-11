@@ -193,6 +193,34 @@ class AuthenticateServiceTest extends TestCase
             ->makeAction();
     }
 
+    public function testMissingAuthCodes()
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Invalid Auth Code ( AUTH_KEY ) provided.');
+
+        $this->wordPressDataMock
+            ->method('getOptionFromDatabase')
+            ->willReturn(
+                json_encode(
+                    [
+                        'allow_authentication' => 1,
+                        'auth_requires_auth_code' => true,
+                    ]
+                )
+            );
+
+        $authenticationService = (new AuthenticateService())
+            ->withRequest([
+                              'username' => 'test@test.com',
+                              'password'=> '123'
+                          ])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+        $authenticationService
+            ->makeAction();
+    }
+
     public function testSuccessFlowWithFullPayload(){
         $this->wordPressDataMock
             ->method('getOptionFromDatabase')
@@ -200,6 +228,7 @@ class AuthenticateServiceTest extends TestCase
                 json_encode(
                     [
                         'allow_authentication' => 1,
+                        'auth_requires_auth_code' => true,
                         'jwt_payload' => [
                             AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT,
                             AuthenticationSettings::JWT_PAYLOAD_PARAM_EMAIL,
@@ -210,6 +239,13 @@ class AuthenticateServiceTest extends TestCase
                         ],
                         'enabled_hooks' => [
                             SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME
+                        ],
+                        'auth_codes' => [
+                            [
+                                'code' => '123',
+                                'role' => '',
+                                'expiration_date' => '',
+                            ]
                         ]
                     ]
                 )
@@ -227,10 +263,13 @@ class AuthenticateServiceTest extends TestCase
             ->method('createResponse')
             ->willReturn(true);
         $authenticationService = (new AuthenticateService())
-            ->withRequest([
-                              'username' => 'test@test.com',
-                              'password'=> '123'
-                          ])
+            ->withRequest(
+                [
+                    'username' => 'test@test.com',
+                    'password' => '123',
+                    'AUTH_KEY' => '123',
+                ]
+            )
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));

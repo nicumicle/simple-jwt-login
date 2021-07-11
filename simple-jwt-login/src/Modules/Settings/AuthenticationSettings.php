@@ -49,6 +49,13 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             'auth_ip',
             BaseSettings::SETTINGS_TYPE_STRING
         );
+        $this->assignSettingsPropertyFromPost(
+            null,
+            'auth_requires_auth_code',
+            null,
+            'auth_requires_auth_code',
+            BaseSettings::SETTINGS_TYPE_BOL
+        );
     }
 
     /**
@@ -169,5 +176,15 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
         return isset($this->settings['auth_ip'])
             ? (string) $this->settings['auth_ip']
             : '';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAuthKeyRequired()
+    {
+        return isset($this->settings['auth_requires_auth_code'])
+            ? (bool) $this->settings['auth_requires_auth_code']
+            : false;
     }
 }

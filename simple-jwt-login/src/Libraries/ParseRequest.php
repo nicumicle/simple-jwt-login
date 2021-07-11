@@ -5,6 +5,11 @@ class ParseRequest
 {
     const UPLOAD_ERR_CANT_WRITE = 7;
 
+    /**
+     * @param array $server
+     *
+     * @return array|array[]
+     */
     public static function process($server)
     {
         $serverContentType = isset($server['CONTENT_TYPE'])

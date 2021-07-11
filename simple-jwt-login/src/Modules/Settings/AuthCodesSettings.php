@@ -47,6 +47,8 @@ class AuthCodesSettings extends BaseSettings implements SettingsInterface
             && !empty($this->settings['allow_register'])
             || !empty($this->settings['require_delete_auth'])
             && !empty($this->settings['allow_delete'])
+            || !empty($this->settings['auth_requires_auth_code'])
+            && !empty($this->settings['allow_authentication'])
         ) {
             if (empty($this->settings['auth_codes'])) {
                 throw new Exception(

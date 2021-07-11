@@ -40,7 +40,8 @@ class AuthenticationSettingsTest extends TestCase
                     ],
                     'jwt_auth_ttl' => 120,
                     'jwt_auth_refresh_ttl' => 130,
-                    'auth_ip' => '127.0.0.1'
+                    'auth_ip' => '127.0.0.1',
+                    'auth_requires_auth_code' => 1,
                 ]
             );
         $authenticationSettings->initSettingsFromPost();
@@ -64,6 +65,10 @@ class AuthenticationSettingsTest extends TestCase
             $authenticationSettings->getAuthJwtRefreshTtl()
         );
         $this->assertIsArray($authenticationSettings->getJwtPayloadParameters());
+        $this->assertSame(
+            true,
+            $authenticationSettings->isAuthKeyRequired()
+        );
     }
 
     public function testValidationSucceededWithMissingPayload()

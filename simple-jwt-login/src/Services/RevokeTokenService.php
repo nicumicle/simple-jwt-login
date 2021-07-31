@@ -12,6 +12,7 @@ class RevokeTokenService extends AuthenticateService
     {
         $this->checkAuthenticationEnabled();
         $this->checkAllowedIPAddress();
+        $this->validateAuthenticationAuthKey(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED);
 
         return $this->revokeToken();
     }

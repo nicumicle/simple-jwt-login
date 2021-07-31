@@ -30,54 +30,70 @@ $settingsPages = [
         'view' => 'dashboard-view.php',
         'name' => 'Dashboard',
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_DASHBOARD,
+        'index' => SettingsErrors::PREFIX_DASHBOARD,
     ],
     [
         'id'   => 'simple-jwt-login-tab-general',
         'view' => 'general-view.php',
         'name' => 'General',
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_GENERAL,
+        'index' => SettingsErrors::PREFIX_GENERAL,
     ],
     [
         'id'   => 'simple-jwt-login-tab-login',
         'view' => 'login-view.php',
         'name' => 'Login',
         'has_error' =>   $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_LOGIN,
+        'index' => SettingsErrors::PREFIX_LOGIN,
     ],
     [
         'id'   => 'simple-jwt-login-tab-register',
         'view' => 'register-view.php',
         'name' => 'Register User',
         'has_error' =>   $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_REGISTER,
+        'index' => SettingsErrors::PREFIX_REGISTER,
     ],
     [
         'id'   => 'simple-jwt-login-tab-delete',
         'view' => 'delete-view.php',
         'name' => 'Delete User',
         'has_error' =>   $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_DELETE,
+        'index' => SettingsErrors::PREFIX_DELETE,
+    ],
+    [
+        'id'   => 'simple-jwt-login-tab-reset-password',
+        'view' => 'reset-password-view.php',
+        'name' => 'Reset Password',
+        'has_error' =>   $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_RESET_PASSWORD,
+        'index' => SettingsErrors::PREFIX_RESET_PASSWORD,
     ],
     [
         'id'   => 'auth-tab-login',
         'view' => 'auth-view.php',
         'name' => 'Authentication',
         'has_error' =>   $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_AUTHENTICATION,
+        'index' => SettingsErrors::PREFIX_AUTHENTICATION,
     ],
     [
         'id'   => 'simple-jwt-login-tab-auth-codes',
         'view' => 'auth-codes-view.php',
         'name' => 'Auth Codes',
         'has_error' =>   $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_AUTH_CODES,
+        'index' => SettingsErrors::PREFIX_AUTH_CODES,
     ],
     [
         'id'   => 'simple-jwt-login-tab-hooks',
         'view' => 'hooks-view.php',
         'name' => 'Hooks',
         'has_error' =>   $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_HOOKS,
+        'index' => SettingsErrors::PREFIX_HOOKS,
     ],
     [
         'id'   => 'simple-jwt-login-cors-tab',
         'view' => 'cors-view.php',
         'name' => 'CORS',
-        'has_error' =>   $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_CORS
+        'has_error' =>   $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_CORS,
+        'index' => SettingsErrors::PREFIX_CORS,
     ],
 ];
 
@@ -119,9 +135,10 @@ $settingsPages = [
                 <div class="col-md-2 mb-3">
                     <ul class="nav nav-pills flex-column" id="myTab" role="tablist">
 						<?php
-                        foreach ($settingsPages as $index => $page) {
-                            $isActive = empty($errorCode) && $index === 0
-                                ||  $settingsErrors->getSectionFromErrorCode($errorCode) === $index + 1
+                        foreach ($settingsPages as $page) {
+                            $index = $page['index'];
+                            $isActive = empty($errorCode) && $index === 1
+                                ||  $settingsErrors->getSectionFromErrorCode($errorCode) === $index
                             ?>
                             <li class="nav-item">
                                 <a class="nav-link <?php echo $isActive ? 'active' : ''?>"
@@ -152,9 +169,10 @@ $settingsPages = [
                 <div class="col-md-10">
                     <div class="tab-content card-shadow" id="simple-jwt-login-tab-content">
 						<?php
-                        foreach ($settingsPages as $index => $page) {
-                            $isActive = empty($errorCode) && $index === 0
-                                ||  $settingsErrors->getSectionFromErrorCode($errorCode) === $index + 1
+                        foreach ($settingsPages as $page) {
+                            $index = $page['index'];
+                            $isActive = empty($errorCode) && $index === 1
+                                ||  $settingsErrors->getSectionFromErrorCode($errorCode) === $index
                             ?>
                             <div class="tab-pane fade <?php echo $isActive ? 'active' : '' ?> show"
                                  id="<?php echo $page['id']; ?>"

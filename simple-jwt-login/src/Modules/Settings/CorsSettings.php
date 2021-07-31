@@ -76,7 +76,7 @@ class CorsSettings extends BaseSettings implements SettingsInterface
                 && empty($this->settings['cors']['allow_headers_enabled'])
             )
         ) {
-            throw  new Exception(
+            throw new Exception(
                 __(
                     'Cors is enabled but no option is checked. Please check at least one option.',
                     'simple-jwt-login'

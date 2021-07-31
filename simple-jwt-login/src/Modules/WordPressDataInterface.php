@@ -203,4 +203,38 @@ interface WordPressDataInterface
      * @return array
      */
     public function convertUserToArray($user);
+
+    /**
+     * @param string $code
+     * @param string $email
+     *
+     * @return WP_User|bool
+     */
+    public function checkPasswordResetKey($code, $email);
+
+    /**
+     * @param WP_User $user
+     * @param string $newPassword
+     */
+    public function resetPassword($user, $newPassword);
+
+    /**
+     * @param WP_User $user
+     *
+     * @return string|bool
+     */
+    public function generateAndGetPasswordResetKey($user);
+
+    /**
+     * @param string $email
+     */
+    public function sendDefaultWordPressResetPassword($email);
+
+    /**
+     * @param string $sendTo
+     * @param string $emailSubject
+     * @param string $emailBody
+     * @param bool $sendAsHtml
+     */
+    public function sendEmail($sendTo, $emailSubject, $emailBody, $sendAsHtml);
 }

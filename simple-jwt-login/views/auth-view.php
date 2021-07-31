@@ -47,7 +47,7 @@ if (! defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Auto-Login Requires Auth Code', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo __('Authentication Requires Auth Code', 'simple-jwt-login'); ?></h3>
         <div class="form-group">
             <input type="radio" id="require_auth_code_no" name="auth_requires_auth_code" class="form-control"
                    value="0"

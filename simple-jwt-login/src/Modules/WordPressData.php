@@ -321,4 +321,63 @@ class WordPressData implements WordPressDataInterface
     {
         return $user->to_array();
     }
+
+    /**
+     * @param string $code
+     * @param string $email
+     *
+     * @return bool|WP_User
+     */
+    public function checkPasswordResetKey($code, $email)
+    {
+        $result = check_password_reset_key($code, $email);
+        if ($result instanceof WP_User) {
+            return $result;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param WP_User $user
+     * @param string $newPassword
+     */
+    public function resetPassword($user, $newPassword)
+    {
+        reset_password($user, $newPassword);
+    }
+
+    /**
+     * @param WP_User $user
+     *
+     * @return string|bool
+     */
+    public function generateAndGetPasswordResetKey($user)
+    {
+        $result = get_password_reset_key($user);
+        if ($result instanceof \WP_Error) {
+            return false;
+        }
+
+        return $result;
+    }
+
+    public function sendDefaultWordPressResetPassword($username)
+    {
+        retrieve_password($username);
+    }
+
+    /**
+     * @param string $sendTo
+     * @param string $emailSubject
+     * @param string $emailBody
+     * @param bool $sendAsHtml
+     */
+    public function sendEmail($sendTo, $emailSubject, $emailBody, $sendAsHtml)
+    {
+        $headers = $sendAsHtml
+            ? $headers = 'Content-type: text/html'
+            : [];
+        wp_mail($sendTo, $emailSubject, $emailBody, $headers);
+    }
 }

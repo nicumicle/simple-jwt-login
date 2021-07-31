@@ -13,6 +13,7 @@ class RouteService extends BaseService
     const AUTHENTICATION_REFRESH_ROUTE = 'auth/refresh';
     const AUTHENTICATION_VALIDATE_ROUTE = 'auth/validate';
     const AUTHENTICATION_REVOKE = 'auth/revoke';
+    const RESET_PASSWORD_LINK = 'user/reset_password';
 
     const METHOD_POST = 'POST';
     const METHOD_GET = 'GET';
@@ -65,6 +66,16 @@ class RouteService extends BaseService
                 'method' => self::METHOD_POST,
                 'service' => RevokeTokenService::class,
             ],
+            [
+                'name' => self::RESET_PASSWORD_LINK,
+                'method' => self::METHOD_PUT,
+                'service' => ResetPasswordService::class
+            ],
+            [
+                'name' => self::RESET_PASSWORD_LINK,
+                'method' => self::METHOD_POST,
+                'service' => ResetPasswordService::class
+            ]
         ];
     }
 

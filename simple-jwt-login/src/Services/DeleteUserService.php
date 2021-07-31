@@ -39,7 +39,7 @@ class DeleteUserService extends BaseService implements ServiceInterface
         }
 
         if ($this->jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete()
-            && !isset($this->request[$this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()])
+            && $this->validateAuthKey() === false
         ) {
             throw new Exception(
                 sprintf(

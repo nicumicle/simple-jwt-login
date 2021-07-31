@@ -14,6 +14,7 @@ class SettingsErrors extends \Exception
     const PREFIX_AUTH_CODES = 7;
     const PREFIX_HOOKS = 8;
     const PREFIX_CORS = 9;
+    const PREFIX_RESET_PASSWORD = 10;
 
     #authentication
     const ERR_AUTHENTICATION_EMPTY_PAYLOAD = 1;
@@ -43,7 +44,7 @@ class SettingsErrors extends \Exception
     const ERR_CORS_NO_OPTION = 1;
 
     #register
-    const ERR__REGISTER_MISSING_NEW_USER_PROFILE = 1;
+    const ERR_REGISTER_MISSING_NEW_USER_PROFILE = 1;
 
     /**
      * @param int $sectionPrefix

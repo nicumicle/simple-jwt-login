@@ -8,6 +8,13 @@ jQuery(document).ready(
             }
         );
 
+        $('#simple-jwt-login input[name="jwt_reset_password_flow"]').on(
+            'change',
+            function(){
+               simple_jwt_bind_reset_password();
+            }
+        )
+
         $('#simple-jwt-login input[name="redirect"]').on(
             'change',
             function () {
@@ -99,6 +106,7 @@ jQuery(document).ready(
         }
 
         simple_jwt_bind_decryption_key();
+        simple_jwt_bind_reset_password();
     }(jQuery)
 );
 
@@ -120,4 +128,13 @@ function showDecryptionKey()
 
     jQuery('#decryption_key').attr('type', elementType);
 
+}
+
+function simple_jwt_bind_reset_password(){
+    var jwt_reset_email_value = jQuery('#simple-jwt-login #jwt_reset_password_flow_custom').is(':checked');
+    if (~~jwt_reset_email_value) {
+        jQuery('#simple-jwt-login #simple_jwt_reset_password_email_container').show();
+    } else {
+        jQuery('#simple-jwt-login #simple_jwt_reset_password_email_container').hide();
+    }
 }

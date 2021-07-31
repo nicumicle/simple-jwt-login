@@ -10,9 +10,13 @@ use SimpleJWTLogin\Modules\Settings\GeneralSettings;
 use SimpleJWTLogin\Modules\Settings\HooksSettings;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\Settings\RegisterSettings;
+use SimpleJWTLogin\Modules\Settings\ResetPasswordSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsFactory;
 use SimpleJWTLogin\Modules\Settings\SettingsInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class SimpleJWTLoginSettings
 {
     const REVOKE_TOKEN_KEY = 'simple_jwt_login_revoked_token';
@@ -144,6 +148,14 @@ class SimpleJWTLoginSettings
     public function getHooksSettings()
     {
         return $this->getSettingsClassByType(SettingsFactory::HOOKS_SETTINGS);
+    }
+
+    /**
+     * @return ResetPasswordSettings
+     */
+    public function getResetPasswordSettings()
+    {
+        return $this->getSettingsClassByType(SettingsFactory::RESET_PASSWORD_SETTINGS);
     }
 
     /**

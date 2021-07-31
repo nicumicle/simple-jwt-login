@@ -1,9 +1,8 @@
 # Changelog - Releases
 
-## (Unreleased)
+## 3.1.0 (31 July 2021)
 - Fix Auth Codes title on Authentication page
-- Add Reset password and Send Reset password endpoints 
--
+- Add Reset password and Send Reset password endpoints
 
 ##  3.0.0 (11 July 2021)
 - Plugin code refactor

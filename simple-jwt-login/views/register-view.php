@@ -109,7 +109,7 @@ if (!defined('ABSPATH')) {
             echo isset($errorCode)
             && $settingsErrors->generateCode(
                 SettingsErrors::PREFIX_REGISTER,
-                SettingsErrors::ERR__REGISTER_MISSING_NEW_USER_PROFILE
+                SettingsErrors::ERR_REGISTER_MISSING_NEW_USER_PROFILE
             ) === $errorCode
                 ? '<span class="simple-jwt-error">!</span>'
                 : ''

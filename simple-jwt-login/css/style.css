@@ -25,6 +25,10 @@
     font-size: 14px;
     font-weight: bold;
 }
+#simple-jwt-login .sub-section-title{
+    font-size: 13px;
+    font-weight: bold;
+}
 
 #simple-jwt-login a.nav-link {
     color: #263544;
@@ -185,7 +189,9 @@
 ### Authentication
  */
 
-#simple-jwt-login .authentication_jwt_container {
+#simple-jwt-login .authentication_jwt_container,
+#simple-jwt-login .jwt_sub_container
+{
     background: #EEE;
     padding: 10px;
     border-radius: 0.3em;
@@ -215,6 +221,12 @@
     min-width: 90px;
     display: inline-block;
     font-weight: 400;
+}
+/**
+Reset password
+*/
+#simple-jwt-login #reset_password_email_body{
+    min-height: 200px;
 }
 
 /**

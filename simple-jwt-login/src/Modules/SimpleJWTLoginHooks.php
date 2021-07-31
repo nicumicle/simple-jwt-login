@@ -9,6 +9,7 @@ class SimpleJWTLoginHooks
     const DELETE_USER_ACTION_NAME = 'simple_jwt_login_delete_user_hook';
     const JWT_PAYLOAD_ACTION_NAME  = 'simple_jwt_login_jwt_payload_auth';
     const NO_REDIRECT_RESPONSE = 'simple_jwt_login_no_redirect_message';
+    const RESET_PASSWORD_CUSTOM_EMAIL_TEMPLATE = 'simple_jwt_login_reset_password_custom_email_template';
 
     const HOOK_TYPE_ACTION = 'action';
     const HOOK_TYPE_FILTER = 'filter';
@@ -81,6 +82,20 @@ class SimpleJWTLoginHooks
                 'description' => __(
                     'This hook is called on /autologin endpoint when the option'
                     . '`No Redirect` is selected. You can customize the message and add parameters.',
+                    'simple-jwt-login'
+                )
+            ],
+            [
+                'name' => self::RESET_PASSWORD_CUSTOM_EMAIL_TEMPLATE,
+                'type' => self::HOOK_TYPE_FILTER,
+                'parameters' => [
+                    'string $template',
+                    'array $request'
+                ],
+                'return' => 'string $template',
+                'description' => __(
+                    'This is executed when POST /user/reset_password is called.'
+                    . ' It will replace the email template that has been added in Reset Password settings',
                     'simple-jwt-login'
                 )
             ],

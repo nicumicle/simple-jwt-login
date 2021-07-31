@@ -131,6 +131,34 @@ if (!function_exists('apply_filters')) {
     }
 }
 
+if (!function_exists('check_password_reset_key')) {
+    function check_password_reset_key($code, $email){
+
+    }
+}
+
+if (!function_exists('get_password_reset_key')) {
+    function get_password_reset_key($user){
+
+    }
+}
+if (!function_exists(' retrieve_password')) {
+    function  retrieve_password($username) {
+
+    }
+}
+
+if (!function_exists(' wp_email')) {
+    function wp_mail($sendTo, $emailSubject, $emailBody, $headers = []) {
+    }
+}
+
+if (!function_exists(' reset_password')) {
+    function reset_password($user, $newPassword) {
+    }
+}
+
+
 if (!class_exists('WP_REST_Response')) {
     class WP_REST_Response
     {

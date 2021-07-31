@@ -4,7 +4,7 @@ Contributors: nicu_m
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PK9BCD6AYF58Y&source=url
 Tags: jwt, API, auto login, register users, tokens, REST, auth, generate jwt, refresh jwt
 Requires at least: 4.4.0
-Tested up to: 5.7
+Tested up to: 5.8
 Requires PHP: 5.3
 Stable tag: trunk
 License: GPLv2 or later
@@ -12,7 +12,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Description ==
 
-This plugin allows you to login or register to a WordPress website using a JWT.
+This plugin allows you to login, register, authenticate, delete and change user password to a WordPress website using a JWT.
 
 Plugin Documentation Site: [Documentation](https://simplejwtlogin.com?utm_source=readme)
 
@@ -138,6 +138,16 @@ Also, you have to choose the JWT parameter key where email or user ID it is stor
 
 Also, you can limit the deletion of users to specific IP addresses for security reasons.
 
+== Reset Password ==
+
+Reset password and change password endpoints are disabled by default.
+
+This plugin allows you to send the reset password endpoint, just by calling an endpoint. An email with the code will be sent to a specific email address.
+
+Also, you are able to customize this email, or even not send at email at all.
+
+The change password endpoint, changes the user password, based on the reset password code.
+
 == Authentication ==
 
 This plugin allows users to generate JWT tokens based from WordPress user email and password.
@@ -214,6 +224,12 @@ Currently, available hooks are:
   - return: array $payload
   - description: This hook is called on /autologin endpoint when the option `No Redirect` is selected. You can customize the message and add parameters.
 
+- simple_jwt_login_reset_password_custom_email_template
+  - type: filter
+  - parameters: string $template, array $request
+  - return: string $template
+  - description: This is executed when POST /user/reset_password is called. It will replace the email template that has been added in Reset Password settings  
+
 == CORS ==
 The CORS standard it is needed because it allows servers to specify who can access its assets and how the assets can be accessed.
 Cross-origin requests are made using the standard HTTP request methods like GET, POST, PUT, DELETE, etc.
@@ -225,10 +241,11 @@ Cross-origin requests are made using the standard HTTP request methods like GET,
 3. Auto-login configuration
 4. Register new users configuration
 5. Delete user configuration
-6. Authentication configuration for generating and refresh Json Web Tokens
-7. Auth Codes
-8. Available Hooks
-9. CORS
+6. Reset Password configuration   
+7. Authentication configuration for generating and refresh Json Web Tokens
+8. Auth Codes
+9. Available Hooks
+10. CORS
 
 == Installation ==
 
@@ -322,6 +339,18 @@ Here is an example on how you can overwrite the "No Redirect" response after aut
     },10, 2);
 ``
 
+Here is an example, on how you can change the body for reset password email template:
+``
+    add_filter('simple_jwt_login_reset_password_custom_email_template',
+    function ($template, $request) {
+            $template .= 'The template has been modified by hook';
+            return $template;
+        },
+        10,
+        2
+    );
+``
+
 = I cannot get the JWT from session. Where should I store the JWT? =
 The plugin searches for the JWT in:
 - URL ( &jwt=YOUR JWT HERE)
@@ -340,6 +369,9 @@ After that, for the create user route, simply add the AUTH code in the request, 
 The [Changelog](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md) can be found in the GitHub repository https://github.com/nicumicle/simple-jwt-login
 
 Also, here you can find the beta version of the plugin, before it is released
+
+= 3.1.0 (31 July 2021) =
+- Add reset password and change password endpoints
 
 = 3.0.0 (11 July 2021) =
 - Plugin code refactor

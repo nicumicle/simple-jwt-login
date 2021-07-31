@@ -93,4 +93,14 @@ class ServerHelper
         }
         return [];
     }
+
+    /**
+     * @return string|null
+     */
+    public function getRequestMethod()
+    {
+        return isset($this->server['REQUEST_METHOD'])
+            ? $this->server['REQUEST_METHOD']
+            : null;
+    }
 }

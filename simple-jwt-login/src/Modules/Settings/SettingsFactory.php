@@ -13,10 +13,12 @@ class SettingsFactory
     const HOOKS_SETTINGS = 5;
     const LOGIN_SETTINGS = 6;
     const REGISTER_SETTINGS = 7;
+    const RESET_PASSWORD_SETTINGS = 8;
 
     /**
      * @param int $type
-     * @return AuthCodesSettings|AuthenticationSettings|CorsSettings|DeleteUserSettings|GeneralSettings|HooksSettings|LoginSettings|RegisterSettings
+     *
+     * @return AuthCodesSettings|AuthenticationSettings|CorsSettings|DeleteUserSettings|GeneralSettings|HooksSettings|LoginSettings|RegisterSettings|ResetPasswordSettings
      * @throws Exception
      */
     public static function getFactory($type)
@@ -38,6 +40,8 @@ class SettingsFactory
                 return new LoginSettings();
             case self::REGISTER_SETTINGS:
                 return new RegisterSettings();
+            case self::RESET_PASSWORD_SETTINGS:
+                return new ResetPasswordSettings();
             default:
                 throw new Exception('Settings implementation not found.');
         }
@@ -56,6 +60,9 @@ class SettingsFactory
             self::HOOKS_SETTINGS => new HooksSettings(),
             self::LOGIN_SETTINGS => new LoginSettings(),
             self::REGISTER_SETTINGS => new RegisterSettings(),
+            self::RESET_PASSWORD_SETTINGS => new ResetPasswordSettings(),
+
+            //auth codes needs to be the last one
             self::AUTH_CODES_SETTINGS => new AuthCodesSettings(),
         ];
     }

@@ -79,7 +79,7 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
                 __('New User profile slug can not be empty.', 'simple-jwt-login'),
                 $this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_REGISTER,
-                    SettingsErrors::ERR__REGISTER_MISSING_NEW_USER_PROFILE
+                    SettingsErrors::ERR_REGISTER_MISSING_NEW_USER_PROFILE
                 )
             );
         }

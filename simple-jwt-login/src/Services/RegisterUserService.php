@@ -95,7 +95,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
         }
 
         if ($this->jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::REGISTER_ACTION_NAME)) {
-            $this->wordPressData->triggerAction(SimpleJWTLoginHooks::REGISTER_ACTION_NAME, $userId, $password);
+            $this->wordPressData->triggerAction(SimpleJWTLoginHooks::REGISTER_ACTION_NAME, $user, $password);
         }
 
         if ($this->jwtSettings->getLoginSettings()->isAutologinEnabled()
@@ -103,7 +103,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
         ) {
             $this->wordPressData->loginUser($user);
             if ($this->jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::LOGIN_ACTION_NAME)) {
-                $this->wordPressData->triggerAction(SimpleJWTLoginHooks::LOGIN_ACTION_NAME, $userId);
+                $this->wordPressData->triggerAction(SimpleJWTLoginHooks::LOGIN_ACTION_NAME, $user);
             }
 
             return (new RedirectService())

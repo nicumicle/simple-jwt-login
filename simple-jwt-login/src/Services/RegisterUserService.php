@@ -3,7 +3,10 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
+use SimpleJWTLogin\Libraries\JWT;
 use SimpleJWTLogin\Modules\AuthCodeBuilder;
+use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\UserProperties;
 use WP_REST_Response;
@@ -120,12 +123,24 @@ class RegisterUserService extends BaseService implements ServiceInterface
             unset($userArray['user_pass']);
         }
 
-        return $this->wordPressData->createResponse([
+        $response = [
             'success' => true,
             'id' => $userId,
             'message' => __('User was successfully created.', 'simple-jwt-login'),
             'user' => $userArray
-        ]);
+        ];
+
+        if ($this->jwtSettings->getRegisterSettings()->isJwtEnabled()) {
+            $payload = $this->initPayload($user);
+
+            $response['jwt'] = JWT::encode(
+                $payload,
+                JwtKeyFactory::getFactory($this->jwtSettings)->getPrivateKey(),
+                $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm()
+            );
+        }
+
+        return $this->wordPressData->createResponse($response);
     }
 
 
@@ -215,5 +230,30 @@ class RegisterUserService extends BaseService implements ServiceInterface
         $chars = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
         return substr(str_shuffle($chars), 0, $length);
+    }
+
+    /**
+     * @SuppressWarnings(StaticAccess)
+     * @param \WP_User $user
+     *
+     * @return array
+     */
+    private function initPayload($user)
+    {
+        if ($this->jwtSettings->getAuthenticationSettings()->isAuthenticationEnabled()) {
+            return AuthenticateService::generatePayload(
+                [],
+                $this->wordPressData,
+                $this->jwtSettings,
+                $user
+            );
+        }
+
+        return [
+            AuthenticationSettings::JWT_PAYLOAD_PARAM_EMAIL    => $user->get('user_email'),
+            AuthenticationSettings::JWT_PAYLOAD_PARAM_ID       => $user->get('id'),
+            AuthenticationSettings::JWT_PAYLOAD_PARAM_USERNAME => $user->get('user_login'),
+            AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT      => time(),
+        ];
     }
 }

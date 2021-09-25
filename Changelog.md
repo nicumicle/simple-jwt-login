@@ -1,7 +1,8 @@
 # Changelog - Releases
 
 ## Unreleased
-- \#9: Add user to simple_jwt_login_register_hook and simple_jwt_login_login_hook hooks 
+- \#10: Add user to simple_jwt_login_register_hook and simple_jwt_login_login_hook hooks 
+-  \#9: Add option to allow adding a JWT in the register user endpoint
 
 ## 3.1.0 (31 July 2021)
 - Fix Auth Codes title on Authentication page

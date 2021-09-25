@@ -173,6 +173,27 @@ if (!defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
+        <input type="checkbox" name="register_jwt" id="register_jwt"
+               value="1" <?php echo($jwtSettings->getRegisterSettings()->isJwtEnabled() ? 'checked' : ''); ?>>
+        <label for="register_jwt">
+            <?php echo __('Return a JWT in the response', 'simple-jwt-login'); ?>
+        </label>
+        <br/>
+        <small>
+            <?php
+            echo __(
+                'If this option is selected, a JWT will be added in the response.'
+                . ' By default, it will contain email, id and username in the payload. If the Authentication is enabled, payload will be generated using authentication configuration.',
+                'simple-jwt-login'
+            );
+            ?>
+        </small>
+    </div>
+</div>
+<hr/>
+
+<div class="row">
+    <div class="col-md-12">
         <h3 class="section-title"><?php echo __(
                 'Allow Register only from the following IP addresses',
                 'simple-jwt-login'

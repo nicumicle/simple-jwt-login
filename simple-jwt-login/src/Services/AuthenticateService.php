@@ -7,11 +7,59 @@ use SimpleJWTLogin\Libraries\JWT;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Modules\WordPressDataInterface;
 use WP_REST_Response;
 use Exception;
+use WP_User;
 
 class AuthenticateService extends BaseService implements ServiceInterface
 {
+    /**
+     * @param array $payload
+     * @param WordPressDataInterface $wordPressData
+     * @param SimpleJWTLoginSettings $jwtSettings
+     * @param WP_User $user
+     *
+     * @return array
+     */
+    public static function generatePayload(
+        $payload,
+        $wordPressData,
+        $jwtSettings,
+        $user
+    ) {
+        $payload[AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT] = time();
+
+        foreach ($jwtSettings->getAuthenticationSettings()->getJwtPayloadParameters() as $parameter) {
+            if ($parameter === AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT
+                || $jwtSettings->getAuthenticationSettings()->isPayloadDataEnabled($parameter) === false
+            ) {
+                continue;
+            }
+
+            switch ($parameter) {
+                case AuthenticationSettings::JWT_PAYLOAD_PARAM_EXP:
+                    $ttl = (int)$jwtSettings->getAuthenticationSettings()->getAuthJwtTtl() * 60;
+                    $payload[$parameter] = time() + $ttl;
+                    break;
+                case AuthenticationSettings::JWT_PAYLOAD_PARAM_ID:
+                    $payload[$parameter] = $wordPressData->getUserProperty($user, 'id');
+                    break;
+                case AuthenticationSettings::JWT_PAYLOAD_PARAM_EMAIL:
+                    $payload[$parameter] = $wordPressData->getUserProperty($user, 'user_email');
+                    break;
+                case AuthenticationSettings::JWT_PAYLOAD_PARAM_SITE:
+                    $payload[$parameter] = $wordPressData->getSiteUrl();
+                    break;
+                case AuthenticationSettings::JWT_PAYLOAD_PARAM_USERNAME:
+                    $payload[$parameter] = $wordPressData->getUserProperty($user, 'user_login');
+                    break;
+            }
+        }
+
+        return $payload;
+    }
+
     /**
      * @return WP_REST_Response
      * @throws Exception
@@ -71,34 +119,13 @@ class AuthenticateService extends BaseService implements ServiceInterface
         $payload = isset($this->request['payload'])
             ? json_decode(stripslashes($this->request['payload']), true)
             : [];
-        $payload[AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT] = time();
 
-        foreach ($this->jwtSettings->getAuthenticationSettings()->getJwtPayloadParameters() as $parameter) {
-            if ($parameter === AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT
-                || $this->jwtSettings->getAuthenticationSettings()->isPayloadDataEnabled($parameter) === false
-            ) {
-                continue;
-            }
-
-            switch ($parameter) {
-                case AuthenticationSettings::JWT_PAYLOAD_PARAM_EXP:
-                    $ttl = (int)$this->jwtSettings->getAuthenticationSettings()->getAuthJwtTtl() * 60;
-                    $payload[$parameter] = time() + $ttl;
-                    break;
-                case AuthenticationSettings::JWT_PAYLOAD_PARAM_ID:
-                    $payload[$parameter] = $this->wordPressData->getUserProperty($user, 'id');
-                    break;
-                case AuthenticationSettings::JWT_PAYLOAD_PARAM_EMAIL:
-                    $payload[$parameter] = $this->wordPressData->getUserProperty($user, 'user_email');
-                    break;
-                case AuthenticationSettings::JWT_PAYLOAD_PARAM_SITE:
-                    $payload[$parameter] = $this->wordPressData->getSiteUrl();
-                    break;
-                case AuthenticationSettings::JWT_PAYLOAD_PARAM_USERNAME:
-                    $payload[$parameter] = $this->wordPressData->getUserProperty($user, 'user_login');
-                    break;
-            }
-        }
+        $payload = self::generatePayload(
+            $payload,
+            $this->wordPressData,
+            $this->jwtSettings,
+            $user
+        );
 
         if ($this->jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME)) {
             $payload = $this->wordPressData->triggerFilter(

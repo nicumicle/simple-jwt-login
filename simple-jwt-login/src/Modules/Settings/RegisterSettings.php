@@ -65,6 +65,15 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
 
         $this->assignSettingsPropertyFromPost(
             null,
+            'register_jwt',
+            null,
+            'register_jwt',
+            BaseSettings::SETTINGS_TYPE_BOL,
+            false
+        );
+
+        $this->assignSettingsPropertyFromPost(
+            null,
             'allowed_user_meta',
             null,
             'allowed_user_meta',
@@ -161,5 +170,15 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
         return isset($this->settings['allowed_user_meta'])
             ? $this->settings['allowed_user_meta']
             : '';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isJwtEnabled()
+    {
+        return isset($this->settings['register_jwt'])
+            ? (bool) $this->settings['register_jwt']
+            : false;
     }
 }

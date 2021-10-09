@@ -370,6 +370,9 @@ The [Changelog](https://github.com/nicumicle/simple-jwt-login/blob/master/Change
 
 Also, here you can find the beta version of the plugin, before it is released
 
+= 3.2.1 (09 Oct 2021) =
+- Fix CSRF for admin settings
+
 = 3.2.0 (26 Sept 2021) =
 - Add user to simple_jwt_login_register_hook and simple_jwt_login_login_hook hooks
 - Add option to allow adding a JWT in the register user endpoint

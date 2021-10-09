@@ -237,4 +237,17 @@ interface WordPressDataInterface
      * @param bool $sendAsHtml
      */
     public function sendEmail($sendTo, $emailSubject, $emailBody, $sendAsHtml);
+
+    /**
+     * @param string $nonceName
+     */
+    public function insertNonce($nonceName);
+
+    /**
+     * @param string|null $nonceValue
+     * @param string $nonceName
+     *
+     * @return false|int
+     */
+    public function checkNonce($nonceValue, $nonceName);
 }

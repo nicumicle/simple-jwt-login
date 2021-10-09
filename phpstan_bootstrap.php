@@ -142,22 +142,32 @@ if (!function_exists('get_password_reset_key')) {
 
     }
 }
-if (!function_exists(' retrieve_password')) {
+if (!function_exists('retrieve_password')) {
     function  retrieve_password($username) {
 
     }
 }
 
-if (!function_exists(' wp_email')) {
+if (!function_exists('wp_email')) {
     function wp_mail($sendTo, $emailSubject, $emailBody, $headers = []) {
     }
 }
 
-if (!function_exists(' reset_password')) {
+if (!function_exists('reset_password')) {
     function reset_password($user, $newPassword) {
     }
 }
 
+if (!function_exists('wp_nonce_field')) {
+    function wp_nonce_field($nonceName) {
+    }
+}
+
+if (!function_exists('wp_verify_nonce')) {
+    function wp_verify_nonce($nonceValue, $nonceName){
+        return true;
+    }
+}
 
 if (!class_exists('WP_REST_Response')) {
     class WP_REST_Response

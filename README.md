@@ -39,10 +39,13 @@ Plugin code in is the folder `simple-jwt-login`.
 
 ### Install on a WordPress Website
 
+Please note that this plugin version is not fully tested.
+If you want to make sure you have a stable version, please download this plugin from [WordPress.org](https://wordpress.org/plugins/simple-jwt-login/).
+
 If you want to upload the simple-jwt-login plugin to your website:
-- clone this repository 
-- create a zip folder for the `simple-jwt-login` folder 
-- upload the zip file into your WordPress
+- Download [downloads/simple-jwt-login.zip](https://github.com/nicumicle/simple-jwt-login/blob/master/download/simple-jwt-login.zip)
+- Upload the zip file into your WordPress website
+- Activate the plugin
  
 ### Running tests
 

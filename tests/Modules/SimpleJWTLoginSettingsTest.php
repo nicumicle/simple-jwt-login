@@ -114,6 +114,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
         $this->expectExceptionMessage('Route namespace could not be empty.');
         $this->simpleJwtLoginSettings
             ->watchForUpdates([
+                '_wpnonce' => '123',
                 'some_key' => '123'
             ]);
     }
@@ -130,6 +131,31 @@ class SimpleJWTLoginSettingsTest extends TestCase
         $this->assertSame(
             'https://localhost/?rest_route=/v1/auth&amp;param=<b>1</b>',
             $simpleJwtLoginSettings->generateExampleLink('auth',['param' => 1])
+        );
+    }
+
+    public function testCallWithoutNonceWillReturnFalse()
+    {
+        $this->assertFalse(
+            $this->simpleJwtLoginSettings
+                ->watchForUpdates(['test' => '123'])
+        );
+    }
+
+    public function testCallingWithInvalidNonce()
+    {
+        $wordPressDataMock = $this->getMockBuilder(WordPressDataInterface::class)
+                                  ->getMock();
+        $wordPressDataMock->method('checkNonce')
+                          ->willReturn(false);
+        $settings = new SimpleJWTLoginSettings($wordPressDataMock);
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Something is wrong. We can not save the settings.');
+        $settings->watchForUpdates(
+            [
+                '_wpnonce' => '123',
+                'test'     => '123'
+            ]
         );
     }
 }

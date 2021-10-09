@@ -99,6 +99,11 @@ $settingsPages = [
 
 ?>
 <form method="post">
+    <?php
+    $jwtSettings
+        ->getWordPressData()
+        ->insertNonce(WordPressData::NONCE_NAME);
+    ?>
     <div id="simple-jwt-login" class="wrapper">
 		<?php
         if ($showStatusBar) {

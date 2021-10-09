@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 3.2.1 (09 Oct 2021)
+- Fix CSRF for admin settings
+
 ## 3.2.0 (26 Sept 2021)
 - \#10: Add user to simple_jwt_login_register_hook and simple_jwt_login_login_hook hooks 
 -  \#9: Add option to allow adding a JWT in the register user endpoint

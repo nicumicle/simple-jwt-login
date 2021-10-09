@@ -2,6 +2,7 @@
 namespace SimpleJWTLogin\Modules;
 
 use Exception;
+use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Modules\Settings\AuthCodesSettings;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Modules\Settings\CorsSettings;
@@ -168,8 +169,16 @@ class SimpleJWTLoginSettings
      */
     public function watchForUpdates($post)
     {
-        if (empty($post)) {
+        if (empty($post) || !isset($post['_wpnonce'])) {
             return false;
+        }
+        $result = $this->wordPressData
+            ->checkNonce($post['_wpnonce'], WordPressData::NONCE_NAME);
+        if ($result === false) {
+            throw new Exception(
+                'Something is wrong. We can not save the settings.',
+                ErrorCodes::ERR_INVALID_NONCE
+            );
         }
         $this->post = $post;
         $this->settingsParsers = (new SettingsFactory())->getAll();

@@ -42,7 +42,9 @@ class Sanitizer
         return self::html($string);
     }
 
-    /** @param string $view
+    /**
+     * @param string $view
+     * @return string
      * @throws Exception
      */
     public static function path($view)

@@ -119,7 +119,7 @@ $settingsPages = [
                                 <span class="simple-jwt-error">!</span>
                                 <?php
                             } ?>
-							<?php echo $message; ?>
+							<?php echo Sanitizer::text($message); ?>
                         </p>
                     </div>
                 </div>
@@ -185,7 +185,18 @@ $settingsPages = [
                                  role="tabpanel"
                                  aria-labelledby="<?php echo Sanitizer::attribute($page['id']); ?>-tab"
                             >
-								<?php include_once $page['view']; ?>
+								<?php
+                                try {
+                                    $viewFile = Sanitizer::path($page['view']);
+                                    $file = plugin_dir_path( dirname( __DIR__ ). $viewFile);
+                                    if(!file_exists($file)) {
+                                        throw new Exception(__('Invalid view file.', 'simple-jwt-login'));
+                                    }
+                                    include_once Sanitizer::path($page['view']);
+                                }catch (Exception $e){
+                                    echo Sanitizer::html(__($e->getMessage(), 'simple-jwt-login'));
+                                }
+                                ?>
                             </div>
 							<?php
                         }
@@ -194,8 +205,6 @@ $settingsPages = [
                 </div>
                 <!-- /.col-md-8 -->
             </div>
-
-
         </div>
         <!-- /.container -->
     </div>

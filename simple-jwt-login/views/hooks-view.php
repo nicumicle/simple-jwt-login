@@ -1,5 +1,6 @@
 <?php
 
+use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
@@ -49,20 +50,20 @@ $hooks = SimpleJWTLoginHooks::getHooksDetails();
                             <input
                                     type="checkbox"
                                     name="enabled_hooks[]"
-                                    id="hook_<?php echo $singleHook['name']; ?>"
-                                    value="<?php echo $singleHook['name']; ?>"
+                                    id="hook_<?php echo Sanitizer::attribute($singleHook['name']); ?>"
+                                    value="<?php echo Sanitizer::attribute($singleHook['name']); ?>"
                                     <?php echo $jwtSettings->getHooksSettings()->isHookEnable($singleHook['name']) ? 'checked' : '' ?>
                             />
                         </td>
                         <td>
-                            <label for="hook_<?php echo $singleHook['name']; ?>">
-                                <?php echo $singleHook['name']; ?>
+                            <label for="hook_<?php echo Sanitizer::attribute($singleHook['name']); ?>">
+                                <?php echo Sanitizer::attribute($singleHook['name']); ?>
                             </label>
                         </td>
-                        <td><?php echo $singleHook['type']; ?></td>
+                        <td><?php echo Sanitizer::text($singleHook['type']); ?></td>
                         <td><?php
                         if (! empty($singleHook['parameters'])) {
-                            echo implode(', ', $singleHook['parameters']);
+                            echo Sanitizer::text(implode(', ', $singleHook['parameters']));
                         } ?>
                         </td>
                         <td>
@@ -74,7 +75,7 @@ $hooks = SimpleJWTLoginHooks::getHooksDetails();
                             } ?>
                         </td>
                         <td>
-                            <p><?php echo str_replace("\n", "<br />", $singleHook['description']); ?></p>
+                            <p><?php echo str_replace("\n", "<br />", Sanitizer::text($singleHook['description'])); ?></p>
                         </td>
                     </tr>
 					<?php

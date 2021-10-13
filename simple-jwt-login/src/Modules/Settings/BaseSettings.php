@@ -1,6 +1,7 @@
 <?php
 namespace SimpleJWTLogin\Modules\Settings;
 
+use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Modules\WordPressDataInterface;
 
 abstract class BaseSettings
@@ -125,12 +126,13 @@ abstract class BaseSettings
                     : $this->wordPressData->sanitizeTextField($postValue);
                 break;
             case self::SETTINGS_TYPE_ARRAY:
-                $value = (array)$postValue;
+                $value = $this->sanitizeArray($postValue);
                 break;
             default:
-                $value = $postValue;
+                $value = $this->wordPressData->sanitizeTextField($postValue);
                 break;
         }
+
         $this->assignProperty($value, $propertyName, $propertyGroup);
     }
 
@@ -141,5 +143,27 @@ abstract class BaseSettings
             return;
         }
         $this->settings[$propertyName] = $value;
+    }
+
+    /**
+     * Recursive sanitation for an array
+     *
+     * @param array $array
+     *
+     * @return array
+     */
+    private function sanitizeArray($array)
+    {
+        foreach ($array as $key => $value) {
+            $key = $this->wordPressData->sanitizeTextField($key);
+
+            if (is_array($value)) {
+                $array[$key] = $this->sanitizeArray($value);
+            } elseif (is_string($value) || is_int($value)) {
+                $array[$key] = $this->wordPressData->sanitizeTextField($value);
+            }
+        }
+
+        return $array;
     }
 }

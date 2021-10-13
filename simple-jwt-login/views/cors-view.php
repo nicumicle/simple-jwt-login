@@ -1,5 +1,6 @@
 <?php
 
+use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
 if (!defined('ABSPATH')) {
@@ -15,7 +16,7 @@ if (!defined('ABSPATH')) {
 		<div class="form-group">
 			<input type="radio" id="allow_cors_no" name="cors[enabled]" class="form-control"
 			       value="0"
-				<?php echo($jwtSettings->getCorsSettings()->isCorsEnabled() === false ? 'checked' : ''); ?>
+				<?php echo $jwtSettings->getCorsSettings()->isCorsEnabled() === false ? 'checked' : ''; ?>
 			/>
 			<label for="allow_cors_no">
 				<?php echo __('No', 'simple-jwt-login'); ?>
@@ -23,7 +24,7 @@ if (!defined('ABSPATH')) {
 
             <input type="radio" id="allow_cors_yes" name="cors[enabled]" class="form-control"
                    value="1"
-                <?php echo$jwtSettings->getCorsSettings()->isCorsEnabled() === true
+                <?php echo $jwtSettings->getCorsSettings()->isCorsEnabled() === true
                     ? 'checked'
                     : '';
                 ?>
@@ -50,7 +51,7 @@ if (!defined('ABSPATH')) {
     </div>
     <div class="col-md-8">
         <input type="text" class="form-control" name="cors[allow_origin]"
-               value="<?php echo $jwtSettings->getCorsSettings()->getAllowOrigin(); ?>"/>
+               value="<?php echo Sanitizer::attribute($jwtSettings->getCorsSettings()->getAllowOrigin()); ?>"/>
         <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin" target="_blank">
             <?php echo __('Read more', 'simple-jwt-login'); ?>
         </a>
@@ -66,7 +67,7 @@ if (!defined('ABSPATH')) {
     </div>
     <div class="col-md-8">
         <input type="text" class="form-control" name="cors[allow_methods]"
-               value="<?php echo $jwtSettings->getCorsSettings()->getAllowMethods(); ?>"/>
+               value="<?php echo Sanitizer::attribute($jwtSettings->getCorsSettings()->getAllowMethods()); ?>"/>
         <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Methods"
            target="_blank">
             <?php echo __('Read more', 'simple-jwt-login'); ?>
@@ -82,7 +83,7 @@ if (!defined('ABSPATH')) {
     </div>
     <div class="col-md-8">
         <input type="text" class="form-control" name="cors[allow_headers]"
-               value="<?php echo $jwtSettings->getCorsSettings()->getAllowHeaders(); ?>"/>
+               value="<?php echo Sanitizer::attribute($jwtSettings->getCorsSettings()->getAllowHeaders()); ?>"/>
         <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Headers"
            target="_blank">
             <?php echo __('Read more', 'simple-jwt-login'); ?>

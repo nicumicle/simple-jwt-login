@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 3.3.0 (13 Oct 2021)
+- Sanitize all displayed texts
+- Add missing translation texts
+- Update bootstrap libraries
+- Update all translations
+- Improve random password algorithm for better security
+
 ## 3.2.1 (09 Oct 2021)
 - Fix CSRF for admin settings
 

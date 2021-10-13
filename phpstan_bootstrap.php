@@ -92,6 +92,20 @@ if (!function_exists('esc_html')) {
         return $parameter;
     }
 }
+if (!function_exists('esc_attr')) {
+    function esc_attr($parameter)
+    {
+        return $parameter;
+    }
+}
+
+if (!function_exists('esc_url')) {
+    function esc_url($parameter)
+    {
+        return $parameter;
+    }
+}
+
 if (!function_exists('wp_insert_user')) {
     function wp_insert_user($userParameters)
     {
@@ -166,6 +180,19 @@ if (!function_exists('wp_nonce_field')) {
 if (!function_exists('wp_verify_nonce')) {
     function wp_verify_nonce($nonceValue, $nonceName){
         return true;
+    }
+}
+
+if (!function_exists('wp_generate_password')) {
+    /**
+     * @param int $length
+     * @param bool $specialChar
+     * @param false $extraSpecialChars
+     * @return string
+     */
+    function wp_generate_password($length = 12, $specialChar = true, $extraSpecialChars = false)
+    {
+        return '';
     }
 }
 

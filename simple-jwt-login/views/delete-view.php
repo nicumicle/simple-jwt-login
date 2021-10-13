@@ -1,5 +1,6 @@
 <?php
 
+use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Services\RouteService;
 use SimpleJWTLogin\Modules\Settings\DeleteUserSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
@@ -22,7 +23,7 @@ if (! defined('ABSPATH')) {
         <div class="form-group">
             <input type="radio" id="allow_delete_no" name="allow_delete" class="form-control"
                    value="0"
-				<?php echo($jwtSettings->getDeleteUserSettings()->isDeleteAllowed() === false ? 'checked' : ''); ?>
+				<?php echo $jwtSettings->getDeleteUserSettings()->isDeleteAllowed() === false ? 'checked' : ''; ?>
             />
             <label for="allow_delete_no">
 				<?php echo __('No', 'simple-jwt-login'); ?>
@@ -148,17 +149,17 @@ if (! defined('ABSPATH')) {
     </div>
     <div class="col-md-4">
         <label for="jwt_login_by_paramter"><?php echo __(
-                    'JWT parameter key | JWT payload data id ( key name where the option is saved )',
+                    'JWT parameter key | JWT payload data id (key name where the option is saved)',
                     'simple-jwt-login'
                 ); ?></label>
 
         <input type="text" name="jwt_delete_by_parameter" class="form-control"
                id="jwt_delete_by_parameter"
-               value="<?php echo $jwtSettings->getDeleteUserSettings()->getJwtDeleteByParameter(); ?>"
+               value="<?php echo Sanitizer::attribute($jwtSettings->getDeleteUserSettings()->getJwtDeleteByParameter()); ?>"
                placeholder="<?php echo __('JWT Parameter here. Example: email', 'simple-jwt-login'); ?>"
         />
         <br/>
-        <p>
+        <p class="text-muted">
 			<?php echo __('You can use `.` (dot) as a separator for sub-array values.', 'simple-jwt-login'); ?>
             <br/>
 			<?php echo __('Example: Use `user.id` for getting key `id` from array `user`', 'simple-jwt-login'); ?>
@@ -175,13 +176,13 @@ if (! defined('ABSPATH')) {
         ); ?>:</h3>
         <div class="form-group">
             <input type="text" id="delete_ip" name="delete_ip" class="form-control"
-                   value="<?php echo $jwtSettings->getDeleteUserSettings()->getAllowedDeleteIps(); ?>"
+                   value="<?php echo Sanitizer::attribute($jwtSettings->getDeleteUserSettings()->getAllowedDeleteIps()); ?>"
                    placeholder="<?php echo __('Enter IP here', 'simple-jwt-login'); ?>"/>
-            <small>
+            <p class="text-muted">
 				<?php echo __("If you want to add more IP's, separate them by comma", 'simple-jwt-login'); ?>.
                 <br/>
 				<?php echo __('Leave blank to allow all IP addresses', 'simple-jwt-login'); ?>.
-            </small>
+            </p>
         </div>
     </div>
 </div>

@@ -1,5 +1,6 @@
 <?php
 
+use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Services\RouteService;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -116,14 +117,14 @@ if (!defined('ABSPATH')) {
             ?>
             <?php echo __('New User profile slug', 'simple-jwt-login'); ?>
         </h3>
-        <small><?php echo __('Example', 'simple-jwt-login'); ?>: `administrator`, `editor`, `author`, `contributor`,
-            `subscriber`</small>
+        <p class="text-muted"><?php echo __('Example', 'simple-jwt-login'); ?>: `administrator`, `editor`, `author`, `contributor`,
+            `subscriber`</p>
         <a href="https://wordpress.org/support/article/roles-and-capabilities/" target="_blank">
             <?php echo __('More details', 'simple-jwt-login'); ?>
         </a>
         <div class="form-group">
             <input type="text" name="new_user_profile" class="form-control"
-                   value="<?php echo $jwtSettings->getRegisterSettings()->getNewUSerProfile(); ?>"
+                   value="<?php echo Sanitizer::attribute($jwtSettings->getRegisterSettings()->getNewUSerProfile()); ?>"
                    placeholder="<?php echo __('New user profile name', 'simple-jwt-login'); ?>"
             />
         </div>
@@ -142,10 +143,10 @@ if (!defined('ABSPATH')) {
             <?php echo __('Generate a random password when a new user is created', 'simple-jwt-login'); ?>
         </label>
         <br/>
-        <small><?php echo __(
+        <p class="text-muted"><?php echo __(
                 'If this option is selected, the password is no more required when a new user is created.',
                 'simple-jwt-login'
-            ); ?></small>
+            ); ?></p>
     </div>
 </div>
 <hr/>
@@ -158,7 +159,7 @@ if (!defined('ABSPATH')) {
             <?php echo __('Initialize force login after register', 'simple-jwt-login'); ?>
         </label>
         <br/>
-        <small>
+        <p class="text-muted">
             <?php
             echo __(
             'If user registration is completed, the user will continue on the flow configured on login config.'
@@ -166,7 +167,7 @@ if (!defined('ABSPATH')) {
             'simple-jwt-login'
         );
             ?>
-        </small>
+        </p>
     </div>
 </div>
 <hr/>
@@ -179,7 +180,7 @@ if (!defined('ABSPATH')) {
             <?php echo __('Return a JWT in the response', 'simple-jwt-login'); ?>
         </label>
         <br/>
-        <small>
+        <p class="text-muted">
             <?php
             echo __(
                 'If this option is selected, a JWT will be added in the response.'
@@ -187,7 +188,7 @@ if (!defined('ABSPATH')) {
                 'simple-jwt-login'
             );
             ?>
-        </small>
+        </p>
     </div>
 </div>
 <hr/>
@@ -200,13 +201,13 @@ if (!defined('ABSPATH')) {
             ); ?>:</h3>
         <div class="form-group">
             <input type="text" id="register_ip" name="register_ip" class="form-control"
-                   value="<?php echo $jwtSettings->getRegisterSettings()->getAllowedRegisterIps(); ?>"
+                   value="<?php echo Sanitizer::attribute($jwtSettings->getRegisterSettings()->getAllowedRegisterIps()); ?>"
                    placeholder="<?php echo __('Enter IP here', 'simple-jwt-login'); ?>"/>
-            <small>
+            <p class="text-muted">
                 <?php echo __("If you want to add more IP's, separate them by comma", 'simple-jwt-login'); ?>.
                 <br/>
                 <?php echo __('Leave blank to allow all IP addresses', 'simple-jwt-login'); ?>.
-            </small>
+            </p>
         </div>
     </div>
 </div>
@@ -222,9 +223,9 @@ if (!defined('ABSPATH')) {
             :</h3>
         <div class="form-group">
             <input type="text" id="register_domain" name="register_domain" class="form-control"
-                   value="<?php echo $jwtSettings->getRegisterSettings()->getAllowedRegisterDomain(); ?>"
+                   value="<?php echo Sanitizer::attribute($jwtSettings->getRegisterSettings()->getAllowedRegisterDomain()); ?>"
                    placeholder="<?php echo __('', 'simple-jwt-login'); ?>Email domain"/>
-            <small>
+            <p class="text-muted">
                 <?php echo __(
                 'For example, if you want to allow registration only for users that use their gmail account,'
                     . ' add `gmail.com`',
@@ -233,7 +234,7 @@ if (!defined('ABSPATH')) {
                 <?php echo __('For multiple domains, separate them by comma', 'simple-jwt-login'); ?>.
                 <br/>
                 <?php echo __('Leave blank to allow all domains', 'simple-jwt-login'); ?>.
-            </small>
+            </p>
         </div>
     </div>
 </div>
@@ -246,7 +247,7 @@ if (!defined('ABSPATH')) {
                     type="text"
                     class="form-control"
                     name="allowed_user_meta"
-                    value="<?php echo $jwtSettings->getRegisterSettings()->getAllowedUserMeta(); ?>"
+                    value="<?php echo Sanitizer::attribute($jwtSettings->getRegisterSettings()->getAllowedUserMeta()); ?>"
             />
             <span class="text-muted">
                 <?php echo __(
@@ -275,7 +276,7 @@ if (!defined('ABSPATH')) {
             <ul class="simple-jwt-register-user-properties">
                 <?php
                 foreach (UserProperties::getAllowedUserProperties() as $key => $userProperty) {
-                    echo "<li> <b>" . $key . "</b> : " . $userProperty['description'] . "</li>";
+                    echo "<li> <b>" . Sanitizer::html($key) . "</b> : " . Sanitizer::html($userProperty['description']) . "</li>";
                 }
                 ?>
             </ul>

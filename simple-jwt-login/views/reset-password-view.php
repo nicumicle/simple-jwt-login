@@ -1,6 +1,6 @@
 <?php
 
-use SimpleJWTLogin\Modules\Settings\LoginSettings;
+use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Modules\Settings\ResetPasswordSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -97,10 +97,13 @@ if ( ! defined('ABSPATH')) {
             ?>
         </p>
         <p class="text-muted">
-            Parameters:<Br/>
-            <b>email</b><span class="required">*</span> : The email address that needs reset passowrd<Br/>
+            <?php echo __('Parameters', 'simple-jwt-login');?>:
+            <Br/>
+            <b>email</b><span class="required">*</span> :
+            <?php echo __('The email address that needs reset password', 'simple-jwt-login');?>
+            <Br/>
             <br/>
-            An email with the reset password link will be sent to this email address.
+            <?php echo __('An email with the reset password link will be sent to this email address.', 'simple-jwt-login');?>
         </p>
         <div class="generated-code">
             <span class="method">POST:</span>
@@ -156,7 +159,7 @@ if ( ! defined('ABSPATH')) {
             <li>
                 <input type="radio"
                        value="<?php
-                       echo ResetPasswordSettings::FLOW_SEND_DEFAULT_WP_EMAIL; ?>"
+                       echo Sanitizer::attribute(ResetPasswordSettings::FLOW_SEND_DEFAULT_WP_EMAIL); ?>"
                     <?php
                     echo $jwtSettings->getResetPasswordSettings()->getFlowType() === ResetPasswordSettings::FLOW_SEND_DEFAULT_WP_EMAIL ? 'checked="checked"' : ''; ?>
                        name="jwt_reset_password_flow"
@@ -174,7 +177,7 @@ if ( ! defined('ABSPATH')) {
             <li>
                 <input type="radio"
                        value="<?php
-                       echo ResetPasswordSettings::FLOW_SEND_CUSTOM_EMAIL; ?>"
+                       echo Sanitizer::attribute(ResetPasswordSettings::FLOW_SEND_CUSTOM_EMAIL); ?>"
                     <?php
                     echo $jwtSettings->getResetPasswordSettings()->getFlowType() === ResetPasswordSettings::FLOW_SEND_CUSTOM_EMAIL ? 'checked="checked"' : ''; ?>
                        name="jwt_reset_password_flow"
@@ -195,19 +198,21 @@ if ( ! defined('ABSPATH')) {
 <div class="row" id="simple_jwt_reset_password_email_container">
     <div class="col-md-12">
         <div class="jwt_sub_container">
-            <h4 class="sub-section-title">Email Subject</h4>
+            <h4 class="sub-section-title">
+                <?php echo __('Email Subject', 'simple-jwt-login');?>
+            </h4>
             <input type="text"
                    name="jwt_email_subject"
                    class="form-control"
-                   placeholder="Email Subject"
+                   placeholder="<?php echo __('Email Subject', 'simple-jwt-login');?>"
                    value="<?php
-                   echo $jwtSettings->getResetPasswordSettings()->getResetPasswordEmailSubject(); ?>"
+                   echo Sanitizer::attribute($jwtSettings->getResetPasswordSettings()->getResetPasswordEmailSubject()); ?>"
             />
             <br/>
             <h4 class="sub-section-title">Email body</h4>
             <textarea class="form-control" name="jwt_reset_password_email_body" id="reset_password_email_body"
                       placeholder="Email Content"><?php
-                echo htmlentities($jwtSettings->getResetPasswordSettings()->getResetPasswordEmailBody()); ?></textarea>
+                echo Sanitizer::html($jwtSettings->getResetPasswordSettings()->getResetPasswordEmailBody()); ?></textarea>
             <br/>
             <h4 class="sub-section-title">Email type</h4>
             <ul>
@@ -221,7 +226,7 @@ if ( ! defined('ABSPATH')) {
                         ) === 0 ? 'checked="checked"' : ''; ?>
                     />
                     <label for="jwt_email_type_plain_text">
-                        Plain text
+                        <?php echo __('Plain text', 'simple-jwt-login');?>
                     </label>
                 </li>
                 <li>
@@ -239,18 +244,21 @@ if ( ! defined('ABSPATH')) {
                 </li>
             </ul>
             <br/>
-            For the email content, you need to add <code class="code">{{CODE}}</code> as a variable.
+            <?php echo sprintf(
+                    __('For the email content, you need to add %s as a variable', 'simple-jwt-login'),
+                '<code class="code">{{CODE}}</code>'
+            );?>
             <br/>
             <br/>
-            <b>Available variables</b>:
+            <b><?php echo __('Available variables', 'simple-jwt-login');?></b>:
             <ul>
                 <?php
                 foreach ($jwtSettings->getResetPasswordSettings()->getEmailContentVariables() as $variable => $text)
                 {
                     ?>
                     <li>
-                        <code class="code"><?php echo $variable;?></code>:
-                        <?php echo $text;?>
+                        <code class="code"><?php echo Sanitizer::html($variable);?></code>:
+                        <?php echo Sanitizer::html($text);?>
                     </li>
                     <?php
                 }
@@ -275,12 +283,21 @@ if ( ! defined('ABSPATH')) {
             ?>
         </p>
         <p class="text-muted">
-            Parameters:<Br/>
-            <b>email</b><span class="required">*</span> : The email address that needs reset passowrd<Br/>
-            <b>code</b><span class="required">*</span> : The code received on email<Br/>
-            <b>new_passord</b><span class="required">*</span> : New password for the user<Br/>
+            <?php echo __('Parameters', 'simple-jwt-login');?>:
             <br/>
-            An email with the reset password link will be sent to this email address.
+            <b>email</b><span class="required">*</span> :
+            <?php echo __('The email address that needs reset password', 'simple-jwt-login');?>
+            <br/>
+
+            <b>code</b><span class="required">*</span> :
+            <?php echo __('The code received on email', 'simple-jwt-login');?>
+            <br/>
+
+            <b>new_password</b><span class="required">*</span> :
+            <?php echo __('New password for the user', 'simple-jwt-login');?>
+            <br/>
+            <br/>
+            <?php echo __('An email with the reset password link will be sent to this email address.','simple-jwt-login');?>
         </p>
         <div class="generated-code">
             <span class="method">PUT:</span>

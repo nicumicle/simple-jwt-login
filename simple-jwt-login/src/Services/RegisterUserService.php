@@ -4,6 +4,7 @@ namespace SimpleJWTLogin\Services;
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
+use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Libraries\JWT;
 use SimpleJWTLogin\Modules\AuthCodeBuilder;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
@@ -33,10 +34,11 @@ class RegisterUserService extends BaseService implements ServiceInterface
      */
     public function createUser()
     {
-        $email = $this->request['email'];
+
+        $email = Sanitizer::text($this->request['email']);
         $extraParameters = UserProperties::getExtraParametersFromRequest($this->request);
         $username = !empty($extraParameters['user_login'])
-            ? $extraParameters['user_login']
+            ? Sanitizer::text($extraParameters['user_login'])
             : $email;
 
         if ($this->wordPressData->checkUserExistsByUsernameAndEmail($username, $email) == true) {
@@ -48,7 +50,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
 
         $password = $this->jwtSettings->getRegisterSettings()->isRandomPasswordForCreateUserEnabled()
             ? $this->randomString(10)
-            : $this->request['password'];
+            : Sanitizer::text($this->request['password']);
 
         $newUserRole = $this->jwtSettings->getRegisterSettings()->getNewUSerProfile();
         if (isset($this->request[$this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()])) {
@@ -92,7 +94,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
                     if (!in_array($metaKey, $allowedUserMetaKeys)) {
                         continue;
                     }
-                    $this->wordPressData->addUserMeta($userId, $metaKey, $metaValue);
+                    $this->wordPressData->addUserMeta($userId, Sanitizer::text($metaKey), Sanitizer::text($metaValue));
                 }
             }
         }
@@ -227,9 +229,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
      */
     private function randomString($length = 8)
     {
-        $chars = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-
-        return substr(str_shuffle($chars), 0, $length);
+        return $this->wordPressData->generatePassword($length);
     }
 
     /**

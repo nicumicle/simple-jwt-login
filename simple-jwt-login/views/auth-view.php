@@ -1,5 +1,6 @@
 <?php
 
+use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -203,9 +204,9 @@ if (! defined('ABSPATH')) {
                                     ?>
                                     <input
                                             type="checkbox"
-                                            id="jwt_payload_<?php echo $parameter;?>"
+                                            id="jwt_payload_<?php echo Sanitizer::attribute($parameter);?>"
                                             name="jwt_payload[]"
-                                            value="<?php echo $parameter; ?>"
+                                            value="<?php echo Sanitizer::attribute($parameter); ?>"
                                          <?php
                                          echo $jwtSettings->getAuthenticationSettings()
                                              ->isPayloadDataEnabled($parameter)
@@ -216,11 +217,11 @@ if (! defined('ABSPATH')) {
 	                                <?php
                                 } ?>
                             </span>
-                            <label class="bold" for="jwt_payload_<?php echo $parameter;?>">
-                                <span class="key">"<?php echo $parameter; ?>"</span>
+                            <label class="bold" for="jwt_payload_<?php echo Sanitizer::attribute($parameter);?>">
+                                <span class="key">"<?php echo Sanitizer::attribute($parameter); ?>"</span>
                                 <span class="delimiter">:</span>
-                                <span class="value">"<?php echo $sampleValue; ?>"</span>
-                                <span class="line-separator"><?php echo $lineSeparator; ?></span>
+                                <span class="value">"<?php echo Sanitizer::attribute($sampleValue); ?>"</span>
+                                <span class="line-separator"><?php echo Sanitizer::text($lineSeparator); ?></span>
                             </label>
                             </li>
 							<?php
@@ -281,7 +282,7 @@ if (! defined('ABSPATH')) {
                 type="text"
                 name="jwt_auth_ttl"
                 class="form-control" id="jwt_auth_ttl"
-                value="<?php echo $jwtSettings->getAuthenticationSettings()->getAuthJwtTtl(); ?>"
+                value="<?php echo Sanitizer::attribute($jwtSettings->getAuthenticationSettings()->getAuthJwtTtl()); ?>"
                 placeholder="<?php echo __('Number of minutes', 'simple-jwt-login') ?>"
         />
     </div>
@@ -315,7 +316,7 @@ if (! defined('ABSPATH')) {
                 name="jwt_auth_refresh_ttl"
                 class="form-control"
                 id="jwt_auth_refresh_ttl"
-                value="<?php echo $jwtSettings->getAuthenticationSettings()->getAuthJwtRefreshTtl(); ?>"
+                value="<?php echo Sanitizer::attribute($jwtSettings->getAuthenticationSettings()->getAuthJwtRefreshTtl()); ?>"
                 placeholder="<?php echo __('Number of minutes', 'simple-jwt-login') ?>"
         />
     </div>
@@ -350,7 +351,7 @@ if (! defined('ABSPATH')) {
                 </button>
             </span>
         </div>
-        <p>
+        <p class="text-muted">
             * <?php echo __(
                     'JWT can be sent via URL, SESSION, COOKIE or HEADER.'
                 . ' Please enable the ones you want in the \'General\' section.',
@@ -391,7 +392,7 @@ if (! defined('ABSPATH')) {
                 </button>
             </span>
         </div>
-        <p>
+        <p class="text-muted">
             * <?php echo __(
                     'JWT can be sent via URL, SESSION, COOKIE or HEADER.'
                 . ' Please enable the ones you want in the \'General\' section.',
@@ -430,7 +431,7 @@ if (! defined('ABSPATH')) {
                 </button>
             </span>
         </div>
-        <p>
+        <p class="text-muted">
             * <?php echo __(
                     'JWT can be sent via URL, SESSION, COOKIE or HEADER.'
                 . ' Please enable the ones you want in the \'General\' section.',
@@ -450,13 +451,13 @@ if (! defined('ABSPATH')) {
             ); ?>:</h3>
         <div class="form-group">
             <input type="text" id="auth_ip" name="auth_ip" class="form-control"
-                   value="<?php echo $jwtSettings->getAuthenticationSettings()->getAllowedIps(); ?>"
+                   value="<?php echo Sanitizer::attribute($jwtSettings->getAuthenticationSettings()->getAllowedIps()); ?>"
                    placeholder="<?php echo __('Enter IP here', 'simple-jwt-login'); ?>"/>
-            <small>
+            <p class="text-muted">
                 <?php echo __("If you want to add more IP's, separate them by comma", 'simple-jwt-login'); ?>.
                 <br/>
                 <?php echo __('Leave blank to allow all IP addresses', 'simple-jwt-login'); ?>.
-            </small>
+            </p>
         </div>
     </div>
 </div>

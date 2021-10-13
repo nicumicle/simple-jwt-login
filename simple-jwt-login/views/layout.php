@@ -1,5 +1,6 @@
 <?php
 
+use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Modules\WordPressData;
@@ -28,70 +29,70 @@ $settingsPages = [
     [
         'id'   => 'simple-jwt-login-tab-dashboard',
         'view' => 'dashboard-view.php',
-        'name' => 'Dashboard',
+        'name' => __('Dashboard','simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_DASHBOARD,
         'index' => SettingsErrors::PREFIX_DASHBOARD,
     ],
     [
         'id'   => 'simple-jwt-login-tab-general',
         'view' => 'general-view.php',
-        'name' => 'General',
+        'name' => __('General','simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_GENERAL,
         'index' => SettingsErrors::PREFIX_GENERAL,
     ],
     [
         'id'   => 'simple-jwt-login-tab-login',
         'view' => 'login-view.php',
-        'name' => 'Login',
+        'name' => __('Login','simple-jwt-login'),
         'has_error' =>   $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_LOGIN,
         'index' => SettingsErrors::PREFIX_LOGIN,
     ],
     [
         'id'   => 'simple-jwt-login-tab-register',
         'view' => 'register-view.php',
-        'name' => 'Register User',
+        'name' => __('Register User','simple-jwt-login'),
         'has_error' =>   $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_REGISTER,
         'index' => SettingsErrors::PREFIX_REGISTER,
     ],
     [
         'id'   => 'simple-jwt-login-tab-delete',
         'view' => 'delete-view.php',
-        'name' => 'Delete User',
+        'name' => __('Delete User','simple-jwt-login'),
         'has_error' =>   $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_DELETE,
         'index' => SettingsErrors::PREFIX_DELETE,
     ],
     [
         'id'   => 'simple-jwt-login-tab-reset-password',
         'view' => 'reset-password-view.php',
-        'name' => 'Reset Password',
+        'name' => __('Reset Password','simple-jwt-login'),
         'has_error' =>   $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_RESET_PASSWORD,
         'index' => SettingsErrors::PREFIX_RESET_PASSWORD,
     ],
     [
         'id'   => 'auth-tab-login',
         'view' => 'auth-view.php',
-        'name' => 'Authentication',
+        'name' => __('Authentication','simple-jwt-login'),
         'has_error' =>   $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_AUTHENTICATION,
         'index' => SettingsErrors::PREFIX_AUTHENTICATION,
     ],
     [
         'id'   => 'simple-jwt-login-tab-auth-codes',
         'view' => 'auth-codes-view.php',
-        'name' => 'Auth Codes',
+        'name' => __('Auth Codes','simple-jwt-login'),
         'has_error' =>   $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_AUTH_CODES,
         'index' => SettingsErrors::PREFIX_AUTH_CODES,
     ],
     [
         'id'   => 'simple-jwt-login-tab-hooks',
         'view' => 'hooks-view.php',
-        'name' => 'Hooks',
+        'name' => __('Hooks','simple-jwt-login'),
         'has_error' =>   $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_HOOKS,
         'index' => SettingsErrors::PREFIX_HOOKS,
     ],
     [
         'id'   => 'simple-jwt-login-cors-tab',
         'view' => 'cors-view.php',
-        'name' => 'CORS',
+        'name' => __('CORS','simple-jwt-login'),
         'has_error' =>   $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_CORS,
         'index' => SettingsErrors::PREFIX_CORS,
     ],
@@ -129,16 +130,16 @@ $settingsPages = [
         <div class="">
             <div class="row main-title-container">
                 <div class="col-md-10">
-                    <h1 class="main-title">Simple JWT Login Settings</h1>
+                    <h1 class="main-title"><?php echo __('Simple JWT Login Settings', 'simple-jwt-login');?></h1>
                 </div>
                 <div class="col-md-2 text-right">
-                    <input type="submit" class="btn btn-dark" value="Save">
+                    <input type="submit" class="btn btn-dark" value="<?php echo __('Save', 'simple-jwt-login');?>">
                 </div>
             </div>
             <hr/>
             <div class="row">
                 <div class="col-md-2 mb-3">
-                    <ul class="nav nav-pills flex-column" id="myTab" role="tablist">
+                    <ul class="nav nav-pills flex-column nav-tabs" id="simple-jwt-login-tabs" role="tablist">
 						<?php
                         foreach ($settingsPages as $page) {
                             $index = $page['index'];
@@ -147,13 +148,13 @@ $settingsPages = [
                             ?>
                             <li class="nav-item">
                                 <a class="nav-link <?php echo $isActive ? 'active' : ''?>"
-                                   id="<?php echo $page['id']; ?>-tab"
+                                   id="<?php echo Sanitizer::attribute($page['id']); ?>-tab"
                                    data-toggle="tab"
-                                   href="#<?php echo $page['id']; ?>"
+                                   href="#<?php echo Sanitizer::attribute($page['id']); ?>"
                                    role="tab"
-                                   aria-controls="<?php echo $page['id']; ?>"
+                                   aria-controls="<?php echo Sanitizer::attribute($page['id']); ?>"
                                    aria-selected="true"
-                                   title="<?php echo $page['name'] ?>"
+                                   title="<?php echo Sanitizer::attribute($page['name']); ?>"
                                 >
                                     <?php
                                     if ($page['has_error']) {
@@ -162,7 +163,7 @@ $settingsPages = [
                                         <?php
                                     }
 
-                            echo $page['name']; ?>
+                                echo Sanitizer::text($page['name']); ?>
                                 </a>
                             </li>
 							<?php
@@ -180,9 +181,9 @@ $settingsPages = [
                                 ||  $settingsErrors->getSectionFromErrorCode($errorCode) === $index
                             ?>
                             <div class="tab-pane fade <?php echo $isActive ? 'active' : '' ?> show"
-                                 id="<?php echo $page['id']; ?>"
+                                 id="<?php echo Sanitizer::attribute($page['id']); ?>"
                                  role="tabpanel"
-                                 aria-labelledby="<?php echo $page['id']; ?>-tab"
+                                 aria-labelledby="<?php echo Sanitizer::attribute($page['id']); ?>-tab"
                             >
 								<?php include_once $page['view']; ?>
                             </div>

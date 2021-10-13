@@ -3,6 +3,7 @@ namespace SimpleJWTLogin\Modules;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Modules\Settings\AuthCodesSettings;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Modules\Settings\CorsSettings;
@@ -222,6 +223,7 @@ class SimpleJWTLoginSettings
     }
 
     /**
+     * @SuppressWarnings(StaticAccess)
      * @param string $route
      * @param array $params
      *
@@ -231,10 +233,14 @@ class SimpleJWTLoginSettings
     {
         $url = $this->wordPressData->getSiteUrl()
             . '/?rest_route=/'
-            . $this->getGeneralSettings()->getRouteNamespace()
-            . $route;
+            . Sanitizer::text($this->getGeneralSettings()->getRouteNamespace())
+            . Sanitizer::text($route);
         foreach ($params as $key => $value) {
-            $url .= sprintf('&amp;%s=<b>%s</b>', $key, $value);
+            $url .= sprintf(
+                '&amp;%s=<b>%s</b>',
+                Sanitizer::text($key),
+                Sanitizer::text($value)
+            );
         }
 
         return $url;

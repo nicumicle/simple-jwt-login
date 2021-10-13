@@ -1,6 +1,7 @@
 <?php
 
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyWpConfig;
+use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Libraries\JWT;
 use SimpleJWTLogin\Modules\Settings\GeneralSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
@@ -27,10 +28,10 @@ if (!defined('ABSPATH')) {
                 ? '<span class="simple-jwt-error">!</span>'
                 : ''
             ?>
-            <?php echo __('Route Namespace', 'simple-jwt-login'); ?>
+            <?php echo __('Route Namespace', 'simple-jwt-login'); ?> <span class="required">*</span>
         </h3>
         <div class="form-group">
-            <input type="text" name="route_namespace" value="<?php echo $jwtSettings->getGeneralSettings()->getRouteNamespace(); ?>"
+            <input type="text" name="route_namespace" value="<?php echo Sanitizer::attribute($jwtSettings->getGeneralSettings()->getRouteNamespace()); ?>"
                    class="form-control"
                    placeholder="<?php echo __('Default route namespace', 'simple-jwt-login'); ?>"
             />
@@ -137,7 +138,7 @@ if (!defined('ABSPATH')) {
             <div class="input-group" id="decryption_key_container">
                 <input type="password" name="decryption_key" class="form-control"
                        id="decryption_key"
-                       value="<?php echo $jwtSettings->getGeneralSettings()->getDecryptionKey(); ?>"
+                       value="<?php echo Sanitizer::attribute($jwtSettings->getGeneralSettings()->getDecryptionKey()); ?>"
                        placeholder="<?php echo __('JWT decryption key here', 'simple-jwt-login'); ?>"
                 />
                 <div class="input-group-addon">
@@ -160,7 +161,7 @@ if (!defined('ABSPATH')) {
                         id="decryption_key_base64"
                         value="1"
                         style="margin-top:1px;"
-                    <?php echo($jwtSettings->getGeneralSettings()->isDecryptionKeyBase64Encoded() ? 'checked="checked"' : '') ?>
+                    <?php echo $jwtSettings->getGeneralSettings()->isDecryptionKeyBase64Encoded() ? 'checked="checked"' : ''; ?>
 
                 />
                 <label for="decryption_key_base64">
@@ -170,26 +171,27 @@ if (!defined('ABSPATH')) {
         </div>
 
         <div class="form-group decryption-textarea-group">
-            <label for="simple-jwt-login-public-key">Public Key</label>
+            <label for="simple-jwt-login-public-key">Public Key <span class="required">*</span></label>
             <textarea
                     class="form-control"
                     id="simple-jwt-login-public-key"
                     rows="6"
                     name="decryption_key_public"
-            ><?php echo $jwtSettings->getGeneralSettings()->getDecryptionKeyPublic(); ?></textarea>
+            ><?php echo Sanitizer::text($jwtSettings->getGeneralSettings()->getDecryptionKeyPublic()); ?></textarea>
         </div>
         <div class="form-group  decryption-textarea-group">
-            <label for="simple-jwt-login-private-key">Private Key</label>
+            <label for="simple-jwt-login-private-key">Private Key <span class="required">*</span></label>
             <textarea
                     class="form-control"
                     id="simple-jwt-login-private-key"
                     rows="6"
                     name="decryption_key_private"
-            ><?php echo $jwtSettings->getGeneralSettings()->getDecryptionKeyPrivate(); ?></textarea>
+            ><?php echo Sanitizer::text($jwtSettings->getGeneralSettings()->getDecryptionKeyPrivate()); ?></textarea>
         </div>
 
         <div class="decryption-code-info">
-            You have to defined in your code the following constants ( for example in  wp-config.php ) :
+            <?php echo __('You have to defined in your code the following constants','simple-jwt-login');?>
+            ( <?php echo __('for example in wp-config.php','simple-jwt-login');?> ) :
             <br />
             <code class="define_private_key" style="display: block">
                 define('<b><?php echo JwtKeyWpConfig::SIMPLE_JWT_PRIVATE_KEY;?></b>','MY_SECRET_KEY');<br />
@@ -233,8 +235,8 @@ if (!defined('ABSPATH')) {
                 name="request_keys[url]"
                 required="required"
                 style="display: inline-block"
-                placeholder="Parameter name"
-                value="<?php echo $jwtSettings->getGeneralSettings()->getRequestKeyUrl();?>"
+                placeholder="<?php echo __('Parameter name', 'simple-jwt-login');?>"
+                value="<?php echo Sanitizer::attribute($jwtSettings->getGeneralSettings()->getRequestKeyUrl());?>"
         />
     </div>
     <div class="col-md-2">
@@ -248,7 +250,7 @@ if (!defined('ABSPATH')) {
         </select>
     </div>
     <div class="col-md-5">
-        <div class="code">&<?php echo $jwtSettings->getGeneralSettings()->getRequestKeyUrl();?>=<b>YOUR JWT HERE</b></div>
+        <div class="code">&<?php echo Sanitizer::text($jwtSettings->getGeneralSettings()->getRequestKeyUrl());?>=<b>YOUR JWT HERE</b></div>
     </div>
 </div>
 
@@ -261,7 +263,7 @@ if (!defined('ABSPATH')) {
                 required="required"
                 style="display: inline-block"
                 placeholder="Parameter name"
-                value="<?php echo $jwtSettings->getGeneralSettings()->getRequestKeySession();?>"
+                value="<?php echo Sanitizer::attribute($jwtSettings->getGeneralSettings()->getRequestKeySession());?>"
         />
     </div>
     <div class="col-md-2">
@@ -275,7 +277,7 @@ if (!defined('ABSPATH')) {
         </select>
     </div>
     <div class="col-md-5">
-        <div class="code">$_SESSION['<b><?php echo $jwtSettings->getGeneralSettings()->getRequestKeySession();?></b>']</div>
+        <div class="code">$_SESSION['<b><?php echo Sanitizer::text($jwtSettings->getGeneralSettings()->getRequestKeySession());?></b>']</div>
     </div>
 </div>
 
@@ -288,7 +290,7 @@ if (!defined('ABSPATH')) {
                 required="required"
                 style="display: inline-block"
                 placeholder="Parameter name"
-                value="<?php echo $jwtSettings->getGeneralSettings()->getRequestKeyCookie();?>"
+                value="<?php echo Sanitizer::attribute($jwtSettings->getGeneralSettings()->getRequestKeyCookie());?>"
         />
     </div>
     <div class="col-md-2">
@@ -302,7 +304,7 @@ if (!defined('ABSPATH')) {
         </select>
     </div>
     <div class="col-md-5">
-        <div class="code">$_COOKIE['<b><?php echo $jwtSettings->getGeneralSettings()->getRequestKeyCookie();?></b>']</div>
+        <div class="code">$_COOKIE['<b><?php echo Sanitizer::text($jwtSettings->getGeneralSettings()->getRequestKeyCookie());?></b>']</div>
     </div>
 </div>
 
@@ -313,9 +315,9 @@ if (!defined('ABSPATH')) {
                 type="text"
                 name="request_keys[header]"
                 required="required"
-                placeholder="Parameter name"
+                placeholder="<?php echo __('Parameter name', 'simple-jwt-login');?>"
                 style="display: inline-block"
-                value="<?php echo $jwtSettings->getGeneralSettings()->getRequestKeyHeader();?>"
+                value="<?php echo Sanitizer::attribute($jwtSettings->getGeneralSettings()->getRequestKeyHeader());?>"
         />
     </div>
     <div class="col-md-2">
@@ -329,7 +331,7 @@ if (!defined('ABSPATH')) {
         </select>
     </div>
     <div class="col-md-5">
-        <div class="code"><?php echo $jwtSettings->getGeneralSettings()->getRequestKeyHeader();?>: Bearer <b>YOUR_JWT_HERE</b></div>
+        <div class="code"><?php echo Sanitizer::text($jwtSettings->getGeneralSettings()->getRequestKeyHeader());?>: Bearer <b>YOUR_JWT_HERE</b></div>
     </div>
 </div>
 
@@ -351,10 +353,11 @@ if (!defined('ABSPATH')) {
         <input type="checkbox" name="api_middleware[enabled]"
                value="1" <?php echo $jwtSettings->getGeneralSettings()->isMiddlewareEnabled() ? 'checked="checked"' : "" ?> />
         <span class="beta">beta</span>
-        All WordPress endpoints checks for JWT authentication <Br/>
+        <?php echo __('All WordPress endpoints checks for JWT authentication','simple-jwt-login');?>
+        <br/>
         <p class="text-muted">
-            * If the JWT is provided on other endpoints, the plugin will try to authenticate the user from the JWT in
-            order to perform that API call.
+            * <?php echo __('If the JWT is provided on other endpoints, the plugin will try to authenticate the user from the JWT in
+            order to perform that API call.','simple-jwt-login');?>
         </p>
     </div>
 </div>

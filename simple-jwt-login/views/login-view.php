@@ -1,5 +1,6 @@
 <?php
 
+use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -139,18 +140,22 @@ if (! defined('ABSPATH')) {
         </select>
     </div>
     <div class="col-md-4">
-        <label for="jwt_login_by_paramter"><?php echo __(
-                    'JWT parameter key | JWT payload data id ( key name where the option is saved )',
+        <label for="jwt_login_by_paramter">
+            <?php echo __(
+                    'JWT parameter key | JWT payload data id (key name where the option is saved)',
                     'simple-jwt-login'
-                ); ?></label>
+                ); ?>
+
+            <span class="required">*</span>
+        </label>
 
         <input type="text" name="jwt_login_by_parameter" class="form-control"
                id="jwt_login_by_paramter"
-               value="<?php echo $jwtSettings->getLoginSettings()->getJwtLoginByParameter(); ?>"
+               value="<?php echo Sanitizer::attribute($jwtSettings->getLoginSettings()->getJwtLoginByParameter()); ?>"
                placeholder="<?php echo __('JWT Parameter here. Example: email', 'simple-jwt-login'); ?>"
         />
         <br/>
-        <p>
+        <p class="text-muted">
 			<?php echo __('You can use `.` (dot) as a separator for sub-array values.', 'simple-jwt-login'); ?>
             <br/>
 			<?php echo __('Example: Use `user.id` for getting key `id` from array `user`', 'simple-jwt-login'); ?>
@@ -175,7 +180,7 @@ if (! defined('ABSPATH')) {
         </h3>
         <div class="form-group">
             <input type="radio" id="redirect_dashboard" name="redirect" class="form-control"
-                   value="<?php echo LoginSettings::REDIRECT_DASHBOARD; ?>"
+                   value="<?php echo Sanitizer::attribute(LoginSettings::REDIRECT_DASHBOARD); ?>"
 				<?php
                 echo($jwtSettings->getLoginSettings()->getRedirect() === LoginSettings::REDIRECT_DASHBOARD
                     ? 'checked'
@@ -185,7 +190,7 @@ if (! defined('ABSPATH')) {
             <label for="redirect_dashboard"><?php echo __('Dashboard', 'simple-jwt-login'); ?></label>
             <br/>
             <input type="radio" id="redirect_homepage" name="redirect" class="form-control"
-                   value="<?php echo LoginSettings::REDIRECT_HOMEPAGE; ?>"
+                   value="<?php echo Sanitizer::attribute(LoginSettings::REDIRECT_HOMEPAGE); ?>"
 				<?php
                 echo($jwtSettings->getLoginSettings()->getRedirect() === LoginSettings::REDIRECT_HOMEPAGE
                     ? 'checked'
@@ -195,14 +200,14 @@ if (! defined('ABSPATH')) {
             <label for="redirect_homepage"><?php echo __('Homepage', 'simple-jwt-login'); ?></label>
             <br/>
             <input type="radio" id="no_redirect" name="redirect" class="form-control"
-                   value="<?php echo LoginSettings::NO_REDIRECT; ?>"
+                   value="<?php echo Sanitizer::attribute(LoginSettings::NO_REDIRECT); ?>"
                 <?php echo($jwtSettings->getLoginSettings()->getRedirect() === LoginSettings::NO_REDIRECT ? 'checked' : ''); ?>
             />
 
             <label for="no_redirect"><?php echo __('No Redirect', 'simple-jwt-login'); ?></label>
             <br/>
             <input type="radio" id="redirect_custom" name="redirect" class="form-control"
-                   value="<?php echo LoginSettings::REDIRECT_CUSTOM; ?>"
+                   value="<?php echo Sanitizer::attribute(LoginSettings::REDIRECT_CUSTOM); ?>"
 				<?php echo($jwtSettings->getLoginSettings()->getRedirect() === LoginSettings::REDIRECT_CUSTOM ? 'checked' : ''); ?>
             />
             <label for="redirect_custom"><?php echo __('Custom', 'simple-jwt-login'); ?></label>
@@ -212,7 +217,7 @@ if (! defined('ABSPATH')) {
                     'Example',
                     'simple-jwt-login'
                 ); ?>: https://www.your-site.com/sample-page"
-                   value="<?php echo $jwtSettings->getLoginSettings()->getCustomRedirectURL() ?>"
+                   value="<?php echo Sanitizer::attribute($jwtSettings->getLoginSettings()->getCustomRedirectURL()) ?>"
                    style="<?php echo($jwtSettings->getLoginSettings()->getRedirect() === LoginSettings::REDIRECT_CUSTOM
                        ? ''
                        : 'display:none;'
@@ -220,7 +225,17 @@ if (! defined('ABSPATH')) {
             />
         </div>
     </div>
+</div>
+<hr />
+
+<div class="row">
     <div class="col-md-12">
+        <h3 class="section-title">
+            <?php echo __('Other options', 'simple-jwt-login');?>
+        </h3>
+    </div>
+    <div class="col-md-12">
+
         <input
                 type="checkbox"
                 name="include_login_request_parameters"
@@ -263,18 +278,20 @@ if (! defined('ABSPATH')) {
         </p>
 
         <div class="simple-jwt-url-variables">
-            You can use the following variables in your URL:<br />
+            <?php echo __('You can use the following variables in your URL', 'simple-jwt-login');?>:
+            <br />
             <ol>
-                <li><b>{{site_url}}</b> : Site URL</li>
-                <li><b>{{user_id}}</b> : Logged in user ID</li>
-                <li><b>{{user_email}}</b> : Logged in user email</li>
-                <li><b>{{user_login}}</b> : Logged in username</li>
-                <li><b>{{user_first_name}}</b> : User first name</li>
-                <li><b>{{user_last_name}}</b> : User last name</li>
-                <li><b>{{user_nicename}}</b> : User nice name</li>
+                <li><b>{{site_url}}</b> : <?php echo __('Site URL', 'simple-jwt-login');?></li>
+                <li><b>{{user_id}}</b> : <?php echo __('Logged in user ID', 'simple-jwt-login');?></li>
+                <li><b>{{user_email}}</b> : <?php echo __('Logged in user email', 'simple-jwt-login');?></li>
+                <li><b>{{user_login}}</b> : <?php echo __('Logged in username', 'simple-jwt-login');?></li>
+                <li><b>{{user_first_name}}</b> : <?php echo __('User first name', 'simple-jwt-login');?></li>
+                <li><b>{{user_last_name}}</b> : <?php echo __('User last name', 'simple-jwt-login');?></li>
+                <li><b>{{user_nicename}}</b> : <?php echo __('User nice name', 'simple-jwt-login');?></li>
             </ol>
-            <Br />
-            Example: https://<?php echo site_url();?>?param1={{site_url}}&amp;param2={{user_id}}
+            <br />
+            <?php echo __('Example', 'simple-jwt-login');?>:
+            https://<?php echo site_url();?>?param1={{site_url}}&amp;param2={{user_id}}
         </div>
     </div>
 </div>
@@ -288,13 +305,13 @@ if (! defined('ABSPATH')) {
         ); ?>:</h3>
         <div class="form-group">
             <input type="text" id="login_ip" name="login_ip" class="form-control"
-                   value="<?php echo $jwtSettings->getLoginSettings()->getAllowedLoginIps(); ?>"
+                   value="<?php echo Sanitizer::attribute($jwtSettings->getLoginSettings()->getAllowedLoginIps()); ?>"
                    placeholder="<?php echo __('Enter IP here', 'simple-jwt-login'); ?>"/>
-            <small>
+            <p class="text-muted">
 				<?php echo __("If you want to add more IP's, separate them by comma", 'simple-jwt-login'); ?>.
                 <br/>
 				<?php echo __('Leave blank to allow all IP addresses', 'simple-jwt-login'); ?>.
-            </small>
+            </p>
         </div>
     </div>
 </div>

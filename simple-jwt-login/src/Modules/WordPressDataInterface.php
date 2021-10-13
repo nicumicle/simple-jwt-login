@@ -250,4 +250,10 @@ interface WordPressDataInterface
      * @return false|int
      */
     public function checkNonce($nonceValue, $nonceName);
+
+    /**
+     * @param int $length
+     * @return string
+     */
+    public function generatePassword($length);
 }

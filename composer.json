@@ -26,21 +26,29 @@
   "scripts": {
     "tests": "vendor/bin/phpunit tests/",
     "phpcs": "vendor/bin/phpcs simple-jwt-login/src",
+    "phpmd-design": "vendor/bin/phpmd simple-jwt-login/src/ text design",
     "phpmd-cleancode": "vendor/bin/phpmd simple-jwt-login/src/ text cleancode",
+    "phpmd-unusedcode": "vendor/bin/phpmd simple-jwt-login/src/ text unusedcode",
     "phpmd-naming": "vendor/bin/phpmd simple-jwt-login/src/ text naming",
     "phpmd-controversial": "vendor/bin/phpmd simple-jwt-login/src/ text controversial",
+    "phpstan": "vendor/bin/phpstan analyse simple-jwt-login/src",
     "check-plugin": [
-        "vendor/bin/phpcs simple-jwt-login/src",
-        "vendor/bin/phpmd simple-jwt-login/src/ text design",
-        "vendor/bin/phpmd simple-jwt-login/src/ text cleancode",
-        "vendor/bin/phpmd simple-jwt-login/ text unusedcode",
-        "vendor/bin/phpmd simple-jwt-login/ text naming",
-        "vendor/bin/phpmd simple-jwt-login/ text controversial",
-        "vendor/bin/phpstan analyse simple-jwt-login/src",
-        "vendor/bin/phpunit tests/"
+        "@phpcs",
+        "@phpmd-design",
+        "@phpmd-cleancode",
+        "@phpmd-unusedcode",
+        "@phpmd-naming",
+        "@phpmd-controversial",
+        "@phpstan",
+        "@tests"
     ]
   },
   "scripts-descriptions": {
     "check-plugin": "Check plugin code and run tests"
+  },
+  "support": {
+    "issues": "https://github.com/nicumicle/simple-jwt-login/issues",
+    "source": "https://github.com/nicumicle/simple-jwt-login",
+    "docs": "https://simplejwtlogin.com"
   }
 }

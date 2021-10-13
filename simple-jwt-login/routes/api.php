@@ -69,7 +69,7 @@ add_action('rest_api_init', function () {
                 return $endpoint;
             }
 
-            $jwt = $routeService->getJwtFromRequestHeaderOrCookie($_SERVER);
+            $jwt = $routeService->getJwtFromRequestHeaderOrCookie();
             if (! empty($jwt)) {
                 try {
                     $userID = $routeService->getUserIdFromJWT($jwt);

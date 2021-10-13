@@ -107,6 +107,12 @@ jQuery(document).ready(
 
         simple_jwt_bind_decryption_key();
         simple_jwt_bind_reset_password();
+
+        // TABS
+        $('#simple-jwt-login-tabs a').click(function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+        });
     }(jQuery)
 );
 

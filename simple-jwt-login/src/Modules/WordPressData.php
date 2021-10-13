@@ -8,7 +8,7 @@ use WP_User;
 
 class WordPressData implements WordPressDataInterface
 {
-    public const NONCE_NAME = 'simple-jwt-login-nonce';
+    const NONCE_NAME = 'simple-jwt-login-nonce';
 
     /**
      * @param int $userID
@@ -400,5 +400,14 @@ class WordPressData implements WordPressDataInterface
     public function checkNonce($nonceValue, $nonceName)
     {
         return wp_verify_nonce($nonceValue, $nonceName);
+    }
+
+    /**
+     * @param int $length
+     * @return string
+     */
+    public function generatePassword($length)
+    {
+        return wp_generate_password($length);
     }
 }

@@ -49,7 +49,7 @@
 }
 
 /**
-### Tab content designa
+  Tab content design
  */
 #simple-jwt-login-tab-content {
     border: 1px solid #DDD;
@@ -59,9 +59,17 @@
     border-radius: 0.3em;
     background: #FFF;
 }
+/**
+   Fix tabs on some WorPress data
+ */
+#simple-jwt-login #simple-jwt-login-tab-content.tab-content > .tab-pane.active {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
 
 /**
-### DASHBOARD
+  Dashboard
  */
 #simple-jwt-login .card-shadow {
     box-shadow: 6px 6px 32px -10px rgba(51, 45, 51, 0.33);
@@ -88,7 +96,7 @@
 }
 
 /**
-### Generate code
+  Generate code
  */
 #simple-jwt-login .generated-code {
     min-height: 40px;
@@ -131,10 +139,11 @@
     display: inline-block;
     text-align: center;
     line-height: 22px;
+    margin-top: 10px;
 }
 
 /**
-### Toggle Key
+  Toggle Key
  */
 #simple-jwt-login .toggle_key_button .toggle-image {
     background-image: url("../images/eye-visible.svg");
@@ -155,7 +164,6 @@
     border: 1px solid #E00;
     color: #FFF;
     border-radius: 0.3em;
-    border-radius: 0.3em;
     padding: 2px 10px;
 }
 
@@ -167,7 +175,7 @@
 }
 
 /**
-### Auth codes
+  Auth codes
  */
 #simple-jwt-login .auth-code-delete-container a {
     width: 100%;
@@ -186,7 +194,7 @@
 }
 
 /**
-### Authentication
+  Authentication
  */
 
 #simple-jwt-login .authentication_jwt_container,
@@ -223,17 +231,27 @@
     font-weight: 400;
 }
 /**
-Reset password
+  Reset password
 */
 #simple-jwt-login #reset_password_email_body{
     min-height: 200px;
 }
 
-/**
-Fix tabs on some WorPress data
- */
-#simple-jwt-login #simple-jwt-login-tab-content.tab-content > .tab-pane.active {
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
+#simple-jwt-login .text-right{
+    text-align: right;
+}
+
+#simple-jwt-login .code-info{
+    color: #6c757d!important;
+    font-size: 12px;
+}
+#simple-jwt-login #decryption_key{
+    height: 35px;
+}
+#simple-jwt-login .auth_row {
+    margin-top: 10px;
+}
+#simple-jwt-login small{
+    color: #6c757d!important;
+    font-size: 10px;
 }

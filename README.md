@@ -50,13 +50,13 @@ If you want to upload the simple-jwt-login plugin to your website:
 ### Running tests
 
 ```
-    vendor/bin/phpunit tests/
+    composer tests
 ```
 
 ### Coding Standards
 
 ```
-    vendor/bin/phpcs simple-jwt-login/src
+    composer phpcs
 ```
 
 ### Check plugin

@@ -1,5 +1,6 @@
 <?php
 
+use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Modules\AuthCodeBuilder;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
@@ -23,7 +24,7 @@ if (!defined('ABSPATH')) {
             <br/>
             <?php echo __('For security reasons please use some random strings', 'simple-jwt-login'); ?>.
             <br/>
-            <small><?php echo __('Example: THISISMySpeCiaLAUthCode', 'simple-jwt-login'); ?></small>
+            <p class="text-muted"><?php echo __('Example: THISISMySpeCiaLAUthCode', 'simple-jwt-login'); ?></p>
         </p>
         <br/>
     </div>
@@ -36,7 +37,7 @@ if (!defined('ABSPATH')) {
         <label for="auth_code_key"><b><?php echo __('Auth Code URL Key', 'simple-jwt-login'); ?></b></label> :
         <input
                 name="auth_code_key"
-                value="<?php echo $jwtSettings->getAuthCodesSettings()->getAuthCodeKey(); ?>"
+                value="<?php echo Sanitizer::attribute($jwtSettings->getAuthCodesSettings()->getAuthCodeKey()); ?>"
                 class="form-control"
                 id="auth_code_key"
                 placeholder="<?php echo __('Auth Code Key', 'simple-jwt-login'); ?>"
@@ -87,19 +88,19 @@ if (!defined('ABSPATH')) {
                         <input type="text"
                                name="auth_codes[code][]"
                                class="form-control"
-                               value="<?php echo $code->getCode(); ?>"
+                               value="<?php echo Sanitizer::attribute($code->getCode()); ?>"
                                placeholder="<?php echo __('Authentication Key', 'simple-jwt-login'); ?>"
                         />
                         <input type="text"
                                name="auth_codes[role][]"
                                class="form-control"
-                               value="<?php echo $code->getRole(); ?>"
+                               value="<?php echo Sanitizer::attribute($code->getRole()); ?>"
                                placeholder="<?php echo $authCodeRolePlaceholder; ?>"
                         />
                         <input type="text"
                                name="auth_codes[expiration_date][]"
                                class="form-control"
-                               value="<?php echo $code->getExpirationDate(); ?>"
+                               value="<?php echo Sanitizer::attribute($code->getExpirationDate()); ?>"
                                placeholder="<?php echo $authCodeExpirationDatePlaceholder; ?>"
                         />
                         <div class="input-group-addon auth-code-delete-container">

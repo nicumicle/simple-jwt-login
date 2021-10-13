@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 3.3.1 (13 Oct 2021)
+- Sanitize load views
+
 ## 3.3.0 (13 Oct 2021)
 - Sanitize all displayed texts
 - Add missing translation texts

@@ -2,6 +2,8 @@
 
 namespace SimpleJWTLogin\Helpers;
 
+use Exception;
+
 class Sanitizer
 {
     /**
@@ -38,5 +40,19 @@ class Sanitizer
     public static function text($string)
     {
         return self::html($string);
+    }
+
+    /** @param string $view
+     * @throws Exception
+     */
+    public static function path($view)
+    {
+        $regex = '/[\.|\\|\/]?((?:[a-zA-Z0-9_\-.]+)\.php)/mi';
+        preg_match($regex, $view, $matches);
+
+        if (isset($matches[1])) {
+            return self::text($matches[1]);
+        }
+        throw new Exception(__('Invalid path provided or file does not exists', 'simple-jwt-login'));
     }
 }

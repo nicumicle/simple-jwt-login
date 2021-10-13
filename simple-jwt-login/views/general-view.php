@@ -92,7 +92,7 @@ if (!defined('ABSPATH')) {
                     $selected = $jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm() === $alg
                         ? 'selected'
                         : '';
-                    echo "<option value=\"" . $alg . "\" " . $selected . ">" . $alg . "</option>\n";
+                    echo "<option value=\"" . Sanitizer::attribute($alg) . "\" " . $selected . ">" . Sanitizer::html($alg) . "</option>\n";
                 }
                 ?>
             </select>

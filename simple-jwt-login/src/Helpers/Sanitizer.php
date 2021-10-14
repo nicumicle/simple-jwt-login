@@ -49,7 +49,7 @@ class Sanitizer
      */
     public static function path($view)
     {
-        $regex = '/[\.|\\|\/]?((?:[a-zA-Z0-9_\-.]+)\.php)/mi';
+        $regex = '/(?:[\.\/])*((?:[a-zA-Z0-9_\-.]+)\.php)/mi';
         preg_match($regex, $view, $matches);
 
         if (isset($matches[1])) {

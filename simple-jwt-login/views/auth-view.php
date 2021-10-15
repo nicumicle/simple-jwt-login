@@ -1,6 +1,5 @@
 <?php
 
-use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -96,7 +95,7 @@ if (! defined('ABSPATH')) {
                     'password' => __('Password', 'simple-jwt-login')
                 ];
 
-                echo $jwtSettings->generateExampleLink(RouteService::AUTHENTICATION_ROUTE, $sampleUrlParams);
+                echo esc_html($jwtSettings->generateExampleLink(RouteService::AUTHENTICATION_ROUTE, $sampleUrlParams));
                 ?>
             </span>
             <span class="copy-button">
@@ -204,24 +203,21 @@ if (! defined('ABSPATH')) {
                                     ?>
                                     <input
                                             type="checkbox"
-                                            id="jwt_payload_<?php echo Sanitizer::attribute($parameter);?>"
+                                            id="jwt_payload_<?php echo esc_attr($parameter);?>"
                                             name="jwt_payload[]"
-                                            value="<?php echo Sanitizer::attribute($parameter); ?>"
+                                            value="<?php echo esc_attr($parameter); ?>"
                                          <?php
-                                         echo $jwtSettings->getAuthenticationSettings()
-                                             ->isPayloadDataEnabled($parameter)
-                                             ? 'checked'
-                                             : ''
+                                         echo esc_html($jwtSettings->getAuthenticationSettings()->isPayloadDataEnabled($parameter) ? 'checked' : '')
                                             ?>
                                     />
 	                                <?php
                                 } ?>
                             </span>
-                            <label class="bold" for="jwt_payload_<?php echo Sanitizer::attribute($parameter);?>">
-                                <span class="key">"<?php echo Sanitizer::attribute($parameter); ?>"</span>
+                            <label class="bold" for="jwt_payload_<?php echo esc_attr($parameter);?>">
+                                <span class="key">"<?php echo esc_html($parameter); ?>"</span>
                                 <span class="delimiter">:</span>
-                                <span class="value">"<?php echo Sanitizer::attribute($sampleValue); ?>"</span>
-                                <span class="line-separator"><?php echo Sanitizer::text($lineSeparator); ?></span>
+                                <span class="value">"<?php echo esc_html($sampleValue); ?>"</span>
+                                <span class="line-separator"><?php echo esc_html($lineSeparator); ?></span>
                             </label>
                             </li>
 							<?php
@@ -282,7 +278,7 @@ if (! defined('ABSPATH')) {
                 type="text"
                 name="jwt_auth_ttl"
                 class="form-control" id="jwt_auth_ttl"
-                value="<?php echo Sanitizer::attribute($jwtSettings->getAuthenticationSettings()->getAuthJwtTtl()); ?>"
+                value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAuthJwtTtl()); ?>"
                 placeholder="<?php echo __('Number of minutes', 'simple-jwt-login') ?>"
         />
     </div>
@@ -316,7 +312,7 @@ if (! defined('ABSPATH')) {
                 name="jwt_auth_refresh_ttl"
                 class="form-control"
                 id="jwt_auth_refresh_ttl"
-                value="<?php echo Sanitizer::attribute($jwtSettings->getAuthenticationSettings()->getAuthJwtRefreshTtl()); ?>"
+                value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAuthJwtRefreshTtl()); ?>"
                 placeholder="<?php echo __('Number of minutes', 'simple-jwt-login') ?>"
         />
     </div>
@@ -342,7 +338,7 @@ if (! defined('ABSPATH')) {
                 $sampleUrlParams = [
                     $jwtSettings->getGeneralSettings()->getRequestKeyUrl() => 'YOUR_JWT',
                 ];
-                echo $jwtSettings->generateExampleLink(RouteService::AUTHENTICATION_REFRESH_ROUTE, $sampleUrlParams);
+                echo esc_html($jwtSettings->generateExampleLink(RouteService::AUTHENTICATION_REFRESH_ROUTE, $sampleUrlParams));
                 ?>
             </span>
             <span class="copy-button">
@@ -383,7 +379,7 @@ if (! defined('ABSPATH')) {
                 $sampleUrlParams = [
                     $jwtSettings->getGeneralSettings()->getRequestKeyUrl() => 'YOUR_JWT',
                 ];
-                echo $jwtSettings->generateExampleLink(RouteService::AUTHENTICATION_VALIDATE_ROUTE, $sampleUrlParams);
+                echo esc_html($jwtSettings->generateExampleLink(RouteService::AUTHENTICATION_VALIDATE_ROUTE, $sampleUrlParams));
                 ?>
             </span>
             <span class="copy-button">
@@ -422,7 +418,7 @@ if (! defined('ABSPATH')) {
                 $sampleUrlParams = [
                     $jwtSettings->getGeneralSettings()->getRequestKeyUrl() => 'YOUR_JWT',
                 ];
-                echo $jwtSettings->generateExampleLink(RouteService::AUTHENTICATION_REVOKE, $sampleUrlParams);
+                echo esc_html($jwtSettings->generateExampleLink(RouteService::AUTHENTICATION_REVOKE, $sampleUrlParams));
                 ?>
             </span>
             <span class="copy-button">
@@ -451,7 +447,7 @@ if (! defined('ABSPATH')) {
             ); ?>:</h3>
         <div class="form-group">
             <input type="text" id="auth_ip" name="auth_ip" class="form-control"
-                   value="<?php echo Sanitizer::attribute($jwtSettings->getAuthenticationSettings()->getAllowedIps()); ?>"
+                   value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAllowedIps()); ?>"
                    placeholder="<?php echo __('Enter IP here', 'simple-jwt-login'); ?>"/>
             <p class="text-muted">
                 <?php echo __("If you want to add more IP's, separate them by comma", 'simple-jwt-login'); ?>.

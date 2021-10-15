@@ -1,7 +1,6 @@
 <?php
 namespace SimpleJWTLogin\Modules\Settings;
 
-use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Modules\WordPressDataInterface;
 
 abstract class BaseSettings

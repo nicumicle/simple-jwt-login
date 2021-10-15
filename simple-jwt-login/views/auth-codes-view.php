@@ -1,6 +1,5 @@
 <?php
 
-use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Modules\AuthCodeBuilder;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
@@ -37,7 +36,7 @@ if (!defined('ABSPATH')) {
         <label for="auth_code_key"><b><?php echo __('Auth Code URL Key', 'simple-jwt-login'); ?></b></label> :
         <input
                 name="auth_code_key"
-                value="<?php echo Sanitizer::attribute($jwtSettings->getAuthCodesSettings()->getAuthCodeKey()); ?>"
+                value="<?php echo esc_attr($jwtSettings->getAuthCodesSettings()->getAuthCodeKey()); ?>"
                 class="form-control"
                 id="auth_code_key"
                 placeholder="<?php echo __('Auth Code Key', 'simple-jwt-login'); ?>"
@@ -88,19 +87,19 @@ if (!defined('ABSPATH')) {
                         <input type="text"
                                name="auth_codes[code][]"
                                class="form-control"
-                               value="<?php echo Sanitizer::attribute($code->getCode()); ?>"
+                               value="<?php echo esc_attr($code->getCode()); ?>"
                                placeholder="<?php echo __('Authentication Key', 'simple-jwt-login'); ?>"
                         />
                         <input type="text"
                                name="auth_codes[role][]"
                                class="form-control"
-                               value="<?php echo Sanitizer::attribute($code->getRole()); ?>"
+                               value="<?php echo esc_attr($code->getRole()); ?>"
                                placeholder="<?php echo $authCodeRolePlaceholder; ?>"
                         />
                         <input type="text"
                                name="auth_codes[expiration_date][]"
                                class="form-control"
-                               value="<?php echo Sanitizer::attribute($code->getExpirationDate()); ?>"
+                               value="<?php echo esc_attr($code->getExpirationDate()); ?>"
                                placeholder="<?php echo $authCodeExpirationDatePlaceholder; ?>"
                         />
                         <div class="input-group-addon auth-code-delete-container">

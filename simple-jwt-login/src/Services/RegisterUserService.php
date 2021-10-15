@@ -4,7 +4,6 @@ namespace SimpleJWTLogin\Services;
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
-use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Libraries\JWT;
 use SimpleJWTLogin\Modules\AuthCodeBuilder;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
@@ -35,10 +34,10 @@ class RegisterUserService extends BaseService implements ServiceInterface
     public function createUser()
     {
 
-        $email = Sanitizer::text($this->request['email']);
+        $email = esc_html($this->request['email']);
         $extraParameters = UserProperties::getExtraParametersFromRequest($this->request);
         $username = !empty($extraParameters['user_login'])
-            ? Sanitizer::text($extraParameters['user_login'])
+            ? esc_html($extraParameters['user_login'])
             : $email;
 
         if ($this->wordPressData->checkUserExistsByUsernameAndEmail($username, $email) == true) {
@@ -50,7 +49,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
 
         $password = $this->jwtSettings->getRegisterSettings()->isRandomPasswordForCreateUserEnabled()
             ? $this->randomString(10)
-            : Sanitizer::text($this->request['password']);
+            : esc_html($this->request['password']);
 
         $newUserRole = $this->jwtSettings->getRegisterSettings()->getNewUSerProfile();
         if (isset($this->request[$this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()])) {
@@ -94,7 +93,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
                     if (!in_array($metaKey, $allowedUserMetaKeys)) {
                         continue;
                     }
-                    $this->wordPressData->addUserMeta($userId, Sanitizer::text($metaKey), Sanitizer::text($metaValue));
+                    $this->wordPressData->addUserMeta($userId, esc_html($metaKey), esc_html($metaValue));
                 }
             }
         }

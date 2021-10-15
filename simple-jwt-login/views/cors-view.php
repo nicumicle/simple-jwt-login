@@ -1,6 +1,5 @@
 <?php
 
-use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
 if (!defined('ABSPATH')) {
@@ -51,7 +50,7 @@ if (!defined('ABSPATH')) {
     </div>
     <div class="col-md-8">
         <input type="text" class="form-control" name="cors[allow_origin]"
-               value="<?php echo Sanitizer::attribute($jwtSettings->getCorsSettings()->getAllowOrigin()); ?>"/>
+               value="<?php echo esc_attr($jwtSettings->getCorsSettings()->getAllowOrigin()); ?>"/>
         <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin" target="_blank">
             <?php echo __('Read more', 'simple-jwt-login'); ?>
         </a>
@@ -67,7 +66,7 @@ if (!defined('ABSPATH')) {
     </div>
     <div class="col-md-8">
         <input type="text" class="form-control" name="cors[allow_methods]"
-               value="<?php echo Sanitizer::attribute($jwtSettings->getCorsSettings()->getAllowMethods()); ?>"/>
+               value="<?php echo esc_attr($jwtSettings->getCorsSettings()->getAllowMethods()); ?>"/>
         <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Methods"
            target="_blank">
             <?php echo __('Read more', 'simple-jwt-login'); ?>
@@ -83,7 +82,7 @@ if (!defined('ABSPATH')) {
     </div>
     <div class="col-md-8">
         <input type="text" class="form-control" name="cors[allow_headers]"
-               value="<?php echo Sanitizer::attribute($jwtSettings->getCorsSettings()->getAllowHeaders()); ?>"/>
+               value="<?php echo esc_attr($jwtSettings->getCorsSettings()->getAllowHeaders()); ?>"/>
         <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Headers"
            target="_blank">
             <?php echo __('Read more', 'simple-jwt-login'); ?>

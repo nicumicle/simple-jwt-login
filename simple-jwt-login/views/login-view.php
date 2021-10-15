@@ -1,6 +1,5 @@
 <?php
 
-use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -49,7 +48,7 @@ if (! defined('ABSPATH')) {
             if ($jwtSettings->getLoginSettings()->isAuthKeyRequiredOnLogin()) {
                 $sampleUrlParams[ $jwtSettings->getAuthCodesSettings()->getAuthCodeKey() ] = __('AUTH_KEY_VALUE', 'simple-jwt-login');
             }
-            echo $jwtSettings->generateExampleLink('autologin', $sampleUrlParams);
+            echo esc_html($jwtSettings->generateExampleLink('autologin', $sampleUrlParams));
             ?>
         </span>
             <span class="copy-button">
@@ -151,7 +150,7 @@ if (! defined('ABSPATH')) {
 
         <input type="text" name="jwt_login_by_parameter" class="form-control"
                id="jwt_login_by_paramter"
-               value="<?php echo Sanitizer::attribute($jwtSettings->getLoginSettings()->getJwtLoginByParameter()); ?>"
+               value="<?php echo esc_attr($jwtSettings->getLoginSettings()->getJwtLoginByParameter()); ?>"
                placeholder="<?php echo __('JWT Parameter here. Example: email', 'simple-jwt-login'); ?>"
         />
         <br/>
@@ -180,7 +179,7 @@ if (! defined('ABSPATH')) {
         </h3>
         <div class="form-group">
             <input type="radio" id="redirect_dashboard" name="redirect" class="form-control"
-                   value="<?php echo Sanitizer::attribute(LoginSettings::REDIRECT_DASHBOARD); ?>"
+                   value="<?php echo esc_attr(LoginSettings::REDIRECT_DASHBOARD); ?>"
 				<?php
                 echo($jwtSettings->getLoginSettings()->getRedirect() === LoginSettings::REDIRECT_DASHBOARD
                     ? 'checked'
@@ -190,7 +189,7 @@ if (! defined('ABSPATH')) {
             <label for="redirect_dashboard"><?php echo __('Dashboard', 'simple-jwt-login'); ?></label>
             <br/>
             <input type="radio" id="redirect_homepage" name="redirect" class="form-control"
-                   value="<?php echo Sanitizer::attribute(LoginSettings::REDIRECT_HOMEPAGE); ?>"
+                   value="<?php echo esc_attr(LoginSettings::REDIRECT_HOMEPAGE); ?>"
 				<?php
                 echo($jwtSettings->getLoginSettings()->getRedirect() === LoginSettings::REDIRECT_HOMEPAGE
                     ? 'checked'
@@ -200,14 +199,14 @@ if (! defined('ABSPATH')) {
             <label for="redirect_homepage"><?php echo __('Homepage', 'simple-jwt-login'); ?></label>
             <br/>
             <input type="radio" id="no_redirect" name="redirect" class="form-control"
-                   value="<?php echo Sanitizer::attribute(LoginSettings::NO_REDIRECT); ?>"
+                   value="<?php echo esc_attr(LoginSettings::NO_REDIRECT); ?>"
                 <?php echo($jwtSettings->getLoginSettings()->getRedirect() === LoginSettings::NO_REDIRECT ? 'checked' : ''); ?>
             />
 
             <label for="no_redirect"><?php echo __('No Redirect', 'simple-jwt-login'); ?></label>
             <br/>
             <input type="radio" id="redirect_custom" name="redirect" class="form-control"
-                   value="<?php echo Sanitizer::attribute(LoginSettings::REDIRECT_CUSTOM); ?>"
+                   value="<?php echo esc_attr(LoginSettings::REDIRECT_CUSTOM); ?>"
 				<?php echo($jwtSettings->getLoginSettings()->getRedirect() === LoginSettings::REDIRECT_CUSTOM ? 'checked' : ''); ?>
             />
             <label for="redirect_custom"><?php echo __('Custom', 'simple-jwt-login'); ?></label>
@@ -217,7 +216,7 @@ if (! defined('ABSPATH')) {
                     'Example',
                     'simple-jwt-login'
                 ); ?>: https://www.your-site.com/sample-page"
-                   value="<?php echo Sanitizer::attribute($jwtSettings->getLoginSettings()->getCustomRedirectURL()) ?>"
+                   value="<?php echo esc_attr($jwtSettings->getLoginSettings()->getCustomRedirectURL()) ?>"
                    style="<?php echo($jwtSettings->getLoginSettings()->getRedirect() === LoginSettings::REDIRECT_CUSTOM
                        ? ''
                        : 'display:none;'
@@ -305,7 +304,7 @@ if (! defined('ABSPATH')) {
         ); ?>:</h3>
         <div class="form-group">
             <input type="text" id="login_ip" name="login_ip" class="form-control"
-                   value="<?php echo Sanitizer::attribute($jwtSettings->getLoginSettings()->getAllowedLoginIps()); ?>"
+                   value="<?php echo esc_attr($jwtSettings->getLoginSettings()->getAllowedLoginIps()); ?>"
                    placeholder="<?php echo __('Enter IP here', 'simple-jwt-login'); ?>"/>
             <p class="text-muted">
 				<?php echo __("If you want to add more IP's, separate them by comma", 'simple-jwt-login'); ?>.

@@ -1,6 +1,5 @@
 <?php
 
-use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Services\RouteService;
 use SimpleJWTLogin\Modules\Settings\DeleteUserSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
@@ -52,7 +51,7 @@ if (! defined('ABSPATH')) {
                 if ($jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete()) {
                     $sampleUrlParams[ $jwtSettings->getAuthCodesSettings()->getAuthCodeKey() ] = __('AUTH_KEY_VALUE', 'simple-jwt-login');
                 }
-                echo $jwtSettings->generateExampleLink(RouteService::USER_ROUTE, $sampleUrlParams);
+                echo esc_html($jwtSettings->generateExampleLink(RouteService::USER_ROUTE, $sampleUrlParams));
                 ?>
             </span>
             <span class="copy-button">
@@ -155,7 +154,7 @@ if (! defined('ABSPATH')) {
 
         <input type="text" name="jwt_delete_by_parameter" class="form-control"
                id="jwt_delete_by_parameter"
-               value="<?php echo Sanitizer::attribute($jwtSettings->getDeleteUserSettings()->getJwtDeleteByParameter()); ?>"
+               value="<?php echo esc_attr($jwtSettings->getDeleteUserSettings()->getJwtDeleteByParameter()); ?>"
                placeholder="<?php echo __('JWT Parameter here. Example: email', 'simple-jwt-login'); ?>"
         />
         <br/>
@@ -176,7 +175,7 @@ if (! defined('ABSPATH')) {
         ); ?>:</h3>
         <div class="form-group">
             <input type="text" id="delete_ip" name="delete_ip" class="form-control"
-                   value="<?php echo Sanitizer::attribute($jwtSettings->getDeleteUserSettings()->getAllowedDeleteIps()); ?>"
+                   value="<?php echo esc_attr($jwtSettings->getDeleteUserSettings()->getAllowedDeleteIps()); ?>"
                    placeholder="<?php echo __('Enter IP here', 'simple-jwt-login'); ?>"/>
             <p class="text-muted">
 				<?php echo __("If you want to add more IP's, separate them by comma", 'simple-jwt-login'); ?>.

@@ -1,7 +1,6 @@
 <?php
 
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyWpConfig;
-use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Libraries\JWT;
 use SimpleJWTLogin\Modules\Settings\GeneralSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
@@ -31,7 +30,7 @@ if (!defined('ABSPATH')) {
             <?php echo __('Route Namespace', 'simple-jwt-login'); ?> <span class="required">*</span>
         </h3>
         <div class="form-group">
-            <input type="text" name="route_namespace" value="<?php echo Sanitizer::attribute($jwtSettings->getGeneralSettings()->getRouteNamespace()); ?>"
+            <input type="text" name="route_namespace" value="<?php echo esc_attr($jwtSettings->getGeneralSettings()->getRouteNamespace()); ?>"
                    class="form-control"
                    placeholder="<?php echo __('Default route namespace', 'simple-jwt-login'); ?>"
             />
@@ -92,7 +91,7 @@ if (!defined('ABSPATH')) {
                     $selected = $jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm() === $alg
                         ? 'selected'
                         : '';
-                    echo "<option value=\"" . Sanitizer::attribute($alg) . "\" " . $selected . ">" . Sanitizer::html($alg) . "</option>\n";
+                    echo "<option value=\"" . esc_attr($alg) . "\" " . $selected . ">" . esc_html($alg) . "</option>\n";
                 }
                 ?>
             </select>
@@ -138,7 +137,7 @@ if (!defined('ABSPATH')) {
             <div class="input-group" id="decryption_key_container">
                 <input type="password" name="decryption_key" class="form-control"
                        id="decryption_key"
-                       value="<?php echo Sanitizer::attribute($jwtSettings->getGeneralSettings()->getDecryptionKey()); ?>"
+                       value="<?php echo esc_attr($jwtSettings->getGeneralSettings()->getDecryptionKey()); ?>"
                        placeholder="<?php echo __('JWT decryption key here', 'simple-jwt-login'); ?>"
                 />
                 <div class="input-group-addon">
@@ -177,7 +176,7 @@ if (!defined('ABSPATH')) {
                     id="simple-jwt-login-public-key"
                     rows="6"
                     name="decryption_key_public"
-            ><?php echo Sanitizer::text($jwtSettings->getGeneralSettings()->getDecryptionKeyPublic()); ?></textarea>
+            ><?php echo esc_html($jwtSettings->getGeneralSettings()->getDecryptionKeyPublic()); ?></textarea>
         </div>
         <div class="form-group  decryption-textarea-group">
             <label for="simple-jwt-login-private-key">Private Key <span class="required">*</span></label>
@@ -186,7 +185,7 @@ if (!defined('ABSPATH')) {
                     id="simple-jwt-login-private-key"
                     rows="6"
                     name="decryption_key_private"
-            ><?php echo Sanitizer::text($jwtSettings->getGeneralSettings()->getDecryptionKeyPrivate()); ?></textarea>
+            ><?php echo esc_html($jwtSettings->getGeneralSettings()->getDecryptionKeyPrivate()); ?></textarea>
         </div>
 
         <div class="decryption-code-info">
@@ -236,7 +235,7 @@ if (!defined('ABSPATH')) {
                 required="required"
                 style="display: inline-block"
                 placeholder="<?php echo __('Parameter name', 'simple-jwt-login');?>"
-                value="<?php echo Sanitizer::attribute($jwtSettings->getGeneralSettings()->getRequestKeyUrl());?>"
+                value="<?php echo esc_attr($jwtSettings->getGeneralSettings()->getRequestKeyUrl());?>"
         />
     </div>
     <div class="col-md-2">
@@ -250,7 +249,7 @@ if (!defined('ABSPATH')) {
         </select>
     </div>
     <div class="col-md-5">
-        <div class="code">&<?php echo Sanitizer::text($jwtSettings->getGeneralSettings()->getRequestKeyUrl());?>=<b>YOUR JWT HERE</b></div>
+        <div class="code">&<?php echo esc_html($jwtSettings->getGeneralSettings()->getRequestKeyUrl());?>=<b>YOUR JWT HERE</b></div>
     </div>
 </div>
 
@@ -263,7 +262,7 @@ if (!defined('ABSPATH')) {
                 required="required"
                 style="display: inline-block"
                 placeholder="Parameter name"
-                value="<?php echo Sanitizer::attribute($jwtSettings->getGeneralSettings()->getRequestKeySession());?>"
+                value="<?php echo esc_attr($jwtSettings->getGeneralSettings()->getRequestKeySession());?>"
         />
     </div>
     <div class="col-md-2">
@@ -277,7 +276,7 @@ if (!defined('ABSPATH')) {
         </select>
     </div>
     <div class="col-md-5">
-        <div class="code">$_SESSION['<b><?php echo Sanitizer::text($jwtSettings->getGeneralSettings()->getRequestKeySession());?></b>']</div>
+        <div class="code">$_SESSION['<b><?php echo esc_html($jwtSettings->getGeneralSettings()->getRequestKeySession());?></b>']</div>
     </div>
 </div>
 
@@ -290,7 +289,7 @@ if (!defined('ABSPATH')) {
                 required="required"
                 style="display: inline-block"
                 placeholder="Parameter name"
-                value="<?php echo Sanitizer::attribute($jwtSettings->getGeneralSettings()->getRequestKeyCookie());?>"
+                value="<?php echo esc_attr($jwtSettings->getGeneralSettings()->getRequestKeyCookie());?>"
         />
     </div>
     <div class="col-md-2">
@@ -304,7 +303,7 @@ if (!defined('ABSPATH')) {
         </select>
     </div>
     <div class="col-md-5">
-        <div class="code">$_COOKIE['<b><?php echo Sanitizer::text($jwtSettings->getGeneralSettings()->getRequestKeyCookie());?></b>']</div>
+        <div class="code">$_COOKIE['<b><?php echo esc_html($jwtSettings->getGeneralSettings()->getRequestKeyCookie());?></b>']</div>
     </div>
 </div>
 
@@ -317,7 +316,7 @@ if (!defined('ABSPATH')) {
                 required="required"
                 placeholder="<?php echo __('Parameter name', 'simple-jwt-login');?>"
                 style="display: inline-block"
-                value="<?php echo Sanitizer::attribute($jwtSettings->getGeneralSettings()->getRequestKeyHeader());?>"
+                value="<?php echo esc_attr($jwtSettings->getGeneralSettings()->getRequestKeyHeader());?>"
         />
     </div>
     <div class="col-md-2">
@@ -331,7 +330,7 @@ if (!defined('ABSPATH')) {
         </select>
     </div>
     <div class="col-md-5">
-        <div class="code"><?php echo Sanitizer::text($jwtSettings->getGeneralSettings()->getRequestKeyHeader());?>: Bearer <b>YOUR_JWT_HERE</b></div>
+        <div class="code"><?php echo esc_html($jwtSettings->getGeneralSettings()->getRequestKeyHeader());?>: Bearer <b>YOUR_JWT_HERE</b></div>
     </div>
 </div>
 

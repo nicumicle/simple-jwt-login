@@ -1,6 +1,5 @@
 <?php
 
-use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Services\RouteService;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -60,7 +59,7 @@ if (!defined('ABSPATH')) {
                 if ($jwtSettings->getRegisterSettings()->isAuthKeyRequiredOnRegister()) {
                     $sampleUrlParams[$jwtSettings->getAuthCodesSettings()->getAuthCodeKey()] = __('AUTH_KEY_VALUE', 'simple-jwt-login');
                 }
-                echo $jwtSettings->generateExampleLink(RouteService::USER_ROUTE, $sampleUrlParams);
+                echo esc_html($jwtSettings->generateExampleLink(RouteService::USER_ROUTE, $sampleUrlParams));
                 ?>
             </span>
             <span class="copy-button">
@@ -124,7 +123,7 @@ if (!defined('ABSPATH')) {
         </a>
         <div class="form-group">
             <input type="text" name="new_user_profile" class="form-control"
-                   value="<?php echo Sanitizer::attribute($jwtSettings->getRegisterSettings()->getNewUSerProfile()); ?>"
+                   value="<?php echo esc_attr($jwtSettings->getRegisterSettings()->getNewUSerProfile()); ?>"
                    placeholder="<?php echo __('New user profile name', 'simple-jwt-login'); ?>"
             />
         </div>
@@ -201,7 +200,7 @@ if (!defined('ABSPATH')) {
             ); ?>:</h3>
         <div class="form-group">
             <input type="text" id="register_ip" name="register_ip" class="form-control"
-                   value="<?php echo Sanitizer::attribute($jwtSettings->getRegisterSettings()->getAllowedRegisterIps()); ?>"
+                   value="<?php echo esc_attr($jwtSettings->getRegisterSettings()->getAllowedRegisterIps()); ?>"
                    placeholder="<?php echo __('Enter IP here', 'simple-jwt-login'); ?>"/>
             <p class="text-muted">
                 <?php echo __("If you want to add more IP's, separate them by comma", 'simple-jwt-login'); ?>.
@@ -223,7 +222,7 @@ if (!defined('ABSPATH')) {
             :</h3>
         <div class="form-group">
             <input type="text" id="register_domain" name="register_domain" class="form-control"
-                   value="<?php echo Sanitizer::attribute($jwtSettings->getRegisterSettings()->getAllowedRegisterDomain()); ?>"
+                   value="<?php echo esc_attr($jwtSettings->getRegisterSettings()->getAllowedRegisterDomain()); ?>"
                    placeholder="<?php echo __('', 'simple-jwt-login'); ?>Email domain"/>
             <p class="text-muted">
                 <?php echo __(
@@ -247,7 +246,7 @@ if (!defined('ABSPATH')) {
                     type="text"
                     class="form-control"
                     name="allowed_user_meta"
-                    value="<?php echo Sanitizer::attribute($jwtSettings->getRegisterSettings()->getAllowedUserMeta()); ?>"
+                    value="<?php echo esc_attr($jwtSettings->getRegisterSettings()->getAllowedUserMeta()); ?>"
             />
             <span class="text-muted">
                 <?php echo __(
@@ -276,7 +275,7 @@ if (!defined('ABSPATH')) {
             <ul class="simple-jwt-register-user-properties">
                 <?php
                 foreach (UserProperties::getAllowedUserProperties() as $key => $userProperty) {
-                    echo "<li> <b>" . Sanitizer::html($key) . "</b> : " . Sanitizer::html($userProperty['description']) . "</li>";
+                    echo "<li> <b>" . esc_html($key) . "</b> : " . esc_html($userProperty['description']) . "</li>";
                 }
                 ?>
             </ul>

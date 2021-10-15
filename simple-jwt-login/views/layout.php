@@ -119,7 +119,7 @@ $settingsPages = [
                                 <span class="simple-jwt-error">!</span>
                                 <?php
                             } ?>
-							<?php echo Sanitizer::text($message); ?>
+							<?php echo esc_html($message); ?>
                         </p>
                     </div>
                 </div>
@@ -148,13 +148,13 @@ $settingsPages = [
                             ?>
                             <li class="nav-item">
                                 <a class="nav-link <?php echo $isActive ? 'active' : ''?>"
-                                   id="<?php echo Sanitizer::attribute($page['id']); ?>-tab"
+                                   id="<?php echo esc_attr($page['id']); ?>-tab"
                                    data-toggle="tab"
-                                   href="#<?php echo Sanitizer::attribute($page['id']); ?>"
+                                   href="#<?php echo esc_attr($page['id']); ?>"
                                    role="tab"
-                                   aria-controls="<?php echo Sanitizer::attribute($page['id']); ?>"
+                                   aria-controls="<?php echo esc_attr($page['id']); ?>"
                                    aria-selected="true"
-                                   title="<?php echo Sanitizer::attribute($page['name']); ?>"
+                                   title="<?php echo esc_attr($page['name']); ?>"
                                 >
                                     <?php
                                     if ($page['has_error']) {
@@ -163,7 +163,7 @@ $settingsPages = [
                                         <?php
                                     }
 
-                                echo Sanitizer::text($page['name']); ?>
+                                echo esc_html($page['name']); ?>
                                 </a>
                             </li>
 							<?php
@@ -181,20 +181,16 @@ $settingsPages = [
                                 ||  $settingsErrors->getSectionFromErrorCode($errorCode) === $index
                             ?>
                             <div class="tab-pane fade <?php echo $isActive ? 'active' : '' ?> show"
-                                 id="<?php echo Sanitizer::attribute($page['id']); ?>"
+                                 id="<?php echo esc_attr($page['id']); ?>"
                                  role="tabpanel"
-                                 aria-labelledby="<?php echo Sanitizer::attribute($page['id']); ?>-tab"
+                                 aria-labelledby="<?php echo esc_attr($page['id']); ?>-tab"
                             >
 								<?php
-                                try {
-                                    $viewFile = Sanitizer::path($page['view']);
-                                    $file = plugin_dir_path( dirname( __DIR__ ). $viewFile);
-                                    if(!file_exists($file)) {
-                                        throw new Exception(__('Invalid view file.', 'simple-jwt-login'));
-                                    }
-                                    include_once Sanitizer::path($page['view']);
-                                }catch (Exception $e){
-                                    echo Sanitizer::html(__($e->getMessage(), 'simple-jwt-login'));
+                                $viewPAth = trailingslashit( plugin_dir_path( __FILE__ )) . basename($page['view']);
+                                if(file_exists($viewPAth)){
+                                    include_once $viewPAth;
+                                } else {
+                                    echo __("View file does not exists.", 'simple-jwt-login');
                                 }
                                 ?>
                             </div>

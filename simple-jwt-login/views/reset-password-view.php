@@ -1,6 +1,5 @@
 <?php
 
-use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Modules\Settings\ResetPasswordSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -119,7 +118,7 @@ if ( ! defined('ABSPATH')) {
                         'simple-jwt-login'
                     );
                 }
-                echo $jwtSettings->generateExampleLink(RouteService::RESET_PASSWORD_LINK, $sampleUrlParams);
+                echo esc_html($jwtSettings->generateExampleLink(RouteService::RESET_PASSWORD_LINK, $sampleUrlParams));
                 ?>
             </span>
             <span class="copy-button">
@@ -159,7 +158,7 @@ if ( ! defined('ABSPATH')) {
             <li>
                 <input type="radio"
                        value="<?php
-                       echo Sanitizer::attribute(ResetPasswordSettings::FLOW_SEND_DEFAULT_WP_EMAIL); ?>"
+                       echo esc_attr(ResetPasswordSettings::FLOW_SEND_DEFAULT_WP_EMAIL); ?>"
                     <?php
                     echo $jwtSettings->getResetPasswordSettings()->getFlowType() === ResetPasswordSettings::FLOW_SEND_DEFAULT_WP_EMAIL ? 'checked="checked"' : ''; ?>
                        name="jwt_reset_password_flow"
@@ -177,7 +176,7 @@ if ( ! defined('ABSPATH')) {
             <li>
                 <input type="radio"
                        value="<?php
-                       echo Sanitizer::attribute(ResetPasswordSettings::FLOW_SEND_CUSTOM_EMAIL); ?>"
+                       echo esc_attr(ResetPasswordSettings::FLOW_SEND_CUSTOM_EMAIL); ?>"
                     <?php
                     echo $jwtSettings->getResetPasswordSettings()->getFlowType() === ResetPasswordSettings::FLOW_SEND_CUSTOM_EMAIL ? 'checked="checked"' : ''; ?>
                        name="jwt_reset_password_flow"
@@ -206,13 +205,13 @@ if ( ! defined('ABSPATH')) {
                    class="form-control"
                    placeholder="<?php echo __('Email Subject', 'simple-jwt-login');?>"
                    value="<?php
-                   echo Sanitizer::attribute($jwtSettings->getResetPasswordSettings()->getResetPasswordEmailSubject()); ?>"
+                   echo esc_attr($jwtSettings->getResetPasswordSettings()->getResetPasswordEmailSubject()); ?>"
             />
             <br/>
             <h4 class="sub-section-title">Email body</h4>
             <textarea class="form-control" name="jwt_reset_password_email_body" id="reset_password_email_body"
                       placeholder="Email Content"><?php
-                echo Sanitizer::html($jwtSettings->getResetPasswordSettings()->getResetPasswordEmailBody()); ?></textarea>
+                echo esc_html($jwtSettings->getResetPasswordSettings()->getResetPasswordEmailBody()); ?></textarea>
             <br/>
             <h4 class="sub-section-title">Email type</h4>
             <ul>
@@ -257,8 +256,8 @@ if ( ! defined('ABSPATH')) {
                 {
                     ?>
                     <li>
-                        <code class="code"><?php echo Sanitizer::html($variable);?></code>:
-                        <?php echo Sanitizer::html($text);?>
+                        <code class="code"><?php echo esc_html($variable);?></code>:
+                        <?php echo esc_html($text);?>
                     </li>
                     <?php
                 }
@@ -315,7 +314,7 @@ if ( ! defined('ABSPATH')) {
                         'simple-jwt-login'
                     );
                 }
-                echo $jwtSettings->generateExampleLink(RouteService::RESET_PASSWORD_LINK, $sampleUrlParams);
+                echo esc_html($jwtSettings->generateExampleLink(RouteService::RESET_PASSWORD_LINK, $sampleUrlParams));
                 ?>
             </span>
             <span class="copy-button">

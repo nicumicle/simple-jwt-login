@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJWTLogin\Services;
 
 use Exception;
@@ -9,7 +10,6 @@ use WP_User;
 
 class RedirectService extends BaseService implements ServiceInterface
 {
-
     /**
      * @var WP_User
      */
@@ -20,7 +20,7 @@ class RedirectService extends BaseService implements ServiceInterface
      * @return $this
      */
     public function withUser($user)
-	{
+    {
         $this->user = $user;
 
         return $this;
@@ -34,7 +34,7 @@ class RedirectService extends BaseService implements ServiceInterface
     {
         $this->wordPressData = $this->jwtSettings->getWordPressData();
 
-		return $this->redirectAfterLogin($this->user);
+        return $this->redirectAfterLogin($this->user);
     }
 
     /**

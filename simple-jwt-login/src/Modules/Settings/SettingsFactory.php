@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJWTLogin\Modules\Settings;
 
 use Exception;
@@ -14,11 +15,12 @@ class SettingsFactory
     const LOGIN_SETTINGS = 6;
     const REGISTER_SETTINGS = 7;
     const RESET_PASSWORD_SETTINGS = 8;
+    const PROTECT_ENDPOINTS_SETTINGS = 9;
 
     /**
      * @param int $type
      *
-     * @return AuthCodesSettings|AuthenticationSettings|CorsSettings|DeleteUserSettings|GeneralSettings|HooksSettings|LoginSettings|RegisterSettings|ResetPasswordSettings
+     * @return AuthCodesSettings|AuthenticationSettings|CorsSettings|DeleteUserSettings|GeneralSettings|HooksSettings|LoginSettings|RegisterSettings|ResetPasswordSettings|ProtectEndpointSettings
      * @throws Exception
      */
     public static function getFactory($type)
@@ -42,6 +44,8 @@ class SettingsFactory
                 return new RegisterSettings();
             case self::RESET_PASSWORD_SETTINGS:
                 return new ResetPasswordSettings();
+            case self::PROTECT_ENDPOINTS_SETTINGS:
+                return new ProtectEndpointSettings();
             default:
                 throw new Exception('Settings implementation not found.');
         }
@@ -61,6 +65,7 @@ class SettingsFactory
             self::LOGIN_SETTINGS => new LoginSettings(),
             self::REGISTER_SETTINGS => new RegisterSettings(),
             self::RESET_PASSWORD_SETTINGS => new ResetPasswordSettings(),
+            self::PROTECT_ENDPOINTS_SETTINGS => new ProtectEndpointSettings(),
 
             //auth codes needs to be the last one
             self::AUTH_CODES_SETTINGS => new AuthCodesSettings(),

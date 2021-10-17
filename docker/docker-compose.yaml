@@ -1,0 +1,51 @@
+version: "3.3"
+    
+services:
+  wpdb:
+    image: mysql:5.7
+    container_name: wpdb
+    volumes:
+      - wpdb_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: somewordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+      MYSQL_TCP_PORT: 3308
+    ports:
+      - "3308:3308"  
+  wordpress:
+    depends_on:
+      - wpdb
+    image: wordpress:latest
+    container_name: wordpress
+    volumes:
+      - wordpress_data:/var/www/html
+      - ../simple-jwt-login/:/var/www/html/wp-content/plugins/simple-jwt-login
+    ports:
+      - "88:80"
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: wpdb:3308
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_TABLE_PREFIX: "wp_"
+      WORDPRESS_DEBUG: 1
+
+# Create new container that will allow me to run tests and lint, and etc
+#  dev:
+#    depends_on:
+#      - wordpress
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    container_name: wordpress-dev
+#    volumes:
+#      - wordpress_data:/var/www/html
+#      - ../simple-jwt-login/:/var/www/html/wp-content/plugins/simple-jwt-login
+
+volumes:
+  wpdb_data: {}
+  wordpress_data: {}

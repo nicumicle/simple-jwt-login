@@ -1,6 +1,12 @@
 # Changelog - Releases
 
+
 ## Unreleased
+
+
+## 3.4.0 (17 Oct 2021)
+- Implement protected endpoints
+- Add parallel unit testing library
 
 ## 3.3.1 (13 Oct 2021)
 - Sanitize load views
@@ -179,7 +185,7 @@
 - Add support for translations
 - Code refactor
 
-##1.2.4 (26 Nov 2019)
+## 1.2.4 (26 Nov 2019)
 - Improve UI for Auth codes
 - Update Readme
 

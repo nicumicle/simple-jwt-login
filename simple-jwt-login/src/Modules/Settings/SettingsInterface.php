@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJWTLogin\Modules\Settings;
 
 use SimpleJWTLogin\Modules\WordPressDataInterface;

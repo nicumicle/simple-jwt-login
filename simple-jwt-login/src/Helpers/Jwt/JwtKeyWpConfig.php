@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJWTLogin\Helpers\Jwt;
 
 class JwtKeyWpConfig extends JwtKeyBasic implements JwtKeyInterface

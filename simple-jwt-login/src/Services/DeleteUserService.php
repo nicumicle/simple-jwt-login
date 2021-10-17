@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJWTLogin\Services;
 
 use Exception;

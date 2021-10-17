@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJWTLogin\Modules;
 
 class UserProperties

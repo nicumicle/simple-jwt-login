@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJWTLogin\Helpers;
 
 class ServerHelper

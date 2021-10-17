@@ -1,7 +1,10 @@
 <?php
+
 use SimpleJWTLogin\Helpers\CorsHelper;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Libraries\ParseRequest;
+use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
+use SimpleJWTLogin\Services\ProtectEndpointService;
 use SimpleJWTLogin\Services\RouteService;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Modules\WordPressData;
@@ -16,9 +19,10 @@ require_once(ABSPATH . 'wp-admin/includes/user.php');
 add_action('rest_api_init', function () {
     $parseRequest = ParseRequest::process($_SERVER);
     $parsedRequestVariables = [];
-    if(isset($parseRequest['variables'])){
+    if (isset($parseRequest['variables'])) {
         $parsedRequestVariables = (array) $parseRequest['variables'];
     }
+
     $request = array_merge($_REQUEST, $parsedRequestVariables);
 
     $jwtSettings = new SimpleJWTLoginSettings(new WordPressData());
@@ -27,6 +31,7 @@ add_action('rest_api_init', function () {
     $routeService->withRequest($request);
     $routeService->withCookies($_COOKIE);
     $routeService->withServerHelper(new ServerHelper($_SERVER));
+    $serverHelper = new ServerHelper($_SERVER);
 
     if ($jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
         if (empty(session_id()) && !headers_sent()) {
@@ -81,7 +86,7 @@ add_action('rest_api_init', function () {
                         'message'   => $e->getMessage(),
                         'errorCode' => $e->getCode(),
                         'type'      => 'simple-jwt-login-middleware'
-						],
+                        ],
                         400
                     );
                     die();
@@ -91,9 +96,35 @@ add_action('rest_api_init', function () {
             return $endpoint;
         }, 99);
     }
+    if ($jwtSettings->getProtectEndpointsSettings()->isEnabled() ) {
+        add_action('rest_endpoints', function ($endpoint) use ($routeService, $jwtSettings, $serverHelper, $request) {
+            $service = new ProtectEndpointService();
+            $service
+                ->withRequest($request)
+                ->withSettings($jwtSettings)
+                ->withServerHelper($serverHelper)
+                ->withRouteService($routeService);
+
+            $currentURl = $_SERVER['REQUEST_URI'];
+            $hasAccess = $service->hasAccess($currentURl, $request) ;
+            if ($hasAccess=== false ) {
+                @header('Content-Type: application/json; charset=UTF-8');
+                wp_send_json_error(
+                    [
+                        'message'   => 'Your are not authorized to access this endpoint.',
+                        'errorCode' => 403,
+                        'type'      => 'simple-jwt-login-route-protect'
+                    ],
+                    403
+                );
+                die();
+            }
+
+            return $endpoint;
+        }, 0.1);
+    }
 
     $availableRoutes = $routeService->getAllRoutes();
-    $serverHelper = new ServerHelper($_SERVER);
 
     foreach ($availableRoutes as $route) {
         register_rest_route(
@@ -123,7 +154,7 @@ add_action('rest_api_init', function () {
                             [
                             'message'   => $e->getMessage(),
                             'errorCode' => $e->getCode()
-							],
+                            ],
                             400
                         );
 

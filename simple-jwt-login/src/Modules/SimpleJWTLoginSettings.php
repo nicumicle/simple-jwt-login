@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJWTLogin\Modules;
 
 use Exception;
@@ -10,6 +11,7 @@ use SimpleJWTLogin\Modules\Settings\DeleteUserSettings;
 use SimpleJWTLogin\Modules\Settings\GeneralSettings;
 use SimpleJWTLogin\Modules\Settings\HooksSettings;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
+use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
 use SimpleJWTLogin\Modules\Settings\RegisterSettings;
 use SimpleJWTLogin\Modules\Settings\ResetPasswordSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsFactory;
@@ -157,6 +159,14 @@ class SimpleJWTLoginSettings
     public function getResetPasswordSettings()
     {
         return $this->getSettingsClassByType(SettingsFactory::RESET_PASSWORD_SETTINGS);
+    }
+
+    /**
+     * @return ProtectEndpointSettings
+     */
+    public function getProtectEndpointsSettings()
+    {
+        return $this->getSettingsClassByType(SettingsFactory::PROTECT_ENDPOINTS_SETTINGS);
     }
 
     /**

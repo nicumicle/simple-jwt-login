@@ -2,17 +2,18 @@
 
 Contributors: nicu_m
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PK9BCD6AYF58Y&source=url
-Tags: jwt, API, auto login, register users, tokens, REST, auth, generate jwt, refresh jwt
+Tags: jwt, API, auto login, register users, tokens, REST, auth, generate jwt, refresh jwt, protect
 Requires at least: 4.4.0
 Tested up to: 5.8
 Requires PHP: 5.3
-Stable tag: 3.3.1
+Stable tag: 3.4.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Description ==
 
 This plugin allows you to login, register, authenticate, delete and change user password to a WordPress website using a JWT.
+It's main purpose is to allow you to connect a mobile App with a WordPress website. 
 
 Plugin Documentation Site: [Documentation](https://simplejwtlogin.com?utm_source=readme)
 
@@ -29,7 +30,8 @@ Plugin Documentation Site: [Documentation](https://simplejwtlogin.com?utm_source
 * CORS settings for plugin Routes
 * Hooks
 * JWT Authentication
-* `beta` Allow access private endpoints with JWT
+* Allow access private endpoints with JWT
+* Protect endpoints with JWT
 
 == Login User ==
 
@@ -234,6 +236,33 @@ Currently, available hooks are:
 The CORS standard it is needed because it allows servers to specify who can access its assets and how the assets can be accessed.
 Cross-origin requests are made using the standard HTTP request methods like GET, POST, PUT, DELETE, etc.
 
+== Protect endpoints ==
+
+This option is disabled by default. In order to enable it, you need to set "Protect endpoints enabled" to true.
+
+This feature comes with 2 actions:
+- Apply on All REST Endpoints
+- Apply only on specific REST endpoints
+
+When you choose `Apply on All REST Endpoints`, you will be able to whitelist some endpoints from your WordPress REST by adding them to the whitelist section.
+For example, If you only want to allow users to access the `wp/v2/posts` endpoint without having to provide the JWT, you save in the whitelist section `wp/v2/posts`
+
+When you choose `Apply only on specific endpoints`, you will have to add all the endpoints you want to be protected by JWT.
+
+When an endpoint is protected, and you don't provide a JWT, you will get the following response:
+
+```
+{
+   "success":false,
+   "data":{
+      "message":"Your are not authorized to access this endpoint.",
+      "errorCode":403,
+      "type":"simple-jwt-login-route-protect"
+   }
+}
+```
+
+
 == Screenshots ==
 
 1. Dashboard
@@ -246,6 +275,7 @@ Cross-origin requests are made using the standard HTTP request methods like GET,
 8. Auth Codes
 9. Available Hooks
 10. CORS
+11. Protect endpoints
 
 == Installation ==
 
@@ -366,9 +396,12 @@ After that, for the create user route, simply add the AUTH code in the request, 
 
 == Changelog ==
 
-The [Changelog](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md) can be found in the GitHub repository https://github.com/nicumicle/simple-jwt-login
+The [Changelog](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md) can be found in the GitHub repository [https://github.com/nicumicle/simple-jwt-login](https://github.com/nicumicle/simple-jwt-login).
 
 Also, here you can find the beta version of the plugin, before it is released
+
+= 3.4.0 (17 Oct 2021) =
+- Implement protected endpoints
 
 = 3.3.1 (13 Oct 2021) =
 - Sanitize load views
@@ -514,14 +547,12 @@ Also, here you can find the beta version of the plugin, before it is released
 * Add new option to get JWT from '$_COOKIE' and '$_SESSION'
 * Update readme
 
-
 = 1.6.0 (17 May 2020) =
 * Fix save settings with minimum number of parameters ( No auth codes if all options are disabled)
 * Add hooks for login, register and create User.
 * Ignore case for JWT parameter
 * JWT can be added in header
 * Update Readme
-
 
 = 1.5.0 (05 Feb 2020) =
 * Allow delete users based on a JWT token

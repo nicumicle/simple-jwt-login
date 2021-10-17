@@ -96,6 +96,13 @@ $settingsPages = [
         'has_error' =>   $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_CORS,
         'index' => SettingsErrors::PREFIX_CORS,
     ],
+    [
+        'id'   => 'simple-jwt-login-tab-protect-endpoints',
+        'view' => 'protect-endpoints-view.php',
+        'name' => 'Protect endpoints',
+        'has_error' =>   $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_PROTECT_ENDPOINTS,
+        'index' => SettingsErrors::PREFIX_PROTECT_ENDPOINTS,
+    ],
 ];
 
 ?>

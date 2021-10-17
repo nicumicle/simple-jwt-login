@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJWTLogin\Modules\Settings;
 
 class HooksSettings extends BaseSettings implements SettingsInterface

@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJWTLogin\Modules\Settings;
 
 use SimpleJWTLogin\Modules\WordPressDataInterface;
@@ -67,7 +68,7 @@ abstract class BaseSettings
      * @return $this
      */
     public function withWordPressData($wordPressData)
-	{
+    {
         $this->wordPressData = $wordPressData;
 
         return $this;
@@ -158,8 +159,10 @@ abstract class BaseSettings
 
             if (is_array($value)) {
                 $array[$key] = $this->sanitizeArray($value);
-            } elseif (is_string($value) || is_int($value)) {
+            } elseif (is_string($value) || is_int($value) || is_numeric($value)) {
                 $array[$key] = $this->wordPressData->sanitizeTextField($value);
+            } elseif (is_null($value)) {
+                $array[$key] = null;
             }
         }
 

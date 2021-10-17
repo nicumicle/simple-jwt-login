@@ -3,8 +3,6 @@
 
 ## Unreleased
 
-
-## 3.4.0 (17 Oct 2021)
 - Implement protected endpoints
 - Add parallel unit testing library
 

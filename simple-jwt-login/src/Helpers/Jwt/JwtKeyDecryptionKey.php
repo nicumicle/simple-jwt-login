@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJWTLogin\Helpers\Jwt;
 
 class JwtKeyDecryptionKey extends JwtKeyBasic implements JwtKeyInterface

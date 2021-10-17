@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJWTLogin\Modules\Settings;
 
 use Exception;
@@ -6,7 +7,6 @@ use SimpleJWTLogin\ErrorCodes;
 
 class ResetPasswordSettings extends BaseSettings implements SettingsInterface
 {
-
     const FLOW_JUST_SAVE_IN_DB = 0;
     const FLOW_SEND_DEFAULT_WP_EMAIL = 1;
     const FLOW_SEND_CUSTOM_EMAIL = 2;

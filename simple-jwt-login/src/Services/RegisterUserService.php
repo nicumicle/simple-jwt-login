@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJWTLogin\Services;
 
 use Exception;
@@ -158,9 +159,9 @@ class RegisterUserService extends BaseService implements ServiceInterface
         }
 
         if ((
-                $this->jwtSettings->getRegisterSettings()->isAuthKeyRequiredOnRegister()
+            $this->jwtSettings->getRegisterSettings()->isAuthKeyRequiredOnRegister()
                 || isset($this->request[$this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()])
-            ) && $this->validateAuthKey() === false
+        ) && $this->validateAuthKey() === false
         ) {
             throw  new Exception(
                 sprintf(

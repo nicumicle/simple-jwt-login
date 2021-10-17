@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJWTLogin\Helpers\Jwt;
 
 use SimpleJWTLogin\Modules\Settings\GeneralSettings;

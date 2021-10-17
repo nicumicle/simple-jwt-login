@@ -248,7 +248,8 @@
 #simple-jwt-login #decryption_key{
     height: 35px;
 }
-#simple-jwt-login .auth_row {
+#simple-jwt-login .auth_row,
+#simple-jwt-login .endpoint_row {
     margin-top: 10px;
 }
 #simple-jwt-login small{

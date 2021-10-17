@@ -9,6 +9,7 @@
     "GPL-2.0-or-later"
   ],
   "require-dev": {
+    "brianium/paratest": "^6.3",
     "friendsofphp/php-cs-fixer": "*",
     "phpstan/phpstan": "*",
     "phpunit/phpunit": "*",
@@ -24,7 +25,7 @@
     "sort-packages": true
   },
   "scripts": {
-    "tests": "vendor/bin/phpunit tests/",
+    "tests": "vendor/bin/paratest tests/",
     "phpcs": "vendor/bin/phpcs simple-jwt-login/src",
     "phpmd-design": "vendor/bin/phpmd simple-jwt-login/src/ text design",
     "phpmd-cleancode": "vendor/bin/phpmd simple-jwt-login/src/ text cleancode",

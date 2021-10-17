@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJWTLogin\Modules\Settings;
 
 class SettingsErrors extends \Exception
@@ -15,6 +16,7 @@ class SettingsErrors extends \Exception
     const PREFIX_HOOKS = 8;
     const PREFIX_CORS = 9;
     const PREFIX_RESET_PASSWORD = 10;
+    const PREFIX_PROTECT_ENDPOINTS = 11;
 
     #authentication
     const ERR_AUTHENTICATION_EMPTY_PAYLOAD = 1;
@@ -45,6 +47,9 @@ class SettingsErrors extends \Exception
 
     #register
     const ERR_REGISTER_MISSING_NEW_USER_PROFILE = 1;
+
+    #protect endpoints
+    const ERR_EMPTY_SPECIFIC_ENDPOINT = 1;
 
     /**
      * @param int $sectionPrefix

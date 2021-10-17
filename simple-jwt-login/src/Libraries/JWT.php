@@ -324,7 +324,7 @@ class JWT
     public static function jsonDecode($input)
     {
         $obj = self::getCorrectImplementationForJsonDecode($input);
-      
+
         if (function_exists('json_last_error')) {
             $errno = json_last_error();
             if ($errno) {

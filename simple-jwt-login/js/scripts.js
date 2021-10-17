@@ -8,10 +8,29 @@ jQuery(document).ready(
             }
         );
 
+        $('#simple-jwt-login #add_whitelist_endpoint').click(
+            function () {
+                $('#whitelisted-domains').append($('#endpoint_whitelist_line').html());
+            }
+        );
+
+        $('#simple-jwt-login #add_protect_endpoint').click(
+            function () {
+                $('#protected-domains').append($('#endpoint_protect_line').html());
+            }
+        );
+
         $('#simple-jwt-login input[name="jwt_reset_password_flow"]').on(
             'change',
             function(){
                simple_jwt_bind_reset_password();
+            }
+        )
+
+        $('#simple-jwt-login #protection_type').on(
+            'change',
+            function(){
+                simple_jwt_bind_protected_endpoints();
             }
         )
 
@@ -105,8 +124,20 @@ jQuery(document).ready(
             }//end if
         }
 
+        function simple_jwt_bind_protected_endpoints(){
+            var protection_mode    = jQuery('#simple-jwt-login #protection_type').val();
+            if(protection_mode === '2'){
+                $('#simple-jwt-login #protected_endpoints_protected').show();
+                $('#simple-jwt-login #protected_endpoints_whitelisted').hide();
+            } else {
+                $('#simple-jwt-login #protected_endpoints_protected').hide();
+                $('#simple-jwt-login #protected_endpoints_whitelisted').show();
+            }
+        }
+
         simple_jwt_bind_decryption_key();
         simple_jwt_bind_reset_password();
+        simple_jwt_bind_protected_endpoints();
 
         // TABS
         $('#simple-jwt-login-tabs a').click(function (e) {
@@ -120,6 +151,11 @@ function jwt_login_remove_auth_line(a_element)
 {
     jQuery(a_element).closest('.auth_row').remove();
 
+}
+
+function jwt_login_remove_endpoint_row(a_element)
+{
+    jQuery(a_element).closest('.endpoint_row').remove();
 }
 
 function showDecryptionKey()

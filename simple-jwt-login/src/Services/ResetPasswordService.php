@@ -10,7 +10,6 @@ use WP_REST_Response;
 
 class ResetPasswordService extends BaseService implements ServiceInterface
 {
-
     public function makeAction()
     {
         if ($this->jwtSettings->getResetPasswordSettings()->isResetPasswordEnabled() === false) {

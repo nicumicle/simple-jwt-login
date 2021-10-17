@@ -26,16 +26,20 @@ class ProtectEndpointService extends BaseService
     }
 
     /**
+     * @param string $currentUrl
+     * @param string $documentRoot
+     * @param array $request
+     *
      * @return bool
      */
-    public function hasAccess($currentUrl, $request)
+    public function hasAccess($currentUrl, $documentRoot, $request)
     {
         if ($this->jwtSettings->getProtectEndpointsSettings()->isEnabled() === false) {
             return true;
         }
-
         $parsed = parse_url($currentUrl);
-        $path = str_replace('/wp-json', '', $parsed['path']);
+        $path  = rtrim(str_replace($documentRoot, '', ABSPATH), '/');
+        $path = str_replace($path . '/wp-json', '', $parsed['path']);
 
         $isEndpointsProtected = true;
         if (!empty(trim($path, '/'))) {

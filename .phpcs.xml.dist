@@ -35,6 +35,10 @@
     <!-- Exclude the Composer Vendor directory. -->
     <exclude-pattern>/vendor/*</exclude-pattern>
 
+    <rule ref="Generic.Files.LineEndings">
+        <exclude name="Generic.Files.LineEndings.InvalidEOLChar"/>
+    </rule>
+
     <!-- Exclude minified Javascript files. -->
     <exclude-pattern>*.min.js</exclude-pattern>
 

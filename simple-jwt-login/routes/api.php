@@ -106,7 +106,8 @@ add_action('rest_api_init', function () {
                 ->withRouteService($routeService);
 
             $currentURl = $_SERVER['REQUEST_URI'];
-            $hasAccess = $service->hasAccess($currentURl, $request) ;
+            $documentRoot = $_SERVER['DOCUMENT_ROOT'];
+            $hasAccess = $service->hasAccess($currentURl, $documentRoot, $request) ;
             if ($hasAccess=== false ) {
                 @header('Content-Type: application/json; charset=UTF-8');
                 wp_send_json_error(

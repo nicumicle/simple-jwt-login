@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace SimpleJWTLogin\Services;
 
 use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
@@ -63,9 +61,14 @@ class ProtectEndpointService extends BaseService
 
     private function isEndpointProtected($endpoint)
     {
+        if (strpos($endpoint, '/') !== 0) {
+            $endpoint = '/' . $endpoint;
+        }
+
         $action = $this->jwtSettings->getProtectEndpointsSettings()->getAction();
-        $skipNamespace = $this->removeLastSlash(
-            $this->jwtSettings->getGeneralSettings()->getRouteNamespace()
+        $skipNamespace = '/' . trim(
+            $this->jwtSettings->getGeneralSettings()->getRouteNamespace(),
+            '/'
         );
         $endpoint = $this->removeLastSlash($endpoint);
 
@@ -82,7 +85,7 @@ class ProtectEndpointService extends BaseService
                     ->getWhitelistedDomains();
                 foreach ($domains as $whitelistedDomain) {
                     $whitelistedDomain = $this->removeWpJsonFromEndpoint($whitelistedDomain);
-                    if (empty($whitelistedDomain)) {
+                    if (empty(trim($whitelistedDomain, '/'))) {
                         continue;
                     }
                     if (strpos($endpoint, $whitelistedDomain) === 0) {
@@ -96,11 +99,11 @@ class ProtectEndpointService extends BaseService
                     ->getProtectEndpointsSettings()
                     ->getProtectedEndpoints();
                 foreach ($domains as $protectedEndpoint) {
-                    if (empty($protectedEndpoint)) {
+                    $protectedEndpoint = $this->removeWpJsonFromEndpoint($protectedEndpoint);
+                    if (empty(trim($protectedEndpoint, '/'))) {
                         continue;
                     }
-                    $protectedEndpoint = $this->removeWpJsonFromEndpoint($protectedEndpoint);
-                    if (strpos($endpoint, $this->removeLastSlash($protectedEndpoint)) === 0) {
+                    if (strpos($endpoint, $protectedEndpoint) === 0) {
                         $isEndpointProtected = true;
                     }
                 }
@@ -112,11 +115,30 @@ class ProtectEndpointService extends BaseService
 
     private function removeWpJsonFromEndpoint($endpoint)
     {
-        return $this->removeLastSlash(str_replace('/wp-json', '', $endpoint));
+        $endpoint = str_replace('/wp-json', '', $endpoint);
+
+        return $this->removeLastSlash($endpoint);
     }
 
+    /**
+     * @param string $endpoint
+     * @return string
+     */
+    private function addFirstSlash($endpoint)
+    {
+        if (strpos($endpoint, '/') !== 0) {
+            return '/' . $endpoint;
+        }
+
+        return $endpoint;
+    }
+
+    /**
+     * @param string $endpoints
+     * @return string
+     */
     private function removeLastSlash($endpoints)
     {
-        return rtrim($endpoints, '/');
+        return $this->addFirstSlash(rtrim($endpoints, '/'));
     }
 }

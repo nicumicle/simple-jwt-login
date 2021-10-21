@@ -1,8 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
-
 namespace SimpleJwtLoginTests\Modules\Settings;
 
 use PHPUnit\Framework\TestCase;

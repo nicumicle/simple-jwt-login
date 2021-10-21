@@ -9,6 +9,7 @@ use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Modules\WordPressDataInterface;
 use SimpleJWTLogin\Services\RevokeTokenService;
+use WP_User;
 
 class RevokeTokenServiceTest extends TestCase
 {
@@ -85,6 +86,55 @@ class RevokeTokenServiceTest extends TestCase
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
         $authenticationService->makeAction();
+    }
+
+    public function testSuccess()
+    {
+        $settings = [
+            'allow_authentication' => true,
+            'auth_requires_auth_code' => false,
+            'decryption_key' => 'test',
+            'jwt_login_by' => LoginSettings::JWT_LOGIN_BY_WORDPRESS_USER_ID,
+            'jwt_login_by_parameter' => 'id',
+        ];
+
+        $user = $this->getMockBuilder(WP_User::class)
+            ->getMock();
+        $this->wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode($settings));
+        $this->wordPressDataMock->method('getUserDetailsById')
+            ->willReturn($user);
+        $this->wordPressDataMock->method('isInstanceOfuser')
+            ->willReturn(true);
+        $this->wordPressDataMock->method('getUserProperty')
+            ->willReturn(1);
+
+        $this->wordPressDataMock->method('getUserMeta')
+            ->with(1, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY)
+            ->willReturn([
+                Jwt::encode(['exp' => 1000],'test','HS256')
+            ]);
+
+        $this->wordPressDataMock->method('addUserMeta')
+            ->willReturn(true);
+        $this->wordPressDataMock->method('createResponse')
+            ->willReturn(true);
+
+        $authenticationService = (new RevokeTokenService())
+            ->withRequest([
+                'JWT' => JWT::encode([
+                    'id' => 1
+                ], $settings['decryption_key'], 'HS256'),
+                'AUTH_KEY' => 'test',
+            ])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_CLIENT_IP' => '127.0.0.1',
+            ]))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+        $result = $authenticationService->makeAction();
+        $this->assertTrue($result);
     }
 
     public function validationProvider()

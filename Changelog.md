@@ -4,7 +4,7 @@
 ## Unreleased
 
 - Implement protected endpoints
-- Add parallel unit testing library
+- Improve code coverage
 
 ## 3.3.1 (13 Oct 2021)
 - Sanitize load views

@@ -28,14 +28,6 @@ class RefreshTokenService extends AuthenticateService
      */
     private function refreshJwt()
     {
-        //Validate authentication
-        if ($this->jwtSettings->getAuthenticationSettings()->isAuthenticationEnabled() === false) {
-            throw new Exception(
-                __('Authentication is not enabled.', 'simple-jwt-login'),
-                ErrorCodes::AUTHENTICATION_IS_NOT_ENABLED
-            );
-        }
-
         $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
         if (empty($this->jwt)) {
             throw new Exception(
@@ -70,6 +62,7 @@ class RefreshTokenService extends AuthenticateService
             $payload,
             $this->jwtSettings->getLoginSettings()->getJwtLoginByParameter()
         );
+
 
         $user = $this->getUserDetails($result);
         if ($user !== null) {

@@ -9,6 +9,9 @@ class ServerHelper
      */
     private $server;
 
+    /**
+     * @param array $server
+     */
     public function __construct($server)
     {
         $this->server = $server;

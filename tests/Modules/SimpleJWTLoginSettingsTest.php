@@ -134,6 +134,21 @@ class SimpleJWTLoginSettingsTest extends TestCase
         );
     }
 
+    public function testGenerateExampleLinkWithNoParams()
+    {
+        $wordPressDataMock = $this->getMockBuilder(WordPressDataInterface::class)
+            ->getMock();
+        $wordPressDataMock->method('getSiteUrl')
+            ->willReturn('https://localhost');
+        $wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode(['route_namespace' => 'v1']));
+        $simpleJwtLoginSettings = new SimpleJWTLoginSettings($wordPressDataMock);
+        $this->assertSame(
+            'https://localhost/?rest_route=/v1/test',
+            $simpleJwtLoginSettings->generateExampleLink('test', [])
+        );
+    }
+
     public function testCallWithoutNonceWillReturnFalse()
     {
         $this->assertFalse(
@@ -144,18 +159,62 @@ class SimpleJWTLoginSettingsTest extends TestCase
 
     public function testCallingWithInvalidNonce()
     {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Something is wrong. We can not save the settings.');
+
         $wordPressDataMock = $this->getMockBuilder(WordPressDataInterface::class)
                                   ->getMock();
         $wordPressDataMock->method('checkNonce')
                           ->willReturn(false);
         $settings = new SimpleJWTLoginSettings($wordPressDataMock);
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Something is wrong. We can not save the settings.');
         $settings->watchForUpdates(
             [
                 '_wpnonce' => '123',
                 'test'     => '123'
             ]
         );
+    }
+
+    /**
+     * @dataProvider settingsProvider
+     * @param mixed $settings
+     * @throws Exception
+     */
+    public function testWatchForUpdatesSuccess($settings)
+    {
+        $wordPressDataMock = $this->getMockBuilder(WordPressDataInterface::class)
+            ->getMock();
+        $wordPressDataMock->method('checkNonce')
+            ->willReturn(true);
+        $wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn($settings);
+        $simpleJwtLoginSettings = new SimpleJWTLoginSettings($wordPressDataMock);
+        $result = $simpleJwtLoginSettings->watchForUpdates(
+            [
+                '_wpnonce' => '123',
+                'test'     => '123',
+                'route_namespace' => 'test',
+                'request_jwt_url' => true,
+                'new_user_profile' => 'subscriber',
+            ]
+        );
+        $this->assertTrue($result);
+    }
+
+    /**
+     * @return array
+     */
+    public function settingsProvider()
+    {
+        return [
+            'empty_settings' => [
+                'settings' => false,
+            ],
+            'has_settings' => [
+                'settings' => json_encode([
+                    'test' => 1,
+                ])
+            ]
+        ];
     }
 }

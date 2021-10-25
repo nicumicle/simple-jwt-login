@@ -34,7 +34,6 @@ class RegisterUserService extends BaseService implements ServiceInterface
      */
     public function createUser()
     {
-
         $email = esc_html($this->request['email']);
         $extraParameters = UserProperties::getExtraParametersFromRequest($this->request);
         $username = !empty($extraParameters['user_login'])
@@ -249,10 +248,17 @@ class RegisterUserService extends BaseService implements ServiceInterface
             );
         }
 
+        $userEmail = $this->wordPressData
+            ->getUserProperty($user, 'user_email');
+        $userId = $this->wordPressData
+            ->getUserProperty($user, 'id');
+        $username = $this->wordPressData
+            ->getUserProperty($user, 'user_login');
+
         return [
-            AuthenticationSettings::JWT_PAYLOAD_PARAM_EMAIL    => $user->get('user_email'),
-            AuthenticationSettings::JWT_PAYLOAD_PARAM_ID       => $user->get('id'),
-            AuthenticationSettings::JWT_PAYLOAD_PARAM_USERNAME => $user->get('user_login'),
+            AuthenticationSettings::JWT_PAYLOAD_PARAM_EMAIL    => $userEmail,
+            AuthenticationSettings::JWT_PAYLOAD_PARAM_ID       => $userId,
+            AuthenticationSettings::JWT_PAYLOAD_PARAM_USERNAME => $username,
             AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT      => time(),
         ];
     }

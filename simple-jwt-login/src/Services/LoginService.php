@@ -85,7 +85,7 @@ class LoginService extends BaseService implements ServiceInterface
         if (!empty($allowedIPs) && !$this->serverHelper->isClientIpInList($allowedIPs)) {
             throw new Exception(
                 sprintf(
-                    __('This IP[ %s] is not allowed to auto-login.', 'simple-jwt-login'),
+                    __('This IP[ %s ] is not allowed to auto-login.', 'simple-jwt-login'),
                     $this->serverHelper->getClientIP()
                 ),
                 ErrorCodes::ERR_IP_IS_NOT_ALLOWED_TO_LOGIN

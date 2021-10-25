@@ -1,11 +1,10 @@
 <?php
 
-
 namespace SimpleJWTLoginTests\Services;
-
 
 use Exception;
 use PHPUnit\Framework\TestCase;
+use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Libraries\JWT;
 use SimpleJWTLogin\Modules\Settings\DeleteUserSettings;
@@ -38,7 +37,8 @@ class DeleteUserServiceTest extends TestCase
      *
      * @throws Exception
      */
-    public function testValidations($request, $settings, $exceptionMessage){
+    public function testValidations($request, $settings, $exceptionMessage)
+    {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage($exceptionMessage);
         $this->wordPressDataMock->method('getOptionFromDatabase')
@@ -53,7 +53,8 @@ class DeleteUserServiceTest extends TestCase
         $deleteUserService->makeAction();
     }
 
-    public function testUserNotFoundFromJWT(){
+    public function testUserNotFoundFromJWT()
+    {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('User not found.');
         $settings = [
@@ -71,7 +72,7 @@ class DeleteUserServiceTest extends TestCase
             ->willReturn(false);
         $deleteUserService = (new DeleteUserService())
             ->withRequest([
-                'JWT' => JWT::encode(['id' => 1],$settings['decryption_key'],'HS256')
+                'JWT' => JWT::encode(['id' => 1], $settings['decryption_key'], 'HS256')
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
@@ -79,7 +80,8 @@ class DeleteUserServiceTest extends TestCase
         $deleteUserService->makeAction();
     }
 
-    public function testUnableToDeleteUser(){
+    public function testUnableToDeleteUser()
+    {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('User not found.');
 
@@ -101,7 +103,7 @@ class DeleteUserServiceTest extends TestCase
             ->willReturn(false);
         $deleteUserService = (new DeleteUserService())
             ->withRequest([
-                'JWT' => JWT::encode(['id' => 1],$settings['decryption_key'],'HS256')
+                'JWT' => JWT::encode(['id' => 1], $settings['decryption_key'], 'HS256')
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
@@ -109,15 +111,21 @@ class DeleteUserServiceTest extends TestCase
         $deleteUserService->makeAction();
     }
 
-    public function testSuccessResponse(){
+    /**
+     * @dataProvider deleteByProvider
+     * @param int $deleteBy
+     * @throws Exception
+     */
+    public function testSuccessResponse($deleteBy)
+    {
         $settings = [
             'allow_delete' => true,
             'require_delete_auth' => false,
-            'delete_user_by' => DeleteUserSettings::DELETE_USER_BY_ID,
+            'delete_user_by' => $deleteBy,
             'decryption_key' => 'test',
             'jwt_delete_by_parameter' => 'id',
             'enabled_hooks' => [
-                SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME => 1,
+                SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME,
             ]
         ];
 
@@ -127,6 +135,10 @@ class DeleteUserServiceTest extends TestCase
             ->getMock();
         $this->wordPressDataMock->method('getUserDetailsById')
             ->willReturn($useMock);
+        $this->wordPressDataMock->method('getUserDetailsByEmail')
+            ->willReturn($useMock);
+        $this->wordPressDataMock->method('getUserByUserLogin')
+            ->willReturn($useMock);
         $this->wordPressDataMock->method('deleteUser')
             ->willReturn(true);
         $this->wordPressDataMock->method('triggerAction')
@@ -135,7 +147,7 @@ class DeleteUserServiceTest extends TestCase
             ->willReturn(true);
         $deleteUserService = (new DeleteUserService())
             ->withRequest([
-                'JWT' => JWT::encode(['id' => 1],$settings['decryption_key'],'HS256')
+                'JWT' => JWT::encode(['id' => 1], $settings['decryption_key'], 'HS256')
             ])
             ->withCookies([])
             ->withSession([])
@@ -144,7 +156,57 @@ class DeleteUserServiceTest extends TestCase
 
         $response = $deleteUserService->makeAction();
         $this->assertTrue($response);
+    }
 
+    public function testDeleteByInvalidAction()
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('User not found.');
+        $this->expectExceptionCode(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND);
+
+        $settings = [
+            'allow_delete' => true,
+            'require_delete_auth' => false,
+            'delete_user_by' => -1,
+            'decryption_key' => 'test',
+            'jwt_delete_by_parameter' => 'id',
+            'enabled_hooks' => [
+                SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME,
+            ]
+        ];
+
+        $this->wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode($settings));
+
+        $deleteUserService = (new DeleteUserService())
+            ->withRequest([
+                'JWT' => JWT::encode(['id' => 1], $settings['decryption_key'], 'HS256')
+            ])
+            ->withCookies([])
+            ->withSession([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+
+        $deleteUserService->makeAction();
+    }
+
+    /**
+     * @return array[]
+     */
+    public function deleteByProvider()
+    {
+        return [
+            'delete-by-email' => [
+                DeleteUserSettings::DELETE_USER_BY_EMAIL,
+            ],
+            'delete-by-id' => [
+                DeleteUserSettings::DELETE_USER_BY_ID,
+            ],
+            'delete-by-username' => [
+                DeleteUserSettings::DELETE_USER_BY_USER_LOGIN
+            ]
+
+        ];
     }
 
 

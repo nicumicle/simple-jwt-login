@@ -2,7 +2,6 @@
 
 namespace SimpleJwtLoginTests\Helpers;
 
-
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Helpers\ServerHelper;
 
@@ -19,6 +18,9 @@ class ServerHelperTest extends TestCase
         $this->assertSame($expectedResult, $serverHelper->getClientIP());
     }
 
+    /**
+     * @return array[]
+     */
     public function ipProvider()
     {
         return [
@@ -66,6 +68,9 @@ class ServerHelperTest extends TestCase
         $this->assertSame($result, $serberHelper->isClientIpInList($list));
     }
 
+    /**
+     * @return array[]
+     */
     public function isClientInListProvider()
     {
         return [
@@ -105,7 +110,8 @@ class ServerHelperTest extends TestCase
      * @param array $server
      * @param array $expectedResult
      */
-    public function testGetHeaders($server, $expectedResult){
+    public function testGetHeaders($server, $expectedResult)
+    {
         $serverHelper = new ServerHelper($server);
         $this->assertSame(
             $expectedResult,
@@ -113,11 +119,14 @@ class ServerHelperTest extends TestCase
         );
     }
 
+    /**
+     * @return array
+     */
     public function getHeadersProvider()
     {
         return [
             [
-                'server'=> [],
+                'server' => [],
                 'result' => []
             ],
             [
@@ -148,6 +157,9 @@ class ServerHelperTest extends TestCase
         $this->assertSame($expectedResult, $serverHelper->isClientIpInList($ipList));
     }
 
+    /**
+     * @return array[]
+     */
     public function providerWildIps()
     {
         return [
@@ -204,5 +216,13 @@ class ServerHelperTest extends TestCase
                 true
             ]
         ];
+    }
+
+    public function testGetRequestMethod()
+    {
+        $serverHelper = new ServerHelper([
+            'REQUEST_METHOD' => 'POST',
+        ]);
+        $this->assertSame('POST', $serverHelper->getRequestMethod());
     }
 }

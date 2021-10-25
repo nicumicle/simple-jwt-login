@@ -26,7 +26,8 @@ class CorsSettingsTest extends TestCase
             );
     }
 
-    public function testProperties(){
+    public function testProperties()
+    {
         $post = [
             'cors' => [
                 'enabled' => '1',
@@ -75,7 +76,8 @@ class CorsSettingsTest extends TestCase
         );
     }
 
-    public function testValidation(){
+    public function testValidation()
+    {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Cors is enabled but no option is checked. Please check at least one option.');
         $corsSettings = (new CorsSettings())
@@ -86,6 +88,5 @@ class CorsSettingsTest extends TestCase
             ]]);
         $corsSettings->initSettingsFromPost();
         $corsSettings->validateSettings();
-
     }
 }

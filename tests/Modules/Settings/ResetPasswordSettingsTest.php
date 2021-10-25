@@ -19,13 +19,13 @@ class ResetPasswordSettingsTest extends TestCase
     {
         parent::setUp();
         $this->wordPressData = $this->getMockBuilder(WordPressDataInterface::class)
-                                    ->getMock();
+            ->getMock();
         $this->wordPressData->method('sanitizeTextField')
-                            ->willReturnCallback(
-                                function ($parameter) {
-                                    return $parameter;
-                                }
-                            );
+            ->willReturnCallback(
+                function ($parameter) {
+                    return $parameter;
+                }
+            );
     }
 
     public function testAssignProperties()
@@ -39,38 +39,38 @@ class ResetPasswordSettingsTest extends TestCase
             'jwt_reset_password_email_body'     => '{{CODE}} testbody',
             'jwt_email_type'                    => ResetPasswordSettings::EMAIL_TYPE_HTML,
         ];
-        $resetPasswordSettings = (new ResetPasswordSettings())
+        $resetPassSettings = (new ResetPasswordSettings())
             ->withWordPressData($this->wordPressData)
             ->withSettings([])
             ->withPost($post);
-        $resetPasswordSettings->initSettingsFromPost();
-        $resetPasswordSettings->validateSettings();
+        $resetPassSettings->initSettingsFromPost();
+        $resetPassSettings->validateSettings();
         $this->assertSame(
             true,
-            $resetPasswordSettings->isResetPasswordEnabled()
+            $resetPassSettings->isResetPasswordEnabled()
         );
         $this->assertSame(
             true,
-            $resetPasswordSettings->isAuthKeyRequired()
+            $resetPassSettings->isAuthKeyRequired()
         );
         $this->assertSame(
             ResetPasswordSettings::FLOW_SEND_CUSTOM_EMAIL,
-            $resetPasswordSettings->getFlowType()
+            $resetPassSettings->getFlowType()
         );
         $this->assertSame(
             'test subject',
-            $resetPasswordSettings->getResetPasswordEmailSubject()
+            $resetPassSettings->getResetPasswordEmailSubject()
         );
         $this->assertSame(
             '{{CODE}} testbody',
-            $resetPasswordSettings->getResetPasswordEmailBody()
+            $resetPassSettings->getResetPasswordEmailBody()
         );
         $this->assertSame(
             ResetPasswordSettings::EMAIL_TYPE_HTML,
-            $resetPasswordSettings->getResetPasswordEmailType()
+            $resetPassSettings->getResetPasswordEmailType()
         );
 
-        $variables = array_keys($resetPasswordSettings->getEmailContentVariables());
+        $variables = array_keys($resetPassSettings->getEmailContentVariables());
         $this->assertTrue(! empty($variables));
         $this->assertTrue(in_array('{{CODE}}', $variables));
     }
@@ -88,11 +88,11 @@ class ResetPasswordSettingsTest extends TestCase
             'jwt_reset_password_email_body'     => 'test body',
             'jwt_email_type'                    => '1',
         ];
-        $resetPasswordSettings = (new ResetPasswordSettings())
+        $resetPassSettings = (new ResetPasswordSettings())
             ->withWordPressData($this->wordPressData)
             ->withSettings([])
             ->withPost($post);
-        $resetPasswordSettings->initSettingsFromPost();
-        $resetPasswordSettings->validateSettings();
+        $resetPassSettings->initSettingsFromPost();
+        $resetPassSettings->validateSettings();
     }
 }

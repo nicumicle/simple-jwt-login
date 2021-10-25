@@ -51,7 +51,6 @@ class RedirectServiceTest extends TestCase
                 )
             )
             ->withSession([])
-            ->withUser(null)
             ->makeAction();
         $this->assertTrue($response);
     }
@@ -63,7 +62,7 @@ class RedirectServiceTest extends TestCase
             'enabled_hooks' => [
                 SimpleJWTLoginHooks::LOGIN_REDIRECT_NAME
             ],
-            'include_login_request_parameters'=> 1,
+            'include_login_request_parameters' => 1,
             'allow_usage_redirect_parameter' => 1,
             'redirect_url' => 'https://www.google.com',
         ];
@@ -91,7 +90,6 @@ class RedirectServiceTest extends TestCase
                 )
             )
             ->withSession([])
-            ->withUser(null)
             ->makeAction();
         $this->assertSame(null, $response);
     }
@@ -120,9 +118,7 @@ class RedirectServiceTest extends TestCase
                 )
             )
             ->withSession([])
-            ->withUser(null)
             ->makeAction();
         $this->assertSame(null, $response);
     }
-
 }

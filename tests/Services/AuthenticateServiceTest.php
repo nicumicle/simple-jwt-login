@@ -30,21 +30,22 @@ class AuthenticateServiceTest extends TestCase
      *
      * @param array $settings
      * @param array $request
-     * @param string $expectedExceptionMessage
+     * @param string $exceptionMessage
      *
      * @throws Exception
      */
-    public function testValidation($settings,$request, $expectedExceptionMessage){
+    public function testValidation($settings, $request, $exceptionMessage)
+    {
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage($expectedExceptionMessage);
+        $this->expectExceptionMessage($exceptionMessage);
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
-        $authenticationService = (new AuthenticateService())
+        $authService = (new AuthenticateService())
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
-        $authenticationService->makeAction();
+        $authService->makeAction();
     }
 
     /**
@@ -90,12 +91,11 @@ class AuthenticateServiceTest extends TestCase
                 ],
                 'expectedMessage' => 'The password parameter is missing from request.'
             ],
-
-
         ];
     }
 
-    public function testIpLimitation(){
+    public function testIpLimitation()
+    {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('You are not allowed to Authenticate from this IP:');
         $this->wordPressDataMock->method('getOptionFromDatabase')
@@ -105,57 +105,57 @@ class AuthenticateServiceTest extends TestCase
                     'auth_ip' => '127.0.0.1',
                 ]
             ));
-        $authenticationService = (new AuthenticateService())
+        $authService = (new AuthenticateService())
             ->withRequest([
                 'email' => 'test@test.com',
-                'password'=> '123'
+                'password' => '123'
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['HTTP_CLIENT_IP' => '127.0.0.2']))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
-        $authenticationService->makeAction();
+        $authService->makeAction();
     }
 
-    public function testUserNotFoundWithEmail(){
+    public function testUserNotFoundWithEmail()
+    {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Wrong user credentials.');
         $this->wordPressDataMock->method('getOptionFromDatabase')
-            ->willReturn(json_encode(
-                 [
-                     'allow_authentication' => 1,
-                 ]));
+            ->willReturn(json_encode([
+                'allow_authentication' => 1,
+            ]));
         $this->wordPressDataMock->method('getUserDetailsByEmail')
             ->willReturn(null);
-        $authenticationService = (new AuthenticateService())
+        $authService = (new AuthenticateService())
             ->withRequest([
-                              'email' => 'test@test.com',
-                              'password'=> '123'
-                          ])
+                'email' => 'test@test.com',
+                'password' => '123'
+            ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
-        $authenticationService->makeAction();
+        $authService->makeAction();
     }
 
-    public function testUserNotFoundWithUsername(){
+    public function testUserNotFoundWithUsername()
+    {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Wrong user credentials.');
         $this->wordPressDataMock->method('getOptionFromDatabase')
-            ->willReturn(json_encode(
-                             [
-                                 'allow_authentication' => 1,
-                             ]));
+            ->willReturn(json_encode([
+                'allow_authentication' => 1,
+            ]));
         $this->wordPressDataMock->method('getUserByUserLogin')
                                 ->willReturn(null);
-        $authenticationService = (new AuthenticateService())
+        $authService = (new AuthenticateService())
             ->withRequest([
-                              'username' => 'test@test.com',
-                              'password'=> '123'
-                          ])
+                'username' => 'test@test.com',
+                'password' => '123'
+            ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
-        $authenticationService->makeAction();
+        $authService->makeAction();
     }
 
     public function testWrongUserCredentials()
@@ -165,13 +165,9 @@ class AuthenticateServiceTest extends TestCase
 
         $this->wordPressDataMock
             ->method('getOptionFromDatabase')
-            ->willReturn(
-                json_encode(
-                    [
-                        'allow_authentication' => 1,
-                    ]
-                )
-            );
+            ->willReturn(json_encode([
+                'allow_authentication' => 1,
+            ]));
         $this->wordPressDataMock
             ->method('getUserByUserLogin')
             ->willReturn('user');
@@ -181,16 +177,15 @@ class AuthenticateServiceTest extends TestCase
         $this->wordPressDataMock
             ->method('checkPassword')
             ->willReturn(false);
-        $authenticationService = (new AuthenticateService())
+        $authService = (new AuthenticateService())
             ->withRequest([
-                              'username' => 'test@test.com',
-                              'password'=> '123'
-                          ])
+                'username' => 'test@test.com',
+                'password' => '123'
+            ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
-        $authenticationService
-            ->makeAction();
+        $authService->makeAction();
     }
 
     public function testMissingAuthCodes()
@@ -200,56 +195,48 @@ class AuthenticateServiceTest extends TestCase
 
         $this->wordPressDataMock
             ->method('getOptionFromDatabase')
-            ->willReturn(
-                json_encode(
-                    [
-                        'allow_authentication' => 1,
-                        'auth_requires_auth_code' => true,
-                    ]
-                )
-            );
+            ->willReturn(json_encode([
+                'allow_authentication' => 1,
+                'auth_requires_auth_code' => true,
+            ]));
 
-        $authenticationService = (new AuthenticateService())
+        $authService = (new AuthenticateService())
             ->withRequest([
-                              'username' => 'test@test.com',
-                              'password'=> '123'
-                          ])
+                'username' => 'test@test.com',
+                'password' => '123'
+            ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
-        $authenticationService
-            ->makeAction();
+        $authService->makeAction();
     }
 
-    public function testSuccessFlowWithFullPayload(){
+    public function testSuccessFlowWithFullPayload()
+    {
         $this->wordPressDataMock
             ->method('getOptionFromDatabase')
-            ->willReturn(
-                json_encode(
+            ->willReturn(json_encode([
+                'allow_authentication' => 1,
+                'auth_requires_auth_code' => true,
+                'jwt_payload' => [
+                    AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT,
+                    AuthenticationSettings::JWT_PAYLOAD_PARAM_EMAIL,
+                    AuthenticationSettings::JWT_PAYLOAD_PARAM_EXP,
+                    AuthenticationSettings::JWT_PAYLOAD_PARAM_ID,
+                    AuthenticationSettings::JWT_PAYLOAD_PARAM_SITE,
+                    AuthenticationSettings::JWT_PAYLOAD_PARAM_USERNAME
+                ],
+                'enabled_hooks' => [
+                    SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME
+                ],
+                'auth_codes' => [
                     [
-                        'allow_authentication' => 1,
-                        'auth_requires_auth_code' => true,
-                        'jwt_payload' => [
-                            AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT,
-                            AuthenticationSettings::JWT_PAYLOAD_PARAM_EMAIL,
-                            AuthenticationSettings::JWT_PAYLOAD_PARAM_EXP,
-                            AuthenticationSettings::JWT_PAYLOAD_PARAM_ID,
-                            AuthenticationSettings::JWT_PAYLOAD_PARAM_SITE,
-                            AuthenticationSettings::JWT_PAYLOAD_PARAM_USERNAME
-                        ],
-                        'enabled_hooks' => [
-                            SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME
-                        ],
-                        'auth_codes' => [
-                            [
-                                'code' => '123',
-                                'role' => '',
-                                'expiration_date' => '',
-                            ]
-                        ]
+                        'code' => '123',
+                        'role' => '',
+                        'expiration_date' => '',
                     ]
-                )
-            );
+                ]
+            ]));
         $this->wordPressDataMock
             ->method('getUserByUserLogin')
             ->willReturn('user');
@@ -262,7 +249,7 @@ class AuthenticateServiceTest extends TestCase
         $this->wordPressDataMock
             ->method('createResponse')
             ->willReturn(true);
-        $authenticationService = (new AuthenticateService())
+        $authService = (new AuthenticateService())
             ->withRequest(
                 [
                     'username' => 'test@test.com',
@@ -273,8 +260,7 @@ class AuthenticateServiceTest extends TestCase
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
-        $result = $authenticationService
-            ->makeAction();
+        $result = $authService->makeAction();
         $this->assertTrue($result);
     }
 }

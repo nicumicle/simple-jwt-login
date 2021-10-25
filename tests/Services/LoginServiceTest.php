@@ -74,7 +74,7 @@ class LoginServiceTest extends TestCase
                 'settings' => [
                     'allow_autologin' => 'true',
                 ],
-                'request'=> [],
+                'request' => [],
                 'exceptionMessage' => 'Wrong Request.',
             ],
             'missing_auth_code' => [
@@ -131,11 +131,34 @@ class LoginServiceTest extends TestCase
                     )
                 ],
                 'exception' => 'Unable to find user test property in JWT.',
+            ],
+            'test_unable_to_find_user_in_jwt_nested' => [
+                'settings' => [
+                    'allow_autologin' => true,
+                    'require_login_auth' => false,
+                    'decryption_key' => 'test',
+                    'jwt_login_by_parameter' => 'user.properties'
+                ],
+                'request' => [
+                    'JWT' => JWT::encode(
+                        [
+                            'user' => [
+                                'someKey' => [
+                                    'id' => 1
+                                ]
+                            ],
+                        ],
+                        'test',
+                        'HS256'
+                    )
+                ],
+                'exception' => 'Unable to find user properties property in JWT.',
             ]
         ];
     }
 
-    public function testUserNotFound(){
+    public function testUserNotFound()
+    {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('User not found');
         $this->expectExceptionCode(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND);
@@ -166,7 +189,8 @@ class LoginServiceTest extends TestCase
         $service->makeAction();
     }
 
-    public function testLoginWithRevokedJWT(){
+    public function testLoginWithRevokedJWT()
+    {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('This JWT is invalid.');
         $this->expectExceptionCode(ErrorCodes::ERR_REVOKED_TOKEN);
@@ -208,25 +232,40 @@ class LoginServiceTest extends TestCase
         $service->makeAction();
     }
 
-    public function testSuccess()
+    /**
+     * @dataProvider loginProvider
+     * @param array|null $request
+     * @param array|null $session
+     * @param array|null $cookie
+     * @param array|null $headers
+     * @throws Exception
+     */
+    public function testSuccess($loginBy, $request, $session, $cookie, $headers)
     {
-        $jwt = JWT::encode(
-            ['id' => 1],
-            'test',
-            'HS256'
-        );
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode([
                 'allow_autologin' => true,
                 'require_login_auth' => false,
                 'decryption_key' => 'test',
-                'jwt_login_by_parameter' => 'id',
-                'jwt_login_by' => LoginSettings::JWT_LOGIN_BY_EMAIL,
+                'jwt_login_by_parameter' => 'user.id',
+                'jwt_login_by' => $loginBy,
+                'request_jwt_session' => true,
+                'request_jwt_header' => true,
+                'request_jwt_cookie' => true,
+                'request_jwt_url' => true,
                 'enabled_hooks' => [
                     SimpleJWTLoginHooks::LOGIN_ACTION_NAME
                 ],
             ]));
+        $this->wordPressDataMock->method('getUserMeta')
+            ->willReturn([
+                Jwt::encode(['test' => 1], 'test', 'HS256'), //another JWT
+            ]);
         $this->wordPressDataMock->method('getUserDetailsByEmail')
+            ->willReturn(true);
+        $this->wordPressDataMock->method('getUserByUserLogin')
+            ->willReturn(true);
+        $this->wordPressDataMock->method('getUserDetailsById')
             ->willReturn(true);
         $this->wordPressDataMock->method('isInstanceOfuser')
             ->willReturn(true);
@@ -238,17 +277,73 @@ class LoginServiceTest extends TestCase
             ->willReturn(true);
 
         $service = (new LoginService())
-            ->withRequest([
-                'JWT' => $jwt
-            ])
-            ->withCookies([])
-            ->withServerHelper(new ServerHelper([
-                'HTTP_CLIENT_IP' => '127.0.0.1'
-            ]))
-            ->withSession([])
+            ->withRequest($request)
+            ->withCookies($cookie)
+            ->withServerHelper(new ServerHelper($headers))
+            ->withSession($session)
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
 
         $result = $service->makeAction();
         $this->assertNull($result);
+    }
+
+    public function loginProvider()
+    {
+        $jwt = JWT::encode(
+            [
+                'user' => ['id' => 1]
+            ],
+            'test',
+            'HS256'
+        );
+
+        return [
+           'test_jwt_in_request' => [
+               'loginBy' => LoginSettings::JWT_LOGIN_BY_EMAIL,
+                'request' => [
+                    'JWT' => $jwt,
+                ],
+                'session' => [],
+                'cookie' => [],
+                'headers' => [],
+           ],
+            'test_jwt_in_session' =>  [
+                'loginBy' => LoginSettings::JWT_LOGIN_BY_EMAIL,
+                'request' => [],
+                'session' => [
+                    'simple-jwt-login-token' => $jwt,
+                ],
+                'cookie' => [],
+                'headers' => [],
+            ],
+            'test_jwt_in_cookie' => [
+                'loginBy' => LoginSettings::JWT_LOGIN_BY_EMAIL,
+                'request' => [],
+                'session' => [],
+                'cookie' => [
+                    'simple-jwt-login-token' => $jwt
+                ],
+                'headers' => [],
+            ],
+            'test_jwt_in_header' => [
+                'loginBy' => LoginSettings::JWT_LOGIN_BY_USER_LOGIN,
+                'request' => [],
+                'session' => [],
+                'cookie' => [],
+                'headers' => [
+                    'HTTP_Authorization' => $jwt
+                ],
+            ],
+            'test_jwt_in_header_with_bearer' => [
+                'loginBy' => LoginSettings::JWT_LOGIN_BY_WORDPRESS_USER_ID,
+                'request' => [],
+                'session' => [],
+                'cookie' => [],
+                'headers' => [
+                    'HTTP_Authorization' => 'Bearer ' . $jwt
+                ],
+            ],
+
+        ];
     }
 }

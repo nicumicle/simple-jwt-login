@@ -50,8 +50,8 @@ class RegisterSettingsTest extends TestCase
             $registerSettings->isRegisterAllowed()
         );
         $this->assertSame(
-           'subscriber',
-           $registerSettings->getNewUSerProfile()
+            'subscriber',
+            $registerSettings->getNewUSerProfile()
         );
         $this->assertSame(
             '127.0.0.1',

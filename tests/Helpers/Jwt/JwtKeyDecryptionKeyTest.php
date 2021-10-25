@@ -1,8 +1,6 @@
 <?php
 
-
 namespace SimpleJwtLoginTests\Helpers\Jwt;
-
 
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyDecryptionKey;
 
@@ -14,7 +12,8 @@ class JwtKeyDecryptionKeyTest extends JwtKeyBase
      * @param string $expectedPublicKey
      * @param string $expectedPrivateKey
      */
-    public function testPrivateAndPublicKey($settings, $expectedPublicKey, $expectedPrivateKey){
+    public function testPrivateAndPublicKey($settings, $expectedPublicKey, $expectedPrivateKey)
+    {
         $settings = $this->getSettingsMock($settings);
         $jwtKeyDecryptionKey = new JwtKeyDecryptionKey($settings);
         $this->assertSame(

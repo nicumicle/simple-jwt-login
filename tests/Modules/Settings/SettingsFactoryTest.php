@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJWTLoginTests\Modules\Settings;
 
 use Exception;

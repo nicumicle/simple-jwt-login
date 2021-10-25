@@ -33,9 +33,11 @@ class RegisterUserServiceTest extends TestCase
      * @dataProvider validationProvider
      * @param mixed $request
      * @param array $settings
+     * @param string $exceptionMessage
      * @throws Exception
      */
-    public function testValidation($request, $settings, $exceptionMessage){
+    public function testValidation($request, $settings, $exceptionMessage)
+    {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage($exceptionMessage);
 
@@ -208,7 +210,8 @@ class RegisterUserServiceTest extends TestCase
         ];
     }
 
-    public function testRegisteredUserAlreadyExists(){
+    public function testRegisteredUserAlreadyExists()
+    {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('User already exists.');
         $this->expectExceptionCode(ErrorCodes::ERR_REGISTER_USER_ALREADY_EXISTS);
@@ -290,7 +293,8 @@ class RegisterUserServiceTest extends TestCase
         $this->assertSame(null, $result);
     }
 
-    public function testRegisterSuccess(){
+    public function testRegisterSuccessWithJwtFromAuth()
+    {
         $authSettings = new AuthenticationSettings();
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode([
@@ -320,7 +324,7 @@ class RegisterUserServiceTest extends TestCase
                 'some_param' => 'test',
             ]);
         $this->wordPressDataMock->method('createResponse')
-            ->willReturnCallback(function($result){
+            ->willReturnCallback(function ($result) {
                 return $result;
             });
 
@@ -336,6 +340,65 @@ class RegisterUserServiceTest extends TestCase
             ->withSession([])
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
 
+        /** @var array $result */
+        $result = $service->makeAction();
+
+        $this->assertArrayHasKey('success', $result);
+        $this->assertTrue($result['success']);
+        $this->assertArrayHasKey('id', $result);
+        $this->assertArrayHasKey('message', $result);
+        $this->assertArrayHasKey('user', $result);
+        $this->assertArrayHasKey('jwt', $result);
+    }
+
+    public function testRegisterWithoutAuthPayload()
+    {
+        $this->wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication' => false,
+                'allow_register' => true,
+                'require_register_auth' => false,
+                'random_password' => false,
+                'decryption_key' => '123',
+                'register_jwt' => true,
+            ]));
+
+        $this->wordPressDataMock->method('isEmail')
+            ->willReturn(true);
+        $this->wordPressDataMock->method('checkUserExistsByUsernameAndEmail')
+            ->willReturn(false);
+
+
+        $this->wordPressDataMock->method('createUser')
+            ->willReturn([]);
+        $this->wordPressDataMock->method('getUserIdFromUser')
+            ->willReturn(1);
+        $this->wordPressDataMock->method('getUserProperty')
+            ->willReturn('test');
+        $this->wordPressDataMock->method('wordpressUserToArray')
+            ->willReturn([
+                'user_pass' => '123',
+                'email' => 'user@test.com',
+                'some_param' => 'test',
+            ]);
+        $this->wordPressDataMock->method('createResponse')
+            ->willReturnCallback(function ($result) {
+                return $result;
+            });
+
+        $service = (new RegisterUserService())
+            ->withRequest([
+                'email' => 'test@test.com',
+                'password' => 123,
+            ])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([
+                'HTTP_CLIENT_IP' => '127.0.0.1'
+            ]))
+            ->withSession([])
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+
+        /** @var array $result */
         $result = $service->makeAction();
 
         $this->assertArrayHasKey('success', $result);

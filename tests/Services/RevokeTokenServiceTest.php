@@ -39,7 +39,7 @@ class RevokeTokenServiceTest extends TestCase
 
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
-        $authenticationService = (new RevokeTokenService())
+        $revokeService = (new RevokeTokenService())
             ->withRequest([
                 'JWT' => '',
                 'AUTH_KEY' => 'test',
@@ -50,7 +50,7 @@ class RevokeTokenServiceTest extends TestCase
                 'HTTP_CLIENT_IP' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
-        $authenticationService->makeAction();
+        $revokeService->makeAction();
     }
 
     public function testUserNotFound()
@@ -72,11 +72,11 @@ class RevokeTokenServiceTest extends TestCase
             ->willReturn(false);
         $this->wordPressDataMock->method('isInstanceOfuser')
             ->willReturn(false);
-        $authenticationService = (new RevokeTokenService())
+        $revokeService = (new RevokeTokenService())
             ->withRequest([
                 'JWT' => JWT::encode([
                     'id' => 1
-                ],$settings['decryption_key'], 'HS256'),
+                ], $settings['decryption_key'], 'HS256'),
                 'AUTH_KEY' => 'test',
             ])
             ->withCookies([])
@@ -85,7 +85,7 @@ class RevokeTokenServiceTest extends TestCase
                 'HTTP_CLIENT_IP' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
-        $authenticationService->makeAction();
+        $revokeService->makeAction();
     }
 
     public function testSuccess()
@@ -112,7 +112,7 @@ class RevokeTokenServiceTest extends TestCase
         $this->wordPressDataMock->method('getUserMeta')
             ->with(1, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY)
             ->willReturn([
-                Jwt::encode(['exp' => 1000],'test','HS256')
+                Jwt::encode(['exp' => 1000], 'test', 'HS256')
             ]);
 
         $this->wordPressDataMock->method('addUserMeta')
@@ -120,7 +120,7 @@ class RevokeTokenServiceTest extends TestCase
         $this->wordPressDataMock->method('createResponse')
             ->willReturn(true);
 
-        $authenticationService = (new RevokeTokenService())
+        $revokeService = (new RevokeTokenService())
             ->withRequest([
                 'JWT' => JWT::encode([
                     'id' => 1
@@ -133,7 +133,7 @@ class RevokeTokenServiceTest extends TestCase
                 'HTTP_CLIENT_IP' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
-        $result = $authenticationService->makeAction();
+        $result = $revokeService->makeAction();
         $this->assertTrue($result);
     }
 

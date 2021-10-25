@@ -14,19 +14,25 @@ use SimpleJWTLogin\Services\RouteService;
 
 class RouteServiceTest extends TestCase
 {
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|WordPressDataInterface
+     */
+    private $wordPressDataMock;
+
     public function testGetAllRoutes()
     {
         $allRoutes = (new RouteService())
             ->getAllRoutes();
         $this->assertNotEmpty($allRoutes);
-        foreach ($allRoutes as $route){
-            $this->assertArrayHasKey('name',$route);
-            $this->assertArrayHasKey('method',$route);
-            $this->assertArrayHasKey('service',$route);
+        foreach ($allRoutes as $route) {
+            $this->assertArrayHasKey('name', $route);
+            $this->assertArrayHasKey('method', $route);
+            $this->assertArrayHasKey('service', $route);
         }
     }
 
-    public function testUserNotFound(){
+    public function testUserNotFound()
+    {
         $this->wordPressDataMock = $this
             ->getMockBuilder(WordPressDataInterface::class)
             ->getMock();
@@ -59,10 +65,11 @@ class RouteServiceTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('WordPress User not found.');
         $jwt = JWT::encode(['user' => 'test'], '123');
-        $userId = $routeServie->getUserIdFromJWT($jwt);
+        $routeServie->getUserIdFromJWT($jwt);
     }
 
-    public function testGetUserIdFromJWT(){
+    public function testGetUserIdFromJWT()
+    {
         $this->wordPressDataMock = $this
             ->getMockBuilder(WordPressDataInterface::class)
             ->getMock();

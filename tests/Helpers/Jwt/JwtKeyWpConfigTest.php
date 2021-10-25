@@ -1,21 +1,23 @@
 <?php
 
-
 namespace SimpleJwtLoginTests\Helpers\Jwt;
-
 
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyWpConfig;
 
 class JwtKeyWpConfigTest extends JwtKeyBase
 {
-    protected $preserveGlobalState = TRUE;
+    /**
+     * @var boolean $preserveGlobalState
+     */
+    protected $preserveGlobalState = true;
     /**
      * @dataProvider settingsProvider
      * @param array $settings
      * @param string|null $expectedPublicKey
      * @param string|null $expectedPrivateKey
      */
-    public function testPrivateAndPublicKey($settings, $expectedPublicKey, $expectedPrivateKey){
+    public function testPrivateAndPublicKey($settings, $expectedPublicKey, $expectedPrivateKey)
+    {
         $settings = $this->getSettingsMock($settings);
         $jwtKeyWpConfig = new JwtKeyWpConfig($settings);
 

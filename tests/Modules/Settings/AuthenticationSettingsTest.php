@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJWTLoginTests\Modules\Settings;
 
 use Exception;
@@ -26,8 +27,9 @@ class AuthenticationSettingsTest extends TestCase
             );
     }
 
-    public function testAssignProperties(){
-        $authenticationSettings = (new AuthenticationSettings())
+    public function testAssignProperties()
+    {
+        $authSettings = (new AuthenticationSettings())
             ->withWordPressData($this->wordPressData)
             ->withSettings([])
             ->withPost(
@@ -44,30 +46,30 @@ class AuthenticationSettingsTest extends TestCase
                     'auth_requires_auth_code' => 1,
                 ]
             );
-        $authenticationSettings->initSettingsFromPost();
-        $authenticationSettings->validateSettings();
+        $authSettings->initSettingsFromPost();
+        $authSettings->validateSettings();
 
         $this->assertSame(
             true,
-            $authenticationSettings->isAuthenticationEnabled()
+            $authSettings->isAuthenticationEnabled()
         );
         $this->assertSame(
             true,
-            $authenticationSettings->isPayloadDataEnabled('exp')
+            $authSettings->isPayloadDataEnabled('exp')
         );
-        $this->assertSame(120, $authenticationSettings->getAuthJwtTtl());
+        $this->assertSame(120, $authSettings->getAuthJwtTtl());
         $this->assertSame(
             '127.0.0.1',
-            $authenticationSettings->getAllowedIps()
+            $authSettings->getAllowedIps()
         );
         $this->assertSame(
             130,
-            $authenticationSettings->getAuthJwtRefreshTtl()
+            $authSettings->getAuthJwtRefreshTtl()
         );
-        $this->assertIsArray($authenticationSettings->getJwtPayloadParameters());
+        $this->assertIsArray($authSettings->getJwtPayloadParameters());
         $this->assertSame(
             true,
-            $authenticationSettings->isAuthKeyRequired()
+            $authSettings->isAuthKeyRequired()
         );
     }
 
@@ -75,7 +77,7 @@ class AuthenticationSettingsTest extends TestCase
     {
         $this->expectExceptionMessage('Authentication payload data can not be empty.');
         $this->expectException(Exception::class);
-        $authenticationSettings = (new AuthenticationSettings())
+        $authSettings = (new AuthenticationSettings())
             ->withSettings([])
             ->withPost(
                 [
@@ -83,13 +85,14 @@ class AuthenticationSettingsTest extends TestCase
                 ]
             )
             ->withWordPressData($this->wordPressData);
-        $authenticationSettings->validateSettings();
+        $authSettings->validateSettings();
     }
 
-    public function testValidationWithTTLSmalledThanZero(){
+    public function testValidationWithTTLSmalledThanZero()
+    {
         $this->expectExceptionMessage('Authentication JWT time to live should be greater than zero.');
         $this->expectException(Exception::class);
-        $authenticationSettings = (new AuthenticationSettings())
+        $authSettings = (new AuthenticationSettings())
             ->withSettings([])
             ->withPost(
                 [
@@ -102,13 +105,14 @@ class AuthenticationSettingsTest extends TestCase
                 ]
             )
             ->withWordPressData($this->wordPressData);
-        $authenticationSettings->validateSettings();
+        $authSettings->validateSettings();
     }
 
-    public function testValidationWithRefreshTTLSmalledThanZero(){
+    public function testValidationWithRefreshTTLSmalledThanZero()
+    {
         $this->expectExceptionMessage('Authentication JWT Refresh time to live should be greater than zero.');
         $this->expectException(Exception::class);
-        $authenticationSettings = (new AuthenticationSettings())
+        $authSettings = (new AuthenticationSettings())
             ->withSettings([])
             ->withPost(
                 [
@@ -122,7 +126,6 @@ class AuthenticationSettingsTest extends TestCase
                 ]
             )
             ->withWordPressData($this->wordPressData);
-        $authenticationSettings->validateSettings();
+        $authSettings->validateSettings();
     }
-
 }

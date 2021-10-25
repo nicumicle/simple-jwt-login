@@ -1,8 +1,6 @@
 <?php
 
-
-namespace Services;
-
+namespace SimpleJwtLoginTests\Services;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
@@ -31,23 +29,25 @@ class ResetPasswordServiceTest extends TestCase
     /**
      * @dataProvider sendUserPasswordProvider
      *
+     * @param mixed $settings
      * @param array $request
+     * @param string $exceptionMessage
      *
      * @throws \Exception
      */
-    public function testValidationSendUserPassword($settings, $request, $expectedExceptionMessage)
+    public function testValidationSendUserPassword($settings, $request, $exceptionMessage)
     {
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage($expectedExceptionMessage);
+        $this->expectExceptionMessage($exceptionMessage);
         $this->wordPressDataMock
             ->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
-        $authenticationService = (new ResetPasswordService())
+        $resetService = (new ResetPasswordService())
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'POST']))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
-        $authenticationService->makeAction();
+        $resetService->makeAction();
     }
 
     public function sendUserPasswordProvider()
@@ -146,12 +146,12 @@ class ResetPasswordServiceTest extends TestCase
         $this->wordPressDataMock
             ->method('createResponse')
             ->willReturn(true);
-        $authenticationService = (new ResetPasswordService())
+        $resetService = (new ResetPasswordService())
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'POST']))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
-        $result                = $authenticationService->makeAction();
+        $result = $resetService->makeAction();
         $this->assertSame(true, $result);
     }
 
@@ -175,23 +175,23 @@ class ResetPasswordServiceTest extends TestCase
      *
      * @param array $settings
      * @param array $request
-     * @param string $expectedExceptionMessage
+     * @param string $exceptionMessage
      *
      * @throws Exception
      */
-    public function testValidationChangePassword($settings, $request, $expectedExceptionMessage)
+    public function testValidationChangePassword($settings, $request, $exceptionMessage)
     {
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage($expectedExceptionMessage);
+        $this->expectExceptionMessage($exceptionMessage);
         $this->wordPressDataMock
             ->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
-        $authenticationService = (new ResetPasswordService())
+        $resetService = (new ResetPasswordService())
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'PUT']))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
-        $authenticationService->makeAction();
+        $resetService->makeAction();
     }
 
     public function changePasswordValidationProvider()
@@ -315,12 +315,12 @@ class ResetPasswordServiceTest extends TestCase
         $this->wordPressDataMock
             ->method('createResponse')
             ->willReturn(true);
-        $authenticationService = (new ResetPasswordService())
+        $resetService = (new ResetPasswordService())
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'PUT']))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
-        $result                = $authenticationService->makeAction();
+        $result = $resetService->makeAction();
         $this->assertSame(true, $result);
     }
 
@@ -340,11 +340,11 @@ class ResetPasswordServiceTest extends TestCase
         $this->wordPressDataMock
             ->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
-        $authenticationService = (new ResetPasswordService())
+        $resetService = (new ResetPasswordService())
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'OPTIONS']))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
-        $authenticationService->makeAction();
+        $resetService->makeAction();
     }
 }

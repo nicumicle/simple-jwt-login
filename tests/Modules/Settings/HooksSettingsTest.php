@@ -26,7 +26,8 @@ class HooksSettingsTest extends TestCase
             );
     }
 
-    public function testGetProperties(){
+    public function testGetProperties()
+    {
         $post = [
             'enabled_hooks' => []
         ];

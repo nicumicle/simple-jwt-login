@@ -62,7 +62,7 @@ class GeneralSettingsTest extends TestCase
         $this->assertSame('0', $generalSettings->getDecryptionSource());
         $this->assertSame(false, $generalSettings->isDecryptionKeyBase64Encoded());
         $this->assertSame('123', $generalSettings->getDecryptionKey());
-        $this->assertSame('',  $generalSettings->getDecryptionKeyPublic());
+        $this->assertSame('', $generalSettings->getDecryptionKeyPublic());
         $this->assertSame('', $generalSettings->getDecryptionKeyPrivate());
         $this->assertSame('HS256', $generalSettings->getJWTDecryptAlgorithm());
         $this->assertSame('jwt/', $generalSettings->getRouteNamespace());
@@ -267,6 +267,4 @@ class GeneralSettingsTest extends TestCase
         $generalSettings->initSettingsFromPost();
         $generalSettings->validateSettings();
     }
-
 }
-

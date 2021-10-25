@@ -26,13 +26,18 @@
   },
   "scripts": {
     "tests": "vendor/bin/paratest tests/",
-    "phpcs": "vendor/bin/phpcs simple-jwt-login/src",
+    "phpcs": "vendor/bin/phpcs simple-jwt-login/src tests",
     "phpmd-design": "vendor/bin/phpmd simple-jwt-login/src/ text design",
     "phpmd-cleancode": "vendor/bin/phpmd simple-jwt-login/src/ text cleancode",
     "phpmd-unusedcode": "vendor/bin/phpmd simple-jwt-login/src/ text unusedcode",
     "phpmd-naming": "vendor/bin/phpmd simple-jwt-login/src/ text naming",
     "phpmd-controversial": "vendor/bin/phpmd simple-jwt-login/src/ text controversial",
     "phpstan": "vendor/bin/phpstan analyse simple-jwt-login/src",
+    "phpmd-test-design" : "vendor/bin/phpmd tests/ text design",
+    "phpmd-test-cleancode" : "vendor/bin/phpmd tests/ text cleancode",
+    "phpmd-test-unusedcode" : "vendor/bin/phpmd tests/ text unusedcode",
+    "phpmd-test-naming" : "vendor/bin/phpmd tests/ text naming",
+    "phpmd-test-controversial" : "vendor/bin/phpmd tests/ text controversial",
     "check-plugin": [
         "@phpcs",
         "@phpmd-design",
@@ -41,7 +46,11 @@
         "@phpmd-naming",
         "@phpmd-controversial",
         "@phpstan",
-        "@tests"
+        "@tests",
+        "@phpmd-test-design",
+        "@phpmd-test-naming",
+        "@phpmd-test-unusedcode",
+        "@phpmd-test-controversial"
     ]
   },
   "scripts-descriptions": {

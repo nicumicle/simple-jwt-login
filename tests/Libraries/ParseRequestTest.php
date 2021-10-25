@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Libraries;
-
 
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Libraries\ParseRequest;
@@ -15,11 +13,15 @@ class ParseRequestTest extends TestCase
      * @param mixed $server
      * @param mixed $expectedResult
      */
-    public function testRequest($server, $expectedResult){
-      $requestParameters = ParseRequest::process($server);
-      $this->assertSame($expectedResult, $requestParameters['variables']);
+    public function testRequest($server, $expectedResult)
+    {
+        $requestParameters = ParseRequest::process($server);
+        $this->assertSame($expectedResult, $requestParameters['variables']);
     }
 
+    /**
+     * @return array
+     */
     public function contentTypeProvider()
     {
         return [

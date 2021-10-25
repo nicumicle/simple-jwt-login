@@ -1,6 +1,5 @@
 <?php
 
-
 namespace SimpleJwtLoginTests\Helpers\Jwt;
 
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyCertificate;

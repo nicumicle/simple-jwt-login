@@ -53,6 +53,21 @@ jobs:
     - name: Run phpstan on plugin
       run: vendor/bin/phpstan analyse simple-jwt-login/src
 
+    - name: Run PHPCS design on tests
+      run: vendor/bin/phpcs tests/
+
+    - name: Run PHPMD design on tests
+      run: vendor/bin/phpmd tests text design
+
+    - name: Run PHPMD unusedcode on tests
+      run: vendor/bin/phpmd tests/ text unusedcode
+
+    - name: Run PHPMD naming on tests
+      run: vendor/bin/phpmd tests/ text naming
+
+    - name: Run PHPMD controversial on tests
+      run: vendor/bin/phpmd tests/ text controversial
+
     - name: PHPUnit tests
       uses: php-actions/phpunit@v2
       with:

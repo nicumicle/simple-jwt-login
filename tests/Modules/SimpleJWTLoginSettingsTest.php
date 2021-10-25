@@ -20,20 +20,20 @@ class SimpleJWTLoginSettingsTest extends TestCase
     /**
      * @var SimpleJWTLoginSettings
      */
-    private $simpleJwtLoginSettings;
+    private $simpleJWTSettings;
 
     public function setUp(): void
     {
         parent::setUp();
         $wordPressDataMock            = $this->getMockBuilder(WordPressDataInterface::class)->getMock();
-        $this->simpleJwtLoginSettings = new SimpleJWTLoginSettings($wordPressDataMock);
+        $this->simpleJWTSettings = new SimpleJWTLoginSettings($wordPressDataMock);
     }
 
     public function testGetGeneralSettings()
     {
         $this->assertInstanceOf(
             GeneralSettings::class,
-            $this->simpleJwtLoginSettings->getGeneralSettings()
+            $this->simpleJWTSettings->getGeneralSettings()
         );
     }
 
@@ -41,7 +41,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
     {
         $this->assertInstanceOf(
             AuthCodesSettings::class,
-            $this->simpleJwtLoginSettings->getAuthCodesSettings()
+            $this->simpleJWTSettings->getAuthCodesSettings()
         );
     }
 
@@ -49,7 +49,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
     {
         $this->assertInstanceOf(
             AuthenticationSettings::class,
-            $this->simpleJwtLoginSettings->getAuthenticationSettings()
+            $this->simpleJWTSettings->getAuthenticationSettings()
         );
     }
 
@@ -57,7 +57,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
     {
         $this->assertInstanceOf(
             HooksSettings::class,
-            $this->simpleJwtLoginSettings->getHooksSettings()
+            $this->simpleJWTSettings->getHooksSettings()
         );
     }
 
@@ -65,7 +65,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
     {
         $this->assertInstanceOf(
             CorsSettings::class,
-            $this->simpleJwtLoginSettings->getCorsSettings()
+            $this->simpleJWTSettings->getCorsSettings()
         );
     }
 
@@ -73,7 +73,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
     {
         $this->assertInstanceOf(
             DeleteUserSettings::class,
-            $this->simpleJwtLoginSettings->getDeleteUserSettings()
+            $this->simpleJWTSettings->getDeleteUserSettings()
         );
     }
 
@@ -81,7 +81,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
     {
         $this->assertInstanceOf(
             LoginSettings::class,
-            $this->simpleJwtLoginSettings->getLoginSettings()
+            $this->simpleJWTSettings->getLoginSettings()
         );
     }
 
@@ -89,7 +89,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
     {
         $this->assertInstanceOf(
             RegisterSettings::class,
-            $this->simpleJwtLoginSettings->getRegisterSettings()
+            $this->simpleJWTSettings->getRegisterSettings()
         );
     }
 
@@ -97,14 +97,14 @@ class SimpleJWTLoginSettingsTest extends TestCase
     {
         $this->assertInstanceOf(
             WordPressDataInterface::class,
-            $this->simpleJwtLoginSettings->getWordPressData()
+            $this->simpleJWTSettings->getWordPressData()
         );
     }
 
     public function testWatchForUpdatesWithEmptyPost()
     {
         $this->assertFalse(
-            $this->simpleJwtLoginSettings->watchForUpdates([])
+            $this->simpleJWTSettings->watchForUpdates([])
         );
     }
 
@@ -112,7 +112,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Route namespace could not be empty.');
-        $this->simpleJwtLoginSettings
+        $this->simpleJWTSettings
             ->watchForUpdates([
                 '_wpnonce' => '123',
                 'some_key' => '123'
@@ -127,10 +127,10 @@ class SimpleJWTLoginSettingsTest extends TestCase
             ->willReturn('https://localhost');
         $wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode(['route_namespace' => 'v1']));
-        $simpleJwtLoginSettings = new SimpleJWTLoginSettings($wordPressDataMock);
+        $simpleJwtSetttings = new SimpleJWTLoginSettings($wordPressDataMock);
         $this->assertSame(
             'https://localhost/?rest_route=/v1/auth&amp;param=1',
-            $simpleJwtLoginSettings->generateExampleLink('auth',['param' => 1])
+            $simpleJwtSetttings->generateExampleLink('auth', ['param' => 1])
         );
     }
 
@@ -142,17 +142,17 @@ class SimpleJWTLoginSettingsTest extends TestCase
             ->willReturn('https://localhost');
         $wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode(['route_namespace' => 'v1']));
-        $simpleJwtLoginSettings = new SimpleJWTLoginSettings($wordPressDataMock);
+        $simpleJwtSettings = new SimpleJWTLoginSettings($wordPressDataMock);
         $this->assertSame(
             'https://localhost/?rest_route=/v1/test',
-            $simpleJwtLoginSettings->generateExampleLink('test', [])
+            $simpleJwtSettings->generateExampleLink('test', [])
         );
     }
 
     public function testCallWithoutNonceWillReturnFalse()
     {
         $this->assertFalse(
-            $this->simpleJwtLoginSettings
+            $this->simpleJWTSettings
                 ->watchForUpdates(['test' => '123'])
         );
     }
@@ -188,8 +188,8 @@ class SimpleJWTLoginSettingsTest extends TestCase
             ->willReturn(true);
         $wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn($settings);
-        $simpleJwtLoginSettings = new SimpleJWTLoginSettings($wordPressDataMock);
-        $result = $simpleJwtLoginSettings->watchForUpdates(
+        $simpleJWTSettings = new SimpleJWTLoginSettings($wordPressDataMock);
+        $result = $simpleJWTSettings->watchForUpdates(
             [
                 '_wpnonce' => '123',
                 'test'     => '123',

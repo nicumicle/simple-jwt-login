@@ -11,9 +11,9 @@ class UserPropertiesTest extends TestCase
 
     /**
      * @dataProvider providerBuildMethod
-     * @param $expected
-     * @param $userProperties
-     * @param $extraParameters
+     * @param mixed $expected
+     * @param mixed $userProperties
+     * @param mixed $extraParameters
      */
     public function testBuildMethod($expected, $userProperties, $extraParameters)
     {

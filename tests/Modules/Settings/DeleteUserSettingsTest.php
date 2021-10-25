@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJWTLoginTests\Modules\Settings;
 
 use Exception;
@@ -73,14 +74,11 @@ class DeleteUserSettingsTest extends TestCase
         $deleteUserSettings = (new DeleteUserSettings())
             ->withWordPressData($this->wordPressData)
             ->withSettings([])
-            ->withPost(
-                [
-                    'allow_delete' => 1,
-                    'jwt_delete_by_parameter'=>''
-                ]
-            );
+            ->withPost([
+                'allow_delete' => 1,
+                'jwt_delete_by_parameter' => ''
+            ]);
         $deleteUserSettings->initSettingsFromPost();
         $deleteUserSettings->validateSettings();
     }
-
 }

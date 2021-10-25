@@ -107,7 +107,7 @@ class ValidateTokenServiceTest extends TestCase
         $validateTokenService = (new ValidateTokenService())
             ->withSession([])
             ->withCookies([])
-            ->withRequest(['JWT' => JWT::encode(['id' => 123],'123','HS256')])
+            ->withRequest(['JWT' => JWT::encode(['id' => 123], '123', 'HS256')])
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
 
         $validateTokenService->makeAction();
@@ -155,12 +155,10 @@ class ValidateTokenServiceTest extends TestCase
         $validateTokenService = (new ValidateTokenService())
             ->withSession([])
             ->withCookies([])
-            ->withRequest(['JWT' => JWT::encode(['id' => 123, 'exp' => strtotime('+1Year')],'123','HS256')])
+            ->withRequest(['JWT' => JWT::encode(['id' => 123, 'exp' => strtotime('+1Year')], '123', 'HS256')])
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
 
         $result  = $validateTokenService->makeAction();
         $this->assertSame(['success' => true], $result);
     }
-
-
 }

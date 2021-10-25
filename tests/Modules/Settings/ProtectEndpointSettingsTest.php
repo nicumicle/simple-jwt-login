@@ -2,6 +2,7 @@
 
 namespace SimpleJwtLoginTests\Modules\Settings;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
 use SimpleJWTLogin\Modules\WordPressDataInterface;
@@ -28,37 +29,35 @@ class ProtectEndpointSettingsTest extends TestCase
 
     public function testAssignCodesFromPost()
     {
-        $protectEndpointSettings = (new ProtectEndpointSettings())
+        $protectSettings = (new ProtectEndpointSettings())
             ->withSettings([])
-            ->withPost(
-                [
-                    ProtectEndpointSettings::PROPERTY_GROUP => [
-                        'enabled' => '1',
-                        'action' => ProtectEndpointSettings::ALL_ENDPOINTS,
-                        'protect' => [
-                            '123',
-                            '',
-                            '123'
-                        ],
-                        'whitelist' => [
-                            'abc',
-                            '',
-                            'abc'
-                        ]
+            ->withPost([
+                ProtectEndpointSettings::PROPERTY_GROUP => [
+                    'enabled' => '1',
+                    'action' => ProtectEndpointSettings::ALL_ENDPOINTS,
+                    'protect' => [
+                        '123',
+                        '',
+                        '123'
+                    ],
+                    'whitelist' => [
+                        'abc',
+                        '',
+                        'abc'
                     ]
                 ]
-            )
+            ])
             ->withWordPressData($this->wordPressData);
-        $protectEndpointSettings->initSettingsFromPost();
+        $protectSettings->initSettingsFromPost();
 
         $this->assertSame(
             true,
-            $protectEndpointSettings->isEnabled()
+            $protectSettings->isEnabled()
         );
 
         $this->assertSame(
             ProtectEndpointSettings::ALL_ENDPOINTS,
-            $protectEndpointSettings->getAction()
+            $protectSettings->getAction()
         );
 
         $this->assertSame(
@@ -66,7 +65,7 @@ class ProtectEndpointSettingsTest extends TestCase
                 '123',
                 ''
             ],
-            $protectEndpointSettings->getProtectedEndpoints()
+            $protectSettings->getProtectedEndpoints()
         );
 
         $this->assertSame(
@@ -74,52 +73,182 @@ class ProtectEndpointSettingsTest extends TestCase
                 'abc',
                 ''
             ],
-            $protectEndpointSettings->getWhitelistedDomains()
+            $protectSettings->getWhitelistedDomains()
         );
     }
 
     public function testNoErrorIsThrownWhenDisabled()
     {
-        $protectEndpointSettings = (new ProtectEndpointSettings())
+        $protectSettings = (new ProtectEndpointSettings())
             ->withSettings([])
-            ->withPost(
-                [
-                    ProtectEndpointSettings::PROPERTY_GROUP => [
-                        'enabled' => '0',
-                        'action' => ProtectEndpointSettings::ALL_ENDPOINTS,
-                        'protect' => [
-                        ],
-                        'whitelist' => [
-                        ]
+            ->withPost([
+                ProtectEndpointSettings::PROPERTY_GROUP => [
+                    'enabled' => '0',
+                    'action' => ProtectEndpointSettings::ALL_ENDPOINTS,
+                    'protect' => [
+                    ],
+                    'whitelist' => [
                     ]
                 ]
-            )->withWordPressData($this->wordPressData);
-        $protectEndpointSettings->initSettingsFromPost();;
-        $protectEndpointSettings->validateSettings();
-        $this->assertFalse($protectEndpointSettings->isEnabled());
+            ])
+            ->withWordPressData($this->wordPressData);
+        $protectSettings->initSettingsFromPost();
+        $protectSettings->validateSettings();
+        $this->assertFalse($protectSettings->isEnabled());
     }
 
     public function testExceptionIsThrownWhenNoEndpointIsAdded()
     {
-        $protectEndpointSettings = (new ProtectEndpointSettings())
+        $protectSettings = (new ProtectEndpointSettings())
             ->withSettings([])
             ->withPost(
                 [
                     ProtectEndpointSettings::PROPERTY_GROUP => [
                         'enabled' => '1',
-                         'action' => ProtectEndpointSettings::ALL_ENDPOINTS,
-                         'protect' => [
-                             '',
-                             '0',
-                             'null',
-                         ]
+                        'action' => ProtectEndpointSettings::ALL_ENDPOINTS,
+                        'protect' => [
+                            '',
+                            '0',
+                            'null',
+                        ]
                     ]
                 ]
             )
             ->withWordPressData($this->wordPressData);
-        $protectEndpointSettings->initSettingsFromPost();
+        $protectSettings->initSettingsFromPost();
 
-        $protectEndpointSettings->validateSettings();
-        $this->assertTrue($protectEndpointSettings->isEnabled());
+        $protectSettings->validateSettings();
+        $this->assertTrue($protectSettings->isEnabled());
+    }
+
+    public function testInitProperties()
+    {
+        $post = [
+            ProtectEndpointSettings::PROPERTY_GROUP => [
+                'enabled' => 1,
+                'action' => ProtectEndpointSettings::ALL_ENDPOINTS,
+                'protect' => [
+                    'test',
+                    '',
+                    'test'
+                ],
+                'whitelist' => [
+                    '123',
+                    '',
+                    '123'
+                ]
+            ]
+        ];
+        $settings = (new ProtectEndpointSettings())
+            ->withSettings([])
+            ->withWordPressData($this->wordPressData)
+            ->withPost($post);
+        $settings->initSettingsFromPost();
+        $this->assertTrue($settings->isEnabled());
+        $this->assertSame(
+            ProtectEndpointSettings::ALL_ENDPOINTS,
+            $settings->getAction()
+        );
+        $this->assertSame(
+            [
+                'test',
+                ''
+            ],
+            $settings->getProtectedEndpoints()
+        );
+        $this->assertSame(
+            [
+                '123',
+                ''
+            ],
+            $settings->getWhitelistedDomains()
+        );
+    }
+
+    public function testGetDefaultValues()
+    {
+        $settings = (new ProtectEndpointSettings())
+            ->withPost([])
+            ->withWordPressData($this->wordPressData)
+            ->withSettings([]);
+
+        $this->assertSame(
+            false,
+            $settings->isEnabled()
+        );
+        $this->assertSame(
+            0,
+            $settings->getAction()
+        );
+        $this->assertSame(
+            [
+                ''
+            ],
+            $settings->getWhitelistedDomains()
+        );
+        $this->assertSame(
+            [
+                ''
+            ],
+            $settings->getProtectedEndpoints()
+        );
+    }
+
+    public function testValidateWhenNotEnabled()
+    {
+        $settings = (new ProtectEndpointSettings())
+            ->withPost([])
+            ->withWordPressData($this->wordPressData)
+            ->withSettings([
+                ProtectEndpointSettings::PROPERTY_GROUP => [
+                    'enabled' => false
+                ]
+            ]);
+        $this->assertTrue($settings->validateSettings());
+    }
+
+    /**
+     * @param mixed $endpointLists
+     * @throws Exception
+     *
+     * @dataProvider endpointsProvider
+     */
+    public function testNoEndpointProvided($endpointLists)
+    {
+        $settings = (new ProtectEndpointSettings())
+            ->withPost([])
+            ->withWordPressData($this->wordPressData)
+            ->withSettings([
+                ProtectEndpointSettings::PROPERTY_GROUP => [
+                    'enabled' => true,
+                    'action' => ProtectEndpointSettings::SPECIFIC_ENDPOINTS,
+                    'protect' => $endpointLists
+                ]
+            ]);
+        $this->expectException(Exception::class);
+        $this->expectErrorMessage('You need to add at least one endpoint.');
+        $settings->validateSettings();
+    }
+
+    public function endpointsProvider()
+    {
+        return [
+            'empty_array' => [
+                'endpoint_list' => ['']
+            ],
+            'array_with_empty_values' => [
+                'endpoint_list' => [
+                    '',
+                    '',
+                    '',
+                ]
+            ],
+            'array_with_space' => [
+                'endpoint_list' => [
+                    '    ',
+                    '    ',
+                ]
+            ],
+        ];
     }
 }

@@ -7,12 +7,14 @@ use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 
 class SettingsErrorsTest extends TestCase
 {
-    public function testEmptyGetSectionFromErrorCode(){
+    public function testEmptyGetSectionFromErrorCode()
+    {
         $settingsErrors = new SettingsErrors();
         $this->assertSame(0, $settingsErrors->getSectionFromErrorCode(0));
     }
 
-    public function testGetSectionFromErrorCode(){
+    public function testGetSectionFromErrorCode()
+    {
         $settingsErrors = new SettingsErrors();
         $errorCode = ErrorCodes::AUTHENTICATION_IS_NOT_ENABLED;
         $section = SettingsErrors::PREFIX_AUTHENTICATION;

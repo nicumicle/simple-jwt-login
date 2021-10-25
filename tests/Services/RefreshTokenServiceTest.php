@@ -39,7 +39,7 @@ class RefreshTokenServiceTest extends TestCase
 
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
-        $authenticationService = (new RefreshTokenService())
+        $refreshService = (new RefreshTokenService())
             ->withRequest([
                 'JWT' => '',
                 'AUTH_KEY' => 'test',
@@ -50,7 +50,7 @@ class RefreshTokenServiceTest extends TestCase
                 'HTTP_CLIENT_IP' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
-        $authenticationService->makeAction();
+        $refreshService->makeAction();
     }
 
     public function testRefreshWithInvalidJWT()
@@ -67,7 +67,7 @@ class RefreshTokenServiceTest extends TestCase
 
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
-        $authenticationService = (new RefreshTokenService())
+        $refreshService = (new RefreshTokenService())
             ->withRequest([
                 'JWT' => '123.123',
             ])
@@ -76,10 +76,11 @@ class RefreshTokenServiceTest extends TestCase
                 'REQUEST_METHOD' => 'POST',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
-        $authenticationService->makeAction();
+        $refreshService->makeAction();
     }
 
-    public function testRefreshExpiredTokenThatWasBlacklisted(){
+    public function testRefreshExpiredTokenThatWasBlacklisted()
+    {
         $settings = [
             'allow_authentication' => true,
             'auth_requires_auth_code' => false,
@@ -96,7 +97,7 @@ class RefreshTokenServiceTest extends TestCase
         $jwt = JWT::encode(
             [
                 'id' => 1,
-                'exp' => time()-1000*60,
+                'exp' => time() - 1000 * 60,
             ],
             'test',
             'HS256'
@@ -109,7 +110,7 @@ class RefreshTokenServiceTest extends TestCase
             ->willReturn(true);
         $this->wordPressDataMock->method('getUserMeta')
             ->willReturn([$jwt]);
-        $authenticationService = (new RefreshTokenService())
+        $refreshService = (new RefreshTokenService())
             ->withRequest([
                 'JWT' => $jwt,
             ])
@@ -118,7 +119,7 @@ class RefreshTokenServiceTest extends TestCase
                 'REQUEST_METHOD' => 'POST',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
-        $authenticationService->makeAction();
+        $refreshService->makeAction();
     }
 
     public function testRefreshTooOldToken()
@@ -139,7 +140,7 @@ class RefreshTokenServiceTest extends TestCase
         $jwt = JWT::encode(
             [
                 'id' => 1,
-                'exp' => time()-11*60,
+                'exp' => time() - 11 * 60,
             ],
             'test',
             'HS256'
@@ -152,7 +153,7 @@ class RefreshTokenServiceTest extends TestCase
             ->willReturn(true);
         $this->wordPressDataMock->method('getUserMeta')
             ->willReturn([]);
-        $authenticationService = (new RefreshTokenService())
+        $refreshService = (new RefreshTokenService())
             ->withRequest([
                 'JWT' => $jwt,
             ])
@@ -161,7 +162,7 @@ class RefreshTokenServiceTest extends TestCase
                 'REQUEST_METHOD' => 'POST',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
-        $authenticationService->makeAction();
+        $refreshService->makeAction();
     }
 
     public function testSuccess()
@@ -179,7 +180,7 @@ class RefreshTokenServiceTest extends TestCase
         $jwt = JWT::encode(
             [
                 'id' => 1,
-                'exp' => time()-11*60,
+                'exp' => time() - 11 * 60,
             ],
             'test',
             'HS256'
@@ -194,7 +195,7 @@ class RefreshTokenServiceTest extends TestCase
             ->willReturn([]);
         $this->wordPressDataMock->method('createResponse')
             ->willReturn(true);
-        $authenticationService = (new RefreshTokenService())
+        $refreshService = (new RefreshTokenService())
             ->withRequest([
                 'JWT' => $jwt,
             ])
@@ -203,7 +204,7 @@ class RefreshTokenServiceTest extends TestCase
                 'REQUEST_METHOD' => 'POST',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
-        $result = $authenticationService->makeAction();
+        $result = $refreshService->makeAction();
         $this->assertTrue($result);
     }
 
@@ -253,5 +254,4 @@ class RefreshTokenServiceTest extends TestCase
             ],
         ];
     }
-
 }

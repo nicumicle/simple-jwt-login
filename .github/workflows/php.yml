@@ -73,3 +73,6 @@ jobs:
       with:
         configuration: phpunit.xml.dist
         memory_limit: 256M
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1

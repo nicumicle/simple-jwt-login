@@ -1,7 +1,6 @@
 # Changelog - Releases
 
-
-## Unreleased
+## 3.4.0 (26 Oct 2021)
 
 - Implement protected endpoints
 - Improve code coverage

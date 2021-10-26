@@ -77,7 +77,5 @@ jobs:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
-        file: ./clover.xml
-        flags: tests
-        name: codecov-umbrella
-        fail_ci_if_error: true
+        file: clover.xml
+        fail_ci_if_error: false

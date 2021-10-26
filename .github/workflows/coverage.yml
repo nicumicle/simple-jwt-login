@@ -26,9 +26,9 @@ jobs:
       - name: "Validate composer.json and composer.lock"
         run: "composer validate"
       - name: "Install dependencies"
-        run: "composer install --prefer-dist --no-progress --no-suggest && composer development-enable"
+        run: "composer install"
       - name: "Run test suite"
-        run: "vendor/bin/phpunit --coverage-clover=coverage.xml"
+        run: "vendor/bin/phpunit tests/ --coverage-clover=coverage.xml"
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:

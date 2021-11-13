@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2021-10-17T06:13:21+00:00\n"
+"POT-Creation-Date: 2021-13-11T08:53:34+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -134,6 +134,10 @@ msgstr ""
 msgid "Missing Auth Codes. Please add at least one Auth Code."
 msgstr ""
 
+#: src/Modules/Settings/AuthCodesSettings.php:73
+msgid "Invalid role provided."
+msgstr ""
+
 #: src/Modules/Settings/AuthenticationSettings.php:74
 msgid "Authentication payload data can not be empty. Please choose the ones you want to be added in the JWT."
 msgstr ""
@@ -190,7 +194,7 @@ msgstr ""
 msgid "Invalid custom URL provided."
 msgstr ""
 
-#: src/Modules/Settings/ProtectEndpointSettings.php:60
+#: src/Modules/Settings/ProtectEndpointSettings.php:58
 msgid "You need to add at least one endpoint."
 msgstr ""
 
@@ -198,19 +202,23 @@ msgstr ""
 msgid "New User profile slug can not be empty."
 msgstr ""
 
-#: src/Modules/Settings/ResetPasswordSettings.php:74
+#: src/Modules/Settings/RegisterSettings.php:99
+msgid "Invalid user role provided."
+msgstr ""
+
+#: src/Modules/Settings/ResetPasswordSettings.php:82
 msgid "You need to add the {{CODE}} variable in email body."
 msgstr ""
 
-#: src/Modules/Settings/ResetPasswordSettings.php:143
+#: src/Modules/Settings/ResetPasswordSettings.php:159
 msgid "User first and last name"
 msgstr ""
 
-#: src/Modules/Settings/ResetPasswordSettings.php:148
+#: src/Modules/Settings/ResetPasswordSettings.php:164
 msgid "Website URL"
 msgstr ""
 
-#: src/Modules/Settings/ResetPasswordSettings.php:149
+#: src/Modules/Settings/ResetPasswordSettings.php:165
 msgid "Client IP address"
 msgstr ""
 
@@ -247,26 +255,25 @@ msgid "The email or username parameter is missing from request."
 msgstr ""
 
 #: src/Services/AuthenticateService.php:92
-msgid "The password parameter is missing from request."
+msgid "The password or password_hash parameter is missing from request."
 msgstr ""
 
 #: src/Services/AuthenticateService.php:103
-#: src/Services/AuthenticateService.php:114
+#: src/Services/AuthenticateService.php:120
 msgid "Wrong user credentials."
 msgstr ""
 
-#: src/Services/AuthenticateService.php:161
+#: src/Services/AuthenticateService.php:167
 msgid "You are not allowed to Authenticate from this IP: %s"
 msgstr ""
 
-#: src/Services/AuthenticateService.php:176
-#: src/Services/RefreshTokenService.php:34
+#: src/Services/AuthenticateService.php:182
 msgid "Authentication is not enabled."
 msgstr ""
 
-#: src/Services/AuthenticateService.php:194
+#: src/Services/AuthenticateService.php:200
 #: src/Services/LoginService.php:78
-#: src/Services/RegisterUserService.php:168
+#: src/Services/RegisterUserService.php:167
 #: src/Services/ResetPasswordService.php:27
 msgid "Invalid Auth Code ( %s ) provided."
 msgstr ""
@@ -288,6 +295,7 @@ msgid "Delete is not enabled."
 msgstr ""
 
 #: src/Services/DeleteUserService.php:37
+#: src/Services/ResetPasswordService.php:230
 #: src/Services/RevokeTokenService.php:28
 #: src/Services/ValidateTokenService.php:32
 msgid "The `jwt` parameter is missing."
@@ -322,54 +330,54 @@ msgid "Wrong Request."
 msgstr ""
 
 #: src/Services/LoginService.php:88
-msgid "This IP[ %s] is not allowed to auto-login."
+msgid "This IP[ %s ] is not allowed to auto-login."
 msgstr ""
 
 #: src/Services/RedirectService.php:100
 msgid "User was logged in."
 msgstr ""
 
-#: src/Services/RefreshTokenService.php:42
+#: src/Services/RefreshTokenService.php:34
 msgid "JWT is missing."
 msgstr ""
 
-#: src/Services/RefreshTokenService.php:64
+#: src/Services/RefreshTokenService.php:56
 msgid "There was an error with your JWT and we can not refresh it."
 msgstr ""
 
-#: src/Services/RefreshTokenService.php:83
+#: src/Services/RefreshTokenService.php:76
 msgid "Jwt is invalid."
 msgstr ""
 
-#: src/Services/RefreshTokenService.php:95
+#: src/Services/RefreshTokenService.php:88
 msgid "JWT is too old to be refreshed."
 msgstr ""
 
-#: src/Services/RegisterUserService.php:46
+#: src/Services/RegisterUserService.php:45
 msgid "User already exists."
 msgstr ""
 
-#: src/Services/RegisterUserService.php:131
+#: src/Services/RegisterUserService.php:130
 msgid "User was successfully created."
 msgstr ""
 
-#: src/Services/RegisterUserService.php:156
+#: src/Services/RegisterUserService.php:155
 msgid "Register is not allowed."
 msgstr ""
 
-#: src/Services/RegisterUserService.php:179
+#: src/Services/RegisterUserService.php:178
 msgid "This IP[%s] is not allowed to register users."
 msgstr ""
 
-#: src/Services/RegisterUserService.php:194
+#: src/Services/RegisterUserService.php:193
 msgid "Missing email or password."
 msgstr ""
 
-#: src/Services/RegisterUserService.php:201
+#: src/Services/RegisterUserService.php:200
 msgid "Invalid email address."
 msgstr ""
 
-#: src/Services/RegisterUserService.php:218
+#: src/Services/RegisterUserService.php:217
 msgid "This website does not allows users from this domain."
 msgstr ""
 
@@ -381,42 +389,46 @@ msgstr ""
 msgid "Route called with invalid request method."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:62
-msgid "Invalid code provided."
-msgstr ""
-
-#: src/Services/ResetPasswordService.php:71
-msgid "User Password has been changed."
-msgstr ""
-
-#: src/Services/ResetPasswordService.php:80
-#: src/Services/ResetPasswordService.php:176
-msgid "Missing email parameter."
-msgstr ""
-
-#: src/Services/ResetPasswordService.php:87
+#: src/Services/ResetPasswordService.php:61
 msgid "Missing code parameter."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:94
+#: src/Services/ResetPasswordService.php:72
+msgid "User Password has been changed."
+msgstr ""
+
+#: src/Services/ResetPasswordService.php:81
+#: src/Services/ResetPasswordService.php:170
+msgid "Missing email parameter."
+msgstr ""
+
+#: src/Services/ResetPasswordService.php:88
 msgid "Missing new_password parameter."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:112
+#: src/Services/ResetPasswordService.php:106
 msgid "Wrong user."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:119
+#: src/Services/ResetPasswordService.php:113
 msgid "The Code has been saved into the database."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:125
-#: src/Services/ResetPasswordService.php:152
+#: src/Services/ResetPasswordService.php:119
+#: src/Services/ResetPasswordService.php:146
 msgid "Reset password email has been sent."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:156
+#: src/Services/ResetPasswordService.php:150
 msgid "Invalid flow type."
+msgstr ""
+
+#: src/Services/ResetPasswordService.php:242
+msgid "This JWT can not change your password."
+msgstr ""
+
+#: src/Services/ResetPasswordService.php:253
+msgid "Invalid code provided."
 msgstr ""
 
 #: src/Services/RevokeTokenService.php:62
@@ -427,66 +439,66 @@ msgstr ""
 msgid "WordPress User not found."
 msgstr ""
 
-#: views/auth-codes-view.php:15
+#: views/auth-codes-view.php:17
 msgid "Authorization Codes"
 msgstr ""
 
-#: views/auth-codes-view.php:17
+#: views/auth-codes-view.php:19
 msgid "Add authorization codes for authentication to this WordPress"
 msgstr ""
 
-#: views/auth-codes-view.php:19
+#: views/auth-codes-view.php:21
 msgid "One of this codes should be added in the request parameters for each API request"
 msgstr ""
 
-#: views/auth-codes-view.php:24
+#: views/auth-codes-view.php:26
 msgid "For security reasons please use some random strings"
 msgstr ""
 
-#: views/auth-codes-view.php:26
+#: views/auth-codes-view.php:28
 msgid "Example: THISISMySpeCiaLAUthCode"
 msgstr ""
 
-#: views/auth-codes-view.php:35
+#: views/auth-codes-view.php:37
 msgid "Config"
 msgstr ""
 
-#: views/auth-codes-view.php:36
+#: views/auth-codes-view.php:38
 msgid "Auth Code URL Key"
 msgstr ""
 
-#: views/auth-codes-view.php:42
+#: views/auth-codes-view.php:44
 msgid "Auth Code Key"
 msgstr ""
 
-#: views/auth-codes-view.php:50
+#: views/auth-codes-view.php:62
 #: views/layout.php:81
 msgid "Auth Codes"
 msgstr ""
 
-#: views/auth-codes-view.php:51
+#: views/auth-codes-view.php:64
 msgid "Add Auth Code"
 msgstr ""
 
-#: views/auth-codes-view.php:59
-#: views/auth-codes-view.php:91
+#: views/auth-codes-view.php:72
+#: views/auth-codes-view.php:104
 #: views/layout.php:223
 msgid "Authentication Key"
 msgstr ""
 
-#: views/auth-codes-view.php:62
-#: views/auth-codes-view.php:77
+#: views/auth-codes-view.php:75
+#: views/auth-codes-view.php:90
 #: views/layout.php:228
 msgid "WordPress new user Role ( when new users are created )"
 msgstr ""
 
-#: views/auth-codes-view.php:65
-#: views/auth-codes-view.php:81
+#: views/auth-codes-view.php:78
+#: views/auth-codes-view.php:94
 #: views/layout.php:236
 msgid "Expiration date: YYYY-MM-DD HH:MM:SS ( Example: 2020-12-23 23:34:59)"
 msgstr ""
 
-#: views/auth-codes-view.php:108
+#: views/auth-codes-view.php:121
 #: views/layout.php:244
 #: views/protect-endpoints-view.php:110
 #: views/protect-endpoints-view.php:154
@@ -495,23 +507,23 @@ msgstr ""
 msgid "delete"
 msgstr ""
 
-#: views/auth-codes-view.php:126
+#: views/auth-codes-view.php:139
 msgid " %sAuthentication Key%s: This is the actual code that you have to add in the request."
 msgstr ""
 
-#: views/auth-codes-view.php:137
+#: views/auth-codes-view.php:150
 msgid ""
 "%sWordPress new User Role%s:' \n"
 "                . ' can be used when you want to create multiple user types with the create user endpoint.' \n"
 "                . ' If you leave it blank, the value configured in the 'Register Settings' will be used."
 msgstr ""
 
-#: views/auth-codes-view.php:148
-#: views/register-view.php:122
+#: views/auth-codes-view.php:161
+#: views/register-view.php:127
 msgid "More details"
 msgstr ""
 
-#: views/auth-codes-view.php:153
+#: views/auth-codes-view.php:166
 msgid "%sExpiration Date%s: This allows you to set an expiration date for you auth codes. The format is `Y-M-D H:m:s'. Example : 2020-12-24 23:00:00 If you leave it blank, it will never expired."
 msgstr ""
 
@@ -561,113 +573,129 @@ msgstr ""
 msgid "This route allows you to generate a JWT based on your WordPress email ( or WordPress username ) and Password."
 msgstr ""
 
-#: views/auth-view.php:94
-#: views/reset-password-view.php:112
-#: views/reset-password-view.php:306
-msgid "Email"
+#: views/auth-view.php:85
+msgid "to login with email"
+msgstr ""
+
+#: views/auth-view.php:86
+msgid "to login with username"
+msgstr ""
+
+#: views/auth-view.php:87
+msgid "your password"
+msgstr ""
+
+#: views/auth-view.php:88
+msgid "your hashed password from the database"
 msgstr ""
 
 #: views/auth-view.php:95
+#: views/reset-password-view.php:112
+#: views/reset-password-view.php:323
+msgid "Email"
+msgstr ""
+
+#: views/auth-view.php:96
 msgid "Password"
 msgstr ""
 
-#: views/auth-view.php:103
-#: views/auth-view.php:346
-#: views/auth-view.php:387
-#: views/auth-view.php:426
+#: views/auth-view.php:104
+#: views/auth-view.php:347
+#: views/auth-view.php:388
+#: views/auth-view.php:427
 #: views/delete-view.php:59
 #: views/login-view.php:56
 #: views/register-view.php:67
 #: views/reset-password-view.php:127
-#: views/reset-password-view.php:323
+#: views/reset-password-view.php:340
 msgid "Copy"
 msgstr ""
 
-#: views/auth-view.php:114
+#: views/auth-view.php:115
 msgid "JWT Header parameters"
 msgstr ""
 
-#: views/auth-view.php:157
+#: views/auth-view.php:158
 msgid "JWT Payload parameters"
 msgstr ""
 
-#: views/auth-view.php:238
+#: views/auth-view.php:239
 msgid "Verify Signature"
 msgstr ""
 
-#: views/auth-view.php:269
+#: views/auth-view.php:270
 msgid "JWT time to live"
 msgstr ""
 
-#: views/auth-view.php:272
+#: views/auth-view.php:273
 msgid "Specify the length of time (in minutes) that the token will be valid for."
 msgstr ""
 
-#: views/auth-view.php:282
-#: views/auth-view.php:316
+#: views/auth-view.php:283
+#: views/auth-view.php:317
 msgid "Number of minutes"
 msgstr ""
 
-#: views/auth-view.php:300
+#: views/auth-view.php:301
 msgid "Refresh time to live"
 msgstr ""
 
-#: views/auth-view.php:303
+#: views/auth-view.php:304
 msgid "Specify the length of time (in minutes) that the token can be refreshed within. I.E. The user can refresh their token within a 2 week window of the original token being created until they must re-authenticate.Defaults to 2 weeks"
 msgstr ""
 
-#: views/auth-view.php:324
+#: views/auth-view.php:325
 msgid "Refresh JWT URL Example"
 msgstr ""
 
-#: views/auth-view.php:327
+#: views/auth-view.php:328
 msgid "This route is for refreshing expired tokens. It accept as a parameter an expired token, and returns a new valid JWT."
 msgstr ""
 
-#: views/auth-view.php:351
-#: views/auth-view.php:392
-#: views/auth-view.php:431
+#: views/auth-view.php:352
+#: views/auth-view.php:393
+#: views/auth-view.php:432
 msgid "JWT can be sent via URL, SESSION, COOKIE or HEADER. Please enable the ones you want in the 'General' section."
 msgstr ""
 
-#: views/auth-view.php:365
+#: views/auth-view.php:366
 msgid "Validate JWT URL Example"
 msgstr ""
 
-#: views/auth-view.php:368
+#: views/auth-view.php:369
 msgid "This endpoint validates a JWT. If it is valid,it will return the WordPress user details and some JWT details."
 msgstr ""
 
-#: views/auth-view.php:405
+#: views/auth-view.php:406
 msgid "Revoke JWT URL Example"
 msgstr ""
 
-#: views/auth-view.php:408
+#: views/auth-view.php:409
 msgid "This endpoint revokes a JWT. If it is valid, it will be marked as invalid."
 msgstr ""
 
-#: views/auth-view.php:444
+#: views/auth-view.php:445
 msgid "Allow Authentication only from the following IP addresses"
 msgstr ""
 
-#: views/auth-view.php:451
+#: views/auth-view.php:452
 #: views/delete-view.php:179
 #: views/login-view.php:308
-#: views/register-view.php:204
+#: views/register-view.php:209
 msgid "Enter IP here"
 msgstr ""
 
-#: views/auth-view.php:453
+#: views/auth-view.php:454
 #: views/delete-view.php:181
 #: views/login-view.php:310
-#: views/register-view.php:206
+#: views/register-view.php:211
 msgid "If you want to add more IP's, separate them by comma"
 msgstr ""
 
-#: views/auth-view.php:455
+#: views/auth-view.php:456
 #: views/delete-view.php:183
 #: views/login-view.php:312
-#: views/register-view.php:208
+#: views/register-view.php:213
 msgid "Leave blank to allow all IP addresses"
 msgstr ""
 
@@ -766,7 +794,7 @@ msgstr ""
 #: views/login-view.php:49
 #: views/register-view.php:60
 #: views/reset-password-view.php:116
-#: views/reset-password-view.php:312
+#: views/reset-password-view.php:329
 msgid "AUTH_KEY_VALUE"
 msgstr ""
 
@@ -1021,8 +1049,8 @@ msgstr ""
 
 #: views/login-view.php:215
 #: views/login-view.php:292
-#: views/register-view.php:119
-#: views/register-view.php:260
+#: views/register-view.php:124
+#: views/register-view.php:265
 msgid "Example"
 msgstr ""
 
@@ -1099,7 +1127,7 @@ msgid "Whitelisted endpoints"
 msgstr ""
 
 #: views/protect-endpoints-view.php:88
-msgid "This endpoints will skip the check for the JWT."
+msgid "These endpoints will skip the check for the JWT."
 msgstr ""
 
 #: views/protect-endpoints-view.php:92
@@ -1142,75 +1170,75 @@ msgstr ""
 msgid " Warning! It's not recommended to allow register without Auth Codes"
 msgstr ""
 
-#: views/register-view.php:117
+#: views/register-view.php:122
 msgid "New User profile slug"
 msgstr ""
 
-#: views/register-view.php:127
+#: views/register-view.php:132
 msgid "New user profile name"
 msgstr ""
 
-#: views/register-view.php:136
+#: views/register-view.php:141
 msgid "New User Config"
 msgstr ""
 
-#: views/register-view.php:142
+#: views/register-view.php:147
 msgid "Generate a random password when a new user is created"
 msgstr ""
 
-#: views/register-view.php:145
+#: views/register-view.php:150
 msgid "If this option is selected, the password is no more required when a new user is created."
 msgstr ""
 
-#: views/register-view.php:158
+#: views/register-view.php:163
 msgid "Initialize force login after register"
 msgstr ""
 
-#: views/register-view.php:163
+#: views/register-view.php:168
 msgid "If user registration is completed, the user will continue on the flow configured on login config. If auto-login is disabled, this feature will not work."
 msgstr ""
 
-#: views/register-view.php:179
+#: views/register-view.php:184
 msgid "Return a JWT in the response"
 msgstr ""
 
-#: views/register-view.php:184
+#: views/register-view.php:189
 msgid "If this option is selected, a JWT will be added in the response. By default, it will contain email, id and username in the payload. If the Authentication is enabled, payload will be generated using authentication configuration."
 msgstr ""
 
-#: views/register-view.php:197
+#: views/register-view.php:202
 msgid "Allow Register only from the following IP addresses"
 msgstr ""
 
-#: views/register-view.php:218
+#: views/register-view.php:223
 msgid "Allow Register only for specific email domains"
 msgstr ""
 
-#: views/register-view.php:228
+#: views/register-view.php:233
 msgid "For example, if you want to allow registration only for users that use their gmail account, add `gmail.com`"
 msgstr ""
 
-#: views/register-view.php:233
+#: views/register-view.php:238
 msgid "For multiple domains, separate them by comma"
 msgstr ""
 
-#: views/register-view.php:235
+#: views/register-view.php:240
 msgid "Leave blank to allow all domains"
 msgstr ""
 
-#: views/register-view.php:243
+#: views/register-view.php:248
 msgid "Allowed user_meta keys on create user"
 msgstr ""
 
-#: views/register-view.php:252
+#: views/register-view.php:257
 msgid "Separate user_meta keys by comma. If no user_meta is specified, then users will not be able to add user_meta via register user."
 msgstr ""
 
-#: views/register-view.php:267
+#: views/register-view.php:272
 msgid "New User available properties"
 msgstr ""
 
-#: views/register-view.php:270
+#: views/register-view.php:275
 msgid "This properties can be passed in the request when the new user is created."
 msgstr ""
 
@@ -1289,10 +1317,22 @@ msgstr ""
 msgid "New password for the user"
 msgstr ""
 
-#: views/reset-password-view.php:307
+#: views/reset-password-view.php:303
+msgid "Reset password with JWT"
+msgstr ""
+
+#: views/reset-password-view.php:311
+msgid "Allow Reset password with JWT"
+msgstr ""
+
+#: views/reset-password-view.php:313
+msgid "If this option is selected, the <b>code</b> parameter is no longer required. The plugin will search for the USER that is present in the JWT. Also, the JWT should be valid."
+msgstr ""
+
+#: views/reset-password-view.php:324
 msgid "Code"
 msgstr ""
 
-#: views/reset-password-view.php:308
+#: views/reset-password-view.php:325
 msgid "New password"
 msgstr ""

@@ -38,6 +38,7 @@ class ResetPasswordSettingsTest extends TestCase
             'require_register_auth'             => '0',
             'jwt_reset_password_email_body'     => '{{CODE}} testbody',
             'jwt_email_type'                    => ResetPasswordSettings::EMAIL_TYPE_HTML,
+            'reset_password_jwt'                => '1',
         ];
         $resetPassSettings = (new ResetPasswordSettings())
             ->withWordPressData($this->wordPressData)
@@ -69,6 +70,7 @@ class ResetPasswordSettingsTest extends TestCase
             ResetPasswordSettings::EMAIL_TYPE_HTML,
             $resetPassSettings->getResetPasswordEmailType()
         );
+        $this->assertTrue($resetPassSettings->isJwtAllowed());
 
         $variables = array_keys($resetPassSettings->getEmailContentVariables());
         $this->assertTrue(! empty($variables));

@@ -34,18 +34,6 @@ services:
       WORDPRESS_TABLE_PREFIX: "wp_"
       WORDPRESS_DEBUG: 1
 
-# Create new container that will allow me to run tests and lint, and etc
-#  dev:
-#    depends_on:
-#      - wordpress
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#    container_name: wordpress-dev
-#    volumes:
-#      - wordpress_data:/var/www/html
-#      - ../simple-jwt-login/:/var/www/html/wp-content/plugins/simple-jwt-login
-
 volumes:
   wpdb_data: {}
   wordpress_data: {}

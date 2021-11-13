@@ -1,12 +1,14 @@
 <?php
 
 use SimpleJWTLogin\Modules\AuthCodeBuilder;
+use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
 if (!defined('ABSPATH')) {
     exit;
 } // Exit if accessed directly
 /**
+ * @var SettingsErrors $settingsErrors
  * @var SimpleJWTLoginSettings $jwtSettings
  */
 ?>
@@ -47,7 +49,18 @@ if (!defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Auth Codes', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title">
+            <?php
+            echo isset($errorCode)
+            && $settingsErrors->generateCode(
+                SettingsErrors::PREFIX_AUTH_CODES,
+                SettingsErrors::ERR_INVALID_ROLE
+            ) === $errorCode
+                ? '<span class="simple-jwt-error">!</span>'
+                : ''
+            ?>
+            <?php echo __('Auth Codes', 'simple-jwt-login'); ?>
+        </h3>
         <input type="button" class="btn btn-dark" value="<?php echo __('Add Auth Code', 'simple-jwt-login'); ?> +"
                id="add_code"/>
         <br/>

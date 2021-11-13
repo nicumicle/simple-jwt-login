@@ -53,12 +53,17 @@ class ProtectEndpointService extends BaseService
         try {
             $jwt = $this->getJwtFromRequestHeaderOrCookie();
             $userID = $this->routeService->getUserIdFromJWT($jwt);
+
             return !empty($userID);
         } catch (\Exception $e) {
             return false;
         }
     }
 
+    /**
+     * @param string $endpoint
+     * @return bool
+     */
     private function isEndpointProtected($endpoint)
     {
         if (strpos($endpoint, '/') !== 0) {
@@ -71,48 +76,69 @@ class ProtectEndpointService extends BaseService
             '/'
         );
         $endpoint = $this->removeLastSlash($endpoint);
-
-        if (strpos($endpoint, $skipNamespace) === 0) {
-            //Skip simple jwt login endpoints
+        $adminPath = trim(
+            str_replace($this->wordPressData->getSiteUrl(), '', $this->wordPressData->getAdminUrl()),
+            '/'
+        );
+        if (strpos($endpoint, $skipNamespace) === 0
+            || strpos(trim($endpoint, '/'), $adminPath) === 0) {
+            //Skip simple jwt login endpoints and wp-admin
             return false;
         }
-        $isEndpointProtected = true;
+
         switch ($action) {
             case ProtectEndpointSettings::ALL_ENDPOINTS:
-                $isEndpointProtected = true;
                 $domains = $this->jwtSettings
                     ->getProtectEndpointsSettings()
                     ->getWhitelistedDomains();
-                foreach ($domains as $whitelistedDomain) {
-                    $whitelistedDomain = $this->removeWpJsonFromEndpoint($whitelistedDomain);
-                    if (empty(trim($whitelistedDomain, '/'))) {
-                        continue;
-                    }
-                    if (strpos($endpoint, $whitelistedDomain) === 0) {
-                        $isEndpointProtected = false;
-                    }
-                }
-                break;
+                return $this->parseDomainsAndGetResult(
+                    $endpoint,
+                    $domains,
+                    true,
+                    false
+                );
             case ProtectEndpointSettings::SPECIFIC_ENDPOINTS:
-                $isEndpointProtected = false;
                 $domains = $this->jwtSettings
                     ->getProtectEndpointsSettings()
                     ->getProtectedEndpoints();
-                foreach ($domains as $protectedEndpoint) {
-                    $protectedEndpoint = $this->removeWpJsonFromEndpoint($protectedEndpoint);
-                    if (empty(trim($protectedEndpoint, '/'))) {
-                        continue;
-                    }
-                    if (strpos($endpoint, $protectedEndpoint) === 0) {
-                        $isEndpointProtected = true;
-                    }
-                }
-                break;
+                return $this->parseDomainsAndGetResult(
+                    $endpoint,
+                    $domains,
+                    false,
+                    true
+                );
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string $endpoint
+     * @param array $domains
+     * @param bool $defaultValue
+     * @param bool $setValue
+     * @return bool
+     */
+    private function parseDomainsAndGetResult($endpoint, $domains, $defaultValue, $setValue)
+    {
+        $isEndpointProtected = $defaultValue;
+        foreach ($domains as $protectedEndpoint) {
+            $protectedEndpoint = $this->removeWpJsonFromEndpoint($protectedEndpoint);
+            if (empty(trim($protectedEndpoint, '/'))) {
+                continue;
+            }
+            if (strpos($endpoint, $protectedEndpoint) === 0) {
+                $isEndpointProtected = $setValue;
+            }
         }
 
         return $isEndpointProtected;
     }
 
+    /**
+     * @param string $endpoint
+     * @return string
+     */
     private function removeWpJsonFromEndpoint($endpoint)
     {
         $endpoint = str_replace('/wp-json', '', $endpoint);

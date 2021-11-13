@@ -50,19 +50,20 @@ class ResetPasswordService extends BaseService implements ServiceInterface
      */
     private function changeUserPassword()
     {
+
         $this->validateChangePassword();
 
-        $email = $this->request['email'];
-        $code = $this->request['code'];
         $newPassword = $this->request['new_password'];
 
-        $user = $this->wordPressData->checkPasswordResetKey($code, $email);
-        if (empty($user)) {
+        $jwtAllowed = $this->jwtSettings->getResetPasswordSettings()->isJwtAllowed();
+        if ($jwtAllowed === false && empty($this->request['code'])) {
             throw new Exception(
-                __('Invalid code provided.', 'simple-jwt-login'),
-                ErrorCodes::ERR_INVALID_RESET_PASSWORD_CODE
+                __('Missing code parameter.', 'simple-jwt-login'),
+                ErrorCodes::ERR_MISSING_CODE_FOR_CHANGE_PASSWORD
             );
         }
+
+        $user = $this->getUser($jwtAllowed);
         $this->wordPressData->resetPassword($user, $newPassword);
 
         return $this->wordPressData->createResponse(
@@ -79,13 +80,6 @@ class ResetPasswordService extends BaseService implements ServiceInterface
             throw new Exception(
                 __('Missing email parameter.', 'simple-jwt-login'),
                 ErrorCodes::ERR_MISSING_EMAIL_FOR_CHANGE_PASSWORD
-            );
-        }
-
-        if (empty($this->request['code'])) {
-            throw new Exception(
-                __('Missing code parameter.', 'simple-jwt-login'),
-                ErrorCodes::ERR_MISSING_CODE_FOR_CHANGE_PASSWORD
             );
         }
 
@@ -225,5 +219,42 @@ class ResetPasswordService extends BaseService implements ServiceInterface
         }
 
         return $emailBody;
+    }
+
+    private function getUser(bool $jwtAllowed)
+    {
+        if ($jwtAllowed && empty($this->request['code'])) {
+            $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
+            if (empty($this->jwt)) {
+                throw new Exception(
+                    __('The `jwt` parameter is missing.', 'simple-jwt-login'),
+                    ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE
+                );
+            }
+            $loginParameter = $this->validateJWTAndGetUserValueFromPayload(
+                $this->jwtSettings->getLoginSettings()->getJwtLoginByParameter()
+            );
+            $user = $this->getUserDetails($loginParameter);
+            if (empty($user)
+                || $this->wordPressData->getUserProperty($user, 'user_email') !== $this->request['email']
+            ) {
+                throw new Exception(
+                    __('This JWT can not change your password.', 'simple-jwt-login')
+                );
+            }
+
+            return $user;
+        }
+
+        $code = $this->request['code'];
+        $user = $this->wordPressData->checkPasswordResetKey($code, $this->request['email']);
+        if (empty($user)) {
+            throw new Exception(
+                __('Invalid code provided.', 'simple-jwt-login'),
+                ErrorCodes::ERR_INVALID_RESET_PASSWORD_CODE
+            );
+        }
+
+        return $user;
     }
 }

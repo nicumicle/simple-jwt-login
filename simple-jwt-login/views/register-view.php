@@ -111,6 +111,11 @@ if (!defined('ABSPATH')) {
                 SettingsErrors::PREFIX_REGISTER,
                 SettingsErrors::ERR_REGISTER_MISSING_NEW_USER_PROFILE
             ) === $errorCode
+            ||
+             $settingsErrors->generateCode(
+                SettingsErrors::PREFIX_REGISTER,
+                SettingsErrors::ERR_REGISTER_INVALID_ROLE
+            ) === $errorCode
                 ? '<span class="simple-jwt-error">!</span>'
                 : ''
             ?>

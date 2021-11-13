@@ -38,6 +38,8 @@ class RegisterSettingsTest extends TestCase
             'register_force_login' => '1',
             'allowed_user_meta' => 'test',
         ];
+        $this->wordPressData->method('roleExists')
+            ->willReturn(true);
         $registerSettings = (new RegisterSettings())
             ->withWordPressData($this->wordPressData)
             ->withSettings([])
@@ -82,6 +84,8 @@ class RegisterSettingsTest extends TestCase
 
     public function testValidation()
     {
+        $this->wordPressData->method('roleExists')
+            ->willReturn(true);
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('New User profile slug can not be empty.');
         $registerUser = (new RegisterSettings())
@@ -90,5 +94,46 @@ class RegisterSettingsTest extends TestCase
             ->withPost([]);
         $registerUser->initSettingsFromPost();
         $registerUser->validateSettings();
+    }
+
+    /**
+     * @dataProvider invalidRoleProvider
+     * @param string $roleName
+     * @param string $expectedException
+     * @throws Exception
+     */
+    public function testInvalidRole($roleName, $expectedException)
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage($expectedException);
+        $this->wordPressData->method('roleExists')
+            ->willReturn(false);
+
+        $registerUser = (new RegisterSettings())
+            ->withWordPressData($this->wordPressData)
+            ->withSettings([])
+            ->withPost([
+                'allow_register' => '1',
+                'new_user_profile' => $roleName,
+            ]);
+        $registerUser->initSettingsFromPost();
+        $registerUser->validateSettings();
+    }
+
+    /**
+     * @return array
+     */
+    public function invalidRoleProvider()
+    {
+        return [
+            'empty_role' => [
+                'role' => '',
+                'exception' => 'New User profile slug can not be empty.',
+            ],
+            'invalid_role' => [
+                'role' => 'test',
+                'exception' => 'Invalid user role provided.',
+            ]
+        ];
     }
 }

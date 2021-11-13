@@ -93,6 +93,16 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
                 )
             );
         }
+
+        if ($this->wordPressData->roleExists($this->post['new_user_profile']) === false) {
+            throw new Exception(
+                __('Invalid user role provided.', 'simple-jwt-login'),
+                $this->settingsErrors->generateCode(
+                    SettingsErrors::PREFIX_REGISTER,
+                    SettingsErrors::ERR_REGISTER_INVALID_ROLE
+                )
+            );
+        }
     }
 
     /**

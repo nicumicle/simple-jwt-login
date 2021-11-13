@@ -106,6 +106,8 @@ abstract class BaseSettings
             } elseif ($type === self::SETTINGS_TYPE_ARRAY) {
                 $defaultValue = [];
                 $this->assignProperty($defaultValue, $propertyName, $propertyGroup);
+            } elseif ($type == self::SETTINGS_TYPE_BOL) {
+                $this->assignProperty(false, $propertyName, $propertyGroup);
             }
             return;
         }

@@ -5,6 +5,7 @@ namespace SimpleJwtLoginTests\Services;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Helpers\ServerHelper;
+use SimpleJWTLogin\Libraries\JWT;
 use SimpleJWTLogin\Modules\Settings\ResetPasswordSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -197,12 +198,12 @@ class ResetPasswordServiceTest extends TestCase
     public function changePasswordValidationProvider()
     {
         return [
-            [
+            'empty_settings' => [
                 'settings'  => [],
                 'request'   => [],
                 'exception' => 'Reset Password is not allowed.'
             ],
-            [
+            'empty_auth_key' => [
                 'settings'  => [
                     'allow_reset_password'              => 1,
                     'reset_password_requires_auth_code' => 1,
@@ -210,7 +211,7 @@ class ResetPasswordServiceTest extends TestCase
                 'request'   => [],
                 'exception' => 'Invalid Auth Code ( AUTH_KEY ) provided.'
             ],
-            [
+            'missing_email' => [
                 'settings'  => [
                     'allow_reset_password'              => 1,
                     'reset_password_requires_auth_code' => 1,
@@ -227,7 +228,7 @@ class ResetPasswordServiceTest extends TestCase
                 ],
                 'exception' => 'Missing email parameter.'
             ],
-            [
+            'missing_code' => [
                 'settings'  => [
                     'allow_reset_password'              => 1,
                     'reset_password_requires_auth_code' => 1,
@@ -237,15 +238,16 @@ class ResetPasswordServiceTest extends TestCase
                             'role'            => '',
                             'expiration_date' => '',
                         ]
-                    ]
+                    ],
                 ],
                 'request'   => [
                     'AUTH_KEY' => 123,
                     'email'    => 'email@email.com',
+                    'new_password' => '123',
                 ],
                 'exception' => 'Missing code parameter.'
             ],
-            [
+            'missing_password' => [
                 'settings'  => [
                     'allow_reset_password'              => 1,
                     'reset_password_requires_auth_code' => 1,
@@ -264,7 +266,7 @@ class ResetPasswordServiceTest extends TestCase
                 ],
                 'exception' => 'Missing new_password parameter.'
             ],
-            [
+            'invalid_code' => [
                 'settings'  => [
                     'allow_reset_password'              => 1,
                     'reset_password_requires_auth_code' => 1,
@@ -283,6 +285,29 @@ class ResetPasswordServiceTest extends TestCase
                     'new_password' => '123',
                 ],
                 'exception' => 'Invalid code provided.'
+            ],
+            'jwt_with_invalid_email' => [
+                'settings'  => [
+                    'allow_reset_password'              => 1,
+                    'reset_password_requires_auth_code' => 1,
+                    'auth_codes'                        => [
+                        [
+                            'code'            => 123,
+                            'role'            => '',
+                            'expiration_date' => '',
+                        ]
+                    ],
+                    'reset_password_jwt' => 1,
+                    'decryption_key' => 'test',
+                    'jwt_login_by_parameter' => 'email',
+                ],
+                'request'   => [
+                    'AUTH_KEY'     => 123,
+                    'email'        => 'email@email.com',
+                    'jwt'          => JWT::encode(['email' => 'test@test.com'], 'test', 'HS256'),
+                    'new_password' => '123',
+                ],
+                'exception' => 'This JWT can not change your password.'
             ],
         ];
     }

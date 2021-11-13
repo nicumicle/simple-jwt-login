@@ -28,6 +28,8 @@ class AuthCodesSettingsTest extends TestCase
 
     public function testAssignCodesFromPost()
     {
+        $this->wordPressData->method('roleExists')
+            ->willReturn(true);
         $authCodesSettings = (new AuthCodesSettings())
             ->withSettings([])
             ->withPost(
@@ -85,6 +87,38 @@ class AuthCodesSettingsTest extends TestCase
                 ]
             )
             ->withPost([]);
+        $authCodesSettings->validateSettings();
+    }
+
+    public function testInvalidUserRoles()
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Invalid role provided.');
+
+        $this->wordPressData->method('roleExists')
+            ->willReturn(false);
+
+        $authCodesSettings = (new AuthCodesSettings())
+            ->withSettings([])
+            ->withPost(
+                [
+                    'auth_codes'    => [
+                        'code'            => [
+                            '1',
+                            '', //one empty code that should be ignored
+                        ],
+                        'role'            => [
+                            'subscriber'
+                        ],
+                        'expiration_date' => [
+                            '2099-01-01 11:11:11'
+                        ],
+                    ],
+                    'auth_code_key' => 'AUTH_CODE_KEY'
+                ]
+            )
+            ->withWordPressData($this->wordPressData);
+        $authCodesSettings->initSettingsFromPost();
         $authCodesSettings->validateSettings();
     }
 }

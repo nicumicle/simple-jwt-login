@@ -22,6 +22,7 @@ Plugin Documentation Site: [Documentation](https://simplejwtlogin.com?utm_source
 * Auto-login using JWT and AUTH_KEY
 * Register new users via API
 * Delete WordPress users based on a JWT
+* Reset user password
 * Allow auto-login / register / delete users only from specific IP addresses
 * Allow register users only from a specific domain name
 * API Route for generating new JWT
@@ -154,7 +155,7 @@ The change password endpoint, changes the user password, based on the reset pass
 
 This plugin allows users to generate JWT tokens based from WordPress user email and password.
 
-In order to Get a new JWT, just make a POST request to */auth* route with your WordPress email and password and the response will look something like this:
+In order to Get a new JWT, just make a POST request to */auth* route with your WordPress email and password ( or password_hash) and the response will look something like this:
 
 ``
      {

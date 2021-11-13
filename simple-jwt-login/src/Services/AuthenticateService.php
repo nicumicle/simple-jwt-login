@@ -87,9 +87,9 @@ class AuthenticateService extends BaseService implements ServiceInterface
                 ErrorCodes::AUTHENTICATION_MISSING_EMAIL
             );
         }
-        if (!isset($this->request['password'])) {
+        if (!isset($this->request['password']) && !isset($this->request['password_hash'])) {
             throw new Exception(
-                __('The password parameter is missing from request.', 'simple-jwt-login'),
+                __('The password or password_hash parameter is missing from request.', 'simple-jwt-login'),
                 ErrorCodes::AUTHENTICATION_MISSING_PASSWORD
             );
         }
@@ -105,10 +105,16 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
         }
 
-        $password = $this->request['password'];
-        $dbPassword = $this->wordPressData->getUserPassword($user);
+        $password = isset($this->request['password'])
+            ? $this->request['password']
+            : null;
+        $passwordHash = isset($this->request['password_hash'])
+            ? $this->request['password_hash']
+            : null;
 
-        $passwordMatch = $this->wordPressData->checkPassword($password, $dbPassword);
+        $dbPassword = $this->wordPressData->getUserPassword($user);
+        $passwordMatch = $this->wordPressData->checkPassword($password, $passwordHash, $dbPassword);
+
         if ($passwordMatch === false) {
             throw new Exception(
                 __('Wrong user credentials.', 'simple-jwt-login'),

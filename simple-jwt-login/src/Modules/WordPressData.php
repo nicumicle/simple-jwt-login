@@ -284,14 +284,21 @@ class WordPressData implements WordPressDataInterface
     }
 
     /**
-     * @param string $password
+     * @param string|null $password
+     * @param string|null $passwordHash
      * @param string $dbPassword
      *
      * @return bool
      */
-    public function checkPassword($password, $dbPassword)
+    public function checkPassword($password, $passwordHash, $dbPassword)
     {
-        return wp_check_password($password, $dbPassword);
+        if ($password !== null) {
+            return wp_check_password($password, $dbPassword);
+        } elseif ($passwordHash !== null) {
+            return hash_equals($dbPassword, $passwordHash);
+        }
+
+        return false;
     }
 
     /**
@@ -410,5 +417,15 @@ class WordPressData implements WordPressDataInterface
     public function generatePassword($length)
     {
         return wp_generate_password($length);
+    }
+
+    /**
+     * @param string $role
+     * @return bool
+     */
+    /** * @SuppressWarnings(PHPMD.Superglobals) */
+    public function roleExists($role)
+    {
+        return  isset($GLOBALS['wp_roles']) && $GLOBALS['wp_roles']->is_role($role);
     }
 }

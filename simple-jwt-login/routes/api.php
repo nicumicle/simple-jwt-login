@@ -94,8 +94,9 @@ add_action('rest_api_init', function () {
             }
 
             return $endpoint;
-        }, 99);
+        }, 0.2);
     }
+
     if ($jwtSettings->getProtectEndpointsSettings()->isEnabled() ) {
         add_action('rest_endpoints', function ($endpoint) use ($routeService, $jwtSettings, $serverHelper, $request) {
             $service = new ProtectEndpointService();

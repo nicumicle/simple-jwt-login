@@ -66,6 +66,21 @@ class AuthCodesSettings extends BaseSettings implements SettingsInterface
                 );
             }
         }
+
+        foreach ($this->settings['auth_codes'] as $code) {
+            if (!empty($code['role']) && !$this->wordPressData->roleExists($code['role'])) {
+                throw new Exception(
+                    __(
+                        'Invalid role provided.',
+                        'simple-jwt-login'
+                    ),
+                    $this->settingsErrors->generateCode(
+                        SettingsErrors::PREFIX_AUTH_CODES,
+                        SettingsErrors::ERR_INVALID_ROLE
+                    )
+                );
+            }
+        }
     }
 
     /**

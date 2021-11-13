@@ -1,5 +1,13 @@
 # Changelog - Releases
 
+## Unreleased
+
+- Fix protect endpoint conflict with wp-admin actions
+- Check if user role exists
+- Improve logic for protect endpoints
+- Allow Authentication with DB hashed password
+- Change user password with JWT
+
 ## 3.4.0 (26 Oct 2021)
 
 - Implement protected endpoints

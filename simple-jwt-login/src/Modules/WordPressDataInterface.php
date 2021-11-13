@@ -168,12 +168,13 @@ interface WordPressDataInterface
     public function wordpressUserToArray($user);
 
     /**
-     * @param string $password
+     * @param string|null $password
+     * @param string|null $passwordHash
      * @param string $dbPassword
      *
      * @return boolean
      */
-    public function checkPassword($password, $dbPassword);
+    public function checkPassword($password, $passwordHash, $dbPassword);
 
     /**
      * @param WP_User $user
@@ -256,4 +257,10 @@ interface WordPressDataInterface
      * @return string
      */
     public function generatePassword($length);
+
+    /**
+     * @param string $roleName
+     * @return bool
+     */
+    public function roleExists($roleName);
 }

@@ -24,6 +24,10 @@ class ProtectEndpointServiceTest extends TestCase
 
         $this->wordPressData = $this->getMockBuilder(WordPressData::class)
             ->getMock();
+        $this->wordPressData->method('getSiteUrl')
+            ->willReturn('http://test.com');
+        $this->wordPressData->method('getAdminUrl')
+            ->willReturn('http://test.com/wp-admin/');
     }
 
     /**
@@ -140,14 +144,62 @@ class ProtectEndpointServiceTest extends TestCase
                     'enabled' => true,
                     'action' => ProtectEndpointSettings::SPECIFIC_ENDPOINTS,
                     'protect' => [
-                        '/wp/v2/posts'
+                        '/wp/v2/posts',
+                    ]
+                ]
+            ],
+            'test-enabled-all-endpoints_on_wp_admin' => [
+                'expectedResult' => true,
+                'currentUrl' => '/wp-admin/something',
+                'documentRoot' => '/var/www/html',
+                'request' => [
+                    'rest_route' => '/wp-admin/something'
+                ],
+                'settings' => [
+                    'enabled' => true,
+                    'action' => ProtectEndpointSettings::ALL_ENDPOINTS,
+                    'whitelist' => [
+                        '/wp-json/v2/posts',
+                        '',
+                    ]
+                ]
+            ],
+            'test_invalid_action' => [
+                'expectedResult' => false,
+                'currentUrl' => '/wp-json/wp/v2/posts',
+                'documentRoot' => '/var/www/html',
+                'request' => [
+                    'rest_route' => '/wp-json/wp/v2/posts'
+                ],
+                'settings' => [
+                    'enabled' => true,
+                    'action' => -1, //invalid action
+                    'whitelist' => [
+                        'wp-json/wp/v2/posts',
+                        '',
+                    ]
+                ]
+            ],
+            'test_empty_endpoint' => [
+                'expectedResult' => false,
+                'currentUrl' => 'wp-json',
+                'documentRoot' => '/var/www/html',
+                'request' => [
+                    'rest_route' => 'wp-json'
+                ],
+                'settings' => [
+                    'enabled' => true,
+                    'action' => ProtectEndpointSettings::ALL_ENDPOINTS,
+                    'whitelist' => [
+                        'wp-json/v2/posts',
+                        '',
                     ]
                 ]
             ],
         ];
     }
 
-    public function testCallProtectedEndpoinWithInvalidJWT()
+    public function testCallProtectedEndpointWithInvalidJWT()
     {
         $settings = [
             'decryption_key' => 'test',

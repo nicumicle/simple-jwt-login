@@ -298,6 +298,23 @@ if ( ! defined('ABSPATH')) {
             <br/>
             <?php echo __('An email with the reset password link will be sent to this email address.','simple-jwt-login');?>
         </p>
+        <div class="">
+            <h4 class="sub-section-title">
+                <?php echo __('Reset password with JWT', 'simple-jwt-login');?>
+            </h4>
+
+            <input type="checkbox" name="reset_password_jwt"
+                   id="reset_password_jwt"
+                <?php echo($jwtSettings->getResetPasswordSettings()->isJwtAllowed() ? 'checked' : ''); ?>
+                   value="1"/>
+            <label for="reset_password_jwt">
+                <?php echo __('Allow Reset password with JWT', 'simple-jwt-login'); ?>
+            </label>
+            <p class="text-muted"><?php echo __(
+                    'If this option is selected, the <b>code</b> parameter is no longer required. The plugin will search for the USER that is present in the JWT. Also, the JWT should be valid.',
+                    'simple-jwt-login'
+                ); ?></p>
+        </div>
         <div class="generated-code">
             <span class="method">PUT:</span>
             <span class="code">

@@ -85,7 +85,7 @@ if (!defined('ABSPATH')) {
             <?php echo __('Whitelisted endpoints', 'simple-jwt-login');?>
         </h2>
         <p class="text-muted">
-            <?php echo __('This endpoints will skip the check for the JWT.', 'simple-jwt-login');?>
+            <?php echo __('These endpoints will skip the check for the JWT.', 'simple-jwt-login');?>
         </p>
     </div>
     <div class="col-md-12">

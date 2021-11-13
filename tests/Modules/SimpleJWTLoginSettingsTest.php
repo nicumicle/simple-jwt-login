@@ -25,7 +25,9 @@ class SimpleJWTLoginSettingsTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $wordPressDataMock            = $this->getMockBuilder(WordPressDataInterface::class)->getMock();
+        $wordPressDataMock = $this->getMockBuilder(WordPressDataInterface::class)->getMock();
+        $wordPressDataMock->method('roleExists')
+            ->willReturn(true);
         $this->simpleJWTSettings = new SimpleJWTLoginSettings($wordPressDataMock);
     }
 
@@ -185,6 +187,8 @@ class SimpleJWTLoginSettingsTest extends TestCase
         $wordPressDataMock = $this->getMockBuilder(WordPressDataInterface::class)
             ->getMock();
         $wordPressDataMock->method('checkNonce')
+            ->willReturn(true);
+        $wordPressDataMock->method('roleExists')
             ->willReturn(true);
         $wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn($settings);

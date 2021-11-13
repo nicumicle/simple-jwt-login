@@ -59,6 +59,14 @@ class ResetPasswordSettings extends BaseSettings implements SettingsInterface
             'jwt_email_type',
             BaseSettings::SETTINGS_TYPE_INT
         );
+
+        $this->assignSettingsPropertyFromPost(
+            null,
+            'reset_password_jwt',
+            null,
+            'reset_password_jwt',
+            BaseSettings::SETTINGS_TYPE_BOL
+        );
     }
 
     /**
@@ -94,6 +102,14 @@ class ResetPasswordSettings extends BaseSettings implements SettingsInterface
     public function isAuthKeyRequired()
     {
         return !empty($this->settings['reset_password_requires_auth_code']);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isJwtAllowed()
+    {
+        return !empty($this->settings['reset_password_jwt']);
     }
 
     /**

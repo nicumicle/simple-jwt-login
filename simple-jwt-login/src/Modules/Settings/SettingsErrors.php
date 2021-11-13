@@ -34,6 +34,7 @@ class SettingsErrors extends \Exception
 
     #auth-codes
     const ERR_EMPTY_AUTH_CODES = 1;
+    const ERR_INVALID_ROLE = 2;
 
     #login
     const ERR_LOGIN_MISSING_JWT_PARAMETER_KEY = 1;
@@ -47,9 +48,11 @@ class SettingsErrors extends \Exception
 
     #register
     const ERR_REGISTER_MISSING_NEW_USER_PROFILE = 1;
+    const ERR_REGISTER_INVALID_ROLE = 2;
 
     #protect endpoints
     const ERR_EMPTY_SPECIFIC_ENDPOINT = 1;
+
 
     /**
      * @param int $sectionPrefix

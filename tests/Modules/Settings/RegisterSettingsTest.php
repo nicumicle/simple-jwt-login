@@ -9,7 +9,7 @@ use SimpleJWTLogin\Modules\WordPressDataInterface;
 class RegisterSettingsTest extends TestCase
 {
     /**
-     * @var WordPressDataInterface
+     * @var mixed|\PHPUnit\Framework\MockObject\MockObject|WordPressDataInterface
      */
     private $wordPressData;
 

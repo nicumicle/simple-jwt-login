@@ -11,6 +11,7 @@ if (!defined('ABSPATH')) {
 /**
  * @var SettingsErrors $settingsErrors
  * @var SimpleJWTLoginSettings $jwtSettings
+ * @var int|null $errorCode
  */
 ?>
 <div class="row">

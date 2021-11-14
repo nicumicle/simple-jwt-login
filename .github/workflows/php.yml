@@ -51,7 +51,7 @@ jobs:
       run: vendor/bin/phpmd simple-jwt-login/ text controversial
 
     - name: Run phpstan on plugin
-      run: vendor/bin/phpstan analyse simple-jwt-login/src
+      run: vendor/bin/phpstan analyse simple-jwt-login/src -c phpstan.neon
 
     - name: Run PHPCS design on tests
       run: vendor/bin/phpcs tests/

@@ -31,7 +31,7 @@
     "phpmd-unusedcode": "vendor/bin/phpmd simple-jwt-login/src/ text unusedcode",
     "phpmd-naming": "vendor/bin/phpmd simple-jwt-login/src/ text naming",
     "phpmd-controversial": "vendor/bin/phpmd simple-jwt-login/src/ text controversial",
-    "phpstan": "vendor/bin/phpstan analyse simple-jwt-login/src",
+    "phpstan": "vendor/bin/phpstan analyse simple-jwt-login/src -c phpstan.neon",
     "phpmd-test-design" : "vendor/bin/phpmd tests/ text design",
     "phpmd-test-cleancode" : "vendor/bin/phpmd tests/ text cleancode",
     "phpmd-test-unusedcode" : "vendor/bin/phpmd tests/ text unusedcode",

@@ -3,7 +3,7 @@
 namespace SimpleJWTLoginTests\Services;
 
 use Exception;
-use PHPStan\Testing\TestCase;
+use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Libraries\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;

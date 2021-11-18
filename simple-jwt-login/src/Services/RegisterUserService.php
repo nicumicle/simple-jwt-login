@@ -88,7 +88,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
                 return trim($value);
             }, explode(',', $this->jwtSettings->getRegisterSettings()->getAllowedUserMeta()));
 
-            if (is_array($userMeta) && !empty($allowedUserMetaKeys)) {
+            if (is_array($userMeta) && !empty($userMeta)) {
                 foreach ($userMeta as $metaKey => $metaValue) {
                     if (!in_array($metaKey, $allowedUserMetaKeys)) {
                         continue;
@@ -205,7 +205,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
         if (!empty($this->jwtSettings->getRegisterSettings()->getAllowedRegisterDomain())) {
             $parts = explode('@', $this->request['email']);
             if (!isset($parts[1])
-                || isset($parts[1]) && !in_array(
+                || !in_array(
                     $parts[1],
                     array_map(
                         'trim',

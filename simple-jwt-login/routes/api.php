@@ -106,9 +106,16 @@ add_action('rest_api_init', function () {
                 ->withServerHelper($serverHelper)
                 ->withRouteService($routeService);
 
-            $currentURl = $_SERVER['REQUEST_URI'];
+            $currentURL =
+                "http"
+                . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "s" : "")
+                . "://" . $_SERVER['HTTP_HOST']
+                . $_SERVER['REQUEST_URI'];
+            $currentURL = str_replace( home_url(), "",$currentURL);
+
             $documentRoot = $_SERVER['DOCUMENT_ROOT'];
-            $hasAccess = $service->hasAccess($currentURl, $documentRoot, $request) ;
+
+            $hasAccess = $service->hasAccess($currentURL, $documentRoot, $request) ;
             if ($hasAccess=== false ) {
                 @header('Content-Type: application/json; charset=UTF-8');
                 wp_send_json_error(

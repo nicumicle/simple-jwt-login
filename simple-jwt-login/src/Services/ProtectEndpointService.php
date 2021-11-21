@@ -124,6 +124,7 @@ class ProtectEndpointService extends BaseService
         $isEndpointProtected = $defaultValue;
         foreach ($domains as $protectedEndpoint) {
             $protectedEndpoint = $this->removeWpJsonFromEndpoint($protectedEndpoint);
+            $endpoint = $this->removeWpJsonFromEndpoint($endpoint);
             if (empty(trim($protectedEndpoint, '/'))) {
                 continue;
             }

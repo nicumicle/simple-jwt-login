@@ -161,6 +161,12 @@ interface WordPressDataInterface
     public function addUserMeta($userId, $metaKey, $value);
 
     /**
+     * @param int $userId
+     * @return bool|WP_User
+     */
+    public function currentUser($userId);
+
+    /**
      * @param WP_User$user
      *
      * @return mixed

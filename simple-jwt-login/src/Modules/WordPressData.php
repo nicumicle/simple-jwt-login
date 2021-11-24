@@ -284,6 +284,16 @@ class WordPressData implements WordPressDataInterface
     }
 
     /**
+     * @param int $userId
+     * @return bool|WP_User
+     */
+    public function currentUser($userId)
+    {
+        return wp_set_current_user($userId);
+    }
+
+
+    /**
      * @param string|null $password
      * @param string|null $passwordHash
      * @param string $dbPassword

@@ -8,6 +8,7 @@ use SimpleJWTLogin\Libraries\JWT;
 use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Modules\WordPressData;
+use SimpleJWTLogin\Modules\WordPressDataInterface;
 use SimpleJWTLogin\Services\ProtectEndpointService;
 use SimpleJWTLogin\Services\RouteService;
 
@@ -28,6 +29,8 @@ class ProtectEndpointServiceTest extends TestCase
             ->willReturn('http://test.com');
         $this->wordPressData->method('getAdminUrl')
             ->willReturn('http://test.com/wp-admin/');
+        $this->wordPressData->method('currentUser')
+            ->willReturn(true);
     }
 
     /**

@@ -53,6 +53,7 @@ class ProtectEndpointService extends BaseService
         try {
             $jwt = $this->getJwtFromRequestHeaderOrCookie();
             $userID = $this->routeService->getUserIdFromJWT($jwt);
+            $this->wordPressData->currentUser($userID);
 
             return !empty($userID);
         } catch (\Exception $e) {

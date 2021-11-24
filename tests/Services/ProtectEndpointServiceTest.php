@@ -8,7 +8,6 @@ use SimpleJWTLogin\Libraries\JWT;
 use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Modules\WordPressData;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
 use SimpleJWTLogin\Services\ProtectEndpointService;
 use SimpleJWTLogin\Services\RouteService;
 

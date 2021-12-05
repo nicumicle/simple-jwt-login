@@ -60,11 +60,6 @@ You can contribute by:
 
 In order to easily integrate your app/site with the simple-jwt-login plugin, we have developed a composer package.
 
-You can install it in your app using:
-```
-    composer require nicumicle/simple-jwt-login-client-php
-```
-
 You can check the [github repository](https://github.com/nicumicle/simple-jwt-login-client-php) for more details and code examples.
 
 ## Development

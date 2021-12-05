@@ -267,11 +267,6 @@ When an endpoint is protected, and you don't provide a JWT, you will get the fol
 
 In order to easily integrate your app/site with simple-jwt-login, we have developed a composer package.
 
-You can install it using: 
-```
-    composer require nicumicle/simple-jwt-login-client-php
-```
-
 You can check the [package page](https://packagist.org/packages/nicumicle/simple-jwt-login-client-php) for more details and code examples.
 
 == Screenshots ==

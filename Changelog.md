@@ -1,6 +1,6 @@
 # Changelog - Releases
 
-## Unreleased
+## 3.4.1 (05 Dec 2021)
 
 - Fix protect endpoint conflict with wp-admin actions
 - Check if user role exists

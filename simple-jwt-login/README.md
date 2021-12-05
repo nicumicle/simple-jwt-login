@@ -252,7 +252,7 @@ When you choose `Apply only on specific endpoints`, you will have to add all the
 
 When an endpoint is protected, and you don't provide a JWT, you will get the following response:
 
-```
+``
 {
    "success":false,
    "data":{
@@ -261,7 +261,7 @@ When an endpoint is protected, and you don't provide a JWT, you will get the fol
       "type":"simple-jwt-login-route-protect"
    }
 }
-```
+``
 
 == Integration ==
 
@@ -405,6 +405,13 @@ After that, for the create user route, simply add the AUTH code in the request, 
 The [Changelog](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md) can be found in the GitHub repository [https://github.com/nicumicle/simple-jwt-login](https://github.com/nicumicle/simple-jwt-login).
 
 Also, here you can find the beta version of the plugin, before it is released
+
+= 3.4.1 (05 Dec 2021) =
+- Fix protect endpoint conflict with wp-admin actions
+- Check if user role exists
+- Improve logic for protect endpoints
+- Allow Authentication with DB hashed password
+- Change user password with JWT
 
 = 3.4.0 (17 Oct 2021) =
 - Implement protected endpoints

@@ -1,5 +1,9 @@
 # Changelog - Releases
 
+## 3.4.2 (14 Dec 2021)
+
+- Display user roles on auth/validate and on register user
+
 ## 3.4.1 (05 Dec 2021)
 
 - Fix protect endpoint conflict with wp-admin actions

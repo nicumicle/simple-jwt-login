@@ -128,7 +128,8 @@ class RegisterUserService extends BaseService implements ServiceInterface
             'success' => true,
             'id' => $userId,
             'message' => __('User was successfully created.', 'simple-jwt-login'),
-            'user' => $userArray
+            'user' => $userArray,
+            'roles' => $this->wordPressData->getUserRoles($user),
         ];
 
         if ($this->jwtSettings->getRegisterSettings()->isJwtEnabled()) {

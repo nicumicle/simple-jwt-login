@@ -7,8 +7,6 @@ use SimpleJWTLogin\Modules\UserProperties;
 
 class UserPropertiesTest extends TestCase
 {
-
-
     /**
      * @dataProvider providerBuildMethod
      * @param mixed $expected

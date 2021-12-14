@@ -426,6 +426,19 @@ class WordPressData implements WordPressDataInterface
     /** * @SuppressWarnings(PHPMD.Superglobals) */
     public function roleExists($role)
     {
-        return  isset($GLOBALS['wp_roles']) && $GLOBALS['wp_roles']->is_role($role);
+        return isset($GLOBALS['wp_roles']) && $GLOBALS['wp_roles']->is_role($role);
+    }
+
+    /**
+     * @param WP_User $user
+     * @return array
+     */
+    public function getUserRoles($user)
+    {
+        if (isset($user->roles)) {
+            return $user->roles;
+        }
+
+        return [];
     }
 }

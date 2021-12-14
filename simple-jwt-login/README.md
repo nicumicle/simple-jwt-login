@@ -406,6 +406,9 @@ The [Changelog](https://github.com/nicumicle/simple-jwt-login/blob/master/Change
 
 Also, here you can find the beta version of the plugin, before it is released
 
+= 3.4.2 (14 Dec 2021) =
+- Display user roles on auth/validate and on register user
+
 = 3.4.1 (05 Dec 2021) =
 - Fix protect endpoint conflict with wp-admin actions
 - Check if user role exists

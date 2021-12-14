@@ -7,7 +7,6 @@ use SimpleJWTLogin\Modules\AuthCodeBuilder;
 
 class AuthCodeBuilderTest extends TestCase
 {
-
     /**
      * @dataProvider authCodeBuilderArrayProvider
      * @param array $data

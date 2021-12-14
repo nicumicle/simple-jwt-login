@@ -263,4 +263,10 @@ interface WordPressDataInterface
      * @return bool
      */
     public function roleExists($roleName);
+
+    /**
+     * @param WP_User $user
+     * @return array
+     */
+    public function getUserRoles($user);
 }

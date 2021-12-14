@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJwtLoginTests\Libraries;
 
 use Exception;
@@ -7,7 +8,6 @@ use SimpleJWTLogin\Libraries\JWT;
 
 class JWTTest extends TestCase
 {
-
     public function testSuccessJWT()
     {
         $payload = [

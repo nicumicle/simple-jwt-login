@@ -16,7 +16,6 @@ use SimpleJWTLogin\Modules\Settings\SettingsFactory;
 
 class SettingsFactoryTest extends TestCase
 {
-
     /**
      * @dataProvider settingsFactoryProvider
      * @param int $type

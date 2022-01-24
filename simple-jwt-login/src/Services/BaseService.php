@@ -162,7 +162,7 @@ abstract class BaseService
         if ($this->jwtSettings->getGeneralSettings()->isJwtFromHeaderEnabled()) {
             $headers = array_change_key_case($this->serverHelper->getHeaders(), CASE_LOWER);
             $headerKey = strtolower($this->jwtSettings->getGeneralSettings()->getRequestKeyHeader());
-            if (isset($headers[$headerKey]) && !empty(trim($headers[$headerKey]))) {
+            if (isset($headers[$headerKey])) {
                 $matches = [];
                 preg_match(
                     '/^(?:Bearer)?[\s]*(.*)$/mi',
@@ -170,7 +170,7 @@ abstract class BaseService
                     $matches
                 );
 
-                if (isset($matches[1])) {
+                if (isset($matches[1]) && !empty(trim($matches[1]))) {
                     return $matches[1];
                 }
             }

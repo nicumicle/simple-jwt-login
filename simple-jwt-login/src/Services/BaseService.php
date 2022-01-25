@@ -170,7 +170,7 @@ abstract class BaseService
                     $matches
                 );
 
-                if (isset($matches[1])) {
+                if (isset($matches[1]) && !empty(trim($matches[1]))) {
                     return $matches[1];
                 }
             }

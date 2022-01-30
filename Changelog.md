@@ -1,10 +1,14 @@
 # Changelog - Releases
 
-## 3.4.2 (14 Dec 2021)
+## 3.4.3 (30 January 2022)
+- Tested with WordPress 5.9
+- Do not add empty JWT to Authorization header
+
+## 3.4.2 (14 December 2021)
 
 - Display user roles on auth/validate and on register user
 
-## 3.4.1 (05 Dec 2021)
+## 3.4.1 (05 December 2021)
 
 - Fix protect endpoint conflict with wp-admin actions
 - Check if user role exists
@@ -12,25 +16,25 @@
 - Allow Authentication with DB hashed password
 - Change user password with JWT
 
-## 3.4.0 (26 Oct 2021)
+## 3.4.0 (26 October 2021)
 
 - Implement protected endpoints
 - Improve code coverage
 
-## 3.3.1 (13 Oct 2021)
+## 3.3.1 (13 October 2021)
 - Sanitize load views
 
-## 3.3.0 (13 Oct 2021)
+## 3.3.0 (13 October 2021)
 - Sanitize all displayed texts
 - Add missing translation texts
 - Update bootstrap libraries
 - Update all translations
 - Improve random password algorithm for better security
 
-## 3.2.1 (09 Oct 2021)
+## 3.2.1 (09 October 2021)
 - Fix CSRF for admin settings
 
-## 3.2.0 (26 Sept 2021)
+## 3.2.0 (26 September 2021)
 - \#10: Add user to simple_jwt_login_register_hook and simple_jwt_login_login_hook hooks 
 -  \#9: Add option to allow adding a JWT in the register user endpoint
 
@@ -171,13 +175,13 @@
 - Update Readme
 
 
-## 1.5.0 (05 Feb 2020)
+## 1.5.0 (05 February 2020)
 - Allow delete users based on a JWT token
 - Refactor routes section
 - Allow users to set custom namespace for API route
 - Change create user route name and offer support for backward compatibility
 
-## 1.4.0 (29 Jan 2020)
+## 1.4.0 (29 January 2020)
 - Add codes to errors
 - Code refactor
 - Allow save in settings with no AUTH_KEYS when they are not used
@@ -187,21 +191,21 @@
 - Keep settings values even if there is an error
 - Update readme
 
-## 1.3.1 (20 Dec 2019)
+## 1.3.1 (20 December 2019)
 - Plugin can be configured only by administrators
 
-## 1.3.0 (28 Nov 2019)
+## 1.3.0 (28 November 2019)
 - Add support for translations
 - Code refactor
 
-## 1.2.4 (26 Nov 2019)
+## 1.2.4 (26 November 2019)
 - Improve UI for Auth codes
 - Update Readme
 
-## 1.2.3 (16 Nov 2019)
+## 1.2.3 (16 November 2019)
 - Allow users to change Auth Key parameter
 
-## 1.2.2 (16 Nov 2019)
+## 1.2.2 (16 November 2019)
 - Add support for getting key from jwt and array
 
 ## 1.2.1 (23 June 2019)

@@ -4,6 +4,7 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use WP_REST_Response;
 
 class ValidateTokenService extends AuthenticateService
@@ -64,17 +65,28 @@ class ValidateTokenService extends AuthenticateService
             $jwtParameters['expire_in'] = $jwtParameters['payload']['exp'] - time();
         }
 
-        return $this->wordPressData->createResponse(
-            [
-                'success' => true,
-                'data'    => [
-                    'user' => $userArray,
-                    'roles' => $this->wordPressData->getUserRoles($user),
-                    'jwt'  => [
-                        $jwtParameters
-                    ]
+        $response = [
+            'success' => true,
+            'data'    => [
+                'user' => $userArray,
+                'roles' => $this->wordPressData->getUserRoles($user),
+                'jwt'  => [
+                    $jwtParameters
                 ]
             ]
-        );
+        ];
+
+        if ($this->jwtSettings->getHooksSettings()
+            ->isHookEnable(SimpleJWTLoginHooks::HOOK_RESPONSE_VALIDATE_TOKEN)
+        ) {
+            $response = $this->wordPressData
+                ->triggerFilter(
+                    SimpleJWTLoginHooks::HOOK_RESPONSE_VALIDATE_TOKEN,
+                    $response,
+                    $user
+                );
+        }
+
+        return $this->wordPressData->createResponse($response);
     }
 }

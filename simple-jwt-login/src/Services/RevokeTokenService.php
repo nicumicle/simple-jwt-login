@@ -4,6 +4,7 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
 class RevokeTokenService extends AuthenticateService
@@ -56,17 +57,29 @@ class RevokeTokenService extends AuthenticateService
             $this->jwt
         );
 
-        return $this->wordPressData->createResponse(
-            [
-                'success' => true,
-                'message' => __('Token was revoked.', 'simple-jwt-login'),
-                'data'    => [
-                    'jwt' => [
-                        $this->jwt
-                    ]
+        $response =  [
+            'success' => true,
+            'message' => __('Token was revoked.', 'simple-jwt-login'),
+            'data'    => [
+                'jwt' => [
+                    $this->jwt
                 ]
             ]
-        );
+        ];
+
+
+        if ($this->jwtSettings->getHooksSettings()
+            ->isHookEnable(SimpleJWTLoginHooks::HOOK_RESPONSE_REVOKE_TOKEN)
+        ) {
+            $response = $this->wordPressData
+                ->triggerFilter(
+                    SimpleJWTLoginHooks::HOOK_RESPONSE_REVOKE_TOKEN,
+                    $response,
+                    $user
+                );
+        }
+
+        return $this->wordPressData->createResponse($response);
     }
 
     /**

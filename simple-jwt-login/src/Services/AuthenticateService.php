@@ -142,8 +142,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
         }
 
-        //Display result
-        return $this->wordPressData->createResponse([
+        $response = [
             'success' => true,
             'data' => [
                 'jwt' => JWT::encode(
@@ -152,7 +151,16 @@ class AuthenticateService extends BaseService implements ServiceInterface
                     $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm()
                 )
             ]
-        ]);
+        ];
+        if ($this->jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::HOOK_RESPONSE_AUTH_USER)) {
+            $response = $this->wordPressData->triggerFilter(
+                SimpleJWTLoginHooks::HOOK_RESPONSE_AUTH_USER,
+                $response,
+                $user
+            );
+        }
+
+        return $this->wordPressData->createResponse($response);
     }
 
     /**

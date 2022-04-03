@@ -7,3 +7,4 @@ composer.lock
 clover.xml
 buddypress/*
 simple-logs
+mailpoet/*

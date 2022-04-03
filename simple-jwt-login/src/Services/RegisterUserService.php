@@ -142,6 +142,17 @@ class RegisterUserService extends BaseService implements ServiceInterface
             );
         }
 
+        if ($this->jwtSettings->getHooksSettings()
+            ->isHookEnable(SimpleJWTLoginHooks::HOOK_RESPONSE_REGISTER_USER)
+        ) {
+            $response = $this->wordPressData
+                ->triggerFilter(
+                    SimpleJWTLoginHooks::HOOK_RESPONSE_REGISTER_USER,
+                    $response,
+                    $user
+                );
+        }
+
         return $this->wordPressData->createResponse($response);
     }
 

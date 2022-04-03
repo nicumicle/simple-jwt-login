@@ -66,12 +66,24 @@ class ResetPasswordService extends BaseService implements ServiceInterface
         $user = $this->getUser($jwtAllowed);
         $this->wordPressData->resetPassword($user, $newPassword);
 
-        return $this->wordPressData->createResponse(
-            [
-                'success' => true,
-                'message' => __('User Password has been changed.', 'simple-jwt-login'),
-            ]
-        );
+
+        $response =  [
+            'success' => true,
+            'message' => __('User Password has been changed.', 'simple-jwt-login'),
+        ];
+
+        if ($this->jwtSettings->getHooksSettings()
+                ->isHookEnable(SimpleJWTLoginHooks::HOOK_RESPONSE_CHANGE_USER_PASSWORD)
+        ) {
+            $response = $this->wordPressData
+                ->triggerFilter(
+                    SimpleJWTLoginHooks::HOOK_RESPONSE_CHANGE_USER_PASSWORD,
+                    $response,
+                    $user
+                );
+        }
+
+        return $this->wordPressData->createResponse($response);
     }
 
     private function validateChangePassword()
@@ -152,12 +164,22 @@ class ResetPasswordService extends BaseService implements ServiceInterface
                 );
         }
 
-        return $this->wordPressData->createResponse(
-            [
-                'success' => true,
-                'message' => $message,
-            ]
-        );
+        $response = [
+            'success' => true,
+            'message' => $message,
+        ];
+
+        if ($this->jwtSettings->getHooksSettings()
+            ->isHookEnable(SimpleJWTLoginHooks::HOOK_RESPONSE_SEND_RESET_PASSWORD)
+        ) {
+            $response = $this->wordPressData->triggerFilter(
+                SimpleJWTLoginHooks::HOOK_RESPONSE_SEND_RESET_PASSWORD,
+                $response,
+                $user
+            );
+        }
+
+        return $this->wordPressData->createResponse($response);
     }
 
     /**
@@ -215,13 +237,22 @@ class ResetPasswordService extends BaseService implements ServiceInterface
                     break;
             }
 
+            if ($replace === null) {
+                $replace = $variableKey;
+            }
+
             $emailBody = str_replace($variableKey, $replace, $emailBody);
         }
 
         return $emailBody;
     }
 
-    private function getUser(bool $jwtAllowed)
+    /**
+     * @param bool $jwtAllowed
+     * @return bool|\WP_User
+     * @throws Exception
+     */
+    private function getUser($jwtAllowed)
     {
         if ($jwtAllowed && empty($this->request['code'])) {
             $this->jwt = $this->getJwtFromRequestHeaderOrCookie();

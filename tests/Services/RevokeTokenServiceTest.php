@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Libraries\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
+use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Modules\WordPressDataInterface;
 use SimpleJWTLogin\Services\RevokeTokenService;
@@ -96,6 +97,9 @@ class RevokeTokenServiceTest extends TestCase
             'decryption_key' => 'test',
             'jwt_login_by' => LoginSettings::JWT_LOGIN_BY_WORDPRESS_USER_ID,
             'jwt_login_by_parameter' => 'id',
+            'enabled_hooks' => [
+                SimpleJWTLoginHooks::HOOK_RESPONSE_REVOKE_TOKEN,
+            ],
         ];
 
         $user = $this->getMockBuilder(WP_User::class)
@@ -108,6 +112,8 @@ class RevokeTokenServiceTest extends TestCase
             ->willReturn(true);
         $this->wordPressDataMock->method('getUserProperty')
             ->willReturn(1);
+        $this->wordPressDataMock->method('triggerFilter')
+            ->willReturn(true);
 
         $this->wordPressDataMock->method('getUserMeta')
             ->with(1, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY)

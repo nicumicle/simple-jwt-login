@@ -64,7 +64,11 @@ class SimpleJWTLoginSettings
     {
         $this->wordPressData = $wordPressData;
         $data = $this->wordPressData->getOptionFromDatabase(self::OPTIONS_KEY);
-        $this->settings = json_decode($data, true);
+        $this->settings = [];
+        if ($data !== null) {
+            $this->settings = json_decode($data, true);
+        }
+
         $this->needUpdateOnOptions = $data !== false;
 
         $this->post = [];
@@ -174,7 +178,7 @@ class SimpleJWTLoginSettings
      *
      * @param array $post
      *
-     * @return bool|void
+     * @return bool
      * @throws Exception
      */
     public function watchForUpdates($post)

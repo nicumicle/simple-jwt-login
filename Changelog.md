@@ -1,5 +1,9 @@
 # Changelog - Releases
 
+## 3.4.4 (03 April 2022)
+- Add openapi file
+- Add hooks for all success responses
+
 ## 3.4.3 (30 January 2022)
 - Tested with WordPress 5.9
 - Do not add empty JWT to Authorization header

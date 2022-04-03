@@ -38,12 +38,12 @@ interface WordPressDataInterface
     public function redirect($url);
 
     /**
-     * @return string|void
+     * @return string
      */
     public function getAdminUrl();
 
     /**
-     * @return string|void
+     * @return string
      */
     public function getSiteUrl();
 

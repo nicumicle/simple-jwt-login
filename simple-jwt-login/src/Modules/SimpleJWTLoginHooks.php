@@ -15,6 +15,18 @@ class SimpleJWTLoginHooks
     const HOOK_TYPE_ACTION = 'action';
     const HOOK_TYPE_FILTER = 'filter';
 
+    const HOOK_RESPONSE_AUTH_USER = 'simple_jwt_login_response_auth_user';
+    const HOOK_RESPONSE_DELETE_USER = 'simple_jwt_login_response_delete_user';
+    const HOOK_RESPONSE_REFRESH_TOKEN = 'simple_jwt_login_response_refresh_token';
+    const HOOK_RESPONSE_REGISTER_USER = 'simple_jwt_login_response_register_user';
+    const HOOK_RESPONSE_SEND_RESET_PASSWORD = 'simple_jwt_login_response_send_reset_password';
+    const HOOK_RESPONSE_CHANGE_USER_PASSWORD = 'simple_jwt_login_response_change_user_password';
+    const HOOK_RESPONSE_REVOKE_TOKEN = 'simple_jwt_login_response_revoke_token';
+    const HOOK_RESPONSE_VALIDATE_TOKEN = 'simple_jwt_login_response_validate_token';
+
+    /**
+     * @return array[]
+     */
     public static function getHooksDetails()
     {
         return [
@@ -47,7 +59,10 @@ class SimpleJWTLoginHooks
                     'Wp_User $user',
                     'string $password'
                 ],
-                'description' => __('This hook is called after a new user is created.', 'simple-jwt-login'),
+                'description' => __(
+                    'This hook is called after a new user is created.',
+                    'simple-jwt-login'
+                ),
             ],
             [
                 'name' => self::DELETE_USER_ACTION_NAME,
@@ -55,7 +70,10 @@ class SimpleJWTLoginHooks
                 'parameters' => [
                     'Wp_User $user'
                 ],
-                'description' => __('This hook is called right after the user was deleted.', 'simple-jwt-login')
+                'description' => __(
+                    'This hook is called right after the user was deleted.',
+                    'simple-jwt-login'
+                ),
             ],
             [
                 'name' => self::JWT_PAYLOAD_ACTION_NAME,
@@ -65,12 +83,11 @@ class SimpleJWTLoginHooks
                     'array $request'
                 ],
                 'return' => 'array $payload',
-                'description' =>
-                    __(
-                        'This hook is called on /auth endpoint.'
-                        . 'Here you can modify payload parameters.',
-                        'simple-jwt-login'
-                    )
+                'description' => __(
+                    'This hook is called on /auth endpoint.'
+                    . 'Here you can modify payload parameters.',
+                    'simple-jwt-login'
+                ),
             ],
             [
                 'name' => self::NO_REDIRECT_RESPONSE,
@@ -84,7 +101,7 @@ class SimpleJWTLoginHooks
                     'This hook is called on /autologin endpoint when the option'
                     . '`No Redirect` is selected. You can customize the message and add parameters.',
                     'simple-jwt-login'
-                )
+                ),
             ],
             [
                 'name' => self::RESET_PASSWORD_CUSTOM_EMAIL_TEMPLATE,
@@ -98,7 +115,111 @@ class SimpleJWTLoginHooks
                     'This is executed when POST /user/reset_password is called.'
                     . ' It will replace the email template that has been added in Reset Password settings',
                     'simple-jwt-login'
-                )
+                ),
+            ],
+            [
+                'name' => self::HOOK_RESPONSE_AUTH_USER,
+                'type' => self::HOOK_TYPE_FILTER,
+                'parameters' => [
+                    'array $response',
+                    'WP_User $user'
+                ],
+                'return' => 'array $response',
+                'description' => __(
+                    'This is executed before displaying the response of auth endpoint.',
+                    'simple-jwt-login'
+                ),
+            ],
+            [
+                'name' => self::HOOK_RESPONSE_DELETE_USER,
+                'type' => self::HOOK_TYPE_FILTER,
+                'parameters' => [
+                    'array $response',
+                    'WP_User $user'
+                ],
+                'return' => 'array $response',
+                'description' => __(
+                    'This is executed before displaying the response of delete user endpoint.',
+                    'simple-jwt-login'
+                ),
+            ],
+            [
+                'name' => self::HOOK_RESPONSE_REFRESH_TOKEN,
+                'type' => self::HOOK_TYPE_FILTER,
+                'parameters' => [
+                    'array $response',
+                    'WP_User $user'
+                ],
+                'return' => 'array $response',
+                'description' => __(
+                    'This is executed before displaying the response of refresh token endpoint.',
+                    'simple-jwt-login'
+                ),
+            ],
+            [
+                'name' => self::HOOK_RESPONSE_REGISTER_USER,
+                'type' => self::HOOK_TYPE_FILTER,
+                'parameters' => [
+                    'array $response',
+                    'WP_User $user'
+                ],
+                'return' => 'array $response',
+                'description' => __(
+                    'This is executed before displaying the response of register user endpoint.',
+                    'simple-jwt-login'
+                ),
+            ],
+            [
+                'name' => self::HOOK_RESPONSE_SEND_RESET_PASSWORD,
+                'type' => self::HOOK_TYPE_FILTER,
+                'parameters' => [
+                    'array $response',
+                    'WP_User $user'
+                ],
+                'return' => 'array $response',
+                'description' => __(
+                    'This is executed before displaying the response of send reset password endpoint.',
+                    'simple-jwt-login'
+                ),
+            ],
+            [
+                'name' => self::HOOK_RESPONSE_CHANGE_USER_PASSWORD,
+                'type' => self::HOOK_TYPE_FILTER,
+                'parameters' => [
+                    'array $response',
+                    'WP_User $user'
+                ],
+                'return' => 'array $response',
+                'description' => __(
+                    'This is executed before displaying the response of change user password endpoint.',
+                    'simple-jwt-login'
+                ),
+            ],
+            [
+                'name' => self::HOOK_RESPONSE_REVOKE_TOKEN,
+                'type' => self::HOOK_TYPE_FILTER,
+                'parameters' => [
+                    'array $response',
+                    'WP_User $user'
+                ],
+                'return' => 'array $response',
+                'description' => __(
+                    'This is executed before displaying the response of revoke token endpoint.',
+                    'simple-jwt-login'
+                ),
+            ],
+            [
+                'name' => self::HOOK_RESPONSE_VALIDATE_TOKEN,
+                'type' => self::HOOK_TYPE_FILTER,
+                'parameters' => [
+                    'array $response',
+                    'WP_User $user'
+                ],
+                'return' => 'array $response',
+                'description' => __(
+                    'This is executed before displaying the response of validate token endpoint.',
+                    'simple-jwt-login'
+                ),
             ],
         ];
     }

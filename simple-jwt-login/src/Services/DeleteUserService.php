@@ -106,9 +106,21 @@ class DeleteUserService extends BaseService implements ServiceInterface
             $this->wordPressData->triggerAction(SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME, $user);
         }
 
-        return $this->wordPressData->createResponse([
+        $response = [
             'message' => __('User was successfully deleted.', 'simple-jwt-login'),
             'id' => $result
-        ]);
+        ];
+        if ($this->jwtSettings->getHooksSettings()
+            ->isHookEnable(SimpleJWTLoginHooks::HOOK_RESPONSE_DELETE_USER)
+        ) {
+            $response = $this->wordPressData
+                ->triggerFilter(
+                    SimpleJWTLoginHooks::HOOK_RESPONSE_DELETE_USER,
+                    $response,
+                    $user
+                );
+        }
+
+        return $this->wordPressData->createResponse($response);
     }
 }

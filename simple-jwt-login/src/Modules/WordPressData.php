@@ -63,7 +63,7 @@ class WordPressData implements WordPressDataInterface
     }
 
     /**
-     * @return string|void
+     * @return string
      */
     public function getAdminUrl()
     {
@@ -71,7 +71,7 @@ class WordPressData implements WordPressDataInterface
     }
 
     /**
-     * @return string|void
+     * @return string
      */
     public function getSiteUrl()
     {
@@ -128,7 +128,7 @@ class WordPressData implements WordPressDataInterface
     /**
      * @param string $option
      *
-     * @return mixed|void
+     * @return mixed
      */
     public function getOptionFromDatabase($option)
     {

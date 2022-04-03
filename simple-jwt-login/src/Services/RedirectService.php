@@ -3,6 +3,7 @@
 namespace SimpleJWTLogin\Services;
 
 use Exception;
+use PHPUnit\Util\Xml\ValidationResult;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use WP_REST_Response;
@@ -125,14 +126,21 @@ class RedirectService extends BaseService implements ServiceInterface
      */
     private function replaceVariables($url, $user)
     {
+        /** @var array<string,string> $replace */
         $replace = [
-            '{{site_url}}' => $this->wordPressData->getSiteUrl(),
-            '{{user_id}}' => $this->wordPressData->getUserProperty($user, 'id'),
-            '{{user_email}}' => $this->wordPressData->getUserProperty($user, 'user_email'),
-            '{{user_login}}' => $this->wordPressData->getUserProperty($user, 'user_login'),
-            '{{user_first_name}}' => $this->wordPressData->getUserProperty($user, 'first_name'),
-            '{{user_last_name}}' => $this->wordPressData->getUserProperty($user, 'last_name'),
-            '{{user_nicename}}' => $this->wordPressData->getUserProperty($user, 'user_nicename'),
+            '{{site_url}}' => $this->wordPressData->getSiteUrl() ? $this->wordPressData->getSiteUrl() : '{{site_url}}',
+            '{{user_id}}' => $this->wordPressData->getUserProperty($user, 'id') ?
+                $this->wordPressData->getUserProperty($user, 'id') : '{{user_id}}',
+            '{{user_email}}' => $this->wordPressData->getUserProperty($user, 'user_email') ?
+                $this->wordPressData->getUserProperty($user, 'user_email') : '{{user_email}}',
+            '{{user_login}}' => $this->wordPressData->getUserProperty($user, 'user_login') ?
+                $this->wordPressData->getUserProperty($user, 'user_login') : '{{user_login}}',
+            '{{user_first_name}}' => $this->wordPressData->getUserProperty($user, 'first_name')
+                ? $this->wordPressData->getUserProperty($user, 'first_name') : '{{user_first_name}}',
+            '{{user_last_name}}' => $this->wordPressData->getUserProperty($user, 'last_name') ?
+                $this->wordPressData->getUserProperty($user, 'last_name') : '{{user_last_name}}',
+            '{{user_nicename}}' => $this->wordPressData->getUserProperty($user, 'user_nicename') ?
+                $this->wordPressData->getUserProperty($user, 'user_nicename') : '{{user_nicename}}',
         ];
 
         return str_replace(array_keys($replace), array_values($replace), $url);

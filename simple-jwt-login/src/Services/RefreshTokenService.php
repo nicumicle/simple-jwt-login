@@ -7,6 +7,7 @@ use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
 use SimpleJWTLogin\Libraries\JWT;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
+use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use WP_REST_Response;
 
@@ -94,18 +95,29 @@ class RefreshTokenService extends AuthenticateService
             $payload[AuthenticationSettings::JWT_PAYLOAD_PARAM_EXP] = $expValue;
         }
 
-        //Display result
-        return $this->wordPressData->createResponse(
-            [
-                'success' => true,
-                'data'    => [
-                    'jwt' => JWT::encode(
-                        $payload,
-                        JwtKeyFactory::getFactory($this->jwtSettings)->getPrivateKey(),
-                        $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm()
-                    )
-                ]
+        $response =  [
+            'success' => true,
+            'data'    => [
+                'jwt' => JWT::encode(
+                    $payload,
+                    JwtKeyFactory::getFactory($this->jwtSettings)->getPrivateKey(),
+                    $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm()
+                )
             ]
-        );
+        ];
+
+        if ($this->jwtSettings->getHooksSettings()
+            ->isHookEnable(SimpleJWTLoginHooks::HOOK_RESPONSE_REFRESH_TOKEN)
+        ) {
+            $response = $this->wordPressData
+                ->triggerFilter(
+                    SimpleJWTLoginHooks::HOOK_RESPONSE_REFRESH_TOKEN,
+                    $response,
+                    $user
+                );
+        }
+
+        //Display result
+        return $this->wordPressData->createResponse($response);
     }
 }

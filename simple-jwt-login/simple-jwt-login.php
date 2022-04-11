@@ -68,6 +68,9 @@ function simple_jwt_login_request_shortcode($parameter = null)
         return '';
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
     if (!isset($_REQUEST[$parameter])) {
         return '';
     }

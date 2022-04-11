@@ -18,11 +18,15 @@ services:
   wordpress:
     depends_on:
       - wpdb
-    image: wordpress:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: wordpress
     volumes:
       - wordpress_data:/var/www/html
+      - ../:/var/www/dev
       - ../simple-jwt-login/:/var/www/html/wp-content/plugins/simple-jwt-login
+      - ../simple-jwt-login-mailpoet/:/var/www/html/wp-content/plugins/simple-jwt-login-mailpoet
     ports:
       - "88:80"
     restart: always

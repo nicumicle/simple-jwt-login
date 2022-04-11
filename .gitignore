@@ -8,3 +8,4 @@ clover.xml
 buddypress/*
 simple-logs
 mailpoet/*
+simple-jwt-login-mailpoet/*

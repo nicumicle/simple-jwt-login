@@ -45,11 +45,11 @@
         "@phpmd-naming",
         "@phpmd-controversial",
         "@phpstan",
-        "@tests",
         "@phpmd-test-design",
         "@phpmd-test-naming",
         "@phpmd-test-unusedcode",
-        "@phpmd-test-controversial"
+        "@phpmd-test-controversial",
+        "@tests"
     ]
   },
   "scripts-descriptions": {

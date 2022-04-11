@@ -69,25 +69,7 @@ class RedirectService extends BaseService implements ServiceInterface
             $url = $this->request['redirectUrl'];
         }
 
-        if ($this->jwtSettings->getLoginSettings()->getShouldIncludeRequestParameters()) {
-            $requestParams = $this->request;
-            $dangerousKeys = [
-                'rest_route',
-                'jwt',
-                'JWT',
-                'email',
-                'password',
-                'redirectUrl',
-                $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()
-            ];
-            foreach ($dangerousKeys as $key) {
-                if (isset($requestParams[$key])) {
-                    unset($requestParams[$key]);
-                }
-            }
-
-            $url = $url . (strpos('?', $url) !== false ? '&' : '?') . http_build_query($requestParams);
-        }
+        $url = $this->includeRequestParameters($url);
 
         if ($this->jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::LOGIN_REDIRECT_NAME)) {
             $this->wordPressData->triggerAction(SimpleJWTLoginHooks::LOGIN_REDIRECT_NAME, $url, $this->request);

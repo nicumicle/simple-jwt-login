@@ -302,4 +302,32 @@ abstract class BaseService
             ? json_decode(base64_decode($jwtParts[1]), true)
             : null;
     }
+
+    /**
+     * @param string $url
+     * @return string
+     */
+    protected function includeRequestParameters($url)
+    {
+        if ($this->jwtSettings->getLoginSettings()->getShouldIncludeRequestParameters()) {
+            $requestParams = $this->request;
+            $dangerousKeys = [
+                'rest_route',
+                'jwt',
+                'JWT',
+                'email',
+                'password',
+                'redirectUrl',
+                $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()
+            ];
+            foreach ($dangerousKeys as $key) {
+                if (isset($requestParams[$key])) {
+                    unset($requestParams[$key]);
+                }
+            }
+
+            $url = $url . (strpos('?', $url) !== false ? '&' : '?') . http_build_query($requestParams);
+        }
+        return $url;
+    }
 }

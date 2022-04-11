@@ -1,17 +1,17 @@
-# Copyright (C) 2021 Nicu Micle
+# Copyright (C) 2022 Nicu Micle
 # This file is distributed under the same license as the Simple-JWT-Login plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Simple-JWT-Login 3.4.0\n"
+"Project-Id-Version: Simple-JWT-Login 3.4.5\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/simple-jwt-login\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2021-13-11T08:53:34+00:00\n"
+"POT-Creation-Date: 2022-04-11T19:54:32+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.5.0\n"
+"X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: simple-jwt-login\n"
 
 #. Plugin Name of the plugin
@@ -186,11 +186,11 @@ msgstr ""
 msgid "You have to have at least on option enabled in 'Get JWT token From'"
 msgstr ""
 
-#: src/Modules/Settings/LoginSettings.php:89
+#: src/Modules/Settings/LoginSettings.php:97
 msgid "JWT Parameter key from LoginSettings Config is missing."
 msgstr ""
 
-#: src/Modules/Settings/LoginSettings.php:105
+#: src/Modules/Settings/LoginSettings.php:113
 msgid "Invalid custom URL provided."
 msgstr ""
 
@@ -222,32 +222,64 @@ msgstr ""
 msgid "Client IP address"
 msgstr ""
 
-#: src/Modules/SimpleJWTLoginHooks.php:27
+#: src/Modules/SimpleJWTLoginHooks.php:39
 msgid "This hook is called after the user is logged in."
 msgstr ""
 
-#: src/Modules/SimpleJWTLoginHooks.php:37
+#: src/Modules/SimpleJWTLoginHooks.php:49
 msgid "This hook is called before the user is redirected to the pagethat he specified in the login section."
 msgstr ""
 
-#: src/Modules/SimpleJWTLoginHooks.php:50
+#: src/Modules/SimpleJWTLoginHooks.php:62
 msgid "This hook is called after a new user is created."
 msgstr ""
 
-#: src/Modules/SimpleJWTLoginHooks.php:58
+#: src/Modules/SimpleJWTLoginHooks.php:73
 msgid "This hook is called right after the user was deleted."
 msgstr ""
 
-#: src/Modules/SimpleJWTLoginHooks.php:69
+#: src/Modules/SimpleJWTLoginHooks.php:86
 msgid "This hook is called on /auth endpoint.Here you can modify payload parameters."
 msgstr ""
 
-#: src/Modules/SimpleJWTLoginHooks.php:83
+#: src/Modules/SimpleJWTLoginHooks.php:100
 msgid "This hook is called on /autologin endpoint when the option`No Redirect` is selected. You can customize the message and add parameters."
 msgstr ""
 
-#: src/Modules/SimpleJWTLoginHooks.php:97
+#: src/Modules/SimpleJWTLoginHooks.php:114
 msgid "This is executed when POST /user/reset_password is called. It will replace the email template that has been added in Reset Password settings"
+msgstr ""
+
+#: src/Modules/SimpleJWTLoginHooks.php:128
+msgid "This is executed before displaying the response of auth endpoint."
+msgstr ""
+
+#: src/Modules/SimpleJWTLoginHooks.php:141
+msgid "This is executed before displaying the response of delete user endpoint."
+msgstr ""
+
+#: src/Modules/SimpleJWTLoginHooks.php:154
+msgid "This is executed before displaying the response of refresh token endpoint."
+msgstr ""
+
+#: src/Modules/SimpleJWTLoginHooks.php:167
+msgid "This is executed before displaying the response of register user endpoint."
+msgstr ""
+
+#: src/Modules/SimpleJWTLoginHooks.php:180
+msgid "This is executed before displaying the response of send reset password endpoint."
+msgstr ""
+
+#: src/Modules/SimpleJWTLoginHooks.php:193
+msgid "This is executed before displaying the response of change user password endpoint."
+msgstr ""
+
+#: src/Modules/SimpleJWTLoginHooks.php:206
+msgid "This is executed before displaying the response of revoke token endpoint."
+msgstr ""
+
+#: src/Modules/SimpleJWTLoginHooks.php:219
+msgid "This is executed before displaying the response of validate token endpoint."
 msgstr ""
 
 #: src/Services/AuthenticateService.php:86
@@ -263,17 +295,17 @@ msgstr ""
 msgid "Wrong user credentials."
 msgstr ""
 
-#: src/Services/AuthenticateService.php:167
+#: src/Services/AuthenticateService.php:175
 msgid "You are not allowed to Authenticate from this IP: %s"
 msgstr ""
 
-#: src/Services/AuthenticateService.php:182
+#: src/Services/AuthenticateService.php:190
 msgid "Authentication is not enabled."
 msgstr ""
 
-#: src/Services/AuthenticateService.php:200
-#: src/Services/LoginService.php:78
-#: src/Services/RegisterUserService.php:167
+#: src/Services/AuthenticateService.php:208
+#: src/Services/LoginService.php:98
+#: src/Services/RegisterUserService.php:179
 #: src/Services/ResetPasswordService.php:27
 msgid "Invalid Auth Code ( %s ) provided."
 msgstr ""
@@ -295,9 +327,9 @@ msgid "Delete is not enabled."
 msgstr ""
 
 #: src/Services/DeleteUserService.php:37
-#: src/Services/ResetPasswordService.php:230
-#: src/Services/RevokeTokenService.php:28
-#: src/Services/ValidateTokenService.php:32
+#: src/Services/ResetPasswordService.php:261
+#: src/Services/RevokeTokenService.php:29
+#: src/Services/ValidateTokenService.php:33
 msgid "The `jwt` parameter is missing."
 msgstr ""
 
@@ -311,9 +343,9 @@ msgstr ""
 
 #: src/Services/DeleteUserService.php:86
 #: src/Services/DeleteUserService.php:100
-#: src/Services/LoginService.php:31
-#: src/Services/RevokeTokenService.php:39
-#: src/Services/ValidateTokenService.php:44
+#: src/Services/LoginService.php:51
+#: src/Services/RevokeTokenService.php:40
+#: src/Services/ValidateTokenService.php:45
 msgid "User not found."
 msgstr ""
 
@@ -321,35 +353,35 @@ msgstr ""
 msgid "User was successfully deleted."
 msgstr ""
 
-#: src/Services/LoginService.php:63
+#: src/Services/LoginService.php:83
 msgid "Auto-login is not enabled on this website."
 msgstr ""
 
-#: src/Services/LoginService.php:70
+#: src/Services/LoginService.php:90
 msgid "Wrong Request."
 msgstr ""
 
-#: src/Services/LoginService.php:88
+#: src/Services/LoginService.php:108
 msgid "This IP[ %s ] is not allowed to auto-login."
 msgstr ""
 
-#: src/Services/RedirectService.php:100
+#: src/Services/RedirectService.php:83
 msgid "User was logged in."
 msgstr ""
 
-#: src/Services/RefreshTokenService.php:34
+#: src/Services/RefreshTokenService.php:35
 msgid "JWT is missing."
 msgstr ""
 
-#: src/Services/RefreshTokenService.php:56
+#: src/Services/RefreshTokenService.php:57
 msgid "There was an error with your JWT and we can not refresh it."
 msgstr ""
 
-#: src/Services/RefreshTokenService.php:76
+#: src/Services/RefreshTokenService.php:77
 msgid "Jwt is invalid."
 msgstr ""
 
-#: src/Services/RefreshTokenService.php:88
+#: src/Services/RefreshTokenService.php:89
 msgid "JWT is too old to be refreshed."
 msgstr ""
 
@@ -361,23 +393,23 @@ msgstr ""
 msgid "User was successfully created."
 msgstr ""
 
-#: src/Services/RegisterUserService.php:155
+#: src/Services/RegisterUserService.php:167
 msgid "Register is not allowed."
 msgstr ""
 
-#: src/Services/RegisterUserService.php:178
+#: src/Services/RegisterUserService.php:190
 msgid "This IP[%s] is not allowed to register users."
 msgstr ""
 
-#: src/Services/RegisterUserService.php:193
+#: src/Services/RegisterUserService.php:205
 msgid "Missing email or password."
 msgstr ""
 
-#: src/Services/RegisterUserService.php:200
+#: src/Services/RegisterUserService.php:212
 msgid "Invalid email address."
 msgstr ""
 
-#: src/Services/RegisterUserService.php:217
+#: src/Services/RegisterUserService.php:229
 msgid "This website does not allows users from this domain."
 msgstr ""
 
@@ -397,37 +429,37 @@ msgstr ""
 msgid "User Password has been changed."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:81
-#: src/Services/ResetPasswordService.php:170
+#: src/Services/ResetPasswordService.php:93
+#: src/Services/ResetPasswordService.php:192
 msgid "Missing email parameter."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:88
+#: src/Services/ResetPasswordService.php:100
 msgid "Missing new_password parameter."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:106
+#: src/Services/ResetPasswordService.php:118
 msgid "Wrong user."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:113
+#: src/Services/ResetPasswordService.php:125
 msgid "The Code has been saved into the database."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:119
-#: src/Services/ResetPasswordService.php:146
+#: src/Services/ResetPasswordService.php:131
+#: src/Services/ResetPasswordService.php:158
 msgid "Reset password email has been sent."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:150
+#: src/Services/ResetPasswordService.php:162
 msgid "Invalid flow type."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:242
+#: src/Services/ResetPasswordService.php:273
 msgid "This JWT can not change your password."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:253
+#: src/Services/ResetPasswordService.php:284
 msgid "Invalid code provided."
 msgstr ""
 
@@ -519,7 +551,7 @@ msgid ""
 msgstr ""
 
 #: views/auth-codes-view.php:161
-#: views/register-view.php:127
+#: views/register-view.php:128
 msgid "More details"
 msgstr ""
 
@@ -539,8 +571,8 @@ msgstr ""
 #: views/login-view.php:26
 #: views/login-view.php:83
 #: views/protect-endpoints-view.php:27
-#: views/register-view.php:28
-#: views/register-view.php:84
+#: views/register-view.php:29
+#: views/register-view.php:85
 #: views/reset-password-view.php:32
 #: views/reset-password-view.php:68
 msgid "No"
@@ -554,8 +586,8 @@ msgstr ""
 #: views/login-view.php:30
 #: views/login-view.php:90
 #: views/protect-endpoints-view.php:39
-#: views/register-view.php:40
-#: views/register-view.php:91
+#: views/register-view.php:41
+#: views/register-view.php:92
 #: views/reset-password-view.php:46
 #: views/reset-password-view.php:78
 msgid "Yes"
@@ -605,7 +637,7 @@ msgstr ""
 #: views/auth-view.php:427
 #: views/delete-view.php:59
 #: views/login-view.php:56
-#: views/register-view.php:67
+#: views/register-view.php:68
 #: views/reset-password-view.php:127
 #: views/reset-password-view.php:340
 msgid "Copy"
@@ -680,22 +712,22 @@ msgstr ""
 
 #: views/auth-view.php:452
 #: views/delete-view.php:179
-#: views/login-view.php:308
-#: views/register-view.php:209
+#: views/login-view.php:326
+#: views/register-view.php:210
 msgid "Enter IP here"
 msgstr ""
 
 #: views/auth-view.php:454
 #: views/delete-view.php:181
-#: views/login-view.php:310
-#: views/register-view.php:211
+#: views/login-view.php:328
+#: views/register-view.php:212
 msgid "If you want to add more IP's, separate them by comma"
 msgstr ""
 
 #: views/auth-view.php:456
 #: views/delete-view.php:183
-#: views/login-view.php:312
-#: views/register-view.php:213
+#: views/login-view.php:330
+#: views/register-view.php:214
 msgid "Leave blank to allow all IP addresses"
 msgstr ""
 
@@ -781,7 +813,7 @@ msgstr ""
 
 #: views/delete-view.php:43
 #: views/login-view.php:40
-#: views/register-view.php:50
+#: views/register-view.php:51
 msgid "URL Example"
 msgstr ""
 
@@ -792,7 +824,7 @@ msgstr ""
 
 #: views/delete-view.php:52
 #: views/login-view.php:49
-#: views/register-view.php:60
+#: views/register-view.php:61
 #: views/reset-password-view.php:116
 #: views/reset-password-view.php:329
 msgid "AUTH_KEY_VALUE"
@@ -1048,61 +1080,73 @@ msgid "Custom"
 msgstr ""
 
 #: views/login-view.php:215
-#: views/login-view.php:292
-#: views/register-view.php:124
-#: views/register-view.php:265
+#: views/login-view.php:310
+#: views/register-view.php:125
+#: views/register-view.php:266
 msgid "Example"
 msgstr ""
 
-#: views/login-view.php:233
+#: views/login-view.php:232
+msgid "Redirect on Fail autologin"
+msgstr ""
+
+#: views/login-view.php:239
+msgid "Redirect URL"
+msgstr ""
+
+#: views/login-view.php:241
+msgid "Leave it blank if you do not want to redirect"
+msgstr ""
+
+#: views/login-view.php:251
 msgid "Other options"
 msgstr ""
 
-#: views/login-view.php:246
+#: views/login-view.php:264
 msgid "Include request parameters used for login link in the REDIRECT URL"
 msgstr ""
 
-#: views/login-view.php:260
+#: views/login-view.php:278
 msgid "Allow redirect to a specific URL if `%s` is present in the request. This option will overwrite previous redirect that was set."
 msgstr ""
 
-#: views/login-view.php:270
+#: views/login-view.php:288
 msgid "You can attach to your redirect an URL parameter `%s` that will be used for redirect instead of the defined ones."
 msgstr ""
 
-#: views/login-view.php:280
+#: views/login-view.php:298
 msgid "You can use the following variables in your URL"
 msgstr ""
 
-#: views/login-view.php:283
+#: views/login-view.php:301
 msgid "Site URL"
 msgstr ""
 
-#: views/login-view.php:284
+#: views/login-view.php:302
 msgid "Logged in user ID"
 msgstr ""
 
-#: views/login-view.php:285
+#: views/login-view.php:303
 msgid "Logged in user email"
 msgstr ""
 
-#: views/login-view.php:286
+#: views/login-view.php:304
 msgid "Logged in username"
 msgstr ""
 
-#: views/login-view.php:287
+#: views/login-view.php:305
 msgid "User first name"
 msgstr ""
 
-#: views/login-view.php:288
+#: views/login-view.php:306
 msgid "User last name"
 msgstr ""
 
-#: views/login-view.php:289
+#: views/login-view.php:307
 msgid "User nice name"
 msgstr ""
 
-#: views/login-view.php:301
+#: views/login-view.php:319
 msgid "Allow Auto-Login only from the following IP addresses"
 msgstr ""
 
@@ -1150,95 +1194,95 @@ msgstr ""
 msgid "The JWT will be required on the following endpoints."
 msgstr ""
 
-#: views/register-view.php:18
+#: views/register-view.php:19
 msgid "Allow Register"
 msgstr ""
 
-#: views/register-view.php:56
+#: views/register-view.php:57
 msgid "NEW_USER_EMAIL"
 msgstr ""
 
-#: views/register-view.php:57
+#: views/register-view.php:58
 msgid "NEW_USER_PASSWORD"
 msgstr ""
 
-#: views/register-view.php:77
+#: views/register-view.php:78
 msgid "Register Requires Auth Code"
 msgstr ""
 
-#: views/register-view.php:95
+#: views/register-view.php:96
 msgid " Warning! It's not recommended to allow register without Auth Codes"
 msgstr ""
 
-#: views/register-view.php:122
+#: views/register-view.php:123
 msgid "New User profile slug"
 msgstr ""
 
-#: views/register-view.php:132
+#: views/register-view.php:133
 msgid "New user profile name"
 msgstr ""
 
-#: views/register-view.php:141
+#: views/register-view.php:142
 msgid "New User Config"
 msgstr ""
 
-#: views/register-view.php:147
+#: views/register-view.php:148
 msgid "Generate a random password when a new user is created"
 msgstr ""
 
-#: views/register-view.php:150
+#: views/register-view.php:151
 msgid "If this option is selected, the password is no more required when a new user is created."
 msgstr ""
 
-#: views/register-view.php:163
+#: views/register-view.php:164
 msgid "Initialize force login after register"
 msgstr ""
 
-#: views/register-view.php:168
+#: views/register-view.php:169
 msgid "If user registration is completed, the user will continue on the flow configured on login config. If auto-login is disabled, this feature will not work."
 msgstr ""
 
-#: views/register-view.php:184
+#: views/register-view.php:185
 msgid "Return a JWT in the response"
 msgstr ""
 
-#: views/register-view.php:189
+#: views/register-view.php:190
 msgid "If this option is selected, a JWT will be added in the response. By default, it will contain email, id and username in the payload. If the Authentication is enabled, payload will be generated using authentication configuration."
 msgstr ""
 
-#: views/register-view.php:202
+#: views/register-view.php:203
 msgid "Allow Register only from the following IP addresses"
 msgstr ""
 
-#: views/register-view.php:223
+#: views/register-view.php:224
 msgid "Allow Register only for specific email domains"
 msgstr ""
 
-#: views/register-view.php:233
+#: views/register-view.php:234
 msgid "For example, if you want to allow registration only for users that use their gmail account, add `gmail.com`"
 msgstr ""
 
-#: views/register-view.php:238
+#: views/register-view.php:239
 msgid "For multiple domains, separate them by comma"
 msgstr ""
 
-#: views/register-view.php:240
+#: views/register-view.php:241
 msgid "Leave blank to allow all domains"
 msgstr ""
 
-#: views/register-view.php:248
+#: views/register-view.php:249
 msgid "Allowed user_meta keys on create user"
 msgstr ""
 
-#: views/register-view.php:257
+#: views/register-view.php:258
 msgid "Separate user_meta keys by comma. If no user_meta is specified, then users will not be able to add user_meta via register user."
 msgstr ""
 
-#: views/register-view.php:272
+#: views/register-view.php:273
 msgid "New User available properties"
 msgstr ""
 
-#: views/register-view.php:275
+#: views/register-view.php:276
 msgid "This properties can be passed in the request when the new user is created."
 msgstr ""
 

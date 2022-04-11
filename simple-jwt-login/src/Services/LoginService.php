@@ -13,11 +13,31 @@ use WP_User;
 
 class LoginService extends BaseService implements ServiceInterface
 {
+    public function makeAction()
+    {
+        try {
+            return $this->makeActionInternal();
+        } catch (Exception $e) {
+            $redirectOnFail = $this->jwtSettings->getLoginSettings()->getAutologinRedirectOnFail();
+            if (!empty($redirectOnFail)) {
+                $redirectOnFail = $this->includeRequestParameters($redirectOnFail);
+                $redirectOnFail .= (strpos($redirectOnFail, '?') !== false ? '&' : '?')
+                    . http_build_query([
+                        'error_message' => $e->getMessage(),
+                        'error_code' => $e->getCode()
+                    ]);
+
+                return $this->wordPressData->redirect($redirectOnFail);
+            }
+            throw new Exception($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
     /**
      * @return WP_REST_Response|null
      * @throws Exception
      */
-    public function makeAction()
+    public function makeActionInternal()
     {
         $this->validateDoLogin();
         $loginParameter = $this->validateJWTAndGetUserValueFromPayload(

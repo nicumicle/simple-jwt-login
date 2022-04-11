@@ -7,7 +7,7 @@
     Author URI: https://profiles.wordpress.org/nicu_m/
     Text Domain: simple-jwt-login
     Domain Path: /i18n
-    Version: 3.4.4
+    Version: 3.4.5
 */
 
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -50,6 +50,29 @@ function simple_jwt_login_plugin_load_translations()
         false,
         plugin_basename(dirname(__FILE__)) . '/i18n/'
     );
+}
+
+add_shortcode('simple-jwt-login:request', 'simple_jwt_login_request_shortcode');
+
+/**
+ * @param array|null $parameter
+ * @return string
+ */
+function simple_jwt_login_request_shortcode($parameter = null)
+{
+    $parameter = $parameter !== null && isset($parameter['key'])
+        ? $parameter['key']
+        : null;
+
+    if ($parameter === null) {
+        return '';
+    }
+
+    if (!isset($_REQUEST[$parameter])) {
+        return '';
+    }
+
+    return strip_tags($_REQUEST[$parameter]);
 }
 
 // function triggered in add_menu_page

@@ -49,6 +49,14 @@ class LoginSettings extends BaseSettings implements SettingsInterface
 
         $this->assignSettingsPropertyFromPost(
             null,
+            'login_fail_redirect',
+            null,
+            'login_fail_redirect',
+            BaseSettings::SETTINGS_TYPE_STRING
+        );
+
+        $this->assignSettingsPropertyFromPost(
+            null,
             'require_login_auth',
             null,
             'require_login_auth',
@@ -207,5 +215,15 @@ class LoginSettings extends BaseSettings implements SettingsInterface
         return isset($this->settings['allow_usage_redirect_parameter'])
             ? (bool)$this->settings['allow_usage_redirect_parameter']
             : false;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAutologinRedirectOnFail()
+    {
+        return isset($this->settings['login_fail_redirect'])
+            ? (string) $this->settings['login_fail_redirect']
+            : '';
     }
 }

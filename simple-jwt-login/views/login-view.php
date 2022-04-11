@@ -229,6 +229,24 @@ if (! defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
+        <h3 class="section-title"><?php echo __(
+                'Redirect on Fail autologin',
+                'simple-jwt-login'
+            ); ?>:</h3>
+        <div class="form-group">
+            <input type="text" id="login_fail_redirect" name="login_fail_redirect" class="form-control"
+                   value="<?php echo esc_attr($jwtSettings->getLoginSettings()->getAutologinRedirectOnFail()); ?>"
+                   placeholder="<?php echo __('Redirect URL', 'simple-jwt-login'); ?>"/>
+            <p class="text-muted">
+                <?php echo __("Leave it blank if you do not want to redirect", 'simple-jwt-login'); ?>.
+            </p>
+        </div>
+    </div>
+</div>
+<hr />
+
+<div class="row">
+    <div class="col-md-12">
         <h3 class="section-title">
             <?php echo __('Other options', 'simple-jwt-login');?>
         </h3>

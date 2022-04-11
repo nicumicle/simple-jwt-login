@@ -1,5 +1,10 @@
 # Changelog - Releases
 
+## 3.4.5 (11 April 2022)
+- Add Redirect on Fail autologin
+- Add shortcodes for displaying autologin errors
+- Add xdebug to docker
+
 ## 3.4.4 (03 April 2022)
 - Add openapi file
 - Add hooks for all success responses

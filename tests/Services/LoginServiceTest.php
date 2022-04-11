@@ -346,4 +346,93 @@ class LoginServiceTest extends TestCase
 
         ];
     }
+
+    /**
+     * @dataProvider redirectOnFailProvider
+     * @param array $request
+     * @param bool $includeParams
+     */
+    public function testRedirectOnFail($request, $includeParams)
+    {
+        $returnUrl = 'www.google.com';
+        $this->wordPressDataMock->method('redirect')
+            ->willReturnCallback(function ($url) {
+                return $url;
+            });
+        $request['JWT'] = JWT::encode([
+            'id' => 1,
+        ], 'test', 'HS256');
+        $this->wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_autologin' => true,
+                'require_login_auth' => false,
+                'decryption_key' => 'test',
+                'jwt_login_by_parameter' => 'id',
+                'jwt_login_by' => LoginSettings::JWT_LOGIN_BY_EMAIL,
+                'request_jwt_session' => true,
+                'request_jwt_header' => true,
+                'request_jwt_cookie' => true,
+                'request_jwt_url' => true,
+                'include_login_request_parameters' => $includeParams,
+                'enabled_hooks' => [
+                    SimpleJWTLoginHooks::LOGIN_ACTION_NAME
+                ],
+                'login_fail_redirect' => 'https://' . $returnUrl
+            ]));
+
+        $settings = new SimpleJWTLoginSettings($this->wordPressDataMock);
+        $loginService = (new LoginService())
+            ->withSettings($settings)
+            ->withRequest($request)
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSession([])
+            ->makeAction();
+
+        $parsedUrl = parse_url($loginService);
+        parse_str($parsedUrl['query'], $params);
+
+        unset($request['JWT']);
+        $this->assertSame($returnUrl, $parsedUrl['host']);
+        $this->assertArrayNotHasKey('JWT', $params);
+        $this->assertArrayHasKey('error_message', $params);
+        $this->assertArrayHasKey('error_code', $params);
+
+        foreach ($request as $key => $value) {
+            if ($includeParams) {
+                $this->assertArrayHasKey($key, $params);
+                $this->assertSame($params[$key], $value);
+            }
+            if ($includeParams === false) {
+                $this->assertFalse(isset($params[$key]));
+            }
+        }
+    }
+
+    public function redirectOnFailProvider()
+    {
+        return [
+            'test_empty_request_and_include_params' => [
+                'request' => [],
+                'include_extra_params' => true,
+            ],
+            'test_one_param_and_include_params' => [
+                'request' => [
+                    'test' => '123',
+                ],
+                'include_extra_params' => true,
+            ],
+            'test_empty_request' => [
+                'request' => [],
+                'include_extra_params' => false,
+            ],
+            'test_one_param' => [
+                'request' => [
+                    'test' => '123',
+                ],
+                'include_extra_params' => false,
+            ],
+
+        ];
+    }
 }

@@ -75,14 +75,17 @@ class RegisterUserService extends BaseService implements ServiceInterface
         $userId = $this->wordPressData->getUserIdFromUser($user);
 
         if (!empty($this->request['user_meta'])) {
-            $userMeta = json_decode($this->request['user_meta'], true);
-            if ($userMeta === null
-                && strpos($this->request['user_meta'], '\\"') !== false
-            ) {
-                $userMeta = json_decode(
-                    stripslashes($this->request['user_meta']),
-                    true
-                );
+            $userMeta = $this->request['user_meta'];
+            if (is_string($userMeta)) {
+                $userMeta = json_decode($this->request['user_meta'], true);
+                if ($userMeta === null
+                    && strpos($this->request['user_meta'], '\\"') !== false
+                ) {
+                    $userMeta = json_decode(
+                        stripslashes($this->request['user_meta']),
+                        true
+                    );
+                }
             }
             $allowedUserMetaKeys = array_map(function ($value) {
                 return trim($value);

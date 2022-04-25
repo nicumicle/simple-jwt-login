@@ -76,7 +76,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
 
         if (!empty($this->request['user_meta'])) {
             $userMeta = $this->request['user_meta'];
-            if(is_string($userMeta)) {
+            if (is_string($userMeta)) {
                 $userMeta = json_decode($this->request['user_meta'], true);
                 if ($userMeta === null
                     && strpos($this->request['user_meta'], '\\"') !== false

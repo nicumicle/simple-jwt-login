@@ -406,6 +406,9 @@ The [Changelog](https://github.com/nicumicle/simple-jwt-login/blob/master/Change
 
 Also, here you can find the beta version of the plugin, before it is released
 
+= 3.4.6 (27 April 2022) =
+- Fix user_meta when passed as json in request body
+
 = 3.4.5 (11 Apr 2022) =
 - Add Redirect on Fail autologin
 - Add shortcodes for displaying autologin errors

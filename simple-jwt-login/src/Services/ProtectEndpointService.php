@@ -53,7 +53,9 @@ class ProtectEndpointService extends BaseService
         try {
             $jwt = $this->getJwtFromRequestHeaderOrCookie();
             $userID = $this->routeService->getUserIdFromJWT($jwt);
-
+            
+            wp_set_current_user($userID);
+            
             return !empty($userID);
         } catch (\Exception $e) {
             return false;

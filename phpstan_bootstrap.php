@@ -20,7 +20,7 @@ if (!function_exists('get_user_meta')) {
 
 
 if (!function_exists('do_action')) {
-    function do_action($actionName, $arg1, $arg2)
+    function do_action($actionName, $arg1 = null, $arg2 = null, $arg3 = null, $arg4=null)
     {
     }
 }
@@ -140,7 +140,7 @@ if (!function_exists('wp_check_password')) {
 }
 
 if (!function_exists('apply_filters')) {
-    function apply_filters()
+    function apply_filters($name, $option1=null, $option2=null, $option3=null, $option4=null)
     {
     }
 }

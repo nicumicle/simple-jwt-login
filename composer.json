@@ -12,6 +12,7 @@
     "friendsofphp/php-cs-fixer": "*",
     "phpstan/phpstan": "*",
     "phpunit/phpunit": "*",
+    "roave/security-advisories": "dev-latest",
     "squizlabs/php_codesniffer": "*"
   },
   "autoload": {
@@ -30,7 +31,6 @@
     "phpmd-cleancode": "vendor/bin/phpmd simple-jwt-login/src/ text cleancode",
     "phpmd-unusedcode": "vendor/bin/phpmd simple-jwt-login/src/ text unusedcode",
     "phpmd-naming": "vendor/bin/phpmd simple-jwt-login/src/ text naming",
-
     "phpmd-controversial": "vendor/bin/phpmd simple-jwt-login/ text controversial",
     "phpstan": "vendor/bin/phpstan analyse simple-jwt-login/src -c phpstan.neon",
     "phpmd-test-design" : "vendor/bin/phpmd tests/ text design",

@@ -4,9 +4,9 @@ Contributors: nicu_m
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PK9BCD6AYF58Y&source=url
 Tags: jwt, API, auto login, register users, tokens, REST, auth, generate jwt, refresh jwt, protect
 Requires at least: 4.4.0
-Tested up to: 5.9
+Tested up to: 6.0.2
 Requires PHP: 5.3
-Stable tag: 3.4.6
+Stable tag: 3.4.7
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -405,6 +405,10 @@ After that, for the create user route, simply add the AUTH code in the request, 
 The [Changelog](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md) can be found in the GitHub repository [https://github.com/nicumicle/simple-jwt-login](https://github.com/nicumicle/simple-jwt-login).
 
 Also, here you can find the beta version of the plugin, before it is released
+
+= 3.4.7 (27 April 2022) =
+- Remove unused code from the JWT library
+- Move JWT Library to a folder
 
 = 3.4.6 (27 April 2022) =
 - Fix user_meta when passed as json in request body

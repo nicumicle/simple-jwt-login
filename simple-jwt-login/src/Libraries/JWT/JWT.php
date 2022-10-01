@@ -13,7 +13,7 @@
  * @link     https://github.com/firebase/php-jwt
  */
 
-namespace SimpleJWTLogin\Libraries;
+namespace SimpleJWTLogin\Libraries\JWT;
 
 use DateTime;
 use Exception;
@@ -52,7 +52,7 @@ class JWT
      * Decodes a JWT string into a PHP object.
      *
      * @param string       $jwt             The JWT
-     * @param string|array $key             The key, or map of keys.
+     * @param string $key                   The key
      *                                      If the algorithm used is asymmetric, this is the public key
      * @param array        $allowedAlgs    List of supported verification algorithms
      *                                      Supported algorithms are 'HS256', 'HS384', 'HS512' and 'RS256'
@@ -119,22 +119,6 @@ class JWT
                 __('Algorithm not allowed', 'simple-jwt-login'),
                 ErrorCodes::ERR_ALGORITHM_NOT_ALLOWED
             );
-        }
-        if (is_array($key)) {
-            if (!isset($header->kid)) {
-                throw new Exception(
-                    __('`kid` empty, unable to lookup correct key', 'simple-jwt-login'),
-                    ErrorCodes::ERR_EMPTY_KID
-                );
-            }
-
-            if (! isset($key[ $header->kid ])) {
-                throw new Exception(
-                    __('`kid` invalid, unable to lookup correct key', 'simple-jwt-login'),
-                    ErrorCodes::ERR_INVALID_KID
-                );
-            }
-            $key = $key[ $header->kid ];
         }
         // Check the signature
         if (! static::verify("$headb64.$bodyb64", $sig, $key, $header->alg)) {

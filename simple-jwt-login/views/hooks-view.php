@@ -68,7 +68,7 @@ $hooks = SimpleJWTLoginHooks::getHooksDetails();
                         <td>
                             <?php
                             if (isset($singleHook['return'])) {
-                                echo $singleHook['return'];
+                                echo esc_html($singleHook['return']);
                             } else {
                                 echo "void";
                             } ?>

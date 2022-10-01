@@ -109,11 +109,11 @@ add_action('rest_api_init', function () {
             $currentURL =
                 "http"
                 . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "s" : "")
-                . "://" . $_SERVER['HTTP_HOST']
-                . $_SERVER['REQUEST_URI'];
-            $currentURL = str_replace( home_url(), "",$currentURL);
+                . "://" . esc_html($_SERVER['HTTP_HOST'])
+                . esc_html($_SERVER['REQUEST_URI']);
+            $currentURL = str_replace( home_url(), "", $currentURL);
 
-            $documentRoot = $_SERVER['DOCUMENT_ROOT'];
+            $documentRoot = esc_html($_SERVER['DOCUMENT_ROOT']);
 
             $hasAccess = $service->hasAccess($currentURL, $documentRoot, $request) ;
             if ($hasAccess=== false ) {

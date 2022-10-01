@@ -10,5 +10,5 @@ parameters:
        message: '#Method SimpleJWTLogin\\Modules\\WordPressDataInterface::(triggerFilter|triggerAction)\(\) invoked with .* parameters, 0 required.#'
        path: simple-jwt-login/src
     -
-       message : '#Unsafe call to private method SimpleJWTLogin\\Libraries\\JWT::.*\(\) through static::.#'
+       message : '#Unsafe call to private method SimpleJWTLogin\\Libraries\\JWT\\JWT::.*\(\) through static::.#'
        path: simple-jwt-login/src

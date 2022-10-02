@@ -380,7 +380,12 @@ if (! defined('ABSPATH')) {
                 $sampleUrlParams = [
                     $jwtSettings->getGeneralSettings()->getRequestKeyUrl() => 'YOUR_JWT',
                 ];
-                echo esc_html($jwtSettings->generateExampleLink(RouteService::AUTHENTICATION_VALIDATE_ROUTE, $sampleUrlParams));
+                echo esc_html(
+                        $jwtSettings->generateExampleLink(
+                                RouteService::AUTHENTICATION_VALIDATE_ROUTE,
+                                $sampleUrlParams
+                        )
+                );
                 ?>
             </span>
             <span class="copy-button">

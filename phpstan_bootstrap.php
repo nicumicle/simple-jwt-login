@@ -206,6 +206,210 @@ if (!function_exists('role_exists')) {
     }
 }
 
+if (!function_exists('plugin_dir_path')) {
+    /**
+     * @param string|null $path
+     * @return string
+     */
+    function plugin_dir_path($path = null) {
+        return "";
+    }
+}
+
+if (!function_exists('plugin_dir_url')) {
+    /**
+     * @param string $file
+     * @return string
+     */
+    function plugin_dir_url( $file ) {
+        return '';
+    }
+}
+if (!function_exists('delete_option')) {
+    /**
+     * @param string $option
+     * @return bool
+     */
+    function delete_option($option) {
+        return true;
+    }
+}
+
+if (!function_exists('register_uninstall_hook')) {
+    /**
+     * @param string|null $file
+     * @param string|null $callable
+     */
+    function register_uninstall_hook($file, $callable) {
+    }
+}
+
+
+if (!function_exists('add_action')) {
+    /**
+     * @param string $hook_name
+     * @param callable $callback
+     * @param int|float $priority
+     * @param int $accepted_args
+     * @return void
+     */
+    function add_action($hook_name, $callback, $priority = 10, $accepted_args = 1) {
+    }
+}
+if (!function_exists('add_filter')) {
+    /**
+     * @param string $hook_name
+     * @param callable $callback
+     * @param int $priority
+     * @param int $accepted_args
+     * @return true
+     */
+    function add_filter($hook_name, $callback,$priority = 10, $accepted_args = 1 ){
+        return true;
+    }
+}
+
+if (!function_exists('plugins_url')) {
+    /**
+     * @param string $path
+     * @param string $plugin
+     * @return string
+     */
+    function plugins_url($path = '', $plugin = '' ) {
+        return  '';
+    }
+}
+
+if (!function_exists('add_menu_page')) {
+    /**
+     * @param string $page_title
+     * @param string $menu_title
+     * @param string $capability
+     * @param string $menu_slug
+     * @param callable $callback
+     * @param string $icon_url
+     * @param int|float|null $position
+     * @return string
+     */
+    function add_menu_page($page_title, $menu_title, $capability, $menu_slug, $callback = '', $icon_url = '', $position = null ) {
+        return '';
+    }
+}
+
+if (!function_exists('load_plugin_textdomain')) {
+    /**
+     * @param string $domain
+     * @param string|false $deprecated
+     * @param string|false $plugin_rel_path
+     * @return bool
+     */
+    function load_plugin_textdomain( $domain, $deprecated = false, $plugin_rel_path = false )
+    {
+        return true;
+    }
+}
+
+if (!function_exists('wp_enqueue_style')) {
+    /**
+     * @param string $handle
+     * @param string $src
+     * @param string[] $deps
+     * @param string|bool|null $ver
+     * @param string $media
+     * @return void
+     */
+    function wp_enqueue_style( $handle, $src = '', $deps = array(), $ver = false, $media = 'all' )
+    {
+    }
+}
+
+
+if (!function_exists('wp_enqueue_script')) {
+    /**
+     * @param string $handle
+     * @param string $src
+     * @param string[] $deps
+     * @param string|bool|null $ver
+     * @param bool $in_footer
+     * @return void
+     */
+    function wp_enqueue_script( $handle, $src = '', $deps = array(), $ver = false, $in_footer = false ) {
+    }
+}
+
+if (!function_exists('plugin_basename')) {
+    /**
+     * @param string $file
+     * @return string
+     */
+    function plugin_basename( $file ) {
+        return '';
+    }
+}
+
+if (!function_exists('add_shortcode')) {
+    /**
+     * @param string $tag
+     * @param callable $callback
+     * @return void
+     */
+    function add_shortcode($tag, $callback) {
+    }
+}
+
+if (!function_exists('get_plugin_data')) {
+    /**
+     * @param string $plugin_file
+     * @param bool $markup
+     * @param bool $translate
+     * @return array
+     */
+    function get_plugin_data($plugin_file, $markup = true, $translate = true ) {
+        return [];
+    }
+}
+
+if (!function_exists('wp_send_json_error')) {
+    /**
+     * @param mixed|null $data
+     * @param int|null $status_code
+     * @param int $options
+     * @return void
+     */
+    function wp_send_json_error($data = null, $status_code = null, $options = 0 ){
+    }
+}
+
+if (!function_exists('home_url')) {
+    /**
+     * @param string $path
+     * @param string|null $scheme
+     * @return string
+     */
+    function home_url($path = '', $scheme = null ) {
+        return '';
+    }
+}
+
+
+if (!function_exists('register_rest_route')) {
+    /**
+     * @param string $namespace
+     * @param string $route
+     * @param array $args
+     * @param bool $override
+     * @return bool
+     */
+    function register_rest_route($namespace, $route, $args = array(), $override = false ) {
+        return true;
+    }
+}
+
+
+
+
+
+
 if (!class_exists('WP_REST_Response')) {
     class WP_REST_Response
     {

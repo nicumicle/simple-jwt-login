@@ -11,6 +11,7 @@ use SimpleJWTLogin\Modules\WordPressData;
 use SimpleJWTLogin\Services\ServiceInterface;
 
 if (! defined('ABSPATH')) {
+    /** @phpstan-ignore-next-line  */
     exit;
 } // Exit if accessed directly
 
@@ -89,7 +90,7 @@ add_action('rest_api_init', function () {
                         ],
                         400
                     );
-                    die();
+                    return false;
                 }
             }
 
@@ -126,7 +127,7 @@ add_action('rest_api_init', function () {
                     ],
                     403
                 );
-                die();
+                return false;
             }
 
             return $endpoint;
@@ -141,7 +142,7 @@ add_action('rest_api_init', function () {
             $route['name'],
             [
                 'methods'  => $route['method'],
-                'callback' => function () use ($request, $route, $routeService, $jwtSettings, $serverHelper) {
+                'callback' => function () use ($request, $route, $jwtSettings, $serverHelper) {
                     try {
                         /** @var ServiceInterface $service */
                         $service = new $route['service']();

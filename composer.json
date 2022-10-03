@@ -13,6 +13,7 @@
     "phpstan/phpstan": "*",
     "phpunit/phpunit": "*",
     "roave/security-advisories": "dev-latest",
+    "spaze/phpstan-disallowed-calls": "^2.5",
     "squizlabs/php_codesniffer": "*"
   },
   "autoload": {
@@ -32,7 +33,7 @@
     "phpmd-unusedcode": "vendor/bin/phpmd simple-jwt-login/src/ text unusedcode",
     "phpmd-naming": "vendor/bin/phpmd simple-jwt-login/src/ text naming",
     "phpmd-controversial": "vendor/bin/phpmd simple-jwt-login/ text controversial",
-    "phpstan": "vendor/bin/phpstan analyse simple-jwt-login/src -c phpstan.neon",
+    "phpstan": "vendor/bin/phpstan analyse simple-jwt-login/ -c phpstan.neon",
     "phpmd-test-design" : "vendor/bin/phpmd tests/ text design",
     "phpmd-test-cleancode" : "vendor/bin/phpmd tests/ text cleancode",
     "phpmd-test-unusedcode" : "vendor/bin/phpmd tests/ text unusedcode",

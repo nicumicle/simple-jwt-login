@@ -3,6 +3,7 @@ use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
 if (! defined('ABSPATH')) {
+    /** @phpstan-ignore-next-line  */
     exit;
 } // Exit if accessed directly
 
@@ -10,6 +11,7 @@ if (! defined('ABSPATH')) {
  * @var SettingsErrors $settingsErrors
  * @var SimpleJWTLoginSettings $jwtSettings
  */
+$x =1;
 
 ?>
 <div class="row">

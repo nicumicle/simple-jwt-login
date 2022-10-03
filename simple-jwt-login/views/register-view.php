@@ -6,6 +6,7 @@ use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Modules\UserProperties;
 
 if (!defined('ABSPATH')) {
+    /** @phpstan-ignore-next-line  */
     exit;
 } // Exit if accessed directly
 /**

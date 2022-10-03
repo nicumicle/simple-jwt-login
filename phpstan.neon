@@ -1,3 +1,5 @@
+includes:
+  - vendor/spaze/phpstan-disallowed-calls/extension.neon
 parameters:
   level: 5
   paths:
@@ -12,3 +14,41 @@ parameters:
     -
        message : '#Unsafe call to private method SimpleJWTLogin\\Libraries\\JWT\\JWT::.*\(\) through static::.#'
        path: simple-jwt-login/src
+    -
+       message : '#Calling exit\(\) is forbidden.*#'
+       path: simple-jwt-login/src/Modules/WordPressData.php
+    -
+       message : '#Using (\$_POST|\$_GET|\$_REQUEST|\$_SERVER) is forbidden.*#'
+       paths:
+         - simple-jwt-login/views/
+         - simple-jwt-login/routes/api.php
+         - simple-jwt-login/3rd-party/force_login.php
+         - simple-jwt-login/simple-jwt-login.php
+  disallowedFunctionCalls:
+    -
+      function:
+        - 'var_dump()'
+        - 'print_r()'
+        - 'var_export'
+      message: 'User a logger instead.'
+    -
+       function:
+         - 'die'
+         - 'exit'
+         - 'eval'
+         - 'exec'
+         - 'pcntl_exec'
+       message: 'This function is forbidden.'
+  disallowedSuperglobals:
+    -
+        superglobal: '$_GET'
+        message: 'not allowed'
+    -
+        superglobal: '$_POST'
+        message: 'not allowed'
+    -
+        superglobal: '$_REQUEST'
+        message: 'not allowed'
+    -
+        superglobal: '$_SERVER'
+        message: 'not allowed'

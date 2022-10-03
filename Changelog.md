@@ -6,6 +6,7 @@
 - Some small text sanitizations
 - Add "roave/security-advisories" to composer, in order to detect used packages vulnerabilities
 - Change how views are loaded in order to prevent "local file inclusion risk"
+- Add more rules in phpstan
 
 ## 3.4.6 (27 April 2022)
 - Fix user_meta when passed as json in request body

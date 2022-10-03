@@ -5,6 +5,7 @@ use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
 if (! defined('ABSPATH')) {
+    /** @phpstan-ignore-next-line  */
     exit;
 } // Exit if accessed directly
 

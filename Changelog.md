@@ -1,5 +1,12 @@
 # Changelog - Releases
 
+## 3.4.7 (02 October 2022)
+- Remove code vulnerability from the JWT library
+- Stay on current page after saving settings
+- Some small text sanitizations
+- Add "roave/security-advisories" to composer, in order to detect used packages vulnerabilities
+- Change how views are loaded in order to prevent "local file inclusion risk"
+
 ## 3.4.6 (27 April 2022)
 - Fix user_meta when passed as json in request body
 

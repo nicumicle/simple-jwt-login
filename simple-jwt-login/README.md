@@ -406,11 +406,14 @@ The [Changelog](https://github.com/nicumicle/simple-jwt-login/blob/master/Change
 
 Also, here you can find the beta version of the plugin, before it is released
 
-= 3.4.7 (27 April 2022) =
+= 3.4.7 (02 Oct 2022) =
 - Remove unused code from the JWT library
 - Move JWT Library to a folder
+- Stay on current page after saving settings
+- Some small text sanitizations
+- Change how views are loaded in order to prevent "local file inclusion risk"
 
-= 3.4.6 (27 April 2022) =
+= 3.4.6 (27 Apr 2022) =
 - Fix user_meta when passed as json in request body
 
 = 3.4.5 (11 Apr 2022) =

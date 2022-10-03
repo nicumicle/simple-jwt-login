@@ -1,6 +1,5 @@
 <?php
 
-use SimpleJWTLogin\Helpers\Sanitizer;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Modules\WordPressData;
@@ -28,77 +27,66 @@ $settingsErrors = new SettingsErrors();
 $settingsPages = [
     [
         'id'   => 'simple-jwt-login-tab-dashboard',
-        'view' => 'dashboard-view.php',
         'name' => __('Dashboard','simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_DASHBOARD,
         'index' => SettingsErrors::PREFIX_DASHBOARD,
     ],
     [
         'id'   => 'simple-jwt-login-tab-general',
-        'view' => 'general-view.php',
         'name' => __('General','simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_GENERAL,
         'index' => SettingsErrors::PREFIX_GENERAL,
     ],
     [
         'id'   => 'simple-jwt-login-tab-login',
-        'view' => 'login-view.php',
         'name' => __('Login','simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_LOGIN,
         'index' => SettingsErrors::PREFIX_LOGIN,
     ],
     [
         'id'   => 'simple-jwt-login-tab-register',
-        'view' => 'register-view.php',
         'name' => __('Register User','simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_REGISTER,
         'index' => SettingsErrors::PREFIX_REGISTER,
     ],
     [
         'id'   => 'simple-jwt-login-tab-delete',
-        'view' => 'delete-view.php',
         'name' => __('Delete User','simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_DELETE,
         'index' => SettingsErrors::PREFIX_DELETE,
     ],
     [
         'id'   => 'simple-jwt-login-tab-reset-password',
-        'view' => 'reset-password-view.php',
         'name' => __('Reset Password','simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_RESET_PASSWORD,
         'index' => SettingsErrors::PREFIX_RESET_PASSWORD,
     ],
     [
         'id'   => 'auth-tab-login',
-        'view' => 'auth-view.php',
         'name' => __('Authentication','simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_AUTHENTICATION,
         'index' => SettingsErrors::PREFIX_AUTHENTICATION,
     ],
     [
         'id'   => 'simple-jwt-login-tab-auth-codes',
-        'view' => 'auth-codes-view.php',
         'name' => __('Auth Codes','simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_AUTH_CODES,
         'index' => SettingsErrors::PREFIX_AUTH_CODES,
     ],
     [
         'id'   => 'simple-jwt-login-tab-hooks',
-        'view' => 'hooks-view.php',
         'name' => __('Hooks','simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_HOOKS,
         'index' => SettingsErrors::PREFIX_HOOKS,
     ],
     [
-        'id'   => 'simple-jwt-login-cors-tab',
-        'view' => 'cors-view.php',
+        'id'   => 'simple-jwt-login-tab-cors',
         'name' => __('CORS','simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_CORS,
         'index' => SettingsErrors::PREFIX_CORS,
     ],
     [
         'id'   => 'simple-jwt-login-tab-protect-endpoints',
-        'view' => 'protect-endpoints-view.php',
         'name' => 'Protect endpoints',
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_PROTECT_ENDPOINTS,
         'index' => SettingsErrors::PREFIX_PROTECT_ENDPOINTS,
@@ -107,6 +95,17 @@ $settingsPages = [
 
 ?>
 <form method="post">
+    <?php
+    $activeTab = $settingsPages[0]['index'];
+    if(isset($_POST['active_tab'])){
+        foreach ($settingsPages as $item){
+            if($item['index'] === (int)esc_attr($_POST['active_tab'])){
+                $activeTab = (int)esc_attr($_POST['active_tab']);
+            }
+        }
+    }
+    ?>
+    <input type="hidden" name="active_tab" id="active_tab" value="<?php echo $activeTab;?>"/>
     <?php
     $jwtSettings
         ->getWordPressData()
@@ -150,13 +149,14 @@ $settingsPages = [
 						<?php
                         foreach ($settingsPages as $page) {
                             $index = $page['index'];
-                            $isActive = empty($errorCode) && $index === 1
+                            $isActive = (empty($errorCode) && ($activeTab === $page['index']))
                                 ||  $settingsErrors->getSectionFromErrorCode($errorCode) === $index
                             ?>
                             <li class="nav-item">
                                 <a class="nav-link <?php echo $isActive ? 'active' : ''?>"
                                    id="<?php echo esc_attr($page['id']); ?>-tab"
                                    data-toggle="tab"
+                                   data-index="<?php echo esc_html($index);?>"
                                    href="#<?php echo esc_attr($page['id']); ?>"
                                    role="tab"
                                    aria-controls="<?php echo esc_attr($page['id']); ?>"
@@ -184,7 +184,7 @@ $settingsPages = [
 						<?php
                         foreach ($settingsPages as $page) {
                             $index = $page['index'];
-                            $isActive = empty($errorCode) && $index === 1
+                            $isActive = (empty($errorCode) && ($activeTab === $page['index']))
                                 ||  $settingsErrors->getSectionFromErrorCode($errorCode) === $index
                             ?>
                             <div class="tab-pane fade <?php echo $isActive ? 'active' : '' ?> show"
@@ -193,11 +193,42 @@ $settingsPages = [
                                  aria-labelledby="<?php echo esc_attr($page['id']); ?>-tab"
                             >
 								<?php
-                                $viewPAth = trailingslashit( plugin_dir_path( __FILE__ )) . basename($page['view']);
-                                if(file_exists($viewPAth)){
-                                    include_once $viewPAth;
-                                } else {
-                                    echo __("View file does not exists.", 'simple-jwt-login');
+                                switch ($page['index']){
+                                    case SettingsErrors::PREFIX_DASHBOARD:
+                                        include_once  plugin_dir_path( __FILE__ ) . "dashboard-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_GENERAL:
+                                        include_once plugin_dir_path( __FILE__ ) . "general-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_LOGIN:
+                                        include_once plugin_dir_path( __FILE__ ) . "login-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_REGISTER:
+                                        include_once plugin_dir_path( __FILE__ ) . "register-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_DELETE:
+                                        include_once plugin_dir_path( __FILE__ ) . "delete-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_RESET_PASSWORD:
+                                        include_once plugin_dir_path( __FILE__ ) . "reset-password-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_AUTHENTICATION:
+                                        include_once plugin_dir_path( __FILE__ ) . "auth-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_AUTH_CODES:
+                                        include_once plugin_dir_path( __FILE__ ) . "auth-codes-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_HOOKS:
+                                        include_once plugin_dir_path( __FILE__ ) . "hooks-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_CORS:
+                                        include_once plugin_dir_path( __FILE__ ) . "cors-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_PROTECT_ENDPOINTS:
+                                        include_once plugin_dir_path( __FILE__ ) . "protect-endpoints-view.php";
+                                        break;
+                                    default:
+                                        echo __("View file does not exists.", 'simple-jwt-login');
                                 }
                                 ?>
                             </div>

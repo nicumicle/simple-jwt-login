@@ -142,6 +142,7 @@ jQuery(document).ready(
         // TABS
         $('#simple-jwt-login-tabs a').click(function (e) {
             e.preventDefault();
+            $('#active_tab').val($(this).attr('data-index'));
             $(this).tab('show');
         });
     }(jQuery)

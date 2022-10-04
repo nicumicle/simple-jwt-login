@@ -31,9 +31,12 @@ if (!defined('ABSPATH')) {
             <?php echo __('Route Namespace', 'simple-jwt-login'); ?> <span class="required">*</span>
         </h3>
         <div class="form-group">
-            <input type="text" name="route_namespace" value="<?php echo esc_attr($jwtSettings->getGeneralSettings()->getRouteNamespace()); ?>"
-                   class="form-control"
-                   placeholder="<?php echo __('Default route namespace', 'simple-jwt-login'); ?>"
+            <input
+                    type="text"
+                    name="route_namespace"
+                    value="<?php echo esc_attr($jwtSettings->getGeneralSettings()->getRouteNamespace()); ?>"
+                    class="form-control"
+                    placeholder="<?php echo __('Default route namespace', 'simple-jwt-login'); ?>"
             />
         </div>
     </div>
@@ -53,18 +56,23 @@ if (!defined('ABSPATH')) {
                 <option
                     value="<?php echo GeneralSettings::DECRYPTION_SOURCE_SETTINGS;?>"
                     <?php
-                    echo $jwtSettings->getGeneralSettings()->getDecryptionSource() === GeneralSettings::DECRYPTION_SOURCE_SETTINGS
+                    echo ($jwtSettings->getGeneralSettings()->getDecryptionSource()
+                            === GeneralSettings::DECRYPTION_SOURCE_SETTINGS
                         ? 'selected'
                         : ''
+                    )
                     ?>
                 >
                     Plugin Settings
                 </option>
                 <option
                     value="<?php echo GeneralSettings::DECRYPTION_SOURCE_CODE;?>"
-                    <?php echo $jwtSettings->getGeneralSettings()->getDecryptionSource() === GeneralSettings::DECRYPTION_SOURCE_CODE
+                    <?php
+                    echo ($jwtSettings->getGeneralSettings()->getDecryptionSource()
+                    === GeneralSettings::DECRYPTION_SOURCE_CODE
                         ? 'selected'
                         : ''
+                    );
                     ?>
                 >
                     Code
@@ -81,10 +89,14 @@ if (!defined('ABSPATH')) {
             <spam> </spam>
             <?php echo __('JWT Decrypt Algorithm', 'simple-jwt-login'); ?>
         </h3>
-        <div class="info"><?php echo __(
-                        'The algorithm that should be used to verify the JWT signature.',
-                        'simple-jwt-login'
-                    ); ?></div>
+        <div class="info">
+            <?php
+            echo __(
+                'The algorithm that should be used to verify the JWT signature.',
+                'simple-jwt-login'
+            );
+            ?>
+        </div>
         <div class="form-group">
             <select name="jwt_algorithm" class="form-control" id="simple-jwt-login-jwt-algorithm">
                 <?php
@@ -161,7 +173,10 @@ if (!defined('ABSPATH')) {
                         id="decryption_key_base64"
                         value="1"
                         style="margin-top:1px;"
-                    <?php echo $jwtSettings->getGeneralSettings()->isDecryptionKeyBase64Encoded() ? 'checked="checked"' : ''; ?>
+                    <?php echo $jwtSettings->getGeneralSettings()->isDecryptionKeyBase64Encoded()
+                        ? esc_html('checked="checked"')
+                        : '';
+                    ?>
 
                 />
                 <label for="decryption_key_base64">
@@ -190,8 +205,8 @@ if (!defined('ABSPATH')) {
         </div>
 
         <div class="decryption-code-info">
-            <?php echo __('You have to defined in your code the following constants','simple-jwt-login');?>
-            ( <?php echo __('for example in wp-config.php','simple-jwt-login');?> ) :
+            <?php echo __('You have to defined in your code the following constants', 'simple-jwt-login'); ?>
+            ( <?php echo __('for example in wp-config.php', 'simple-jwt-login'); ?> ) :
             <br />
             <code class="define_private_key" style="display: block">
                 define('<b><?php echo JwtKeyWpConfig::SIMPLE_JWT_PRIVATE_KEY;?></b>','MY_SECRET_KEY');<br />
@@ -241,16 +256,25 @@ if (!defined('ABSPATH')) {
     </div>
     <div class="col-md-2">
         <select name="request_jwt_url" class="form-control onOff">
-            <option value="0" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromURLEnabled() === false ? "selected" : ""; ?> >
+            <option value="0" <?php
+            echo $jwtSettings->getGeneralSettings()->isJwtFromURLEnabled() === false
+                ? "selected"
+                : "";
+            ?> >
                 <?php echo __('Off', 'simple-jwt-login'); ?>
             </option>
-            <option value="1" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromURLEnabled() === true ? "selected" : ""; ?>>
+            <option value="1" <?php
+            echo $jwtSettings->getGeneralSettings()->isJwtFromURLEnabled() === true
+                ? "selected"
+                : "";
+            ?>>
                 <?php echo __('On', 'simple-jwt-login'); ?>
             </option>
         </select>
     </div>
     <div class="col-md-5">
-        <div class="code">&<?php echo esc_html($jwtSettings->getGeneralSettings()->getRequestKeyUrl());?>=<b>YOUR JWT HERE</b></div>
+        <?php $requestKeyUrl = esc_html($jwtSettings->getGeneralSettings()->getRequestKeyUrl());?>
+        <div class="code">&<?php echo $requestKeyUrl; ?>=<b>YOUR JWT HERE</b></div>
     </div>
 </div>
 
@@ -268,16 +292,33 @@ if (!defined('ABSPATH')) {
     </div>
     <div class="col-md-2">
         <select name="request_jwt_session" class="form-control onOff">
-            <option value="0" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled() === false ? "selected" : ""; ?>>
+            <option value="0"
+                <?php
+                echo $jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled() === false
+                    ? "selected"
+                    : "";
+                ?>
+            >
                 <?php echo __('Off', 'simple-jwt-login'); ?>
             </option>
-            <option value="1" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled() === true ? "selected" : ""; ?>>
+            <option value="1"
+                <?php
+                echo $jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled() === true
+                    ? "selected"
+                    : "";
+                ?>
+            >
                 <?php echo __('On', 'simple-jwt-login'); ?>
             </option>
         </select>
     </div>
     <div class="col-md-5">
-        <div class="code">$_SESSION['<b><?php echo esc_html($jwtSettings->getGeneralSettings()->getRequestKeySession());?></b>']</div>
+        <div class="code">$_SESSION['<b>
+                <?php
+                echo esc_html($jwtSettings->getGeneralSettings()->getRequestKeySession());
+                ?>
+            </b>']
+        </div>
     </div>
 </div>
 
@@ -295,16 +336,33 @@ if (!defined('ABSPATH')) {
     </div>
     <div class="col-md-2">
         <select name="request_jwt_cookie" class="form-control onOff">
-            <option value="0" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromCookieEnabled() === false ? "selected" : ""; ?>>
+            <option value="0"
+                <?php
+                echo $jwtSettings->getGeneralSettings()->isJwtFromCookieEnabled() === false
+                    ? "selected"
+                    : "";
+                ?>
+            >
                 <?php echo __('Off', 'simple-jwt-login'); ?>
             </option>
-            <option value="1" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromCookieEnabled() === true ? "selected" : ""; ?>>
+            <option value="1"
+                <?php
+                echo $jwtSettings->getGeneralSettings()->isJwtFromCookieEnabled() === true
+                    ? "selected"
+                    : "";
+                ?>
+            >
                 <?php echo __('On', 'simple-jwt-login'); ?>
             </option>
         </select>
     </div>
     <div class="col-md-5">
-        <div class="code">$_COOKIE['<b><?php echo esc_html($jwtSettings->getGeneralSettings()->getRequestKeyCookie());?></b>']</div>
+        <div class="code">$_COOKIE['<b>
+                <?php
+                echo esc_html($jwtSettings->getGeneralSettings()->getRequestKeyCookie());
+                ?>
+            </b>']
+        </div>
     </div>
 </div>
 
@@ -322,16 +380,29 @@ if (!defined('ABSPATH')) {
     </div>
     <div class="col-md-2">
         <select name="request_jwt_header" class="form-control onOff">
-            <option value="0" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromHeaderEnabled() === false ? "selected" : ""; ?>>
+            <option value="0"
+                <?php
+                echo $jwtSettings->getGeneralSettings()->isJwtFromHeaderEnabled() === false
+                    ? "selected"
+                    : "";
+                ?>
+            >
                 <?php echo __('Off', 'simple-jwt-login'); ?>
             </option>
-            <option value="1" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromHeaderEnabled() === true ? "selected" : ""; ?>>
+            <option value="1"
+                <?php
+                echo $jwtSettings->getGeneralSettings()->isJwtFromHeaderEnabled() === true
+                    ? "selected"
+                    : "";
+                ?>
+            >
                 <?php echo __('On', 'simple-jwt-login'); ?>
             </option>
         </select>
     </div>
     <div class="col-md-5">
-        <div class="code"><?php echo esc_html($jwtSettings->getGeneralSettings()->getRequestKeyHeader());?>: Bearer <b>YOUR_JWT_HERE</b></div>
+        <?php  $simplejwtloginRequestHeaderKey = esc_html($jwtSettings->getGeneralSettings()->getRequestKeyHeader()); ?>
+        <div class="code"><?php echo $simplejwtloginRequestHeaderKey?>: Bearer <b>YOUR_JWT_HERE</b></div>
     </div>
 </div>
 
@@ -351,13 +422,24 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <input type="checkbox" name="api_middleware[enabled]"
-               value="1" <?php echo $jwtSettings->getGeneralSettings()->isMiddlewareEnabled() ? 'checked="checked"' : "" ?> />
+               value="1"
+            <?php
+            echo $jwtSettings->getGeneralSettings()->isMiddlewareEnabled()
+                ? 'checked="checked"'
+                : ""
+            ?>
+        />
         <span class="beta">beta</span>
-        <?php echo __('All WordPress endpoints checks for JWT authentication','simple-jwt-login');?>
+        <?php echo __('All WordPress endpoints checks for JWT authentication', 'simple-jwt-login');?>
         <br/>
         <p class="text-muted">
-            * <?php echo __('If the JWT is provided on other endpoints, the plugin will try to authenticate the user from the JWT in
-            order to perform that API call.','simple-jwt-login');?>
+            * <?php
+            echo __(
+                'If the JWT is provided on other endpoints, the plugin will try to authenticate'
+                . ' the user from the JWT in order to perform that API call.',
+                'simple-jwt-login'
+            );
+            ?>
         </p>
     </div>
 </div>

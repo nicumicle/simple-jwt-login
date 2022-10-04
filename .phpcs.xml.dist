@@ -25,7 +25,10 @@
         <exclude name="PSR12.Properties.ConstantVisibility"/>
         <exclude name="Generic.WhiteSpace.DisallowSpaceIndent.SpacesUsed"/>
     </rule>
-
+    <rule ref="PSR1">
+        <exclude name="PSR1.Files.SideEffects.FoundWithSymbols"/>
+    </rule>
+    <exclude-pattern>/SideEffects/*</exclude-pattern>
     <exclude-pattern>/Annotations/*</exclude-pattern>
 
     <!-- Add in some extra rules from other standards. -->

@@ -22,14 +22,14 @@ jQuery(document).ready(
 
         $('#simple-jwt-login input[name="jwt_reset_password_flow"]').on(
             'change',
-            function(){
-               simple_jwt_bind_reset_password();
+            function () {
+                simple_jwt_bind_reset_password();
             }
         )
 
         $('#simple-jwt-login #protection_type').on(
             'change',
-            function(){
+            function () {
                 simple_jwt_bind_protected_endpoints();
             }
         )
@@ -124,9 +124,10 @@ jQuery(document).ready(
             }//end if
         }
 
-        function simple_jwt_bind_protected_endpoints(){
-            var protection_mode    = jQuery('#simple-jwt-login #protection_type').val();
-            if(protection_mode === '2'){
+        function simple_jwt_bind_protected_endpoints()
+        {
+            var protection_mode = jQuery('#simple-jwt-login #protection_type').val();
+            if (protection_mode === '2') {
                 $('#simple-jwt-login #protected_endpoints_protected').show();
                 $('#simple-jwt-login #protected_endpoints_whitelisted').hide();
             } else {
@@ -173,7 +174,8 @@ function showDecryptionKey()
 
 }
 
-function simple_jwt_bind_reset_password(){
+function simple_jwt_bind_reset_password()
+{
     var jwt_reset_email_value = jQuery('#simple-jwt-login #jwt_reset_password_flow_custom').is(':checked');
     if (~~jwt_reset_email_value) {
         jQuery('#simple-jwt-login #simple_jwt_reset_password_email_container').show();

@@ -98,7 +98,7 @@ add_action('rest_api_init', function () {
         }, 0.2);
     }
 
-    if ($jwtSettings->getProtectEndpointsSettings()->isEnabled() ) {
+    if ($jwtSettings->getProtectEndpointsSettings()->isEnabled()) {
         add_action('rest_endpoints', function ($endpoint) use ($routeService, $jwtSettings, $serverHelper, $request) {
             $service = new ProtectEndpointService();
             $service
@@ -107,17 +107,18 @@ add_action('rest_api_init', function () {
                 ->withServerHelper($serverHelper)
                 ->withRouteService($routeService);
 
-            $currentURL =
+            $currentURL = esc_url(
                 "http"
                 . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "s" : "")
                 . "://" . esc_html($_SERVER['HTTP_HOST'])
-                . esc_html($_SERVER['REQUEST_URI']);
-            $currentURL = str_replace( home_url(), "", $currentURL);
+                . $_SERVER['REQUEST_URI']
+            );
+            $currentURL = str_replace(home_url(), "", $currentURL);
 
             $documentRoot = esc_html($_SERVER['DOCUMENT_ROOT']);
 
             $hasAccess = $service->hasAccess($currentURL, $documentRoot, $request) ;
-            if ($hasAccess=== false ) {
+            if ($hasAccess === false) {
                 @header('Content-Type: application/json; charset=UTF-8');
                 wp_send_json_error(
                     [

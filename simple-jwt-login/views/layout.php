@@ -28,68 +28,70 @@ $settingsErrors = new SettingsErrors();
 $settingsPages = [
     [
         'id'   => 'simple-jwt-login-tab-dashboard',
-        'name' => __('Dashboard','simple-jwt-login'),
+        'name' => __('Dashboard', 'simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_DASHBOARD,
         'index' => SettingsErrors::PREFIX_DASHBOARD,
     ],
     [
         'id'   => 'simple-jwt-login-tab-general',
-        'name' => __('General','simple-jwt-login'),
+        'name' => __('General', 'simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_GENERAL,
         'index' => SettingsErrors::PREFIX_GENERAL,
     ],
     [
         'id'   => 'simple-jwt-login-tab-login',
-        'name' => __('Login','simple-jwt-login'),
+        'name' => __('Login', 'simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_LOGIN,
         'index' => SettingsErrors::PREFIX_LOGIN,
     ],
     [
         'id'   => 'simple-jwt-login-tab-register',
-        'name' => __('Register User','simple-jwt-login'),
+        'name' => __('Register User', 'simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_REGISTER,
         'index' => SettingsErrors::PREFIX_REGISTER,
     ],
     [
         'id'   => 'simple-jwt-login-tab-delete',
-        'name' => __('Delete User','simple-jwt-login'),
+        'name' => __('Delete User', 'simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_DELETE,
         'index' => SettingsErrors::PREFIX_DELETE,
     ],
     [
         'id'   => 'simple-jwt-login-tab-reset-password',
-        'name' => __('Reset Password','simple-jwt-login'),
+        'name' => __('Reset Password', 'simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_RESET_PASSWORD,
         'index' => SettingsErrors::PREFIX_RESET_PASSWORD,
     ],
     [
         'id'   => 'auth-tab-login',
-        'name' => __('Authentication','simple-jwt-login'),
+        'name' => __('Authentication', 'simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_AUTHENTICATION,
         'index' => SettingsErrors::PREFIX_AUTHENTICATION,
     ],
     [
         'id'   => 'simple-jwt-login-tab-auth-codes',
-        'name' => __('Auth Codes','simple-jwt-login'),
+        'name' => __('Auth Codes', 'simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_AUTH_CODES,
         'index' => SettingsErrors::PREFIX_AUTH_CODES,
     ],
     [
         'id'   => 'simple-jwt-login-tab-hooks',
-        'name' => __('Hooks','simple-jwt-login'),
+        'name' => __('Hooks', 'simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_HOOKS,
         'index' => SettingsErrors::PREFIX_HOOKS,
     ],
     [
         'id'   => 'simple-jwt-login-tab-cors',
-        'name' => __('CORS','simple-jwt-login'),
+        'name' => __('CORS', 'simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_CORS,
         'index' => SettingsErrors::PREFIX_CORS,
     ],
     [
         'id'   => 'simple-jwt-login-tab-protect-endpoints',
         'name' => 'Protect endpoints',
-        'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_PROTECT_ENDPOINTS,
+        'has_error' =>  (
+                $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_PROTECT_ENDPOINTS
+        ),
         'index' => SettingsErrors::PREFIX_PROTECT_ENDPOINTS,
     ],
 ];
@@ -98,9 +100,9 @@ $settingsPages = [
 <form method="post">
     <?php
     $activeTab = $settingsPages[0]['index'];
-    if(isset($_POST['active_tab'])){
-        foreach ($settingsPages as $item){
-            if($item['index'] === (int)esc_attr($_POST['active_tab'])){
+    if (isset($_POST['active_tab'])) {
+        foreach ($settingsPages as $item) {
+            if ($item['index'] === (int)esc_attr($_POST['active_tab'])) {
                 $activeTab = (int)esc_attr($_POST['active_tab']);
             }
         }
@@ -171,7 +173,7 @@ $settingsPages = [
                                         <?php
                                     }
 
-                                echo esc_html($page['name']); ?>
+                                    echo esc_html($page['name']); ?>
                                 </a>
                             </li>
 							<?php
@@ -194,39 +196,39 @@ $settingsPages = [
                                  aria-labelledby="<?php echo esc_attr($page['id']); ?>-tab"
                             >
 								<?php
-                                switch ($page['index']){
+                                switch ($page['index']) {
                                     case SettingsErrors::PREFIX_DASHBOARD:
-                                        include_once  plugin_dir_path( __FILE__ ) . "dashboard-view.php";
+                                        include_once plugin_dir_path(__FILE__) . "dashboard-view.php";
                                         break;
                                     case SettingsErrors::PREFIX_GENERAL:
-                                        include_once plugin_dir_path( __FILE__ ) . "general-view.php";
+                                        include_once plugin_dir_path(__FILE__) . "general-view.php";
                                         break;
                                     case SettingsErrors::PREFIX_LOGIN:
-                                        include_once plugin_dir_path( __FILE__ ) . "login-view.php";
+                                        include_once plugin_dir_path(__FILE__) . "login-view.php";
                                         break;
                                     case SettingsErrors::PREFIX_REGISTER:
-                                        include_once plugin_dir_path( __FILE__ ) . "register-view.php";
+                                        include_once plugin_dir_path(__FILE__) . "register-view.php";
                                         break;
                                     case SettingsErrors::PREFIX_DELETE:
-                                        include_once plugin_dir_path( __FILE__ ) . "delete-view.php";
+                                        include_once plugin_dir_path(__FILE__) . "delete-view.php";
                                         break;
                                     case SettingsErrors::PREFIX_RESET_PASSWORD:
-                                        include_once plugin_dir_path( __FILE__ ) . "reset-password-view.php";
+                                        include_once plugin_dir_path(__FILE__) . "reset-password-view.php";
                                         break;
                                     case SettingsErrors::PREFIX_AUTHENTICATION:
-                                        include_once plugin_dir_path( __FILE__ ) . "auth-view.php";
+                                        include_once plugin_dir_path(__FILE__) . "auth-view.php";
                                         break;
                                     case SettingsErrors::PREFIX_AUTH_CODES:
-                                        include_once plugin_dir_path( __FILE__ ) . "auth-codes-view.php";
+                                        include_once plugin_dir_path(__FILE__) . "auth-codes-view.php";
                                         break;
                                     case SettingsErrors::PREFIX_HOOKS:
-                                        include_once plugin_dir_path( __FILE__ ) . "hooks-view.php";
+                                        include_once plugin_dir_path(__FILE__) . "hooks-view.php";
                                         break;
                                     case SettingsErrors::PREFIX_CORS:
-                                        include_once plugin_dir_path( __FILE__ ) . "cors-view.php";
+                                        include_once plugin_dir_path(__FILE__) . "cors-view.php";
                                         break;
                                     case SettingsErrors::PREFIX_PROTECT_ENDPOINTS:
-                                        include_once plugin_dir_path( __FILE__ ) . "protect-endpoints-view.php";
+                                        include_once plugin_dir_path(__FILE__) . "protect-endpoints-view.php";
                                         break;
                                     default:
                                         echo __("View file does not exists.", 'simple-jwt-login');
@@ -257,10 +259,12 @@ $settingsPages = [
             <input type="text"
                    name="auth_codes[role][]"
                    class="form-control"
-                   placeholder="<?php  echo __(
-                            'WordPress new user Role ( when new users are created )',
-                            'simple-jwt-login'
-                        ) ;?>"
+                   placeholder="<?php
+                       echo __(
+                           'WordPress new user Role ( when new users are created )',
+                           'simple-jwt-login'
+                       );
+                        ?>"
             />
             <input type="text"
                    name="auth_codes[expiration_date][]"

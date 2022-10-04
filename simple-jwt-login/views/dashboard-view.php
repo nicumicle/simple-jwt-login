@@ -11,8 +11,6 @@ if (! defined('ABSPATH')) {
  * @var SettingsErrors $settingsErrors
  * @var SimpleJWTLoginSettings $jwtSettings
  */
-$x =1;
-
 ?>
 <div class="row">
     <div class="col-md-12">
@@ -50,7 +48,11 @@ $x =1;
                 <h5 class="card-title">
 					<?php echo __('Register Status', 'simple-jwt-login'); ?>
                 </h5>
-                <div class="box-status box-status-<?php echo $jwtSettings->getRegisterSettings()->isRegisterAllowed() ? "on" : 'off' ?>">
+                <div class="box-status box-status-<?php
+                echo $jwtSettings->getRegisterSettings()->isRegisterAllowed()
+                    ? 'on'
+                    : 'off'
+                ?>">
                 </div>
                 <div class="text-center">
 					<?php
@@ -68,7 +70,11 @@ $x =1;
                 <h5 class="card-title">
 					<?php echo __('Delete Status', 'simple-jwt-login'); ?>
                 </h5>
-                <div class="box-status box-status-<?php echo $jwtSettings->getDeleteUserSettings()->isDeleteAllowed() ? "on" : 'off' ?>">
+                <div class="box-status box-status-<?php
+                    echo $jwtSettings->getDeleteUserSettings()->isDeleteAllowed()
+                        ? 'on'
+                        : 'off'
+                ?>">
                 </div>
                 <div class="text-center">
 					<?php

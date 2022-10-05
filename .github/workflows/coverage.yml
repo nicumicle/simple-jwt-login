@@ -1,10 +1,9 @@
-name: "ci build"
+name: "Publish Code Coverage"
 
 on:
-  pull_request:
   push:
-    branches:
-      - "master"
+    tags:
+      - '*'
 
 jobs:
   build:

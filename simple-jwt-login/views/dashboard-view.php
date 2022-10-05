@@ -3,6 +3,7 @@ use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
 if (! defined('ABSPATH')) {
+    /** @phpstan-ignore-next-line  */
     exit;
 } // Exit if accessed directly
 
@@ -10,7 +11,6 @@ if (! defined('ABSPATH')) {
  * @var SettingsErrors $settingsErrors
  * @var SimpleJWTLoginSettings $jwtSettings
  */
-
 ?>
 <div class="row">
     <div class="col-md-12">
@@ -48,7 +48,11 @@ if (! defined('ABSPATH')) {
                 <h5 class="card-title">
 					<?php echo __('Register Status', 'simple-jwt-login'); ?>
                 </h5>
-                <div class="box-status box-status-<?php echo $jwtSettings->getRegisterSettings()->isRegisterAllowed() ? "on" : 'off' ?>">
+                <div class="box-status box-status-<?php
+                echo $jwtSettings->getRegisterSettings()->isRegisterAllowed()
+                    ? 'on'
+                    : 'off'
+                ?>">
                 </div>
                 <div class="text-center">
 					<?php
@@ -66,7 +70,11 @@ if (! defined('ABSPATH')) {
                 <h5 class="card-title">
 					<?php echo __('Delete Status', 'simple-jwt-login'); ?>
                 </h5>
-                <div class="box-status box-status-<?php echo $jwtSettings->getDeleteUserSettings()->isDeleteAllowed() ? "on" : 'off' ?>">
+                <div class="box-status box-status-<?php
+                    echo $jwtSettings->getDeleteUserSettings()->isDeleteAllowed()
+                        ? 'on'
+                        : 'off'
+                ?>">
                 </div>
                 <div class="text-center">
 					<?php

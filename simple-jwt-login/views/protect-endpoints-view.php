@@ -5,6 +5,7 @@ use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
 if (!defined('ABSPATH')) {
+    /** @phpstan-ignore-next-line  */
     exit;
 } // Exit if accessed directly
 /**
@@ -16,7 +17,10 @@ if (!defined('ABSPATH')) {
     <div class="col-md-12">
         <h3 class="section-title"><?php echo __('Protect endpoints enabled', 'simple-jwt-login'); ?></h3>
         <div class="form-group">
-            <input type="radio" id="protect_endpoints_enabled_no" name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[enabled]" class="form-control"
+            <input type="radio"
+                   id="protect_endpoints_enabled_no"
+                   name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[enabled]"
+                   class="form-control"
                    value="0"
                 <?php echo $jwtSettings->getProtectEndpointsSettings()->isEnabled() === false
                     ? esc_html('checked')
@@ -27,7 +31,11 @@ if (!defined('ABSPATH')) {
                 <?php echo __('No', 'simple-jwt-login'); ?>
             </label>
 
-            <input type="radio" id="protect_endpoints_enabled_yes"  name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[enabled]" class="form-control"
+            <input
+                    type="radio"
+                    id="protect_endpoints_enabled_yes"
+                    name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[enabled]"
+                    class="form-control"
                    value="1"
                 <?php echo
                 $jwtSettings->getProtectEndpointsSettings()->isEnabled()
@@ -41,7 +49,13 @@ if (!defined('ABSPATH')) {
             <br/>
             <br />
             <p>
-              <?php echo __('The endpoints will require a JWT in order to be accessed. If no JWT is provided, rest endpoints will provide an error instead of the actual content.', 'simple-jwt-login');?>
+                <?php
+                echo __(
+                    'The endpoints will require a JWT in order to be accessed.'
+                    . ' If no JWT is provided, rest endpoints will provide an error instead of the actual content.',
+                    'simple-jwt-login'
+                );
+                ?>
             </p>
         </div>
     </div>
@@ -53,11 +67,16 @@ if (!defined('ABSPATH')) {
     <div class="col-md-6">
         <div class="form-group">
             <h2 class="section-title">Action</h2>
-            <select id="protection_type" name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[action]" class="form-control">
+            <select
+                    id="protection_type"
+                    name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[action]"
+                    class="form-control"
+            >
                 <option
                         value="<?php echo esc_attr(ProtectEndpointSettings::ALL_ENDPOINTS);?>"
                     <?php
-                    echo $jwtSettings->getProtectEndpointsSettings()->getAction() === ProtectEndpointSettings::ALL_ENDPOINTS
+                    echo $jwtSettings->getProtectEndpointsSettings()->getAction()
+                    === ProtectEndpointSettings::ALL_ENDPOINTS
                         ? esc_html('selected')
                         : esc_html('')
                     ?>
@@ -66,7 +85,8 @@ if (!defined('ABSPATH')) {
                 </option>
                 <option
                         value="<?php echo esc_attr(ProtectEndpointSettings::SPECIFIC_ENDPOINTS);?>"
-                    <?php echo $jwtSettings->getProtectEndpointsSettings()->getAction() === ProtectEndpointSettings::SPECIFIC_ENDPOINTS
+                    <?php echo $jwtSettings->getProtectEndpointsSettings()->getAction()
+                    === ProtectEndpointSettings::SPECIFIC_ENDPOINTS
                         ? esc_html('selected')
                         : esc_html('')
                     ?>
@@ -89,7 +109,12 @@ if (!defined('ABSPATH')) {
         </p>
     </div>
     <div class="col-md-12">
-        <input type="button" class="btn btn-dark" value="<?php echo __('Add Endpoint', 'simple-jwt-login');?> +" id="add_whitelist_endpoint" >
+        <input
+                type="button"
+                class="btn btn-dark"
+                value="<?php echo __('Add Endpoint', 'simple-jwt-login');?> +"
+                id="add_whitelist_endpoint"
+        />
     </div>
     <div class="col-md-12">
         <div id="whitelisted-domains">
@@ -129,11 +154,16 @@ if (!defined('ABSPATH')) {
             <?php echo __('Protected endpoints', 'simple-jwt-login');?>
         </h2>
         <p class="text-muted">
-            <?php echo __('The JWT will be required on the following endpoints.' , 'simple-jwt-login');?>
+            <?php echo __('The JWT will be required on the following endpoints.', 'simple-jwt-login'); ?>
         </p>
     </div>
     <div class="col-md-12">
-        <input type="button" class="btn btn-dark" value="<?php echo __('Add Endpoint', 'simple-jwt-login');?> +" id="add_protect_endpoint">
+        <input
+                type="button"
+                class="btn btn-dark"
+                value="<?php echo __('Add Endpoint', 'simple-jwt-login');?> +"
+                id="add_protect_endpoint"
+        />
     </div>
     <div class="col-md-12">
         <div id="protected-domains">

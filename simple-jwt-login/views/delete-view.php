@@ -6,6 +6,7 @@ use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
 if (! defined('ABSPATH')) {
+    /** @phpstan-ignore-next-line  */
     exit;
 } // Exit if accessed directly
 
@@ -29,7 +30,14 @@ if (! defined('ABSPATH')) {
             </label>
 
             <input type="radio" id="allow_delete_yes" name="allow_delete" class="form-control"
-                   value="1" <?php echo($jwtSettings->getDeleteUserSettings()->isDeleteAllowed() === true ? 'checked' : ''); ?> />
+                   value="1"
+                <?php
+                echo($jwtSettings->getDeleteUserSettings()->isDeleteAllowed() === true
+                    ? 'checked'
+                    : ''
+                );
+                ?>
+            />
             <label for="allow_delete_yes">
 				<?php echo __('Yes', 'simple-jwt-login'); ?>
             </label>
@@ -49,7 +57,8 @@ if (! defined('ABSPATH')) {
                     $jwtSettings->getGeneralSettings()->getRequestKeyUrl() => __('JWT', 'simple-jwt-login'),
                 ];
                 if ($jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete()) {
-                    $sampleUrlParams[ $jwtSettings->getAuthCodesSettings()->getAuthCodeKey() ] = __('AUTH_KEY_VALUE', 'simple-jwt-login');
+                    $sampleUrlParams[ $jwtSettings->getAuthCodesSettings()->getAuthCodeKey() ] =
+                        __('AUTH_KEY_VALUE', 'simple-jwt-login');
                 }
                 echo esc_html($jwtSettings->generateExampleLink(RouteService::USER_ROUTE, $sampleUrlParams));
                 ?>
@@ -63,9 +72,9 @@ if (! defined('ABSPATH')) {
         <div class="code-info">
             * <?php
             echo __(
-                    'You can also send the JWT in Authorization header. Example:',
-                    'simple-jwt-login'
-                )
+                'You can also send the JWT in Authorization header. Example:',
+                'simple-jwt-login'
+            )
             ?> <b>Authorization: Bearer YOURJWTTOKEN</b>
         </div>
     </div>
@@ -78,21 +87,33 @@ if (! defined('ABSPATH')) {
         <div class="form-group">
             <input type="radio" id="require_delete_auth_no" name="require_delete_auth" class="form-control"
                    value="0"
-				<?php echo $jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete() === false ? 'checked' : '' ?>
+				<?php echo $jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete() === false
+                    ? 'checked'
+                    : ''
+                ?>
             />
             <label for="require_delete_auth_no">
 				<?php echo __('No', 'simple-jwt-login'); ?>
             </label>
             <input type="radio" id="require_delete_auth_yes" name="require_delete_auth" class="form-control"
                    value="1"
-				<?php echo $jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete() === true ? 'checked' : '' ?>
+				<?php echo $jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete() === true
+                    ? 'checked'
+                    : ''
+                ?>
             />
             <label for="require_delete_auth_yes">
 				<?php echo __('Yes', 'simple-jwt-login'); ?>
             </label>
             <div id="require_delete_auth_alert" class="alert alert-warning" role="alert"
-                 style="<?php echo $jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete() === true ? 'display:none;' : ''; ?>">
-				<?php echo __(
+                 style="
+                 <?php
+                     echo $jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete() === true
+                         ? 'display:none;'
+                         : '';
+                    ?>"
+            />
+            <?php echo __(
                 " Warning! It's not recommended to allow delete users without Auth Codes",
                 'simple-jwt-login'
             ); ?>.
@@ -125,7 +146,8 @@ if (! defined('ABSPATH')) {
         <select name="delete_user_by" class="form-control" id="delete_user_by">
             <option value="0"
 				<?php
-                echo $jwtSettings->getDeleteUserSettings()->getDeleteUserBy() === DeleteUserSettings::DELETE_USER_BY_EMAIL
+                echo $jwtSettings->getDeleteUserSettings()->getDeleteUserBy()
+                === DeleteUserSettings::DELETE_USER_BY_EMAIL
                     ? 'selected'
                     : ''
                 ?>
@@ -139,7 +161,8 @@ if (! defined('ABSPATH')) {
             ><?php echo __('Delete User by WordPress User ID', 'simple-jwt-login'); ?></option>
             <option value="2"
                 <?php
-                echo $jwtSettings->getDeleteUserSettings()->getDeleteUserBy() === DeleteUserSettings::DELETE_USER_BY_USER_LOGIN
+                echo $jwtSettings->getDeleteUserSettings()->getDeleteUserBy()
+                === DeleteUserSettings::DELETE_USER_BY_USER_LOGIN
                     ? 'selected'
                     : ''
                 ?>
@@ -147,10 +170,14 @@ if (! defined('ABSPATH')) {
         </select>
     </div>
     <div class="col-md-4">
-        <label for="jwt_login_by_paramter"><?php echo __(
-                    'JWT parameter key | JWT payload data id (key name where the option is saved)',
-                    'simple-jwt-login'
-                ); ?></label>
+        <label for="jwt_login_by_paramter">
+            <?php
+            echo __(
+                'JWT parameter key | JWT payload data id (key name where the option is saved)',
+                'simple-jwt-login'
+            );
+            ?>
+        </label>
 
         <input type="text" name="jwt_delete_by_parameter" class="form-control"
                id="jwt_delete_by_parameter"

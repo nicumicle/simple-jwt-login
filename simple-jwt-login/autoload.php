@@ -1,6 +1,6 @@
 <?php
-
 if (!defined('ABSPATH')) {
+    /** @phpstan-ignore-next-line  */
     exit;
 } // Exit if accessed directly
 

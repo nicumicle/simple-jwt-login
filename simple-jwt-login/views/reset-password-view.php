@@ -5,7 +5,8 @@ use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Services\RouteService;
 
-if ( ! defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
+    /** @phpstan-ignore-next-line */
     exit;
 } // Exit if accessed directly
 
@@ -102,7 +103,12 @@ if ( ! defined('ABSPATH')) {
             <?php echo __('The email address that needs reset password', 'simple-jwt-login');?>
             <Br/>
             <br/>
-            <?php echo __('An email with the reset password link will be sent to this email address.', 'simple-jwt-login');?>
+            <?php
+            echo __(
+                'An email with the reset password link will be sent to this email address.',
+                'simple-jwt-login'
+            );
+            ?>
         </p>
         <div class="generated-code">
             <span class="method">POST:</span>
@@ -139,13 +145,20 @@ if ( ! defined('ABSPATH')) {
         <ul>
             <li>
                 <input type="radio"
-                       value="<?php
-                       echo ResetPasswordSettings::FLOW_JUST_SAVE_IN_DB; ?>"
+                    value="<?php
+                    echo esc_attr(ResetPasswordSettings::FLOW_JUST_SAVE_IN_DB); ?>"
                     <?php
-                    echo $jwtSettings->getResetPasswordSettings()->getFlowType() === ResetPasswordSettings::FLOW_JUST_SAVE_IN_DB ? 'checked="checked"' : ''; ?>
-                       name="jwt_reset_password_flow"
-                       class="jwt_reset_password_flow"
-                       id="jwt_reset_password_flow_db">
+                    echo (
+                            $jwtSettings->getResetPasswordSettings()->getFlowType()
+                            === ResetPasswordSettings::FLOW_JUST_SAVE_IN_DB
+                    )
+                        ? 'checked="checked"'
+                        : '';
+                    ?>
+                    name="jwt_reset_password_flow"
+                    class="jwt_reset_password_flow"
+                    id="jwt_reset_password_flow_db"
+                />
                 <label for="jwt_reset_password_flow_db">
                     <?php
                     echo __(
@@ -157,13 +170,19 @@ if ( ! defined('ABSPATH')) {
             </li>
             <li>
                 <input type="radio"
-                       value="<?php
-                       echo esc_attr(ResetPasswordSettings::FLOW_SEND_DEFAULT_WP_EMAIL); ?>"
+                    value="<?php
+                    echo esc_attr(ResetPasswordSettings::FLOW_SEND_DEFAULT_WP_EMAIL); ?>"
                     <?php
-                    echo $jwtSettings->getResetPasswordSettings()->getFlowType() === ResetPasswordSettings::FLOW_SEND_DEFAULT_WP_EMAIL ? 'checked="checked"' : ''; ?>
-                       name="jwt_reset_password_flow"
-                       class="jwt_reset_password_flow"
-                       id="jwt_reset_password_flow_wordpress">
+                        echo ($jwtSettings->getResetPasswordSettings()->getFlowType()
+                        === ResetPasswordSettings::FLOW_SEND_DEFAULT_WP_EMAIL
+                        ? 'checked="checked"'
+                        : ''
+                        );
+                        ?>
+                    name="jwt_reset_password_flow"
+                    class="jwt_reset_password_flow"
+                    id="jwt_reset_password_flow_wordpress"
+                />
                 <label for="jwt_reset_password_flow_wordpress">
                     <?php
                     echo __(
@@ -174,14 +193,20 @@ if ( ! defined('ABSPATH')) {
                 </label>
             </li>
             <li>
-                <input type="radio"
-                       value="<?php
-                       echo esc_attr(ResetPasswordSettings::FLOW_SEND_CUSTOM_EMAIL); ?>"
-                    <?php
-                    echo $jwtSettings->getResetPasswordSettings()->getFlowType() === ResetPasswordSettings::FLOW_SEND_CUSTOM_EMAIL ? 'checked="checked"' : ''; ?>
-                       name="jwt_reset_password_flow"
-                       id="jwt_reset_password_flow_custom"
-                       class="jwt_reset_password_flow">
+                <input
+                        type="radio"
+                        value="<?php
+                           echo esc_attr(ResetPasswordSettings::FLOW_SEND_CUSTOM_EMAIL); ?>"
+                        <?php
+                        echo ($jwtSettings->getResetPasswordSettings()->getFlowType()
+                        === ResetPasswordSettings::FLOW_SEND_CUSTOM_EMAIL
+                            ? 'checked="checked"'
+                            : ''
+                        );
+                        ?>
+                        name="jwt_reset_password_flow"
+                        id="jwt_reset_password_flow_custom"
+                        class="jwt_reset_password_flow">
                 <label for="jwt_reset_password_flow_custom">
                     <?php
                     echo __(
@@ -205,13 +230,17 @@ if ( ! defined('ABSPATH')) {
                    class="form-control"
                    placeholder="<?php echo __('Email Subject', 'simple-jwt-login');?>"
                    value="<?php
-                   echo esc_attr($jwtSettings->getResetPasswordSettings()->getResetPasswordEmailSubject()); ?>"
+                    echo esc_attr($jwtSettings->getResetPasswordSettings()->getResetPasswordEmailSubject()); ?>"
             />
             <br/>
             <h4 class="sub-section-title">Email body</h4>
-            <textarea class="form-control" name="jwt_reset_password_email_body" id="reset_password_email_body"
-                      placeholder="Email Content"><?php
-                echo esc_html($jwtSettings->getResetPasswordSettings()->getResetPasswordEmailBody()); ?></textarea>
+            <textarea class="form-control"
+                      name="jwt_reset_password_email_body"
+                      id="reset_password_email_body"
+                      placeholder="Email Content"
+            ><?php
+                        echo esc_html($jwtSettings->getResetPasswordSettings()->getResetPasswordEmailBody());
+            ?></textarea>
             <br/>
             <h4 class="sub-section-title">Email type</h4>
             <ul>
@@ -243,21 +272,22 @@ if ( ! defined('ABSPATH')) {
                 </li>
             </ul>
             <br/>
-            <?php echo sprintf(
-                    __('For the email content, you need to add %s as a variable', 'simple-jwt-login'),
+            <?php
+            echo sprintf(
+                __('For the email content, you need to add %s as a variable', 'simple-jwt-login'),
                 '<code class="code">{{CODE}}</code>'
-            );?>
+            );
+            ?>
             <br/>
             <br/>
             <b><?php echo __('Available variables', 'simple-jwt-login');?></b>:
             <ul>
                 <?php
-                foreach ($jwtSettings->getResetPasswordSettings()->getEmailContentVariables() as $variable => $text)
-                {
+                foreach ($jwtSettings->getResetPasswordSettings()->getEmailContentVariables() as $variable => $text) {
                     ?>
                     <li>
-                        <code class="code"><?php echo esc_html($variable);?></code>:
-                        <?php echo esc_html($text);?>
+                        <code class="code"><?php echo esc_html($variable); ?></code>:
+                        <?php echo esc_html($text); ?>
                     </li>
                     <?php
                 }
@@ -276,7 +306,8 @@ if ( ! defined('ABSPATH')) {
         <p>
             <?php
             echo __(
-                'This route changes the user password. It requires the reset password code that it was received on email and the new password.',
+                'This route changes the user password.'
+                . ' It requires the reset password code that it was received on email and the new password.',
                 'simple-jwt-login'
             );
             ?>
@@ -296,7 +327,12 @@ if ( ! defined('ABSPATH')) {
             <?php echo __('New password for the user', 'simple-jwt-login');?>
             <br/>
             <br/>
-            <?php echo __('An email with the reset password link will be sent to this email address.','simple-jwt-login');?>
+            <?php
+            echo __(
+                'An email with the reset password link will be sent to this email address.',
+                'simple-jwt-login'
+            );
+            ?>
         </p>
         <div class="">
             <h4 class="sub-section-title">
@@ -310,10 +346,15 @@ if ( ! defined('ABSPATH')) {
             <label for="reset_password_jwt">
                 <?php echo __('Allow Reset password with JWT', 'simple-jwt-login'); ?>
             </label>
-            <p class="text-muted"><?php echo __(
-                    'If this option is selected, the <b>code</b> parameter is no longer required. The plugin will search for the USER that is present in the JWT. Also, the JWT should be valid.',
+            <p class="text-muted">
+                <?php
+                echo __(
+                    'If this option is selected, the <b>code</b> parameter is no longer required.'
+                    . ' The plugin will search for the USER that is present in the JWT. Also, the JWT should be valid.',
                     'simple-jwt-login'
-                ); ?></p>
+                );
+                ?>
+            </p>
         </div>
         <div class="generated-code">
             <span class="method">PUT:</span>

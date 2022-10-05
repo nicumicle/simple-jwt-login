@@ -4,7 +4,7 @@ namespace SimpleJWTLoginTests\Services;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
-use SimpleJWTLogin\Libraries\JWT;
+use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Modules\WordPressDataInterface;

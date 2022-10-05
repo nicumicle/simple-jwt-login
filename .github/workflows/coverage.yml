@@ -1,4 +1,4 @@
-name: "ci build"
+name: "Publish Code Coverage"
 
 on:
   push:

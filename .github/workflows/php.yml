@@ -34,13 +34,13 @@ jobs:
     # Docs: https://getcomposer.org/doc/articles/scripts.md
 
     - name: Run PHPCS design on plugin
-      run: vendor/bin/phpcs simple-jwt-login/src
+      run: vendor/bin/phpcs simple-jwt-login/
 
     - name: Run PHPMD design on plugin
-      run: vendor/bin/phpmd simple-jwt-login/src text design
+      run: vendor/bin/phpmd simple-jwt-login/ text design
 
     - name: Run PHPMD cleancode on plugin
-      run: vendor/bin/phpmd simple-jwt-login/src text cleancode
+      run: vendor/bin/phpmd simple-jwt-login/ text cleancode
 
     - name: Run PHPMD unusedcode on plugin
       run: vendor/bin/phpmd simple-jwt-login/ text unusedcode
@@ -52,7 +52,7 @@ jobs:
       run: vendor/bin/phpmd simple-jwt-login/ text controversial
 
     - name: Run phpstan on plugin
-      run: vendor/bin/phpstan analyse simple-jwt-login/src -c phpstan.neon
+      run: vendor/bin/phpstan analyse simple-jwt-login -c phpstan.neon --memory-limit=256M
 
     - name: Run PHPCS design on tests
       run: vendor/bin/phpcs tests/

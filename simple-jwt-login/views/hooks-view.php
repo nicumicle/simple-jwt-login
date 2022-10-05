@@ -4,6 +4,7 @@ use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
 if (! defined('ABSPATH')) {
+    /** @phpstan-ignore-next-line  */
     exit;
 } // Exit if accessed directly
 
@@ -18,11 +19,13 @@ $hooks = SimpleJWTLoginHooks::getHooksDetails();
     <div class="col-md-12">
         <h3 class="section-title"><?php echo __('Hooks', 'simple-jwt-login'); ?></h3>
         <p>
-            <?php echo __(
-    'Make sure that the hook you are trying to use is enabled.'
-                    . ' Otherwise, the hook will not be called.',
-    'simple-jwt-login'
-);?>
+            <?php
+            echo __(
+                'Make sure that the hook you are trying to use is enabled.'
+                . ' Otherwise, the hook will not be called.',
+                'simple-jwt-login'
+            );
+            ?>
         </p>
         <table class="table table-bordered">
             <thead class="thead-dark">
@@ -51,7 +54,10 @@ $hooks = SimpleJWTLoginHooks::getHooksDetails();
                                     name="enabled_hooks[]"
                                     id="hook_<?php echo esc_attr($singleHook['name']); ?>"
                                     value="<?php echo esc_attr($singleHook['name']); ?>"
-                                    <?php echo $jwtSettings->getHooksSettings()->isHookEnable($singleHook['name']) ? 'checked' : '' ?>
+                                    <?php echo $jwtSettings->getHooksSettings()->isHookEnable($singleHook['name'])
+                                        ? 'checked'
+                                        : ''
+                                    ?>
                             />
                         </td>
                         <td>
@@ -68,7 +74,7 @@ $hooks = SimpleJWTLoginHooks::getHooksDetails();
                         <td>
                             <?php
                             if (isset($singleHook['return'])) {
-                                echo $singleHook['return'];
+                                echo esc_html($singleHook['return']);
                             } else {
                                 echo "void";
                             } ?>

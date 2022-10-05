@@ -10,8 +10,8 @@ add_filter(
         $currentURL  =
             "http"
             . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "s" : "")
-            . "://" . $_SERVER['HTTP_HOST']
-            . $_SERVER['REQUEST_URI'];
+            . "://" . esc_html($_SERVER['HTTP_HOST'])
+            . esc_html($_SERVER['REQUEST_URI']);
 
         $jwtSettings = new SimpleJWTLoginSettings(new WordPressData());
 

@@ -6,6 +6,7 @@ use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Services\RouteService;
 
 if (! defined('ABSPATH')) {
+    /** @phpstan-ignore-next-line  */
     exit;
 } // Exit if accessed directly
 /**
@@ -74,10 +75,10 @@ if (! defined('ABSPATH')) {
         <p>
 			<?php
             echo __(
-                    'This route allows you to generate a JWT based on your WordPress email'
+                'This route allows you to generate a JWT based on your WordPress email'
                 . ' ( or WordPress username ) and Password.',
-                    'simple-jwt-login'
-                );
+                'simple-jwt-login'
+            );
             ?>
         </p>
         <p class="text-muted">
@@ -163,15 +164,10 @@ if (! defined('ABSPATH')) {
                 <li>
                     <ul>
 						<?php
-                        foreach ($jwtSettings
-                                     ->getAuthenticationSettings()
-                                     ->getJwtPayloadParameters()
-                                 as $parameterIndex => $parameter) {
-                            $numberOfLines = count(
-                                $jwtSettings
-                                        ->getAuthenticationSettings()
-                                        ->getJwtPayloadParameters()
-                            ) - 1;
+                        $payloadParameters = $jwtSettings->getAuthenticationSettings()->getJwtPayloadParameters();
+                        foreach ($payloadParameters as $parameterIndex => $parameter
+                        ) {
+                            $numberOfLines = count($payloadParameters) - 1;
                             $lineSeparator = $numberOfLines === $parameterIndex
                                 ? ''
                                 : ',';
@@ -204,11 +200,17 @@ if (! defined('ABSPATH')) {
                                     ?>
                                     <input
                                             type="checkbox"
-                                            id="jwt_payload_<?php echo esc_attr($parameter);?>"
+                                            id="jwt_payload_<?php echo esc_attr($parameter); ?>"
                                             name="jwt_payload[]"
                                             value="<?php echo esc_attr($parameter); ?>"
-                                         <?php
-                                         echo esc_html($jwtSettings->getAuthenticationSettings()->isPayloadDataEnabled($parameter) ? 'checked' : '')
+                                            <?php
+                                             echo esc_html(
+                                                 $jwtSettings
+                                                     ->getAuthenticationSettings()
+                                                     ->isPayloadDataEnabled($parameter)
+                                                     ? 'checked'
+                                                     : ''
+                                             )
                                             ?>
                                     />
 	                                <?php
@@ -339,7 +341,12 @@ if (! defined('ABSPATH')) {
                 $sampleUrlParams = [
                     $jwtSettings->getGeneralSettings()->getRequestKeyUrl() => 'YOUR_JWT',
                 ];
-                echo esc_html($jwtSettings->generateExampleLink(RouteService::AUTHENTICATION_REFRESH_ROUTE, $sampleUrlParams));
+                echo esc_html(
+                    $jwtSettings->generateExampleLink(
+                        RouteService::AUTHENTICATION_REFRESH_ROUTE,
+                        $sampleUrlParams
+                    )
+                );
                 ?>
             </span>
             <span class="copy-button">
@@ -349,12 +356,13 @@ if (! defined('ABSPATH')) {
             </span>
         </div>
         <p class="text-muted">
-            * <?php echo __(
-                    'JWT can be sent via URL, SESSION, COOKIE or HEADER.'
+            * <?php
+            echo __(
+                'JWT can be sent via URL, SESSION, COOKIE or HEADER.'
                 . ' Please enable the ones you want in the \'General\' section.',
-                    'simple-jwt-login'
-                );
-?>
+                'simple-jwt-login'
+            );
+            ?>
         </p>
     </div>
 </div>
@@ -367,10 +375,10 @@ if (! defined('ABSPATH')) {
         <p>
 			<?php
             echo __(
-    'This endpoint validates a JWT.'
+                'This endpoint validates a JWT.'
                 . ' If it is valid,it will return the WordPress user details and some JWT details.',
-    'simple-jwt-login'
-);
+                'simple-jwt-login'
+            );
             ?>
         </p>
         <div class="generated-code">
@@ -380,7 +388,12 @@ if (! defined('ABSPATH')) {
                 $sampleUrlParams = [
                     $jwtSettings->getGeneralSettings()->getRequestKeyUrl() => 'YOUR_JWT',
                 ];
-                echo esc_html($jwtSettings->generateExampleLink(RouteService::AUTHENTICATION_VALIDATE_ROUTE, $sampleUrlParams));
+                echo esc_html(
+                    $jwtSettings->generateExampleLink(
+                        RouteService::AUTHENTICATION_VALIDATE_ROUTE,
+                        $sampleUrlParams
+                    )
+                );
                 ?>
             </span>
             <span class="copy-button">
@@ -390,12 +403,13 @@ if (! defined('ABSPATH')) {
             </span>
         </div>
         <p class="text-muted">
-            * <?php echo __(
-                    'JWT can be sent via URL, SESSION, COOKIE or HEADER.'
+            * <?php
+            echo __(
+                'JWT can be sent via URL, SESSION, COOKIE or HEADER.'
                 . ' Please enable the ones you want in the \'General\' section.',
-                    'simple-jwt-login'
-                );
-?>
+                'simple-jwt-login'
+            );
+            ?>
         </p>
     </div>
 </div>
@@ -407,9 +421,9 @@ if (! defined('ABSPATH')) {
         <p>
             <?php
             echo __(
-    'This endpoint revokes a JWT. If it is valid, it will be marked as invalid.',
-    'simple-jwt-login'
-);
+                'This endpoint revokes a JWT. If it is valid, it will be marked as invalid.',
+                'simple-jwt-login'
+            );
             ?>
         </p>
         <div class="generated-code">
@@ -429,12 +443,13 @@ if (! defined('ABSPATH')) {
             </span>
         </div>
         <p class="text-muted">
-            * <?php echo __(
-                    'JWT can be sent via URL, SESSION, COOKIE or HEADER.'
+            * <?php
+            echo __(
+                'JWT can be sent via URL, SESSION, COOKIE or HEADER.'
                 . ' Please enable the ones you want in the \'General\' section.',
-                    'simple-jwt-login'
-                );
-?>
+                'simple-jwt-login'
+            );
+            ?>
         </p>
     </div>
 </div>
@@ -442,10 +457,14 @@ if (! defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __(
+        <h3 class="section-title">
+            <?php
+            echo __(
                 'Allow Authentication only from the following IP addresses',
                 'simple-jwt-login'
-            ); ?>:</h3>
+            );
+            ?>:
+        </h3>
         <div class="form-group">
             <input type="text" id="auth_ip" name="auth_ip" class="form-control"
                    value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAllowedIps()); ?>"

@@ -4,7 +4,7 @@ namespace SimpleJwtLoginTests\Services;
 
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Helpers\ServerHelper;
-use SimpleJWTLogin\Libraries\JWT;
+use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Modules\WordPressData;

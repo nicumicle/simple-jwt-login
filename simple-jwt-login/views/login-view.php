@@ -5,6 +5,7 @@ use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
 if (! defined('ABSPATH')) {
+    /** @phpstan-ignore-next-line  */
     exit;
 } // Exit if accessed directly
 
@@ -26,7 +27,9 @@ if (! defined('ABSPATH')) {
             <label for="allow_autologin_no"><?php echo __('No', 'simple-jwt-login'); ?></label>
 
             <input type="radio" id="allow_autologin_yes" name="allow_autologin" class="form-control"
-                   value="1" <?php echo($jwtSettings->getLoginSettings()->isAutologinEnabled() === true ? 'checked' : ''); ?> />
+                   value="1"
+                   <?php echo($jwtSettings->getLoginSettings()->isAutologinEnabled() === true ? 'checked' : ''); ?>
+            />
             <label for="allow_autologin_yes"><?php echo __('Yes', 'simple-jwt-login'); ?></label>
             <br/>
         </div>
@@ -46,7 +49,8 @@ if (! defined('ABSPATH')) {
                 $jwtSettings->getGeneralSettings()->getRequestKeyUrl() => __('JWT', 'simple-jwt-login')
             ];
             if ($jwtSettings->getLoginSettings()->isAuthKeyRequiredOnLogin()) {
-                $sampleUrlParams[ $jwtSettings->getAuthCodesSettings()->getAuthCodeKey() ] = __('AUTH_KEY_VALUE', 'simple-jwt-login');
+                $sampleUrlParams[ $jwtSettings->getAuthCodesSettings()->getAuthCodeKey() ] =
+                    __('AUTH_KEY_VALUE', 'simple-jwt-login');
             }
             echo esc_html($jwtSettings->generateExampleLink('autologin', $sampleUrlParams));
             ?>
@@ -140,10 +144,11 @@ if (! defined('ABSPATH')) {
     </div>
     <div class="col-md-4">
         <label for="jwt_login_by_paramter">
-            <?php echo __(
+                <?php echo __(
                     'JWT parameter key | JWT payload data id (key name where the option is saved)',
                     'simple-jwt-login'
-                ); ?>
+                );
+                ?>
 
             <span class="required">*</span>
         </label>
@@ -200,22 +205,27 @@ if (! defined('ABSPATH')) {
             <br/>
             <input type="radio" id="no_redirect" name="redirect" class="form-control"
                    value="<?php echo esc_attr(LoginSettings::NO_REDIRECT); ?>"
-                <?php echo($jwtSettings->getLoginSettings()->getRedirect() === LoginSettings::NO_REDIRECT ? 'checked' : ''); ?>
+                    <?php
+                    echo ($jwtSettings->getLoginSettings()->getRedirect() === LoginSettings::NO_REDIRECT
+                        ? 'checked'
+                        : '');
+                    ?>
             />
 
             <label for="no_redirect"><?php echo __('No Redirect', 'simple-jwt-login'); ?></label>
             <br/>
             <input type="radio" id="redirect_custom" name="redirect" class="form-control"
                    value="<?php echo esc_attr(LoginSettings::REDIRECT_CUSTOM); ?>"
-				<?php echo($jwtSettings->getLoginSettings()->getRedirect() === LoginSettings::REDIRECT_CUSTOM ? 'checked' : ''); ?>
+                <?php
+                    echo ($jwtSettings->getLoginSettings()->getRedirect() === LoginSettings::REDIRECT_CUSTOM
+                        ? 'checked'
+                        : '');
+                    ?>
             />
             <label for="redirect_custom"><?php echo __('Custom', 'simple-jwt-login'); ?></label>
             <br/>
             <input type="text" id="redirect_url" name="redirect_url" class="form-control"
-                   placeholder="<?php echo __(
-                    'Example',
-                    'simple-jwt-login'
-                ); ?>: https://www.your-site.com/sample-page"
+                   placeholder="<?php echo __('Example', 'simple-jwt-login'); ?>: https://www.your-site.com/sample-page"
                    value="<?php echo esc_attr($jwtSettings->getLoginSettings()->getCustomRedirectURL()) ?>"
                    style="<?php echo($jwtSettings->getLoginSettings()->getRedirect() === LoginSettings::REDIRECT_CUSTOM
                        ? ''
@@ -229,10 +239,12 @@ if (! defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __(
+        <h3 class="section-title">
+            <?php echo __(
                 'Redirect on Fail autologin',
                 'simple-jwt-login'
-            ); ?>:</h3>
+            ); ?>:
+        </h3>
         <div class="form-group">
             <input type="text" id="login_fail_redirect" name="login_fail_redirect" class="form-control"
                    value="<?php echo esc_attr($jwtSettings->getLoginSettings()->getAutologinRedirectOnFail()); ?>"
@@ -274,24 +286,27 @@ if (! defined('ABSPATH')) {
 			<?php echo $jwtSettings->getLoginSettings()->isRedirectParameterAllowed() ? 'checked' : '' ?>
         />
         <label for="allow_usage_redirect_parameter">
-			<?php echo sprintf(
-                       __(
+			<?php
+            echo sprintf(
+                __(
                     'Allow redirect to a specific URL if `%s` is present in the request.'
                     . ' This option will overwrite previous redirect that was set.',
                     'simple-jwt-login'
                 ),
-                       LoginSettings::REDIRECT_URL_PARAMETER
-                   );
-?>
+                LoginSettings::REDIRECT_URL_PARAMETER
+            );
+            ?>
         </label>
-        <p><?php echo sprintf(
-    __(
-                'You can attach to your redirect an URL parameter `%s`'
-                . ' that will be used for redirect instead of the defined ones.',
-                'simple-jwt-login'
-            ),
-    LoginSettings::REDIRECT_URL_PARAMETER
-);?>
+        <p><?php
+            echo sprintf(
+                __(
+                    'You can attach to your redirect an URL parameter `%s`'
+                    . ' that will be used for redirect instead of the defined ones.',
+                    'simple-jwt-login'
+                ),
+                LoginSettings::REDIRECT_URL_PARAMETER
+            );
+            ?>
         </p>
 
         <div class="simple-jwt-url-variables">

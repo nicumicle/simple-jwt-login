@@ -11,6 +11,7 @@ use SimpleJWTLogin\Modules\WordPressData;
 use SimpleJWTLogin\Services\ServiceInterface;
 
 if (! defined('ABSPATH')) {
+    /** @phpstan-ignore-next-line  */
     exit;
 } // Exit if accessed directly
 
@@ -89,7 +90,7 @@ add_action('rest_api_init', function () {
                         ],
                         400
                     );
-                    die();
+                    return false;
                 }
             }
 
@@ -97,7 +98,7 @@ add_action('rest_api_init', function () {
         }, 0.2);
     }
 
-    if ($jwtSettings->getProtectEndpointsSettings()->isEnabled() ) {
+    if ($jwtSettings->getProtectEndpointsSettings()->isEnabled()) {
         add_action('rest_endpoints', function ($endpoint) use ($routeService, $jwtSettings, $serverHelper, $request) {
             $service = new ProtectEndpointService();
             $service
@@ -106,17 +107,18 @@ add_action('rest_api_init', function () {
                 ->withServerHelper($serverHelper)
                 ->withRouteService($routeService);
 
-            $currentURL =
+            $currentURL = esc_url(
                 "http"
                 . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "s" : "")
-                . "://" . $_SERVER['HTTP_HOST']
-                . $_SERVER['REQUEST_URI'];
-            $currentURL = str_replace( home_url(), "",$currentURL);
+                . "://" . esc_html($_SERVER['HTTP_HOST'])
+                . $_SERVER['REQUEST_URI']
+            );
+            $currentURL = str_replace(home_url(), "", $currentURL);
 
-            $documentRoot = $_SERVER['DOCUMENT_ROOT'];
+            $documentRoot = esc_html($_SERVER['DOCUMENT_ROOT']);
 
             $hasAccess = $service->hasAccess($currentURL, $documentRoot, $request) ;
-            if ($hasAccess=== false ) {
+            if ($hasAccess === false) {
                 @header('Content-Type: application/json; charset=UTF-8');
                 wp_send_json_error(
                     [
@@ -126,7 +128,7 @@ add_action('rest_api_init', function () {
                     ],
                     403
                 );
-                die();
+                return false;
             }
 
             return $endpoint;
@@ -141,7 +143,7 @@ add_action('rest_api_init', function () {
             $route['name'],
             [
                 'methods'  => $route['method'],
-                'callback' => function () use ($request, $route, $routeService, $jwtSettings, $serverHelper) {
+                'callback' => function () use ($request, $route, $jwtSettings, $serverHelper) {
                     try {
                         /** @var ServiceInterface $service */
                         $service = new $route['service']();

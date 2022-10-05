@@ -5,6 +5,7 @@ use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
 if (!defined('ABSPATH')) {
+    /** @phpstan-ignore-next-line  */
     exit;
 } // Exit if accessed directly
 /**
@@ -107,13 +108,13 @@ if (!defined('ABSPATH')) {
                                name="auth_codes[role][]"
                                class="form-control"
                                value="<?php echo esc_attr($code->getRole()); ?>"
-                               placeholder="<?php echo $authCodeRolePlaceholder; ?>"
+                               placeholder="<?php echo esc_attr($authCodeRolePlaceholder); ?>"
                         />
                         <input type="text"
                                name="auth_codes[expiration_date][]"
                                class="form-control"
                                value="<?php echo esc_attr($code->getExpirationDate()); ?>"
-                               placeholder="<?php echo $authCodeExpirationDatePlaceholder; ?>"
+                               placeholder="<?php echo esc_attr($authCodeExpirationDatePlaceholder); ?>"
                         />
                         <div class="input-group-addon auth-code-delete-container">
                             <a href="javascript:void(0)"

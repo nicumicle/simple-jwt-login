@@ -4,7 +4,7 @@ namespace SimpleJwtLoginTests\Libraries;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
-use SimpleJWTLogin\Libraries\JWT;
+use SimpleJWTLogin\Libraries\JWT\JWT;
 
 class JWTTest extends TestCase
 {

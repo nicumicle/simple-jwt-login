@@ -140,8 +140,7 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
     public function validateSettings()
     {
         if (!isset($this->post['route_namespace'])
-            || isset($this->post['route_namespace'])
-            && empty(trim(
+            || empty(trim(
                 $this->post['route_namespace'],
                 ' /'
             ))) {

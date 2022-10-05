@@ -2,16 +2,18 @@
   "name": "nicumicle/simple-jwt-login",
   "description": "Simple JWT Login WordPress plugin",
   "require": {
-    "php": ">=7.0",
-    "phpmd/phpmd": "^2.9"
+    "php": ">=7.0"
   },
   "license": [
     "GPL-2.0-or-later"
   ],
   "require-dev": {
     "friendsofphp/php-cs-fixer": "*",
+    "phpmd/phpmd": "^2.9",
     "phpstan/phpstan": "*",
     "phpunit/phpunit": "*",
+    "roave/security-advisories": "dev-latest",
+    "spaze/phpstan-disallowed-calls": "^2.5",
     "squizlabs/php_codesniffer": "*"
   },
   "autoload": {
@@ -25,14 +27,13 @@
   },
   "scripts": {
     "tests": "vendor/bin/phpunit tests/ --coverage-text",
-    "phpcs": "vendor/bin/phpcs simple-jwt-login/src tests",
-    "phpmd-design": "vendor/bin/phpmd simple-jwt-login/src/ text design",
-    "phpmd-cleancode": "vendor/bin/phpmd simple-jwt-login/src/ text cleancode",
-    "phpmd-unusedcode": "vendor/bin/phpmd simple-jwt-login/src/ text unusedcode",
-    "phpmd-naming": "vendor/bin/phpmd simple-jwt-login/src/ text naming",
-
+    "phpcs": "vendor/bin/phpcs simple-jwt-login/ tests",
+    "phpmd-design": "vendor/bin/phpmd simple-jwt-login/ text design",
+    "phpmd-cleancode": "vendor/bin/phpmd simple-jwt-login/ text cleancode",
+    "phpmd-unusedcode": "vendor/bin/phpmd simple-jwt-login/ text unusedcode",
+    "phpmd-naming": "vendor/bin/phpmd simple-jwt-login/ text naming",
     "phpmd-controversial": "vendor/bin/phpmd simple-jwt-login/ text controversial",
-    "phpstan": "vendor/bin/phpstan analyse simple-jwt-login/src -c phpstan.neon",
+    "phpstan": "vendor/bin/phpstan analyse simple-jwt-login/ -c phpstan.neon --memory-limit=256M",
     "phpmd-test-design" : "vendor/bin/phpmd tests/ text design",
     "phpmd-test-cleancode" : "vendor/bin/phpmd tests/ text cleancode",
     "phpmd-test-unusedcode" : "vendor/bin/phpmd tests/ text unusedcode",

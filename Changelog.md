@@ -1,5 +1,8 @@
 # Changelog - Releases
 
+## Unreleased
+- Add filter to allow the change for authentication payload
+
 ## 3.4.7 (02 October 2022)
 - Remove code vulnerability from the JWT library
 - Stay on current page after saving settings

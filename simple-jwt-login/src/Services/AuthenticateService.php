@@ -59,7 +59,9 @@ class AuthenticateService extends BaseService implements ServiceInterface
         }
         
         // Allow developers to create their own payload values inside of the returned JWT
-        $payload = apply_filters('simple_jwt_login_generate_payload', $payload, $wordPressData, $user);
+        if ($jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::HOOK_GENERATE_PAYLOAD)) {
+            $payload = $wordPressData->triggerFilter(SimpleJWTLoginHooks::HOOK_GENERATE_PAYLOAD, $payload, $user);
+        }
 
         return $payload;
     }

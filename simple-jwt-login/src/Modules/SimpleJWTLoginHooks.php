@@ -23,6 +23,7 @@ class SimpleJWTLoginHooks
     const HOOK_RESPONSE_CHANGE_USER_PASSWORD = 'simple_jwt_login_response_change_user_password';
     const HOOK_RESPONSE_REVOKE_TOKEN = 'simple_jwt_login_response_revoke_token';
     const HOOK_RESPONSE_VALIDATE_TOKEN = 'simple_jwt_login_response_validate_token';
+    const HOOK_GENERATE_PAYLOAD = 'simple_jwt_login_generate_payload';
 
     /**
      * @return array[]
@@ -220,6 +221,24 @@ class SimpleJWTLoginHooks
                     'This is executed before displaying the response of validate token endpoint.',
                     'simple-jwt-login'
                 ),
+            ],
+            [
+                'name' => self::HOOK_GENERATE_PAYLOAD,
+                'type' => self::HOOK_TYPE_FILTER,
+                'parameters' => [
+                    'array $payload',
+                    'WP_User $user'
+                ],
+                'return' => 'array $payload',
+                'description' => __(
+                    'This is executed before generating the JWT payload.',
+                    'simple-jwt-login'
+                ) .
+                    __(
+                        'This will allow you to append extra properties in JWT on authentication.',
+                        'simple-jwt-login'
+                    )
+                ,
             ],
         ];
     }

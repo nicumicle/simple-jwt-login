@@ -78,8 +78,10 @@ add_action('rest_api_init', function () {
             $jwt = $routeService->getJwtFromRequestHeaderOrCookie();
             if (! empty($jwt)) {
                 try {
-                    $userID = $routeService->getUserIdFromJWT($jwt);
-                    wp_set_current_user($userID);
+                    (new WordPressData())
+                        ->loginUser(
+                            $routeService->getUserFromJwt($jwt)
+                        );
                 } catch (\Exception $e) {
                     @header('Content-Type: application/json; charset=UTF-8');
                     wp_send_json_error(

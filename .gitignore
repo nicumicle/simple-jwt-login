@@ -1,11 +1,16 @@
-vendor/*
+# IDEs
 .idea
+.vscode/*
+
+vendor/*
 .phpunit.result.cache
 composer.lock
 .php_cs.cache
 .php-cs-fixer.cache
 clover.xml
-buddypress/*
 simple-logs
+
+# other plugins
+buddypress/*
 mailpoet/*
 simple-jwt-login-mailpoet/*

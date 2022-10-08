@@ -2,6 +2,8 @@
 
 ## Unreleased
 - Add filter to allow the change for authentication payload
+- Change how we log in the user on while using the "protect endpoint" feature
+- Refactor Route Service getUserFromJWT method
 
 ## 3.4.7 (02 October 2022)
 - Remove code vulnerability from the JWT library

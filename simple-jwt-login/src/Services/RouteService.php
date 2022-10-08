@@ -88,6 +88,19 @@ class RouteService extends BaseService
      */
     public function getUserIdFromJWT($jwt)
     {
+        $user = $this->getUserFromJwt($jwt);
+
+        return (int) $this->wordPressData->getUserProperty($user, 'id');
+    }
+
+    /**
+     * @param string $jwt
+     *
+     * @return \WP_User
+     * @throws Exception
+     */
+    public function getUserFromJwt($jwt)
+    {
         $this->jwt = $jwt;
         $userValue = $this->validateJWTAndGetUserValueFromPayload(
             $this->jwtSettings->getLoginSettings()->getJwtLoginByParameter()
@@ -99,6 +112,7 @@ class RouteService extends BaseService
                 ErrorCodes::ERR_GET_USER_ID_FROM_JWT
             );
         }
-        return (int) $this->wordPressData->getUserProperty($user, 'id');
+
+        return $user;
     }
 }

@@ -20,4 +20,4 @@
 ## Checklist:
 - [ ] My code is tested.
 - [ ] I wrote tests for the impacted area
-- [ ] My code follows Simple-JWT-login code style
+- [ ] I ran `composer check-plugin` locally

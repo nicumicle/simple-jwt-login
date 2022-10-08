@@ -47,8 +47,8 @@ class ProtectEndpointServiceTest extends TestCase
             ]));
         $routeService = $this->getMockBuilder(RouteService::class)
             ->getMock();
-        $routeService->method('getUserIdFromJWT')
-            ->willReturn(0);
+        $routeService->method('getUserFromJwt')
+            ->willThrowException(new \Exception());
 
         $service = (new ProtectEndpointService())
             ->withRequest($request)

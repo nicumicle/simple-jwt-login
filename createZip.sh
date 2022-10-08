@@ -6,3 +6,5 @@ cd download/
 zip -r simple-jwt-login.zip simple-jwt-login
 
 rm -rf simple-jwt-login/
+
+echo "done."

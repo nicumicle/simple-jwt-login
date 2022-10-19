@@ -3,12 +3,17 @@
 </p>
 
 <p align="center">
-
    <img src="https://img.shields.io/wordpress/plugin/stars/simple-jwt-login" alt="Rating" />
    <img src="https://img.shields.io/wordpress/plugin/dt/simple-jwt-login" alt="Total Downloads" />
    <img src="https://img.shields.io/wordpress/plugin/installs/simple-jwt-login" alt="Active installs" />
+</p>
+<p align="center">
    <img src="https://img.shields.io/github/contributors/nicumicle/simple-jwt-login" alt="Contributors" />
    <img src="https://img.shields.io/github/last-commit/nicumicle/simple-jwt-login" alt="Last Commit"/>
+   <img src="https://img.shields.io/github/issues-raw/nicumicle/simple-jwt-login" alt="Open issues"/>
+   <img src="https://img.shields.io/github/issues-closed-raw/nicumicle/simple-jwt-login" alt="Closed issues"/>
+   <img src="https://img.shields.io/github/issues-pr/nicumicle/simple-jwt-login" alt="Open pull requests" />
+   <img src="https://img.shields.io/github/issues-pr-closed/nicumicle/simple-jwt-login" alt="Closed pull requests" />
 </p>
 <p align="center">
     <img src="https://img.shields.io/wordpress/plugin/v/simple-jwt-login" alt="Simple-Jwt-Login WordPress.org version"/>
@@ -19,7 +24,7 @@
     <img src="https://img.shields.io/github/v/tag/nicumicle/simple-jwt-login" alt="Current Tag" />
     <img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/php.yml/badge.svg" alt="Check plugin" />
     <img src="https://codecov.io/gh/nicumicle/simple-jwt-login/branch/master/graph/badge.svg?token=dVOwuGQoY3" alt="Coverage"/>
-    <img src="https://img.shields.io/github/license/nicumicle/simple-jwt-login" alt="License"/>
+    <img src="https://img.shields.io/github/license/nicumicle/simple-jwt-login" alt="License" />
 </p>
 
 <p align="center">
@@ -118,7 +123,7 @@ With that in mind, all contributors are expected to follow our [Code of Conduct]
 - Suggest features or report bugs: [issues/bugs](https://github.com/nicumicle/simple-jwt-login/issues/new/choose)
 - Translate the plugin: [https://translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/simple-jwt-login/)
 
-## Contributors
+## :trophy: Contributors
 
 <a href="https://github.com/nicumicle/simple-jwt-login/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=nicumicle/simple-jwt-login" />

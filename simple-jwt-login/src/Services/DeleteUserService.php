@@ -89,7 +89,7 @@ class DeleteUserService extends BaseService implements ServiceInterface
         }
 
         $this->validateJwtRevoked(
-            $this->wordPressData->getUserProperty($user, 'id'),
+            $this->wordPressData->getUserProperty($user, 'ID'),
             $this->jwt
         );
 

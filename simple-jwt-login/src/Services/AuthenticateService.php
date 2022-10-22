@@ -44,7 +44,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
                     $payload[$parameter] = time() + $ttl;
                     break;
                 case AuthenticationSettings::JWT_PAYLOAD_PARAM_ID:
-                    $payload[$parameter] = $wordPressData->getUserProperty($user, 'id');
+                    $payload[$parameter] = $wordPressData->getUserProperty($user, 'ID');
                     break;
                 case AuthenticationSettings::JWT_PAYLOAD_PARAM_EMAIL:
                     $payload[$parameter] = $wordPressData->getUserProperty($user, 'user_email');
@@ -100,8 +100,8 @@ class AuthenticateService extends BaseService implements ServiceInterface
         }
 
         $user = isset($this->request['username'])
-            ? $this->wordPressData->getUserByUserLogin($this->request['username'])
-            : $this->wordPressData->getUserDetailsByEmail($this->request['email']);
+            ? $this->wordPressData->getUserByUserLogin(sanitize_text_field($this->request['username']))
+            : $this->wordPressData->getUserDetailsByEmail(sanitize_text_field($this->request['email']));
 
         if (empty($user)) {
             throw new Exception(
@@ -111,10 +111,10 @@ class AuthenticateService extends BaseService implements ServiceInterface
         }
 
         $password = isset($this->request['password'])
-            ? $this->request['password']
+            ? sanitize_text_field($this->request['password'])
             : null;
         $passwordHash = isset($this->request['password_hash'])
-            ? $this->request['password_hash']
+            ? sanitize_text_field($this->request['password_hash'])
             : null;
 
         $dbPassword = $this->wordPressData->getUserPassword($user);
@@ -129,7 +129,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
 
         //Generate payload
         $payload = isset($this->request['payload'])
-            ? json_decode(stripslashes($this->request['payload']), true)
+            ? json_decode(stripslashes(sanitize_text_field($this->request['payload'])), true)
             : [];
 
         $payload = self::generatePayload(

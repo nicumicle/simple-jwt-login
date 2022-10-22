@@ -46,8 +46,8 @@ class WordPressData implements WordPressDataInterface
      */
     public function loginUser($user)
     {
-        wp_set_current_user($user->get('id'));
-        wp_set_auth_cookie($user->get('id'));
+        wp_set_current_user($user->get('ID'));
+        wp_set_auth_cookie($user->get('ID'));
 
         do_action('wp_login', $user->user_login, $user);
     }
@@ -197,7 +197,7 @@ class WordPressData implements WordPressDataInterface
      */
     public function deleteUser($user)
     {
-        $userId = $user->get('id');
+        $userId = $user->get('ID');
         $return = wp_delete_user($userId);
 
         return $return === false
@@ -238,7 +238,7 @@ class WordPressData implements WordPressDataInterface
      */
     public function getUserIdFromUser($user)
     {
-        return $user->get('id');
+        return $user->get('ID');
     }
 
     /**

@@ -66,7 +66,7 @@ class RedirectService extends BaseService implements ServiceInterface
             && isset($this->request['redirectUrl'])
             && !empty($this->request['redirectUrl'])
         ) {
-            $url = $this->request['redirectUrl'];
+            $url = sanitize_text_field($this->request['redirectUrl']);
         }
 
         $url = $this->includeRequestParameters($url);
@@ -111,8 +111,8 @@ class RedirectService extends BaseService implements ServiceInterface
         /** @var array<string,string> $replace */
         $replace = [
             '{{site_url}}' => $this->wordPressData->getSiteUrl() ? $this->wordPressData->getSiteUrl() : '{{site_url}}',
-            '{{user_id}}' => $this->wordPressData->getUserProperty($user, 'id') ?
-                $this->wordPressData->getUserProperty($user, 'id') : '{{user_id}}',
+            '{{user_id}}' => $this->wordPressData->getUserProperty($user, 'ID') ?
+                $this->wordPressData->getUserProperty($user, 'ID') : '{{user_id}}',
             '{{user_email}}' => $this->wordPressData->getUserProperty($user, 'user_email') ?
                 $this->wordPressData->getUserProperty($user, 'user_email') : '{{user_email}}',
             '{{user_login}}' => $this->wordPressData->getUserProperty($user, 'user_login') ?

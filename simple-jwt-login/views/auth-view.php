@@ -382,7 +382,8 @@ if (! defined('ABSPATH')) {
             ?>
         </p>
         <div class="generated-code">
-            <span class="method">GET:</span>
+            <span class="method">GET</span>
+            <span class="method">POST:</span>
             <span class="code">
                 <?php
                 $sampleUrlParams = [

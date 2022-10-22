@@ -63,6 +63,11 @@ class RouteService extends BaseService
                 'service' => ValidateTokenService::class,
             ],
             [
+                'name' => self::AUTHENTICATION_VALIDATE_ROUTE,
+                'method' => self::METHOD_POST,
+                'service' => ValidateTokenService::class,
+            ],
+            [
                 'name' => self::AUTHENTICATION_REVOKE,
                 'method' => self::METHOD_POST,
                 'service' => RevokeTokenService::class,

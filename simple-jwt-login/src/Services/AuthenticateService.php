@@ -100,8 +100,12 @@ class AuthenticateService extends BaseService implements ServiceInterface
         }
 
         $user = isset($this->request['username'])
-            ? $this->wordPressData->getUserByUserLogin(sanitize_text_field($this->request['username']))
-            : $this->wordPressData->getUserDetailsByEmail(sanitize_text_field($this->request['email']));
+            ? $this->wordPressData->getUserByUserLogin(
+                $this->wordPressData->sanitizeTextField($this->request['username'])
+            )
+            : $this->wordPressData->getUserDetailsByEmail(
+                $this->wordPressData->sanitizeTextField($this->request['email'])
+            );
 
         if (empty($user)) {
             throw new Exception(
@@ -111,10 +115,10 @@ class AuthenticateService extends BaseService implements ServiceInterface
         }
 
         $password = isset($this->request['password'])
-            ? sanitize_text_field($this->request['password'])
+            ? $this->wordPressData->sanitizeTextField($this->request['password'])
             : null;
         $passwordHash = isset($this->request['password_hash'])
-            ? sanitize_text_field($this->request['password_hash'])
+            ? $this->wordPressData->sanitizeTextField($this->request['password_hash'])
             : null;
 
         $dbPassword = $this->wordPressData->getUserPassword($user);
@@ -129,7 +133,12 @@ class AuthenticateService extends BaseService implements ServiceInterface
 
         //Generate payload
         $payload = isset($this->request['payload'])
-            ? json_decode(stripslashes(sanitize_text_field($this->request['payload'])), true)
+            ? json_decode(
+                stripslashes(
+                    $this->wordPressData->sanitizeTextField($this->request['payload'])
+                ),
+                true
+            )
             : [];
 
         $payload = self::generatePayload(

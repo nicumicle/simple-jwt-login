@@ -66,7 +66,7 @@ class RedirectService extends BaseService implements ServiceInterface
             && isset($this->request['redirectUrl'])
             && !empty($this->request['redirectUrl'])
         ) {
-            $url = sanitize_text_field($this->request['redirectUrl']);
+            $url = $this->wordPressData->sanitizeTextField($this->request['redirectUrl']);
         }
 
         $url = $this->includeRequestParameters($url);

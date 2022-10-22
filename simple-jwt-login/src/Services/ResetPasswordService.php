@@ -53,7 +53,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
 
         $this->validateChangePassword();
 
-        $newPassword = sanitize_text_field($this->request['new_password']);
+        $newPassword = $this->wordPressData->sanitizeTextField($this->request['new_password']);
 
         $jwtAllowed = $this->jwtSettings->getResetPasswordSettings()->isJwtAllowed();
         if ($jwtAllowed === false && empty($this->request['code'])) {
@@ -110,7 +110,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
     private function sendResetPassword()
     {
         $this->validateSendResetPassword();
-        $email = sanitize_text_field($this->request['email']);
+        $email = $this->wordPressData->sanitizeTextField($this->request['email']);
 
         $user = $this->wordPressData->getUserDetailsByEmail($email);
         if (empty($user)) {
@@ -277,8 +277,11 @@ class ResetPasswordService extends BaseService implements ServiceInterface
             return $user;
         }
 
-        $code = sanitize_text_field($this->request['code']);
-        $user = $this->wordPressData->checkPasswordResetKey($code, sanitize_text_field($this->request['email']));
+        $code = $this->wordPressData->sanitizeTextField($this->request['code']);
+        $user = $this->wordPressData->checkPasswordResetKey(
+            $code,
+            $this->wordPressData->sanitizeTextField($this->request['email'])
+        );
         if (empty($user)) {
             throw new Exception(
                 __('Invalid code provided.', 'simple-jwt-login'),

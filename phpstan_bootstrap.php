@@ -124,6 +124,7 @@ if (!function_exists('is_email')) {
 if (!function_exists('sanitize_text_field')) {
     function sanitize_text_field($value)
     {
+        return $value;
     }
 }
 if (!function_exists('wp_delete_user')) {

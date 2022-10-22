@@ -98,7 +98,7 @@ class RevokeTokenService extends AuthenticateService
                 $this->wordPressData->deleteUserMeta(
                     $userId,
                     SimpleJWTLoginSettings::REVOKE_TOKEN_KEY,
-                    sanitize_text_field($token)
+                    $this->wordPressData->sanitizeTextField($token)
                 );
             }
         }

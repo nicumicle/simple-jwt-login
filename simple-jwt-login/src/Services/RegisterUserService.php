@@ -34,10 +34,10 @@ class RegisterUserService extends BaseService implements ServiceInterface
      */
     public function createUser()
     {
-        $email = sanitize_text_field($this->request['email']);
+        $email = $this->wordPressData->sanitizeTextField($this->request['email']);
         $extraParameters = UserProperties::getExtraParametersFromRequest($this->request);
         $username = !empty($extraParameters['user_login'])
-            ? sanitize_text_field($extraParameters['user_login'])
+            ? $this->wordPressData->sanitizeTextField($extraParameters['user_login'])
             : $email;
 
         if ($this->wordPressData->checkUserExistsByUsernameAndEmail($username, $email) == true) {
@@ -49,7 +49,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
 
         $password = $this->jwtSettings->getRegisterSettings()->isRandomPasswordForCreateUserEnabled()
             ? $this->randomString(10)
-            : sanitize_text_field($this->request['password']);
+            : $this->wordPressData->sanitizeTextField($this->request['password']);
 
         $newUserRole = $this->jwtSettings->getRegisterSettings()->getNewUSerProfile();
         if (isset($this->request[$this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()])) {
@@ -75,14 +75,18 @@ class RegisterUserService extends BaseService implements ServiceInterface
         $userId = $this->wordPressData->getUserIdFromUser($user);
 
         if (!empty($this->request['user_meta'])) {
-            $userMeta = sanitize_text_field($this->request['user_meta']);
+            $userMeta = $this->wordPressData->sanitizeTextField($this->request['user_meta']);
             if (is_string($userMeta)) {
                 $userMeta = json_decode($this->request['user_meta'], true);
                 if ($userMeta === null
                     && strpos($this->request['user_meta'], '\\"') !== false
                 ) {
                     $userMeta = json_decode(
-                        stripslashes(sanitize_text_field($this->request['user_meta'])),
+                        stripslashes(
+                            $this->wordPressData->sanitizeTextField(
+                                $this->request['user_meta']
+                            )
+                        ),
                         true
                     );
                 }
@@ -98,8 +102,8 @@ class RegisterUserService extends BaseService implements ServiceInterface
                     }
                     $this->wordPressData->addUserMeta(
                         $userId,
-                        sanitize_text_field($metaKey),
-                        sanitize_text_field($metaValue)
+                        $this->wordPressData->sanitizeTextField($metaKey),
+                        $this->wordPressData->sanitizeTextField($metaValue)
                     );
                 }
             }
@@ -222,7 +226,10 @@ class RegisterUserService extends BaseService implements ServiceInterface
         }
 
         if (!empty($this->jwtSettings->getRegisterSettings()->getAllowedRegisterDomain())) {
-            $parts = explode('@', sanitize_text_field($this->request['email']));
+            $parts = explode(
+                '@',
+                $this->wordPressData->sanitizeTextField($this->request['email'])
+            );
             if (!isset($parts[1])
                 || !in_array(
                     $parts[1],

@@ -12,10 +12,13 @@ License URI: https://www.gnu.org/licenses/quick-guide-gplv3.html
 
 == Description ==
 
-This plugin allows you to login, register, authenticate, delete and change user password to a WordPress website using a JWT.
-It's main purpose is to allow you to connect a mobile App with a WordPress website. 
+Simple JWT Login is a FREE WordPress plugin that allows you to use a JWT on WordPress REST endpoints.
 
-Plugin Documentation Site: [Documentation](https://simplejwtlogin.com?utm_source=readme)
+This plugin allows you to login, register, authenticate, delete and change user password to a WordPress website using a JWT.
+
+It's main purpose is to allow you to connect a mobile App or other websites with WordPress. 
+
+Plugin Documentation Site: [https://simplejwtlogin.com](https://simplejwtlogin.com?utm_source=readme)
 
 == Some awesome features ==
 
@@ -74,9 +77,10 @@ Here are the variables which you can use in your URL:
 You can generate dynamic URLs with these variables, and, before the redirect, the specific value will be replaced.
 
 Here is an example:
-```
+
+``
     http://yourdomain.com?param1={{user_id}}&param2={{user_login}}
-``` 
+`` 
 
 Also, this plugin allows you to limit the auto-login based on the client IP address.
 If you are concerned about security, you can limit the auto-login only from some IP addresses.
@@ -109,26 +113,26 @@ If you want to add custom user_meta on user creation, just add the parameter `us
 
 These properties can be passed in the request when the new user is created.
 
-- *email* : (required) (string)  The user email address.
-- *password* :  (required) (string) The plain-text user password.
-- *user_login* : (string) The user's login username.
-- *user_nicename* : (string) The URL-friendly user name.
-- *user_url* : (string) The user URL.
-- *display_name* : (string) The user's display name. Default is the user's username.
-- *nickname* : (string) The user's nickname. Default is the user's username.
-- *first_name* : (string) The user's first name. For new users, will be used to build the first part of the user's display name if $display_name is not specified.
-- *last_name* : (string) The user's last name. For new users, will be used to build the second part of the user's display name if $display_name is not specified.
-- *description* : (string) The user's biographical description.
-- *rich_editing* : (string) Whether to enable the rich-editor for the user. Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'.
-- *syntax_highlighting* : (string) Whether to enable the rich code editor for the user. Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'.
-- *comment_shortcuts* : (string) Whether to enable comment moderation keyboard shortcuts for the user. Accepts 'true' or 'false' as a string literal, not boolean. Default 'false'.
-- *admin_color* : (string) Admin color scheme for the user. Default 'fresh'.
-- *use_ssl* : (bool) Whether the user should always access the admin over https. Default false.
-- *user_registered* : (string) Date the user registered. Format is `Y-m-d H:m:s`.
-- *user_activation_key* : (string) Password reset key. Default empty.
-- *spam* : (bool) Multisite only. Whether the user is marked as spam. Default false.
-- *show_admin_bar_front* : (string) Whether to display the Admin Bar for the user on the site's front end. Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'.
-- *locale* : (string) User's locale. Default empty.
+- **email** : (required) (string)  The user email address.
+- **password** :  (required) (string) The plain-text user password.
+- **user_login** : (string) The user's login username.
+- **user_nicename** : (string) The URL-friendly username.
+- **user_url** : (string) The user URL.
+- **display_name** : (string) The user's display name. Default is the user's username.
+- **nickname** : (string) The user's nickname. Default is the user's username.
+- **first_name** : (string) The user's first name. For new users, will be used to build the first part of the user's display name if $display_name is not specified.
+- **last_name** : (string) The user's last name. For new users, will be used to build the second part of the user's display name if $display_name is not specified.
+- **description** : (string) The user's biographical description.
+- **rich_editing** : (string) Whether to enable the rich-editor for the user. Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'.
+- **syntax_highlighting** : (string) Whether to enable the rich code editor for the user. Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'.
+- **comment_shortcuts** : (string) Whether to enable comment moderation keyboard shortcuts for the user. Accepts 'true' or 'false' as a string literal, not boolean. Default 'false'.
+- **admin_color** : (string) Admin color scheme for the user. Default 'fresh'.
+- **use_ssl** : (bool) Whether the user should always access the admin over https. Default false.
+- **user_registered** : (string) Date the user registered. Format is `Y-m-d H:m:s`.
+- **user_activation_key** : (string) Password reset key. Default empty.
+- **spam** : (bool) Multisite only. Whether the user is marked as spam. Default false.
+- **show_admin_bar_front** : (string) Whether to display the Admin Bar for the user on the site's front end. Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'.
+- **locale** : (string) User's locale. Default empty.
 
 == Delete User ==
 
@@ -164,7 +168,8 @@ In order to Get a new JWT, just make a POST request to */auth* route with your W
              "jwt": "NEW_GENERATED_JWT_HERE"
          }
      }
-`` 
+``
+
 If you want to add extra parameters in the JWT payload, just send the parameter `payload` on `/auth` endpoint, and add a json with the values you want to be added in the payload.
 
 At some point, the JWT will expire.
@@ -193,45 +198,47 @@ Expiration date format: year-month-day hours:minutes:seconds
 == Hooks ==
 
 This plugin allows advanced users to link some hooks with the plugin and perform some custom scripts.
-Currently, available hooks are:
+Some available hooks:
 
-- simple_jwt_login_login_hook
+- **simple_jwt_login_login_hook**
   - type: action
   - parameters: Wp_User $user
   - description: This hook it is called after the user has been logged in. 
   
-- simple_jwt_login_redirect_hook
+- **simple_jwt_login_redirect_hook**
   - type: action
   - parameters: string $url, array $request
   - description: This hook it is called before the user it will be redirected to the page he specified in the login section. 
   
-- simple_jwt_login_register_hook
+- **simple_jwt_login_register_hook**
   - type: action
   - parameters: Wp_User $user, string $plain_text_password
   - description: This hook it is called after a new user has been created.  
   
-- simple_jwt_login_delete_user_hook
+- **simple_jwt_login_delete_user_hook**
   - type: action
   - parameters: Wp_User $user
   - description: This hook it is called right after the user has been deleted.
 
-- simple_jwt_login_jwt_payload_auth
+- **simple_jwt_login_jwt_payload_auth**
   - type: filter
   - parameters: array $payload, array $request
   - return: array $payload
   - description: This hook is called on /auth endpoint. Here you can modify payload parameters. 
 
-- simple_jwt_login_no_redirect_message 
+- **simple_jwt_login_no_redirect_message**
   - type: filter
   - parameters: array $payload, array $request
   - return: array $payload
   - description: This hook is called on /autologin endpoint when the option `No Redirect` is selected. You can customize the message and add parameters.
 
-- simple_jwt_login_reset_password_custom_email_template
+- **simple_jwt_login_reset_password_custom_email_template**
   - type: filter
   - parameters: string $template, array $request
   - return: string $template
   - description: This is executed when POST /user/reset_password is called. It will replace the email template that has been added in Reset Password settings  
+
+View full list of hooks on [https://simplejwtlogin.com/docs/hooks](https://simplejwtlogin.com/docs/hooks).
 
 == CORS ==
 The CORS standard it is needed because it allows servers to specify who can access its assets and how the assets can be accessed.
@@ -316,7 +323,7 @@ Please note that the JWT that is set in the header overwrites the one from the U
 Example:
 
 ``
-    Authorization: Bearer YOURJWTTOKEN
+Authorization: Bearer YOURJWTTOKEN
 ``
 
 or
@@ -404,7 +411,7 @@ After that, for the create user route, simply add the AUTH code in the request, 
 
 The [Changelog](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md) can be found in the GitHub repository [https://github.com/nicumicle/simple-jwt-login](https://github.com/nicumicle/simple-jwt-login).
 
-Also, here you can find the beta version of the plugin, before it is released
+Also,  here you can find the beta version of the plugin, before it is released
 
 = 3.4.7 (02 Oct 2022) =
 - Remove unused code from the JWT library

@@ -28,12 +28,13 @@
 </p>
 
 <p align="center">
-    Simple JWT Login is a WordPress plugin that allows you to use a JWT on WordPress REST endpoints.
+    <b>Simple JWT Login</b> is a <b>free</b> WordPress plugin that allows you to use a JWT on WordPress REST endpoints.
 </p>
 <p align="center">
     The main purpose of this plugin is to allow Mobile apps, or other websites to access the content from a WordPress website via REST endpoints in a secure way.
 </p>
 
+## Overview
 <p align="center">
     <img src="https://github.com/nicumicle/simple-jwt-login/blob/master/wordpress.org/assets/schema.png?raw=true" alt="Simple-JWT-Login schema" />
 </p>
@@ -49,8 +50,11 @@ Table of contents
 * [Integrate](#electric_plug-integrate)
   * [PHP SDK](#php-sdk)
 * [Documentation](#ledger-documentation)
+* [Roadmap](#rocket-roadmap)
 * [Contribute](#scroll-contribute)
   * [How can you contribute](#how-can-you-contribute)
+* [Contributors](#trophy-contributors)
+
 <!--te-->
 
 ## :bulb: Installation
@@ -109,6 +113,11 @@ Plugin documentation is available at [simplejwtlogin.com](https://simplejwtlogin
 - [Protect Endpoints](https://simplejwtlogin.com/docs/protect-endpoints)<br>
 - [Hooks](https://simplejwtlogin.com/docs/hooks)
 
+
+## :rocket: Roadmap
+
+Check out the [roadmap](https://github.com/users/nicumicle/projects/1) to get informed on the latest released features, current statuses, and upcoming features.
+
 ## :scroll: Contribute
 
 Simple-JTW-Login is an open-source project and welcomes all contributors.
@@ -124,7 +133,14 @@ With that in mind, all contributors are expected to follow our [Code of Conduct]
 - Translate the plugin: [https://translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/simple-jwt-login/)
 
 ## :trophy: Contributors
+Thanks to all our contributors!
 
 <a href="https://github.com/nicumicle/simple-jwt-login/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=nicumicle/simple-jwt-login" />
 </a>
+
+## Copyright
+
+This project is distributed under the [GNU General Public License v3.0](https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE).
+
+By submitting a pull request to this project, you agree to license your contribution under the GNU General Public License v3.0 to this project.

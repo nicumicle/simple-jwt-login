@@ -43,16 +43,16 @@ class RevokeTokenService extends AuthenticateService
         }
 
         $userRevokedTokens = $this->getUserRevokedTokensFromDatabase(
-            $this->wordPressData->getUserProperty($user, 'id')
+            $this->wordPressData->getUserProperty($user, 'ID')
         );
         $this->cleanUpUserExpiredTokens(
             $userRevokedTokens,
-            $this->wordPressData->getUserProperty($user, 'id')
+            $this->wordPressData->getUserProperty($user, 'ID')
         );
         $this->checkIfTokenIsAlreadyRevoked($userRevokedTokens);
 
         $this->wordPressData->addUserMeta(
-            $this->wordPressData->getUserProperty($user, 'id'),
+            $this->wordPressData->getUserProperty($user, 'ID'),
             SimpleJWTLoginSettings::REVOKE_TOKEN_KEY,
             $this->jwt
         );
@@ -95,7 +95,11 @@ class RevokeTokenService extends AuthenticateService
         foreach ($revokedTokens as $token) {
             $payload = $this->getPayloadFromJWT($token);
             if (isset($payload['exp']) && $payload['exp'] < $currentTime) {
-                $this->wordPressData->deleteUserMeta($userId, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY, $token);
+                $this->wordPressData->deleteUserMeta(
+                    $userId,
+                    SimpleJWTLoginSettings::REVOKE_TOKEN_KEY,
+                    sanitize_text_field($token)
+                );
             }
         }
     }

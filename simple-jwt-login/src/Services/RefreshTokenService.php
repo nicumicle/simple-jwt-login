@@ -69,7 +69,7 @@ class RefreshTokenService extends AuthenticateService
         if ($user !== null) {
             $userMeta = $this->wordPressData
                 ->getUserMeta(
-                    $this->wordPressData->getUserProperty($user, 'id'),
+                    $this->wordPressData->getUserProperty($user, 'ID'),
                     SimpleJWTLoginSettings::REVOKE_TOKEN_KEY
                 );
             foreach ($userMeta as $key) {

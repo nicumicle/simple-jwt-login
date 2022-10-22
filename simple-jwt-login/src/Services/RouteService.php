@@ -90,7 +90,7 @@ class RouteService extends BaseService
     {
         $user = $this->getUserFromJwt($jwt);
 
-        return (int) $this->wordPressData->getUserProperty($user, 'id');
+        return (int) $this->wordPressData->getUserProperty($user, 'ID');
     }
 
     /**

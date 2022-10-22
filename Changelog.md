@@ -5,6 +5,8 @@
 - Change how we log in the user on while using the "protect endpoint" feature
 - Refactor Route Service getUserFromJWT method
 - Update License to GPL v3
+- Sanitize data from request
+- Fix password that contains special characters [#50](https://github.com/nicumicle/simple-jwt-login/issues/50)
 
 ## 3.4.7 (02 October 2022)
 - Remove code vulnerability from the JWT library

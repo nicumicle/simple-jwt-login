@@ -48,7 +48,7 @@ class ValidateTokenService extends AuthenticateService
         }
 
         $this->validateJwtRevoked(
-            $this->wordPressData->getUserProperty($user, 'id'),
+            $this->wordPressData->getUserProperty($user, 'ID'),
             $this->jwt
         );
 

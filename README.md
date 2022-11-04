@@ -27,6 +27,14 @@
     <img src="https://img.shields.io/github/license/nicumicle/simple-jwt-login" alt="License" />
 </p>
 
+<div align="center">
+  <a href="https://github.com/nicumicle/simple-jwt-login/issues/new?assignees=&labels=bug&template=bug_report.md&title=bug%3A+">Report a Bug</a>
+  ·
+  <a href="https://github.com/nicumicle/simple-jwt-login/issues/new?assignees=&labels=feature-request&template=feature_request.md&title=feature%3A+">Request a Feature</a>
+  ·
+  <a href="https://github.com/nicumicle/simple-jwt-login/discussions">Ask a Question</a>
+</div>
+
 <p align="center">
     <b>Simple JWT Login</b> is a <b>free</b> WordPress plugin that allows you to use a JWT on WordPress REST endpoints.
 </p>
@@ -49,6 +57,7 @@ Table of contents
 * [Features](#tada-features)
 * [Integrate](#electric_plug-integrate)
   * [PHP SDK](#php-sdk)
+  * [JavaScript SDK](#javascript-sdk)
 * [Documentation](#ledger-documentation)
 * [Roadmap](#rocket-roadmap)
 * [Contribute](#scroll-contribute)
@@ -97,7 +106,27 @@ In order to install the latest stable version, from your WordPress admin:
 
 In order to easily integrate your app/site with the simple-jwt-login plugin, we have developed a composer package.
 
+```shell
+composer require nicumicle/simple-jwt-login-client-php
+```
+
 You can check this [GitHub repository](https://github.com/nicumicle/simple-jwt-login-client-php) for more details and code examples.
+
+### JavaScript SDK
+
+The Javascript SDK can be installed using `npm` or `yarn` into your App.
+
+```shell
+npm install "simple-jwt-login"
+```
+
+or
+
+```shell
+yarn add "simple-jwt-login"
+```
+
+You can check this [GitHub repository](https://github.com/simple-jwt-login/js-sdk) for more details.
 
 
 ## :ledger: Documentation
@@ -117,6 +146,10 @@ Plugin documentation is available at [simplejwtlogin.com](https://simplejwtlogin
 ## :rocket: Roadmap
 
 Check out the [roadmap](https://github.com/users/nicumicle/projects/1) to get informed on the latest released features, current statuses, and upcoming features.
+
+- [Top Feature Requests](https://github.com/nicumicle/simple-jwt-login/issues?q=label%3Afeature-request+is%3Aopen+sort%3Areactions-%2B1-desc) (Add your votes using the 👍 reaction)
+- [Top Bugs](https://github.com/nicumicle/simple-jwt-login/issues?q=is%3Aissue+is%3Aopen+label%3Abug+sort%3Areactions-%2B1-desc) (Add your votes using the 👍 reaction)
+- [Newest Bugs](https://github.com/nicumicle/simple-jwt-login/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
 
 ## :scroll: Contribute
 

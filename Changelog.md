@@ -1,6 +1,8 @@
 # Changelog - Releases
 
 ## Unreleased
+
+## 3.4.8 (04 Nov 2022)
 - Add filter to allow the change for authentication payload
 - Change how we log in the user on while using the "protect endpoint" feature
 - Refactor Route Service getUserFromJWT method

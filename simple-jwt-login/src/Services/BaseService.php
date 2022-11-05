@@ -328,6 +328,7 @@ abstract class BaseService
 
             $url = $url . (strpos('?', $url) !== false ? '&' : '?') . http_build_query($requestParams);
         }
+
         return $url;
     }
 }

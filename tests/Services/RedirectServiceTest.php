@@ -8,6 +8,7 @@ use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Modules\WordPressDataInterface;
 use SimpleJWTLogin\Services\RedirectService;
+use WP_User;
 
 class RedirectServiceTest extends TestCase
 {
@@ -21,6 +22,15 @@ class RedirectServiceTest extends TestCase
         parent::setUp();
         $this->wordPressDataMock = $this
             ->getMockBuilder(WordPressDataInterface::class)
+            ->getMock();
+        $this->wordPressDataMock->method('sanitizeTextField')
+            ->willReturnCallback(
+                function ($parameter) {
+                    return $parameter;
+                }
+            );
+
+        $this->user = $this->getMockBuilder(WP_User::class)
             ->getMock();
     }
 
@@ -41,10 +51,13 @@ class RedirectServiceTest extends TestCase
         $this->wordPressDataMock
             ->method('createResponse')
             ->willReturn(true);
+        $this->wordPressDataMock->method('getAdminUrl')
+            ->willReturn('https://admin.com');
 
         $response = (new RedirectService())
             ->withRequest([])
             ->withCookies([])
+            ->withUser($this->user)
             ->withSettings(
                 new SimpleJWTLoginSettings(
                     $this->wordPressDataMock
@@ -89,6 +102,7 @@ class RedirectServiceTest extends TestCase
                     $this->wordPressDataMock
                 )
             )
+            ->withUser($this->user)
             ->withSession([])
             ->makeAction();
         $this->assertSame(null, $response);
@@ -108,6 +122,8 @@ class RedirectServiceTest extends TestCase
         $this->wordPressDataMock
             ->method('createResponse')
             ->willReturn(true);
+        $this->wordPressDataMock->method('getSiteUrl')
+            ->willReturn('https://google.com');
 
         $response = (new RedirectService())
             ->withRequest([])
@@ -118,6 +134,7 @@ class RedirectServiceTest extends TestCase
                 )
             )
             ->withSession([])
+            ->withUser($this->user)
             ->makeAction();
         $this->assertSame(null, $response);
     }

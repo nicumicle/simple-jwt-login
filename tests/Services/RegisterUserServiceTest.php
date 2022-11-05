@@ -27,6 +27,12 @@ class RegisterUserServiceTest extends TestCase
         $this->wordPressDataMock = $this
             ->getMockBuilder(WordPressDataInterface::class)
             ->getMock();
+        $this->wordPressDataMock->method('sanitizeTextField')
+            ->willReturnCallback(
+                function ($parameter) {
+                    return $parameter;
+                }
+            );
     }
 
     /**
@@ -47,7 +53,6 @@ class RegisterUserServiceTest extends TestCase
         $isEmail = isset($request['email']) && $request['email'] !== '---';
         $this->wordPressDataMock->method('isEmail')
             ->willReturn($isEmail);
-
 
         $service = (new RegisterUserService())
             ->withRequest($request)
@@ -275,6 +280,8 @@ class RegisterUserServiceTest extends TestCase
         $this->wordPressDataMock->method('getUserIdFromUser')
             ->willReturn(1);
 
+        $this->wordPressDataMock->method('getAdminUrl')
+            ->willReturn('https://admin.com');
         $service = (new RegisterUserService())
             ->withRequest([
                 'email' => 'test@test.com',

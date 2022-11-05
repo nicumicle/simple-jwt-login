@@ -26,6 +26,15 @@ class LoginServiceTest extends TestCase
         $this->wordPressDataMock = $this
             ->getMockBuilder(WordPressDataInterface::class)
             ->getMock();
+
+        $this->wordPressDataMock->method('sanitizeTextField')
+            ->willReturnCallback(
+                function ($parameter) {
+                    return $parameter;
+                }
+            );
+        $this->wordPressDataMock->method('getAdminUrl')
+            ->willReturn('https://admin.com');
     }
 
     /**

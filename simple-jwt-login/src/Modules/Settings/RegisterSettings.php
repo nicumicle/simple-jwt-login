@@ -57,6 +57,15 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
 
         $this->assignSettingsPropertyFromPost(
             null,
+            'random_password_length',
+            null,
+            'random_password_length',
+            BaseSettings::SETTINGS_TYPE_INT,
+            10
+        );
+
+        $this->assignSettingsPropertyFromPost(
+            null,
             'register_force_login',
             null,
             'register_force_login',
@@ -100,6 +109,35 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
                 $this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_REGISTER,
                     SettingsErrors::ERR_REGISTER_INVALID_ROLE
+                )
+            );
+        }
+
+        if (isset($this->post['random_password_length']) && !is_numeric($this->post['random_password_length'])) {
+            throw new Exception(
+                __('Random password length should be an integer.', 'simple-jwt-login'),
+                $this->settingsErrors->generateCode(
+                    SettingsErrors::PREFIX_REGISTER,
+                    SettingsErrors::ERR_REGISTER_RANDOM_PASS_LENGTH_NUMERIC
+                )
+            );
+        }
+
+        if (isset($this->post['random_password_length']) && ((int)$this->post['random_password_length'] < 6)) {
+            throw new Exception(
+                __('Random password length should be at least 6 characters.', 'simple-jwt-login'),
+                $this->settingsErrors->generateCode(
+                    SettingsErrors::PREFIX_REGISTER,
+                    SettingsErrors::ERR_REGISTER_RANDOM_PASS_LENGTH_MIN_LENGTH
+                )
+            );
+        }
+        if (isset($this->post['random_password_length']) && ((int)$this->post['random_password_length'] >= 255)) {
+            throw new Exception(
+                __('Random password length can be max 255.', 'simple-jwt-login'),
+                $this->settingsErrors->generateCode(
+                    SettingsErrors::PREFIX_REGISTER,
+                    SettingsErrors::ERR_REGISTER_RANDOM_PASS_LENGTH_MAX_LENGTH
                 )
             );
         }
@@ -161,6 +199,16 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
         return isset($this->settings['random_password'])
             ? (bool)$this->settings['random_password']
             : false;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRandomPasswordLength()
+    {
+        return isset($this->settings['random_password_length'])
+            ? (int)$this->settings['random_password_length']
+            : 10;
     }
 
     /**

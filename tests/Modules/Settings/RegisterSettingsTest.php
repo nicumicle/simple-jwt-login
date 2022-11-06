@@ -35,6 +35,7 @@ class RegisterSettingsTest extends TestCase
             'register_domain' => 'test.com',
             'require_register_auth' => '0',
             'random_password' => '1',
+            'random_password_length' => '100',
             'register_force_login' => '1',
             'allowed_user_meta' => 'test',
         ];
@@ -72,10 +73,17 @@ class RegisterSettingsTest extends TestCase
             true,
             $registerSettings->isRandomPasswordForCreateUserEnabled()
         );
+
+        $this->assertSame(
+            100,
+            $registerSettings->getRandomPasswordLength()
+        );
+
         $this->assertSame(
             true,
             $registerSettings->isForceLoginAfterCreateUserEnabled()
         );
+
         $this->assertSame(
             'test',
             $registerSettings->getAllowedUserMeta()
@@ -121,6 +129,32 @@ class RegisterSettingsTest extends TestCase
     }
 
     /**
+     * @dataProvider passwordLengthProvider
+     * @param mixed $passwordLength
+     * @param string $expectedException
+     * @return void
+     * @throws Exception
+     */
+    public function testInvalidPasswordLength($passwordLength, $expectedException)
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage($expectedException);
+        $this->wordPressData->method('roleExists')
+            ->willReturn(true);
+
+        $registerUser = (new RegisterSettings())
+            ->withWordPressData($this->wordPressData)
+            ->withSettings([])
+            ->withPost([
+                'allow_register' => '1',
+                'new_user_profile' => 'subscriber',
+                'random_password_length' => $passwordLength,
+            ]);
+        $registerUser->initSettingsFromPost();
+        $registerUser->validateSettings();
+    }
+
+    /**
      * @return array
      */
     public function invalidRoleProvider()
@@ -134,6 +168,47 @@ class RegisterSettingsTest extends TestCase
                 'role' => 'test',
                 'exception' => 'Invalid user role provided.',
             ]
+        ];
+    }
+
+    /**
+     * @return array<string,array<string,mixed>>
+     */
+    public function passwordLengthProvider()
+    {
+        return [
+            'one' => [
+                'password_length' => '1',
+                'expected_exception' => 'Random password length should be at least 6 characters.',
+            ],
+            'negative_value' => [
+                'password_length' => '-1',
+                'expected_exception' => 'Random password length should be at least 6 characters.',
+            ],
+            'max_length' => [
+                'password_length' => '256',
+                'expected_exception' => 'Random password length can be max 255.',
+            ],
+            'letters' => [
+                'password_length' => 'abc',
+                'expected_exception' => 'Random password length should be an integer.',
+            ],
+            'letters_and_number' => [
+                'password_length' => 'abc123',
+                'expected_exception' => 'Random password length should be an integer.',
+            ],
+            'number_and_letters' => [
+                'password_length' => '123abc',
+                'expected_exception' => 'Random password length should be an integer.',
+            ],
+            'empty_value' => [
+                'password_length' => '',
+                'expected_exception' => 'Random password length should be an integer.',
+            ],
+            'empty_space' => [
+                'password_length' => ' ',
+                'expected_exception' => 'Random password length should be an integer.',
+            ],
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 ## Unreleased
 - Add Strength indicator for JWT decryption key
+- Allow setting custom length for random password. The default is 10 characters.
 
 ## 3.4.8 (04 Nov 2022)
 - Add filter to allow the change for authentication payload

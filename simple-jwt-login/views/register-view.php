@@ -153,7 +153,30 @@ if (!defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('New User Config', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title">
+            <?php
+            echo isset($errorCode)
+            && (
+                    $settingsErrors->generateCode(
+                        SettingsErrors::PREFIX_REGISTER,
+                        SettingsErrors::ERR_REGISTER_RANDOM_PASS_LENGTH_NUMERIC
+                    ) === $errorCode
+                ||
+                    $settingsErrors->generateCode(
+                        SettingsErrors::PREFIX_REGISTER,
+                        SettingsErrors::ERR_REGISTER_RANDOM_PASS_LENGTH_MIN_LENGTH
+                    ) === $errorCode
+                ||
+                    $settingsErrors->generateCode(
+                        SettingsErrors::PREFIX_REGISTER,
+                        SettingsErrors::ERR_REGISTER_RANDOM_PASS_LENGTH_MAX_LENGTH
+                    ) === $errorCode
+            )
+                ? '<span class="simple-jwt-error">!</span>'
+                : ''
+            ?>
+            <?php echo __('New User Config', 'simple-jwt-login'); ?>
+        </h3>
         <input type="checkbox" name="random_password"
                id="random_password"
             <?php echo($jwtSettings->getRegisterSettings()->isRandomPasswordForCreateUserEnabled() ? 'checked' : ''); ?>
@@ -170,6 +193,30 @@ if (!defined('ABSPATH')) {
             );
             ?>
         </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <label for="random_password_length">
+            <?php echo __('Random password length', 'simple-jwt-login'); ?>
+        </label>
+        <br />
+        <div class="text-muted">
+            <?php
+            echo __(
+                'The number of characters for the random generated password',
+                'simple-jwt-login'
+            );
+            ?>
+        </div>
+        <br />
+        <input type="text" name="random_password_length"
+               id="random_password_length"
+               value="<?php
+                    echo $jwtSettings->getRegisterSettings()->getRandomPasswordLength();
+                ?>"
+        />
     </div>
 </div>
 <hr/>

@@ -49,6 +49,9 @@ class SettingsErrors extends \Exception
     #register
     const ERR_REGISTER_MISSING_NEW_USER_PROFILE = 1;
     const ERR_REGISTER_INVALID_ROLE = 2;
+    const ERR_REGISTER_RANDOM_PASS_LENGTH_NUMERIC = 3;
+    const ERR_REGISTER_RANDOM_PASS_LENGTH_MIN_LENGTH = 4;
+    const ERR_REGISTER_RANDOM_PASS_LENGTH_MAX_LENGTH = 5;
 
     #protect endpoints
     const ERR_EMPTY_SPECIFIC_ENDPOINT = 1;

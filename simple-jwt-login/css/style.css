@@ -248,6 +248,11 @@
 #simple-jwt-login #decryption_key{
     height: 35px;
 }
+
+#simple-jwt-login #decryption_progress{
+    font-size: 16px;
+    margin: 0 5px;
+}
 #simple-jwt-login .auth_row,
 #simple-jwt-login .endpoint_row {
     margin-top: 10px;
@@ -256,3 +261,19 @@
     color: #6c757d!important;
     font-size: 10px;
 }
+
+#simple-jwt-login .decryption-input-group progress[value="25"]::-moz-progress-bar { background: #b32d2e; }
+#simple-jwt-login .decryption-input-group progress[value="25"]::-webkit-progress-value { background: #b32d2e; }
+#simple-jwt-login .decryption-input-group progress[value="25"] { color: #b32d2e; }
+
+#simple-jwt-login .decryption-input-group progress[value="50"]::-moz-progress-bar { background: #f3a505; }
+#simple-jwt-login .decryption-input-group progress[value="50"]::-webkit-progress-value { background: #f3a505; }
+#simple-jwt-login .decryption-input-group progress[value="50"] { color: #f3a505; }
+
+#simple-jwt-login .decryption-input-group progress[value="75"]::-moz-progress-bar { background: #ff0; }
+#simple-jwt-login .decryption-input-group progress[value="75"]::-webkit-progress-value { background: #ff0; }
+#simple-jwt-login .decryption-input-group progress[value="75"] { color: #ff0; }
+
+#simple-jwt-login .decryption-input-group progress[value="100"]::-moz-progress-bar { background: #0f5132; }
+#simple-jwt-login .decryption-input-group progress[value="100"]::-webkit-progress-value { background: #0f5132; }
+#simple-jwt-login .decryption-input-group progress[value="100"] { color: #0f5132; }

@@ -91,6 +91,13 @@ jQuery(document).ready(
             }
         );
 
+        $('#simple-jwt-login #decryption_key').on(
+            'keyup',
+            function () {
+                calculate_strength_decryptionKey();
+            }
+        )
+
         $('#simple-jwt-login #simple-jwt-login-jwt-algorithm, #simple-jwt-login #decryption_source').on(
             'change',
             function (e) {
@@ -112,6 +119,7 @@ jQuery(document).ready(
                     $('#simple-jwt-login .decryption-input-group').show();
                     $('#simple-jwt-login .decryption-textarea-group').hide();
                 }
+                calculate_strength_decryptionKey();
             } else {
                 $('#simple-jwt-login .decryption-input-group').hide();
                 $('#simple-jwt-login .decryption-textarea-group').hide();
@@ -134,6 +142,54 @@ jQuery(document).ready(
                 $('#simple-jwt-login #protected_endpoints_protected').hide();
                 $('#simple-jwt-login #protected_endpoints_whitelisted').show();
             }
+        }
+
+        function calculate_strength_decryptionKey()
+        {
+            var simplejwt_decryptionKey = jQuery('#decryption_key').val();
+            var simplejwt_is_decryption_base64 = jQuery('#decryption_key_base64').is(':checked');
+
+            if (simplejwt_is_decryption_base64) {
+                var simpleJWTLoginBase64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+                if (simpleJWTLoginBase64regex.test((simplejwt_decryptionKey))) {
+                    simplejwt_decryptionKey = atob(simplejwt_decryptionKey);
+                }
+            }
+
+            if (simplejwt_decryptionKey.length === 0) {
+                document.getElementById("decryption_progress_label").innerHTML = "0%";
+                document.getElementById("decryption_progress").value = "0";
+                return;
+            }
+            // Check progress
+            var simplejwt_progress = [/[$@$!%*#?&]/, /[A-Z]/, /[0-9]/, /[a-z]/]
+                .reduce((memo, test) => memo + test.test(simplejwt_decryptionKey), 0);
+
+            // Length must be at least 8 chars
+            if (simplejwt_progress > 2 && simplejwt_decryptionKey.length > 7) {
+                simplejwt_progress++;
+            }
+
+            var simple_jwt_login_progress_percent = "";
+            switch (simplejwt_progress) {
+                case 0:
+                case 1:
+                case 2:
+                    simple_jwt_login_progress_percent = "25";
+                    break;
+                case 3:
+                    simple_jwt_login_progress_percent = "50";
+                    break;
+                case 4:
+                    simple_jwt_login_progress_percent = "75";
+                    break;
+                case 5:
+                    simple_jwt_login_progress_percent = "100";
+                    break;
+            }
+
+            document.getElementById("decryption_progress_label").innerHTML = simple_jwt_login_progress_percent + '%';
+            document.getElementById("decryption_progress").value = simple_jwt_login_progress_percent;
         }
 
         simple_jwt_bind_decryption_key();

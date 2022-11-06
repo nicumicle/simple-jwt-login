@@ -51,7 +51,12 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-6">
         <div class="form-group">
-            <h2 class="section-title" ><span class="step-number">1</span> Decryption key source</h2>
+            <h2 class="section-title" >
+                <span class="step-number">1</span>&nbsp;
+                <?php
+                echo __('Decryption key source', 'simple-jwt-login');
+                ?>
+            </h2>
             <select id="decryption_source" name="decryption_source" class="form-control">
                 <option
                     value="<?php echo GeneralSettings::DECRYPTION_SOURCE_SETTINGS;?>"
@@ -63,7 +68,9 @@ if (!defined('ABSPATH')) {
                     )
                     ?>
                 >
-                    Plugin Settings
+                    <?php
+                    echo __('Plugin Settings', 'simple-jwt-login');
+                    ?>
                 </option>
                 <option
                     value="<?php echo GeneralSettings::DECRYPTION_SOURCE_CODE;?>"
@@ -75,7 +82,9 @@ if (!defined('ABSPATH')) {
                     );
                     ?>
                 >
-                    Code
+                    <?php
+                    echo __('Code', 'simple-jwt-login');
+                    ?>
                 </option>
             </select>
         </div>
@@ -165,7 +174,13 @@ if (!defined('ABSPATH')) {
                     </a>
                 </div>
             </div>
-
+            <div class="input-group">
+                <?php
+                echo __('Strength', 'simple-jwt-login');
+                ?>:
+                <progress id="decryption_progress" value="0" max="100">10</progress>
+                <span id="decryption_progress_label"></span>
+            </div>
             <div class="input-group" style="margin-top:10px">
                 <input
                         type="checkbox"

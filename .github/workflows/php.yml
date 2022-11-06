@@ -34,7 +34,7 @@ jobs:
     # Docs: https://getcomposer.org/doc/articles/scripts.md
 
     - name: Run PHPCS design on plugin
-      run: vendor/bin/phpcs simple-jwt-login/
+      run: vendor/bin/phpcs simple-jwt-login/ --extensions=php
 
     - name: Run PHPMD design on plugin
       run: vendor/bin/phpmd simple-jwt-login/ text design

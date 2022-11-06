@@ -27,7 +27,7 @@
   },
   "scripts": {
     "tests": "vendor/bin/phpunit tests/ --coverage-text",
-    "phpcs": "vendor/bin/phpcs simple-jwt-login/ tests",
+    "phpcs": "vendor/bin/phpcs simple-jwt-login/ tests --extensions=php",
     "phpmd-design": "vendor/bin/phpmd simple-jwt-login/ text design",
     "phpmd-cleancode": "vendor/bin/phpmd simple-jwt-login/ text cleancode",
     "phpmd-unusedcode": "vendor/bin/phpmd simple-jwt-login/ text unusedcode",

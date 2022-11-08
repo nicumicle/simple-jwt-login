@@ -57,6 +57,14 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             'auth_requires_auth_code',
             BaseSettings::SETTINGS_TYPE_BOL
         );
+        $this->assignSettingsPropertyFromPost(
+            null,
+            'auth_password_base64',
+            null,
+            'auth_password_base64',
+            BaseSettings::SETTINGS_TYPE_BOL,
+            false
+        );
     }
 
     /**
@@ -186,6 +194,16 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
     {
         return isset($this->settings['auth_requires_auth_code'])
             ? (bool) $this->settings['auth_requires_auth_code']
+            : false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAuthPasswordBase64Encoded()
+    {
+        return isset($this->settings['auth_password_base64'])
+            ? (bool) $this->settings['auth_password_base64']
             : false;
     }
 }

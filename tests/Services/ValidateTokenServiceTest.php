@@ -6,6 +6,7 @@ use Exception;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
+use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Modules\WordPressDataInterface;
 use SimpleJWTLogin\Services\ValidateTokenService;
@@ -129,6 +130,9 @@ class ValidateTokenServiceTest extends TestCase
                         'request_keys'         => [
                             'url' => 'JWT'
                         ],
+                        'enabled_hooks' => [
+                            SimpleJWTLoginHooks::HOOK_RESPONSE_VALIDATE_TOKEN,
+                        ],
                     ]
                 )
             );
@@ -152,6 +156,9 @@ class ValidateTokenServiceTest extends TestCase
         $this->wordPressDataMock
             ->method('createResponse')
             ->willReturn(['success' => true]);
+        $this->wordPressDataMock
+            ->method('triggerFilter')
+            ->willReturn([]);
         $validateTokenService = (new ValidateTokenService())
             ->withSession([])
             ->withCookies([])

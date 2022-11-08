@@ -121,6 +121,15 @@ class AuthenticateService extends BaseService implements ServiceInterface
             ? $this->wordPressData->sanitizeTextField($this->request['password_hash'])
             : null;
 
+        if ($this->jwtSettings->getAuthenticationSettings()->isAuthPasswordBase64Encoded()) {
+            if ($password !== null) {
+                $password = base64_decode($password);
+            }
+            if ($passwordHash !== null) {
+                $passwordHash = base64_decode($passwordHash);
+            }
+        }
+
         $dbPassword = $this->wordPressData->getUserPassword($user);
         $passwordMatch = $this->wordPressData->checkPassword($password, $passwordHash, $dbPassword);
 

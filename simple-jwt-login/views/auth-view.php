@@ -110,6 +110,32 @@ if (! defined('ABSPATH')) {
 </div>
 <hr/>
 
+<div class="row">
+    <div class="col-md-12">
+        <h3 class="section-title"><?php echo __('Options', 'simple-jwt-login'); ?></h3>
+        <div class="form-group">
+            <div class="input-group" style="margin-top:10px">
+                <input
+                        type="checkbox"
+                        name="auth_password_base64"
+                        id="auth_password_base64"
+                        value="1"
+                        style="margin-top:1px;"
+                    <?php echo $jwtSettings->getAuthenticationSettings()->isAuthPasswordBase64Encoded()
+                        ? esc_html('checked="checked"')
+                        : '';
+                    ?>
+
+                />
+                <label for="auth_password_base64">
+                    <?php echo __('Authentication password/passhash is base64 encoded', 'simple-jwt-login'); ?>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+<hr/>
+
 
 <div class="row">
     <div class="col-md-12">

@@ -3,6 +3,9 @@
 ## Unreleased
 - Add Strength indicator for JWT decryption key
 - Allow setting custom length for random password. The default is 10 characters.
+- Allow sending base_64 encoded `password` and `passhash` on the `/auth` endpoint
+- Fix issue with `includeRequestParameters` that has been building incorrect URLs
+- 
 
 ## 3.4.8 (04 Nov 2022)
 - Add filter to allow the change for authentication payload

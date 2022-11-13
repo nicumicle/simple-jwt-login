@@ -68,8 +68,17 @@ class RedirectServiceTest extends TestCase
         $this->assertTrue($response);
     }
 
-    public function testRedirectCustomUrl()
+    /**
+     * @dataProvider redirectCustomURLProvider
+     * @param array $extraSettings
+     * @param string $expectedUrl
+     * @return void
+     * @throws \Exception
+     */
+    public function testRedirectCustomUrl($extraSettings, $request, $expectedUrl)
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Correct URL');
         $settings = [
             'redirect' => LoginSettings::REDIRECT_CUSTOM,
             'enabled_hooks' => [
@@ -77,8 +86,9 @@ class RedirectServiceTest extends TestCase
             ],
             'include_login_request_parameters' => 1,
             'allow_usage_redirect_parameter' => 1,
-            'redirect_url' => 'https://www.google.com',
         ];
+        $settings = array_merge($settings, $extraSettings);
+
         $this->wordPressDataMock
             ->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
@@ -89,13 +99,12 @@ class RedirectServiceTest extends TestCase
             ->method('createResponse')
             ->willReturn(true);
 
+        $this->wordPressDataMock->method('redirect')
+            ->with($expectedUrl)
+            ->willThrowException(new \Exception('Correct URL'));
+
         $response = (new RedirectService())
-            ->withRequest(
-                [
-                    'redirectUrl' => 'http://www.test.com',
-                    'email' => 'test@test.com',
-                ]
-            )
+            ->withRequest($request)
             ->withCookies([])
             ->withSettings(
                 new SimpleJWTLoginSettings(
@@ -105,6 +114,7 @@ class RedirectServiceTest extends TestCase
             ->withUser($this->user)
             ->withSession([])
             ->makeAction();
+
         $this->assertSame(null, $response);
     }
 
@@ -137,5 +147,47 @@ class RedirectServiceTest extends TestCase
             ->withUser($this->user)
             ->makeAction();
         $this->assertSame(null, $response);
+    }
+
+    public function redirectCustomURLProvider()
+    {
+        return [
+            'simple-redirect' => [
+                'settings' => [
+                    'redirect_url' => 'https://www.google.com',
+                ],
+                'request' =>  [
+                    'redirectUrl' => 'http://www.test.com',
+                    'email' => 'test@test.com',
+                ],
+                'expected_url' => 'http://www.test.com',
+            ],
+            'redirect_parameters_are_added_to_redirect_url' => [
+                'settings' => [
+                    'redirect_url' => 'https://www.google.com',
+                    'login_remove_request_parameters' => 'jwt',
+                ],
+                'request' =>  [
+                    'redirectUrl' => 'http://www.test.com',
+                    'email' => 'test@test.com',
+                ],
+                'expected_url' => 'http://www.test.com?redirectUrl='
+                    . urlencode('http://www.test.com?email=test@test.com'),
+            ],
+            'redirect_parameters_outside_redirect_url' => [
+                'settings' => [
+                    'redirect_url' => 'https://www.google.com',
+                    'login_remove_request_parameters' => 'jwt, JWT,password',
+                ],
+                'request' =>  [
+                    'redirectUrl' => 'http://www.test.com?test=1',
+                    'email' => 'test@test.com',
+                    'JWT' => '123',
+                    'password' => 'my-super-secret-password',
+                ],
+                'expected_url' => 'http://www.test.com?test=1&redirectUrl='
+                    . urlencode('http://www.test.com?test=1&email=test@test.com'),
+            ]
+        ];
     }
 }

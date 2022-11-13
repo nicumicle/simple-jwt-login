@@ -264,7 +264,6 @@ if (! defined('ABSPATH')) {
         </h3>
     </div>
     <div class="col-md-12">
-
         <input
                 type="checkbox"
                 name="include_login_request_parameters"
@@ -276,7 +275,35 @@ if (! defined('ABSPATH')) {
             <?php echo __('Include request parameters used for login link in the REDIRECT URL', 'simple-jwt-login');?>
         </label>
     </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div><b><?php
+                echo __(
+                    'Remove the following query parameters on redirect',
+                    'simple-jwt-login'
+                ); ?>
+            </b>:
+        </div>
+        <div class="form-group">
+            <input
+                   type="text"
+                   id="login_remove_request_parameters"
+                   name="login_remove_request_parameters"
+                   class="form-control"
+                   value="<?php echo esc_attr($jwtSettings->getLoginSettings()->getDangerousQueryParameters()); ?>"
+                   placeholder="<?php echo __('Enter parameters here', 'simple-jwt-login'); ?>"
+            />
+            <p class="text-muted">
+                <?php echo __("If you want to add more parameters, separate them by comma", 'simple-jwt-login'); ?>.
+                <br/>
+                <?php echo __('Leave blank to allow all request parameters', 'simple-jwt-login'); ?>.
+            </p>
+        </div>
+    </div>
+</div>
 
+<div class="row">
     <div class="col-md-12">
         <input
                 type="checkbox"

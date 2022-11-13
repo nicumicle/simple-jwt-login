@@ -78,6 +78,14 @@ class LoginSettings extends BaseSettings implements SettingsInterface
             BaseSettings::SETTINGS_TYPE_BOL,
             false
         );
+        $this->assignSettingsPropertyFromPost(
+            null,
+            'login_remove_request_parameters',
+            null,
+            'login_remove_request_parameters',
+            BaseSettings::SETTINGS_TYPE_STRING,
+            null,
+        );
 
         $this->assignSettingsPropertyFromPost(
             null,
@@ -225,5 +233,28 @@ class LoginSettings extends BaseSettings implements SettingsInterface
         return isset($this->settings['login_fail_redirect'])
             ? (string) $this->settings['login_fail_redirect']
             : '';
+    }
+
+    /**
+     * @return string
+     */
+    public function getDangerousQueryParameters()
+    {
+        $default =  [
+            'rest_route',
+            'jwt',
+            'JWT',
+            'email',
+            'password',
+            'redirectUrl',
+        ];
+
+        if (isset($this->settings['auth_code_key'])) {
+            $default[] = $this->settings['auth_code_key'];
+        }
+
+        return isset($this->settings['login_remove_request_parameters'])
+            ? (string) $this->settings['login_remove_request_parameters']
+            : implode(', ', $default);
     }
 }

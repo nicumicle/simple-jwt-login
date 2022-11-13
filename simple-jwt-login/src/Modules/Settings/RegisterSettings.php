@@ -132,7 +132,7 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
                 )
             );
         }
-        if (isset($this->post['random_password_length']) && ((int)$this->post['random_password_length'] >= 255)) {
+        if (isset($this->post['random_password_length']) && ((int)$this->post['random_password_length'] > 255)) {
             throw new Exception(
                 __('Random password length can be max 255.', 'simple-jwt-login'),
                 $this->settingsErrors->generateCode(

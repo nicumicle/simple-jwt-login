@@ -147,6 +147,16 @@ add_action('rest_api_init', function () {
                 'methods'  => $route['method'],
                 'callback' => function () use ($request, $route, $jwtSettings, $serverHelper) {
                     try {
+                        $wordPressData = $jwtSettings->getWordPressData();
+
+                        /** @phpstan-ignore-next-line  */
+                        $wordPressData->triggerAction(
+                            \SimpleJWTLogin\Modules\SimpleJWTLoginHooks::HOOK_BEFORE_ENDPOINT,
+                            $route['method'],
+                            $route['name'],
+                            $request,
+                        );
+
                         /** @var ServiceInterface $service */
                         $service = new $route['service']();
                         $service

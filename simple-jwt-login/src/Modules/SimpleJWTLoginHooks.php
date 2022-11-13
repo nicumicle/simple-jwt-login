@@ -24,6 +24,7 @@ class SimpleJWTLoginHooks
     const HOOK_RESPONSE_REVOKE_TOKEN = 'simple_jwt_login_response_revoke_token';
     const HOOK_RESPONSE_VALIDATE_TOKEN = 'simple_jwt_login_response_validate_token';
     const HOOK_GENERATE_PAYLOAD = 'simple_jwt_login_generate_payload';
+    const HOOK_BEFORE_ENDPOINT = 'simple_jwt_login_before_endpoint';
 
     /**
      * @return array[]
@@ -239,6 +240,19 @@ class SimpleJWTLoginHooks
                         'simple-jwt-login'
                     )
                 ,
+            ],
+            [
+                'name' => self::HOOK_BEFORE_ENDPOINT,
+                'type' => self::HOOK_TYPE_ACTION,
+                'parameters' => [
+                    'string $method',
+                    'string $endpoint',
+                    'array $request'
+                ],
+                'description' => __(
+                    'This is executed before the simple-jwt-login rest route is initialized.',
+                    'simple-jwt-login'
+                ),
             ],
         ];
     }

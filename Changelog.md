@@ -6,6 +6,7 @@
 - Allow sending base_64 encoded `password` and `passhash` on the `/auth` endpoint
 - Fix issue with `includeRequestParameters` that has been building incorrect URLs
 - Add query parameters filter on autologin redirect
+- Add the `simple_jwt_login_before_endpoint` hook before all simple-jwt-login routes are initialized
 
 ## 3.4.8 (04 Nov 2022)
 - Add filter to allow the change for authentication payload

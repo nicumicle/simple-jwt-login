@@ -37,6 +37,7 @@ class LoginSettingsTest extends TestCase
             'require_login_auth' => '0',
             'include_login_request_parameters' => '1',
             'allow_usage_redirect_parameter' => '1',
+            'login_remove_request_parameters' => 'jwt,test',
             'login_ip' => '127.0.0.1',
         ];
         $loginSettings = (new LoginSettings())
@@ -62,6 +63,11 @@ class LoginSettingsTest extends TestCase
         $this->assertSame(
             true,
             $loginSettings->getShouldIncludeRequestParameters()
+        );
+
+        $this->assertSame(
+            implode(',', ['jwt', 'test']),
+            $loginSettings->getDangerousQueryParameters()
         );
 
         $this->assertSame(
@@ -131,5 +137,93 @@ class LoginSettingsTest extends TestCase
             );
         $loginSettings->initSettingsFromPost();
         $loginSettings->validateSettings();
+    }
+
+    /**
+     * @dataProvider loginRemoveRequestParametersProvider
+     * @param array $settings
+     * @param string $expectedResult
+     * @return void
+     */
+    public function testLoginRemoveRequestParameters($settings, $expectedResult)
+    {
+        $loginSettings = (new LoginSettings())
+            ->withWordPressData($this->wordPressData)
+            ->withSettings($settings)
+            ;
+
+        $this->assertSame(
+            $expectedResult,
+            $loginSettings->getDangerousQueryParameters()
+        );
+    }
+
+    public function loginRemoveRequestParametersProvider()
+    {
+        return [
+            'not_set_get_default_values' => [
+                'settings' => [],
+                'expected_result' => implode(
+                    ', ',
+                    [
+                        'rest_route',
+                        'jwt',
+                        'JWT',
+                        'email',
+                        'password',
+                        'redirectUrl'
+                    ]
+                ),
+            ],
+            'not_set_with_auth_code_key' => [
+                'settings' => [
+                    'auth_code_key' => 'auth_code',
+                ],
+                'expected_result' => implode(
+                    ', ',
+                    [
+                        'rest_route',
+                        'jwt',
+                        'JWT',
+                        'email',
+                        'password',
+                        'redirectUrl',
+                        'auth_code'
+                    ]
+                ),
+            ],
+            'null_as_value' => [
+                'settings' => [
+                    'login_remove_request_parameters' => null,
+                    'auth_code_key' => 'auth_code',
+                ],
+                'expected_result' => implode(
+                    ', ',
+                    [
+                        'rest_route',
+                        'jwt',
+                        'JWT',
+                        'email',
+                        'password',
+                        'redirectUrl',
+                        'auth_code',
+                    ]
+                ),
+            ],
+            'set_specific_value' => [
+                'settings' => [
+                    'login_remove_request_parameters' => implode(', ', ['test']),
+                    'auth_code_key' => 'auth_code',
+                ],
+                'expected_result' => implode(', ', ['test']),
+            ],
+            'set_specific_values' => [
+                'settings' => [
+                    'login_remove_request_parameters' => implode(', ', ['test1', 'test2']),
+                    'auth_code_key' => 'auth_code',
+                ],
+                'expected_result' => implode(', ', ['test1', 'test2']),
+            ],
+        ];
     }
 }

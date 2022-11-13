@@ -311,24 +311,42 @@ abstract class BaseService
     {
         if ($this->jwtSettings->getLoginSettings()->getShouldIncludeRequestParameters()) {
             $requestParams = $this->request;
-            $dangerousKeys = [
-                'rest_route',
-                'jwt',
-                'JWT',
-                'email',
-                'password',
-                'redirectUrl',
-                $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()
-            ];
+
+            $dangerousKeys = array_map(function ($value) {
+                return trim($value);
+            }, explode(',', $this->jwtSettings->getLoginSettings()->getDangerousQueryParameters()));
+
             foreach ($dangerousKeys as $key) {
                 if (isset($requestParams[$key])) {
                     unset($requestParams[$key]);
                 }
             }
+            if (empty($requestParams)) {
+                return $url;
+            }
 
-            $url = $url . (strpos($url, '?') !== false ? '&' : '?') . http_build_query($requestParams);
+            if (isset($requestParams['redirectUrl'])) {
+                 $redirectUrl = $requestParams['redirectUrl'];
+                 unset($requestParams['redirectUrl']);
+                 $redirectUrl .=  $this->getDelimiter($redirectUrl)
+                     . urldecode(http_build_query($requestParams));
+                 return  $url
+                     . $this->getDelimiter($url)
+                     . 'redirectUrl=' . urlencode($redirectUrl);
+            }
+
+            return $url . $this->getDelimiter($url) . http_build_query($requestParams);
         }
 
         return $url;
+    }
+
+    private function getDelimiter($url)
+    {
+        if (strpos($url, '?') !== false) {
+            return '&';
+        }
+
+        return '?';
     }
 }

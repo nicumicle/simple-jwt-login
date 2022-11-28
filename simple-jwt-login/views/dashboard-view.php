@@ -199,3 +199,42 @@ if (! defined('ABSPATH')) {
         </div>
     </div>
 </div>
+<div class="row">
+    <div class="col-lg-3 col-md-6 col-xs-12">
+        <div class="card card-shadow">
+            <div class="card-body text-center">
+                <h5 class="card-title">
+					<?php echo __('Protect endpoints', 'simple-jwt-login'); ?>
+                </h5>
+                <div
+                        class="box-status box-status-<?php
+                        // var_dump(get_class_methods($jwtSettings));
+                        echo $jwtSettings->getProtectEndpointsSettings()->isEnabled()
+                            ? "on"
+                            : 'off'
+                        ?>"
+                >
+                </div>
+                <div class="text-center">
+					<?php
+                    echo $jwtSettings->getProtectEndpointsSettings()->isEnabled()
+                        ? __('On', 'simple-jwt-login')
+                        : __('Off', 'simple-jwt-login');
+                    ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 col-xs-12">
+
+    </div>
+    
+    <div class="col-lg-3 col-md-6 col-xs-12">
+
+    </div>
+    <div class="col-lg-3 col-md-6 col-xs-12">
+        
+    </div>
+    
+</div>

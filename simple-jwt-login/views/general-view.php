@@ -444,7 +444,6 @@ if (!defined('ABSPATH')) {
                 : ""
             ?>
         />
-        <span class="beta">beta</span>
         <?php echo __('All WordPress endpoints checks for JWT authentication', 'simple-jwt-login');?>
         <br/>
         <p class="text-muted">

@@ -159,14 +159,6 @@
     background-image: url("../images/eye-not-visible.svg");
 }
 
-#simple-jwt-login span.beta {
-    background: #F11;
-    border: 1px solid #E00;
-    color: #FFF;
-    border-radius: 0.3em;
-    padding: 2px 10px;
-}
-
 #simple-jwt-login .simple-jwt-error {
     background: #DC3232;
     border-radius: 3em;

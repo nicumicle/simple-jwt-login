@@ -106,8 +106,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
             $auth_method = (str_contains($this->request['username'], '@'))
             ? 'email'
             : 'username';
-            }    
-        else {
+        } else {
             $user_by = $this->request['email'];
         }
 

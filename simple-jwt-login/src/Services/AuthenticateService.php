@@ -99,22 +99,22 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
         }
 
-        $auth_method = 'email';
-        $user_by = $this->request['email'];
+        $authMethod = 'email';
+        $userBy = $this->request['email'];
 
         if (isset($this->request['username'])) {
-            $user_by = $this->request['username'];
-            $auth_method = (str_contains($this->request['username'], '@'))
+            $userBy = $this->request['username'];
+            $authMethod = (str_contains($this->request['username'], '@'))
             ? 'email'
             : 'username';
         }
 
-        $user = ($auth_method == 'email')
+        $user = ($authMethod == 'email')
             ? $this->wordPressData->getUserDetailsByEmail(
-                $this->wordPressData->sanitizeTextField($user_by)
+                $this->wordPressData->sanitizeTextField($userBy)
             )
             : $this->wordPressData->getUserByUserLogin(
-                $this->wordPressData->sanitizeTextField($user_by)
+                $this->wordPressData->sanitizeTextField($userBy)
             );
 
         if (empty($user)) {

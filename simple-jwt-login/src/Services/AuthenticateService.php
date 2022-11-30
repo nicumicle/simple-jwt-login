@@ -99,7 +99,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
         }
 
-        $userBy = isset($this->request['email'])
+        $userBy = isset($this->request['email'] && str_contains($this->request['email'], '@')
             ? $this->request['email']
             : $this->request['username'];
 

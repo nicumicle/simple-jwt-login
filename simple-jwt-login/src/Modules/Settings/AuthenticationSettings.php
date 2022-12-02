@@ -157,6 +157,16 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
     }
     
     /**
+     * @param string $role
+     * @return bool
+     */
+    public function isRoleEnabled($role)
+    {
+        return !empty($this->settings['role_auth'])
+            && in_array($role, $this->settings['role_auth']);
+    }
+    
+    /**
      * @param string $name
      * @return bool
      */

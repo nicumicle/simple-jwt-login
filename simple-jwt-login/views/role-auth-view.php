@@ -15,9 +15,9 @@ if (! defined('ABSPATH')) {
  */
 
 global $wp_roles;
-global count_users();
+// global count_users();
 
-$result = count_users();
+// $result = count_users();
 ?>
 
 <div class="form-group">
@@ -95,7 +95,7 @@ $result = count_users();
                                     <label class="bold" for="role_auth_<?php echo esc_attr($role_name);?>">
                                         <?php
 										echo esc_attr($role_name) . ' ';
-										echo $role_count . ' users.';
+										// echo $role_count . ' users.';
 										?>
                                     </label>
                                 </div>

@@ -205,46 +205,46 @@ $settingsPages = [
                             >
 								<?php
                                 switch ($page['index']) {
-					case SettingsErrors::PREFIX_DASHBOARD:
-						include_once plugin_dir_path(__FILE__) . "dashboard-view.php";
-						break;
-					case SettingsErrors::PREFIX_GENERAL:
-						include_once plugin_dir_path(__FILE__) . "general-view.php";
-						break;
-					case SettingsErrors::PREFIX_LOGIN:
-						include_once plugin_dir_path(__FILE__) . "login-view.php";
-						break;
-					case SettingsErrors::PREFIX_REGISTER:
-						include_once plugin_dir_path(__FILE__) . "register-view.php";
-						break;
-					case SettingsErrors::PREFIX_DELETE:
-						include_once plugin_dir_path(__FILE__) . "delete-view.php";
-						break;
-					case SettingsErrors::PREFIX_RESET_PASSWORD:
-						include_once plugin_dir_path(__FILE__) . "reset-password-view.php";
-						break;
-					case SettingsErrors::PREFIX_AUTHENTICATION:
-						include_once plugin_dir_path(__FILE__) . "auth-view.php";
-						break;
-					case SettingsErrors::PREFIX_AUTH_CODES:
-						include_once plugin_dir_path(__FILE__) . "auth-codes-view.php";
-						break;
-					case SettingsErrors::PREFIX_HOOKS:
-						include_once plugin_dir_path(__FILE__) . "hooks-view.php";
-						break;
-					case SettingsErrors::PREFIX_CORS:
-						include_once plugin_dir_path(__FILE__) . "cors-view.php";
-						break;
-					case SettingsErrors::PREFIX_PROTECT_ENDPOINTS:
-						include_once plugin_dir_path(__FILE__) . "protect-endpoints-view.php";
-						break;
-					case SettingsErrors::PREFIX_ROLE_AUTHENTICATION:
-						include_once plugin_dir_path(__FILE__) . "role-auth-view.php";
-						break;
-					default:
-						echo __("View file does not exists.", 'simple-jwt-login');
-				}
-				    ?>
+                                    case SettingsErrors::PREFIX_DASHBOARD:
+                                        include_once plugin_dir_path(__FILE__) . "dashboard-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_GENERAL:
+                                        include_once plugin_dir_path(__FILE__) . "general-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_LOGIN:
+                                        include_once plugin_dir_path(__FILE__) . "login-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_REGISTER:
+                                        include_once plugin_dir_path(__FILE__) . "register-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_DELETE:
+                                        include_once plugin_dir_path(__FILE__) . "delete-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_RESET_PASSWORD:
+                                        include_once plugin_dir_path(__FILE__) . "reset-password-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_AUTHENTICATION:
+                                        include_once plugin_dir_path(__FILE__) . "auth-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_AUTH_CODES:
+                                        include_once plugin_dir_path(__FILE__) . "auth-codes-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_HOOKS:
+                                        include_once plugin_dir_path(__FILE__) . "hooks-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_CORS:
+                                        include_once plugin_dir_path(__FILE__) . "cors-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_PROTECT_ENDPOINTS:
+                                        include_once plugin_dir_path(__FILE__) . "protect-endpoints-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_ROLE_AUTHENTICATION:
+                                        include_once plugin_dir_path(__FILE__) . "role-auth-view.php";
+                                        break;
+                                    default:
+                                        echo __("View file does not exists.", 'simple-jwt-login');
+                                }
+                                ?>
                             </div>
 							<?php
                         }
@@ -296,4 +296,3 @@ $settingsPages = [
         </div>
     </div>
 </div>
-

@@ -58,13 +58,13 @@ $result   = count_users();
                     
 						<?php
                         foreach ($wp_roles->roles as $roleIndex => $role) {
-                            $numberOfLines = count($wp_roles->roles) - 1;
-                            $lineSeparator = $numberOfLines === $roleIndex
-                                ? ''
-                                : ',';
-                            $role_name = strtolower($role['name']);
-			    $role_count = $result['avail_roles'][$role_name] ? $result['avail_roles'][$role_name] : 0;
-			                            ?>
+				$numberOfLines = count($wp_roles->roles) - 1;
+				$lineSeparator = $numberOfLines === $roleIndex
+					? ''
+					: ',';
+				$role_name = strtolower($role['name']);
+				$role_count = $result['avail_roles'][$role_name] ? $result['avail_roles'][$role_name] : 0;
+			?>
                             <div class="column">
                             <div class="card">
                                 <div class="card-header">
@@ -97,7 +97,7 @@ $result   = count_users();
                             </div>
                         </div>
 			<?php
-                        	}
+                        }
                         ?>
                     
                 </div>

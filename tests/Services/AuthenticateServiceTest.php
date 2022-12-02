@@ -283,7 +283,7 @@ class AuthenticateServiceTest extends TestCase
             ->withRequest(
                 [
                     'username' => 'test@test.com',
-                    'password' => '123',
+                    'password' => '1234',
                     'AUTH_KEY' => '123',
                 ]
             )

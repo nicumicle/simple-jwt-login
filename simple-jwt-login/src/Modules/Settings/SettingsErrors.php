@@ -17,6 +17,7 @@ class SettingsErrors extends \Exception
     const PREFIX_CORS = 9;
     const PREFIX_RESET_PASSWORD = 10;
     const PREFIX_PROTECT_ENDPOINTS = 11;
+    const PREFIX_ROLE_AUTHENTICATION = 12;
 
     #authentication
     const ERR_AUTHENTICATION_EMPTY_PAYLOAD = 1;

@@ -94,6 +94,14 @@ $settingsPages = [
         ),
         'index' => SettingsErrors::PREFIX_PROTECT_ENDPOINTS,
     ],
+    [
+        'id'   => 'simple-jwt-login-tab-role-authentication',
+        'name' => 'Role Authentication [alpha]',
+        'has_error' =>  (
+                $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_ROLE_AUTHENTICATION
+        ),
+        'index' => SettingsErrors::PREFIX_ROLE_AUTHENTICATION,
+    ],
 ];
 
 ?>
@@ -229,6 +237,9 @@ $settingsPages = [
                                         break;
                                     case SettingsErrors::PREFIX_PROTECT_ENDPOINTS:
                                         include_once plugin_dir_path(__FILE__) . "protect-endpoints-view.php";
+                                        break;
+				    case SettingsErrors::PREFIX_ROLE_AUTHENTICATION:
+                                        include_once plugin_dir_path(__FILE__) . "role-auth-view.php";
                                         break;
                                     default:
                                         echo __("View file does not exists.", 'simple-jwt-login');

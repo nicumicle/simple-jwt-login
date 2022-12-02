@@ -327,6 +327,9 @@ class AuthenticateServiceTest extends TestCase
             ->method('getUserByUserLogin')
             ->willReturn('user');
         $this->wordPressDataMock
+            ->method('getUserDetailsByEmail')
+            ->willReturn('user');
+        $this->wordPressDataMock
             ->method('getUserPassword')
             ->willReturn('1234');
         $this->wordPressDataMock

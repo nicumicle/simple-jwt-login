@@ -14,8 +14,10 @@ if (! defined('ABSPATH')) {
  * @var SimpleJWTLoginSettings $jwtSettings
  */
 
-$wp_roles = wp_roles();
-$result   = count_users();
+global $wp_roles;
+global count_users();
+
+$result = count_users();
 ?>
 
 <div class="form-group">

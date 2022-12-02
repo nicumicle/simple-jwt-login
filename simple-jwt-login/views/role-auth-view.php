@@ -1,7 +1,6 @@
 <?php
 
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
-use SimpleJWTLogin\Helpers\RoleAuthHelper;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Services\RouteService;
@@ -15,7 +14,6 @@ if (! defined('ABSPATH')) {
  * @var SimpleJWTLoginSettings $jwtSettings
  */
 
-$roleauthService = new RoleAuthHelper();
 $wp_roles = wp_roles();
 $result   = count_users();
 ?>
@@ -59,7 +57,6 @@ $result   = count_users();
                 <div>
                     
 						<?php
-                        // $payloadParameters = $jwtSettings->getAuthenticationSettings()->getJwtPayloadParameters();
                         foreach($wp_roles->roles as $roleIndex => $role)
                          {
                             $numberOfLines = count($wp_roles->roles) - 1;
@@ -67,8 +64,7 @@ $result   = count_users();
                                 ? ''
                                 : ',';
                             $role_name = strtolower($role['name']);
-                            
-                            $role_count = $result['avail_roles'][$role_name] ? $result['avail_roles'][$role_name] : 0;
+			    $role_count = $result['avail_roles'][$role_name] ? $result['avail_roles'][$role_name] : 0;
                             ?>
                             <div class="column">
                             <div class="card">
@@ -97,9 +93,9 @@ $result   = count_users();
                                     </label>
                                 </div>
                             </div>
-                                    </div>
-							<?php
-                        }
+                        </div>
+			<?php
+                        	}
                         ?>
                     
                 </div>

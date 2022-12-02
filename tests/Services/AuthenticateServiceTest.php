@@ -335,7 +335,7 @@ class AuthenticateServiceTest extends TestCase
         $authService = (new AuthenticateService())
             ->withRequest(
                 [
-                    'username' => 'test@test.com',
+                    'username' => 'test',
                     'password_hash' => '123',
                     'AUTH_KEY' => '123',
                 ]

@@ -59,8 +59,7 @@ $result   = count_users();
                     
 						<?php
                         // $payloadParameters = $jwtSettings->getAuthenticationSettings()->getJwtPayloadParameters();
-                        foreach($wp_roles->roles as $roleIndex => $role)
-                         {
+                        foreach ($wp_roles->roles as $roleIndex => $role) {
                             $numberOfLines = count($wp_roles->roles) - 1;
                             $lineSeparator = $numberOfLines === $roleIndex
                                 ? ''
@@ -92,7 +91,10 @@ $result   = count_users();
                                         
                                     </span>
                                     <label class="bold" for="role_auth_<?php echo esc_attr($role_name);?>">
-                                        <?php echo esc_attr($role_name). ' '; echo $role_count . ' users.';?>
+                                        <?php
+				echo esc_attr($role_name). ' ';
+				echo $role_count . ' users.';
+					    ?>
                                     </label>
                                 </div>
                             </div>

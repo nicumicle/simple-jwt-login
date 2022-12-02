@@ -121,7 +121,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
         
         // check if user role enabled
         if ($this->jwtSettings->getAuthenticationSettings()->isRoleAuthenticationEnabled()) {
-            $userRoles = getUserRoles($user);
+            $userRoles = $this->wordPressData->getUserRoles($user);
             $passRoleCheck = false;
             
             foreach ($userRoles as $userRole) {

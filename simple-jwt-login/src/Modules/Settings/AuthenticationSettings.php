@@ -65,6 +65,21 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             BaseSettings::SETTINGS_TYPE_BOL,
             false
         );
+        $this->assignSettingsPropertyFromPost(
+            null,
+            'role_authentication_enabled',
+            null,
+            'role_authentication_enabled',
+            BaseSettings::SETTINGS_TYPE_BOL,
+            false
+        );
+        $this->assignSettingsPropertyFromPost(
+            null,
+            'role_auth',
+            null,
+            'role_auth',
+            BaseSettings::SETTINGS_TYPE_ARRAY
+        );
     }
 
     /**
@@ -131,7 +146,16 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
         return isset($this->settings['allow_authentication'])
          && !empty($this->settings['allow_authentication']);
     }
-
+    
+    /**
+     * @return bool
+     */
+    public function isRoleAuthenticationEnabled()
+    {
+        return isset($this->settings['role_authentication_enabled'])
+         && !empty($this->settings['role_authentication_enabled']);
+    }
+    
     /**
      * @param string $name
      * @return bool
@@ -185,6 +209,16 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
         return isset($this->settings['auth_ip'])
             ? (string) $this->settings['auth_ip']
             : '';
+    }
+    
+    /**
+     * @return string
+     */
+    public function getAllowedRoles()
+    {
+        return isset($this->settings['auth_role'])
+            ? (string) $this->settings['auth_role']
+            : ',';
     }
 
     /**

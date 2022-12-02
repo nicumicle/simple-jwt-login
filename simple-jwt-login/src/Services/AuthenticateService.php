@@ -121,19 +121,16 @@ class AuthenticateService extends BaseService implements ServiceInterface
         
         // check if user role enabled
         if ($this->jwtSettings->getAuthenticationSettings()->isRoleAuthenticationEnabled()) {
-            $user_roles = $user->roles;
-            $pass_role_check = false;
-            //$allowed_roles = $this->jwtSettings->getAuthenticationSettings()->getAllowedRoles();
+            $userRoles = $user->roles;
+            $passRole_check = false;
             
-            foreach ($user_roles as $user_role) {
-                //var_dump($allowed_roles);
-                //if ($roleauthService->isUserRoleInList($allowed_roles, $user_role)) {
-                if ($this->jwtSettings->getAuthenticationSettings()->isRoleEnabled($user_role)) {
-                    $pass_role_check = true;
+            foreach ($userRoles as $userRole) {
+                if ($this->jwtSettings->getAuthenticationSettings()->isRoleEnabled($userRole)) {
+                    $passRoleCheck = true;
                 }
             }
             
-            if (!$pass_role_check) {
+            if (!$passRoleCheck) {
                 throw new Exception(
                     __('User role not allowed.', 'simple-jwt-login'),
                     ErrorCodes::AUTHENTICATION_WRONG_ROLE

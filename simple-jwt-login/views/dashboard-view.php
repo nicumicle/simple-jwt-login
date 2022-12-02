@@ -227,7 +227,28 @@ if (! defined('ABSPATH')) {
     </div>
     
     <div class="col-lg-3 col-md-6 col-xs-12">
-
+	<div class="card card-shadow">
+            <div class="card-body text-center">
+                <h5 class="card-title">
+                    <?php echo __('Role Authentication', 'simple-jwt-login'); ?>
+                </h5>
+                <div
+                        class="box-status box-status-<?php
+                        echo $jwtSettings->getAuthenticationSettings()->isRoleAuthenticationEnabled()
+                            ? "on"
+                            : 'off'
+                        ?>"
+                >
+                </div>
+                <div class="text-center">
+                    <?php
+                    echo $jwtSettings->getAuthenticationSettings()->isRoleAuthenticationEnabled()
+                        ? __('On', 'simple-jwt-login')
+                        : __('Off', 'simple-jwt-login');
+                    ?>
+                </div>
+            </div>
+        </div>
     </div>
     
     <div class="col-lg-3 col-md-6 col-xs-12">

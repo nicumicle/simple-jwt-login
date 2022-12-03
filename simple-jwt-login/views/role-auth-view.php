@@ -15,10 +15,11 @@ if (! defined('ABSPATH')) {
  * @var SimpleJWTLoginSettings $jwtSettings
  */
 
-$rolesManager = new WP_Roles();
 
-$wpRoles = $rolesManager->get_roles();
-$result = $rolesManager->count_users();
+/** @phpstan-ignore-next-line */
+$wpRoles = get_roles();
+/** @phpstan-ignore-next-line */
+$result = count_users();
 ?>
 
 <div class="form-group">

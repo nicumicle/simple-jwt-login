@@ -13,11 +13,7 @@ if (! defined('ABSPATH')) {
  * @var SettingsErrors $settingsErrors
  * @var SimpleJWTLoginSettings $jwtSettings
  */
-
-global $wp_roles;
-// global count_users();
-
-// $result = count_users();
+$wpRoles = get_roles();
 ?>
 
 <div class="form-group">
@@ -61,14 +57,14 @@ global $wp_roles;
                     
 						<?php
                         // $payloadParameters = $jwtSettings->getAuthenticationSettings()->getJwtPayloadParameters();
-                        foreach ($wp_roles->roles as $roleIndex => $role) {
-                            $numberOfLines = count($wp_roles->roles) - 1;
+                        foreach ($wpRoles->roles as $roleIndex => $role) {
+                            $numberOfLines = count($wpRoles->roles) - 1;
                             $lineSeparator = $numberOfLines === $roleIndex
                                 ? ''
                                 : ',';
-                            $role_name = strtolower($role['name']);
+                            $roleName = strtolower($role['name']);
                             
-                            $role_count = $result['avail_roles'][$role_name] ? $result['avail_roles'][$role_name] : 0;
+                            $roleCount = $result['avail_roles'][$roleName] ? $result['avail_roles'][$roleName] : 0;
                             ?>
                             <div class="column">
                             <div class="card">
@@ -77,14 +73,14 @@ global $wp_roles;
                                         
                                             <input
                                                     type="checkbox"
-                                                    id="role_auth_<?php echo esc_attr($role_name); ?>"
+                                                    id="role_auth_<?php echo esc_attr($roleName); ?>"
                                                     name="role_auth[]"
-                                                    value="<?php echo esc_attr($role_name); ?>"
+                                                    value="<?php echo esc_attr($roleName); ?>"
                                                     <?php
                                                     echo esc_html(
                                                         $jwtSettings
                                                             ->getAuthenticationSettings()
-                                                            ->isRoleEnabled($role_name)
+                                                            ->isRoleEnabled($roleName)
                                                             ? 'checked'
                                                             : ''
                                                     )
@@ -92,9 +88,9 @@ global $wp_roles;
                                             />
                                         
                                     </span>
-                                    <label class="bold" for="role_auth_<?php echo esc_attr($role_name);?>">
+                                    <label class="bold" for="role_auth_<?php echo esc_attr($roleName);?>">
                                         <?php
-										echo esc_attr($role_name) . ' ';
+										echo esc_attr($roleName) . ' ';
 										// echo $role_count . ' users.';
 										?>
                                     </label>

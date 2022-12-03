@@ -15,8 +15,9 @@ if (! defined('ABSPATH')) {
  * @var SimpleJWTLoginSettings $jwtSettings
  */
 
+$rolesManager = new WP_Roles;
 
-$wpRoles = get_roles();
+$wpRoles = $rolesManager->get_roles();
 ?>
 
 <div class="form-group">

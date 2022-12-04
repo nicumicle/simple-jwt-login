@@ -45,9 +45,11 @@ if (!defined('ABSPATH')) {
 
 <div class="row mb-4">
     <div class="col-md-4">
-        <input type="checkbox" name="cors[allow_origin_enabled]"
+        <input type="checkbox" name="cors[allow_origin_enabled]" id="cors_allow_origin_enabled"
                value="1" <?php echo $jwtSettings->getCorsSettings()->isAllowOriginEnabled() ? 'checked' : '' ?> />
-        <b>Access-Control-Allow-Origin</b>
+        <label for="cors_allow_origin_enabled">
+        	<b>Access-Control-Allow-Origin</b>
+        </label>
     </div>
     <div class="col-md-8">
         <input type="text" class="form-control" name="cors[allow_origin]"
@@ -61,9 +63,11 @@ if (!defined('ABSPATH')) {
 
 <div class="row mb-4">
     <div class="col-md-4">
-        <input type="checkbox" name="cors[allow_methods_enabled]"
+        <input type="checkbox" name="cors[allow_methods_enabled]" id="cors_allow_methods_enabled"
                value="1" <?php echo $jwtSettings->getCorsSettings()->isAllowMethodsEnabled() ? 'checked' : '' ?> />
-        <b>Access-Control-Allow-Methods</b>
+        <label for="cors_allow_methods_enabled">
+        	<b>Access-Control-Allow-Methods</b>
+        </label>
     </div>
     <div class="col-md-8">
         <input type="text" class="form-control" name="cors[allow_methods]"
@@ -77,9 +81,11 @@ if (!defined('ABSPATH')) {
 
 <div class="row mb-4">
     <div class="col-md-4">
-        <input type="checkbox" name="cors[allow_headers_enabled]"
+        <input type="checkbox" name="cors[allow_headers_enabled]" id="cors_allow_headers_enabled"
                value="1" <?php echo $jwtSettings->getCorsSettings()->isAllowHeadersEnabled() ? 'checked' : '' ?> />
-        <b>Access-Control-Allow-Headers</b>
+        <label for="cors_allow_headers_enabled">
+        	<b>Access-Control-Allow-Headers</b>
+        </label>
     </div>
     <div class="col-md-8">
         <input type="text" class="form-control" name="cors[allow_headers]"

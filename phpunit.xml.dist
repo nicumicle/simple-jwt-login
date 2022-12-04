@@ -16,6 +16,7 @@
             <directory suffix=".php">./simple-jwt-login/src</directory>
             <exclude>
                 <file>./simple-jwt-login/src/Modules/WordPressData.php</file>
+                <directory suffix=".php">./simple-jwt-login/src/Libraries/</directory>
             </exclude>
         </whitelist>
     </filter>

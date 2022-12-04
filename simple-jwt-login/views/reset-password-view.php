@@ -28,7 +28,7 @@ if (!defined('ABSPATH')) {
                     : '';
                 ?>
             />
-            <label for="allow_register_no">
+            <label for="allow_reset_password_no">
                 <?php
                 echo __('No', 'simple-jwt-login'); ?>
             </label>
@@ -42,7 +42,7 @@ if (!defined('ABSPATH')) {
                     : '';
                 ?>
             />
-            <label for="allow_register_yes">
+            <label for="allow_reset_password_yes">
                 <?php
                 echo __('Yes', 'simple-jwt-login'); ?>
             </label>
@@ -64,7 +64,7 @@ if (!defined('ABSPATH')) {
                 <?php
                 echo $jwtSettings->getResetPasswordSettings()->isAuthKeyRequired() === false ? 'checked' : '' ?>
             />
-            <label for="require_login_auth_no">
+            <label for="reset_password_auth_code_no">
                 <?php
                 echo __('No', 'simple-jwt-login'); ?>
             </label>
@@ -74,7 +74,7 @@ if (!defined('ABSPATH')) {
                 <?php
                 echo $jwtSettings->getResetPasswordSettings()->isAuthKeyRequired() === true ? 'checked' : '' ?>
             />
-            <label for="require_login_auth_yes">
+            <label for="reset_password_auth_code_yes">
                 <?php
                 echo __('Yes', 'simple-jwt-login'); ?>
             </label>

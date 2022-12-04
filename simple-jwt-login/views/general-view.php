@@ -436,7 +436,7 @@ if (!defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <input type="checkbox" name="api_middleware[enabled]"
+        <input type="checkbox" name="api_middleware[enabled]" id="api_middleware_enabled"
                value="1"
             <?php
             echo $jwtSettings->getGeneralSettings()->isMiddlewareEnabled()

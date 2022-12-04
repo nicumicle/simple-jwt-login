@@ -54,14 +54,14 @@ if (! defined('ABSPATH')) {
                    value="0"
                 <?php echo $jwtSettings->getAuthenticationSettings()->isAuthKeyRequired() === false ? 'checked' : '' ?>
             />
-            <label for="require_login_auth_no">
+            <label for="require_auth_code_no">
                 <?php echo __('No', 'simple-jwt-login'); ?>
             </label>
             <input type="radio" id="require_auth_code_yes" name="auth_requires_auth_code" class="form-control"
                    value="1"
                 <?php echo $jwtSettings->getAuthenticationSettings()->isAuthKeyRequired() === true ? 'checked' : '' ?>
             />
-            <label for="require_login_auth_yes">
+            <label for="require_auth_code_yes">
                 <?php echo __('Yes', 'simple-jwt-login'); ?>
             </label>
         </div>

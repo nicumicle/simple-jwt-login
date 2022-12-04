@@ -208,7 +208,6 @@ if (! defined('ABSPATH')) {
                 </h5>
                 <div
                         class="box-status box-status-<?php
-                        // var_dump(get_class_methods($jwtSettings));
                         echo $jwtSettings->getProtectEndpointsSettings()->isEnabled()
                             ? "on"
                             : 'off'

@@ -444,8 +444,9 @@ if (!defined('ABSPATH')) {
                 : ""
             ?>
         />
+        <label for="api_middleware_enabled">
         <?php echo __('All WordPress endpoints checks for JWT authentication', 'simple-jwt-login');?>
-        <br/>
+        </label><br/>
         <p class="text-muted">
             * <?php
             echo __(

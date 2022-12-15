@@ -119,12 +119,13 @@ add_action('rest_api_init', function () {
 
             $documentRoot = esc_html($_SERVER['DOCUMENT_ROOT']);
 
-            $hasAccess = $service->hasAccess($currentURL, $documentRoot, $request) ;
+            $hasAccess = $service->hasAccess($currentURL, $documentRoot, $request);
+
             if ($hasAccess === false) {
                 @header('Content-Type: application/json; charset=UTF-8');
                 wp_send_json_error(
                     [
-                        'message'   => 'Your are not authorized to access this endpoint.',
+                        'message'   => 'You are not authorized to access this endpoint.',
                         'errorCode' => 403,
                         'type'      => 'simple-jwt-login-route-protect'
                     ],
@@ -149,13 +150,18 @@ add_action('rest_api_init', function () {
                     try {
                         $wordPressData = $jwtSettings->getWordPressData();
 
-                        /** @phpstan-ignore-next-line  */
-                        $wordPressData->triggerAction(
-                            \SimpleJWTLogin\Modules\SimpleJWTLoginHooks::HOOK_BEFORE_ENDPOINT,
-                            $route['method'],
-                            $route['name'],
-                            $request,
-                        );
+                        if ($jwtSettings
+                            ->getHooksSettings()
+                            ->isHookEnable(\SimpleJWTLogin\Modules\SimpleJWTLoginHooks::HOOK_BEFORE_ENDPOINT)
+                        ) {
+                            /** @phpstan-ignore-next-line */
+                            $wordPressData->triggerAction(
+                                \SimpleJWTLogin\Modules\SimpleJWTLoginHooks::HOOK_BEFORE_ENDPOINT,
+                                $route['method'],
+                                $route['name'],
+                                $request
+                            );
+                        }
 
                         /** @var ServiceInterface $service */
                         $service = new $route['service']();

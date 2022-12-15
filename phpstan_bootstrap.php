@@ -406,10 +406,14 @@ if (!function_exists('register_rest_route')) {
     }
 }
 
-
-
-
-
+if (!function_exists('is_user_logged_in')) {
+    /**
+     * @return bool
+     */
+    function is_user_logged_in(){
+        return false;
+    }
+}
 
 if (!class_exists('WP_REST_Response')) {
     class WP_REST_Response

@@ -28,6 +28,8 @@
 </p>
 
 <div align="center">
+  <a href="https://simplejwtlogin.com/docs">Documentation</a>
+  ·
   <a href="https://github.com/nicumicle/simple-jwt-login/issues/new?assignees=&labels=bug&template=bug_report.md&title=bug%3A+">Report a Bug</a>
   ·
   <a href="https://github.com/nicumicle/simple-jwt-login/issues/new?assignees=&labels=feature-request&template=feature_request.md&title=feature%3A+">Request a Feature</a>

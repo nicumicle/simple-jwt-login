@@ -6,7 +6,7 @@ Tags: jwt, API, auto login, register users, tokens, REST, auth, generate jwt, re
 Requires at least: 4.4.0
 Tested up to: 6.1
 Requires PHP: 5.3
-Stable tag: 3.4.9
+Stable tag: 3.4.10
 License: GPLv3
 License URI: https://www.gnu.org/licenses/quick-guide-gplv3.html
 
@@ -412,6 +412,9 @@ After that, for the create user route, simply add the AUTH code in the request, 
 The [Changelog](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md) can be found in the GitHub repository [https://github.com/nicumicle/simple-jwt-login](https://github.com/nicumicle/simple-jwt-login).
 
 Also,  here you can find the beta version of the plugin, before it is released
+
+= 3.4.10 (14 Dec 2022) =
+- Fix issue with rest routes
 
 = 3.4.9 (04 Dec 2022) =
 - Add Strength indicator for JWT decryption key

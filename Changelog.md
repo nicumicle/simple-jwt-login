@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 3.4.10 (14 Dec 2022)
+- Fix issue with rest routes
+
 ## 3.4.9 (4 Dec 2022)
 - Add Strength indicator for JWT decryption key
 - Allow setting custom length for random password. The default is 10 characters.

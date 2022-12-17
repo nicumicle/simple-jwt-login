@@ -1,0 +1,39 @@
+name: "Check plugin with multiple PHP versions"
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Check with PHP ${{ matrix.php-versions }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ['5.6', '7.0', '7.4', '8.0', '8.1']
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ matrix.php-versions }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+
+      - name: Check PHP Version
+        run: php --version
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Install dependencies
+        run: composer check-plugin

@@ -2,7 +2,7 @@
   "name": "nicumicle/simple-jwt-login",
   "description": "Simple JWT Login WordPress plugin",
   "require": {
-    "php": ">=7.0",
+    "php": ">=5.6",
     "ext-json": "*"
   },
   "license": [
@@ -10,11 +10,11 @@
   ],
   "require-dev": {
     "friendsofphp/php-cs-fixer": "*",
-    "phpmd/phpmd": "^2.9",
+    "phpmd/phpmd": "*",
     "phpstan/phpstan": "*",
     "phpunit/phpunit": "*",
     "roave/security-advisories": "dev-latest",
-    "spaze/phpstan-disallowed-calls": "^2.5",
+    "spaze/phpstan-disallowed-calls": "*",
     "squizlabs/php_codesniffer": "*"
   },
   "autoload": {

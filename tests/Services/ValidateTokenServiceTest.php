@@ -146,7 +146,7 @@ class ValidateTokenServiceTest extends TestCase
             ->withAnyParameters()
             ->willReturn(true);
         $this->wordPressDataMock
-            ->method('convertUserToArray')
+            ->method('wordpressUserToArray')
             ->willReturn(
                 [
                     'user_pass' => 123,

@@ -199,19 +199,19 @@ interface WordPressDataInterface
     public function isInstanceOfuser($user);
 
     /**
-     * @param WP_User $user
-     *
-     * @return array
-     */
-    public function convertUserToArray($user);
-
-    /**
      * @param string $code
      * @param string $email
      *
      * @return WP_User|bool
      */
-    public function checkPasswordResetKey($code, $email);
+    public function checkPasswordResetKeyByEmail($code, $email);
+
+    /**
+     * @param string $code
+     * @param string $login
+     * @return WP_User|bool
+     */
+    public function checkPasswordResetKeyByUserLogin($code, $login);
 
     /**
      * @param WP_User $user
@@ -269,4 +269,9 @@ interface WordPressDataInterface
      * @return array
      */
     public function getUserRoles($user);
+
+    /**
+     * @return bool
+     */
+    public function isUserLoggedIn();
 }

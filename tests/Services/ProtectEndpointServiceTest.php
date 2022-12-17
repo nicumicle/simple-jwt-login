@@ -45,10 +45,18 @@ class ProtectEndpointServiceTest extends TestCase
             ->willReturn(json_encode([
                 ProtectEndpointSettings::PROPERTY_GROUP => $settings
             ]));
-        $routeService = $this->getMockBuilder(RouteService::class)
+        $this->wordPressData->method('isUserLoggedIn')
+            ->willReturn(false);
+
+        $routeServiceMock = $this->getMockBuilder(RouteService::class)
             ->getMock();
-        $routeService->method('getUserFromJwt')
+        $routeServiceMock->method('getUserFromJwt')
             ->willThrowException(new \Exception());
+
+        $routeService = new \ReflectionClass($routeServiceMock);
+        $wordPressData = $routeService->getProperty('wordPressData');
+        $wordPressData->setAccessible(true);
+        $wordPressData->setValue($routeService, $this->wordPressData);
 
         $service = (new ProtectEndpointService())
             ->withRequest($request)

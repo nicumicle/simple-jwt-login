@@ -50,11 +50,6 @@ if (!function_exists('get_userdata')) {
     {
     }
 }
-if (!function_exists('get_user_by_email')) {
-    function get_user_by_email($email)
-    {
-    }
-}
 if (!function_exists('get_user_by')) {
     function get_user_by($field, $value)
     {

@@ -335,7 +335,7 @@ class ResetPasswordServiceTest extends TestCase
             ->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
         $this->wordPressDataMock
-            ->method('checkPasswordResetKey')
+            ->method('checkPasswordResetKeyByEmail')
             ->willReturn(['User']);
         $this->wordPressDataMock
             ->method('createResponse')

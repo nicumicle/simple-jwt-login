@@ -52,7 +52,7 @@ class ValidateTokenService extends AuthenticateService
             $this->jwt
         );
 
-        $userArray = $this->wordPressData->convertUserToArray($user);
+        $userArray = $this->wordPressData->wordpressUserToArray($user);
         if (isset($userArray['user_pass'])) {
             unset($userArray['user_pass']);
         }

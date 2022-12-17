@@ -28,7 +28,7 @@ class WordPressData implements WordPressDataInterface
      */
     public function getUserDetailsByEmail($emailAddress)
     {
-        return get_user_by_email($emailAddress);
+        return get_user_by('email', $emailAddress);
     }
 
     /**
@@ -327,20 +327,30 @@ class WordPressData implements WordPressDataInterface
         return $user instanceof WP_User;
     }
 
-    public function convertUserToArray($user)
-    {
-        return $user->to_array();
-    }
-
     /**
      * @param string $code
      * @param string $email
      *
      * @return bool|WP_User
      */
-    public function checkPasswordResetKey($code, $email)
+    public function checkPasswordResetKeyByEmail($code, $email)
     {
-        $result = check_password_reset_key($code, $email);
+        $user = $this->getUserDetailsByEmail($email);
+        if ($user instanceof WP_User === false) {
+            return false;
+        }
+
+        return $this->checkPasswordResetKeyByUserLogin($code, $user->user_login);
+    }
+
+    /**
+     * @param string $code
+     * @param string $userLogin
+     * @return false|WP_User
+     */
+    public function checkPasswordResetKeyByUserLogin($code, $userLogin)
+    {
+        $result = check_password_reset_key($code, $userLogin);
         if ($result instanceof WP_User) {
             return $result;
         }
@@ -386,7 +396,7 @@ class WordPressData implements WordPressDataInterface
     public function sendEmail($sendTo, $emailSubject, $emailBody, $sendAsHtml)
     {
         $headers = $sendAsHtml
-            ? $headers = 'Content-type: text/html'
+            ? 'Content-type: text/html'
             : [];
         wp_mail($sendTo, $emailSubject, $emailBody, $headers);
     }
@@ -440,5 +450,14 @@ class WordPressData implements WordPressDataInterface
         }
 
         return [];
+    }
+
+    /**
+     * Check if User is already logged in
+     * @return bool
+     */
+    public function isUserLoggedIn()
+    {
+        return is_user_logged_in();
     }
 }

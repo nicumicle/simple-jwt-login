@@ -27,7 +27,7 @@ jobs:
         run: php --version
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress
+        run: composer install -ignore-platform-reqs --no-progress
 
       - name: Install dependencies
         run: composer check-plugin

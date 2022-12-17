@@ -17,17 +17,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Validate composer.json and composer.lock
-        run: composer validate --strict
-
-      - name: Cache Composer packages
-        id: composer-cache
-        uses: actions/cache@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          path: vendor
-          key: ${{ runner.os }}-php-${{ matrix.php-versions }}
-          restore-keys: |
-            ${{ runner.os }}-php-
+          php-version: ${{ matrix.php-versions }}
+          coverage: none
 
       - name: Check PHP Version
         run: php --version

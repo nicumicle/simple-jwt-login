@@ -278,7 +278,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
         }
 
         $code = $this->wordPressData->sanitizeTextField($this->request['code']);
-        $user = $this->wordPressData->checkPasswordResetKey(
+        $user = $this->wordPressData->checkPasswordResetKeyByEmail(
             $code,
             $this->wordPressData->sanitizeTextField($this->request['email'])
         );

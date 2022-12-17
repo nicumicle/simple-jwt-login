@@ -2,8 +2,13 @@
 
 ## Unreleased
 
+- Fix unable to create post issue when protect endpoints is enabled for all endpoints [#62](https://github.com/nicumicle/simple-jwt-login/issues/64)
+- Search user by email on reset password [#31](https://github.com/nicumicle/simple-jwt-login/issues/31)
+- Switch `get_user_by_email` to `get_user_by()` due to [deprecation](https://developer.wordpress.org/reference/functions/get_user_by_email/)
+- Remove method `convertUserToArray` from WordPressData.
+
 ## 3.4.10 (14 Dec 2022)
-- Fix issue with rest routes
+- Fix issue with rest routes ( Issue introduced by `3.4.9`)
 
 ## 3.4.9 (4 Dec 2022)
 - Add Strength indicator for JWT decryption key

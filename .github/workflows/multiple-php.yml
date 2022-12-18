@@ -23,6 +23,7 @@ jobs:
           php-version: ${{ matrix.php-versions }}
           coverage: none
           tools: php-cs-fixer, phpunit:5.7.26
+          ini-values: short_open_tag=On
 
       - name: Check PHP Version
         run: php --version

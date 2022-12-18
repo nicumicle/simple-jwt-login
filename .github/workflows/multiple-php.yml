@@ -27,7 +27,7 @@ jobs:
         run: php --version
 
       - name: Install dependencies
-        run: composer install --ignore-platform-reqs --no-progress
+        run: composer install --ignore-platform-reqs --no-progress --no-cache
 
       - name: Run tests
         run: vendor/bin/phpunit tests/

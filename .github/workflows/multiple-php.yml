@@ -29,5 +29,5 @@ jobs:
       - name: Install dependencies
         run: composer install --ignore-platform-reqs --no-progress
 
-      - name: Install dependencies
-        run: composer check-plugin
+      - name: Run tests
+        run: vendor/bin/phpunit tests/

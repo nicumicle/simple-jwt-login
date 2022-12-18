@@ -27,8 +27,8 @@ jobs:
       - name: Check PHP Version
         run: php --version
 
-#      - name: Install dependencies
-#        run: composer install --ignore-platform-reqs --no-progress --no-cache
+      - name: Install dependencies
+        run: composer install --ignore-platform-reqs --no-progress --no-cache
 
       - name: Run tests
         run: phpunit tests/

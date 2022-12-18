@@ -28,8 +28,11 @@ jobs:
       - name: Check PHP Version
         run: php --version
 
+      - name: Check phpunit version
+        run: phpunit --version
+
       - name: Install dependencies
-        run: composer install --ignore-platform-reqs --no-progress --no-cache
+        run: composer install --no-progress --no-cache
 
       - name: Run tests
         run: phpunit tests/

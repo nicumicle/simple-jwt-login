@@ -9,13 +9,8 @@
     "GPL-2.0-or-later"
   ],
   "require-dev": {
-    "friendsofphp/php-cs-fixer": "*",
-    "phpmd/phpmd": "*",
-    "phpstan/phpstan": "*",
     "phpunit/phpunit": "*",
     "roave/security-advisories": "dev-latest",
-    "spaze/phpstan-disallowed-calls": "*",
-    "squizlabs/php_codesniffer": "*"
   },
   "autoload": {
     "psr-4": {

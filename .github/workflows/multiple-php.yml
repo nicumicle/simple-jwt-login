@@ -15,11 +15,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.0.0
 
-      - name: PHP syntax checker 5.4
-        uses: prestashop/github-action-php-lint/5.4@master
-        with:
-          working-directory: simple-jwt-login/
-
       - name: PHP syntax checker 5.5
         uses: prestashop/github-action-php-lint/5.5@master
         with:

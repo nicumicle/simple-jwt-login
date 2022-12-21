@@ -84,7 +84,7 @@ class LoginSettings extends BaseSettings implements SettingsInterface
             null,
             'login_remove_request_parameters',
             BaseSettings::SETTINGS_TYPE_STRING,
-            null,
+            null
         );
 
         $this->assignSettingsPropertyFromPost(

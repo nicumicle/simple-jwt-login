@@ -7,32 +7,60 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-    name: Check with PHP ${{ matrix.php-versions }}
+  # Check there is no syntax errors in the project
+  php-linter:
+    name: Check plugin code compatibility with multiple PHP versions
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        php-versions: ['5.6', '7.0', '7.4', '8.0', '8.1']
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - name: PHP syntax checker 5.4
+        uses: prestashop/github-action-php-lint/5.4@master
         with:
-          php-version: ${{ matrix.php-versions }}
-          coverage: none
-          tools: php-cs-fixer, phpunit:5.7.26
-          ini-values: short_open_tag=On
+          working-directory: simple-jwt-login/
 
-      - name: Check PHP Version
-        run: php --version
+      - name: PHP syntax checker 5.5
+        uses: prestashop/github-action-php-lint/5.5@master
+        with:
+          working-directory: simple-jwt-login/
 
-      - name: Check phpunit version
-        run: phpunit --version
+      - name: PHP syntax checker 5.6
+        uses: prestashop/github-action-php-lint/5.6@master
+        with:
+          working-directory: simple-jwt-login/
 
-      - name: Install dependencies
-        run: composer install --no-progress --no-cache
+      - name: PHP syntax checker 7.1
+        uses: prestashop/github-action-php-lint/7.1@master
+        with:
+          working-directory: simple-jwt-login/
 
-      - name: Run tests
-        run: phpunit tests/
+      - name: PHP syntax checker 7.2
+        uses: prestashop/github-action-php-lint/7.2@master
+        with:
+          working-directory: simple-jwt-login/
+
+      - name: PHP syntax checker 7.3
+        uses: prestashop/github-action-php-lint/7.3@master
+        with:
+          working-directory: simple-jwt-login/
+
+      - name: PHP syntax checker 7.4
+        uses: prestashop/github-action-php-lint/7.4@master
+        with:
+          working-directory: simple-jwt-login/
+
+      - name: PHP syntax checker 8.0
+        uses: prestashop/github-action-php-lint/8.0@master
+        with:
+          working-directory: simple-jwt-login/
+
+      - name: PHP syntax checker 8.1
+        uses: prestashop/github-action-php-lint/8.1@master
+        with:
+          working-directory: simple-jwt-login/
+
+      - name: PHP syntax checker 8.2
+        uses: prestashop/github-action-php-lint/8.2@master
+        with:
+          working-directory: simple-jwt-login/

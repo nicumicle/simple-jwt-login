@@ -37,7 +37,7 @@ jobs:
         env:
           XDEBUG_MODE: coverage
         with:
-          configuration: phpunit.xml
+          configuration: phpunit.xml.dist
           php_extensions: xdebug
           args: tests --coverage-clover ./coverage.xml
 

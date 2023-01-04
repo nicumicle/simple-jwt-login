@@ -32,8 +32,12 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
-      - name: "Run test suite"
-        run: "vendor/bin/phpunit tests/ --coverage-clover=coverage.xml"
+      - name: Code Coverage Check
+        uses: sourcetoad/phpunit-coverage-action@v1
+        with:
+          clover_report_path: coverage.xml
+          min_coverage_percent: 80
+          fail_build_on_under: true
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1

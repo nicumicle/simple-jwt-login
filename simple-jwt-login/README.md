@@ -5,8 +5,8 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: jwt, API, auto login, register users, tokens, REST, auth, generate jwt, refresh jwt, protect
 Requires at least: 4.4.0
 Tested up to: 6.1
-Requires PHP: 5.3
-Stable tag: 3.4.10
+Requires PHP: 5.5
+Stable tag: 3.5.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/quick-guide-gplv3.html
 
@@ -412,6 +412,13 @@ After that, for the create user route, simply add the AUTH code in the request, 
 The [Changelog](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md) can be found in the GitHub repository [https://github.com/nicumicle/simple-jwt-login](https://github.com/nicumicle/simple-jwt-login).
 
 Also,  here you can find the beta version of the plugin, before it is released
+
+= 3.5.0 (04 Jan 2023) =
+- Fix unable to create post issue when protect endpoints is enabled for all endpoints
+- Search user by email on reset password
+- Switch `get_user_by_email` to `get_user_by()` due to [deprecation](https://developer.wordpress.org/reference/functions/get_user_by_email/)
+- Remove method `convertUserToArray` from WordPressData.
+- Drop support for PHP 5.3 and PHP 5.4
 
 = 3.4.10 (14 Dec 2022) =
 - Fix issue with rest routes

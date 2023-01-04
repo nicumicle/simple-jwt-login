@@ -7,7 +7,7 @@
     Author URI: https://profiles.wordpress.org/nicu_m/
     Text Domain: simple-jwt-login
     Domain Path: /i18n
-    Version: 3.4.10
+    Version: 3.5.0
 */
 
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -147,6 +147,11 @@ function simple_jwt_login_add_plugin_action_links($links)
         '<a href="%1$s" target="_blank" style="color: #42b983; font-weight: bold;">%2$s</a>',
         'https://simplejwtlogin.com?utm_source=plugin_page',
         'Documentation'
+    );
+    $links['github'] = sprintf(
+        '<a href="%1$s" target="_blank" style="color: #24292f; font-weight: bold;">%2$s</a>',
+        'https://github.com/nicumicle/simple-jwt-login',
+        'GitHub'
     );
 
     return $links;

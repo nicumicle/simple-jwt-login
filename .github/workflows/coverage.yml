@@ -33,10 +33,11 @@ jobs:
         run: composer install --prefer-dist --no-progress
 
       - name: PHPUnit Tests
-        uses: php-actions/phpunit@v3
+        uses: php-actions/phpunit@v2
         env:
           XDEBUG_MODE: coverage
         with:
+          memory_limit: 256M
           configuration: phpunit.xml.dist
           php_extensions: xdebug
           args: tests --coverage-clover ./coverage.xml

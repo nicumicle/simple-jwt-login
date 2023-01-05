@@ -23,7 +23,7 @@
 <p align="center">
     <img src="https://img.shields.io/github/v/tag/nicumicle/simple-jwt-login" alt="Current Tag" />
     <img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/php.yml/badge.svg" alt="Check plugin" />
-    <img src="https://codecov.io/gh/nicumicle/simple-jwt-login/branch/master/graph/badge.svg?token=dVOwuGQoY3" alt="Coverage"/>
+    <a href="https://app.codecov.io/gh/nicumicle/simple-jwt-login"><img src="https://codecov.io/gh/nicumicle/simple-jwt-login/branch/master/graph/badge.svg?token=dVOwuGQoY3" alt="Coverage"/></a>
     <img src="https://img.shields.io/github/license/nicumicle/simple-jwt-login" alt="License" />
 </p>
 

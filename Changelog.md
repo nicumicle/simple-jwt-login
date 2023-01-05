@@ -1,7 +1,8 @@
 # Changelog - Releases
 
 ## Unreleased
-
+- Fix warnings and failed tests on PHP 8.2
+- Publish code coverage to codecov
 
 ## 3.5.0 (4 Jan 2023)
 - Fix unable to create post issue when protect endpoints is enabled for all endpoints [#62](https://github.com/nicumicle/simple-jwt-login/issues/64)

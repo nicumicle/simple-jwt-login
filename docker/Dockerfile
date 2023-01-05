@@ -1,8 +1,10 @@
-FROM wordpress:latest
+FROM wordpress:php8.2
 
-RUN apt-get update && apt-get install
+RUN apt-get update
 
-RUN apt-get -y install vim
+RUN apt-get -y install \
+    vim \
+    git
 
 # Install wp-cli
 RUN curl -o /bin/wp-cli.phar https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar

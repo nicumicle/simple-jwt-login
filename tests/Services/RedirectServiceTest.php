@@ -1,6 +1,6 @@
 <?php
 
-namespace Services;
+namespace SimpleJwtLoginTests\Services;
 
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
@@ -16,6 +16,11 @@ class RedirectServiceTest extends TestCase
      * @var \PHPUnit\Framework\MockObject\MockObject|WordPressDataInterface
      */
     private $wordPressDataMock;
+
+    /**
+     * @var WP_User|null
+     */
+    private $user = null;
 
     public function setUp(): void
     {

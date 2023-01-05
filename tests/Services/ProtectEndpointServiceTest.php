@@ -53,11 +53,8 @@ class ProtectEndpointServiceTest extends TestCase
         $routeServiceMock->method('getUserFromJwt')
             ->willThrowException(new \Exception());
 
-        $routeService = new \ReflectionClass($routeServiceMock);
-        $wordPressData = $routeService->getProperty('wordPressData');
-        $wordPressData->setAccessible(true);
-        $wordPressData->setValue($routeService, $this->wordPressData);
-
+        $routeService = (new RouteService())
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressData));
         $service = (new ProtectEndpointService())
             ->withRequest($request)
             ->withCookies([])

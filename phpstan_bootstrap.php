@@ -427,6 +427,7 @@ if (!class_exists('WP_User')) {
     class WP_User
     {
         public $user_login;
+        public $roles = [];
 
         public function __construct($user)
         {
@@ -434,6 +435,7 @@ if (!class_exists('WP_User')) {
 
         public function set_role($role)
         {
+            $this->roles[] = $role;
         }
 
         public function get($param)

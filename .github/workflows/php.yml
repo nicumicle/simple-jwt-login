@@ -70,4 +70,4 @@ jobs:
       run: vendor/bin/phpmd tests/ text controversial
 
     - name: PHPUnit tests
-      run: vendor/bin/phpunit tests/ --coverage-text
+      run: vendor/bin/phpunit tests/

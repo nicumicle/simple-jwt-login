@@ -1,20 +1,24 @@
 # Changelog - Releases
 
 ## Unreleased
+
+
+## 3.5.1 (1 October 2023)
+- Update WordPress 6.3 compatibility
 - Fix warnings and failed tests on PHP 8.2
 - Publish code coverage to codecov
 
-## 3.5.0 (4 Jan 2023)
+## 3.5.0 (4 January 2023)
 - Fix unable to create post issue when protect endpoints is enabled for all endpoints [#62](https://github.com/nicumicle/simple-jwt-login/issues/64)
 - Search user by email on reset password [#31](https://github.com/nicumicle/simple-jwt-login/issues/31)
 - Switch `get_user_by_email` to `get_user_by()` due to [deprecation](https://developer.wordpress.org/reference/functions/get_user_by_email/)
 - Remove method `convertUserToArray` from WordPressData.
 - Drop support for PHP 5.3 and PHP 5.4
 
-## 3.4.10 (14 Dec 2022)
+## 3.4.10 (14 December 2022)
 - Fix issue with rest routes ( Issue introduced by `3.4.9`)
 
-## 3.4.9 (4 Dec 2022)
+## 3.4.9 (4 December 2022)
 - Add Strength indicator for JWT decryption key
 - Allow setting custom length for random password. The default is 10 characters.
 - Allow sending base_64 encoded `password` and `passhash` on the `/auth` endpoint
@@ -22,7 +26,7 @@
 - Add query parameters filter on autologin redirect
 - Add the `simple_jwt_login_before_endpoint` hook before all simple-jwt-login routes are initialized
 
-## 3.4.8 (04 Nov 2022)
+## 3.4.8 (04 November 2022)
 - Add filter to allow the change for authentication payload
 - Change how we log in the user on while using the "protect endpoint" feature
 - Refactor Route Service getUserFromJWT method

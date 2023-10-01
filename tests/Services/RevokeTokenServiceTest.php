@@ -36,7 +36,7 @@ class RevokeTokenServiceTest extends TestCase
     public function testValidation($settings, $exceptionMessage)
     {
         $this->expectException(\Exception::class);
-        $this->expectErrorMessage($exceptionMessage);
+        $this->expectExceptionMessage($exceptionMessage);
 
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
@@ -57,7 +57,7 @@ class RevokeTokenServiceTest extends TestCase
     public function testUserNotFound()
     {
         $this->expectException(\Exception::class);
-        $this->expectErrorMessage('User not found.');
+        $this->expectExceptionMessage('User not found.');
 
         $settings = [
             'allow_authentication' => true,
@@ -143,7 +143,7 @@ class RevokeTokenServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function validationProvider()
+    public static function validationProvider()
     {
         return [
             'test_empty_settings' => [

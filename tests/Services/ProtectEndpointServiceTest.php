@@ -74,7 +74,7 @@ class ProtectEndpointServiceTest extends TestCase
     /**
      * @return array[]
      */
-    public function accessProvider()
+    public static function accessProvider()
     {
         return [
             'test-not-enabled' => [

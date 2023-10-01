@@ -19,7 +19,7 @@ class JwtKeyCertificateTest extends JwtKeyBase
         $this->assertSame($expectedPublicKey, $jwtKeyCertificate->getPublicKey());
     }
 
-    public function settingsProvider()
+    public static function settingsProvider()
     {
         return [
             [

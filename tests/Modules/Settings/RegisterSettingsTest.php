@@ -157,7 +157,7 @@ class RegisterSettingsTest extends TestCase
     /**
      * @return array
      */
-    public function invalidRoleProvider()
+    public static function invalidRoleProvider()
     {
         return [
             'empty_role' => [
@@ -174,7 +174,7 @@ class RegisterSettingsTest extends TestCase
     /**
      * @return array<string,array<string,mixed>>
      */
-    public function passwordLengthProvider()
+    public static function passwordLengthProvider()
     {
         return [
             'one' => [

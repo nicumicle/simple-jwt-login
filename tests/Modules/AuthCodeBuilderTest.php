@@ -21,7 +21,7 @@ class AuthCodeBuilderTest extends TestCase
         $this->assertSame($expected['expiration_date'], $builder->getExpirationDate());
     }
 
-    public function authCodeBuilderArrayProvider()
+    public static function authCodeBuilderArrayProvider()
     {
         return [
             0 => [
@@ -74,7 +74,7 @@ class AuthCodeBuilderTest extends TestCase
         $this->assertSame($expected, $builder->toArray());
     }
 
-    public function authCodeBuilderStringProvider()
+    public static function authCodeBuilderStringProvider()
     {
         return [
             0 => [

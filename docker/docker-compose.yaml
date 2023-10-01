@@ -6,7 +6,6 @@ services:
     container_name: wpdb
     volumes:
       - wpdb_data:/var/lib/mysql
-    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: somewordpress
       MYSQL_DATABASE: wordpress
@@ -28,7 +27,6 @@ services:
       - ../simple-jwt-login/:/var/www/html/wp-content/plugins/simple-jwt-login
     ports:
       - "88:80"
-    restart: always
     environment:
       WORDPRESS_DB_HOST: wpdb:3308
       WORDPRESS_DB_USER: wordpress

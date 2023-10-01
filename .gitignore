@@ -9,6 +9,7 @@ composer.lock
 .php-cs-fixer.cache
 clover.xml
 simple-logs
+.phpunit.cache
 
 # other plugins
 buddypress/*

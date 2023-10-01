@@ -193,7 +193,7 @@ class DeleteUserServiceTest extends TestCase
     /**
      * @return array[]
      */
-    public function deleteByProvider()
+    public static function deleteByProvider()
     {
         return [
             'delete-by-email' => [
@@ -210,7 +210,7 @@ class DeleteUserServiceTest extends TestCase
     }
 
 
-    public function validationProvider()
+    public static function validationProvider()
     {
         return [
             'test_empty_settings_and_request' => [

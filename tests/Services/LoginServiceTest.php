@@ -64,7 +64,7 @@ class LoginServiceTest extends TestCase
         $service->makeAction();
     }
 
-    public function validationProvider()
+    public static function validationProvider()
     {
         return [
             'empty_settings_and_request' => [
@@ -296,7 +296,7 @@ class LoginServiceTest extends TestCase
         $this->assertNull($result);
     }
 
-    public function loginProvider()
+    public static function loginProvider()
     {
         $jwt = JWT::encode(
             [
@@ -418,7 +418,7 @@ class LoginServiceTest extends TestCase
         }
     }
 
-    public function redirectOnFailProvider()
+    public static function redirectOnFailProvider()
     {
         return [
             'test_empty_request_and_include_params' => [

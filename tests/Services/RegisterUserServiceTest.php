@@ -64,7 +64,7 @@ class RegisterUserServiceTest extends TestCase
         $service->makeAction();
     }
 
-    public function validationProvider()
+    public static function validationProvider()
     {
         return[
             'test_empty_settings' => [

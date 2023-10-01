@@ -35,7 +35,7 @@ class RefreshTokenServiceTest extends TestCase
     public function testValidation($settings, $exceptionMessage)
     {
         $this->expectException(\Exception::class);
-        $this->expectErrorMessage($exceptionMessage);
+        $this->expectExceptionMessage($exceptionMessage);
 
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
@@ -63,7 +63,7 @@ class RefreshTokenServiceTest extends TestCase
             'jwt_login_by_parameter' => 'id',
         ];
         $this->expectException(\Exception::class);
-        $this->expectErrorMessage('Wrong number of segments');
+        $this->expectExceptionMessage('Wrong number of segments');
 
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
@@ -91,7 +91,7 @@ class RefreshTokenServiceTest extends TestCase
             'jwt_auth_ttl' => 1, //minutes
         ];
         $this->expectException(\Exception::class);
-        $this->expectErrorMessage('Jwt is invalid');
+        $this->expectExceptionMessage('Jwt is invalid');
         $this->expectExceptionCode(ErrorCodes::ERR_REVOKED_TOKEN);
 
         $jwt = JWT::encode(
@@ -134,7 +134,7 @@ class RefreshTokenServiceTest extends TestCase
             'jwt_auth_ttl' => 1, //minutes
         ];
         $this->expectException(\Exception::class);
-        $this->expectErrorMessage('JWT is too old to be refreshed.');
+        $this->expectExceptionMessage('JWT is too old to be refreshed.');
         $this->expectExceptionCode(ErrorCodes::ERR_JWT_REFRESH_JWT_TOO_OLD);
 
         $jwt = JWT::encode(
@@ -211,7 +211,7 @@ class RefreshTokenServiceTest extends TestCase
     /**
      * @return array[]
      */
-    public function validationProvider()
+    public static function validationProvider()
     {
         return [
             'test_empty_settings' => [

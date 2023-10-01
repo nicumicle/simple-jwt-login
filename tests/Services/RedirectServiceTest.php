@@ -154,7 +154,7 @@ class RedirectServiceTest extends TestCase
         $this->assertSame(null, $response);
     }
 
-    public function redirectCustomURLProvider()
+    public static function redirectCustomURLProvider()
     {
         return [
             'simple-redirect' => [

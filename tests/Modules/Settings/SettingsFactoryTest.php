@@ -34,7 +34,7 @@ class SettingsFactoryTest extends TestCase
     /**
      * @return array[]
      */
-    public function settingsFactoryProvider()
+    public static function settingsFactoryProvider()
     {
         return [
             [

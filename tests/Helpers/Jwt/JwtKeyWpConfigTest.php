@@ -36,7 +36,7 @@ class JwtKeyWpConfigTest extends JwtKeyBase
         );
     }
 
-    public function settingsProvider()
+    public static function settingsProvider()
     {
         return [
             [

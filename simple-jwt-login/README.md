@@ -413,6 +413,9 @@ The [Changelog](https://github.com/nicumicle/simple-jwt-login/blob/master/Change
 
 Also,  here you can find the beta version of the plugin, before it is released
 
+= 3.5.1 (1 October 2023)
+- Update WordPress 6.3 compatibility
+
 = 3.5.0 (04 Jan 2023) =
 - Fix unable to create post issue when protect endpoints is enabled for all endpoints
 - Search user by email on reset password

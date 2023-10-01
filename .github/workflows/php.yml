@@ -70,7 +70,4 @@ jobs:
       run: vendor/bin/phpmd tests/ text controversial
 
     - name: PHPUnit tests
-      uses: php-actions/phpunit@v2
-      with:
-        configuration: phpunit.xml.dist
-        memory_limit: 256M
+      run: vendor/bin/phpunit tests/ --coverage-text

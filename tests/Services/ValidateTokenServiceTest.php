@@ -51,7 +51,7 @@ class ValidateTokenServiceTest extends TestCase
         $validateTokenService->makeAction();
     }
 
-    public function validationProvider()
+    public static function validationProvider()
     {
         return [
             [

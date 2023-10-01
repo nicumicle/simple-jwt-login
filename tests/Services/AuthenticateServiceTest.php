@@ -51,7 +51,7 @@ class AuthenticateServiceTest extends TestCase
     /**
      * @return array[]
      */
-    public function validationProvider()
+    public static function validationProvider()
     {
         return [
             [

@@ -23,7 +23,7 @@ class JwtKeyFactoryTest extends JwtKeyBase
         $this->assertInstanceOf($expected, $factory);
     }
 
-    public function settingsProvider()
+    public static function settingsProvider()
     {
         return [
             [

@@ -35,7 +35,7 @@ class JWTTest extends TestCase
     /**
      * @return string[][]
      */
-    public function invalidJwtProvider()
+    public static function invalidJwtProvider()
     {
         return [
             [ '' ],

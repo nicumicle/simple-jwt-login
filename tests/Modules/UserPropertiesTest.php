@@ -22,7 +22,7 @@ class UserPropertiesTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
-    public function providerBuildMethod()
+    public static function providerBuildMethod()
     {
         return [
             0 => [
@@ -108,7 +108,7 @@ class UserPropertiesTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
-    public function providerTestGetExtraParametersFromRequest()
+    public static function providerTestGetExtraParametersFromRequest()
     {
         return [
             0 => [

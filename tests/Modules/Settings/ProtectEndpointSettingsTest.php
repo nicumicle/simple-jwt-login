@@ -226,11 +226,11 @@ class ProtectEndpointSettingsTest extends TestCase
                 ]
             ]);
         $this->expectException(Exception::class);
-        $this->expectErrorMessage('You need to add at least one endpoint.');
+        $this->expectExceptionMessage('You need to add at least one endpoint.');
         $settings->validateSettings();
     }
 
-    public function endpointsProvider()
+    public static function endpointsProvider()
     {
         return [
             'empty_array' => [

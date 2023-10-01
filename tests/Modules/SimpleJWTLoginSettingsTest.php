@@ -208,7 +208,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
     /**
      * @return array
      */
-    public function settingsProvider()
+    public static function settingsProvider()
     {
         return [
             'empty_settings' => [

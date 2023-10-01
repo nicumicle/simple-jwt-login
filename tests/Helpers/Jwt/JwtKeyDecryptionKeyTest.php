@@ -26,7 +26,7 @@ class JwtKeyDecryptionKeyTest extends JwtKeyBase
         );
     }
 
-    public function settingProvider()
+    public static function settingProvider()
     {
         return[
             [

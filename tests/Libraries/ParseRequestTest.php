@@ -22,7 +22,7 @@ class ParseRequestTest extends TestCase
     /**
      * @return array
      */
-    public function contentTypeProvider()
+    public static function contentTypeProvider()
     {
         return [
             [

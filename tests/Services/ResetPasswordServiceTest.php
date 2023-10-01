@@ -51,7 +51,7 @@ class ResetPasswordServiceTest extends TestCase
         $resetService->makeAction();
     }
 
-    public function sendUserPasswordProvider()
+    public static function sendUserPasswordProvider()
     {
         return [
             [
@@ -156,7 +156,7 @@ class ResetPasswordServiceTest extends TestCase
         $this->assertSame(true, $result);
     }
 
-    public function flowTypeProvider()
+    public static function flowTypeProvider()
     {
         return [
             [
@@ -195,7 +195,7 @@ class ResetPasswordServiceTest extends TestCase
         $resetService->makeAction();
     }
 
-    public function changePasswordValidationProvider()
+    public static function changePasswordValidationProvider()
     {
         return [
             'empty_settings' => [

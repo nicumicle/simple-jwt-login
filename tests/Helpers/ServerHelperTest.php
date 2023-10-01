@@ -21,7 +21,7 @@ class ServerHelperTest extends TestCase
     /**
      * @return array[]
      */
-    public function ipProvider()
+    public static function ipProvider()
     {
         return [
             [
@@ -71,7 +71,7 @@ class ServerHelperTest extends TestCase
     /**
      * @return array[]
      */
-    public function isClientInListProvider()
+    public static function isClientInListProvider()
     {
         return [
             [
@@ -122,7 +122,7 @@ class ServerHelperTest extends TestCase
     /**
      * @return array
      */
-    public function getHeadersProvider()
+    public static function getHeadersProvider()
     {
         return [
             [
@@ -160,7 +160,7 @@ class ServerHelperTest extends TestCase
     /**
      * @return array[]
      */
-    public function providerWildIps()
+    public static function providerWildIps()
     {
         return [
             [

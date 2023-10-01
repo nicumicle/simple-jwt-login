@@ -158,7 +158,7 @@ class LoginSettingsTest extends TestCase
         );
     }
 
-    public function loginRemoveRequestParametersProvider()
+    public static function loginRemoveRequestParametersProvider()
     {
         return [
             'not_set_get_default_values' => [

@@ -280,15 +280,15 @@ class RegisterUserService extends BaseService implements ServiceInterface
             ->getUserProperty($user, 'ID');
         $username = $this->wordPressData
             ->getUserProperty($user, 'user_login');
-        $iis = $this->jwtSettings
-            ->getAuthenticationSettings()->getAuthIis();
+        $iss = $this->jwtSettings
+            ->getAuthenticationSettings()->getAuthIss();
 
         return [
             AuthenticationSettings::JWT_PAYLOAD_PARAM_EMAIL    => $userEmail,
             AuthenticationSettings::JWT_PAYLOAD_PARAM_ID       => $userId,
             AuthenticationSettings::JWT_PAYLOAD_PARAM_USERNAME => $username,
             AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT      => time(),
-            AuthenticationSettings::JWT_IIS                    => $iis,
+            AuthenticationSettings::JWT_ISS                    => $iss,
         ];
     }
 }

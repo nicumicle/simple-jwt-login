@@ -217,8 +217,8 @@ if (! defined('ABSPATH')) {
                                 case AuthenticationSettings::JWT_PAYLOAD_PARAM_USERNAME:
                                     $sampleValue = 'WordPresUser_login';
                                     break;
-                                case AuthenticationSettings::JWT_IIS:
-                                    $sampleValue = $jwtSettings->getAuthenticationSettings()->getAuthIis();
+                                case AuthenticationSettings::JWT_ISS:
+                                    $sampleValue = $jwtSettings->getAuthenticationSettings()->getAuthIss();
                                     break;
                                 default:
                                     $sampleValue = '';
@@ -355,21 +355,21 @@ if (! defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title">
-            <?php echo __('JWT Issuer (iis)', 'simple-jwt-login') ?>
+            <?php echo __('JWT Issuer (iss)', 'simple-jwt-login') ?>
         </h3>
         <label for="jwt_auth_ttl">
             <?php echo __(
-                'The iss when a new JWT is generated',
+                'The payload issuer when a new JWT is generated',
                 'simple-jwt-login'
             ); ?>
         </label>
         <input
             type="text"
-            name="jwt_auth_iis"
+            name="jwt_auth_iss"
             class="form-control"
-            id="jwt_auth_iis"
-            value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAuthIis()); ?>"
-            placeholder="<?php echo __('Default iis', 'simple-jwt-login') ?>"
+            id="jwt_auth_iss"
+            value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAuthIss()); ?>"
+            placeholder="<?php echo __('Default issuer', 'simple-jwt-login') ?>"
         />
     </div>
 </div>

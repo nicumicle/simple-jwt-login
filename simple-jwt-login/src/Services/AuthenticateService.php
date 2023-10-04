@@ -55,8 +55,8 @@ class AuthenticateService extends BaseService implements ServiceInterface
                 case AuthenticationSettings::JWT_PAYLOAD_PARAM_USERNAME:
                     $payload[$parameter] = $wordPressData->getUserProperty($user, 'user_login');
                     break;
-                case AuthenticationSettings::JWT_IIS:
-                    $payload[$parameter] = $jwtSettings->getAuthenticationSettings()->getAuthIis();
+                case AuthenticationSettings::JWT_ISS:
+                    $payload[$parameter] = $jwtSettings->getAuthenticationSettings()->getAuthIss();
                     break;
             }
         }

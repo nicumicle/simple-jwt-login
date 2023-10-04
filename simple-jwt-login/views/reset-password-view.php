@@ -145,8 +145,7 @@ if (!defined('ABSPATH')) {
         <ul>
             <li>
                 <input type="radio"
-                       value="<?php
-                       echo esc_attr(ResetPasswordSettings::FLOW_JUST_SAVE_IN_DB); ?>"
+                       value="<?php echo esc_attr(ResetPasswordSettings::FLOW_JUST_SAVE_IN_DB); ?>"
                     <?php
                     echo (
                         $jwtSettings->getResetPasswordSettings()->getFlowType()
@@ -171,14 +170,14 @@ if (!defined('ABSPATH')) {
             <li>
                 <input type="radio"
                        value="<?php
-                       echo esc_attr(ResetPasswordSettings::FLOW_SEND_DEFAULT_WP_EMAIL); ?>"
+                        echo esc_attr(ResetPasswordSettings::FLOW_SEND_DEFAULT_WP_EMAIL); ?>"
                     <?php
-                    echo($jwtSettings->getResetPasswordSettings()->getFlowType()
-                    === ResetPasswordSettings::FLOW_SEND_DEFAULT_WP_EMAIL
-                        ? 'checked="checked"'
-                        : ''
-                    );
-                    ?>
+                        echo($jwtSettings->getResetPasswordSettings()->getFlowType()
+                        === ResetPasswordSettings::FLOW_SEND_DEFAULT_WP_EMAIL
+                            ? 'checked="checked"'
+                            : ''
+                        );
+                        ?>
                        name="jwt_reset_password_flow"
                        class="jwt_reset_password_flow"
                        id="jwt_reset_password_flow_wordpress"
@@ -230,7 +229,7 @@ if (!defined('ABSPATH')) {
                    class="form-control"
                    placeholder="<?php echo __('Email Subject', 'simple-jwt-login'); ?>"
                    value="<?php
-                   echo esc_attr($jwtSettings->getResetPasswordSettings()->getResetPasswordEmailSubject()); ?>"
+                    echo esc_attr($jwtSettings->getResetPasswordSettings()->getResetPasswordEmailSubject()); ?>"
             />
             <br/>
             <h4 class="sub-section-title">Email body</h4>
@@ -239,8 +238,7 @@ if (!defined('ABSPATH')) {
                       id="reset_password_email_body"
                       placeholder="Email Content"
             ><?php
-                echo esc_html($jwtSettings->getResetPasswordSettings()->getResetPasswordEmailBody());
-                ?></textarea>
+                echo esc_html($jwtSettings->getResetPasswordSettings()->getResetPasswordEmailBody()); ?></textarea>
             <br/>
             <h4 class="sub-section-title">Email type</h4>
             <ul>
@@ -250,7 +248,9 @@ if (!defined('ABSPATH')) {
                            id="jwt_email_type_plain_text"
                            value="0"
                         <?php
-                        echo $jwtSettings->getResetPasswordSettings()->getResetPasswordEmailType() === 0 ? 'checked="checked"' : ''; ?>
+                        echo $jwtSettings->getResetPasswordSettings()->getResetPasswordEmailType() === 0
+                            ? 'checked="checked"'
+                            : ''; ?>
                     />
                     <label for="jwt_email_type_plain_text">
                         <?php echo __('Plain text', 'simple-jwt-login'); ?>
@@ -262,7 +262,9 @@ if (!defined('ABSPATH')) {
                            id="jwt_email_type_html"
                            value="1"
                         <?php
-                        echo $jwtSettings->getResetPasswordSettings()->getResetPasswordEmailType() === 1 ? 'checked="checked"' : ''; ?>
+                        echo $jwtSettings->getResetPasswordSettings()->getResetPasswordEmailType() === 1
+                            ? 'checked="checked"'
+                            : ''; ?>
                     />
                     <label for="jwt_email_type_html">
                         HTML

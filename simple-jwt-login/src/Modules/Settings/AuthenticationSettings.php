@@ -12,6 +12,7 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
     const JWT_PAYLOAD_PARAM_ID = 'id';
     const JWT_PAYLOAD_PARAM_SITE = 'site';
     const JWT_PAYLOAD_PARAM_USERNAME = 'username';
+    const JWT_IIS = 'iis';
 
     public function initSettingsFromPost()
     {
@@ -64,6 +65,13 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             'auth_password_base64',
             BaseSettings::SETTINGS_TYPE_BOL,
             false
+        );
+        $this->assignSettingsPropertyFromPost(
+            null,
+            'jwt_auth_iis',
+            null,
+            'jwt_auth_iis',
+            BaseSettings::SETTINGS_TYPE_STRING
         );
     }
 
@@ -153,7 +161,8 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             self::JWT_PAYLOAD_PARAM_EMAIL,
             self::JWT_PAYLOAD_PARAM_ID,
             self::JWT_PAYLOAD_PARAM_SITE,
-            self::JWT_PAYLOAD_PARAM_USERNAME
+            self::JWT_PAYLOAD_PARAM_USERNAME,
+            self::JWT_IIS,
         ];
     }
 
@@ -175,6 +184,16 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
         return isset($this->settings['jwt_auth_refresh_ttl'])
             ? (int)$this->settings['jwt_auth_refresh_ttl']
             : 20160;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAuthIis()
+    {
+        return isset($this->settings['jwt_auth_iis'])
+            ? (string)$this->settings['jwt_auth_iis']
+            : $this->wordPressData->getSiteUrl();
     }
 
     /**

@@ -217,7 +217,7 @@ if (! defined('ABSPATH')) {
                                 case AuthenticationSettings::JWT_PAYLOAD_PARAM_USERNAME:
                                     $sampleValue = 'WordPresUser_login';
                                     break;
-                                case AuthenticationSettings::JWT_ISS:
+                                case AuthenticationSettings::JWT_PAYLOAD_PARAM_ISS:
                                     $sampleValue = $jwtSettings->getAuthenticationSettings()->getAuthIss();
                                     break;
                                 default:

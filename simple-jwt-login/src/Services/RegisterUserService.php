@@ -288,7 +288,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
             AuthenticationSettings::JWT_PAYLOAD_PARAM_ID       => $userId,
             AuthenticationSettings::JWT_PAYLOAD_PARAM_USERNAME => $username,
             AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT      => time(),
-            AuthenticationSettings::JWT_ISS                    => $iss,
+            AuthenticationSettings::JWT_PAYLOAD_PARAM_ISS                    => $iss,
         ];
     }
 }

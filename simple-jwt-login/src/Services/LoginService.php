@@ -128,7 +128,7 @@ class LoginService extends BaseService implements ServiceInterface
                 !in_array($payload['iss'], ArrayHelper::convertStringToArray($allowedIss))) {
                 throw new Exception(
                     __('The JWT issuer(iss) is not allowed to auto-login.', 'simple-jwt-login'),
-                    ErrorCodes::ERR_IP_IS_NOT_ALLOWED_TO_LOGIN
+                    ErrorCodes::ERR_INVALID_IIS_LOGIN
                 );
             }
         }

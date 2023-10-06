@@ -12,7 +12,7 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
     const JWT_PAYLOAD_PARAM_ID = 'id';
     const JWT_PAYLOAD_PARAM_SITE = 'site';
     const JWT_PAYLOAD_PARAM_USERNAME = 'username';
-    const JWT_ISS = 'iss';
+    const JWT_PAYLOAD_PARAM_ISS = 'iss';
 
     public function initSettingsFromPost()
     {
@@ -162,7 +162,7 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             self::JWT_PAYLOAD_PARAM_ID,
             self::JWT_PAYLOAD_PARAM_SITE,
             self::JWT_PAYLOAD_PARAM_USERNAME,
-            self::JWT_ISS,
+            self::JWT_PAYLOAD_PARAM_ISS,
         ];
     }
 

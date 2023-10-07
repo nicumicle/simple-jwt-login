@@ -72,4 +72,6 @@ class ErrorCodes
     const ERR_RESET_PASSWORD_INVALID_FLOW = 65;
     const ERR_MISSING_CODE_FROM_EMAIL_BODY = 66;
     const ERR_INVALID_NONCE = 67;
+
+    const ERR_INVALID_IIS_LOGIN = 68;
 }

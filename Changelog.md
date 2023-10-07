@@ -1,7 +1,7 @@
 # Changelog - Releases
 
 ## Unreleased
-
+- Add `iss` to JWT payload and allow to configure it
 
 ## 3.5.1 (1 October 2023)
 - Update WordPress 6.3 compatibility

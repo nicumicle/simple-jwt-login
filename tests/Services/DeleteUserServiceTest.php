@@ -1,6 +1,6 @@
 <?php
 
-namespace SimpleJWTLoginTests\Services;
+namespace SimpleJwtLoginTests\Services;
 
 use Exception;
 use PHPUnit\Framework\TestCase;

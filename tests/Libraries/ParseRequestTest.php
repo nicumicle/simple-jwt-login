@@ -1,6 +1,6 @@
 <?php
 
-namespace Libraries;
+namespace SimpleJwtLoginTests\Libraries;
 
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Libraries\ParseRequest;

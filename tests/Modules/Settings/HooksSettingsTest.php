@@ -1,6 +1,6 @@
 <?php
 
-namespace SimpleJWTLoginTests\Modules\Settings;
+namespace SimpleJwtLoginTests\Modules\Settings;
 
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\HooksSettings;

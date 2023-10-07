@@ -1,5 +1,5 @@
 <?php
-namespace SimpleJWTLoginTests\Modules\Settings;
+namespace SimpleJwtLoginTests\Modules\Settings;
 
 use Exception;
 use PHPUnit\Framework\TestCase;

@@ -101,6 +101,12 @@ interface WordPressDataInterface
     public function sanitizeTextField($text);
 
     /**
+     * @param array $array
+     * @return array
+     */
+    public function sanitizeArray($array);
+
+    /**
      * @param \WP_User $user
      *
      * @return bool

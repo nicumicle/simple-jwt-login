@@ -2,6 +2,7 @@
 
 ## Unreleased
 - Add `iss` to JWT payload and allow to configure it
+- Fix user meta on register user [#86](https://github.com/nicumicle/simple-jwt-login/issues/86) 
 
 ## 3.5.1 (1 October 2023)
 - Update WordPress 6.3 compatibility

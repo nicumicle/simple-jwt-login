@@ -76,8 +76,10 @@ class RegisterUserService extends BaseService implements ServiceInterface
 
         if (!empty($this->request['user_meta'])) {
             $userMeta = $this->wordPressData->sanitizeTextField($this->request['user_meta']);
-            if (is_string($userMeta)) {
-                $userMeta = json_decode($this->request['user_meta'], true);
+            if (is_array($this->request['user_meta'])) {
+                $userMeta = $this->wordPressData->sanitizeArray($this->request['user_meta']);
+            } elseif (is_string($this->request['user_meta'])) {
+                $userMeta = json_decode($userMeta, true);
                 if ($userMeta === null
                     && strpos($this->request['user_meta'], '\\"') !== false
                 ) {
@@ -91,6 +93,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
                     );
                 }
             }
+
             $allowedUserMetaKeys = array_map(function ($value) {
                 return trim($value);
             }, explode(',', $this->jwtSettings->getRegisterSettings()->getAllowedUserMeta()));

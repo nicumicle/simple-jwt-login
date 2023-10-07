@@ -191,6 +191,27 @@ class WordPressData implements WordPressDataInterface
     }
 
     /**
+     * @param array $array
+     * @return array
+     */
+    public function sanitizeArray($array)
+    {
+        if (is_array($array)) {
+            foreach ($array as $key => $value) {
+                $key = $this->sanitizeTextField($key);
+                if (is_string($value)) {
+                    $array[$key] = $this->sanitizeTextField($value);
+                } elseif (is_numeric($value)) {
+                    $array[$key] = $value;
+                } elseif (is_array($value)) {
+                    $array[$key] = $this->sanitizeArray($value);
+                }
+            }
+        }
+
+        return $array;
+    }
+    /**
      * @param WP_User $user
      *
      * @return bool|int

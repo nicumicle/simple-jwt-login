@@ -54,6 +54,7 @@ class ProtectEndpointService extends BaseService
 
         try {
             $jwt = $this->getJwtFromRequestHeaderOrCookie();
+
             if (empty($jwt)) {
                 if ($this->routeService->wordPressData->isUserLoggedIn()) {
                     return true;
@@ -63,6 +64,10 @@ class ProtectEndpointService extends BaseService
             }
 
             $user = $this->routeService->getUserFromJwt($jwt);
+            $this->validateJwtRevoked(
+                $this->wordPressData->getUserProperty($user, 'ID'),
+                $jwt
+            );
 
             $this->routeService->wordPressData->loginUser($user);
 

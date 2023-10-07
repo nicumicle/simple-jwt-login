@@ -94,6 +94,13 @@ class LoginSettings extends BaseSettings implements SettingsInterface
             'login_ip',
             BaseSettings::SETTINGS_TYPE_STRING
         );
+        $this->assignSettingsPropertyFromPost(
+            null,
+            'login_iss',
+            null,
+            'login_iss',
+            BaseSettings::SETTINGS_TYPE_STRING
+        );
     }
 
     public function validateSettings()
@@ -202,6 +209,16 @@ class LoginSettings extends BaseSettings implements SettingsInterface
     {
         return isset($this->settings['login_ip'])
             ? $this->settings['login_ip']
+            : '';
+    }
+
+    /**
+     * @return string
+     */
+    public function getAllowedLoginIss()
+    {
+        return isset($this->settings['login_iss'])
+            ? $this->settings['login_iss']
             : '';
     }
 

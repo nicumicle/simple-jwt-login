@@ -1,6 +1,6 @@
 <?php
 
-namespace SimpleJWTLoginTests\Modules\Settings;
+namespace SimpleJwtLoginTests\Modules\Settings;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
@@ -25,9 +25,11 @@ class SettingsFactoryTest extends TestCase
      */
     public function testInstances($type, $expectedInstance)
     {
+        $factory = SettingsFactory::getFactory($type);
+
         $this->assertInstanceOf(
             $expectedInstance,
-            SettingsFactory::getFactory($type)
+            $factory
         );
     }
 

@@ -191,6 +191,7 @@ if (! defined('ABSPATH')) {
                     <ul>
 						<?php
                         $payloadParameters = $jwtSettings->getAuthenticationSettings()->getJwtPayloadParameters();
+                        sort($payloadParameters, SORT_ASC);
                         foreach ($payloadParameters as $parameterIndex => $parameter
                         ) {
                             $numberOfLines = count($payloadParameters) - 1;
@@ -215,6 +216,9 @@ if (! defined('ABSPATH')) {
                                     break;
                                 case AuthenticationSettings::JWT_PAYLOAD_PARAM_USERNAME:
                                     $sampleValue = 'WordPresUser_login';
+                                    break;
+                                case AuthenticationSettings::JWT_PAYLOAD_PARAM_ISS:
+                                    $sampleValue = $jwtSettings->getAuthenticationSettings()->getAuthIss();
                                     break;
                                 default:
                                     $sampleValue = '';
@@ -297,7 +301,7 @@ if (! defined('ABSPATH')) {
             ?>
 			<?php echo __('JWT time to live', 'simple-jwt-login') ?>
         </h3>
-        <label>
+        <label for="jwt_auth_ttl">
 			<?php echo __(
                 'Specify the length of time (in minutes) that the token will be valid for.',
                 'simple-jwt-login'
@@ -328,7 +332,7 @@ if (! defined('ABSPATH')) {
             ?>
 			<?php echo __('Refresh time to live', 'simple-jwt-login') ?>
         </h3>
-        <label for="jwt_login_by_paramter">
+        <label for="jwt_auth_refresh_ttl">
 			<?php echo __(
                 'Specify the length of time (in minutes) that the token can be refreshed within.'
                 . ' I.E. The user can refresh their token within a 2 week window of the original token'
@@ -343,6 +347,29 @@ if (! defined('ABSPATH')) {
                 id="jwt_auth_refresh_ttl"
                 value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAuthJwtRefreshTtl()); ?>"
                 placeholder="<?php echo __('Number of minutes', 'simple-jwt-login') ?>"
+        />
+    </div>
+</div>
+<hr/>
+
+<div class="row">
+    <div class="col-md-12">
+        <h3 class="section-title">
+            <?php echo __('JWT Issuer (iss)', 'simple-jwt-login') ?>
+        </h3>
+        <label for="jwt_auth_ttl">
+            <?php echo __(
+                'The payload issuer when a new JWT is generated',
+                'simple-jwt-login'
+            ); ?>
+        </label>
+        <input
+            type="text"
+            name="jwt_auth_iss"
+            class="form-control"
+            id="jwt_auth_iss"
+            value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAuthIss()); ?>"
+            placeholder="<?php echo __('Default issuer', 'simple-jwt-login') ?>"
         />
     </div>
 </div>

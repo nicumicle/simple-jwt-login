@@ -88,6 +88,7 @@ class SimpleJWTLoginSettings
             return self::$settingsInstances[$type];
         }
         self::$settingsInstances[$type] = SettingsFactory::getFactory($type)
+            ->withWordPressData($this->getWordPressData())
             ->withSettings($this->settings);
 
         return self::$settingsInstances[$type];

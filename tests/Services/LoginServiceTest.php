@@ -444,4 +444,104 @@ class LoginServiceTest extends TestCase
 
         ];
     }
+
+    /**
+     * @dataProvider issProvider
+     * @return void
+     * @throws Exception
+     */
+    public function testIss($jwtIss, $settingsIss, $expectedError)
+    {
+        $settings = [
+            'allow_autologin' => true,
+            'require_login_auth' => false,
+            'decryption_key' => 'test',
+            'jwt_login_by_parameter' => 'user.id',
+            'jwt_login_by' => 'email',
+            'request_jwt_session' => true,
+            'request_jwt_header' => true,
+            'request_jwt_cookie' => true,
+            'request_jwt_url' => true,
+            'login_iss' => $settingsIss,
+            'enabled_hooks' => [
+                SimpleJWTLoginHooks::LOGIN_ACTION_NAME
+            ],
+        ];
+
+        $this->wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode($settings));
+        $this->wordPressDataMock->method('getUserDetailsByEmail')
+            ->willReturn(true);
+        $this->wordPressDataMock->method('getUserByUserLogin')
+            ->willReturn(true);
+        $this->wordPressDataMock->method('getUserDetailsById')
+            ->willReturn(true);
+        $this->wordPressDataMock->method('isInstanceOfuser')
+            ->willReturn(true);
+        $this->wordPressDataMock->method('getUserProperty')
+            ->willReturn(1);
+        $this->wordPressDataMock->method('getUserMeta')
+            ->willReturn([]);
+        $this->wordPressDataMock->method('loginUser')
+            ->willReturn(true);
+
+        $jwt = JWT::encode(
+            [
+                'user' => ['id' => 1],
+                'iss' => $jwtIss
+            ],
+            'test',
+            'HS256'
+        );
+
+        $service = (new LoginService())
+            ->withRequest([
+                'JWT' => $jwt
+            ])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSession([])
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+
+
+        if ($expectedError) {
+            $this->expectException(Exception::class);
+            $this->expectExceptionMessage($expectedError);
+        }
+
+        $result = $service->makeAction();
+
+        if (empty($expectedError)) {
+            $this->assertNull($result);
+        }
+    }
+
+    /**
+     * @return array[]
+     */
+    public static function issProvider()
+    {
+        return [
+            'no_iss' => [
+                'jwt_iss' => null,
+                'settings_iss' => null,
+                'expected_error' => null,
+            ],
+            'different_iss' => [
+                'jwt_iss' => 'one',
+                'settings_iss' => 'two',
+                'expected_error' => 'The JWT issuer(iss) is not allowed to auto-login.',
+            ],
+            'iss_only_in_payload' => [
+                'jwt_iss' => 'one',
+                'settings_iss' => '',
+                'expected_error' => null,
+            ],
+            'iss_same_as_payload' => [
+                'jwt_iss' => 'one',
+                'settings_iss' => 'one',
+                'expected_error' => null,
+            ],
+        ];
+    }
 }

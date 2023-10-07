@@ -300,7 +300,15 @@ class RegisterUserServiceTest extends TestCase
 
     public function testRegisterSuccessWithJwtFromAuth()
     {
+        $this->wordPressDataMock->method('isEmail')
+            ->willReturn(true);
+        $this->wordPressDataMock->method('checkUserExistsByUsernameAndEmail')
+            ->willReturn(false);
+        $this->wordPressDataMock->method('getSiteUrl')
+            ->willReturn("http://test.com");
+
         $authSettings = new AuthenticationSettings();
+        $authSettings->withWordPressData($this->wordPressDataMock);
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode([
                 'allow_authentication' => true,
@@ -311,11 +319,6 @@ class RegisterUserServiceTest extends TestCase
                 'register_jwt' => true,
                 'jwt_payload' => $authSettings->getJwtPayloadParameters(),
             ]));
-
-        $this->wordPressDataMock->method('isEmail')
-            ->willReturn(true);
-        $this->wordPressDataMock->method('checkUserExistsByUsernameAndEmail')
-            ->willReturn(false);
 
 
         $this->wordPressDataMock->method('createUser')
@@ -372,8 +375,8 @@ class RegisterUserServiceTest extends TestCase
             ->willReturn(true);
         $this->wordPressDataMock->method('checkUserExistsByUsernameAndEmail')
             ->willReturn(false);
-
-
+        $this->wordPressDataMock->method('getSiteUrl')
+            ->willReturn("http://test.com");
         $this->wordPressDataMock->method('createUser')
             ->willReturn([]);
         $this->wordPressDataMock->method('getUserIdFromUser')

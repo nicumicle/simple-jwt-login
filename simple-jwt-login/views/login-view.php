@@ -374,3 +374,21 @@ if (! defined('ABSPATH')) {
         </div>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-md-12">
+        <h3 class="section-title">
+            <?php echo __('JWT Allowed issuers (iss) for Auto-Login', 'simple-jwt-login');?>:
+        </h3>
+        <div class="form-group">
+            <input type="text" id="login_iss" name="login_iss" class="form-control"
+                   value="<?php echo esc_attr($jwtSettings->getLoginSettings()->getAllowedLoginIss()); ?>"
+                   placeholder="<?php echo __('Enter allowed iss here', 'simple-jwt-login'); ?>"/>
+            <p class="text-muted">
+                <?php echo __("If you want to add more issuers (iss), separate them by comma", 'simple-jwt-login'); ?>.
+                <br/>
+                <?php echo __('Leave blank to allow all issuers (iss)', 'simple-jwt-login'); ?>.
+            </p>
+        </div>
+    </div>
+</div>

@@ -4,6 +4,7 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Helpers\ArrayHelper;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
@@ -73,10 +74,12 @@ class LoginService extends BaseService implements ServiceInterface
     }
 
     /**
+     * @SuppressWarnings(StaticAccess)
      * @throws Exception
      */
     private function validateDoLogin()
     {
+        // Validate Autologin is enabled
         $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
         if ($this->jwtSettings->getLoginSettings()->isAutologinEnabled() === false) {
             throw new Exception(
@@ -85,6 +88,7 @@ class LoginService extends BaseService implements ServiceInterface
             );
         }
 
+        // Check if JWT is present
         if (empty($this->jwt)) {
             throw new Exception(
                 __('Wrong Request.', 'simple-jwt-login'),
@@ -92,6 +96,7 @@ class LoginService extends BaseService implements ServiceInterface
             );
         }
 
+        // Validate AUTH KEY
         if ($this->jwtSettings->getLoginSettings()->isAuthKeyRequiredOnLogin() && $this->validateAuthKey() === false) {
             throw  new Exception(
                 sprintf(
@@ -101,6 +106,8 @@ class LoginService extends BaseService implements ServiceInterface
                 ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED
             );
         }
+
+        // Validate IP
         $allowedIPs = $this->jwtSettings->getLoginSettings()->getAllowedLoginIps();
         if (!empty($allowedIPs) && !$this->serverHelper->isClientIpInList($allowedIPs)) {
             throw new Exception(
@@ -110,6 +117,20 @@ class LoginService extends BaseService implements ServiceInterface
                 ),
                 ErrorCodes::ERR_IP_IS_NOT_ALLOWED_TO_LOGIN
             );
+        }
+
+        // Validate ISS
+        $allowedIss = $this->jwtSettings->getLoginSettings()->getAllowedLoginIss();
+        if (!empty($allowedIss)) {
+            $payload = $this->getPayloadFromJWT($this->jwt);
+            if ($payload == null  ||
+                !isset($payload['iss']) ||
+                !in_array($payload['iss'], ArrayHelper::convertStringToArray($allowedIss))) {
+                throw new Exception(
+                    __('The JWT issuer(iss) is not allowed to auto-login.', 'simple-jwt-login'),
+                    ErrorCodes::ERR_INVALID_IIS_LOGIN
+                );
+            }
         }
     }
 }

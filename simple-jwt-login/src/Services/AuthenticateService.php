@@ -101,7 +101,12 @@ class AuthenticateService extends BaseService implements ServiceInterface
                 ErrorCodes::AUTHENTICATION_MISSING_PASSWORD
             );
         }
-
+        
+        if (isset($this->request['username']) && str_contains($this->request['username'], '@')) {
+            $this->request['email'] = $this->request['username'];
+            unset($this->request['username']);
+        }
+        
         $user = isset($this->request['username'])
             ? $this->wordPressData->getUserByUserLogin(
                 $this->wordPressData->sanitizeTextField($this->request['username'])

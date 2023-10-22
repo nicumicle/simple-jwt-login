@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        bootstrap="phpunit_bootstrap.php"
+        backupGlobals="false"
+        colors="true"
+        processIsolation="true"
+        stopOnFailure="false"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd"
+        cacheDirectory=".phpunit.cache"
+        backupStaticProperties="false"
+>
+    <coverage>
+        <report>
+            <clover outputFile="clover.xml"/>
+        </report>
+    </coverage>
+    <php>
+        <ini name="memory_limit" value="512M"/>
+        <env name="WORDPRESS_DB_USER" value="root" force="true" />
+        <env name="WORDPRESS_DB_PASSWORD" value="root" force="true" />
+        <env name="WORDPRESS_DB_NAME" value="wordpress" force="true" />
+        <env name="WORDPRESS_DB_HOST" value="localhost" force="true" />
+        <env name="WORDPRESS_TABLE_PREFIX" value="wp_" force="true" />
+    </php>
+    <testsuites>
+        <testsuite name="Unit">
+            <directory suffix='Test.php'>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Feature">
+            <directory suffix='Test.php'>tests/Feature</directory>
+        </testsuite>
+    </testsuites>
+    <logging/>
+    <source>
+        <include>
+            <directory suffix=".php">./simple-jwt-login/src</directory>
+        </include>
+        <exclude>
+            <file>./simple-jwt-login/src/Modules/WordPressData.php</file>
+            <directory suffix=".php">./simple-jwt-login/src/Libraries/</directory>
+        </exclude>
+    </source>
+</phpunit>

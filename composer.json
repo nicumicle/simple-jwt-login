@@ -3,7 +3,9 @@
   "description": "Simple JWT Login WordPress plugin",
   "require": {
     "php": ">=7.0",
-    "ext-json": "*"
+    "ext-json": "*",
+    "fakerphp/faker": "^1.23",
+    "guzzlehttp/guzzle": "^7.8"
   },
   "license": [
     "GPL-2.0-or-later"
@@ -27,7 +29,8 @@
     "sort-packages": true
   },
   "scripts": {
-    "tests": "vendor/bin/phpunit tests/ --coverage-text",
+    "tests": "vendor/bin/phpunit --testsuite 'Unit' --coverage-text ",
+    "tests-feature": "vendor/bin/phpunit --testsuite 'Feature' --coverage-text",
     "phpcs": "vendor/bin/phpcs simple-jwt-login/ tests --extensions=php",
     "phpmd-design": "vendor/bin/phpmd simple-jwt-login/ text design",
     "phpmd-cleancode": "vendor/bin/phpmd simple-jwt-login/ text cleancode",
@@ -52,7 +55,8 @@
         "@phpmd-test-naming",
         "@phpmd-test-unusedcode",
         "@phpmd-test-controversial",
-        "@tests"
+        "@tests",
+        "@tests-feature"
     ]
   },
   "scripts-descriptions": {

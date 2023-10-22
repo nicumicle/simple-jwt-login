@@ -32,10 +32,16 @@ Please note we have a [code of conduct](https://github.com/nicumicle/simple-jwt-
 ```
    cd /var/www/dev
 ```
-3. Run the tests
+3. Run the Unit tests
 ```
-   vendor/bin/phpunit tests --coverage-text
+   vendor/bin/phpunit --testsuite "Unit" --coverage-text
 ```
+
+3. Run the Feature tests
+```
+   vendor/bin/phpunit --testsuite "Feature" --coverage-text
+```
+
 4. Check plugin. This script will do all the checks for the plugin. See `composer.json` -> scripts for more details
 ```
     composer check-plugin

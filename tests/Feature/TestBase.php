@@ -18,7 +18,33 @@ class TestBase extends TestCase
     /**
      * @var array|null
      */
-    protected $initialOption;
+    protected static $initialOption;
+    /**
+     * @var \mysqli|null
+     */
+    protected static $dbCon;
+
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        self::initCon();
+        self::initDbDefaultOption();
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->initClient();
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        parent::tearDownAfterClass();
+        self::updateOption(self::$initialOption);
+//        if (self::$dbCon != null) {
+//            static::$dbCon->close();
+//        }
+    }
 
     protected function initClient($extraOptions = []): void
     {
@@ -41,7 +67,7 @@ class TestBase extends TestCase
      * @SuppressWarnings(PHPMD.Superglobals)
      * @return string
      */
-    private function getTablePrefix()
+    protected static function getTablePrefix()
     {
         $env = $_ENV['WORDPRESS_TABLE_PREFIX'];
         if (empty($env)) {
@@ -53,12 +79,15 @@ class TestBase extends TestCase
 
     /**
      * @SuppressWarnings(PHPMD.Superglobals)
-     * @param array $newOption
      * @return void
      * @throws \Exception
      */
-    protected function updateOption($newOption)
+    private static function initCon()
     {
+        if (self::$dbCon != null) {
+            return;
+        }
+
         $dbCon = new \mysqli(
             $_ENV["WORDPRESS_DB_HOST"],
             $_ENV["WORDPRESS_DB_USER"],
@@ -71,23 +100,22 @@ class TestBase extends TestCase
             throw new \Exception($dbCon->connect_error);
         }
 
+        self::$dbCon = $dbCon;
+    }
 
-        $table = $this->getTablePrefix() . "options";
-        $resource = $dbCon->query(
-            sprintf(
-                "SELECT * FROM $table WHERE option_name='%s' LIMIT 1",
-                SimpleJWTLoginSettings::OPTIONS_KEY
-            )
-        );
-        $option = null;
-        while ($rows = $resource->fetch_assoc()) {
-            $option = $rows['option_value'];
-        }
-        $this->initialOption = json_decode($option, true);
+    /**
+     * @SuppressWarnings(PHPMD.Superglobals)
+     * @param array $newOption
+     * @return void
+     * @throws \Exception
+     */
+    protected static function updateOption($newOption)
+    {
+        $table = self::getTablePrefix() . "options";
 
-        if ($option == null) {
+        if (self::$initialOption === null) {
             //INSERT
-            $dbCon->query(
+            self::$dbCon->query(
                 sprintf(
                     "INSERT INTO %s (option_name, option_value) VALUES('%s', '%s');",
                     $table,
@@ -97,7 +125,7 @@ class TestBase extends TestCase
             );
         } else {
             //UPDATE
-            $dbCon->query(
+            self::$dbCon->query(
                 sprintf(
                     "UPDATE %s SET option_value='%s' WHERE option_name='%s' LIMIT 1;",
                     $table,
@@ -106,7 +134,23 @@ class TestBase extends TestCase
                 )
             );
         }
-        $resource->free();
-        $dbCon->close();
+    }
+
+    protected static function initDbDefaultOption()
+    {
+        $table = self::getTablePrefix() . "options";
+        $resource = self::$dbCon->query(
+            sprintf(
+                "SELECT * FROM $table WHERE option_name='%s' LIMIT 1",
+                SimpleJWTLoginSettings::OPTIONS_KEY
+            )
+        );
+        $option = null;
+        while ($rows = $resource->fetch_assoc()) {
+            $option = $rows['option_value'];
+        }
+        if ($option != null) {
+            self::$initialOption = json_decode($option, true);
+        }
     }
 }

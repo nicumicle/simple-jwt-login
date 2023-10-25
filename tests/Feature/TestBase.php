@@ -18,7 +18,7 @@ class TestBase extends TestCase
     /**
      * @var array|null
      */
-    protected static $initialOption;
+    protected static $initialOption = null;
     /**
      * @var \mysqli|null
      */
@@ -117,7 +117,7 @@ class TestBase extends TestCase
             //INSERT
             self::$dbCon->query(
                 sprintf(
-                    "INSERT INTO %s (option_name, option_value) VALUES('%s', '%s');",
+                    "INSERT IGNORE INTO %s (option_name, option_value) VALUES('%s', '%s');",
                     $table,
                     SimpleJWTLoginSettings::OPTIONS_KEY,
                     json_encode($newOption),
@@ -149,8 +149,11 @@ class TestBase extends TestCase
         while ($rows = $resource->fetch_assoc()) {
             $option = $rows['option_value'];
         }
-        if ($option != null) {
+
+        if ($option !== null) {
             self::$initialOption = json_decode($option, true);
+        } else {
+            self::$initialOption = null;
         }
     }
 }

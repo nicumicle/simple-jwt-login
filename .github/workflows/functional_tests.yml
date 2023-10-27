@@ -78,4 +78,4 @@ jobs:
       -   name: Run tests
           run: |
             cd /var/www/html/wp-content/plugins/
-            vendor/bin/phpunit --testsuite "Feature" --coverage-text
+            vendor/bin/phpunit --testsuite "Feature" --coverage-text --testdox

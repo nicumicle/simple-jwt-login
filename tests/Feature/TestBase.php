@@ -156,4 +156,59 @@ class TestBase extends TestCase
             self::$initialOption = null;
         }
     }
+
+    /**
+     * @return array<int,string>
+     */
+    protected function registerRandomUser()
+    {
+        $email = "test" . date('Ymdhis')  . random_int(0, 1000) . "@simplejwtlogin.com";
+        $password = "1234";
+
+        $uri = self::API_URL . "?rest_route=/simple-jwt-login/v1/users";
+        $result = $this->client->post($uri, [
+            'body' => json_encode(
+                [
+                    'email' => $email,
+                    'password' => $password,
+                ]
+            ),
+        ]);
+
+        return [$email, $password, $result->getStatusCode(), $result->getBody()->getContents()];
+    }
+
+    /**
+     * @param string $email
+     * @param string $password
+     * @return array<int,int|string>
+     */
+    protected function authUser($email, $password)
+    {
+        $uri = self::API_URL . "?rest_route=/simple-jwt-login/v1/auth";
+        $result = $this->client->post($uri, [
+            'body' => json_encode([
+                'email' => $email,
+                'password' => $password,
+            ])
+        ]);
+
+        return [$result->getStatusCode(), $result->getBody()->getContents()];
+    }
+
+    /**
+     * @param $jwt string
+     * @return array<int,int|string>
+     */
+    protected function deleteUser($jwt)
+    {
+        $uri = self::API_URL . "?rest_route=/simple-jwt-login/v1/users";
+        $result = $this->client->delete($uri, [
+            'body' => json_encode([
+                'JWT' => $jwt,
+            ])
+        ]);
+
+        return [$result->getStatusCode(), $result->getBody()->getContents()];
+    }
 }

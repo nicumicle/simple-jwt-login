@@ -1,11 +1,11 @@
 <?php
 
-namespace SimpleJwtLoginTests\Feature\TestRegisterUser;
+namespace SimpleJwtLoginTests\Feature\RegisterUsers;
 
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJwtLoginTests\Feature\TestBase;
 
-class ValidationErrorsTest extends TestBase
+class RegisterUserValidationsTest extends TestBase
 {
     public function setUp(): void
     {

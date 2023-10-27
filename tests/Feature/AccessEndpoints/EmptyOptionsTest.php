@@ -1,6 +1,6 @@
 <?php
 
-namespace SimpleJwtLoginTests\Feature\TestAccessEndpoints;
+namespace SimpleJwtLoginTests\Feature\AccessEndpoints;
 
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJwtLoginTests\Feature\TestBase;

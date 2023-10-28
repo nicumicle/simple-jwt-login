@@ -41,7 +41,7 @@ class TestBase extends TestCase
     public static function tearDownAfterClass(): void
     {
         parent::tearDownAfterClass();
-        self::updateOption(self::$initialOption);
+        self::updateSimpleJWTOption(self::$initialOption);
     }
 
     /**
@@ -120,7 +120,7 @@ class TestBase extends TestCase
      * @return void
      * @throws \Exception
      */
-    protected static function updateOption($newOption)
+    protected static function updateSimpleJWTOption($newOption)
     {
         $table = self::getTablePrefix() . "options";
 
@@ -146,6 +146,28 @@ class TestBase extends TestCase
             );
         }
     }
+
+    /**
+     * @param string $optionKey
+     * @param string $optionValue
+     * @return void
+     */
+    protected function updateWpOption($optionKey, $optionValue)
+    {
+        $table = self::getTablePrefix() . "options";
+
+        //UPDATE
+        self::$dbCon->query(
+            sprintf(
+                "UPDATE %s SET option_value='%s' WHERE option_name='%s' LIMIT 1;",
+                $table,
+                $optionValue,
+                $optionKey,
+            )
+        );
+    }
+
+
 
     /**
      * Initializes the default options that are stored in the DB in a variable
@@ -248,5 +270,26 @@ class TestBase extends TestCase
         }
 
         return $result;
+    }
+
+
+    /**
+     * @param string $optionKey
+     * @return mixed|null
+     */
+    protected function getWpOptionValue($optionKey)
+    {
+        $table = self::getTablePrefix() . "options";
+        $resource = self::$dbCon->query(
+            sprintf(
+                "SELECT option_value FROM $table WHERE option_name='%s' LIMIT 1;",
+                $optionKey,
+            )
+        );
+        while ($rows = $resource->fetch_assoc()) {
+            return $rows['option_value'];
+        }
+
+        return null;
     }
 }

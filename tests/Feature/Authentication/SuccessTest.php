@@ -4,14 +4,14 @@ namespace SimpleJwtLoginTests\Feature\Authentication;
 
 use SimpleJwtLoginTests\Feature\TestBase;
 
-class AuthSuccessTest extends TestBase
+class SuccessTest extends TestBase
 {
     const JWT_SECRET_KEY = "123";
 
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        self::updateOption([
+        self::updateSimpleJWTOption([
             "allow_authentication" => true,
             "jwt_payload" => ["email","exp","id","iss","site","username"],
             "jwt_auth_ttl" => 60,
@@ -42,7 +42,7 @@ class AuthSuccessTest extends TestBase
     /**
      * @testdox User can authenticate with email and password
      */
-    public function testAuthentication()
+    public function testAuthenticationEmail()
     {
         // Register random user
         list ($email, $password, $statusCode, $response) = $this->registerRandomUser();

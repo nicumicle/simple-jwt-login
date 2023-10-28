@@ -5,12 +5,12 @@ namespace SimpleJwtLoginTests\Feature\RegisterUsers;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJwtLoginTests\Feature\TestBase;
 
-class RegisterUserValidationsTest extends TestBase
+class ValidationsTest extends TestBase
 {
     public function setUp(): void
     {
         parent::setUp();
-        self::updateOption([
+        self::updateSimpleJWTOption([
             "allow_register" => true,
             "new_user_profile" => "subscriber",
             "register_ip" => "",

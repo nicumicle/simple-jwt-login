@@ -96,7 +96,7 @@ class EmptyOptionsTest extends TestBase
      */
     public function testEmptyOptions($method, $endpoint, $expectedError)
     {
-        self::updateOption([]);
+        self::updateSimpleJWTOption([]);
         $uri = self::API_URL . "?rest_route=/simple-jwt-login/v1" . $endpoint;
         $result = $this->client->request($method, $uri);
         $this->assertSame(

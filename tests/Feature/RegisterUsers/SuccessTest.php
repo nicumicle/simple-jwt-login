@@ -5,12 +5,12 @@ namespace SimpleJwtLoginTests\Feature\RegisterUsers;
 use Faker\Factory;
 use SimpleJwtLoginTests\Feature\TestBase;
 
-class RegisterUserSuccessTest extends TestBase
+class SuccessTest extends TestBase
 {
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        self::updateOption([
+        self::updateSimpleJWTOption([
             "allow_register" => true,
             "new_user_profile" => "subscriber",
             "register_ip" => "",

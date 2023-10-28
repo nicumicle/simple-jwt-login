@@ -54,11 +54,30 @@ class RegisterUserValidationsTest extends TestBase
                     ErrorCodes::ERR_REGISTER_INVALID_EMAIL_ADDRESS
                 )
             ],
+            'valid_email_and_no_password' => [
+                'email'  => "test@simplejwtlogin",
+                'username' => null,
+                'password' => null,
+                'expected_error' => self::generateErrorJson(
+                    'Missing email or password.',
+                    ErrorCodes::ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD
+                )
+            ],
+            'valid_username_and_no_password' => [
+                'email'  => null,
+                'username' => "admin",
+                'password' => null,
+                'expected_error' => self::generateErrorJson(
+                    'Missing email or password.',
+                    ErrorCodes::ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD
+                )
+            ],
 
         ];
     }
 
     /**
+     * @testdox Register User Validation errors with query params
      * @dataProvider registerProvider
      * @return void
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -82,6 +101,7 @@ class RegisterUserValidationsTest extends TestBase
     }
 
     /**
+     * @testdox Register User Validation errors with JSON body
      * @dataProvider registerProvider
      * @return void
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -107,6 +127,7 @@ class RegisterUserValidationsTest extends TestBase
     }
 
     /**
+     * @testdox Register User Validation errors with form params
      * @dataProvider registerProvider
      * @return void
      * @throws \GuzzleHttp\Exception\GuzzleException

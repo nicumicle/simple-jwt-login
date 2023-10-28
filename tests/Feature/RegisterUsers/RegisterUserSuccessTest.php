@@ -20,7 +20,7 @@ class RegisterUserSuccessTest extends TestBase
             "random_password_length" => 10,
             "register_force_login" => false,
             "register_jwt" => false,
-            "allowed_user_meta" => "",
+            "allowed_user_meta" => "first_name, last_name",
         ]);
     }
 
@@ -97,5 +97,48 @@ class RegisterUserSuccessTest extends TestBase
         $json = json_decode($contents, true);
         $this->assertArrayHasKey('success', $json);
         $this->assertSame(true, $json['success']);
+    }
+
+    /**
+     * @testdox User can register with custom user_meta
+     * @return void
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function testSuccessWithUserMeta()
+    {
+        $faker = Factory::create();
+        $firstName = $faker->firstNameMale();
+        $lastName = $faker->lastName();
+
+        $uri = self::API_URL . "?rest_route=/simple-jwt-login/v1/users";
+        $result = $this->client->post($uri, [
+            'body' => json_encode([
+                "email"  => $faker->numberBetween(0, 1000) . $faker->email(),
+                "password" => 123123,
+                "user_meta" => [
+                    "first_name" => $firstName,
+                    "last_name" => $lastName,
+                ],
+            ]),
+        ]);
+
+        $this->assertSame(
+            200,
+            $result->getStatusCode()
+        );
+
+        $contents = $result->getBody()->getContents();
+        $this->assertJson($contents);
+        $json = json_decode($contents, true);
+        $this->assertArrayHasKey('success', $json);
+        $this->assertSame(true, $json['success']);
+        $this->assertArrayHasKey('user', $json);
+        $this->assertArrayHasKey('ID', $json['user']);
+
+        //Test user meta registered
+         $userMeta = $this->getUserMeta($json['user']['ID']);
+         $this->assertNotEmpty($userMeta);
+         $this->assertSame($firstName, $userMeta['first_name']);
+         $this->assertSame($lastName, $userMeta['last_name']);
     }
 }

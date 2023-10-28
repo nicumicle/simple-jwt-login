@@ -89,6 +89,7 @@ class EmptyOptionsTest extends TestBase
     }
 
     /**
+     * @testdox Access endpoints is not allowed
      * @dataProvider endpointsProvider
      * @return void
      * @throws \GuzzleHttp\Exception\GuzzleException

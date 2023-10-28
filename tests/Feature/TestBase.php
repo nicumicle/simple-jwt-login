@@ -2,6 +2,7 @@
 
 namespace SimpleJwtLoginTests\Feature;
 
+use Faker\Factory;
 use GuzzleHttp\Client;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -16,7 +17,7 @@ class TestBase extends TestCase
     const API_URL = 'http://localhost';
 
     /**
-     * @var array|null
+     * @var array<string,mixed>|null
      */
     protected static $initialOption = null;
     /**
@@ -41,17 +42,25 @@ class TestBase extends TestCase
     {
         parent::tearDownAfterClass();
         self::updateOption(self::$initialOption);
-//        if (self::$dbCon != null) {
-//            static::$dbCon->close();
-//        }
     }
 
+    /**
+     * Init a GuzzleClient
+     *
+     * @param array<string,mixed> $extraOptions
+     * @return void
+     */
     protected function initClient($extraOptions = []): void
     {
         $options = array_merge($extraOptions, ['http_errors' => false]);
         $this->client = new Client($options);
     }
 
+    /**
+     * @param string $message
+     * @param int|string $code
+     * @return array<string,mixed>
+     */
     protected static function generateErrorJson($message, $code): array
     {
         return [
@@ -78,6 +87,8 @@ class TestBase extends TestCase
     }
 
     /**
+     * Init the DB Connection
+     *
      * @SuppressWarnings(PHPMD.Superglobals)
      * @return void
      * @throws \Exception
@@ -105,7 +116,7 @@ class TestBase extends TestCase
 
     /**
      * @SuppressWarnings(PHPMD.Superglobals)
-     * @param array $newOption
+     * @param array<string,mixed> $newOption
      * @return void
      * @throws \Exception
      */
@@ -136,6 +147,11 @@ class TestBase extends TestCase
         }
     }
 
+    /**
+     * Initializes the default options that are stored in the DB in a variable
+     *
+     * @return void
+     */
     protected static function initDbDefaultOption()
     {
         $table = self::getTablePrefix() . "options";
@@ -162,7 +178,8 @@ class TestBase extends TestCase
      */
     protected function registerRandomUser()
     {
-        $email = "test" . date('Ymdhis')  . random_int(0, 1000) . "@simplejwtlogin.com";
+        $faker = Factory::create();
+        $email = $faker->randomNumber(6) . $faker->email();
         $password = "1234";
 
         $uri = self::API_URL . "?rest_route=/simple-jwt-login/v1/users";
@@ -210,5 +227,26 @@ class TestBase extends TestCase
         ]);
 
         return [$result->getStatusCode(), $result->getBody()->getContents()];
+    }
+
+    /**
+     * @param int $userID
+     * @return array<string,mixed>
+     */
+    protected function getUserMeta($userID)
+    {
+        $table = self::getTablePrefix() . "usermeta";
+        $resource = self::$dbCon->query(
+            sprintf(
+                "SELECT * FROM $table WHERE user_id='%d';",
+                $userID
+            )
+        );
+        $result = [];
+        while ($rows = $resource->fetch_assoc()) {
+            $result[$rows['meta_key']] = $rows['meta_value'];
+        }
+
+        return $result;
     }
 }

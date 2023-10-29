@@ -271,7 +271,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
 
             $this->validateJwtRevoked(
                 $this->wordPressData->getUserProperty($user, 'ID'),
-                $this->jwt,
+                $this->jwt
             );
 
             return $user;

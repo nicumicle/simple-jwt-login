@@ -1,4 +1,4 @@
-name: Functional Tests
+name: Simple-JWT-Login Feature tests
 
 on:
   push:
@@ -13,12 +13,12 @@ env:
 jobs:
   run:
     runs-on: ubuntu-latest
-    name: Test WordPress Integration with DB & wp-cli
+    name: Run Simple-JWT-Login Feature tests
     steps:
-      - name: Checkout
+      - name: "Checkout"
         uses: actions/checkout@v2
 
-      - name: Setup PHP
+      - name: "Setup PHP"
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.1
@@ -56,7 +56,7 @@ jobs:
           run: |
             cp -R simple-jwt-login /var/www/html/wp-content/plugins
             php wp-cli.phar plugin activate simple-jwt-login --path=/var/www/html
-      -   name: "Prepare functional tests"
+      -   name: "Prepare Feature tests"
           run: |
             cp phpunit.xml.actions.dist /var/www/html/wp-content/plugins/phpunit.xml
             cp composer.json /var/www/html/wp-content/plugins/composer.json            
@@ -65,7 +65,7 @@ jobs:
             
             cd /var/www/html/wp-content/plugins
             composer install --prefer-dist --no-progress
-      -   name: Change /var/www/html owner
+      -   name: "Change /var/www/html owner"
           run: |
             sudo chown -R www-data:www-data /var/www/html
       -   name: "Site healthcheck"
@@ -75,7 +75,7 @@ jobs:
             echo "Test Simple-JWT-Login endpoint"
             curl -X POST -v "http://$SITE_URL/index.php?rest_route=/simple-jwt-login/v1/users"
 
-      -   name: Run tests
+      -   name: "Run the Feature tests"
           run: |
             cd /var/www/html/wp-content/plugins/
             vendor/bin/phpunit --testsuite "Feature" --coverage-text --testdox

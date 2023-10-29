@@ -5,7 +5,7 @@ namespace SimpleJwtLoginTests\Feature\AccessEndpoints;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJwtLoginTests\Feature\TestBase;
 
-class RevokedJWT extends TestBase
+class RevokedJWTTest extends TestBase
 {
     /**
      * @var string $decryptionKey

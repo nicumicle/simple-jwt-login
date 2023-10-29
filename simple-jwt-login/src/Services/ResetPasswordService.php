@@ -50,11 +50,8 @@ class ResetPasswordService extends BaseService implements ServiceInterface
      */
     private function changeUserPassword()
     {
-
         $this->validateChangePassword();
-
         $newPassword = $this->wordPressData->sanitizeTextField($this->request['new_password']);
-
         $jwtAllowed = $this->jwtSettings->getResetPasswordSettings()->isJwtAllowed();
         if ($jwtAllowed === false && empty($this->request['code'])) {
             throw new Exception(
@@ -65,8 +62,6 @@ class ResetPasswordService extends BaseService implements ServiceInterface
 
         $user = $this->getUser($jwtAllowed);
         $this->wordPressData->resetPassword($user, $newPassword);
-
-
         $response =  [
             'success' => true,
             'message' => __('User Password has been changed.', 'simple-jwt-login'),
@@ -273,6 +268,11 @@ class ResetPasswordService extends BaseService implements ServiceInterface
                     __('This JWT can not change your password.', 'simple-jwt-login')
                 );
             }
+
+            $this->validateJwtRevoked(
+                $this->wordPressData->getUserProperty($user, 'ID'),
+                $this->jwt
+            );
 
             return $user;
         }

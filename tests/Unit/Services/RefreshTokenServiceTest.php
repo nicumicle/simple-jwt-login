@@ -91,7 +91,7 @@ class RefreshTokenServiceTest extends TestCase
             'jwt_auth_ttl' => 1, //minutes
         ];
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Jwt is invalid');
+        $this->expectExceptionMessage('This JWT is invalid.');
         $this->expectExceptionCode(ErrorCodes::ERR_REVOKED_TOKEN);
 
         $jwt = JWT::encode(

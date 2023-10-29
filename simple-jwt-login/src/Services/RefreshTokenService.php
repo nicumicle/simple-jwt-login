@@ -74,7 +74,7 @@ class RefreshTokenService extends AuthenticateService
                 );
             foreach ($userMeta as $key) {
                 if ($key === $this->jwt) {
-                    throw new Exception(__('Jwt is invalid.', 'simple-jwt-login'), ErrorCodes::ERR_REVOKED_TOKEN);
+                    throw new Exception(__('This JWT is invalid.', 'simple-jwt-login'), ErrorCodes::ERR_REVOKED_TOKEN);
                 }
             }
         }

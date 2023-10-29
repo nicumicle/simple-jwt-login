@@ -1,4 +1,4 @@
-name: Functional Tests
+name: Simple-JWT-Login Feature tests
 
 on:
   push:
@@ -13,15 +13,15 @@ env:
 jobs:
   run:
     runs-on: ubuntu-latest
-    name: Test WordPress Integration with DB & wp-cli
+    name: Run Simple-JWT-Login Feature tests
     steps:
-      - name: Checkout
+      - name: "Checkout"
         uses: actions/checkout@v2
 
-      - name: Setup PHP
+      - name: "Setup PHP"
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.1
+          php-version: 8.2
           extension-csv: mbstring, intl #setup extensions
           ini-values-csv: post_max_size=256M, short_open_tag=On #setup php.ini configuration
           coverage: xdebug #setup coverage driver
@@ -33,13 +33,15 @@ jobs:
             mysql --user="root" --password="root" --execute="ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';"
       -   name: "Apache Setup"
           run: |
-            sudo apt-get install libapache2-mod-php8.1
-            sudo a2enmod php8.1
+            sudo apt-get update 
+            sudo apt-get install libapache2-mod-php8.2
+            sudo a2enmod php8.2
             sudo /etc/init.d/apache2 start
       -   name: "Install WordPress"
           run: |
             sudo chmod -R 777 /var/www/html
             sudo rm -rf /var/www/html/*
+            sudo apt-get update
             curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
             php wp-cli.phar core download --path=/var/www/html/
             php wp-cli.phar config create --dbname=wordpress --dbuser=root --dbpass=root --dbhost=localhost --dbprefix=wp_ --path=/var/www/html
@@ -56,7 +58,7 @@ jobs:
           run: |
             cp -R simple-jwt-login /var/www/html/wp-content/plugins
             php wp-cli.phar plugin activate simple-jwt-login --path=/var/www/html
-      -   name: "Prepare functional tests"
+      -   name: "Prepare Feature tests"
           run: |
             cp phpunit.xml.actions.dist /var/www/html/wp-content/plugins/phpunit.xml
             cp composer.json /var/www/html/wp-content/plugins/composer.json            
@@ -65,7 +67,7 @@ jobs:
             
             cd /var/www/html/wp-content/plugins
             composer install --prefer-dist --no-progress
-      -   name: Change /var/www/html owner
+      -   name: "Change /var/www/html owner"
           run: |
             sudo chown -R www-data:www-data /var/www/html
       -   name: "Site healthcheck"
@@ -75,7 +77,7 @@ jobs:
             echo "Test Simple-JWT-Login endpoint"
             curl -X POST -v "http://$SITE_URL/index.php?rest_route=/simple-jwt-login/v1/users"
 
-      -   name: Run tests
+      -   name: "Run the Feature tests"
           run: |
             cd /var/www/html/wp-content/plugins/
-            vendor/bin/phpunit --testsuite "Feature" --coverage-text
+            vendor/bin/phpunit --testsuite "Feature" --coverage-text --testdox

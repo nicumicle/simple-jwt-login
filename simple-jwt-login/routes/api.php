@@ -97,7 +97,7 @@ add_action('rest_api_init', function () {
             }
 
             return $endpoint;
-        }, 0.2);
+        }, 0);
     }
 
     if ($jwtSettings->getProtectEndpointsSettings()->isEnabled()) {
@@ -135,7 +135,7 @@ add_action('rest_api_init', function () {
             }
 
             return $endpoint;
-        }, 0.1);
+        }, 0);
     }
 
     $availableRoutes = $routeService->getAllRoutes();

@@ -135,7 +135,7 @@ class SuccessTest extends TestBase
         $this->assertArrayHasKey('user', $json);
         $this->assertArrayHasKey('ID', $json['user']);
 
-        //Test user meta registered
+        // Test user meta registered
          $userMeta = $this->getUserMeta($json['user']['ID']);
          $this->assertNotEmpty($userMeta);
          $this->assertSame($firstName, $userMeta['first_name']);

@@ -1,7 +1,8 @@
 # Changelog - Releases
 
 ## Unreleased
-- Change routes priority from floats to int and fix warning message
+- Fix change user password with revoked JWT
+- Change routes priority from floats to int and fix deprecation message "Implicit conversion from float to int loses precision"
 - Add `iss` to JWT payload and allow to configure it
 - Fix user meta on register user [#86](https://github.com/nicumicle/simple-jwt-login/issues/86) 
 - Fix calling protected endpoints with revoked token [#75](https://github.com/nicumicle/simple-jwt-login/issues/75)

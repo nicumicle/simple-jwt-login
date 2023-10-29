@@ -125,7 +125,7 @@ class TestBase extends TestCase
         $table = self::getTablePrefix() . "options";
 
         if (self::$initialOption === null) {
-            //INSERT
+            // INSERT
             self::$dbCon->query(
                 sprintf(
                     "INSERT IGNORE INTO %s (option_name, option_value) VALUES('%s', '%s');",
@@ -135,7 +135,7 @@ class TestBase extends TestCase
                 )
             );
         } else {
-            //UPDATE
+            // UPDATE
             self::$dbCon->query(
                 sprintf(
                     "UPDATE %s SET option_value='%s' WHERE option_name='%s' LIMIT 1;",
@@ -156,7 +156,7 @@ class TestBase extends TestCase
     {
         $table = self::getTablePrefix() . "options";
 
-        //UPDATE
+        // UPDATE
         self::$dbCon->query(
             sprintf(
                 "UPDATE %s SET option_value='%s' WHERE option_name='%s' LIMIT 1;",

@@ -21,19 +21,19 @@ class SuccessTest extends TestBase
             "auth_password_base64" => false,
             "jwt_auth_iss" => "tests",
             "decryption_key" => self::JWT_SECRET_KEY,
-            //register user
+            // Register user
             "allow_register" => true,
 	        "new_user_profile" => "subscriber",
 	        "register_ip" => "",
 	        "register_domain" => "",
 	        "require_register_auth" => false,
-            //Delete user
+            // Delete user
             "allow_delete" => true,
             "require_delete_auth" => false,
 	        "delete_ip" => "",
 	        "delete_user_by" => 0,
 	        "jwt_delete_by_parameter" => "email",
-            // autologin: We need this for refresh token
+            // Autologin: We need this for refresh token
             "jwt_login_by" => 0,
             "jwt_login_by_parameter" => "email",
         ]);
@@ -63,7 +63,7 @@ class SuccessTest extends TestBase
         $this->assertArrayHasKey('data', $responseArray);
         $this->assertArrayHasKey('jwt', $responseArray['data']);
         $jwt = $responseArray['data']['jwt'];
-        // cleanup
+        // Cleanup
         list($statusCode, $response) = $this->deleteUser($jwt);
         $this->assertSame(200, $statusCode, "unable to delete the user");
     }
@@ -102,7 +102,7 @@ class SuccessTest extends TestBase
         $this->assertArrayHasKey('data', $refreshResponseArray);
         $this->assertArrayHasKey('jwt', $refreshResponseArray['data']);
 
-        // cleanup
+        // Cleanup
         list($statusCode, $response) = $this->deleteUser($jwt);
         $this->assertSame(200, $statusCode, "unable to delete the user");
     }
@@ -144,7 +144,7 @@ class SuccessTest extends TestBase
         $this->assertArrayHasKey('roles', $validateRespArr['data']);
         $this->assertSame($email, $validateRespArr['data']['user']['user_email']);
 
-        // cleanup
+        // Cleanup
         list($statusCode, $response) = $this->deleteUser($jwt);
         $this->assertSame(200, $statusCode, "unable to delete the user");
     }

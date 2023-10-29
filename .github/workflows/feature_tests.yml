@@ -33,13 +33,14 @@ jobs:
             mysql --user="root" --password="root" --execute="ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';"
       -   name: "Apache Setup"
           run: |
-            sudo apt-get install libapache2-mod-php8.2
+            sudo apt-get update && apt-get install libapache2-mod-php8.2
             sudo a2enmod php8.2
             sudo /etc/init.d/apache2 start
       -   name: "Install WordPress"
           run: |
             sudo chmod -R 777 /var/www/html
             sudo rm -rf /var/www/html/*
+            sudo apt-get update
             curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
             php wp-cli.phar core download --path=/var/www/html/
             php wp-cli.phar config create --dbname=wordpress --dbuser=root --dbpass=root --dbhost=localhost --dbprefix=wp_ --path=/var/www/html

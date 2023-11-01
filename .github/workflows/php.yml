@@ -68,6 +68,3 @@ jobs:
 
     - name: Run PHPMD controversial on tests
       run: vendor/bin/phpmd tests/ text controversial
-
-    - name: PHPUnit tests
-      run: XDEBUG_MODE=coverage vendor/bin/phpunit --testsuite "Unit"

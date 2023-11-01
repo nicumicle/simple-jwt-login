@@ -61,15 +61,21 @@ class TestBase extends TestCase
      * @param int|string $code
      * @return array<string,mixed>
      */
-    protected static function generateErrorJson($message, $code): array
+    protected static function generateErrorJson($message, $code, $extraData = []): array
     {
-        return [
+        $result = [
             'success' => false,
             'data' => [
                 'message' => $message,
                 'errorCode' => $code,
             ],
         ];
+
+        if ($extraData != null) {
+            $result['data'] = $result['data'] + $extraData;
+        }
+
+        return $result;
     }
 
     /**

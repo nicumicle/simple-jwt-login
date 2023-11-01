@@ -37,7 +37,9 @@ class ProtectEndpointService extends BaseService
         if ($this->jwtSettings->getProtectEndpointsSettings()->isEnabled() === false) {
             return true;
         }
+
         $parsed = parse_url($currentUrl);
+
         $path  = rtrim(str_replace($documentRoot, '', ABSPATH), '/');
         $path = str_replace($path . '/wp-json', '', $parsed['path']);
 

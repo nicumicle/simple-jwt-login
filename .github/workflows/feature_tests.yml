@@ -1,4 +1,4 @@
-name: Simple-JWT-Login Feature tests
+name: Feature Tests
 
 on:
   push:

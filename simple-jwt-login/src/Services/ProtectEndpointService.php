@@ -39,10 +39,6 @@ class ProtectEndpointService extends BaseService
         }
 
         $parsed = parse_url($currentUrl);
-//        // If we are unable to parse the current URL, endpoint will not be protected
-//        if (!isset($parsed['path'])) {
-//            return true;
-//        }
 
         $path  = rtrim(str_replace($documentRoot, '', ABSPATH), '/');
         $path = str_replace($path . '/wp-json', '', $parsed['path']);

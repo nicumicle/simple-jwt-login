@@ -21,11 +21,24 @@
     <img src="https://img.shields.io/wordpress/plugin/tested/simple-jwt-login" alt="Latest Tested WordPress version"/>
 </p>
 <p align="center">
-    <img src="https://img.shields.io/github/v/tag/nicumicle/simple-jwt-login" alt="Current Tag" />
-    <img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/php.yml/badge.svg" alt="Check plugin" />
-    <img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/feature_tests.yml/badge.svg" alt="Feature Tests" />
-    <a href="https://app.codecov.io/gh/nicumicle/simple-jwt-login"><img src="https://codecov.io/gh/nicumicle/simple-jwt-login/branch/master/graph/badge.svg?token=dVOwuGQoY3" alt="Coverage"/></a>
-    <img src="https://img.shields.io/github/license/nicumicle/simple-jwt-login" alt="License" />
+    <a href="https://github.com/nicumicle/simple-jwt-login/tags">
+      <img src="https://img.shields.io/github/v/tag/nicumicle/simple-jwt-login" alt="Current Tag" />
+    </a>
+    <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/php.yml">
+      <img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/php.yml/badge.svg" alt="Check plugin" />
+    </a>
+    <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/feature_tests.yml">
+      <img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/feature_tests.yml/badge.svg" alt="Feature Tests" />
+    </a>
+    <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/unit_tests.yml">
+      <img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/unit_tests.yml/badge.svg" alt="Unit Tests" />
+    </a>
+    <a href="https://app.codecov.io/gh/nicumicle/simple-jwt-login">
+        <img src="https://codecov.io/gh/nicumicle/simple-jwt-login/branch/master/graph/badge.svg?token=dVOwuGQoY3" alt="Coverage"/>
+    </a>
+    <a href="https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE">
+      <img src="https://img.shields.io/github/license/nicumicle/simple-jwt-login" alt="License" />
+    </a>
 </p>
 
 <div align="center">
@@ -94,6 +107,7 @@ In order to install the latest stable version, from your WordPress admin:
 
 ## :tada: Features 
 
+- **100% Free** and **open-source** under [GPL 3.0](https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE) License
 - **Authenticate** : REST endpoint that will generate/validate/revoke a JWT
 - **Autologin**: Autologin to a WordPress website with JWT
 - **Register user**: Register users in WordPress by calling a REST endpoint
@@ -172,7 +186,7 @@ With that in mind, all contributors are expected to follow our [Code of Conduct]
 Thanks to all our contributors!
 
 <a href="https://github.com/nicumicle/simple-jwt-login/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=nicumicle/simple-jwt-login" />
+  <img src="https://contrib.rocks/image?repo=nicumicle/simple-jwt-login" alt="Contributors"/>
 </a>
 
 ## Copyright

@@ -3,17 +3,35 @@
 </p>
 
 <p align="center">
+  <a href="https://wordpress.org/support/plugin/simple-jwt-login/reviews/">
    <img src="https://img.shields.io/wordpress/plugin/stars/simple-jwt-login" alt="Rating" />
+  </a>
+  <a href="https://wordpress.org/plugins/simple-jwt-login/advanced#plugin-download-stats">
    <img src="https://img.shields.io/wordpress/plugin/dt/simple-jwt-login" alt="Total Downloads" />
+  </a>
+  <a href="https://wordpress.org/plugins/simple-jwt-login/#description">
    <img src="https://img.shields.io/wordpress/plugin/installs/simple-jwt-login" alt="Active installs" />
+  </a>
 </p>
 <p align="center">
+  <a href="https://github.com/nicumicle/simple-jwt-login/graphs/contributors">
    <img src="https://img.shields.io/github/contributors/nicumicle/simple-jwt-login" alt="Contributors" />
+  </a> 
+  <a href="https://github.com/nicumicle/simple-jwt-login/commits/master">
    <img src="https://img.shields.io/github/last-commit/nicumicle/simple-jwt-login" alt="Last Commit"/>
+  </a>
+  <a href="https://github.com/nicumicle/simple-jwt-login/issues">
    <img src="https://img.shields.io/github/issues-raw/nicumicle/simple-jwt-login" alt="Open issues"/>
+  </a>
+  <a href="https://github.com/nicumicle/simple-jwt-login/issues?q=is%3Aissue+is%3Aclosed">
    <img src="https://img.shields.io/github/issues-closed-raw/nicumicle/simple-jwt-login" alt="Closed issues"/>
+  </a>
+  <a href="https://github.com/nicumicle/simple-jwt-login/pulls">
    <img src="https://img.shields.io/github/issues-pr/nicumicle/simple-jwt-login" alt="Open pull requests" />
+  </a>
+  <a href="https://github.com/nicumicle/simple-jwt-login/pulls?q=is%3Apr+is%3Aclosed">
    <img src="https://img.shields.io/github/issues-pr-closed/nicumicle/simple-jwt-login" alt="Closed pull requests" />
+  </a>
 </p>
 <p align="center">
     <img src="https://img.shields.io/wordpress/plugin/v/simple-jwt-login" alt="Simple-Jwt-Login WordPress.org version"/>
@@ -26,6 +44,9 @@
     </a>
     <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/php.yml">
       <img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/php.yml/badge.svg" alt="Check plugin" />
+    </a>
+    <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/multiple-php.yml">
+      <img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/multiple-php.yml/badge.svg" alt="Multiple PHP Versions check"/>
     </a>
     <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/feature_tests.yml">
       <img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/feature_tests.yml/badge.svg" alt="Feature Tests" />

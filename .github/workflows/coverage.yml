@@ -40,7 +40,9 @@ jobs:
           memory_limit: 256M
           configuration: phpunit.xml.dist
           php_extensions: xdebug
-          args: tests/Unit --coverage-clover ./coverage.xml
+          testsuite: "Unit"
+          coverage_clover: "./coverage.xml"
+#          args: tests/Unit --coverage-clover ./coverage.xml
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1

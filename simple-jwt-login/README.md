@@ -6,7 +6,7 @@ Tags: jwt, API, auto login, register users, tokens, REST, auth, generate jwt, re
 Requires at least: 4.4.0
 Tested up to: 6.3
 Requires PHP: 5.5
-Stable tag: 3.5.1
+Stable tag: 3.5.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/quick-guide-gplv3.html
 
@@ -409,11 +409,16 @@ After that, for the create user route, simply add the AUTH code in the request, 
 
 == Changelog ==
 
-The [Changelog](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md) can be found in the GitHub repository [https://github.com/nicumicle/simple-jwt-login](https://github.com/nicumicle/simple-jwt-login).
+A complete Changelog is available on the [GitHub repository](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md).
 
-Also,  here you can find the beta version of the plugin, before it is released
+= 3.5.2 (02 November 2023) =
+- Fix change user password with revoked JWT
+- Change routes priority from floats to int and fix deprecation message "Implicit conversion from float to int loses precision"
+- Add `iss` to JWT payload and allow to configure it
+- Fix user meta on register user [#86](https://github.com/nicumicle/simple-jwt-login/issues/86)
+- Fix calling protected endpoints with revoked token [#75](https://github.com/nicumicle/simple-jwt-login/issues/75)
 
-= 3.5.1 (1 October 2023)
+= 3.5.1 (1 October 2023) =
 - Update WordPress 6.3 compatibility
 
 = 3.5.0 (04 Jan 2023) =

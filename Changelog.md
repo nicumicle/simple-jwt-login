@@ -1,6 +1,8 @@
 # Changelog - Releases
 
 ## Unreleased
+
+## 3.5.2 (02 November 2023)
 - Fix change user password with revoked JWT
 - Change routes priority from floats to int and fix deprecation message "Implicit conversion from float to int loses precision"
 - Add `iss` to JWT payload and allow to configure it

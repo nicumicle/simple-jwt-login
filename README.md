@@ -11,6 +11,8 @@
   </a>
   <a href="https://wordpress.org/plugins/simple-jwt-login/#description">
    <img src="https://img.shields.io/wordpress/plugin/installs/simple-jwt-login" alt="Active installs" />
+  <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request">
+   <img src="https://camo.githubusercontent.com/6dfc0f54109514735be6ad05570f1c8470ac5db0299426950cadbfa92a846eb1/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f5052732d77656c636f6d652d627269676874677265656e" alt="PRs welcome" />
   </a>
 </p>
 <p align="center">

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 3.5.3 (16 November 2023) 
+- Fix licence in composer.json
+- Update WordPress 6.4 compatibility
+
 ## 3.5.2 (02 November 2023)
 - Fix change user password with revoked JWT
 - Change routes priority from floats to int and fix deprecation message "Implicit conversion from float to int loses precision"

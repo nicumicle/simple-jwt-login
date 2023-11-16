@@ -4,9 +4,9 @@ Contributors: nicu_m
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PK9BCD6AYF58Y&source=url
 Tags: jwt, API, auto login, register users, tokens, REST, auth, generate jwt, refresh jwt, protect
 Requires at least: 4.4.0
-Tested up to: 6.3
+Tested up to: 6.4
 Requires PHP: 5.5
-Stable tag: 3.5.2
+Stable tag: 3.5.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/quick-guide-gplv3.html
 

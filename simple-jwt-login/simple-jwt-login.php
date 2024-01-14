@@ -11,6 +11,10 @@
 */
 
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Modules\WordPressData;
+use SimpleJWTLogin\Services\Applications\Google;
+use SimpleJWTLogin\Services\RedirectService;
+use SimpleJWTLogin\Services\RouteService;
 
 if (! defined('ABSPATH')) {
     /** @phpstan-ignore-next-line  */
@@ -160,3 +164,44 @@ function simple_jwt_login_add_plugin_action_links($links)
 //REST API ROUTES
 include_once 'routes/api.php';
 include_once '3rd-party/force_login.php';
+
+add_action('login_head', 'simple_jwt_login_assets');
+function simple_jwt_login_assets()
+{
+    $pluginDirUrl = plugin_dir_url(__FILE__);
+    wp_enqueue_style(
+        'simple-jwt-login-login_header_css',
+        $pluginDirUrl . 'css/login.css'
+    );
+}
+
+
+// Register Oauth Providers
+add_action('login_footer', 'simple_jwt_login_login_footer');
+function simple_jwt_login_login_footer()
+{
+    $wordpressData = new WordPressData();
+    $jwtSettings   = new SimpleJWTLoginSettings($wordpressData);
+    $pluginDirUrl = plugin_dir_url(__FILE__);
+
+    ?>
+
+    <?php
+    // GOOGLE
+    if ($jwtSettings->getApplicationsSettings()->isGoogleEnabled() && $jwtSettings->getApplicationsSettings()->isOauthEnabled()) {
+        ?>
+        <form method="POST" action="<?php echo Google::AUTH_URL;?>" class="simple-jwt-login-oauth-app">
+            <input type="hidden" name="client_id" value="<?php echo esc_attr($jwtSettings->getApplicationsSettings()->getGoogleClientID());?>" />
+            <input type="hidden" name="response_type" value="code" /><br />
+            <input type="hidden" name="scope" value="email" /><br />
+            <input type="hidden" name="redirect_uri" value="<?php echo $jwtSettings->generateExampleLink(RouteService::OAUTH_TOKEN, ['provider' => 'google']);?>" />
+            <button name="google-auth" class="simple-jwt-login-auth-btn">
+                <img src="<?php echo $pluginDirUrl;?>/images/applications/google-60x60.png" alt="google logo"/>
+                <span class="simple-jwt-login-auth-txt">
+                    Continue with Google
+                </span>
+            </button>
+        </form>
+        <?php
+    }
+}

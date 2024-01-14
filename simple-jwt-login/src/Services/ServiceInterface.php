@@ -9,6 +9,12 @@ use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 interface ServiceInterface
 {
     /**
+     * @param string $requestMethod
+     * @return $this
+     */
+    public function withRequestMethod($requestMethod);
+
+    /**
      * @param SimpleJWTLoginSettings $settings
      * @return $this
      */

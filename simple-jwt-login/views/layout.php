@@ -88,11 +88,19 @@ $settingsPages = [
     ],
     [
         'id'   => 'simple-jwt-login-tab-protect-endpoints',
-        'name' => 'Protect endpoints',
+        'name' => __('Protect endpoints', 'simple-jwt-login'),
         'has_error' =>  (
                 $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_PROTECT_ENDPOINTS
         ),
         'index' => SettingsErrors::PREFIX_PROTECT_ENDPOINTS,
+    ],
+    [
+        'id'   => 'simple-jwt-login-tab-applications',
+        'name' => __('Applications', 'simple-jwt-login'),
+        'has_error' =>  (
+            $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_APPLICATIONS
+        ),
+        'index' => SettingsErrors::PREFIX_APPLICATIONS,
     ],
 ];
 
@@ -229,6 +237,9 @@ $settingsPages = [
                                         break;
                                     case SettingsErrors::PREFIX_PROTECT_ENDPOINTS:
                                         include_once plugin_dir_path(__FILE__) . "protect-endpoints-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_APPLICATIONS:
+                                        include_once plugin_dir_path(__FILE__) . "applications.php";
                                         break;
                                     default:
                                         echo __("View file does not exists.", 'simple-jwt-login');

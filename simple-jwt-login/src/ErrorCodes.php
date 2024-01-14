@@ -74,4 +74,12 @@ class ErrorCodes
     const ERR_INVALID_NONCE = 67;
 
     const ERR_INVALID_IIS_LOGIN = 68;
+
+    const ERR_OAUTH_INVALID_PROVIDER = 69;
+    const ERR_OAUTH_PROVIDER_NOT_ACTIVE = 70;
+    const ERR_MISSING_GOOGLE_PARAM = 71;
+
+    const ERR_GOOGLE_INVALID_CODE = 72;
+    const ERR_GOOGLE_INVALID_JWT = 73;
+    const ERR_GOOGLE_USER_NOT_FOUND = 74;
 }

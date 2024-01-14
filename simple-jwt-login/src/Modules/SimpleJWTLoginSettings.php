@@ -16,6 +16,7 @@ use SimpleJWTLogin\Modules\Settings\RegisterSettings;
 use SimpleJWTLogin\Modules\Settings\ResetPasswordSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsFactory;
 use SimpleJWTLogin\Modules\Settings\SettingsInterface;
+use SimpleJWTLogin\Modules\Settings\ApplicationsSettings;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -172,6 +173,14 @@ class SimpleJWTLoginSettings
     public function getProtectEndpointsSettings()
     {
         return $this->getSettingsClassByType(SettingsFactory::PROTECT_ENDPOINTS_SETTINGS);
+    }
+
+    /**
+     * @return ApplicationsSettings
+     */
+    public function getApplicationsSettings()
+    {
+        return $this->getSettingsClassByType(SettingsFactory::APPLICATIONS_SETTINGS);
     }
 
     /**

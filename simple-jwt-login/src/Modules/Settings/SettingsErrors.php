@@ -17,6 +17,7 @@ class SettingsErrors extends \Exception
     const PREFIX_CORS = 9;
     const PREFIX_RESET_PASSWORD = 10;
     const PREFIX_PROTECT_ENDPOINTS = 11;
+    const PREFIX_APPLICATIONS = 12;
 
     #authentication
     const ERR_AUTHENTICATION_EMPTY_PAYLOAD = 1;
@@ -55,6 +56,10 @@ class SettingsErrors extends \Exception
 
     #protect endpoints
     const ERR_EMPTY_SPECIFIC_ENDPOINT = 1;
+
+    # Applications
+    const ERR_GOOGLE_CLIENT_ID_REQUIRED = 1;
+    const ERR_GOOGLE_CLIENT_SECRET_REQUIRED = 2;
 
 
     /**

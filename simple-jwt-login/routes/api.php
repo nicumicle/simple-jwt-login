@@ -3,7 +3,7 @@
 use SimpleJWTLogin\Helpers\CorsHelper;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Libraries\ParseRequest;
-use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
+use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Services\ProtectEndpointService;
 use SimpleJWTLogin\Services\RouteService;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -76,7 +76,7 @@ add_action('rest_api_init', function () {
             }
 
             $jwt = $routeService->getJwtFromRequestHeaderOrCookie();
-            if (! empty($jwt)) {
+            if (!empty($jwt)) {
                 try {
                     (new WordPressData())
                         ->loginUser(
@@ -152,11 +152,11 @@ add_action('rest_api_init', function () {
 
                         if ($jwtSettings
                             ->getHooksSettings()
-                            ->isHookEnable(\SimpleJWTLogin\Modules\SimpleJWTLoginHooks::HOOK_BEFORE_ENDPOINT)
+                            ->isHookEnable(SimpleJWTLoginHooks::HOOK_BEFORE_ENDPOINT)
                         ) {
                             /** @phpstan-ignore-next-line */
                             $wordPressData->triggerAction(
-                                \SimpleJWTLogin\Modules\SimpleJWTLoginHooks::HOOK_BEFORE_ENDPOINT,
+                                SimpleJWTLoginHooks::HOOK_BEFORE_ENDPOINT,
                                 $route['method'],
                                 $route['name'],
                                 $request
@@ -166,6 +166,7 @@ add_action('rest_api_init', function () {
                         /** @var ServiceInterface $service */
                         $service = new $route['service']();
                         $service
+                            ->withRequestMethod($route['method'])
                             ->withRequest($request)
                             ->withCookies($_COOKIE)
                             ->withServerHelper($serverHelper)

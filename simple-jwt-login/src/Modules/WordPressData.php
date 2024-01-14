@@ -78,6 +78,11 @@ class WordPressData implements WordPressDataInterface
         return site_url();
     }
 
+    public function getLoginURL()
+    {
+        return wp_login_url();
+    }
+
     /**
      * @param string $username
      * @param string $email

@@ -47,6 +47,8 @@ interface WordPressDataInterface
      */
     public function getSiteUrl();
 
+    public function getLoginURL();
+
     /**
      * @param string $username
      * @param string $email

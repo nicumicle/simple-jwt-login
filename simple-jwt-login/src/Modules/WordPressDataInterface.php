@@ -47,7 +47,11 @@ interface WordPressDataInterface
      */
     public function getSiteUrl();
 
-    public function getLoginURL();
+    /**
+     * @param ?array $params
+     * @return mixed
+     */
+    public function getLoginURL($params);
 
     /**
      * @param string $username

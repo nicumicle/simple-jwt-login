@@ -78,9 +78,22 @@ class WordPressData implements WordPressDataInterface
         return site_url();
     }
 
-    public function getLoginURL()
+    /**
+     * @param ?array $params
+     * @return string|null
+     */
+    public function getLoginURL($params)
     {
-        return wp_login_url();
+        $url = wp_login_url();
+        if (!empty($params) && is_array($params)) {
+            $separator = (strpos($url, "?") === false ? "?" : "&");
+            foreach ($params as $key => $value) {
+                $url .= sprintf("%s%s=%s", $separator, urlencode($key), urlencode($value));
+                $separator = "&";
+            }
+        }
+
+        return $url;
     }
 
     /**

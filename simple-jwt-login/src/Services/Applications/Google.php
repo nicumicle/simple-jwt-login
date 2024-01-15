@@ -1,5 +1,5 @@
 <?php
-// https://developers.google.com/identity/openid-connect/openid-connect
+
 namespace SimpleJWTLogin\Services\Applications;
 
 use Exception;
@@ -7,16 +7,14 @@ use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Libraries\ServerCall;
-use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
 use SimpleJWTLogin\Services\AuthenticateService;
-use SimpleJWTLogin\Services\RedirectService;
 use SimpleJWTLogin\Services\RouteService;
 
 class Google extends BaseApplication implements ApplicationInterface
 {
     const IIS = "accounts.google.com";
     const AUTH_URL = "https://accounts.google.com/o/oauth2/auth";
+    const CHECK_TOKEN_URL = "https://oauth2.googleapis.com/tokeninfo?id_token=%s";
 
     public function validate()
     {
@@ -39,7 +37,7 @@ class Google extends BaseApplication implements ApplicationInterface
         $statusCode = 400;
         $plainResult = '';
         ServerCall::get(
-            "https://oauth2.googleapis.com/tokeninfo?id_token=" . $jwt,
+            sprintf(self::CHECK_TOKEN_URL, $jwt),
             [],
             $statusCode,
             $plainResult
@@ -78,16 +76,11 @@ class Google extends BaseApplication implements ApplicationInterface
                         'data' => $jsonResult,
                     ];
                 }
-                $error = "";
-
-                if (isset($jsonResult['error_description'])) {
-                    $error = " " . ucfirst($jsonResult['error_description']);
-                }
-                if (isset($jsonResult['error'])) {
-                    $error = " " . ucfirst($jsonResult['error']);
-                }
                 throw new Exception(
-                    __('The code you provided is invalid.' . $error, 'simple-jwt-login'),
+                    __(
+                        'The code you provided is invalid.' . $this->handleErrorMessage($jsonResult),
+                        'simple-jwt-login'
+                    ),
                     ErrorCodes::ERR_GOOGLE_INVALID_CODE
                 );
             case !empty($this->request['id_token']):
@@ -180,7 +173,10 @@ class Google extends BaseApplication implements ApplicationInterface
             $jsonResult = $result['response'];
 
             if ($responseStatusCode !== 200) {
-                $this->wordPressData->redirect($this->wordPressData->getLoginURL());
+                $this->wordPressData->redirect($this->wordPressData->getLoginURL([
+                    'error' => $this->handleErrorMessage($jsonResult)
+                ]));
+
                 return;
             }
 
@@ -188,14 +184,45 @@ class Google extends BaseApplication implements ApplicationInterface
             $email = $jwt['payload']['email'];
             $user = $this->wordPressData->getUserDetailsByEmail($email);
 
+            if ($user == null) {
+                if ($this->settings->getApplicationsSettings()->isGoogleCreateUserIfNotExistsEnabled()) {
+                    $user = $this->createUser($email);
+
+                    $this->wordPressData->loginUser($user);
+                    $this->wordPressData->redirect($this->wordPressData->getAdminUrl());
+
+                    return;
+                }
+
+                $this->wordPressData->redirect($this->wordPressData->getLoginURL([]));
+
+                return;
+            }
 
             $this->wordPressData->loginUser($user);
-
             $this->wordPressData->redirect($this->wordPressData->getAdminUrl());
+
             return;
         } catch (Exception $e) {
-
-            $this->wordPressData->redirect($this->wordPressData->getLoginURL());
+            $this->wordPressData->redirect($this->wordPressData->getLoginURL([]));
         }
+    }
+
+    /**
+     * @param string[] $jsonResult
+     * @return string
+     */
+    private function handleErrorMessage($jsonResult)
+    {
+        $error = "";
+
+        if (isset($jsonResult['error_description'])) {
+            $error = " " . ucfirst($jsonResult['error_description']);
+        }
+        if (isset($jsonResult['error'])) {
+            $error = " " . ucfirst($jsonResult['error']);
+        }
+
+        return $error;
     }
 }

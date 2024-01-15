@@ -269,7 +269,7 @@ if (! defined('ABSPATH')) {
                 ?>
             />
             <label for="google_create_user_if_not_exists">
-                <?php echo __('TODO: Create user if not exists', 'simple-jwt-login');?>
+                <?php echo __('Create user if not exists', 'simple-jwt-login');?>
             </label><br/>
             <p class="text-muted">
                 * <?php

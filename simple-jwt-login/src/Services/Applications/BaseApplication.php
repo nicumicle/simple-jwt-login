@@ -43,4 +43,25 @@ class BaseApplication
         $this->settings = $settings;
         $this->requestMethod = $requestMethod;
     }
+
+    /**
+     * @param string $email
+     * @return \WP_User
+     * @throws \Exception
+     */
+    protected function createUser($email)
+    {
+        $password = $this->wordPressData->generatePassword(
+            $this->settings->getRegisterSettings()->getRandomPasswordLength()
+        );
+        $user = $this->wordPressData->createUser(
+            $email,
+            $email,
+            $password,
+            $this->settings->getRegisterSettings()->getNewUSerProfile(),
+            []
+        );
+
+        return $user;
+    }
 }

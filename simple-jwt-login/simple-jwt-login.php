@@ -13,7 +13,6 @@
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Modules\WordPressData;
 use SimpleJWTLogin\Services\Applications\Google;
-use SimpleJWTLogin\Services\RedirectService;
 use SimpleJWTLogin\Services\RouteService;
 
 if (! defined('ABSPATH')) {

@@ -12,8 +12,6 @@
 
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Modules\WordPressData;
-use SimpleJWTLogin\Services\Applications\Google;
-use SimpleJWTLogin\Services\RouteService;
 
 if (! defined('ABSPATH')) {
     /** @phpstan-ignore-next-line  */
@@ -59,6 +57,7 @@ function simple_jwt_login_plugin_load_translations()
 add_shortcode('simple-jwt-login:request', 'simple_jwt_login_request_shortcode');
 
 /**
+ * @SuppressWarnings(PHPMD.Superglobals)
  * @param array|null $parameter
  * @return string
  */
@@ -72,9 +71,6 @@ function simple_jwt_login_request_shortcode($parameter = null)
         return '';
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
     if (!isset($_REQUEST[$parameter])) {
         return '';
     }
@@ -177,30 +173,89 @@ function simple_jwt_login_assets()
 
 // Register Oauth Providers
 add_action('login_footer', 'simple_jwt_login_login_footer');
+/**
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ * @return void
+ */
 function simple_jwt_login_login_footer()
 {
     $wordpressData = new WordPressData();
     $jwtSettings   = new SimpleJWTLoginSettings($wordpressData);
     $pluginDirUrl = plugin_dir_url(__FILE__);
-
-    ?>
-
-    <?php
     // GOOGLE
     if ($jwtSettings->getApplicationsSettings()->isGoogleEnabled() && $jwtSettings->getApplicationsSettings()->isOauthEnabled()) {
-        ?>
-        <form method="POST" action="<?php echo Google::AUTH_URL;?>" class="simple-jwt-login-oauth-app">
-            <input type="hidden" name="client_id" value="<?php echo esc_attr($jwtSettings->getApplicationsSettings()->getGoogleClientID());?>" />
-            <input type="hidden" name="response_type" value="code" /><br />
-            <input type="hidden" name="scope" value="email" /><br />
-            <input type="hidden" name="redirect_uri" value="<?php echo $jwtSettings->generateExampleLink(RouteService::OAUTH_TOKEN, ['provider' => 'google']);?>" />
-            <button name="google-auth" class="simple-jwt-login-auth-btn">
-                <img src="<?php echo $pluginDirUrl;?>/images/applications/google-60x60.png" alt="google logo"/>
-                <span class="simple-jwt-login-auth-txt">
-                    Continue with Google
-                </span>
-            </button>
-        </form>
-        <?php
+        include_once "views/applications/google-form.php";
     }
+}
+
+add_shortcode('simple-jwt-login-oauth', 'simple_jwt_login_oauth_shortcode');
+/**
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ * @param ?array $parameter
+ * @return string
+ */
+function simple_jwt_login_oauth_shortcode($parameter = null)
+{
+    $wordpressData = new WordPressData();
+    $jwtSettings   = new SimpleJWTLoginSettings($wordpressData);
+    $pluginDirUrl = plugin_dir_url(__FILE__);
+
+    if (!isset($parameter['provider'])) {
+        return '';
+    }
+
+    if ($jwtSettings->getWordPressData()->isUserLoggedIn()) {
+        return '';
+    }
+
+    $background = "#fff";
+    $color = "#000";
+    $imgwidth = "30px";
+    $imgheight = "30px";
+    $border = "1px solid #ccc";
+
+    if (isset($parameter['background'])) {
+        $background = $parameter['background'];
+    }
+    if (isset($parameter['color'])) {
+        $color = $parameter['color'];
+    }
+    if (isset($parameter['width'])) {
+        $imgwidth = $parameter['width'];
+    }
+    if (isset($parameter['height'])) {
+        $imgheight = $parameter['height'];
+    }
+    if (isset($parameter['border'])) {
+        $border = $parameter['border'];
+    }
+    $html = "<style>.simple-jwt-login-oauth-code .simple-jwt-login-auth-btn{
+        color: $color;
+        background-color: $background;
+        border: $border;
+        cursor: pointer;
+        }
+        .simple-jwt-login-oauth-code .simple-jwt-login-auth-btn img {
+        width: $imgwidth;
+        height: $imgheight;
+        }
+        </style>";
+    $haveProvider = false;
+    switch ($parameter['provider']) {
+        case 'google':
+            if ($jwtSettings->getApplicationsSettings()->isGoogleEnabled()
+                && $jwtSettings->getApplicationsSettings()->isOauthEnabled()) {
+                $haveProvider = true;
+                ob_start();
+                include_once "views/applications/google-form.php";
+                $html .= ob_get_clean();
+            }
+            break;
+    }
+
+    if (!$haveProvider) {
+        return "";
+    }
+
+    return "<span class='simple-jwt-login-oauth-code'>" . $html . "</span>";
 }

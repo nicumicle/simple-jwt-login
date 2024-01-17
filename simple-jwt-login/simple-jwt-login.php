@@ -156,10 +156,6 @@ function simple_jwt_login_add_plugin_action_links($links)
     return $links;
 }
 
-//REST API ROUTES
-include_once 'routes/api.php';
-include_once '3rd-party/force_login.php';
-
 add_action('login_head', 'simple_jwt_login_assets');
 function simple_jwt_login_assets()
 {
@@ -170,21 +166,51 @@ function simple_jwt_login_assets()
     );
 }
 
-
 // Register Oauth Providers
+add_action('login_message', 'simple_jwt_login_login_message');
+/**
+ * @SuppressWarnings(PHPMD.Superglobals)
+ * @return void
+ * @throws Exception
+ */
+function simple_jwt_login_login_message()
+{
+    $wordpressData = new WordPressData();
+    $jwtSettings   = new SimpleJWTLoginSettings($wordpressData);
+    $hasError = false;
+    // GOOGLE
+    if ($jwtSettings->getApplicationsSettings()->isGoogleEnabled() && $jwtSettings->getApplicationsSettings()->isOauthEnabled()) {
+        if (isset($_REQUEST['error'])) {
+            $hasError = true;
+        }
+    }
+
+    if ($hasError) {
+        ?>
+        <div class="notice notice-error">
+            <?php echo esc_html(__("OAuth Error: ", 'simple-jwt-login') . $_REQUEST['error']);?>
+        </div>
+        <?php
+    }
+}
+
 add_action('login_footer', 'simple_jwt_login_login_footer');
 /**
  * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ * @SuppressWarnings(PHPMD.Superglobals)
  * @return void
  */
 function simple_jwt_login_login_footer()
 {
     $wordpressData = new WordPressData();
-    $jwtSettings   = new SimpleJWTLoginSettings($wordpressData);
+    $jwtSettings = new SimpleJWTLoginSettings($wordpressData);
     $pluginDirUrl = plugin_dir_url(__FILE__);
-    // GOOGLE
-    if ($jwtSettings->getApplicationsSettings()->isGoogleEnabled() && $jwtSettings->getApplicationsSettings()->isOauthEnabled()) {
-        include_once "views/applications/google-form.php";
+    switch (true) {
+        // GOOGLE
+        case $jwtSettings->getApplicationsSettings()->isGoogleEnabled()
+            && $jwtSettings->getApplicationsSettings()->isOauthEnabled():
+            include_once "views/applications/google-form.php";
+            break;
     }
 }
 
@@ -259,3 +285,7 @@ function simple_jwt_login_oauth_shortcode($parameter = null)
 
     return "<span class='simple-jwt-login-oauth-code'>" . $html . "</span>";
 }
+
+//REST API ROUTES
+include_once 'routes/api.php';
+include_once '3rd-party/force_login.php';

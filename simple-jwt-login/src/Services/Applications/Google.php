@@ -204,7 +204,7 @@ class Google extends BaseApplication implements ApplicationInterface
 
             return;
         } catch (Exception $e) {
-            $this->wordPressData->redirect($this->wordPressData->getLoginURL([]));
+            $this->wordPressData->redirect($this->wordPressData->getLoginURL(['error' => $e->getMessage()]));
         }
     }
 
@@ -217,10 +217,10 @@ class Google extends BaseApplication implements ApplicationInterface
         $error = "";
 
         if (isset($jsonResult['error_description'])) {
-            $error = " " . ucfirst($jsonResult['error_description']);
+            $error = ucfirst($jsonResult['error_description']) . ".";
         }
         if (isset($jsonResult['error'])) {
-            $error = " " . ucfirst($jsonResult['error']);
+            $error .= ($error === "" ? " " : "") . ucfirst($jsonResult['error']);
         }
 
         return $error;

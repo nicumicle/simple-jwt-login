@@ -48,7 +48,9 @@ class RegisterUserService extends BaseService implements ServiceInterface
         }
 
         $password = $this->jwtSettings->getRegisterSettings()->isRandomPasswordForCreateUserEnabled()
-            ? $this->randomString($this->jwtSettings->getRegisterSettings()->getRandomPasswordLength())
+            ? $this->wordPressData->generatePassword(
+                $this->jwtSettings->getRegisterSettings()->getRandomPasswordLength()
+            )
             : $this->wordPressData->sanitizeTextField($this->request['password']);
 
         $newUserRole = $this->jwtSettings->getRegisterSettings()->getNewUSerProfile();
@@ -248,16 +250,6 @@ class RegisterUserService extends BaseService implements ServiceInterface
                 );
             }
         }
-    }
-
-    /**
-     * @param int $length
-     *
-     * @return string
-     */
-    private function randomString($length = 8)
-    {
-        return $this->wordPressData->generatePassword($length);
     }
 
     /**

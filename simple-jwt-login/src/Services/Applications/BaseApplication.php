@@ -51,11 +51,12 @@ class BaseApplication
      */
     protected function createUser($email)
     {
+        $username = "user_" . $this->randomString(6);
         $password = $this->wordPressData->generatePassword(
             $this->settings->getRegisterSettings()->getRandomPasswordLength()
         );
         $user = $this->wordPressData->createUser(
-            $email,
+            $username,
             $email,
             $password,
             $this->settings->getRegisterSettings()->getNewUSerProfile(),
@@ -63,5 +64,20 @@ class BaseApplication
         );
 
         return $user;
+    }
+
+    /**
+     * @param int $length
+     * @return string
+     */
+    private function randomString($length = 8) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+
+        return $randomString;
     }
 }

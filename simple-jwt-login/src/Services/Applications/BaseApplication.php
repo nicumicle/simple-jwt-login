@@ -70,14 +70,15 @@ class BaseApplication
      * @param int $length
      * @return string
      */
-    private function randomString($length = 8) {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $randomString = '';
+    private function randomString($length = 8)
+    {
+        $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charLength = strlen($chars);
+        $result = '';
         for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
+            $result .= $chars[rand(0, $charLength - 1)];
         }
 
-        return $randomString;
+        return $result;
     }
 }

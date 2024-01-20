@@ -3,10 +3,10 @@
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
-if (! defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     /**
-        @phpstan-ignore-next-line
-    */
+     * @phpstan-ignore-next-line
+     */
     exit;
 }
 
@@ -23,6 +23,6 @@ if (! defined('ABSPATH')) {
 
 <div class="application">
     <?php
-    include_once "applications/google.php"
+    include_once "applications/google.php";
     ?>
 </div>

@@ -18,9 +18,9 @@ class Google extends BaseApplication implements ApplicationInterface
 
     public function validate()
     {
-        if (!isset($this->request['code']) && !isset($this->request['jwt'])) {
+        if (!isset($this->request['code']) && !isset($this->request['id_token'])) {
             throw new Exception(
-                __('The code or jwt parameter is missing from request.', 'simple-jwt-login'),
+                __('The code or id_token parameter is missing from request.', 'simple-jwt-login'),
                 ErrorCodes::ERR_MISSING_GOOGLE_PARAM
             );
         }
@@ -28,24 +28,24 @@ class Google extends BaseApplication implements ApplicationInterface
 
     /**
      * @SuppressWarnings(StaticAccess)
-     * @param string $jwt
+     * @param string $idToken
      * @return void
      * @throws Exception
      */
-    public static function validateJWT($jwt)
+    public static function validateIdToken($idToken)
     {
         $statusCode = 400;
         $plainResult = '';
         ServerCall::get(
-            sprintf(self::CHECK_TOKEN_URL, $jwt),
+            sprintf(self::CHECK_TOKEN_URL, $idToken),
             [],
             $statusCode,
             $plainResult
         );
         if ($statusCode != 200) {
             throw new Exception(
-                __("Invalid JWT provided", 'simple-jwt-login'),
-                ErrorCodes::ERR_GOOGLE_INVALID_JWT
+                __("The provided id_token is invalid", 'simple-jwt-login'),
+                ErrorCodes::ERR_GOOGLE_INVALID_ID_TOKEN
             );
         }
     }
@@ -64,7 +64,7 @@ class Google extends BaseApplication implements ApplicationInterface
             case !empty($this->request['code']):
                 $result = $this->exchangeCode(
                     $this->request['code'],
-                    $this->settings->getApplicationsSettings()->getGoogleRedirectURI()
+                    $this->settings->getApplicationsSettings()->getGoogleExchangeCodeRedirectUri()
                 );
 
                 $responseStatusCode = $result['status_code'];
@@ -85,7 +85,7 @@ class Google extends BaseApplication implements ApplicationInterface
                 );
             case !empty($this->request['id_token']):
                 $jwt = $this->request['id_token'];
-                self::validateJWT($jwt);
+                self::validateIdToken($jwt);
 
                 $decoded = JWT::extractDataFromJwt($jwt);
 
@@ -139,6 +139,7 @@ class Google extends BaseApplication implements ApplicationInterface
                 'grant_type' => 'authorization_code',
             ],
         ];
+
         $responseStatusCode = 500;
         $plainResult = null;
         $jsonResult = ServerCall::post(

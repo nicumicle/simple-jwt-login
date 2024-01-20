@@ -284,15 +284,22 @@ Applications
  */
 #simple-jwt-login .application {
     padding: 5px 10px;
-    border: 1px dotted #b9b9b9;
+    border: 1px dotted #8e9194;
     border-radius: 0.3em;
-    background: #f3f3f3;
+    background: #f8f8f8;
+    margin-bottom: 10px;
 }
+
+#simple-jwt-login .application .form-group{
+    margin-bottom: 5px;
+    padding-top: 5px;
+}
+
 #simple-jwt-login .application .logo {
     width: 60px;
     height: 60px;
     float:right;
 }
-#simple-jwt-login .application .google.logo {
+#simple-jwt-login .application .logo.google {
     background-image: url("../images/applications/google-60x60.png");
 }

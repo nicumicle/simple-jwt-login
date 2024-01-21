@@ -44,7 +44,7 @@ if (!defined('ABSPATH')) {
                 'simple-jwt-login'
             );
             ?>
-            <a href="#">Read more</a>
+            <a href="https://simple-jwt-login/docs/applications/google/setup/">Read more</a>
         </p>
     </div>
     <div class="col-md-6 text-right">
@@ -95,7 +95,7 @@ if (!defined('ABSPATH')) {
                     id="google_client_id"
                     class="form-control"
                     value="<?php echo esc_attr($jwtSettings->getApplicationsSettings()->getGoogleClientID()); ?>"
-                    placeholder="<?php echo __('Client ID', 'simple-jwt-login'); ?>"
+                    placeholder="<?php echo esc_attr(__('Client ID', 'simple-jwt-login')); ?>"
             />
 
             <label for="google_client_secret"><b>Client Secret</b> <span class="required">*</span></label>
@@ -105,7 +105,7 @@ if (!defined('ABSPATH')) {
                     name="google[client_secret]"
                     id="google_client_secret"
                     value="<?php echo esc_attr($jwtSettings->getApplicationsSettings()->getGoogleClientSecret()); ?>"
-                    placeholder="<?php echo __('Client Secret', 'simple-jwt-login'); ?>"
+                    placeholder="<?php echo esc_attr(__('Client Secret', 'simple-jwt-login')); ?>"
             />
         </div>
     </div>
@@ -133,7 +133,7 @@ if (!defined('ABSPATH')) {
                 ?>
             />
             <label for="google_enable_oauth">
-                <?php echo __('Enable OAuth on WordPress login', 'simple-jwt-login'); ?>
+                <?php echo esc_html(__('Enable OAuth on WordPress login', 'simple-jwt-login')); ?>
             </label>
             <p>
                 <?php
@@ -170,7 +170,7 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title">
-            <?php echo __('Exchange Google OAuth "code" with Google "id_token"', 'simple-jwt-login'); ?>
+            <?php echo esc_html(__('Exchange Google OAuth "code" with Google "id_token"', 'simple-jwt-login')); ?>
         </h3>
     </div>
     <div class="col-md-12">
@@ -220,7 +220,7 @@ if (!defined('ABSPATH')) {
             <span class="code">
                 <?php
                 $sampleUrlParams = [
-                    'provider' => __('google', 'simple-jwt-login'),
+                    'provider' => 'google',
                     'code' => __('your_code ', 'simple-jwt-login')
                 ];
 
@@ -240,14 +240,16 @@ if (!defined('ABSPATH')) {
 
 <div class="row">
     <h3 class="section-title">
-        <?php echo __('Exchange Google "id_token" with a WordPress "jwt"', 'simple-jwt-login'); ?>
+        <?php echo esc_html(__('Exchange Google "id_token" with a WordPress "jwt"', 'simple-jwt-login')); ?>
     </h3>
     <br/>
     <p>
         <?php
-        echo __(
-            'This route allows you to exchange the Google `id_token` with a Simple-JWT-Login JWT',
-            'simple-jwt-login'
+        echo esc_html(
+            __(
+                'This route allows you to exchange the Google `id_token` with a Simple-JWT-Login JWT',
+                'simple-jwt-login'
+            )
         );
         ?>
     </p>
@@ -256,7 +258,7 @@ if (!defined('ABSPATH')) {
                value="1"
             <?php
             echo $jwtSettings->getApplicationsSettings()->isGoogleExchangeIdTokenEnabled()
-                ? 'checked="checked"'
+                ? esc_html('checked="checked"')
                 : ""
             ?>
         />
@@ -266,7 +268,7 @@ if (!defined('ABSPATH')) {
     </p>
     <p class="text-muted">
         Parameters:<br/>
-        <b>provider</b> -> <?php echo __('google', 'simple-jwt-login'); ?><br/>
+        <b>provider</b> -> <?php echo esc_html('google');?><br/>
         <b>id_token</b> -> <?php echo __('the `id_token` from your OAuth process', 'simple-jwt-login'); ?><br/>
     </p>
     <div class="generated-code">
@@ -274,7 +276,7 @@ if (!defined('ABSPATH')) {
         <span class="code">
                 <?php
                 $sampleUrlParams = [
-                    'provider' => __('google', 'simple-jwt-login'),
+                    'provider' => esc_html('google'),
                     'id_token' => __('google_id_token ', 'simple-jwt-login')
                 ];
 
@@ -319,7 +321,7 @@ if (!defined('ABSPATH')) {
                 'The plugin will search for the user that has the email with the one specified in the JWT payload.',
                 'simple-jwt-login'
             );
-            echo "<br />";
+            echo '<br />';
             echo __(
                 'In order for this option to work, you also need to enable the `All WordPress endpoints checks for JWT authentication` from General.',
                 'simple-jwt-login'

@@ -27,7 +27,7 @@ if (! defined('ABSPATH')) {
     <button name="google-auth" class="simple-jwt-login-auth-btn">
         <img src="<?php echo $pluginDirUrl;?>/images/applications/google-60x60.png" alt="google logo"/>
         <span class="simple-jwt-login-auth-txt">
-            Continue with Google
+            <?php echo __('Continue with Google', 'simple-jwt-login');?>
         </span>
     </button>
 </form>

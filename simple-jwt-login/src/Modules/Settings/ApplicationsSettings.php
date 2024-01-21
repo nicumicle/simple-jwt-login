@@ -31,13 +31,6 @@ class ApplicationsSettings extends BaseSettings implements SettingsInterface
             'client_secret',
             BaseSettings::SETTINGS_TYPE_STRING
         );
-//        $this->assignSettingsPropertyFromPost(
-//            self::GOOGLE_GROUP,
-//            'redirect_uri',
-//            self::GOOGLE_GROUP,
-//            'redirect_uri',
-//            BaseSettings::SETTINGS_TYPE_STRING
-//        );
         $this->assignSettingsPropertyFromPost(
             self::GOOGLE_GROUP,
             'allow_on_all_endpoints',
@@ -174,17 +167,6 @@ class ApplicationsSettings extends BaseSettings implements SettingsInterface
     {
         if (isset($this->settings[self::GOOGLE_GROUP]['client_secret'])) {
             return $this->settings[self::GOOGLE_GROUP]['client_secret'];
-        }
-
-        return  "";
-    }
-    /**
-     * @return string
-     */
-    public function getGoogleRedirectURI()
-    {
-        if (isset($this->settings[self::GOOGLE_GROUP]['redirect_uri'])) {
-            return $this->settings[self::GOOGLE_GROUP]['redirect_uri'];
         }
 
         return  "";

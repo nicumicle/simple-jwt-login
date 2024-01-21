@@ -14,7 +14,7 @@ License URI: https://www.gnu.org/licenses/quick-guide-gplv3.html
 
 Simple JWT Login is a FREE WordPress plugin that allows you to use a JWT on WordPress REST endpoints.
 
-This plugin allows you to login, register, authenticate, delete and change user password to a WordPress website using a JWT.
+This plugin allows you to log in, register, authenticate, delete and change user password to a WordPress website using a JWT.
 
 It's main purpose is to allow you to connect a mobile App or other websites with WordPress. 
 
@@ -39,7 +39,7 @@ Plugin Documentation Site: [https://simplejwtlogin.com](https://simplejwtlogin.c
 
 == Login User ==
 
-This plugin is customizable and offers you multiple methods to login to you website, based on multiple scenarios.
+This plugin is customizable and offers you multiple methods to log in to you website, based on multiple scenarios.
 
 In order to login, users have to send JWT. The plugin, validates the JWT, and if everything is OK, it can extract the WordPress email address or user ID.
 Users can specify the exact key of the JWT payload where this information can be found.
@@ -191,7 +191,7 @@ This feature allows you to add a layer of protection to your API routes.
 The Auth codes contains 3 parts:
 1. Authentication Key: This is the actual code that you have to add in the request.
 2. WordPress new User Role: can be used when you want to create multiple user types with the create user endpoint. If you leave it blank, the value configured in the 'Register Settings' will be used.
-3. Expiration Date: This allows you to set an expiration date for you auth codes. The format is `Y-M-D H:m:s'. Example : 2020-12-24 23:00:00. If you leave it blank, it will never expired.
+3. Expiration Date: This allows you to set an expiration date for you auth codes. The format is `Y-M-D H:m:s'. Example : 2020-12-24 23:00:00. If you leave it blank, it will never expire.
 
 Expiration date format: year-month-day hours:minutes:seconds
 
@@ -351,7 +351,7 @@ Yes. The only thing you have to make sure, in order to work, is that you use the
 = Is the Auth Code required? =
 No, it is not required. You can disable it from 'Login config', 'Register Config' and 'Delete User Config'. Just set the parameter 'Login|Register requires Auth Code' to 'No'.
 
-= I don't want other users to be able delete users. What should I do? =
+= I don't want other users to be able to delete users. What should I do? =
 The 'delete users option' is disabled by default. To make sure nobody will delete a user, please make sure the option "Allow Delete" is set to "No".
 
 =Can I automatically log in to a WordPress website from my mobile App using this plugin?=

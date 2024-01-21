@@ -82,7 +82,7 @@ if (! defined('ABSPATH')) {
             ?>
         </p>
         <p class="text-muted">
-            Parameters:<Br />
+            Parameters:<br />
             <b>email</b> -> <?php echo __('to login with email', 'simple-jwt-login');?><br />
             <b>username</b> -> <?php echo __('to login with username', 'simple-jwt-login');?><br />
             <b>password</b> -> <?php echo __('your password', 'simple-jwt-login');?><br />

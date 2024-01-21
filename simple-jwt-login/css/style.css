@@ -7,6 +7,14 @@
     font-size: 12px;
 }
 
+#simple-jwt-login span.beta {
+    background: #F11;
+    border: 1px solid #E00;
+    color: #FFF;
+    border-radius: 0.3em;
+    padding: 2px 10px;
+}
+
 #simple-jwt-login .row {
     max-width: 100%;
 }
@@ -269,3 +277,29 @@
 #simple-jwt-login .decryption-input-group progress[value="100"]::-moz-progress-bar { background: #0f5132; }
 #simple-jwt-login .decryption-input-group progress[value="100"]::-webkit-progress-value { background: #0f5132; }
 #simple-jwt-login .decryption-input-group progress[value="100"] { color: #0f5132; }
+
+
+/*
+Applications
+ */
+#simple-jwt-login .application {
+    padding: 5px 10px;
+    border: 1px dotted #8e9194;
+    border-radius: 0.3em;
+    background: #f8f8f8;
+    margin-bottom: 10px;
+}
+
+#simple-jwt-login .application .form-group{
+    margin-bottom: 5px;
+    padding-top: 5px;
+}
+
+#simple-jwt-login .application .logo {
+    width: 60px;
+    height: 60px;
+    float:right;
+}
+#simple-jwt-login .application .logo.google {
+    background-image: url("../images/applications/google-60x60.png");
+}

@@ -16,11 +16,12 @@ class SettingsFactory
     const REGISTER_SETTINGS = 7;
     const RESET_PASSWORD_SETTINGS = 8;
     const PROTECT_ENDPOINTS_SETTINGS = 9;
+    const APPLICATIONS_SETTINGS = 10;
 
     /**
      * @param int $type
      *
-     * @return AuthCodesSettings|AuthenticationSettings|CorsSettings|DeleteUserSettings|GeneralSettings|HooksSettings|LoginSettings|RegisterSettings|ResetPasswordSettings|ProtectEndpointSettings
+     * @return AuthCodesSettings|AuthenticationSettings|CorsSettings|DeleteUserSettings|GeneralSettings|HooksSettings|LoginSettings|RegisterSettings|ResetPasswordSettings|ProtectEndpointSettings|ApplicationsSettings
      * @throws Exception
      */
     public static function getFactory($type)
@@ -46,6 +47,8 @@ class SettingsFactory
                 return new ResetPasswordSettings();
             case self::PROTECT_ENDPOINTS_SETTINGS:
                 return new ProtectEndpointSettings();
+            case self::APPLICATIONS_SETTINGS:
+                return new ApplicationsSettings();
             default:
                 throw new Exception('Settings implementation not found.');
         }
@@ -66,6 +69,7 @@ class SettingsFactory
             self::REGISTER_SETTINGS => new RegisterSettings(),
             self::RESET_PASSWORD_SETTINGS => new ResetPasswordSettings(),
             self::PROTECT_ENDPOINTS_SETTINGS => new ProtectEndpointSettings(),
+            self::APPLICATIONS_SETTINGS => new ApplicationsSettings(),
 
             //auth codes needs to be the last one
             self::AUTH_CODES_SETTINGS => new AuthCodesSettings(),

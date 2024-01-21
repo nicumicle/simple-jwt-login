@@ -44,7 +44,7 @@ if (!defined('ABSPATH')) {
                 'simple-jwt-login'
             );
             ?>
-            <a href="https://simple-jwt-login/docs/applications/google/setup/">Read more</a>
+            <a href="https://simplejwtlogin.com/docs/applications/google/setup" target="_blank">Read more</a>
         </p>
     </div>
     <div class="col-md-6 text-right">

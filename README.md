@@ -70,7 +70,7 @@ Table of contents
 * [Contribute](#scroll-contribute)
   * [How can you contribute](#how-can-you-contribute)
 * [Contributors](#trophy-contributors)
-* [Copyright][#copyright]
+* [Copyright](#copyright)
 
 <!--te-->
 

@@ -3,63 +3,33 @@
 </p>
 
 <p align="center">
-  <a href="https://wordpress.org/support/plugin/simple-jwt-login/reviews/">
-   <img src="https://img.shields.io/wordpress/plugin/stars/simple-jwt-login" alt="Rating" />
-  </a>
-  <a href="https://wordpress.org/plugins/simple-jwt-login/advanced#plugin-download-stats">
-   <img src="https://img.shields.io/wordpress/plugin/dt/simple-jwt-login" alt="Total Downloads" />
-  </a>
-  <a href="https://wordpress.org/plugins/simple-jwt-login/#description">
-   <img src="https://img.shields.io/wordpress/plugin/installs/simple-jwt-login" alt="Active installs" />
-  </a>
+  <a href="https://wordpress.org/support/plugin/simple-jwt-login/reviews/"><img src="https://img.shields.io/wordpress/plugin/stars/simple-jwt-login" alt="Rating" /></a>
+  <a href="https://wordpress.org/plugins/simple-jwt-login/advanced#plugin-download-stats"><img src="https://img.shields.io/wordpress/plugin/dt/simple-jwt-login" alt="Total Downloads" /></a>
+  <a href="https://wordpress.org/plugins/simple-jwt-login/#description"><img src="https://img.shields.io/wordpress/plugin/installs/simple-jwt-login" alt="Active installs" /></a>
 </p>
+
 <p align="center">
-  <a href="https://github.com/nicumicle/simple-jwt-login/graphs/contributors">
-   <img src="https://img.shields.io/github/contributors/nicumicle/simple-jwt-login" alt="Contributors" />
-  </a> 
-  <a href="https://github.com/nicumicle/simple-jwt-login/commits/master">
-   <img src="https://img.shields.io/github/last-commit/nicumicle/simple-jwt-login" alt="Last Commit"/>
-  </a>
-  <a href="https://github.com/nicumicle/simple-jwt-login/issues">
-   <img src="https://img.shields.io/github/issues-raw/nicumicle/simple-jwt-login" alt="Open issues"/>
-  </a>
-  <a href="https://github.com/nicumicle/simple-jwt-login/issues?q=is%3Aissue+is%3Aclosed">
-   <img src="https://img.shields.io/github/issues-closed-raw/nicumicle/simple-jwt-login" alt="Closed issues"/>
-  </a>
-  <a href="https://github.com/nicumicle/simple-jwt-login/pulls">
-   <img src="https://img.shields.io/github/issues-pr/nicumicle/simple-jwt-login" alt="Open pull requests" />
-  </a>
-  <a href="https://github.com/nicumicle/simple-jwt-login/pulls?q=is%3Apr+is%3Aclosed">
-   <img src="https://img.shields.io/github/issues-pr-closed/nicumicle/simple-jwt-login" alt="Closed pull requests" />
-  </a>
+  <a href="https://github.com/nicumicle/simple-jwt-login/graphs/contributors"><img src="https://img.shields.io/github/contributors/nicumicle/simple-jwt-login" alt="Contributors" /></a> 
+  <a href="https://github.com/nicumicle/simple-jwt-login/commits/master"><img src="https://img.shields.io/github/last-commit/nicumicle/simple-jwt-login" alt="Last Commit"/></a>
+  <a href="https://github.com/nicumicle/simple-jwt-login/issues"><img src="https://img.shields.io/github/issues-raw/nicumicle/simple-jwt-login" alt="Open issues"/></a>
+  <a href="https://github.com/nicumicle/simple-jwt-login/issues?q=is%3Aissue+is%3Aclosed"><img src="https://img.shields.io/github/issues-closed-raw/nicumicle/simple-jwt-login" alt="Closed issues"/></a>
+  <a href="https://github.com/nicumicle/simple-jwt-login/pulls"><img src="https://img.shields.io/github/issues-pr/nicumicle/simple-jwt-login" alt="Open pull requests" /></a>
+  <a href="https://github.com/nicumicle/simple-jwt-login/pulls?q=is%3Apr+is%3Aclosed"><img src="https://img.shields.io/github/issues-pr-closed/nicumicle/simple-jwt-login" alt="Closed pull requests" /></a>
 </p>
+
 <p align="center">
     <img src="https://img.shields.io/wordpress/plugin/v/simple-jwt-login" alt="Simple-Jwt-Login WordPress.org version"/>
     <img src="https://img.shields.io/wordpress/plugin/required-php/simple-jwt-login" alt="Required PHP version"/>
     <img src="https://img.shields.io/wordpress/plugin/tested/simple-jwt-login" alt="Latest Tested WordPress version"/>
 </p>
 <p align="center">
-    <a href="https://github.com/nicumicle/simple-jwt-login/tags">
-      <img src="https://img.shields.io/github/v/tag/nicumicle/simple-jwt-login" alt="Current Tag" />
-    </a>
-    <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/php.yml">
-      <img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/php.yml/badge.svg" alt="Check plugin" />
-    </a>
-    <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/multiple-php.yml">
-      <img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/multiple-php.yml/badge.svg" alt="Multiple PHP Versions check"/>
-    </a>
-    <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/feature_tests.yml">
-      <img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/feature_tests.yml/badge.svg" alt="Feature Tests" />
-    </a>
-    <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/unit_tests.yml">
-      <img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/unit_tests.yml/badge.svg" alt="Unit Tests" />
-    </a>
-    <a href="https://app.codecov.io/gh/nicumicle/simple-jwt-login">
-        <img src="https://codecov.io/gh/nicumicle/simple-jwt-login/branch/master/graph/badge.svg?token=dVOwuGQoY3" alt="Coverage"/>
-    </a>
-    <a href="https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE">
-      <img src="https://img.shields.io/github/license/nicumicle/simple-jwt-login" alt="License" />
-    </a>
+    <a href="https://github.com/nicumicle/simple-jwt-login/tags"><img src="https://img.shields.io/github/v/tag/nicumicle/simple-jwt-login" alt="Current Tag" /></a>
+    <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/php.yml"><img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/php.yml/badge.svg" alt="Check plugin" /></a>
+    <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/multiple-php.yml"><img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/multiple-php.yml/badge.svg" alt="Multiple PHP Versions check"/></a>
+    <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/feature_tests.yml"><img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/feature_tests.yml/badge.svg" alt="Feature Tests" /></a>
+    <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/unit_tests.yml"><img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/unit_tests.yml/badge.svg" alt="Unit Tests" /></a>
+    <a href="https://app.codecov.io/gh/nicumicle/simple-jwt-login"><img src="https://codecov.io/gh/nicumicle/simple-jwt-login/branch/master/graph/badge.svg?token=dVOwuGQoY3" alt="Coverage"/></a>
+    <a href="https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE"><img src="https://img.shields.io/github/license/nicumicle/simple-jwt-login" alt="License" /></a>
 </p>
 
 <div align="center">
@@ -73,7 +43,7 @@
 </div>
 
 <p align="center">
-    <b>Simple JWT Login</b> is a <b>free</b> WordPress plugin that allows you to use a JWT on WordPress REST endpoints.
+    <b>Simple JWT Login</b> is a <b>FREE</b> WordPress plugin that allows you to use a JWT on WordPress REST endpoints.
 </p>
 <p align="center">
     The main purpose of this plugin is to allow Mobile apps, or other websites to access the content from a WordPress website via REST endpoints in a secure way.
@@ -100,6 +70,7 @@ Table of contents
 * [Contribute](#scroll-contribute)
   * [How can you contribute](#how-can-you-contribute)
 * [Contributors](#trophy-contributors)
+* [Copyright](#copyright)
 
 <!--te-->
 
@@ -191,7 +162,7 @@ Check out the [roadmap](https://github.com/users/nicumicle/projects/1) to get in
 
 ## :scroll: Contribute
 
-Simple-JTW-Login is an open-source project and welcomes all contributors.
+Simple-JWT-Login is an open-source project and welcomes all contributors.
 
 As with all WordPress projects, we want to ensure a welcoming environment for everyone. 
 

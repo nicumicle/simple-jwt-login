@@ -447,4 +447,41 @@ class JWT
 
         return strlen($value);
     }
+
+    /**
+     * @param string $jwt
+     * @throws Exception
+     * @return array
+     */
+    public static function extractDataFromJwt($jwt)
+    {
+        $tks = explode('.', $jwt);
+
+        if (count($tks) != 3) {
+            throw new Exception(
+                __('Wrong number of segments', 'simple-jwt-login'),
+                ErrorCodes::ERR_WRONG_NUMBER_OF_SEGMENTS
+            );
+        }
+        list($headb64, $bodyb64) = $tks;
+        $header = static::jsonDecode(static::urlsafeB64Decode($headb64));
+        if ($header === null) {
+            throw new Exception(
+                __('Invalid header encoding', 'simple-jwt-login'),
+                ErrorCodes::ERR_INVALID_HEADER_ENCODING
+            );
+        }
+        $payload = static::jsonDecode(static::urlsafeB64Decode($bodyb64));
+        if ($payload === null) {
+            throw new Exception(
+                __('Invalid claims encoding', 'simple-jwt-login'),
+                ErrorCodes::ERR_INVALID_CLAIMS_ENCODING
+            );
+        }
+
+        return [
+            'header' => (array)$header,
+            'payload' => (array)$payload,
+        ];
+    }
 }

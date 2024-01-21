@@ -7,14 +7,21 @@ use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Libraries\JWT\JWT;
+use SimpleJWTLogin\Libraries\ServerCall;
 use SimpleJWTLogin\Modules\AuthCodeBuilder;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Services\Applications\Google;
 use WP_User;
 
 abstract class BaseService
 {
+    /**
+     * @var string
+     */
+    protected $requestMetod;
+
     /**
      * @var SimpleJWTLoginSettings
      */
@@ -51,6 +58,16 @@ abstract class BaseService
      * @var ServerHelper
      */
     protected $serverHelper;
+
+    /**
+     * @param string $requestMethod
+     * @return $this
+     */
+    public function withRequestMethod($requestMethod)
+    {
+        $this->requestMetod = $requestMethod;
+        return $this;
+    }
 
     /**
      * @param SimpleJWTLoginSettings $settings
@@ -229,6 +246,20 @@ abstract class BaseService
      */
     protected function validateJWTAndGetUserValueFromPayload($parameter)
     {
+        $jwtParts = JWT::extractDataFromJwt($this->jwt);
+        if (isset($jwtParts['payload']['iss'])) {
+            switch ($jwtParts['payload']['iss']) {
+                case Google::IIS:
+                    if ($this->jwtSettings->getApplicationsSettings()->isGoogleEnabled()
+                        && $this->jwtSettings->getApplicationsSettings()->isGoogleJwtAllowedOnAllEndpoints()) {
+                        Google::validateIdToken($this->jwt);
+
+                        return $jwtParts['payload']['email'];
+                    }
+                    break;
+            }
+        }
+
         JWT::$leeway = self::JWT_LEEVAY;
         $decoded = (array)JWT::decode(
             $this->jwt,

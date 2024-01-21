@@ -11,6 +11,7 @@
 */
 
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Modules\WordPressData;
 
 if (! defined('ABSPATH')) {
     /** @phpstan-ignore-next-line  */
@@ -56,6 +57,7 @@ function simple_jwt_login_plugin_load_translations()
 add_shortcode('simple-jwt-login:request', 'simple_jwt_login_request_shortcode');
 
 /**
+ * @SuppressWarnings(PHPMD.Superglobals)
  * @param array|null $parameter
  * @return string
  */
@@ -69,9 +71,6 @@ function simple_jwt_login_request_shortcode($parameter = null)
         return '';
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
     if (!isset($_REQUEST[$parameter])) {
         return '';
     }
@@ -155,6 +154,136 @@ function simple_jwt_login_add_plugin_action_links($links)
     );
 
     return $links;
+}
+
+add_action('login_head', 'simple_jwt_login_assets');
+function simple_jwt_login_assets()
+{
+    $pluginDirUrl = plugin_dir_url(__FILE__);
+    wp_enqueue_style(
+        'simple-jwt-login-login_header_css',
+        $pluginDirUrl . 'css/login.css'
+    );
+}
+
+// Register Oauth Providers
+add_action('login_message', 'simple_jwt_login_login_message');
+/**
+ * @SuppressWarnings(PHPMD.Superglobals)
+ * @return void
+ * @throws Exception
+ */
+function simple_jwt_login_login_message()
+{
+    $wordpressData = new WordPressData();
+    $jwtSettings   = new SimpleJWTLoginSettings($wordpressData);
+    $hasError = false;
+    // GOOGLE
+    if ($jwtSettings->getApplicationsSettings()->isGoogleEnabled() && $jwtSettings->getApplicationsSettings()->isOauthEnabled()) {
+        if (isset($_REQUEST['error'])) {
+            $hasError = true;
+        }
+    }
+
+    if ($hasError) {
+        ?>
+        <div class="notice notice-error">
+            <?php echo esc_html(__("OAuth Error: ", 'simple-jwt-login') . $_REQUEST['error']);?>
+        </div>
+        <?php
+    }
+}
+
+add_action('login_footer', 'simple_jwt_login_login_footer');
+/**
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ * @SuppressWarnings(PHPMD.Superglobals)
+ * @return void
+ */
+function simple_jwt_login_login_footer()
+{
+    $wordpressData = new WordPressData();
+    $jwtSettings = new SimpleJWTLoginSettings($wordpressData);
+    $pluginDirUrl = plugin_dir_url(__FILE__);
+    switch (true) {
+        // GOOGLE
+        case $jwtSettings->getApplicationsSettings()->isGoogleEnabled()
+            && $jwtSettings->getApplicationsSettings()->isOauthEnabled():
+            include_once "views/applications/google-form.php";
+            break;
+    }
+}
+
+add_shortcode('simple-jwt-login-oauth', 'simple_jwt_login_oauth_shortcode');
+/**
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ * @param ?array $parameter
+ * @return string
+ */
+function simple_jwt_login_oauth_shortcode($parameter = null)
+{
+    $wordpressData = new WordPressData();
+    $jwtSettings   = new SimpleJWTLoginSettings($wordpressData);
+    $pluginDirUrl = plugin_dir_url(__FILE__);
+
+    if (!isset($parameter['provider'])) {
+        return '';
+    }
+
+    if ($jwtSettings->getWordPressData()->isUserLoggedIn()) {
+        return '';
+    }
+
+    $background = "#fff";
+    $color = "#000";
+    $imgwidth = "30px";
+    $imgheight = "30px";
+    $border = "1px solid #ccc";
+
+    if (isset($parameter['background'])) {
+        $background = $parameter['background'];
+    }
+    if (isset($parameter['color'])) {
+        $color = $parameter['color'];
+    }
+    if (isset($parameter['width'])) {
+        $imgwidth = $parameter['width'];
+    }
+    if (isset($parameter['height'])) {
+        $imgheight = $parameter['height'];
+    }
+    if (isset($parameter['border'])) {
+        $border = $parameter['border'];
+    }
+    $html = "<style>.simple-jwt-login-oauth-code .simple-jwt-login-auth-btn{
+        color: $color;
+        background-color: $background;
+        border: $border;
+        cursor: pointer;
+        }
+        .simple-jwt-login-oauth-code .simple-jwt-login-auth-btn img {
+        width: $imgwidth;
+        height: $imgheight;
+        }
+        </style>";
+    $haveProvider = false;
+    switch ($parameter['provider']) {
+        case 'google':
+            if ($jwtSettings->getApplicationsSettings()->isGoogleEnabled()
+                && $jwtSettings->getApplicationsSettings()->isOauthEnabled()) {
+                $haveProvider = true;
+                ob_start();
+                include_once "views/applications/google-form.php";
+                $html .= ob_get_clean();
+            }
+            break;
+    }
+
+    if (!$haveProvider) {
+        return "";
+    }
+
+    return "<span class='simple-jwt-login-oauth-code'>" . $html . "</span>";
 }
 
 //REST API ROUTES

@@ -58,7 +58,7 @@ info:
   contact:
     email: contact@simplejwtlogin.com
   license:
-    name: GLP 2.0
+    name: GPL 3.0
     url: https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE
   version: 1.0.0
   x-logo:

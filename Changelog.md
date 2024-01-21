@@ -1,6 +1,7 @@
 # Changelog - Releases
 
 ## Unreleased
+- Add OAuth support for Google [#97](https://github.com/nicumicle/simple-jwt-login/issues/97)
 
 ## 3.5.3 (16 November 2023) 
 - Fix licence in composer.json

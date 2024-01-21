@@ -129,7 +129,7 @@ jQuery(document).ready(
                 } else {
                     $('#simple-jwt-login .define_public_key').hide();
                 }
-            }//end if
+            }
         }
 
         function simple_jwt_bind_protected_endpoints()

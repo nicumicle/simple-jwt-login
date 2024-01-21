@@ -1,0 +1,29 @@
+.login .simple-jwt-login-oauth-app {
+    background: transparent;
+    padding: 0 10px;
+    border: none;
+    box-shadow: transparent;
+    width: 200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.simple-jwt-login-oauth-app .simple-jwt-login-auth-btn {
+    cursor: pointer;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 0.3em;
+    padding: 2px 10px;
+    text-align: center;
+    font-size: 12px;
+    margin-bottom: 10px;
+    position: relative;
+}
+.simple-jwt-login-oauth-app .simple-jwt-login-auth-btn img {
+    width: 30px;
+    height: 30px;
+}
+.simple-jwt-login-oauth-app .simple-jwt-login-auth-btn .simple-jwt-login-auth-txt{
+    position: relative;
+    top: -10px;
+}

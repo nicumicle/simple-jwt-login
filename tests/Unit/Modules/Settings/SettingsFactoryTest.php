@@ -4,6 +4,7 @@ namespace SimpleJwtLoginTests\Unit\Modules\Settings;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
+use SimpleJWTLogin\Modules\Settings\ApplicationsSettings;
 use SimpleJWTLogin\Modules\Settings\AuthCodesSettings;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Modules\Settings\CorsSettings;
@@ -70,6 +71,10 @@ class SettingsFactoryTest extends TestCase
             [
                 SettingsFactory::REGISTER_SETTINGS,
                 RegisterSettings::class
+            ],
+            [
+                SettingsFactory::APPLICATIONS_SETTINGS,
+                ApplicationsSettings::class
             ]
         ];
     }

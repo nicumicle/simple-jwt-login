@@ -213,7 +213,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
                     $replace = $this->wordPressData->getUserProperty($user, 'user_login');
                     break;
                 case "{{EMAIL}}":
-                    $replace = $this->wordPressData->getUserProperty($user, 'user_login');
+                    $replace = $this->wordPressData->getUserProperty($user, 'user_email');
                     break;
                 case "{{NICKNAME}}":
                     $replace = $this->wordPressData->getUserProperty($user, 'nickname');

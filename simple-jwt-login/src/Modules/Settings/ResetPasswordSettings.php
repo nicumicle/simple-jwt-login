@@ -157,6 +157,7 @@ class ResetPasswordSettings extends BaseSettings implements SettingsInterface
         return [
             '{{CODE}}' => __('Reset password code', 'simple-jwt_login'),
             '{{NAME}}' => __('User first and last name', 'simple-jwt-login'),
+            '{{USERNAME}}' => __('User name', 'simple-jwt_login'),
             '{{EMAIL}}' => __('User email', 'simple-jwt_login'),
             '{{NICKNAME}}' => __('User nickname', 'simple-jwt_login'),
             '{{FIRST_NAME}}' => __('User first name', 'simple-jwt_login'),

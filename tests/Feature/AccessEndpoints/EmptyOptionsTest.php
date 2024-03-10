@@ -2,8 +2,10 @@
 
 namespace SimpleJwtLoginTests\Feature\AccessEndpoints;
 
+use PHPUnit\Framework\Attributes\TestDox;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJwtLoginTests\Feature\TestBase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class EmptyOptionsTest extends TestBase
 {
@@ -88,9 +90,9 @@ class EmptyOptionsTest extends TestBase
         ];
     }
 
+    #[DataProvider('endpointsProvider')]
+    #[TestDox("Access endpoints is not allowed")]
     /**
-     * @testdox Access endpoints is not allowed
-     * @dataProvider endpointsProvider
      * @return void
      * @throws \GuzzleHttp\Exception\GuzzleException
      */

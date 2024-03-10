@@ -2,14 +2,14 @@
 
 namespace SimpleJwtLoginTests\Unit\Libraries;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Libraries\ParseRequest;
 
 class ParseRequestTest extends TestCase
 {
+    #[DataProvider('contentTypeProvider')]
     /**
-     * @dataProvider contentTypeProvider
-     *
      * @param mixed $server
      * @param mixed $expectedResult
      */
@@ -27,31 +27,31 @@ class ParseRequestTest extends TestCase
         return [
             [
                 'server' => [],
-                'result' => []
+                'expectedResult' => []
             ],
             [
                 'server' => [
                     'CONTENT_TYPE' => 'application/json'
                 ],
-                'result' => [],
+                'expectedResult' => [],
             ],
             [
                 'server' => [
                     'CONTENT_TYPE' => 'multipart/form-data; boundary=something test'
                 ],
-                'result' => [],
+                'expectedResult' => [],
             ],
             [
                 'server' => [
                     'CONTENT_TYPE' => 'text/html; charset=UTF-8'
                 ],
-                'result' => [],
+                'expectedResult' => [],
             ],
             [
                 'server' => [
                     'CONTENT_TYPE' => 'multipart/form-data'
                 ],
-                'result' => [],
+                'expectedResult' => [],
             ]
         ];
     }

@@ -2,13 +2,14 @@
 
 namespace SimpleJwtLoginTests\Unit\Modules;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\UserProperties;
 
 class UserPropertiesTest extends TestCase
 {
+    #[DataProvider('providerBuildMethod')]
     /**
-     * @dataProvider providerBuildMethod
      * @param mixed $expected
      * @param mixed $userProperties
      * @param mixed $extraParameters
@@ -97,8 +98,8 @@ class UserPropertiesTest extends TestCase
         ];
     }
 
+    #[DataProvider('providerTestGetExtraParametersFromRequest')]
     /**
-     * @dataProvider providerTestGetExtraParametersFromRequest
      * @param array $expected
      * @param array $request
      */

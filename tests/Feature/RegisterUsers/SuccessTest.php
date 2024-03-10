@@ -3,6 +3,7 @@
 namespace SimpleJwtLoginTests\Feature\RegisterUsers;
 
 use Faker\Factory;
+use PHPUnit\Framework\Attributes\TestDox;
 use SimpleJwtLoginTests\Feature\TestBase;
 
 class SuccessTest extends TestBase
@@ -24,9 +25,7 @@ class SuccessTest extends TestBase
         ]);
     }
 
-    /**
-     * @testdox User can register with query params
-     */
+    #[TestDox("User can register with query params")]
     public function testSuccessWithQueryParams()
     {
         $faker = Factory::create();
@@ -47,9 +46,7 @@ class SuccessTest extends TestBase
         $this->assertSame(true, $json['success']);
     }
 
-    /**
-     * @testdox User can register with form data
-     */
+    #[TestDox("User can register with form data")]
     public function testSuccessWithFormData()
     {
         $faker = Factory::create();
@@ -73,9 +70,7 @@ class SuccessTest extends TestBase
         $this->assertSame(true, $json['success']);
     }
 
-    /**
-     * @testdox User can register with JSON body
-     */
+    #[TestDox("User can register with JSON body")]
     public function testSuccessWithJSONBody()
     {
         $faker = Factory::create();
@@ -99,8 +94,8 @@ class SuccessTest extends TestBase
         $this->assertSame(true, $json['success']);
     }
 
+    #[TestDox("User can register with custom user_meta")]
     /**
-     * @testdox User can register with custom user_meta
      * @return void
      * @throws \GuzzleHttp\Exception\GuzzleException
      */

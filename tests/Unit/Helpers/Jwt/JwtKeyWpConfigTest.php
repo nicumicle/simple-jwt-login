@@ -2,6 +2,7 @@
 
 namespace SimpleJwtLoginTests\Unit\Helpers\Jwt;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyWpConfig;
 
 class JwtKeyWpConfigTest extends JwtKeyBase
@@ -10,8 +11,9 @@ class JwtKeyWpConfigTest extends JwtKeyBase
      * @var boolean $preserveGlobalState
      */
     protected $preserveGlobalState = true;
+
+    #[DataProvider('settingsProvider')]
     /**
-     * @dataProvider settingsProvider
      * @param array $settings
      * @param string|null $expectedPublicKey
      * @param string|null $expectedPrivateKey

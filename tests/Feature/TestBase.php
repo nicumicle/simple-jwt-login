@@ -12,7 +12,7 @@ class TestBase extends TestCase
     /**
      * @var Client|null
      */
-    protected ?Client $client;
+    protected $client;
 
     const API_URL = 'http://localhost';
 
@@ -137,7 +137,7 @@ class TestBase extends TestCase
                     "INSERT IGNORE INTO %s (option_name, option_value) VALUES('%s', '%s');",
                     $table,
                     SimpleJWTLoginSettings::OPTIONS_KEY,
-                    json_encode($newOption),
+                    json_encode($newOption)
                 )
             );
         } else {
@@ -168,7 +168,7 @@ class TestBase extends TestCase
                 "UPDATE %s SET option_value='%s' WHERE option_name='%s' LIMIT 1;",
                 $table,
                 $optionValue,
-                $optionKey,
+                $optionKey
             )
         );
     }
@@ -289,7 +289,7 @@ class TestBase extends TestCase
         $resource = self::$dbCon->query(
             sprintf(
                 "SELECT option_value FROM $table WHERE option_name='%s' LIMIT 1;",
-                $optionKey,
+                $optionKey
             )
         );
         while ($rows = $resource->fetch_assoc()) {

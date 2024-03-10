@@ -3,6 +3,7 @@
 namespace SimpleJwtLoginTests\Unit\Services;
 
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
@@ -26,9 +27,8 @@ class ValidateTokenServiceTest extends TestCase
             ->getMock();
     }
 
+    #[DataProvider('validationProvider')]
     /**
-     * @dataProvider validationProvider
-     *
      * @param mixed $settings
      * @param string $expectedMessage
      * @param array $request
@@ -56,7 +56,7 @@ class ValidateTokenServiceTest extends TestCase
         return [
             [
                 'settings' => [],
-                'message'  => 'Authentication is not enabled',
+                'expectedMessage'  => 'Authentication is not enabled',
             ],
             [
                 'settings' => [
@@ -64,7 +64,7 @@ class ValidateTokenServiceTest extends TestCase
                     'request_jwt_header'   => '0',
                     'request_jwt_url'      => '1',
                 ],
-                'message'  => 'The `jwt` parameter is missing.'
+                'expectedMessage'  => 'The `jwt` parameter is missing.'
             ],
             [
                 'settings' => [
@@ -76,7 +76,7 @@ class ValidateTokenServiceTest extends TestCase
                         'url' => 'JWT'
                     ]
                 ],
-                'message'  => 'Wrong number of segments',
+                'expectedMessage'  => 'Wrong number of segments',
                 'request'  => [
                     'JWT' => '123'
                 ]

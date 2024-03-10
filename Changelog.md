@@ -2,6 +2,7 @@
 
 ## Unreleased
 - Add OAuth support for Google [#97](https://github.com/nicumicle/simple-jwt-login/issues/97)
+- Fix status code for expired tokens [#102](https://github.com/nicumicle/simple-jwt-login/issues/102)
 
 ## 3.5.3 (16 November 2023) 
 - Fix licence in composer.json

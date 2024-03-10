@@ -2,6 +2,8 @@
 
 namespace SimpleJwtLoginTests\Feature\Autologin;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\TestDox;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJwtLoginTests\Feature\TestBase;
 
@@ -47,61 +49,61 @@ class ValidationTest extends TestBase
         return [
             'empty_jwt' => [
                 'jwt' => null,
-                'error_message' => 'Wrong Request.',
-                'error_code' => ErrorCodes::ERR_VALIDATE_LOGIN_WRONG_REQUEST,
+                'errorMessage' => 'Wrong Request.',
+                'errorCode' => ErrorCodes::ERR_VALIDATE_LOGIN_WRONG_REQUEST,
             ],
             'invalid_jwt' => [
                 'jwt' => "123",
-                'error_message' => 'Wrong number of segments',
-                'error_code' => ErrorCodes::ERR_WRONG_NUMBER_OF_SEGMENTS,
+                'errorMessage' => 'Wrong number of segments',
+                'errorCode' => ErrorCodes::ERR_WRONG_NUMBER_OF_SEGMENTS,
             ],
             'invalid_jwt_values' => [
                 'jwt' => "1.1.2",
-                'error_message' => 'Syntax error, malformed JSON',
-                'error_code' => ErrorCodes::ERR_UNKNOWN_ERROR,
+                'errorMessage' => 'Syntax error, malformed JSON',
+                'errorCode' => ErrorCodes::ERR_UNKNOWN_ERROR,
             ],
         ];
     }
 
+    #[DataProvider('autologinValidationProvider')]
+    #[TestDox("Autologin Validation with JWT as Query Parameter")]
     /**
-     * @testdox Autologin Validation with JWT as Query Parameter
-     * @dataProvider autologinValidationProvider
      * @param ?string $jwt
-     * @param string $expectedErrorMessage
-     * @param int $expectedErrorCode
+     * @param string $errorMessage
+     * @param int $errorCode
      * @return void
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function testJWTInQueryParams($jwt, $expectedErrorMessage, $expectedErrorCode)
+    public function testJWTInQueryParams($jwt, $errorMessage, $errorCode)
     {
         $response = $this->client->get(
-            self::API_URL . "?rest_route=/simple-jwt-login/v1/autologin&JWT=" . $jwt,
+            self::API_URL . "?rest_route=/simple-jwt-login/v1/autologin&JWT=" . $jwt
         );
 
         $contents = $response->getBody()->getContents();
         $contentsArr = json_decode($contents, true);
 
         $expectedError = $this->generateErrorJson(
-            $expectedErrorMessage,
-            $expectedErrorCode
+            $errorMessage,
+            $errorCode
         );
 
         $this->assertSame(
             $expectedError,
-            $contentsArr,
+            $contentsArr
         );
     }
 
+    #[DataProvider('autologinValidationProvider')]
+    #[TestDox("Autologin Validation with JWT in the Header")]
     /**
-     * @testdox Autologin Validation with JWT in the Header
-     * @dataProvider autologinValidationProvider
      * @param ?string $jwt
-     * @param string $expectedErrorMessage
-     * @param int $expectedErrorCode
+     * @param string $errorMessage
+     * @param int $errorCode
      * @return void
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function testJWTInHeader($jwt, $expectedErrorMessage, $expectedErrorCode)
+    public function testJWTInHeader($jwt, $errorMessage, $errorCode)
     {
         $response = $this->client->get(
             self::API_URL . "?rest_route=/simple-jwt-login/v1/autologin",
@@ -109,20 +111,20 @@ class ValidationTest extends TestBase
                 'headers' => [
                     'Authorization' => $jwt,
                 ],
-            ],
+            ]
         );
 
         $contents = $response->getBody()->getContents();
         $contentsArr = json_decode($contents, true);
 
         $expectedError = $this->generateErrorJson(
-            $expectedErrorMessage,
-            $expectedErrorCode
+            $errorMessage,
+            $errorCode
         );
 
         $this->assertSame(
             $expectedError,
-            $contentsArr,
+            $contentsArr
         );
     }
 }

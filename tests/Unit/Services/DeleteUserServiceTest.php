@@ -3,6 +3,7 @@
 namespace SimpleJwtLoginTests\Unit\Services;
 
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\ServerHelper;
@@ -28,8 +29,8 @@ class DeleteUserServiceTest extends TestCase
             ->getMock();
     }
 
+    #[DataProvider('validationProvider')]
     /**
-     * @dataProvider validationProvider
      * @param array $request
      * @param array $settings
      * @param string $exceptionMessage
@@ -110,8 +111,8 @@ class DeleteUserServiceTest extends TestCase
         $deleteUserService->makeAction();
     }
 
+    #[DataProvider('deleteByProvider')]
     /**
-     * @dataProvider deleteByProvider
      * @param int $deleteBy
      * @throws Exception
      */
@@ -215,14 +216,14 @@ class DeleteUserServiceTest extends TestCase
             'test_empty_settings_and_request' => [
                 'request' => [],
                 'settings' => [],
-                'expectedException' => 'Delete is not enabled.',
+                'exceptionMessage' => 'Delete is not enabled.',
             ],
             'test_missing_jwt_parameter' => [
                 'request' => [],
                 'settings' => [
                     'allow_delete' => true,
                 ],
-                'expectedException' => 'The `jwt` parameter is missing.',
+                'exceptionMessage' => 'The `jwt` parameter is missing.',
             ],
             'test_empty_jwt' => [
                 'request' => [
@@ -231,7 +232,7 @@ class DeleteUserServiceTest extends TestCase
                 'settings' => [
                     'allow_delete' => true,
                 ],
-                'expectedException' => 'The `jwt` parameter is missing.',
+                'exceptionMessage' => 'The `jwt` parameter is missing.',
             ],
             'empty_upper_case_jwt' => [
                 'request' => [
@@ -240,7 +241,7 @@ class DeleteUserServiceTest extends TestCase
                 'settings' => [
                     'allow_delete' => true,
                 ],
-                'expectedException' => 'The `jwt` parameter is missing.',
+                'exceptionMessage' => 'The `jwt` parameter is missing.',
             ],
             'test_missing_auth_code' => [
                 'request' => [
@@ -250,7 +251,7 @@ class DeleteUserServiceTest extends TestCase
                 'settings' => [
                     'allow_delete' => true,
                 ],
-                'expectedException' => 'Missing AUTH KEY ( AUTH_KEY ).',
+                'exceptionMessage' => 'Missing AUTH KEY ( AUTH_KEY ).',
             ],
             'test_empty_auth_code' => [
                 'request' => [
@@ -260,7 +261,7 @@ class DeleteUserServiceTest extends TestCase
                 'settings' => [
                     'allow_delete' => true,
                 ],
-                'expectedException' => 'Missing AUTH KEY ( AUTH_KEY ).',
+                'exceptionMessage' => 'Missing AUTH KEY ( AUTH_KEY ).',
             ],
             'test_ip_not_allowed' => [
                 'request' => [
@@ -272,7 +273,7 @@ class DeleteUserServiceTest extends TestCase
                     'require_delete_auth' => false,
                     'delete_ip' => '127.1.1.1, 127.2.2.2',
                 ],
-                'expectedException' => 'You are not allowed to delete users from this IP:',
+                'exceptionMessage' => 'You are not allowed to delete users from this IP:',
             ],
 
         ];

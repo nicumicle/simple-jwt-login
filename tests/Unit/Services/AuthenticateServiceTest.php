@@ -2,6 +2,7 @@
 namespace SimpleJwtLoginTests\Unit\Services;
 
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
@@ -25,9 +26,8 @@ class AuthenticateServiceTest extends TestCase
             ->getMock();
     }
 
+    #[DataProvider('validationProvider')]
     /**
-     * @dataProvider validationProvider
-     *
      * @param array $settings
      * @param array $request
      * @param string $exceptionMessage
@@ -57,21 +57,21 @@ class AuthenticateServiceTest extends TestCase
             [
                 'settings' => [],
                 'request' => [],
-                'expectedMessage' => 'Authentication is not enabled.',
+                'exceptionMessage' => 'Authentication is not enabled.',
             ],
             [
                 'settings' => [
                     'allow_authentication' => '0',
                 ],
                 'request' => [],
-                'expectedMessage' => 'Authentication is not enabled.'
+                'exceptionMessage' => 'Authentication is not enabled.'
             ],
             [
                 'settings' => [
                     'allow_authentication' => '1',
                 ],
                 'request' => [],
-                'expectedMessage' => 'The email or username parameter is missing from request.'
+                'exceptionMessage' => 'The email or username parameter is missing from request.'
             ],
             [
                 'settings' => [
@@ -80,7 +80,7 @@ class AuthenticateServiceTest extends TestCase
                 'request' => [
                     'email' => '',
                 ],
-                'expectedMessage' => 'The password or password_hash parameter is missing from request.'
+                'exceptionMessage' => 'The password or password_hash parameter is missing from request.'
             ],
             [
                 'settings' => [
@@ -89,7 +89,7 @@ class AuthenticateServiceTest extends TestCase
                 'request' => [
                     'username' => '',
                 ],
-                'expectedMessage' => 'The password or password_hash parameter is missing from request.'
+                'exceptionMessage' => 'The password or password_hash parameter is missing from request.'
             ],
         ];
     }

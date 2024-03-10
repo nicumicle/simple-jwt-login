@@ -2,6 +2,7 @@
 
 namespace SimpleJwtLoginTests\Unit\Services;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\ServerHelper;
@@ -26,8 +27,8 @@ class RefreshTokenServiceTest extends TestCase
             ->getMock();
     }
 
+    #[DataProvider('validationProvider')]
     /**
-     * @dataProvider validationProvider
      * @param array $settings
      * @param string $exceptionMessage
      * @throws \Exception

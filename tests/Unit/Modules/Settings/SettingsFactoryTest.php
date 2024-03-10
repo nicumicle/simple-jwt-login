@@ -3,6 +3,7 @@
 namespace SimpleJwtLoginTests\Unit\Modules\Settings;
 
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\ApplicationsSettings;
 use SimpleJWTLogin\Modules\Settings\AuthCodesSettings;
@@ -17,8 +18,8 @@ use SimpleJWTLogin\Modules\Settings\SettingsFactory;
 
 class SettingsFactoryTest extends TestCase
 {
+    #[DataProvider('settingsFactoryProvider')]
     /**
-     * @dataProvider settingsFactoryProvider
      * @param int $type
      * @param string $expectedInstance
      *

@@ -3,6 +3,7 @@
 namespace SimpleJwtLoginTests\Unit\Services;
 
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Libraries\JWT\JWT;
@@ -27,9 +28,8 @@ class ResetPasswordServiceTest extends TestCase
             ->getMock();
     }
 
+    #[DataProvider('sendUserPasswordProvider')]
     /**
-     * @dataProvider sendUserPasswordProvider
-     *
      * @param mixed $settings
      * @param array $request
      * @param string $exceptionMessage
@@ -57,7 +57,7 @@ class ResetPasswordServiceTest extends TestCase
             [
                 'settings'  => [],
                 'request'   => [],
-                'exception' => 'Reset Password is not allowed.'
+                'exceptionMessage' => 'Reset Password is not allowed.'
             ],
             [
                 'settings'  => [
@@ -65,7 +65,7 @@ class ResetPasswordServiceTest extends TestCase
                     'reset_password_requires_auth_code' => 1,
                 ],
                 'request'   => [],
-                'exception' => 'Invalid Auth Code ( AUTH_KEY ) provided.'
+                'exceptionMessage' => 'Invalid Auth Code ( AUTH_KEY ) provided.'
             ],
             [
                 'settings'  => [
@@ -82,7 +82,7 @@ class ResetPasswordServiceTest extends TestCase
                 'request'   => [
                     'AUTH_KEY' => 123
                 ],
-                'exception' => 'Missing email parameter.'
+                'exceptionMessage' => 'Missing email parameter.'
             ],
             [
                 'settings'  => [
@@ -100,14 +100,13 @@ class ResetPasswordServiceTest extends TestCase
                     'AUTH_KEY' => 123,
                     'email'    => 'userdoesnotexst@test.com'
                 ],
-                'exception' => 'Wrong user.'
+                'exceptionMessage' => 'Wrong user.'
             ],
         ];
     }
 
+    #[DataProvider('flowTypeProvider')]
     /**
-     * @dataProvider flowTypeProvider
-     *
      * @param int $flowType
      *
      * @throws Exception
@@ -171,9 +170,8 @@ class ResetPasswordServiceTest extends TestCase
         ];
     }
 
+    #[DataProvider('changePasswordValidationProvider')]
     /**
-     * @dataProvider changePasswordValidationProvider
-     *
      * @param array $settings
      * @param array $request
      * @param string $exceptionMessage
@@ -201,7 +199,7 @@ class ResetPasswordServiceTest extends TestCase
             'empty_settings' => [
                 'settings'  => [],
                 'request'   => [],
-                'exception' => 'Reset Password is not allowed.'
+                'exceptionMessage' => 'Reset Password is not allowed.'
             ],
             'empty_auth_key' => [
                 'settings'  => [
@@ -209,7 +207,7 @@ class ResetPasswordServiceTest extends TestCase
                     'reset_password_requires_auth_code' => 1,
                 ],
                 'request'   => [],
-                'exception' => 'Invalid Auth Code ( AUTH_KEY ) provided.'
+                'exceptionMessage' => 'Invalid Auth Code ( AUTH_KEY ) provided.'
             ],
             'missing_email' => [
                 'settings'  => [
@@ -226,7 +224,7 @@ class ResetPasswordServiceTest extends TestCase
                 'request'   => [
                     'AUTH_KEY' => 123
                 ],
-                'exception' => 'Missing email parameter.'
+                'exceptionMessage' => 'Missing email parameter.'
             ],
             'missing_code' => [
                 'settings'  => [
@@ -245,7 +243,7 @@ class ResetPasswordServiceTest extends TestCase
                     'email'    => 'email@email.com',
                     'new_password' => '123',
                 ],
-                'exception' => 'Missing code parameter.'
+                'exceptionMessage' => 'Missing code parameter.'
             ],
             'missing_password' => [
                 'settings'  => [
@@ -264,7 +262,7 @@ class ResetPasswordServiceTest extends TestCase
                     'email'    => 'email@email.com',
                     'code'     => '123',
                 ],
-                'exception' => 'Missing new_password parameter.'
+                'exceptionMessage' => 'Missing new_password parameter.'
             ],
             'invalid_code' => [
                 'settings'  => [
@@ -284,7 +282,7 @@ class ResetPasswordServiceTest extends TestCase
                     'code'         => '123',
                     'new_password' => '123',
                 ],
-                'exception' => 'Invalid code provided.'
+                'exceptionMessage' => 'Invalid code provided.'
             ],
             'jwt_with_invalid_email' => [
                 'settings'  => [
@@ -307,7 +305,7 @@ class ResetPasswordServiceTest extends TestCase
                     'jwt'          => JWT::encode(['email' => 'test@test.com'], 'test', 'HS256'),
                     'new_password' => '123',
                 ],
-                'exception' => 'This JWT can not change your password.'
+                'exceptionMessage' => 'This JWT can not change your password.'
             ],
         ];
     }

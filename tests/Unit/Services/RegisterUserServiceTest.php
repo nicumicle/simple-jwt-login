@@ -3,6 +3,7 @@
 namespace SimpleJwtLoginTests\Unit\Services;
 
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\ServerHelper;
@@ -33,8 +34,8 @@ class RegisterUserServiceTest extends TestCase
             );
     }
 
+    #[DataProvider('validationProvider')]
     /**
-     * @dataProvider validationProvider
      * @param mixed $request
      * @param array $settings
      * @param string $exceptionMessage
@@ -70,21 +71,21 @@ class RegisterUserServiceTest extends TestCase
             'test_empty_settings' => [
                 'request' => [],
                 'settings' => [],
-                'exception' => 'Register is not allowed.',
+                'exceptionMessage' => 'Register is not allowed.',
             ],
             'test_register_is_not_allowed' => [
                 'request' => [],
                 'settings' => [
                     'allow_register' => false,
                 ],
-                'exception' => 'Register is not allowed.',
+                'exceptionMessage' => 'Register is not allowed.',
             ],
             'test_default_auth_key_is_required' => [
                 'request' => [],
                 'settings' => [
                     'allow_register' => true,
                 ],
-                'exception' => 'Invalid Auth Code ( AUTH_KEY ) provided.',
+                'exceptionMessage' => 'Invalid Auth Code ( AUTH_KEY ) provided.',
             ],
             'test_with_invalid_auth_code' => [
                 'request' => [
@@ -100,7 +101,7 @@ class RegisterUserServiceTest extends TestCase
                         ]
                     ]
                 ],
-                'exception' => 'Invalid Auth Code ( AUTH_KEY ) provided.',
+                'exceptionMessage' => 'Invalid Auth Code ( AUTH_KEY ) provided.',
             ],
             'test_without_email_and_password' => [
                 'request' => [
@@ -116,7 +117,7 @@ class RegisterUserServiceTest extends TestCase
                         ]
                     ]
                 ],
-                'exception' => 'Missing email or password.',
+                'exceptionMessage' => 'Missing email or password.',
             ],
             'test_only_with_email' => [
                 'request' => [
@@ -133,7 +134,7 @@ class RegisterUserServiceTest extends TestCase
                         ]
                     ]
                 ],
-                'exception' => 'Missing email or password.',
+                'exceptionMessage' => 'Missing email or password.',
             ],
             'test_only_with_password' => [
                 'request' => [
@@ -150,7 +151,7 @@ class RegisterUserServiceTest extends TestCase
                         ]
                     ]
                 ],
-                'exception' => 'Missing email or password.',
+                'exceptionMessage' => 'Missing email or password.',
             ],
             'test_with_invalid_email' => [
                 'request' => [
@@ -168,7 +169,7 @@ class RegisterUserServiceTest extends TestCase
                         ]
                     ]
                 ],
-                'exception' => 'Invalid email address.',
+                'exceptionMessage' => 'Invalid email address.',
             ],
             'test_register_domain' => [
                 'request' => [
@@ -187,7 +188,7 @@ class RegisterUserServiceTest extends TestCase
                     ],
                     'register_domain' => 'google.com,test.com',
                 ],
-                'exception' => 'This website does not allows users from this domain.',
+                'exceptionMessage' => 'This website does not allows users from this domain.',
             ],
             'test_register_ip' => [
                 'request' => [
@@ -207,7 +208,7 @@ class RegisterUserServiceTest extends TestCase
                     'register_ip' => '127.0.1.1',
                     'register_domain' => 'google.com,test.com',
                 ],
-                'exception' => 'This IP[127.0.0.1] is not allowed to register users.',
+                'exceptionMessage' => 'This IP[127.0.0.1] is not allowed to register users.',
             ],
 
         ];

@@ -3,6 +3,7 @@
 namespace SimpleJwtLoginTests\Unit\Libraries;
 
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 
@@ -20,8 +21,8 @@ class JWTTest extends TestCase
         $this->assertSame($payload, (array) $decoded);
     }
 
+    #[DataProvider('invalidJwtProvider')]
     /**
-     * @dataProvider invalidJwtProvider
      * @throws Exception
      */
     public function testWrongNumberOfSegments($jwtString)

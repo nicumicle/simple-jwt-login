@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace SimpleJWTLogin\Helpers;
 
 use SimpleJWTLogin\ErrorCodes;

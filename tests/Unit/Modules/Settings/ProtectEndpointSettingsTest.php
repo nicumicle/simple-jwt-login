@@ -3,6 +3,7 @@
 namespace SimpleJwtLoginTests\Unit\Modules\Settings;
 
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
 use SimpleJWTLogin\Modules\WordPressDataInterface;
@@ -207,11 +208,10 @@ class ProtectEndpointSettingsTest extends TestCase
         $this->assertTrue($settings->validateSettings());
     }
 
+    #[DataProvider('endpointsProvider')]
     /**
      * @param mixed $endpointLists
      * @throws Exception
-     *
-     * @dataProvider endpointsProvider
      */
     public function testNoEndpointProvided($endpointLists)
     {
@@ -234,17 +234,17 @@ class ProtectEndpointSettingsTest extends TestCase
     {
         return [
             'empty_array' => [
-                'endpoint_list' => ['']
+                'endpointLists' => ['']
             ],
             'array_with_empty_values' => [
-                'endpoint_list' => [
+                'endpointLists' => [
                     '',
                     '',
                     '',
                 ]
             ],
             'array_with_space' => [
-                'endpoint_list' => [
+                'endpointLists' => [
                     '    ',
                     '    ',
                 ]

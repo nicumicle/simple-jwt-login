@@ -48,7 +48,7 @@ class SuccessTest extends TestBase
                 'allow_redirects' => [
                     'track_redirects' => true,
                 ],
-            ],
+            ]
         );
 
         // Register random user

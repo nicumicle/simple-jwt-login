@@ -2,12 +2,13 @@
 
 namespace SimpleJwtLoginTests\Unit\Helpers\Jwt;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyCertificate;
 
 class JwtKeyCertificateTest extends JwtKeyBase
 {
+    #[DataProvider('settingsProvider')]
     /**
-     * @dataProvider settingsProvider
      * @param array $settings
      * @param string $expectedPublicKey
      * @param string $expectedPrivateKey

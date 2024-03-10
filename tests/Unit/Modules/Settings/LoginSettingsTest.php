@@ -2,6 +2,7 @@
 namespace SimpleJwtLoginTests\Unit\Modules\Settings;
 
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\WordPressDataInterface;
@@ -139,8 +140,8 @@ class LoginSettingsTest extends TestCase
         $loginSettings->validateSettings();
     }
 
+    #[DataProvider('loginRemoveRequestParametersProvider')]
     /**
-     * @dataProvider loginRemoveRequestParametersProvider
      * @param array $settings
      * @param string $expectedResult
      * @return void
@@ -163,7 +164,7 @@ class LoginSettingsTest extends TestCase
         return [
             'not_set_get_default_values' => [
                 'settings' => [],
-                'expected_result' => implode(
+                'expectedResult' => implode(
                     ', ',
                     [
                         'rest_route',
@@ -179,7 +180,7 @@ class LoginSettingsTest extends TestCase
                 'settings' => [
                     'auth_code_key' => 'auth_code',
                 ],
-                'expected_result' => implode(
+                'expectedResult' => implode(
                     ', ',
                     [
                         'rest_route',
@@ -197,7 +198,7 @@ class LoginSettingsTest extends TestCase
                     'login_remove_request_parameters' => null,
                     'auth_code_key' => 'auth_code',
                 ],
-                'expected_result' => implode(
+                'expectedResult' => implode(
                     ', ',
                     [
                         'rest_route',
@@ -215,14 +216,14 @@ class LoginSettingsTest extends TestCase
                     'login_remove_request_parameters' => implode(', ', ['test']),
                     'auth_code_key' => 'auth_code',
                 ],
-                'expected_result' => implode(', ', ['test']),
+                'expectedResult' => implode(', ', ['test']),
             ],
             'set_specific_values' => [
                 'settings' => [
                     'login_remove_request_parameters' => implode(', ', ['test1', 'test2']),
                     'auth_code_key' => 'auth_code',
                 ],
-                'expected_result' => implode(', ', ['test1', 'test2']),
+                'expectedResult' => implode(', ', ['test1', 'test2']),
             ],
         ];
     }

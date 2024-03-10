@@ -3,6 +3,7 @@
 namespace SimpleJwtLoginTests\Unit\Modules;
 
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\AuthCodesSettings;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
@@ -177,8 +178,8 @@ class SimpleJWTLoginSettingsTest extends TestCase
         );
     }
 
+    #[DataProvider('settingsProvider')]
     /**
-     * @dataProvider settingsProvider
      * @param mixed $settings
      * @throws Exception
      */

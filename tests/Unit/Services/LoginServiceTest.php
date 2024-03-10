@@ -3,6 +3,7 @@
 namespace SimpleJwtLoginTests\Unit\Services;
 
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\ServerHelper;
@@ -37,8 +38,8 @@ class LoginServiceTest extends TestCase
             ->willReturn('https://admin.com');
     }
 
+    #[DataProvider('validationProvider')]
     /**
-     * @dataProvider validationProvider
      * @param array $settings
      * @param array $request
      * @param string $exceptionMessage
@@ -112,7 +113,7 @@ class LoginServiceTest extends TestCase
                     'JWT' => 'test',
                     'AUTH_KEY' => 'test'
                 ],
-                'exception' => 'Invalid Auth Code ( AUTH_KEY ) provided.',
+                'exceptionMessage' => 'Invalid Auth Code ( AUTH_KEY ) provided.',
             ],
             'ip_not_allowed' => [
                 'settings' => [
@@ -123,7 +124,7 @@ class LoginServiceTest extends TestCase
                 'request' => [
                     'JWT' => 'test',
                 ],
-                'exception' => 'This IP[ 127.0.0.1 ] is not allowed to auto-login.',
+                'exceptionMessage' => 'This IP[ 127.0.0.1 ] is not allowed to auto-login.',
             ],
             'test_unable_to_find_user_in_jwt' => [
                 'settings' => [
@@ -139,7 +140,7 @@ class LoginServiceTest extends TestCase
                         'HS256'
                     )
                 ],
-                'exception' => 'Unable to find user test property in JWT.',
+                'exceptionMessage' => 'Unable to find user test property in JWT.',
             ],
             'test_unable_to_find_user_in_jwt_nested' => [
                 'settings' => [
@@ -161,7 +162,7 @@ class LoginServiceTest extends TestCase
                         'HS256'
                     )
                 ],
-                'exception' => 'Unable to find user properties property in JWT.',
+                'exceptionMessage' => 'Unable to find user properties property in JWT.',
             ]
         ];
     }
@@ -241,8 +242,8 @@ class LoginServiceTest extends TestCase
         $service->makeAction();
     }
 
+    #[DataProvider('loginProvider')]
     /**
-     * @dataProvider loginProvider
      * @param array|null $request
      * @param array|null $session
      * @param array|null $cookie
@@ -356,8 +357,8 @@ class LoginServiceTest extends TestCase
         ];
     }
 
+    #[DataProvider('redirectOnFailProvider')]
     /**
-     * @dataProvider redirectOnFailProvider
      * @param array $request
      * @param bool $includeParams
      */
@@ -423,30 +424,29 @@ class LoginServiceTest extends TestCase
         return [
             'test_empty_request_and_include_params' => [
                 'request' => [],
-                'include_extra_params' => true,
+                'includeParams' => true,
             ],
             'test_one_param_and_include_params' => [
                 'request' => [
                     'test' => '123',
                 ],
-                'include_extra_params' => true,
+                'includeParams' => true,
             ],
             'test_empty_request' => [
                 'request' => [],
-                'include_extra_params' => false,
+                'includeParams' => false,
             ],
             'test_one_param' => [
                 'request' => [
                     'test' => '123',
                 ],
-                'include_extra_params' => false,
+                'includeParams' => false,
             ],
-
         ];
     }
 
+    #[DataProvider('issProvider')]
     /**
-     * @dataProvider issProvider
      * @return void
      * @throws Exception
      */
@@ -523,24 +523,24 @@ class LoginServiceTest extends TestCase
     {
         return [
             'no_iss' => [
-                'jwt_iss' => null,
-                'settings_iss' => null,
-                'expected_error' => null,
+                'jwtIss' => null,
+                'settingsIss' => null,
+                'expectedError' => null,
             ],
             'different_iss' => [
-                'jwt_iss' => 'one',
-                'settings_iss' => 'two',
-                'expected_error' => 'The JWT issuer(iss) is not allowed to auto-login.',
+                'jwtIss' => 'one',
+                'settingsIss' => 'two',
+                'expectedError' => 'The JWT issuer(iss) is not allowed to auto-login.',
             ],
             'iss_only_in_payload' => [
-                'jwt_iss' => 'one',
-                'settings_iss' => '',
-                'expected_error' => null,
+                'jwtIss' => 'one',
+                'settingsIss' => '',
+                'expectedError' => null,
             ],
             'iss_same_as_payload' => [
-                'jwt_iss' => 'one',
-                'settings_iss' => 'one',
-                'expected_error' => null,
+                'jwtIss' => 'one',
+                'settingsIss' => 'one',
+                'expectedError' => null,
             ],
         ];
     }

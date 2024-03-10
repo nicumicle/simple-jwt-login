@@ -4,6 +4,7 @@
         bootstrap="phpunit_bootstrap.php"
         backupGlobals="false"
         colors="true"
+        testdox="true"
         processIsolation="true"
         stopOnFailure="false"
         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd"

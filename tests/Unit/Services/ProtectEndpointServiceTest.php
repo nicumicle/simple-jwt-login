@@ -2,6 +2,7 @@
 
 namespace SimpleJwtLoginTests\Unit\Services;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Libraries\JWT\JWT;
@@ -30,14 +31,14 @@ class ProtectEndpointServiceTest extends TestCase
             ->willReturn('http://test.com/wp-admin/');
     }
 
+
+    #[DataProvider('accessProvider')]
     /**
      * @param bool $expectedResult
      * @param string $currentUrl
      * @param string $documentRoot
      * @param array $request
      * @param array $settings
-     *
-     * @dataProvider accessProvider
      */
     public function testHasAccess($expectedResult, $currentUrl, $documentRoot, $request, $settings)
     {

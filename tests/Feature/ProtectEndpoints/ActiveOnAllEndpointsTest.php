@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SimpleJwtLoginTests\Feature\ProtectEndpoints;
 
+use PHPUnit\Framework\Attributes\TestDox;
 use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
 use SimpleJwtLoginTests\Feature\TestBase;
 
@@ -51,8 +52,8 @@ class ActiveOnAllEndpointsTest extends TestBase
         ]);
     }
 
+    #[TestDox("WordPress endpoint can be accessed without JWT if whitelisted")]
     /**
-     * @testdox WordPress endpoint can be accessed without JWT if whitelisted
      * @return void
      */
     public function testCanAccessWhitelistedEndpoint()
@@ -62,8 +63,8 @@ class ActiveOnAllEndpointsTest extends TestBase
         $this->assertEquals(200, $resp->getStatusCode());
     }
 
+    #[TestDox("WordPress endpoint can't be accessed without JWT if whitelisted")]
     /**
-     * @testdox WordPress endpoint can't be accessed without JWT if whitelisted
      * @return void
      */
     public function testEndpointCanNotBeAccessedWithoutJWT()
@@ -77,14 +78,14 @@ class ActiveOnAllEndpointsTest extends TestBase
             $this->generateErrorJson(
                 "You are not authorized to access this endpoint.",
                 403,
-                ['type' => 'simple-jwt-login-route-protect'],
+                ['type' => 'simple-jwt-login-route-protect']
             ),
-            $contentsArr,
+            $contentsArr
         );
     }
 
+    #[TestDox("WordPress endpoint can be accessed with JWT if whitelisted")]
     /**
-     * @testdox WordPress endpoint can be accessed with JWT if whitelisted
      * @return void
      */
     public function testEndpointCanBeAccessedWithJWT()

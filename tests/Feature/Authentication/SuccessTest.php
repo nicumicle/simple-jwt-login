@@ -2,6 +2,7 @@
 
 namespace SimpleJwtLoginTests\Feature\Authentication;
 
+use PHPUnit\Framework\Attributes\TestDox;
 use SimpleJwtLoginTests\Feature\TestBase;
 
 class SuccessTest extends TestBase
@@ -39,9 +40,7 @@ class SuccessTest extends TestBase
         ]);
     }
 
-    /**
-     * @testdox User can authenticate with email and password
-     */
+    #[TestDox("User can authenticate with email and password")]
     public function testAuthenticationEmail()
     {
         // Register random user
@@ -68,9 +67,8 @@ class SuccessTest extends TestBase
         $this->assertSame(200, $statusCode, "unable to delete the user");
     }
 
-    /**
-     * @testdox User can refresh a valid JWT
-     */
+
+    #[TestDox("User can refresh a valid JWT")]
     public function testRefreshToken()
     {
         // Register random user
@@ -107,9 +105,7 @@ class SuccessTest extends TestBase
         $this->assertSame(200, $statusCode, "unable to delete the user");
     }
 
-    /**
-     * @testdox User can validate a JWT
-     */
+    #[TestDox("User can validate a JWT")]
     public function testValidateToken()
     {
         // Register random user

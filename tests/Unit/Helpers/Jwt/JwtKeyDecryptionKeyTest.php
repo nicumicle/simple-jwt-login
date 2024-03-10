@@ -2,12 +2,13 @@
 
 namespace SimpleJwtLoginTests\Unit\Helpers\Jwt;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyDecryptionKey;
 
 class JwtKeyDecryptionKeyTest extends JwtKeyBase
 {
+    #[DataProvider('settingProvider')]
     /**
-     * @dataProvider settingProvider
      * @param array $settings
      * @param string $expectedPublicKey
      * @param string $expectedPrivateKey

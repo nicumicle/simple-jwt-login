@@ -2,6 +2,7 @@
 
 namespace SimpleJwtLoginTests\Unit\Helpers\Jwt;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyCertificate;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyDecryptionKey;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
@@ -10,14 +11,14 @@ use SimpleJWTLogin\Modules\Settings\GeneralSettings;
 
 class JwtKeyFactoryTest extends JwtKeyBase
 {
+    #[DataProvider('settingsProvider')]
     /**
-     * @dataProvider settingsProvider
-     * @param array $settingsArray
+     * @param array $settings
      * @param string $expected
      */
-    public function testInstanceOfJwtKeyWpConfig($settingsArray, $expected)
+    public function testInstanceOfJwtKeyWpConfig($settings, $expected)
     {
-        $settingsMock = $this->getSettingsMock($settingsArray);
+        $settingsMock = $this->getSettingsMock($settings);
         $factory = JwtKeyFactory::getFactory($settingsMock);
         $this->assertInstanceOf($expected, $factory);
     }

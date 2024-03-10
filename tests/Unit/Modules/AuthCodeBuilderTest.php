@@ -2,13 +2,14 @@
 
 namespace SimpleJwtLoginTests\Unit\Modules;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\AuthCodeBuilder;
 
 class AuthCodeBuilderTest extends TestCase
 {
+    #[DataProvider('authCodeBuilderArrayProvider')]
     /**
-     * @dataProvider authCodeBuilderArrayProvider
      * @param array $data
      * @param array $expected
      */
@@ -63,8 +64,8 @@ class AuthCodeBuilderTest extends TestCase
         ];
     }
 
+    #[DataProvider('authCodeBuilderStringProvider')]
     /**
-     * @dataProvider authCodeBuilderStringProvider
      * @param array $data
      * @param array $expected
      */

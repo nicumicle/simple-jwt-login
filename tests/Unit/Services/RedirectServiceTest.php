@@ -2,6 +2,7 @@
 
 namespace SimpleJwtLoginTests\Unit\Services;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
@@ -73,8 +74,8 @@ class RedirectServiceTest extends TestCase
         $this->assertTrue($response);
     }
 
+    #[DataProvider('redirectCustomURLProvider')]
     /**
-     * @dataProvider redirectCustomURLProvider
      * @param array $extraSettings
      * @param string $expectedUrl
      * @return void
@@ -158,17 +159,17 @@ class RedirectServiceTest extends TestCase
     {
         return [
             'simple-redirect' => [
-                'settings' => [
+                'extraSettings' => [
                     'redirect_url' => 'https://www.google.com',
                 ],
                 'request' =>  [
                     'redirectUrl' => 'http://www.test.com',
                     'email' => 'test@test.com',
                 ],
-                'expected_url' => 'http://www.test.com',
+                'expectedUrl' => 'http://www.test.com',
             ],
             'redirect_parameters_are_added_to_redirect_url' => [
-                'settings' => [
+                'extraSettings' => [
                     'redirect_url' => 'https://www.google.com',
                     'login_remove_request_parameters' => 'jwt',
                 ],
@@ -176,11 +177,11 @@ class RedirectServiceTest extends TestCase
                     'redirectUrl' => 'http://www.test.com',
                     'email' => 'test@test.com',
                 ],
-                'expected_url' => 'http://www.test.com?redirectUrl='
+                'expectedUrl' => 'http://www.test.com?redirectUrl='
                     . urlencode('http://www.test.com?email=test@test.com'),
             ],
             'redirect_parameters_outside_redirect_url' => [
-                'settings' => [
+                'extraSettings' => [
                     'redirect_url' => 'https://www.google.com',
                     'login_remove_request_parameters' => 'jwt, JWT,password',
                 ],
@@ -190,7 +191,7 @@ class RedirectServiceTest extends TestCase
                     'JWT' => '123',
                     'password' => 'my-super-secret-password',
                 ],
-                'expected_url' => 'http://www.test.com?test=1&redirectUrl='
+                'expectedUrl' => 'http://www.test.com?test=1&redirectUrl='
                     . urlencode('http://www.test.com?test=1&email=test@test.com'),
             ]
         ];

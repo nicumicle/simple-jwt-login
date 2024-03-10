@@ -2,6 +2,7 @@
 
 namespace SimpleJwtLoginTests\Unit\Services;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Libraries\JWT\JWT;
@@ -27,8 +28,8 @@ class RevokeTokenServiceTest extends TestCase
             ->getMock();
     }
 
+    #[DataProvider('validationProvider')]
     /**
-     * @dataProvider validationProvider
      * @param array $settings
      * @param string $exceptionMessage
      * @throws \Exception

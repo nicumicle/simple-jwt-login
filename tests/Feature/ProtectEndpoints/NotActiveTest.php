@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SimpleJwtLoginTests\Feature\ProtectEndpoints;
 
+use PHPUnit\Framework\Attributes\TestDox;
 use SimpleJwtLoginTests\Feature\TestBase;
 
 class NotActiveTest extends TestBase
@@ -48,8 +49,9 @@ class NotActiveTest extends TestBase
         ]);
     }
 
+
+    #[TestDox("WordPress endpoint can be accesses if protect endpoints is disabled")]
     /**
-     * @testdox WordPress endpoint can be accesses if protect endpoints is disabled
      * @return void
      */
     public function testCanAccessEndpoint()

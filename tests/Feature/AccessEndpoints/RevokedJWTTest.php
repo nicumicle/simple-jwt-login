@@ -2,6 +2,8 @@
 
 namespace SimpleJwtLoginTests\Feature\AccessEndpoints;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\TestDox;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJwtLoginTests\Feature\TestBase;
 
@@ -80,9 +82,9 @@ class RevokedJWTTest extends TestBase
         ];
     }
 
+    #[DataProvider('endpointsProvider')]
+    #[TestDox("Calling endpoints with revoked JWT")]
     /**
-     * @testdox Calling endpoints with revoked JWT
-     * @dataProvider endpointsProvider
      * @param string $method
      * @param string $endpoint
      * @return void
@@ -96,7 +98,7 @@ class RevokedJWTTest extends TestBase
                 'allow_redirects' => [
                     'track_redirects' => true,
                 ],
-            ],
+            ]
         );
 
         // Register random user
@@ -142,7 +144,7 @@ class RevokedJWTTest extends TestBase
                     'email' => $email,
                     'password' => $password,
                 ]),
-            ],
+            ]
         );
 
         $contents = $response->getBody()->getContents();

@@ -2,24 +2,25 @@
 
 namespace SimpleJwtLoginTests\Unit\Helpers;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Helpers\ArrayHelper;
 
 class ArrayHelperTest extends TestCase
 {
+    #[DataProvider('convertStringToArrayProvider')]
     /**
-     * @dataProvider convertStringToArrayProvider
      * @param string $string
-     * @param string[] $expectedResult
+     * @param string[] $result
      * @return void
      */
-    public function testConvertStringToArray($string, $expectedResult)
+    public function testConvertStringToArray($string, $result)
     {
-        $result = ArrayHelper::convertStringToArray($string);
+        $data = ArrayHelper::convertStringToArray($string);
 
         $this->assertEquals(
-            $expectedResult,
-            $result
+            $result,
+            $data
         );
     }
 

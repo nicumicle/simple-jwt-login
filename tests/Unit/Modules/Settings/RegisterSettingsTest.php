@@ -2,6 +2,7 @@
 namespace SimpleJwtLoginTests\Unit\Modules\Settings;
 
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\RegisterSettings;
 use SimpleJWTLogin\Modules\WordPressDataInterface;
@@ -104,16 +105,16 @@ class RegisterSettingsTest extends TestCase
         $registerUser->validateSettings();
     }
 
+    #[DataProvider('invalidRoleProvider')]
     /**
-     * @dataProvider invalidRoleProvider
-     * @param string $roleName
-     * @param string $expectedException
+     * @param string $role
+     * @param string $exception
      * @throws Exception
      */
-    public function testInvalidRole($roleName, $expectedException)
+    public function testInvalidRole($role, $exception)
     {
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage($expectedException);
+        $this->expectExceptionMessage($exception);
         $this->wordPressData->method('roleExists')
             ->willReturn(false);
 
@@ -122,14 +123,14 @@ class RegisterSettingsTest extends TestCase
             ->withSettings([])
             ->withPost([
                 'allow_register' => '1',
-                'new_user_profile' => $roleName,
+                'new_user_profile' => $role,
             ]);
         $registerUser->initSettingsFromPost();
         $registerUser->validateSettings();
     }
 
+    #[DataProvider('passwordLengthProvider')]
     /**
-     * @dataProvider passwordLengthProvider
      * @param mixed $passwordLength
      * @param string $expectedException
      * @return void
@@ -178,36 +179,36 @@ class RegisterSettingsTest extends TestCase
     {
         return [
             'one' => [
-                'password_length' => '1',
-                'expected_exception' => 'Random password length should be at least 6 characters.',
+                'passwordLength' => '1',
+                'expectedException' => 'Random password length should be at least 6 characters.',
             ],
             'negative_value' => [
-                'password_length' => '-1',
-                'expected_exception' => 'Random password length should be at least 6 characters.',
+                'passwordLength' => '-1',
+                'expectedException' => 'Random password length should be at least 6 characters.',
             ],
             'max_length' => [
-                'password_length' => '256',
-                'expected_exception' => 'Random password length can be max 255.',
+                'passwordLength' => '256',
+                'expectedException' => 'Random password length can be max 255.',
             ],
             'letters' => [
-                'password_length' => 'abc',
-                'expected_exception' => 'Random password length should be an integer.',
+                'passwordLength' => 'abc',
+                'expectedException' => 'Random password length should be an integer.',
             ],
             'letters_and_number' => [
-                'password_length' => 'abc123',
-                'expected_exception' => 'Random password length should be an integer.',
+                'passwordLength' => 'abc123',
+                'expectedException' => 'Random password length should be an integer.',
             ],
             'number_and_letters' => [
-                'password_length' => '123abc',
-                'expected_exception' => 'Random password length should be an integer.',
+                'passwordLength' => '123abc',
+                'expectedException' => 'Random password length should be an integer.',
             ],
             'empty_value' => [
-                'password_length' => '',
-                'expected_exception' => 'Random password length should be an integer.',
+                'passwordLength' => '',
+                'expectedException' => 'Random password length should be an integer.',
             ],
             'empty_space' => [
-                'password_length' => ' ',
-                'expected_exception' => 'Random password length should be an integer.',
+                'passwordLength' => ' ',
+                'expectedException' => 'Random password length should be an integer.',
             ],
         ];
     }

@@ -2,13 +2,14 @@
 
 namespace SimpleJwtLoginTests\Unit\Helpers;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Helpers\ServerHelper;
 
 class ServerHelperTest extends TestCase
 {
+    #[DataProvider('ipProvider')]
     /**
-     * @dataProvider ipProvider
      * @param array $server
      * @param mixed $expectedResult
      */
@@ -26,25 +27,25 @@ class ServerHelperTest extends TestCase
         return [
             [
                 'server' => [],
-                'result' => null,
+                'expectedResult' => null,
             ],
             [
                 'server' => [
                     'HTTP_CLIENT_IP' => '127.0.0.1'
                 ],
-                'result' => '127.0.0.1'
+                'expectedResult' => '127.0.0.1'
             ],
             [
                 'server' => [
                     'HTTP_X_FORWARDED_FOR' => '127.0.0.1'
                 ],
-                'result' => '127.0.0.1'
+                'expectedResult' => '127.0.0.1'
             ],
             [
                 'server' => [
                     'REMOTE_ADDR' => '127.0.0.1'
                 ],
-                'result' => '127.0.0.1'
+                'expectedResult' => '127.0.0.1'
             ],
             [
                 'server' => [
@@ -52,13 +53,13 @@ class ServerHelperTest extends TestCase
                     'HTTP_X_FORWARDED_FOR' => '',
                     'REMOTE_ADDR' => '127.0.0.1'
                 ],
-                'result' => '127.0.0.1'
+                'expectedResult' => '127.0.0.1'
             ]
         ];
     }
 
+    #[DataProvider('isClientInListProvider')]
     /**
-     * @dataProvider isClientInListProvider
      * @param mixed $list
      * @param bool $result
      */
@@ -105,8 +106,8 @@ class ServerHelperTest extends TestCase
         ];
     }
 
+    #[DataProvider('getHeadersProvider')]
     /**
-     * @dataProvider getHeadersProvider
      * @param array $server
      * @param array $expectedResult
      */
@@ -127,13 +128,13 @@ class ServerHelperTest extends TestCase
         return [
             [
                 'server' => [],
-                'result' => []
+                'expectedResult' => []
             ],
             [
                 'server' => [
                     'HTTP_CUSTOM_HEADER' => 1
                 ],
-                'result' => [
+                'expectedResult' => [
                     'Custom-Header' => 1
                 ],
             ],
@@ -141,16 +142,14 @@ class ServerHelperTest extends TestCase
                 'server' => [
                     'HTTP_Authorization' => 'Bearer 123',
                 ],
-                'result' => [
+                'expectedResult' => [
                     'Authorization' => 'Bearer 123'
                 ]
             ]
         ];
     }
 
-    /**
-     * @dataProvider providerWildIps
-     */
+    #[DataProvider('providerWildIps')]
     public function testIsClientIpInListWildCard($ipList, $expectedResult)
     {
         $serverHelper = new ServerHelper(['REMOTE_ADDR' => '127.0.0.1']);

@@ -4,9 +4,9 @@ Contributors: nicu_m
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PK9BCD6AYF58Y&source=url
 Tags: jwt, API, auto login, register users, tokens, REST, auth, generate jwt, refresh jwt, protect
 Requires at least: 4.4.0
-Tested up to: 6.4
+Tested up to: 6.5
 Requires PHP: 5.5
-Stable tag: 3.5.3
+Stable tag: 3.5.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/quick-guide-gplv3.html
 
@@ -410,6 +410,15 @@ After that, for the create user route, simply add the AUTH code in the request, 
 == Changelog ==
 
 A complete Changelog is available on the [GitHub repository](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md).
+
+= 3.5.4 ( 03 May 2024) =
+- Add OAuth support for Google [#97](https://github.com/nicumicle/simple-jwt-login/issues/97)
+- Fix status code for expired tokens [#102](https://github.com/nicumicle/simple-jwt-login/issues/102)
+- Update WordPress 6.5 Compatibility
+
+= 3.5.3 (16 November 2023) =
+- Fix licence in composer.json
+- Update WordPress 6.4 compatibility
 
 = 3.5.2 (02 November 2023) =
 - Fix change user password with revoked JWT

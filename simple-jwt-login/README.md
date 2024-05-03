@@ -1,14 +1,16 @@
-=== Simple JWT Login - Login and Register to WordPress using JWT ===
+=== Simple JWT Login – Allows you to use JWT on REST endpoints. ===
 
 Contributors: nicu_m
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PK9BCD6AYF58Y&source=url
-Tags: jwt, API, auto login, register users, tokens, REST, auth, generate jwt, refresh jwt, protect
+Tags: jwt, API, auto login, register, tokens
 Requires at least: 4.4.0
 Tested up to: 6.5
 Requires PHP: 5.5
 Stable tag: 3.5.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/quick-guide-gplv3.html
+
+The main purpose of this plugin is to allow Mobile apps, or other websites to access the content via REST endpoints in a secure way.
 
 == Description ==
 
@@ -36,6 +38,8 @@ Plugin Documentation Site: [https://simplejwtlogin.com](https://simplejwtlogin.c
 * JWT Authentication
 * Allow access private endpoints with JWT
 * Protect endpoints with JWT
+
+Check the plugin [website](https://simplejwtlogin.com) for more features.
 
 == Login User ==
 
@@ -85,6 +89,8 @@ Here is an example:
 Also, this plugin allows you to limit the auto-login based on the client IP address.
 If you are concerned about security, you can limit the auto-login only from some IP addresses.
 
+[Read more](https://simplejwtlogin.com/docs/autologin/) on our website. 
+
 == Register Users ==
 
 This plugin also allows you to create WordPress users.
@@ -108,7 +114,10 @@ If auto-login is disabled, this feature will not work and the register user will
 If you want to add custom user_meta on user creation, just add the parameter `user_meta` with a json. This will create user_meta for the new user.
 
 ``
-{"meta_key":"meta_value","meta_key2":"meta_value"}
+{
+    "meta_key":"meta_value",
+    "meta_key2":"meta_value"
+}
 ``
 
 These properties can be passed in the request when the new user is created.
@@ -134,6 +143,8 @@ These properties can be passed in the request when the new user is created.
 - **show_admin_bar_front** : (string) Whether to display the Admin Bar for the user on the site's front end. Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'.
 - **locale** : (string) User's locale. Default empty.
 
+[Read More](https://simplejwtlogin.com/docs/register-user/) on our website.
+
 == Delete User ==
 
 Delete user it is disabled by default.
@@ -154,6 +165,8 @@ This plugin allows you to send the reset password endpoint, just by calling an e
 Also, you are able to customize this email, or even not send at email at all.
 
 The change password endpoint, changes the user password, based on the reset password code.
+
+[Read More](https://simplejwtlogin.com/docs/delete-user/) on our website.
 
 == Authentication ==
 
@@ -183,7 +196,10 @@ If you want to revoke a JWT, access `/auth/revoke` and send the `jwt` as a param
 
 The plugin auto-generates the example URL you might need to test these scenarios.
 
+[Read More](https://simplejwtlogin.com/docs/authentication/) on our website.
+
 == Auth codes ==
+
 Auth codes are optional, but you can enable them for Auto-login, Register User and Delete user.
 
 This feature allows you to add a layer of protection to your API routes.
@@ -194,6 +210,8 @@ The Auth codes contains 3 parts:
 3. Expiration Date: This allows you to set an expiration date for you auth codes. The format is `Y-M-D H:m:s'. Example : 2020-12-24 23:00:00. If you leave it blank, it will never expire.
 
 Expiration date format: year-month-day hours:minutes:seconds
+
+[Read More](https://simplejwtlogin.com/docs/auth-codes/) on our website.
 
 == Hooks ==
 
@@ -241,8 +259,11 @@ Some available hooks:
 View full list of hooks on [https://simplejwtlogin.com/docs/hooks](https://simplejwtlogin.com/docs/hooks).
 
 == CORS ==
+
 The CORS standard it is needed because it allows servers to specify who can access its assets and how the assets can be accessed.
 Cross-origin requests are made using the standard HTTP request methods like GET, POST, PUT, DELETE, etc.
+
+[Read More](https://simplejwtlogin.com/docs/cors/) on our website.
 
 == Protect endpoints ==
 
@@ -270,11 +291,32 @@ When an endpoint is protected, and you don't provide a JWT, you will get the fol
 }
 ``
 
+[Read More](https://simplejwtlogin.com/docs/protect-endpoints/) on our website.
+
 == Integration ==
+
+**PHP** 
 
 In order to easily integrate your app/site with simple-jwt-login, we have developed a composer package.
 
+``
+composer require nicumicle/simple-jwt-login-client-php
+``
+
 You can check the [package page](https://packagist.org/packages/nicumicle/simple-jwt-login-client-php) for more details and code examples.
+
+**Javascript**
+
+Also, there is a [Javascript SDK](https://github.com/simple-jwt-login/js-sdk) that you can install with `npm` or `yarn`.
+
+``
+npm install "simple-jwt-login"
+``
+or 
+
+``
+yarn add "simple-jwt-login"
+``
 
 == Screenshots ==
 
@@ -317,7 +359,7 @@ Next steps:
 
 After that, you can copy the sample URL from the top of the page ( Login Config section), replace the JWT string with your valid JWT, and you will be redirected to your WordPress and automatically logged in.
 
-Also, if you don't want to add the JWT in the URL, you can add it in the header of the request with the key 'Authorizatoin'.
+Also, if you don't want to add the JWT in the URL, you can add it in the header of the request with the key 'Authorization'.
 Please note that the JWT that is set in the header overwrites the one from the URL.
 
 Example:

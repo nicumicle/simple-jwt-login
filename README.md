@@ -33,8 +33,7 @@
 </p>
 
 <div align="center">
-  <img alt="X (formerly Twitter) Follow" src="https://img.shields.io/twitter/follow/simplejwtlogin">
-  <img alt="X (formerly Twitter) URL" src="https://img.shields.io/twitter/url?url=https%3A%2F%2Ftwitter.com%2Fsimplejwtlogin">
+  <a href="https://twitter.com/simplejwtlogin"><img alt="X (formerly Twitter) Follow" src="https://img.shields.io/twitter/follow/simplejwtlogin"></a>
 </div>
 
 <div align="center">

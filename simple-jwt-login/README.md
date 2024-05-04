@@ -6,7 +6,7 @@ Tags: jwt, API, auto login, register, tokens
 Requires at least: 4.4.0
 Tested up to: 6.5
 Requires PHP: 5.5
-Stable tag: 3.5.4
+Stable tag: 3.5.5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/quick-guide-gplv3.html
 
@@ -452,6 +452,10 @@ After that, for the create user route, simply add the AUTH code in the request, 
 == Changelog ==
 
 A complete Changelog is available on the [GitHub repository](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md).
+
+= 3.5.5 ( 04 May 2024) =
+- Update README
+- Refactor Protect Endpoints
 
 = 3.5.4 ( 03 May 2024) =
 - Add OAuth support for Google [#97](https://github.com/nicumicle/simple-jwt-login/issues/97)

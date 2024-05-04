@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## 3.5.4 ( 03 May 2024)
+## 3.5.5 ( 04 May 2024)
 - Update README 
 - Refactor Protect Endpoints
 

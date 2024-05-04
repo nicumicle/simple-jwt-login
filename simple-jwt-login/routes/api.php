@@ -107,6 +107,7 @@ add_action('rest_api_init', function () {
             $service = new ProtectEndpointService();
             $service
                 ->withRequest($request)
+                ->withRequestMethod($serverHelper->getRequestMethod())
                 ->withSettings($jwtSettings)
                 ->withServerHelper($serverHelper)
                 ->withRouteService($routeService);

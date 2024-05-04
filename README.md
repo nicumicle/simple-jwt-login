@@ -33,6 +33,10 @@
 </p>
 
 <div align="center">
+  <a href="https://twitter.com/simplejwtlogin"><img alt="X (formerly Twitter) Follow" src="https://img.shields.io/twitter/follow/simplejwtlogin"></a>
+</div>
+
+<div align="center">
   <a href="https://simplejwtlogin.com/docs">Documentation</a>
   ·
   <a href="https://github.com/nicumicle/simple-jwt-login/issues/new?assignees=&labels=bug&template=bug_report.md&title=bug%3A+">Report a Bug</a>
@@ -61,6 +65,7 @@ Table of contents
 * [Installation](#bulb-installation)
   * [Install from Zip](#install-from-zip)
   * [Install from WordPress.org](#install-from-wordpressorg)
+  * [Setup the Plugin](#setup-the-plugin)
 * [Features](#tada-features)
 * [Integrate](#electric_plug-integrate)
   * [PHP SDK](#php-sdk)
@@ -76,14 +81,12 @@ Table of contents
 
 ## :bulb: Installation
 
-Please note that this plugin version is not fully tested.
-
 If you want to make sure you have a stable version, please download this plugin from [WordPress.org](https://wordpress.org/plugins/simple-jwt-login/).
 
-| :warning: Make sure you use the latest plugin version in production. |
-| --- |
-
 ### Install from Zip
+
+> [!NOTE]
+>  Please note that this plugin version is not fully tested.
 
 If you want to upload the simple-jwt-login plugin to your website:
 - Download [downloads/simple-jwt-login.zip](https://github.com/nicumicle/simple-jwt-login/blob/master/download/simple-jwt-login.zip)
@@ -92,10 +95,23 @@ If you want to upload the simple-jwt-login plugin to your website:
 
 ### Install from WordPress.org
 
+> [!TIP]
+>  For production environments we recommend installing the plugin from Wordpress.org 
+
 In order to install the latest stable version, from your WordPress admin:
 - Go to the ‘Plugins’ menu in WordPress and click ‘Add New’
 - Search for ‘Simple JWT Login’ and select ‘Install Now’
 - Activate the plugin when prompted
+
+### Setup the Plugin
+
+1. Go to "General" section
+2. Set a "JWT Decryption key". With this key the JWT will be validated.
+3. Choose "JWT Decryption algorithm".
+4. Go to "Login" section
+5. Set "JWT parameter key" with the payload key where user can be identified
+6. Save Changes.
+
 
 ## :tada: Features 
 
@@ -108,6 +124,8 @@ In order to install the latest stable version, from your WordPress admin:
 - **Protect endpoints**: Protect WordPress endpoints with a JWT. This way, you can make some endpoints private, and the content can be viewed only if you provide a valid JWT.
 - **Allow JWT usage on other endpoints**: Add a JWT to requests for other API endpoints and you will act as an authenticated user.
 - **Integrate with other plugins**: This plugin works well in combination with other plugins that extends the WordPress REST API.
+- **Google OAuth**(beta):  Login to your website with Google
+- **Google JWT**(beta): Use the Google `id_token` in order to access WordPress endpoints as an authenticated user.
 
 ## :electric_plug: Integrate
 

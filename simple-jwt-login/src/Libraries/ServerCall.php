@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author   Nicu Micle <contact@simplejwtlogin.com>
- * @license  http://opensource.org/licenses/BSD-3-Clause 3-clause BSD
- * @link     https://github.com/nicumicle/simple-jwt-login
- */
-
 namespace SimpleJWTLogin\Libraries;
 
 class ServerCall

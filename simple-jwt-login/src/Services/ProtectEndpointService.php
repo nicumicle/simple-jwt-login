@@ -105,24 +105,19 @@ class ProtectEndpointService extends BaseService
             return false;
         }
 
+        $protectSettings = $this->jwtSettings->getProtectEndpointsSettings();
         switch ($action) {
             case ProtectEndpointSettings::ALL_ENDPOINTS:
-                $domains = $this->jwtSettings
-                    ->getProtectEndpointsSettings()
-                    ->getWhitelistedDomains();
                 return $this->parseDomainsAndGetResult(
                     $endpoint,
-                    $domains,
+                    $protectSettings->getWhitelistedDomains(),
                     true,
                     false
                 );
             case ProtectEndpointSettings::SPECIFIC_ENDPOINTS:
-                $domains = $this->jwtSettings
-                    ->getProtectEndpointsSettings()
-                    ->getProtectedEndpoints();
                 return $this->parseDomainsAndGetResult(
                     $endpoint,
-                    $domains,
+                    $protectSettings->getProtectedEndpoints(),
                     false,
                     true
                 );

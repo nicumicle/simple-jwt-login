@@ -160,9 +160,11 @@ if (! defined('ABSPATH')) {
         />
         <br/>
         <p class="text-muted">
-			<?php echo __('You can use `.` (dot) as a separator for sub-array values.', 'simple-jwt-login'); ?>
+            <?php echo __('You can use `.` (dot) as a separator for sub-array values.', 'simple-jwt-login'); ?>
             <br/>
-			<?php echo __('Example: Use `user.id` for getting key `id` from array `user`', 'simple-jwt-login'); ?>
+            <?php echo __('Example: Use `id` for getting the `id` key from the JWT payload.', 'simple-jwt-login'); ?>
+            <br />
+            <?php echo __('Example: Use `user.id` for getting the `id` key from the array `user`', 'simple-jwt-login'); ?>
         </p>
     </div>
 </div>

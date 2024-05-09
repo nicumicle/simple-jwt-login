@@ -129,6 +129,11 @@ class RouteService extends BaseService
             );
         }
 
+        $this->validateJwtRevoked(
+            $this->wordPressData->getUserProperty($user, 'ID'),
+            $this->jwt
+        );
+
         return $user;
     }
 }

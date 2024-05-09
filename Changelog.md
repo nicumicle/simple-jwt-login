@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix revoked token validation when middleware enabled [#110](https://github.com/nicumicle/simple-jwt-login/issues/110)
+
 ## 3.5.5 ( 04 May 2024)
 - Update README 
 - Refactor Protect Endpoints

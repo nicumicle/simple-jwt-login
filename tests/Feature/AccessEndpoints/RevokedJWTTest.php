@@ -46,6 +46,19 @@ class RevokedJWTTest extends TestBase
             // Reset password
             'allow_reset_password' => true,
             'reset_password_jwt' => true,
+            // API Middleware
+            "api_middleware" => [
+                "enabled" =>  true,
+            ],
+            // Protect endpoints
+            "protect_endpoints" => [
+                "enabled" => 1,
+                "action" => 2,
+                "protect" => [
+                    "/wp/v2/users",
+                ],
+                "whitelist" => [],
+            ],
         ]);
     }
 
@@ -57,27 +70,35 @@ class RevokedJWTTest extends TestBase
         return [
             'autologin' => [
                 'method' => 'GET',
-                'endpoint' => '/autologin',
+                'endpoint' => '/simple-jwt-login/v1/autologin',
             ],
             'delete_user' => [
                 'method' => 'DELETE',
-                'endpoint' => '/users',
+                'endpoint' => '/simple-jwt-login/v1/users',
             ],
             'change_password' => [
                 'method' => 'PUT',
-                'endpoint' => '/user/reset_password&new_password=123',
+                'endpoint' => '/simple-jwt-login/v1/user/reset_password&new_password=123',
             ],
             'auth_refresh' => [
                 'method' => 'POST',
-                'endpoint' => '/auth/refresh',
+                'endpoint' => '/simple-jwt-login/v1/auth/refresh',
             ],
             'auth_validate' => [
                 'method' => 'POST',
-                'endpoint' => '/auth/validate',
+                'endpoint' => '/simple-jwt-login/v1/auth/validate',
             ],
             'auth_validate_get' => [
                 'method' => 'GET',
-                'endpoint' => '/auth/validate',
+                'endpoint' => '/simple-jwt-login/v1/auth/validate',
+            ],
+            'get_posts' => [
+                'method' => 'GET',
+                'endpoint' => '/wp/v2/posts',
+            ],
+            'get_protected_endpoint_wp_users' => [
+                'method' => 'GET',
+                'endpoint' => '/wp/v2/users',
             ],
         ];
     }
@@ -127,7 +148,10 @@ class RevokedJWTTest extends TestBase
             [
                 'body' => json_encode([
                     'jwt' => $jwt,
-                ])
+                ]),
+                'headers' => [
+                    'Content-type' => 'application/json',
+                ]
             ]
         );
         $contents = $revokeResp->getBody()->getContents();
@@ -137,13 +161,16 @@ class RevokedJWTTest extends TestBase
 
         $response = $this->client->request(
             $method,
-            self::API_URL . "/?rest_route=/simple-jwt-login/v1" . $endpoint,
+            self::API_URL . "/?rest_route=" . $endpoint,
             [
                 'body' => json_encode([
                     'jwt' => $jwt,
                     'email' => $email,
                     'password' => $password,
                 ]),
+                'headers' => [
+                    'Content-type' => 'application/json',
+                ]
             ]
         );
 

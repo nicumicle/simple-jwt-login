@@ -6,7 +6,6 @@
   <a href="https://wordpress.org/support/plugin/simple-jwt-login/reviews/"><img src="https://img.shields.io/wordpress/plugin/stars/simple-jwt-login" alt="Rating" /></a>
   <a href="https://wordpress.org/plugins/simple-jwt-login/advanced#plugin-download-stats"><img src="https://img.shields.io/wordpress/plugin/dt/simple-jwt-login" alt="Total Downloads" /></a>
   <a href="https://wordpress.org/plugins/simple-jwt-login/#description"><img src="https://img.shields.io/wordpress/plugin/installs/simple-jwt-login" alt="Active installs" /></a>
-  <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs welcome" /></a>
 </p>
 
 <p align="center">

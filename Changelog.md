@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+## 3.5.6 (03 Aug 2024)
 - Update WordPress 6.6 Compatibility
 - Fix revoked token validation when middleware enabled [#110](https://github.com/nicumicle/simple-jwt-login/issues/110)
 

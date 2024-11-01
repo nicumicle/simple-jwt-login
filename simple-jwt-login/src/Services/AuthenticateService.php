@@ -134,7 +134,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
         }
 
         $dbPassword = $this->wordPressData->getUserPassword($user);
-        $passwordMatch = $this->wordPressData->checkPassword($password, $passwordHash, $dbPassword);
+        $passwordMatch = $this->wordPressData->checkPassword(wp_slash($password), $passwordHash, $dbPassword);
 
         if ($passwordMatch === false) {
             throw new Exception(

@@ -428,6 +428,12 @@ if (!function_exists('wp_remote_retrieve_body')) {
     function wp_remote_retrieve_body($response) {
     }
 }
+if (!function_exists('wp_slash')) {
+    function wp_slash($value)
+    {
+        return $value;
+    }
+}
 
 if (!class_exists('WP_REST_Response')) {
     class WP_REST_Response

@@ -120,7 +120,7 @@ class WordPressData implements WordPressDataInterface
     public function createUser($username, $email, $password, $role, $extraParameters = [])
     {
         $userParameters = [
-            'user_pass'  => $password,
+            'user_pass'  => wp_slash($password),
             'user_login' => $username,
             'user_email' => $email,
         ];

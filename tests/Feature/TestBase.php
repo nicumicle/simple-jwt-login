@@ -204,11 +204,14 @@ class TestBase extends TestCase
     /**
      * @return array<int,string>
      */
-    protected function registerRandomUser()
+    protected function registerRandomUser(string $overridePassword = null)
     {
         $faker = Factory::create();
         $email = $faker->randomNumber(6) . $faker->email();
         $password = "1234";
+        if ($overridePassword !== null) {
+            $password = $overridePassword;
+        }
 
         $uri = self::API_URL . "?rest_route=/simple-jwt-login/v1/users";
         $result = $this->client->post($uri, [

@@ -291,5 +291,5 @@ interface WordPressDataInterface
      * @param string $value
      * @return string
      */
-    public function sanitizePassword(string $value): string;
+    public function sanitizePassword(value);
 }

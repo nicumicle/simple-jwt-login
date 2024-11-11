@@ -286,4 +286,10 @@ interface WordPressDataInterface
      * @return bool
      */
     public function isUserLoggedIn();
+
+    /**
+     * @param string $value
+     * @return string
+     */
+    public function sanitizePassword(string $value): string;
 }

@@ -122,6 +122,12 @@ if (!function_exists('sanitize_text_field')) {
         return $value;
     }
 }
+if (!function_exists('sanitizePassword')) {
+    function sanitizePassword($value)
+    {
+        return $value;
+    }
+}
 if (!function_exists('wp_delete_user')) {
     function wp_delete_user($value)
     {

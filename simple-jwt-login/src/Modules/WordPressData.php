@@ -120,7 +120,7 @@ class WordPressData implements WordPressDataInterface
     public function createUser($username, $email, $password, $role, $extraParameters = [])
     {
         $userParameters = [
-            'user_pass'  => wp_slash($password),
+            'user_pass'  => $this->sanitizePassword($password),
             'user_login' => $username,
             'user_email' => $email,
         ];
@@ -498,5 +498,11 @@ class WordPressData implements WordPressDataInterface
     public function isUserLoggedIn()
     {
         return is_user_logged_in();
+    }
+
+    public function sanitizePassword(string $value): string
+    {
+        $sanitizedValue = sanitize_text_field($value);
+        return wp_slash($sanitizedValue);
     }
 }

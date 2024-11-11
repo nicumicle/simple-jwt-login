@@ -500,7 +500,7 @@ class WordPressData implements WordPressDataInterface
         return is_user_logged_in();
     }
 
-    public function sanitizePassword(string $value): string
+    public function sanitizePassword($value)
     {
         $sanitizedValue = sanitize_text_field($value);
         return wp_slash($sanitizedValue);

@@ -129,7 +129,7 @@ class ParseRequest
             return ['variables' => $variables];
         }
 
-        $name     = isset($matches[2]) ? $matches[2] : '';
+        $name     = isset($matches[2]) ? $matches[2] : ''; // @phpstan-ignore-line
         $filename = isset($matches[4]) ? $matches[4] : '';
 
         if (!empty($filename)) {

@@ -94,6 +94,30 @@ class SuccessTest extends TestBase
         $this->assertSame(true, $json['success']);
     }
 
+    #[TestDox("User can register with JSON body and a password that includes special characters")]
+    public function testSuccessWithJSONBodyAndSpecialCharacterPassword()
+    {
+        $faker = Factory::create();
+        $uri = self::API_URL . "?rest_route=/simple-jwt-login/v1/users";
+        $result = $this->client->post($uri, [
+            'body' => json_encode([
+                "email"  => $faker->numberBetween(0, 1000) . $faker->email(),
+                "password" => "I!Wqn^&oZg*kscZVrzH^41yvaRj'",
+            ]),
+        ]);
+
+        $this->assertSame(
+            200,
+            $result->getStatusCode()
+        );
+
+        $contents = $result->getBody()->getContents();
+        $this->assertJson($contents);
+        $json = json_decode($contents, true);
+        $this->assertArrayHasKey('success', $json);
+        $this->assertSame(true, $json['success']);
+    }
+
     #[TestDox("User can register with custom user_meta")]
     /**
      * @return void

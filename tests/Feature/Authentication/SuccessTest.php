@@ -67,6 +67,33 @@ class SuccessTest extends TestBase
         $this->assertSame(200, $statusCode, "unable to delete the user");
     }
 
+    #[TestDox("User can authenticate with email and password that contains special characters")]
+    public function testAuthenticationEmailWithSpecialCharacterPassword()
+    {
+        // Register random user
+        list ($email, $password, $statusCode, $response) = $this->registerRandomUser("I!Wqn^&oZg*kscZVrzH^41yvaRj'");
+
+        $this->assertSame(200, $statusCode, "Unable to register user");
+
+        // Auth new USer
+        list ($statusCode, $responseContents) = $this->authUser($email, $password);
+
+        $this->assertSame(
+            200,
+            $statusCode,
+            "Auth User Failed"
+        );
+        $responseArray = json_decode($responseContents, true);
+        $this->assertArrayHasKey('success', $responseArray);
+        $this->assertTrue($responseArray['success']);
+        $this->assertArrayHasKey('data', $responseArray);
+        $this->assertArrayHasKey('jwt', $responseArray['data']);
+        $jwt = $responseArray['data']['jwt'];
+        // Cleanup
+        list($statusCode, $response) = $this->deleteUser($jwt);
+        $this->assertSame(200, $statusCode, "unable to delete the user");
+    }
+
 
     #[TestDox("User can refresh a valid JWT")]
     public function testRefreshToken()

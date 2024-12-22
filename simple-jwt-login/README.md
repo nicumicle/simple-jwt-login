@@ -4,9 +4,9 @@ Contributors: nicu_m
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PK9BCD6AYF58Y&source=url
 Tags: jwt, API, auto login, register, tokens
 Requires at least: 4.4.0
-Tested up to: 6.6
+Tested up to: 6.7
 Requires PHP: 5.5
-Stable tag: 3.5.6
+Stable tag: 3.5.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/quick-guide-gplv3.html
 
@@ -453,6 +453,8 @@ After that, for the create user route, simply add the AUTH code in the request, 
 
 A complete Changelog is available on the [GitHub repository](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md).
 
+= 3.5.7 ( 22 Dec 2024) =
+- Update WordPress 6.7 Compatibility
 
 = 3.5.6 ( 03 Aug 2024) =
 - Update WordPress 6.6 Compatibility

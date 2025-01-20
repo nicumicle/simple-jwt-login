@@ -125,7 +125,7 @@
 
 ##  3.0.0 (11 July 2021)
 - Plugin code refactor
-- Rewrite file auto-loaded
+- Rewrite file autoloader
 - Improve parse request parameters
 - Add support for JSON body requests
 - Fix user_meta URL encoded
@@ -257,7 +257,7 @@
 
 
 ## 1.5.0 (05 February 2020)
-- Allow delete users based on a JWT token
+- Allow to delete users based on a JWT token
 - Refactor routes section
 - Allow users to set custom namespace for API route
 - Change create user route name and offer support for backward compatibility

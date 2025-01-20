@@ -20,7 +20,7 @@ This plugin allows you to log in, register, authenticate, delete and change user
 
 It's main purpose is to allow you to connect a mobile App or other websites with WordPress. 
 
-Plugin Documentation Site: [https://simplejwtlogin.com](https://simplejwtlogin.com?utm_source=readme)
+Plugin Documentation Site: [https://simplejwtlogin.com](https://simplejwtlogin.com)
 
 == Some awesome features ==
 
@@ -38,6 +38,8 @@ Plugin Documentation Site: [https://simplejwtlogin.com](https://simplejwtlogin.c
 * JWT Authentication
 * Allow access private endpoints with JWT
 * Protect endpoints with JWT
+* **beta** Google OAuth Integration
+* **beta** Use Google JWT on all endpoints
 
 Check the plugin [website](https://simplejwtlogin.com) for more features.
 
@@ -70,13 +72,13 @@ In order to use this, you have to enable it by checking the option `Allow redire
 
 Also, redirect after login offers some variables that you can use in the customURL and redirectUrl.
 Here are the variables which you can use in your URL:
-- {{site_url}} : Site URL
-- {{user_id}} : Logged in user ID
-- {{user_email}} : Logged in user email
-- {{user_login}} : Logged in username
-- {{user_first_name}} : User first name
-- {{user_last_name}} : User last name
-- {{user_nicename}} : User nice name
+- `{{site_url}}` : Site URL
+- `{{user_id}}` : Logged in user ID
+- `{{user_email}}` : Logged in user email
+- `{{user_login}}` : Logged in username
+- `{{user_first_name}}` : User first name
+- `{{user_last_name}}` : User last name
+- `{{user_nicename}}` : User nice name
 
 You can generate dynamic URLs with these variables, and, before the redirect, the specific value will be replaced.
 
@@ -114,10 +116,10 @@ If auto-login is disabled, this feature will not work and the register user will
 If you want to add custom user_meta on user creation, just add the parameter `user_meta` with a json. This will create user_meta for the new user.
 
 ``
-{
-    "meta_key":"meta_value",
-    "meta_key2":"meta_value"
-}
+    {
+        "meta_key":"meta_value",
+        "meta_key2":"meta_value"
+    }
 ``
 
 These properties can be passed in the request when the new user is created.
@@ -281,14 +283,14 @@ When you choose `Apply only on specific endpoints`, you will have to add all the
 When an endpoint is protected, and you don't provide a JWT, you will get the following response:
 
 ``
-{
-   "success":false,
-   "data":{
-      "message":"Your are not authorized to access this endpoint.",
-      "errorCode":403,
-      "type":"simple-jwt-login-route-protect"
-   }
-}
+    {
+       "success":false,
+       "data":{
+          "message":"Your are not authorized to access this endpoint.",
+          "errorCode":403,
+          "type":"simple-jwt-login-route-protect"
+       }
+    }
 ``
 
 [Read More](https://simplejwtlogin.com/docs/protect-endpoints/) on our website.
@@ -300,7 +302,7 @@ When an endpoint is protected, and you don't provide a JWT, you will get the fol
 In order to easily integrate your app/site with simple-jwt-login, we have developed a composer package.
 
 ``
-composer require nicumicle/simple-jwt-login-client-php
+    composer require nicumicle/simple-jwt-login-client-php
 ``
 
 You can check the [package page](https://packagist.org/packages/nicumicle/simple-jwt-login-client-php) for more details and code examples.
@@ -310,12 +312,12 @@ You can check the [package page](https://packagist.org/packages/nicumicle/simple
 Also, there is a [Javascript SDK](https://github.com/simple-jwt-login/js-sdk) that you can install with `npm` or `yarn`.
 
 ``
-npm install "simple-jwt-login"
+    npm install "simple-jwt-login"
 ``
 or 
 
 ``
-yarn add "simple-jwt-login"
+    yarn add "simple-jwt-login"
 ``
 
 == Screenshots ==
@@ -365,13 +367,13 @@ Please note that the JWT that is set in the header overwrites the one from the U
 Example:
 
 ``
-Authorization: Bearer YOURJWTTOKEN
+    Authorization: Bearer YOURJWTTOKEN
 ``
 
 or
 
 ``
-Authorization: YOURJWTTOKEN
+    Authorization: YOURJWTTOKEN
 ``
 
 == Frequently Asked Questions ==
@@ -439,9 +441,9 @@ Here is an example, on how you can change the body for reset password email temp
 = I cannot get the JWT from session. Where should I store the JWT? =
 The plugin searches for the JWT in:
 - URL ( &jwt=YOUR JWT HERE)
-- SESSION (  ` $_SESSION['simple-jwt-login-token'] `)
-- COOKIE ( ` $_COOKIE['simple-jwt-login-token'] ` )
-- Header ( ` Authorization: Bearer YOUR_JWT_HERE `)
+- SESSION (  `$_SESSION['simple-jwt-login-token']`)
+- COOKIE ( `$_COOKIE['simple-jwt-login-token']` )
+- Header ( `Authorization: Bearer YOUR_JWT_HERE`)
 
 Also, the key name for each parameter, can be changed in the general section.
 
@@ -565,7 +567,7 @@ A complete Changelog is available on the [GitHub repository](https://github.com/
 
 = 3.0.0 (11 July 2021) =
 - Plugin code refactor
-- Rewrite file auto-loaded
+- Rewrite file autoloader
 - Improve parse request parameters
 - Add support for JSON body requests
 - Fix user_meta URL encoded
@@ -695,7 +697,7 @@ A complete Changelog is available on the [GitHub repository](https://github.com/
 * Update Readme
 
 = 1.5.0 (05 Feb 2020) =
-* Allow delete users based on a JWT token
+* Allow to delete users based on a JWT token
 * Refactor routes section
 * Allow users to set custom namespace for API route
 * Change create user route name and offer support for backward compatibility

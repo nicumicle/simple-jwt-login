@@ -458,3 +458,34 @@ if (!defined('ABSPATH')) {
         </p>
     </div>
 </div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <h3 class="section-title">
+          <?php echo __('Security', 'simple-jwt-login');?>
+        </h3>
+    </div>
+    <div class="col-md-12">
+        <input type="checkbox" name="security[safe_redirect]" id="security_safe_redirect"
+               value="1"
+            <?php
+            echo $jwtSettings->getGeneralSettings()->isSafeRedirectEnabled()
+                ? 'checked="checked"'
+                : ""
+            ?>
+        />
+        <label for="security_safe_redirect">
+            <?php echo __('Enable Safe redirects', 'simple-jwt-login');?>
+        </label><br/>
+        <p class="text-muted">
+            * <?php
+            echo __(
+                'Use wp_safe_redirect for all the redirects',
+                'simple-jwt-login'
+            );
+            ?>
+        </p>
+    </div>
+</div>
+

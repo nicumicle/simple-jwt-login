@@ -96,6 +96,11 @@ class RedirectService extends BaseService implements ServiceInterface
             return $this->wordPressData->createResponse($response);
         }
 
+        if ($this->jwtSettings->getGeneralSettings()->isSafeRedirectEnabled()) {
+             $this->wordPressData->redirectSafe($url);
+
+             return null;
+        }
         $this->wordPressData->redirect($url);
 
         return null;

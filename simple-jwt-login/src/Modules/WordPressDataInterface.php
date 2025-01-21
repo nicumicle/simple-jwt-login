@@ -38,6 +38,11 @@ interface WordPressDataInterface
     public function redirect($url);
 
     /**
+     * @param string $url
+     */
+    public function redirectSafe($url);
+
+    /**
      * @return string
      */
     public function getAdminUrl();

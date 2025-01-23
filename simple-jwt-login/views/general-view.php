@@ -328,11 +328,8 @@ if (!defined('ABSPATH')) {
         </select>
     </div>
     <div class="col-md-5">
-        <div class="code">$_SESSION['<b>
-                <?php
-                echo esc_html($jwtSettings->getGeneralSettings()->getRequestKeySession());
-                ?>
-            </b>']
+        <div class="code">
+            $_SESSION['<b><?php echo esc_html($jwtSettings->getGeneralSettings()->getRequestKeySession()); ?></b>']
         </div>
     </div>
 </div>
@@ -372,11 +369,8 @@ if (!defined('ABSPATH')) {
         </select>
     </div>
     <div class="col-md-5">
-        <div class="code">$_COOKIE['<b>
-                <?php
-                echo esc_html($jwtSettings->getGeneralSettings()->getRequestKeyCookie());
-                ?>
-            </b>']
+        <div class="code">
+            $_COOKIE['<b><?php echo esc_html($jwtSettings->getGeneralSettings()->getRequestKeyCookie()); ?></b>']
         </div>
     </div>
 </div>
@@ -476,7 +470,7 @@ if (!defined('ABSPATH')) {
             ?>
         />
         <label for="security_safe_redirect">
-            <?php echo __('Enable Safe redirects', 'simple-jwt-login');?>
+            <?php echo __('Enable safe redirects', 'simple-jwt-login');?>
         </label><br/>
         <p class="text-muted">
             * <?php

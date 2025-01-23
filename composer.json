@@ -1,7 +1,6 @@
 {
   "name": "nicumicle/simple-jwt-login",
   "description": "Simple JWT Login WordPress plugin",
-  "version": "1.0.0",
   "require": {
     "php": ">=7.0",
     "ext-json": "*",

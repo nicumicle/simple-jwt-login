@@ -174,7 +174,7 @@ class Google extends BaseApplication implements ApplicationInterface
             $jsonResult = $result['response'];
 
             if ($responseStatusCode !== 200) {
-                $this->wordPressData->redirect($this->wordPressData->getLoginURL([
+                $this->redirect($this->wordPressData->getLoginURL([
                     'error' => $this->handleErrorMessage($jsonResult)
                 ]));
 
@@ -190,23 +190,34 @@ class Google extends BaseApplication implements ApplicationInterface
                     $user = $this->createUser($email);
 
                     $this->wordPressData->loginUser($user);
-                    $this->wordPressData->redirect($this->wordPressData->getAdminUrl());
+                    $this->redirect($this->wordPressData->getAdminUrl());
 
                     return;
                 }
 
-                $this->wordPressData->redirect($this->wordPressData->getLoginURL([]));
+                $this->redirect($this->wordPressData->getLoginURL([]));
 
                 return;
             }
 
             $this->wordPressData->loginUser($user);
-            $this->wordPressData->redirect($this->wordPressData->getAdminUrl());
+            $this->redirect($this->wordPressData->getAdminUrl());
 
             return;
         } catch (Exception $e) {
-            $this->wordPressData->redirect($this->wordPressData->getLoginURL(['error' => $e->getMessage()]));
+            $this->redirect($this->wordPressData->getLoginURL(['error' => $e->getMessage()]));
         }
+    }
+
+    private function redirect($url)
+    {
+        if ($this->settings->getGeneralSettings()->isSafeRedirectEnabled()) {
+            $this->wordPressData->redirectSafe($url);
+
+            return;
+        }
+
+        $this->wordPressData->redirect($url);
     }
 
     /**

@@ -36,6 +36,9 @@ class SuccessTest extends TestBase
             "jwt_login_by" => 0,
             "jwt_login_by_parameter" => "email",
             "allow_autologin" => true,
+            "security" => [
+                "safe_redirect" => true,
+            ]
         ]);
     }
 

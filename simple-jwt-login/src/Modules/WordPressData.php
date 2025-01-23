@@ -63,6 +63,16 @@ class WordPressData implements WordPressDataInterface
     }
 
     /**
+     * @SuppressWarnings(ExitExpression)
+     * @param string $url
+     */
+    public function redirectSafe($url)
+    {
+        wp_safe_redirect($url);
+        exit;
+    }
+
+    /**
      * @return string
      */
     public function getAdminUrl()

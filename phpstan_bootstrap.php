@@ -70,6 +70,13 @@ if (!function_exists('wp_redirect')) {
     {
     }
 }
+
+if (!function_exists('wp_safe_redirect')) {
+    function wp_safe_redirect($url)
+    {
+    }
+}
+
 if (!function_exists('admin_url')) {
     function admin_url()
     {

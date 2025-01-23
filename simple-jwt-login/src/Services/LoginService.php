@@ -28,6 +28,10 @@ class LoginService extends BaseService implements ServiceInterface
                         'error_code' => $e->getCode()
                     ]);
 
+                if ($this->jwtSettings->getGeneralSettings()->isSafeRedirectEnabled()) {
+                    return $this->wordPressData->redirectSafe($redirectOnFail);
+                }
+
                 return $this->wordPressData->redirect($redirectOnFail);
             }
             throw new Exception($e->getMessage(), $e->getCode(), $e);

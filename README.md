@@ -97,14 +97,14 @@ If you want to upload the simple-jwt-login plugin to your website:
 ### Install from WordPress.org
 
 > [!TIP]
->  For production environments we recommend installing the plugin from Wordpress.org 
+>  For production environments we recommend installing the plugin from WordPress.org 
 
 In order to install the latest stable version, from your WordPress admin:
 - Go to the ‘Plugins’ menu in WordPress and click ‘Add New’
 - Search for ‘Simple JWT Login’ and select ‘Install Now’
 - Activate the plugin when prompted
 
-### Setup the Plugin
+### Set up the Plugin
 
 1. Go to "General" section
 2. Set a "JWT Decryption key". With this key the JWT will be validated.
@@ -123,7 +123,7 @@ In order to install the latest stable version, from your WordPress admin:
 - **Delete user**: You can delete a WordPress user by adding some details in the JWT payload.
 - **Reset password**: REST endpoint that allows you to reset WordPress User password. Also, it can send custom email if you want.
 - **Protect endpoints**: Protect WordPress endpoints with a JWT. This way, you can make some endpoints private, and the content can be viewed only if you provide a valid JWT.
-- **Allow JWT usage on other endpoints**: Add a JWT to requests for other API endpoints and you will act as an authenticated user.
+- **Allow JWT usage on other endpoints**: Add a JWT to requests for other API endpoints, and you will act as an authenticated user.
 - **Integrate with other plugins**: This plugin works well in combination with other plugins that extends the WordPress REST API.
 - **Google OAuth**(beta):  Login to your website with Google
 - **Google JWT**(beta): Use the Google `id_token` in order to access WordPress endpoints as an authenticated user.

@@ -132,6 +132,14 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
             'header',
             BaseSettings::SETTINGS_TYPE_STRING
         );
+
+        $this->assignSettingsPropertyFromPost(
+            'security',
+            'safe_redirect',
+            'security',
+            'safe_redirect',
+            BaseSettings::SETTINGS_TYPE_BOL
+        );
     }
 
     /**
@@ -394,5 +402,12 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
         return isset($this->settings['api_middleware'])
             && isset($this->settings['api_middleware']['enabled'])
             && !empty($this->settings['api_middleware']['enabled']);
+    }
+
+    public function isSafeRedirectEnabled()
+    {
+        return isset($this->settings['security'])
+            && isset($this->settings['security']['safe_redirect'])
+            && !empty($this->settings['security']['safe_redirect']);
     }
 }

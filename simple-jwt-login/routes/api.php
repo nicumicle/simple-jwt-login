@@ -65,7 +65,7 @@ add_action('rest_api_init', function () {
     }
 
     if ($jwtSettings->getGeneralSettings()->isMiddlewareEnabled()) {
-        add_action('rest_endpoints', function ($endpoint) use ($routeService, $jwtSettings) {
+        add_filter('rest_authentication_errors', function ($errors) use ($routeService, $jwtSettings) {
             $currentURL =
                 "http"
                 . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "s" : "")
@@ -73,7 +73,7 @@ add_action('rest_api_init', function () {
                 . $_SERVER['REQUEST_URI'];
             if (strpos($currentURL, $jwtSettings->getGeneralSettings()->getRouteNamespace()) !== false) {
                 //Skip middleware for simple-jwt-plugin
-                return $endpoint;
+                return $errors;
             }
 
             $jwt = $routeService->getJwtFromRequestHeaderOrCookie();
@@ -83,6 +83,7 @@ add_action('rest_api_init', function () {
                         ->loginUser(
                             $routeService->getUserFromJwt($jwt)
                         );
+                    return true;
                 } catch (\Exception $exception) {
                     @header('Content-Type: application/json; charset=UTF-8');
 
@@ -94,11 +95,11 @@ add_action('rest_api_init', function () {
                         ],
                         StatusCodeHelper::getStatusCodeFromExeption($exception, 400)
                     );
-                    return false;
+                    return new WP_Error($exception->getCode(), $exception->getMessage());
                 }
             }
 
-            return $endpoint;
+            return $errors;
         }, 0);
     }
 

@@ -129,6 +129,12 @@ if (!function_exists('sanitize_text_field')) {
         return $value;
     }
 }
+if (!function_exists('sanitizePassword')) {
+    function sanitizePassword($value)
+    {
+        return $value;
+    }
+}
 if (!function_exists('wp_delete_user')) {
     function wp_delete_user($value)
     {
@@ -433,6 +439,12 @@ if (!function_exists('wp_remote_retrieve_response_code')) {
 }
 if (!function_exists('wp_remote_retrieve_body')) {
     function wp_remote_retrieve_body($response) {
+    }
+}
+if (!function_exists('wp_slash')) {
+    function wp_slash($value)
+    {
+        return $value;
     }
 }
 

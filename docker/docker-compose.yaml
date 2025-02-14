@@ -2,7 +2,7 @@ version: "3.3"
     
 services:
   wpdb:
-    image: mysql:5.7
+    image: mysql:latest
     container_name: wpdb
     volumes:
       - wpdb_data:/var/lib/mysql

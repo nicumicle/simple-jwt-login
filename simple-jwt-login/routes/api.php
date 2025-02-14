@@ -65,7 +65,11 @@ add_action('rest_api_init', function () {
     }
 
     if ($jwtSettings->getGeneralSettings()->isMiddlewareEnabled()) {
-        add_action('rest_endpoints', function ($endpoint) use ($routeService, $jwtSettings) {
+        add_filter('rest_authentication_errors', function ($errors) use ($routeService, $jwtSettings) {
+	        if (!empty($errors)) {
+		        return $errors;
+	        }
+
             $currentURL =
                 "http"
                 . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "s" : "")
@@ -73,7 +77,7 @@ add_action('rest_api_init', function () {
                 . $_SERVER['REQUEST_URI'];
             if (strpos($currentURL, $jwtSettings->getGeneralSettings()->getRouteNamespace()) !== false) {
                 //Skip middleware for simple-jwt-plugin
-                return $endpoint;
+                return $errors;
             }
 
             $jwt = $routeService->getJwtFromRequestHeaderOrCookie();
@@ -83,6 +87,7 @@ add_action('rest_api_init', function () {
                         ->loginUser(
                             $routeService->getUserFromJwt($jwt)
                         );
+                    return true;
                 } catch (\Exception $exception) {
                     @header('Content-Type: application/json; charset=UTF-8');
 
@@ -94,11 +99,16 @@ add_action('rest_api_init', function () {
                         ],
                         StatusCodeHelper::getStatusCodeFromExeption($exception, 400)
                     );
-                    return false;
+
+	                /* The wp_send_json_error call breaks the filter chain; the return statement will never be reached.
+	                   however if we remove above lines, this will cause a change in the api error response format */
+
+	                $status = StatusCodeHelper::getStatusCodeFromExeption($exception, 400);
+	                return new WP_Error($exception->getCode(), $exception->getMessage(), ["status" => $status]);
                 }
             }
 
-            return $endpoint;
+            return $errors;
         }, 0);
     }
 

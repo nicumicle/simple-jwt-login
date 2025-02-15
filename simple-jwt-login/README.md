@@ -6,7 +6,7 @@ Tags: jwt, API, auto login, register, tokens
 Requires at least: 4.4.0
 Tested up to: 6.7
 Requires PHP: 5.5
-Stable tag: 3.5.7
+Stable tag: 3.5.8
 License: GPLv3
 License URI: https://www.gnu.org/licenses/quick-guide-gplv3.html
 
@@ -440,7 +440,7 @@ Here is an example, on how you can change the body for reset password email temp
 
 = I cannot get the JWT from session. Where should I store the JWT? =
 The plugin searches for the JWT in:
-- URL ( &jwt=YOUR JWT HERE)
+- URL ( `&jwt=YOUR JWT HERE`)
 - SESSION (  `$_SESSION['simple-jwt-login-token']`)
 - COOKIE ( `$_COOKIE['simple-jwt-login-token']` )
 - Header ( `Authorization: Bearer YOUR_JWT_HERE`)
@@ -454,6 +454,10 @@ After that, for the create user route, simply add the AUTH code in the request, 
 == Changelog ==
 
 A complete Changelog is available on the [GitHub repository](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md).
+
+= 3.5.8 ( 14 Feb 2025) =
+- Use wp_safe_redirect for redirects [#115](https://github.com/nicumicle/simple-jwt-login/issues/115)
+- Ensure JWT middleware only run once [#125:](https://github.com/nicumicle/simple-jwt-login/issues/125)
 
 = 3.5.7 ( 22 Dec 2024) =
 - Update WordPress 6.7 Compatibility

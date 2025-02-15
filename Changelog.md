@@ -1,7 +1,10 @@
 # Changelog - Releases
 
 ## Unreleased
-- use wp_safe_redirect for redirects [#115](https://github.com/nicumicle/simple-jwt-login/issues/115)
+
+## 3.5.8 (14 Feb 2025)
+- Use wp_safe_redirect for redirects [#115](https://github.com/nicumicle/simple-jwt-login/issues/115)
+- Ensure JWT middleware only run once [#125:](https://github.com/nicumicle/simple-jwt-login/issues/125)
 
 ## 3.5.7 (22 Dec 2024)
 - Update WordPress 6.7 Compatibility

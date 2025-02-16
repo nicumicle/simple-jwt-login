@@ -1,6 +1,7 @@
 # Changelog - Releases
 
 ## Unreleased
+- Beta: Authenticate user when performing queries with WPGraphQL [#32](https://github.com/nicumicle/simple-jwt-login/issues/32)
 
 ## 3.5.8 (14 Feb 2025)
 - Use wp_safe_redirect for redirects [#115](https://github.com/nicumicle/simple-jwt-login/issues/115)

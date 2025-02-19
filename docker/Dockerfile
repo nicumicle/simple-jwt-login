@@ -1,4 +1,4 @@
-FROM wordpress:php8.2
+FROM wordpress:php8.3
 
 RUN apt-get update
 

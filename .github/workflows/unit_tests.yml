@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
@@ -32,9 +32,3 @@ jobs:
 
       - name: PHPUnit tests
         run: XDEBUG_MODE=coverage vendor/bin/phpunit --testsuite "Unit"
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
-        with:
-          file: ./clover.xml
-          fail_ci_if_error: false

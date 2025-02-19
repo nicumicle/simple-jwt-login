@@ -16,12 +16,12 @@ jobs:
     name: Run Simple-JWT-Login Feature tests
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: "Setup PHP"
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: 8.3
           extension-csv: mbstring, intl #setup extensions
           ini-values-csv: post_max_size=256M, short_open_tag=On #setup php.ini configuration
           coverage: xdebug #setup coverage driver
@@ -34,8 +34,8 @@ jobs:
       -   name: "Apache Setup"
           run: |
             sudo apt-get update 
-            sudo apt-get install libapache2-mod-php8.2
-            sudo a2enmod php8.2
+            sudo apt-get install libapache2-mod-php8.3
+            sudo a2enmod php8.3
             sudo /etc/init.d/apache2 start
       -   name: "Install WordPress"
           run: |
@@ -61,8 +61,8 @@ jobs:
       -   name: "Prepare Feature tests"
           run: |
             cp phpunit.xml.actions.dist /var/www/html/wp-content/plugins/phpunit.xml
-            cp composer.json /var/www/html/wp-content/plugins/composer.json            
-            cp phpunit_bootstrap.php /var/www/html/wp-content/plugins/phpunit_bootstrap.php            
+            cp composer.json /var/www/html/wp-content/plugins/           
+            cp bootstrap.php /var/www/html/wp-content/plugins/            
             cp -R tests /var/www/html/wp-content/plugins
             
             cd /var/www/html/wp-content/plugins
@@ -80,4 +80,4 @@ jobs:
       -   name: "Run the Feature tests"
           run: |
             cd /var/www/html/wp-content/plugins/
-            vendor/bin/phpunit --testsuite "Feature" --coverage-text --testdox
+            XDEBUG_MODE=coverage vendor/bin/phpunit --testsuite "Feature" --coverage-text --testdox

@@ -179,18 +179,18 @@ abstract class BaseService
         if ($this->jwtSettings->getGeneralSettings()->isJwtFromHeaderEnabled()) {
             $headers = array_change_key_case($this->serverHelper->getHeaders(), CASE_LOWER);
             $headerKey = strtolower($this->jwtSettings->getGeneralSettings()->getRequestKeyHeader());
-            if (isset($headers[$headerKey])) {
-                $matches = [];
-                preg_match(
-                    '/^(?:Bearer)?[\s]*(.*)$/mi',
-                    $headers[$headerKey],
-                    $matches
-                );
+	        if (isset($headers[$headerKey])) {
+		        $matches = [];
+		        $match = preg_match(
+			        '/^(?:(\w+)\s+)?([\w\-.]+)$/mi',
+			        $headers[$headerKey],
+			        $matches
+		        );
 
-                if (isset($matches[1]) && !empty(trim($matches[1]))) {
-                    return $matches[1];
-                }
-            }
+		        if ($match && (empty($matches[1]) || strtolower($matches[1]) == "bearer")) {
+			        return $matches[2];
+		        }
+	        }
         }
         if ($this->jwtSettings->getGeneralSettings()->isJwtFromCookieEnabled()) {
             if (isset($this->cookie[$this->jwtSettings->getGeneralSettings()->getRequestKeyCookie()])) {

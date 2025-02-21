@@ -1,0 +1,43 @@
+name: Deploy WordPress.org [WIP]
+
+on:
+  push:
+    branches: 'master'  # Triggers on master branch pushes
+    tags: '**'       # Also triggers on tag pushes
+env:
+  plugin_slug: "simple-jwt-login"
+
+jobs:
+  validate-deploy:
+    if: ${{ !startsWith(github.ref, 'refs/tags/') }} # Does not run for tags
+    runs-on: ubuntu-latest
+    steps:
+      - name: ♻️ Checkout repository
+        uses: actions/checkout@v4
+      - name: 🦺 Validate Deploy to WordPress.org
+        uses: simple-jwt-login/deployer@main
+        with:
+          plugin_folder: "/simple-jwt-login"
+          slug: ${{ env.plugin_slug }}
+          assets_folder: "wordpress.org"
+          # username: ${{secrets.SVN_USERNAME}} # Not required in dry_run mode
+          # password: ${{secrets.SVN_PASSWORD}} # Not required in dry_run mode
+          # tag: ${{ github.ref_name }} # Don't create a tag in /tags folder
+          # commit_message: "Release plugin" # Not required in dry_run mode
+          dry_run: true
+  deploy:
+    if: ${{ startsWith(github.ref, 'refs/tags/') }} # Runs only when a tag is pushed
+    runs-on: ubuntu-latest
+    steps:
+      - name: ♻️ Checkout repository
+        uses: actions/checkout@v4
+      - name: 🚀 Deploy ${{ github.ref_name }} to WordPress.org
+        uses: simple-jwt-login/deployer@main
+        with:
+          plugin_folder: "/simple-jwt-login"
+          slug: ${{ env.plugin_slug }}
+          assets_folder: "wordpress.org"
+          username: ${{secrets.SVN_USERNAME}}
+          password: ${{secrets.SVN_PASSWORD}}
+          tag: ${{ github.ref_name }}
+          commit_message: Release plugin version ${{ github.ref_name }}

@@ -1,5 +1,51 @@
 <?php
-include_once 'phpunit_bootstrap.php';
+define('ABSPATH', 'PHPunit');
+error_reporting(E_ALL);
+
+require_once "simple-jwt-login/autoload.php";
+require_once "vendor/autoload.php";
+
+if (! function_exists('__')) {
+    function __($text, $domain)
+    {
+        if ($domain === null) {
+            throw new Exception('Missing domain.');
+        }
+        return $text;
+    }
+}
+if (! function_exists('esc_html')) {
+    function esc_html($text) {
+        return $text;
+    }
+}
+
+if (!class_exists('WP_User')) {
+    class WP_User
+    {
+        public $user_login;
+        public $roles = [];
+
+        public function __construct($user)
+        {
+        }
+
+        public function set_role($role)
+        {
+            $this->roles[] = $role;
+        }
+
+        public function get($param)
+        {
+            return "";
+        }
+
+        public static function to_array()
+        {
+            return [];
+        }
+    }
+}
 
 if (!function_exists('delete_user_meta')) {
     function delete_user_meta($userId, $metaKey, $metaValue)
@@ -247,7 +293,6 @@ if (!function_exists('register_uninstall_hook')) {
     }
 }
 
-
 if (!function_exists('add_action')) {
     /**
      * @param string $hook_name
@@ -259,6 +304,7 @@ if (!function_exists('add_action')) {
     function add_action($hook_name, $callback, $priority = 10, $accepted_args = 1) {
     }
 }
+
 if (!function_exists('add_filter')) {
     /**
      * @param string $hook_name
@@ -325,7 +371,6 @@ if (!function_exists('wp_enqueue_style')) {
     {
     }
 }
-
 
 if (!function_exists('wp_enqueue_script')) {
     /**
@@ -400,7 +445,6 @@ if (!function_exists('wp_login_url')) {
     }
 }
 
-
 if (!function_exists('register_rest_route')) {
     /**
      * @param string $namespace
@@ -427,10 +471,12 @@ if (!function_exists('wp_remote_request')) {
     function wp_remote_request($url, $args) {
     }
 }
+
 if (!function_exists('wp_remote_retrieve_response_code')) {
     function wp_remote_retrieve_response_code($response){
     }
 }
+
 if (!function_exists('wp_remote_retrieve_body')) {
     function wp_remote_retrieve_body($response) {
     }
@@ -445,33 +491,6 @@ if (!class_exists('WP_REST_Response')) {
 
         public function set_status($status)
         {
-        }
-    }
-}
-
-if (!class_exists('WP_User')) {
-    class WP_User
-    {
-        public $user_login;
-        public $roles = [];
-
-        public function __construct($user)
-        {
-        }
-
-        public function set_role($role)
-        {
-            $this->roles[] = $role;
-        }
-
-        public function get($param)
-        {
-            return "";
-        }
-
-        public static function to_array()
-        {
-            return [];
         }
     }
 }

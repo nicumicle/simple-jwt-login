@@ -27,13 +27,13 @@ add_action('rest_api_init', function () {
 
     $request = array_merge($_REQUEST, $parsedRequestVariables);
 
+    $serverHelper = new ServerHelper($_SERVER);
     $jwtSettings = new SimpleJWTLoginSettings(new WordPressData());
     $routeService = new RouteService();
     $routeService->withSettings($jwtSettings);
     $routeService->withRequest($request);
     $routeService->withCookies($_COOKIE);
-    $routeService->withServerHelper(new ServerHelper($_SERVER));
-    $serverHelper = new ServerHelper($_SERVER);
+    $routeService->withServerHelper($serverHelper);
 
     if ($jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
         if (empty(session_id()) && !headers_sent()) {
@@ -152,7 +152,6 @@ add_action('rest_api_init', function () {
     }
 
     $availableRoutes = $routeService->getAllRoutes();
-
     foreach ($availableRoutes as $route) {
         register_rest_route(
             rtrim($jwtSettings->getGeneralSettings()->getRouteNamespace(), '/\\'),

@@ -37,6 +37,7 @@ class RedirectServiceTest extends TestCase
             );
 
         $this->user = $this->getMockBuilder(WP_User::class)
+            ->disableOriginalConstructor()
             ->getMock();
     }
 

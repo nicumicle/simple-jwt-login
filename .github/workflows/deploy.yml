@@ -2,7 +2,7 @@ name: Deploy WordPress.org [WIP]
 
 on:
   push:
-    branches: '**'  # Triggers on branch pushes
+    branches: 'master'  # Triggers on master branch pushes
     tags: '**'       # Also triggers on tag pushes
 env:
   plugin_slug: "simple-jwt-login"

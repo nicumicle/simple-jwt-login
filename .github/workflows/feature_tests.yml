@@ -45,8 +45,6 @@ jobs:
             sudo rm -rf /var/www/html/*
             sudo apt-get update
             curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-            echo "🔖 WordPress Version:  $(php wp-cli.phar core version)"
-            echo "🔖 PHP Version: $(php -v)"
             php wp-cli.phar core download --path=/var/www/html/
             php wp-cli.phar config create --dbname=wordpress --dbuser=root --dbpass=root --dbhost=localhost --dbprefix=wp_ --path=/var/www/html
             chmod 600 /var/www/html/wp-config.php
@@ -83,5 +81,8 @@ jobs:
 
       -   name: "🧪 Run the Feature tests"
           run: |
+            cd /var/www/html
+            echo "🔖 WordPress Version:  $(php wp-cli.phar core version)"
+            echo "🔖 PHP Version: $(php -v)"
             cd /var/www/html/wp-content/plugins/
             XDEBUG_MODE=coverage vendor/bin/phpunit --testsuite "Feature" --coverage-text --testdox

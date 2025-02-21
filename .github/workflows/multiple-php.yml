@@ -1,4 +1,4 @@
-name: "Check plugin with multiple PHP versions"
+name: "Plugin Compatibility Across Multiple PHP Versions"
 
 on:
   push:
@@ -7,55 +7,17 @@ on:
     branches: [ master ]
 
 jobs:
-  # Check there is no syntax errors in the project
   php-linter:
-    name: Check plugin code compatibility with multiple PHP versions
+    name: PHP syntax check
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php_version: [ 5.5, 5.6, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2, 8.3, 8.4 ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.0.0
+        uses: actions/checkout@v4
 
-      - name: PHP syntax checker 5.5
-        uses: prestashop/github-action-php-lint/5.5@master
-        with:
-          working-directory: simple-jwt-login/
-
-      - name: PHP syntax checker 5.6
-        uses: prestashop/github-action-php-lint/5.6@master
-        with:
-          working-directory: simple-jwt-login/
-
-      - name: PHP syntax checker 7.1
-        uses: prestashop/github-action-php-lint/7.1@master
-        with:
-          working-directory: simple-jwt-login/
-
-      - name: PHP syntax checker 7.2
-        uses: prestashop/github-action-php-lint/7.2@master
-        with:
-          working-directory: simple-jwt-login/
-
-      - name: PHP syntax checker 7.3
-        uses: prestashop/github-action-php-lint/7.3@master
-        with:
-          working-directory: simple-jwt-login/
-
-      - name: PHP syntax checker 7.4
-        uses: prestashop/github-action-php-lint/7.4@master
-        with:
-          working-directory: simple-jwt-login/
-
-      - name: PHP syntax checker 8.0
-        uses: prestashop/github-action-php-lint/8.0@master
-        with:
-          working-directory: simple-jwt-login/
-
-      - name: PHP syntax checker 8.1
-        uses: prestashop/github-action-php-lint/8.1@master
-        with:
-          working-directory: simple-jwt-login/
-
-      - name: PHP syntax checker 8.2
-        uses: prestashop/github-action-php-lint/8.2@master
+      - name: PHP Syntax Checker
+        uses: prestashop/github-action-php-lint/${{ matrix.php_version }}@master
         with:
           working-directory: simple-jwt-login/

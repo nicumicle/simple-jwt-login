@@ -6,7 +6,7 @@ parameters:
     - simple-jwt-login
     - tests
   bootstrapFiles:
-    - phpstan_bootstrap.php
+    - bootstrap.php
   ignoreErrors:
     -
        message: '#Method SimpleJWTLogin\\Modules\\WordPressDataInterface::(triggerFilter|triggerAction)\(\) invoked with .* parameters, 0 required.#'

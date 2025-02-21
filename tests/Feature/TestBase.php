@@ -242,6 +242,26 @@ class TestBase extends TestCase
     }
 
     /**
+     * @param string $email
+     * @param string $password
+     * @return ?string
+     */
+    protected function getJWTForUser($email, $password)
+    {
+        // Auth new User
+        list ($statusCode, $responseContents) = $this->authUser($email, $password);
+        $this->assertSame(200, $statusCode, "unable to authenticate user");
+
+        // Decode the JWT
+        $authResponse = json_decode($responseContents, true);
+        $this->assertNotNull($authResponse, "unable to decode response");
+        $this->assertArrayHasKey('data', $authResponse);
+        $this->assertArrayHasKey('jwt', $authResponse['data']);
+
+        return $authResponse['data']['jwt'];
+    }
+
+    /**
      * @param $jwt string
      * @return array<int,int|string>
      */

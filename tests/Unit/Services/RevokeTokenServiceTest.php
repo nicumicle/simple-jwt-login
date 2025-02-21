@@ -104,6 +104,7 @@ class RevokeTokenServiceTest extends TestCase
         ];
 
         $user = $this->getMockBuilder(WP_User::class)
+            ->disableOriginalConstructor()
             ->getMock();
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
@@ -197,6 +198,7 @@ class RevokeTokenServiceTest extends TestCase
         ];
 
         $user = $this->getMockBuilder(WP_User::class)
+            ->disableOriginalConstructor()
             ->getMock();
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));

@@ -13,6 +13,7 @@ use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Modules\WordPressDataInterface;
 use SimpleJWTLogin\Services\DeleteUserService;
+use WP_User;
 
 class DeleteUserServiceTest extends TestCase
 {
@@ -95,7 +96,8 @@ class DeleteUserServiceTest extends TestCase
 
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
-        $useMock = $this->getMockBuilder(\WP_User::class)
+        $useMock = $this->getMockBuilder(WP_User::class)
+            ->disableOriginalConstructor()
             ->getMock();
         $this->wordPressDataMock->method('getUserDetailsById')
             ->willReturn($useMock);
@@ -131,7 +133,8 @@ class DeleteUserServiceTest extends TestCase
 
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
-        $useMock = $this->getMockBuilder(\WP_User::class)
+        $useMock = $this->getMockBuilder(WP_User::class)
+            ->disableOriginalConstructor()
             ->getMock();
         $this->wordPressDataMock->method('getUserDetailsById')
             ->willReturn($useMock);

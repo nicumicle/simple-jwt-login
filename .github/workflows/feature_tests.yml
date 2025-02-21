@@ -6,43 +6,47 @@ on:
   pull_request:
     branches: [ master ]
 
-
 env:
   SITE_URL: simplejwtlogin.local
 
 jobs:
   run:
     runs-on: ubuntu-latest
-    name: Run Simple-JWT-Login Feature tests
+    name: Simple-JWT-Login Feature tests
+    strategy:
+      matrix:
+        php_version: [ 8.2, 8.3, 8.4 ]
     steps:
       - name: "Checkout"
         uses: actions/checkout@v4
 
-      - name: "Setup PHP"
+      - name: "🔧 Setup PHP"
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.3
+          php-version: ${{ matrix.php_version }}
           extension-csv: mbstring, intl #setup extensions
           ini-values-csv: post_max_size=256M, short_open_tag=On #setup php.ini configuration
           coverage: xdebug #setup coverage driver
           pecl: false
 
-      -   name: "MySQL Setup"
+      -   name: "🚧 MySQL Setup"
           run: |
             sudo /etc/init.d/mysql start
             mysql --user="root" --password="root" --execute="ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';"
-      -   name: "Apache Setup"
+      -   name: "🚧 Apache Setup"
           run: |
             sudo apt-get update 
-            sudo apt-get install libapache2-mod-php8.3
-            sudo a2enmod php8.3
+            sudo apt-get install libapache2-mod-php${{ matrix.php_version }}
+            sudo a2enmod php${{ matrix.php_version }}
             sudo /etc/init.d/apache2 start
-      -   name: "Install WordPress"
+      -   name: "🚧 Install WordPress"
           run: |
             sudo chmod -R 777 /var/www/html
             sudo rm -rf /var/www/html/*
             sudo apt-get update
             curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+            echo "🔖 WordPress Version:  $(php wp-cli.phar core version)"
+            echo "🔖 PHP Version: $(php -v)"
             php wp-cli.phar core download --path=/var/www/html/
             php wp-cli.phar config create --dbname=wordpress --dbuser=root --dbpass=root --dbhost=localhost --dbprefix=wp_ --path=/var/www/html
             chmod 600 /var/www/html/wp-config.php
@@ -54,11 +58,11 @@ jobs:
             php wp-cli.phar config set --raw WP_DEBUG true --path=/var/www/html
             php wp-cli.phar config set --raw WP_DEBUG_LOG true --path=/var/www/html
             php wp-cli.phar config set --raw WP_DEBUG_DISPLAY true --path=/var/www/html
-      -   name: "Init the plugin"
+      -   name: "🚧 Init the plugin"
           run: |
             cp -R simple-jwt-login /var/www/html/wp-content/plugins
             php wp-cli.phar plugin activate simple-jwt-login --path=/var/www/html
-      -   name: "Prepare Feature tests"
+      -   name: "🚧 Prepare Feature tests"
           run: |
             cp phpunit.xml.actions.dist /var/www/html/wp-content/plugins/phpunit.xml
             cp composer.json /var/www/html/wp-content/plugins/           
@@ -67,17 +71,17 @@ jobs:
             
             cd /var/www/html/wp-content/plugins
             composer install --prefer-dist --no-progress
-      -   name: "Change /var/www/html owner"
+      -   name: "🚧 Change /var/www/html owner"
           run: |
             sudo chown -R www-data:www-data /var/www/html
-      -   name: "Site healthcheck"
+      -   name: "🚑️ Site healthcheck"
           run: |
-            echo "5. Test WP API"
+            echo "🩺 Healthcheck WordPress endpoint"
             curl -v "http://$SITE_URL/index.php?rest_route=/wp/v2/users"
-            echo "Test Simple-JWT-Login endpoint"
+            echo "🩺 Healthcheck Simple-JWT-Login endpoint"
             curl -X POST -v "http://$SITE_URL/index.php?rest_route=/simple-jwt-login/v1/users"
 
-      -   name: "Run the Feature tests"
+      -   name: "🧪 Run the Feature tests"
           run: |
             cd /var/www/html/wp-content/plugins/
             XDEBUG_MODE=coverage vendor/bin/phpunit --testsuite "Feature" --coverage-text --testdox

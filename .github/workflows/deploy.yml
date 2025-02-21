@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ♻️ Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: 🦺 Validate Deploy to WordPress.org
         uses: simple-jwt-login/deployer@main
         with:
@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ♻️ Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: 🚀 Deploy ${{ github.ref_name }} to WordPress.org
         uses: simple-jwt-login/deployer@main
         with:

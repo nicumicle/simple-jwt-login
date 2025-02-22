@@ -63,16 +63,28 @@ class ProtectEndpointSettingsTest extends TestCase
 
         $this->assertSame(
             [
-                '123',
-                ''
+                [
+                    'url' => '123',
+                    'method' => 'ALL',
+                ],
+                [
+                    'url' => '123',
+                    'method' => 'ALL',
+                ],
             ],
             $protectSettings->getProtectedEndpoints()
         );
 
         $this->assertSame(
             [
-                'abc',
-                ''
+                [
+                    'url' => 'abc',
+                    'method' => 'ALL',
+                ],
+                [
+                    'url' => 'abc',
+                    'method' => 'ALL',
+                ],
             ],
             $protectSettings->getWhitelistedDomains()
         );
@@ -152,15 +164,27 @@ class ProtectEndpointSettingsTest extends TestCase
         );
         $this->assertSame(
             [
-                'test',
-                ''
+                [
+                    'url' => 'test',
+                    'method' => 'ALL',
+                ],
+                [
+                    'url' => 'test',
+                    'method' => 'ALL',
+                ],
             ],
             $settings->getProtectedEndpoints()
         );
         $this->assertSame(
             [
-                '123',
-                ''
+                [
+                    'url' => '123',
+                    'method' => 'ALL',
+                ],
+                [
+                    'url' => '123',
+                    'method' => 'ALL',
+                ],
             ],
             $settings->getWhitelistedDomains()
         );
@@ -182,15 +206,11 @@ class ProtectEndpointSettingsTest extends TestCase
             $settings->getAction()
         );
         $this->assertSame(
-            [
-                ''
-            ],
+            [],
             $settings->getWhitelistedDomains()
         );
         $this->assertSame(
-            [
-                ''
-            ],
+            [],
             $settings->getProtectedEndpoints()
         );
     }

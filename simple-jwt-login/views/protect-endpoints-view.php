@@ -123,10 +123,21 @@ if (!defined('ABSPATH')) {
                 ?>
                 <div class="form-group endpoint_row">
                     <div class="input-group">
+                        <select name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[whitelist_method][]"  class="multiple-checkboxes"
+                        >
+                            <option value="ALL" <?php echo ($endpoint['method'] == 'ALL' ? 'selected' : '');?>>ALL</option>
+                            <optgroup label="HTTP Methods">
+                                <option value="GET"  <?php echo ($endpoint['method'] == 'GET' ? 'selected' : '');?>>GET</option>
+                                <option value="POST"  <?php echo ($endpoint['method'] == 'POST' ? 'selected' : '');?>>POST</option>
+                                <option value="PUT"  <?php echo ($endpoint['method'] == 'PUT' ? 'selected' : '');?>>PUT</option>
+                                <option value="PATCH" <?php echo ($endpoint['method'] == 'PATCH' ? 'selected' : '');?>>PATCH</option>
+                                <option value="DELETE" <?php echo ($endpoint['method'] == 'DELETE' ? 'selected' : '');?>>DELETE</option>
+                            </optgroup>
+                        </select>
                         <input type="text"
                                name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[whitelist][]"
                                class="form-control"
-                               value="<?php echo esc_attr($endpoint); ?>"
+                               value="<?php echo esc_attr($endpoint['url']); ?>"
                                placeholder="<?php echo __('Endpoint path', 'simple-jwt-login'); ?>"
                         />
                         <div class="input-group-addon auth-code-delete-container">
@@ -168,14 +179,25 @@ if (!defined('ABSPATH')) {
     <div class="col-md-12">
         <div id="protected-domains">
             <?php
-            foreach ($jwtSettings->getProtectEndpointsSettings()->getProtectedEndpoints() as $endpoint) {
+            foreach ($jwtSettings->getProtectEndpointsSettings()->getProtectedEndpoints() as $properties) {
                 ?>
                 <div class="form-group endpoint_row">
                     <div class="input-group">
+                        <select name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[protect_method][]"  class="multiple-checkboxes"
+                        >
+                            <option value="ALL" <?php echo ($properties['method'] == 'ALL' ? 'selected' : '');?>>ALL</option>
+                            <optgroup label="HTTP Methods">
+                                <option value="GET"  <?php echo ($properties['method'] == 'GET' ? 'selected' : '');?>>GET</option>
+                                <option value="POST"  <?php echo ($properties['method'] == 'POST' ? 'selected' : '');?>>POST</option>
+                                <option value="PUT"  <?php echo ($properties['method'] == 'PUT' ? 'selected' : '');?>>PUT</option>
+                                <option value="PATCH" <?php echo ($properties['method'] == 'PATCH' ? 'selected' : '');?>>PATCH</option>
+                                <option value="DELETE" <?php echo ($properties['method'] == 'DELETE' ? 'selected' : '');?>>DELETE</option>
+                            </optgroup>
+                        </select>
                         <input type="text"
                                name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[protect][]"
                                class="form-control"
-                               value="<?php echo esc_attr($endpoint); ?>"
+                               value="<?php echo esc_attr($properties['url']); ?>"
                                placeholder="<?php echo __('Endpoint path', 'simple-jwt-login'); ?>"
                         />
                         <div class="input-group-addon auth-code-delete-container">
@@ -196,10 +218,18 @@ if (!defined('ABSPATH')) {
 </div>
 <hr/>
 
-
 <div id="endpoint_whitelist_line" style="display: none;">
     <div class="form-group endpoint_row">
         <div class="input-group">
+            <select name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[whitelist_method][]"  class="multiple-checkboxes"
+            >
+                <option value="ALL">ALL</option>
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+                <option value="PUT">PUT</option>
+                <option value="PATCH">PATCH</option>
+                <option value="DELETE">DELETE</option>
+            </select>
             <input type="text"
                    name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[whitelist][]"
                    class="form-control"
@@ -221,6 +251,15 @@ if (!defined('ABSPATH')) {
 <div id="endpoint_protect_line" style="display: none;">
     <div class="form-group endpoint_row">
         <div class="input-group">
+            <select name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[protect_method][]" class="multiple-checkboxes"
+            >
+                <option value="ALL">ALL</option>
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+                <option value="PUT">PUT</option>
+                <option value="PATCH">PATCH</option>
+                <option value="DELETE">DELETE</option>
+            </select>
             <input type="text"
                    name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[protect][]"
                    class="form-control"

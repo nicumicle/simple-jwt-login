@@ -60,7 +60,7 @@ class ActiveOnAllEndpointsTest extends TestBase
     {
         $resp = $this->client->get(self::API_URL . "?rest_route=/wp/v2/posts");
 
-        $this->assertEquals(200, $resp->getStatusCode());
+        $this->assertEquals(200, $resp->getStatusCode(), $resp->getBody()->getContents());
     }
 
     #[TestDox("WordPress endpoint can't be accessed without JWT if whitelisted")]

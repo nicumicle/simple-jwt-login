@@ -10,7 +10,12 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
     const ALL_ENDPOINTS = 1;
     const SPECIFIC_ENDPOINTS = 2;
 
-    public const ALL_REQUEST_METHOD = 'ALL';
+    public const REQUEST_METHOD_ALL = 'ALL';
+    public const REQUEST_METHOD_GET = 'GET';
+    public const REQUEST_METHOD_POST = 'POST';
+    public const REQUEST_METHOD_PUT = 'PUT';
+    public const REQUEST_METHOD_PATCH = 'PATCH';
+    public const REQUEST_METHOD_DELETE = 'DELETE';
 
     public function initSettingsFromPost()
     {
@@ -134,7 +139,7 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
                 'url' => $endpointPath,
                 'method' => !empty($methods[$key])
                     ? strtoupper($methods[$key])
-                    : self::ALL_REQUEST_METHOD,
+                    : self::REQUEST_METHOD_ALL,
             ];
         }
 

@@ -150,7 +150,7 @@ class ProtectEndpointService extends BaseService
 
             if (strpos($endpoint, $protectedURL) === 0) {
                 switch ($protectedEndpoint['method']) {
-                    case 'ALL':
+                    case ProtectEndpointSettings::REQUEST_METHOD_ALL:
                         $isEndpointProtected = $setValue; // Same as before.
                         break;
                     default:

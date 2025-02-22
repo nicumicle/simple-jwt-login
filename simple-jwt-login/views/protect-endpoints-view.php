@@ -125,13 +125,27 @@ if (!defined('ABSPATH')) {
                     <div class="input-group">
                         <select name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[whitelist_method][]"  class="multiple-checkboxes"
                         >
-                            <option value="ALL" <?php echo ($endpoint['method'] == 'ALL' ? 'selected' : '');?>>ALL</option>
-                            <optgroup label="HTTP Methods">
-                                <option value="GET"  <?php echo ($endpoint['method'] == 'GET' ? 'selected' : '');?>>GET</option>
-                                <option value="POST"  <?php echo ($endpoint['method'] == 'POST' ? 'selected' : '');?>>POST</option>
-                                <option value="PUT"  <?php echo ($endpoint['method'] == 'PUT' ? 'selected' : '');?>>PUT</option>
-                                <option value="PATCH" <?php echo ($endpoint['method'] == 'PATCH' ? 'selected' : '');?>>PATCH</option>
-                                <option value="DELETE" <?php echo ($endpoint['method'] == 'DELETE' ? 'selected' : '');?>>DELETE</option>
+                            <option value="<?php echo ProtectEndpointSettings::REQUEST_METHOD_ALL;?>"
+                                <?php echo ($endpoint['method'] == ProtectEndpointSettings::REQUEST_METHOD_ALL ? 'selected' : '');?>
+                            >
+                                <?php echo __("ALL", "simple-jwt-login");?>
+                            </option>
+                            <optgroup label="<?php echo __('HTTP Methods', 'simple-jwt-login');?>">
+                                <option value="GET"  <?php echo ($endpoint['method'] == 'GET' ? 'selected' : '');?>>
+                                    <?php echo __("GET", "simple-jwt-login");?>
+                                </option>
+                                <option value="POST"  <?php echo ($endpoint['method'] == 'POST' ? 'selected' : '');?>>
+                                    <?php echo __("POST", "simple-jwt-login");?>
+                                </option>
+                                <option value="PUT"  <?php echo ($endpoint['method'] == 'PUT' ? 'selected' : '');?>>
+                                    <?php echo __("PUT", "simple-jwt-login");?>
+                                </option>
+                                <option value="PATCH" <?php echo ($endpoint['method'] == 'PATCH' ? 'selected' : '');?>>
+                                    <?php echo __("PATCH", "simple-jwt-login");?>
+                                </option>
+                                <option value="DELETE" <?php echo ($endpoint['method'] == 'DELETE' ? 'selected' : '');?>>
+                                    <?php echo __("DELETE", "simple-jwt-login");?>
+                                </option>
                             </optgroup>
                         </select>
                         <input type="text"
@@ -185,13 +199,27 @@ if (!defined('ABSPATH')) {
                     <div class="input-group">
                         <select name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[protect_method][]"  class="multiple-checkboxes"
                         >
-                            <option value="ALL" <?php echo ($properties['method'] == 'ALL' ? 'selected' : '');?>>ALL</option>
-                            <optgroup label="HTTP Methods">
-                                <option value="GET"  <?php echo ($properties['method'] == 'GET' ? 'selected' : '');?>>GET</option>
-                                <option value="POST"  <?php echo ($properties['method'] == 'POST' ? 'selected' : '');?>>POST</option>
-                                <option value="PUT"  <?php echo ($properties['method'] == 'PUT' ? 'selected' : '');?>>PUT</option>
-                                <option value="PATCH" <?php echo ($properties['method'] == 'PATCH' ? 'selected' : '');?>>PATCH</option>
-                                <option value="DELETE" <?php echo ($properties['method'] == 'DELETE' ? 'selected' : '');?>>DELETE</option>
+                            <option value="<?php echo ProtectEndpointSettings::REQUEST_METHOD_ALL;?>"
+                                <?php echo ($properties['method'] == ProtectEndpointSettings::REQUEST_METHOD_ALL ? 'selected' : '');?>
+                            >
+                                <?php echo __("ALL", "simple-jwt-login");?>
+                            </option>
+                            <optgroup label="<?php echo __('HTTP Methods', 'simple-jwt-login');?>">
+                                <option value="GET"  <?php echo ($properties['method'] == 'GET' ? 'selected' : '');?>>
+                                    <?php echo __("GET", "simple-jwt-login");?>
+                                </option>
+                                <option value="POST"  <?php echo ($properties['method'] == 'POST' ? 'selected' : '');?>>
+                                    <?php echo __("POST", "simple-jwt-login");?>
+                                </option>
+                                <option value="PUT"  <?php echo ($properties['method'] == 'PUT' ? 'selected' : '');?>>
+                                    <?php echo __("PUT", "simple-jwt-login");?>
+                                </option>
+                                <option value="PATCH" <?php echo ($properties['method'] == 'PATCH' ? 'selected' : '');?>>
+                                    <?php echo __("PATCH", "simple-jwt-login");?>
+                                </option>
+                                <option value="DELETE" <?php echo ($properties['method'] == 'DELETE' ? 'selected' : '');?>>
+                                    <?php echo __("DELETE", "simple-jwt-login");?>
+                                </option>
                             </optgroup>
                         </select>
                         <input type="text"
@@ -223,12 +251,26 @@ if (!defined('ABSPATH')) {
         <div class="input-group">
             <select name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[whitelist_method][]"  class="multiple-checkboxes"
             >
-                <option value="ALL">ALL</option>
-                <option value="GET">GET</option>
-                <option value="POST">POST</option>
-                <option value="PUT">PUT</option>
-                <option value="PATCH">PATCH</option>
-                <option value="DELETE">DELETE</option>
+                <option value="<?php echo ProtectEndpointSettings::REQUEST_METHOD_ALL;?>">
+                    <?php echo __("ALL", "simple-jwt-login");?>
+                </option>
+                <optgroup label="<?php echo __('HTTP Methods', 'simple-jwt-login');?>">
+                    <option value="GET">
+                        <?php echo __("GET", "simple-jwt-login");?>
+                    </option>
+                    <option value="POST">
+                        <?php echo __("POST", "simple-jwt-login");?>
+                    </option>
+                    <option value="PUT">
+                        <?php echo __("PUT", "simple-jwt-login");?>
+                    </option>
+                    <option value="PATCH">
+                        <?php echo __("PATCH", "simple-jwt-login");?>
+                    </option>
+                    <option value="DELETE">
+                        <?php echo __("DELETE", "simple-jwt-login");?>
+                    </option>
+                </optgroup>
             </select>
             <input type="text"
                    name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[whitelist][]"
@@ -253,12 +295,26 @@ if (!defined('ABSPATH')) {
         <div class="input-group">
             <select name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[protect_method][]" class="multiple-checkboxes"
             >
-                <option value="ALL">ALL</option>
-                <option value="GET">GET</option>
-                <option value="POST">POST</option>
-                <option value="PUT">PUT</option>
-                <option value="PATCH">PATCH</option>
-                <option value="DELETE">DELETE</option>
+                <option value="<?php echo ProtectEndpointSettings::REQUEST_METHOD_ALL;?>">
+                    <?php echo __("ALL", "simple-jwt-login");?>
+                </option>
+                <optgroup label="<?php echo __('HTTP Methods', 'simple-jwt-login');?>">
+                    <option value="GET">
+                        <?php echo __("GET", "simple-jwt-login");?>
+                    </option>
+                    <option value="POST">
+                        <?php echo __("POST", "simple-jwt-login");?>
+                    </option>
+                    <option value="PUT">
+                        <?php echo __("PUT", "simple-jwt-login");?>
+                    </option>
+                    <option value="PATCH">
+                        <?php echo __("PATCH", "simple-jwt-login");?>
+                    </option>
+                    <option value="DELETE">
+                        <?php echo __("DELETE", "simple-jwt-login");?>
+                    </option>
+                </optgroup>
             </select>
             <input type="text"
                    name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[protect][]"

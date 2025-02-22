@@ -1,36 +1,41 @@
-# Copyright (C) 2024 Nicu Micle
+# Copyright (C) 2025 Nicu Micle
 # This file is distributed under the same license as the Simple-JWT-Login plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Simple-JWT-Login 3.5.5\n"
+"Project-Id-Version: Simple-JWT-Login 3.5.8\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/simple-jwt-login\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-05-09T08:34:31+00:00\n"
+"POT-Creation-Date: 2025-02-22T20:51:34+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.8.1\n"
+"X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: simple-jwt-login\n"
 
 #. Plugin Name of the plugin
+#: simple-jwt-login.php
 msgid "Simple-JWT-Login"
 msgstr ""
 
 #. Plugin URI of the plugin
+#: simple-jwt-login.php
 msgid "https://simplejwtlogin.com"
 msgstr ""
 
 #. Description of the plugin
+#: simple-jwt-login.php
 msgid "Simple-JWT-Login REST API Plugin. Allows you to login / register to WordPress using JWT."
 msgstr ""
 
 #. Author of the plugin
+#: simple-jwt-login.php
 msgid "Nicu Micle"
 msgstr ""
 
 #. Author URI of the plugin
+#: simple-jwt-login.php
 msgid "https://profiles.wordpress.org/nicu_m/"
 msgstr ""
 
@@ -173,31 +178,31 @@ msgstr ""
 msgid "Missing JWT parameter for Delete User."
 msgstr ""
 
-#: src/Modules/Settings/GeneralSettings.php:148
+#: src/Modules/Settings/GeneralSettings.php:156
 msgid "Route namespace could not be empty."
 msgstr ""
 
-#: src/Modules/Settings/GeneralSettings.php:162
+#: src/Modules/Settings/GeneralSettings.php:170
 msgid "Request Keys are required."
 msgstr ""
 
-#: src/Modules/Settings/GeneralSettings.php:179
+#: src/Modules/Settings/GeneralSettings.php:187
 msgid "Public or private key is not defined in code."
 msgstr ""
 
-#: src/Modules/Settings/GeneralSettings.php:187
+#: src/Modules/Settings/GeneralSettings.php:195
 msgid "Private key is not defined in code."
 msgstr ""
 
-#: src/Modules/Settings/GeneralSettings.php:202
+#: src/Modules/Settings/GeneralSettings.php:210
 msgid "JWT Decryption public and private key are required."
 msgstr ""
 
-#: src/Modules/Settings/GeneralSettings.php:213
+#: src/Modules/Settings/GeneralSettings.php:221
 msgid "JWT Decryption key is required."
 msgstr ""
 
-#: src/Modules/Settings/GeneralSettings.php:228
+#: src/Modules/Settings/GeneralSettings.php:236
 msgid "You have to have at least on option enabled in 'Get JWT token From'"
 msgstr ""
 
@@ -209,7 +214,7 @@ msgstr ""
 msgid "Invalid custom URL provided."
 msgstr ""
 
-#: src/Modules/Settings/ProtectEndpointSettings.php:58
+#: src/Modules/Settings/ProtectEndpointSettings.php:79
 msgid "You need to add at least one endpoint."
 msgstr ""
 
@@ -356,7 +361,7 @@ msgid "Authentication is not enabled."
 msgstr ""
 
 #: src/Services/AuthenticateService.php:234
-#: src/Services/LoginService.php:103
+#: src/Services/LoginService.php:107
 #: src/Services/RegisterUserService.php:195
 #: src/Services/ResetPasswordService.php:27
 msgid "Invalid Auth Code ( %s ) provided."
@@ -396,7 +401,7 @@ msgstr ""
 
 #: src/Services/DeleteUserService.php:86
 #: src/Services/DeleteUserService.php:100
-#: src/Services/LoginService.php:52
+#: src/Services/LoginService.php:56
 #: src/Services/RevokeTokenService.php:40
 #: src/Services/ValidateTokenService.php:45
 msgid "User not found."
@@ -406,19 +411,19 @@ msgstr ""
 msgid "User was successfully deleted."
 msgstr ""
 
-#: src/Services/LoginService.php:86
+#: src/Services/LoginService.php:90
 msgid "Auto-login is not enabled on this website."
 msgstr ""
 
-#: src/Services/LoginService.php:94
+#: src/Services/LoginService.php:98
 msgid "Wrong Request."
 msgstr ""
 
-#: src/Services/LoginService.php:115
+#: src/Services/LoginService.php:119
 msgid "This IP[ %s ] is not allowed to auto-login."
 msgstr ""
 
-#: src/Services/LoginService.php:130
+#: src/Services/LoginService.php:134
 msgid "The JWT issuer(iss) is not allowed to auto-login."
 msgstr ""
 
@@ -746,10 +751,10 @@ msgstr ""
 
 #: views/auth-codes-view.php:122
 #: views/layout.php:291
-#: views/protect-endpoints-view.php:135
-#: views/protect-endpoints-view.php:184
-#: views/protect-endpoints-view.php:212
-#: views/protect-endpoints-view.php:233
+#: views/protect-endpoints-view.php:160
+#: views/protect-endpoints-view.php:234
+#: views/protect-endpoints-view.php:284
+#: views/protect-endpoints-view.php:328
 msgid "delete"
 msgstr ""
 
@@ -954,8 +959,8 @@ msgstr ""
 #: views/dashboard-view.php:220
 #: views/general-view.php:286
 #: views/general-view.php:326
-#: views/general-view.php:370
-#: views/general-view.php:414
+#: views/general-view.php:367
+#: views/general-view.php:408
 msgid "On"
 msgstr ""
 
@@ -968,8 +973,8 @@ msgstr ""
 #: views/dashboard-view.php:221
 #: views/general-view.php:279
 #: views/general-view.php:317
-#: views/general-view.php:361
-#: views/general-view.php:405
+#: views/general-view.php:358
+#: views/general-view.php:399
 msgid "Off"
 msgstr ""
 
@@ -1158,20 +1163,32 @@ msgid "Get JWT token from"
 msgstr ""
 
 #: views/general-view.php:268
-#: views/general-view.php:391
+#: views/general-view.php:385
 msgid "Parameter name"
 msgstr ""
 
-#: views/general-view.php:427
+#: views/general-view.php:421
 msgid "If the JWT is present in multiple places, the higher number of the option overwrites the smaller number."
 msgstr ""
 
-#: views/general-view.php:448
+#: views/general-view.php:442
 msgid "All WordPress endpoints checks for JWT authentication"
 msgstr ""
 
-#: views/general-view.php:452
+#: views/general-view.php:446
 msgid "If the JWT is provided on other endpoints, the plugin will try to authenticate the user from the JWT in order to perform that API call."
+msgstr ""
+
+#: views/general-view.php:460
+msgid "Security"
+msgstr ""
+
+#: views/general-view.php:473
+msgid "Enable safe redirects"
+msgstr ""
+
+#: views/general-view.php:477
+msgid "Use wp_safe_redirect for all the redirects"
 msgstr ""
 
 #: views/hooks-view.php:20
@@ -1426,22 +1443,71 @@ msgid "These endpoints will skip the check for the JWT."
 msgstr ""
 
 #: views/protect-endpoints-view.php:115
-#: views/protect-endpoints-view.php:164
+#: views/protect-endpoints-view.php:189
 msgid "Add Endpoint"
 msgstr ""
 
-#: views/protect-endpoints-view.php:130
-#: views/protect-endpoints-view.php:179
+#: views/protect-endpoints-view.php:131
+#: views/protect-endpoints-view.php:205
+#: views/protect-endpoints-view.php:255
+#: views/protect-endpoints-view.php:299
+msgid "ALL"
+msgstr ""
+
+#: views/protect-endpoints-view.php:133
 #: views/protect-endpoints-view.php:207
-#: views/protect-endpoints-view.php:228
+#: views/protect-endpoints-view.php:257
+#: views/protect-endpoints-view.php:301
+msgid "HTTP Methods"
+msgstr ""
+
+#: views/protect-endpoints-view.php:135
+#: views/protect-endpoints-view.php:209
+#: views/protect-endpoints-view.php:259
+#: views/protect-endpoints-view.php:303
+msgid "GET"
+msgstr ""
+
+#: views/protect-endpoints-view.php:138
+#: views/protect-endpoints-view.php:212
+#: views/protect-endpoints-view.php:262
+#: views/protect-endpoints-view.php:306
+msgid "POST"
+msgstr ""
+
+#: views/protect-endpoints-view.php:141
+#: views/protect-endpoints-view.php:215
+#: views/protect-endpoints-view.php:265
+#: views/protect-endpoints-view.php:309
+msgid "PUT"
+msgstr ""
+
+#: views/protect-endpoints-view.php:144
+#: views/protect-endpoints-view.php:218
+#: views/protect-endpoints-view.php:268
+#: views/protect-endpoints-view.php:312
+msgid "PATCH"
+msgstr ""
+
+#: views/protect-endpoints-view.php:147
+#: views/protect-endpoints-view.php:221
+#: views/protect-endpoints-view.php:271
+#: views/protect-endpoints-view.php:315
+msgid "DELETE"
+msgstr ""
+
+#: views/protect-endpoints-view.php:155
+#: views/protect-endpoints-view.php:229
+#: views/protect-endpoints-view.php:279
+#: views/protect-endpoints-view.php:323
 msgid "Endpoint path"
 msgstr ""
 
-#: views/protect-endpoints-view.php:154
+#: views/protect-endpoints-view.php:179
 msgid "Protected endpoints"
 msgstr ""
 
-#: views/protect-endpoints-view.php:157
+#: views/protect-endpoints-view.php:182
 msgid "The JWT will be required on the following endpoints."
 msgstr ""
 

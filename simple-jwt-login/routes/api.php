@@ -132,7 +132,7 @@ add_action('rest_api_init', function () {
 
             $documentRoot = esc_html($_SERVER['DOCUMENT_ROOT']);
 
-            $hasAccess = $service->hasAccess($currentURL, $documentRoot, $request);
+            $hasAccess = $service->hasAccess($_SERVER['REQUEST_METHOD'], $currentURL, $documentRoot, $request);
 
             if ($hasAccess === false) {
                 @header('Content-Type: application/json; charset=UTF-8');

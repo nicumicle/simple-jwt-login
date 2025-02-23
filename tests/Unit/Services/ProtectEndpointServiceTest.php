@@ -35,12 +35,13 @@ class ProtectEndpointServiceTest extends TestCase
     #[DataProvider('accessProvider')]
     /**
      * @param bool $expectedResult
+     * @param string $requestMethod
      * @param string $currentUrl
      * @param string $documentRoot
      * @param array $request
      * @param array $settings
      */
-    public function testHasAccess($expectedResult, $currentUrl, $documentRoot, $request, $settings)
+    public function testHasAccess($expectedResult, $requestMethod, $currentUrl, $documentRoot, $request, $settings)
     {
         $this->wordPressData->method('getOptionFromDatabase')
             ->willReturn(json_encode([
@@ -68,7 +69,7 @@ class ProtectEndpointServiceTest extends TestCase
             )
             ->withSession([]);
 
-        $result = $service->hasAccess($currentUrl, $documentRoot, $request);
+        $result = $service->hasAccess($requestMethod, $currentUrl, $documentRoot, $request);
         $this->assertSame($expectedResult, $result);
     }
 
@@ -80,6 +81,7 @@ class ProtectEndpointServiceTest extends TestCase
         return [
             'test-not-enabled' => [
                 'expectedResult' => true,
+                'requestMethod' => 'GET',
                 'currentUrl' => '/wp-json/v2/posts',
                 'documentRoot' => '/var/www/html',
                 'request' => [
@@ -97,6 +99,7 @@ class ProtectEndpointServiceTest extends TestCase
             ],
             'test-enabled-all-endpoints' => [
                 'expectedResult' => true,
+                'requestMethod' => 'GET',
                 'currentUrl' => '/wp-json/v2/posts',
                 'documentRoot' => '/var/www/html',
                 'request' => [
@@ -110,8 +113,28 @@ class ProtectEndpointServiceTest extends TestCase
                     ]
                 ]
             ],
+            'test-enabled-all-endpoints-with-method' => [
+                'expectedResult' => true,
+                'requestMethod' => 'GET',
+                'currentUrl' => '/wp-json/v2/posts',
+                'documentRoot' => '/var/www/html',
+                'request' => [
+                    'rest_route' => '/v2/posts/'
+                ],
+                'settings' => [
+                    'enabled' => true,
+                    'action' => ProtectEndpointSettings::ALL_ENDPOINTS,
+                    'whitelist' => [
+                        '/wp-json/v2/posts'
+                    ],
+                    'whitelist_method' => [
+                        'GET',
+                    ]
+                ]
+            ],
             'test-enabled-all-endpoints-with-no-whitelist' => [
                 'expectedResult' => false,
+                'requestMethod' => 'GET',
                 'currentUrl' => '/wp-json/v2/posts',
                 'documentRoot' => '/var/www/html',
                 'request' => [
@@ -126,6 +149,7 @@ class ProtectEndpointServiceTest extends TestCase
             ],
             'test-enabled-specific-endpoints' => [
                 'expectedResult' => false,
+                'requestMethod' => 'GET',
                 'currentUrl' => '/wp-json/v2/posts',
                 'documentRoot' => '/var/www/html',
                 'request' => [
@@ -139,8 +163,66 @@ class ProtectEndpointServiceTest extends TestCase
                     ]
                 ]
             ],
+            'test-enabled-specific-endpoints-with-method' => [
+                'expectedResult' => false,
+                'requestMethod' => 'GET',
+                'currentUrl' => '/wp-json/v2/posts',
+                'documentRoot' => '/var/www/html',
+                'request' => [
+                    'rest_route' => '/wp/v2/posts/'
+                ],
+                'settings' => [
+                    'enabled' => true,
+                    'action' => ProtectEndpointSettings::SPECIFIC_ENDPOINTS,
+                    'protect' => [
+                        '/wp-json/wp/v2/posts'
+                    ],
+                    'protect_method' => [
+                        'GET',
+                    ]
+                ]
+            ],
+            'test-enabled-specific-endpoints-with-method-all' => [
+                'expectedResult' => false,
+                'requestMethod' => 'GET',
+                'currentUrl' => '/wp-json/v2/posts',
+                'documentRoot' => '/var/www/html',
+                'request' => [
+                    'rest_route' => '/wp/v2/posts/'
+                ],
+                'settings' => [
+                    'enabled' => true,
+                    'action' => ProtectEndpointSettings::SPECIFIC_ENDPOINTS,
+                    'protect' => [
+                        '/wp-json/wp/v2/posts'
+                    ],
+                    'protect_method' => [
+                        'ALL',
+                    ]
+                ]
+            ],
+            'test-enabled-specific-endpoints-with-different-method' => [
+                'expectedResult' => true,
+                'requestMethod' => 'GET',
+                'currentUrl' => '/wp-json/v2/posts',
+                'documentRoot' => '/var/www/html',
+                'request' => [
+                    'rest_route' => '/wp/v2/posts/'
+                ],
+                'settings' => [
+                    'enabled' => true,
+                    'action' => ProtectEndpointSettings::SPECIFIC_ENDPOINTS,
+                    'protect' => [
+                        '/wp-json/wp/v2/posts'
+                    ],
+                    'protect_method' => [
+                        'POST',
+                    ]
+                ]
+            ],
             'test-enabled-specific-endpoints-2' => [
                 'expectedResult' => false,
+                'requestMethod' => 'GET',
                 'currentUrl' => '/wp-json/v2/posts',
                 'documentRoot' => '/var/www/html',
                 'request' => [
@@ -156,6 +238,7 @@ class ProtectEndpointServiceTest extends TestCase
             ],
             'test-enabled-all-endpoints_on_wp_admin' => [
                 'expectedResult' => true,
+                'requestMethod' => 'GET',
                 'currentUrl' => '/wp-admin/something',
                 'documentRoot' => '/var/www/html',
                 'request' => [
@@ -172,6 +255,7 @@ class ProtectEndpointServiceTest extends TestCase
             ],
             'test_invalid_action' => [
                 'expectedResult' => false,
+                'requestMethod' => 'GET',
                 'currentUrl' => '/wp-json/wp/v2/posts',
                 'documentRoot' => '/var/www/html',
                 'request' => [
@@ -188,6 +272,7 @@ class ProtectEndpointServiceTest extends TestCase
             ],
             'test_empty_endpoint' => [
                 'expectedResult' => false,
+                'requestMethod' => 'GET',
                 'currentUrl' => 'wp-json',
                 'documentRoot' => '/var/www/html',
                 'request' => [
@@ -248,7 +333,7 @@ class ProtectEndpointServiceTest extends TestCase
             )
             ->withSession([]);
 
-        $result = $service->hasAccess('/wp-json/v2/posts', '/var/www/html', $request);
+        $result = $service->hasAccess('GET', '/wp-json/v2/posts', '/var/www/html', $request);
         $this->assertSame(false, $result);
     }
 
@@ -294,7 +379,7 @@ class ProtectEndpointServiceTest extends TestCase
             )
             ->withSession([]);
 
-        $result = $service->hasAccess('/wp-json/simple-jwt-login/v1/auth', '/var/www/html', $request);
+        $result = $service->hasAccess('GET', '/wp-json/simple-jwt-login/v1/auth', '/var/www/html', $request);
         $this->assertTrue($result);
     }
 }

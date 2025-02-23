@@ -10,12 +10,12 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
     const ALL_ENDPOINTS = 1;
     const SPECIFIC_ENDPOINTS = 2;
 
-    public const REQUEST_METHOD_ALL = 'ALL';
-    public const REQUEST_METHOD_GET = 'GET';
-    public const REQUEST_METHOD_POST = 'POST';
-    public const REQUEST_METHOD_PUT = 'PUT';
-    public const REQUEST_METHOD_PATCH = 'PATCH';
-    public const REQUEST_METHOD_DELETE = 'DELETE';
+    const REQUEST_METHOD_ALL = 'ALL';
+    const REQUEST_METHOD_GET = 'GET';
+    const REQUEST_METHOD_POST = 'POST';
+    const REQUEST_METHOD_PUT = 'PUT';
+    const REQUEST_METHOD_PATCH = 'PATCH';
+    const REQUEST_METHOD_DELETE = 'DELETE';
 
     public function initSettingsFromPost()
     {

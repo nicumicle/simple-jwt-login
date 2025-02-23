@@ -8,6 +8,80 @@ if (!defined('ABSPATH')) {
     /** @phpstan-ignore-next-line  */
     exit;
 } // Exit if accessed directly
+
+/**
+ * Helper function for drawing protect endpoint line
+ * @param string $type
+ * @param ?array<string,mixed> $endpoint
+ * @return void
+ * @throws Exception
+ */
+function simple_jwt_login_draw_endpoin_row($type, $endpoint)
+{
+    ?>
+    <div class="form-group endpoint_row">
+        <div class="input-group">
+            <select
+                name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP . "[" . $type . "_method][]");?>"
+                >
+                <option
+                    value="<?php echo esc_attr(ProtectEndpointSettings::REQUEST_METHOD_ALL);?>"
+                    <?php echo (!empty($endpoint) && $endpoint['method'] == ProtectEndpointSettings::REQUEST_METHOD_ALL ? 'selected' : '');?>
+                >
+                    <?php echo __("ALL", "simple-jwt-login");?>
+                </option>
+                <optgroup label="<?php echo __('HTTP Methods', 'simple-jwt-login');?>">
+                    <option
+                        value="<?php echo esc_attr(ProtectEndpointSettings::REQUEST_METHOD_GET);?>"
+                        <?php echo (!empty($endpoint) && $endpoint['method'] == ProtectEndpointSettings::REQUEST_METHOD_GET ? 'selected' : '');?>
+                    >
+                        <?php echo __("GET", "simple-jwt-login");?>
+                    </option>
+                    <option
+                        value="<?php echo esc_attr(ProtectEndpointSettings::REQUEST_METHOD_POST);?>"
+                        <?php echo (!empty($endpoint) && $endpoint['method'] == ProtectEndpointSettings::REQUEST_METHOD_POST ? 'selected' : '');?>
+                    >
+                        <?php echo __("POST", "simple-jwt-login");?>
+                    </option>
+                    <option
+                        value="<?php echo esc_attr(ProtectEndpointSettings::REQUEST_METHOD_PUT);?>""
+                        <?php echo (!empty($endpoint) && $endpoint['method'] == ProtectEndpointSettings::REQUEST_METHOD_PUT ? 'selected' : '');?>
+                    >
+                        <?php echo __("PUT", "simple-jwt-login");?>
+                    </option>
+                    <option
+                        value="<?php echo esc_attr(ProtectEndpointSettings::REQUEST_METHOD_PATCH);?>"
+                        <?php echo (!empty($endpoint) && $endpoint['method'] == ProtectEndpointSettings::REQUEST_METHOD_PATCH ? 'selected' : '');?>
+                    >
+                        <?php echo __("PATCH", "simple-jwt-login");?>
+                    </option>
+                    <option
+                        value="<?php echo esc_attr(ProtectEndpointSettings::REQUEST_METHOD_DELETE);?>"
+                        <?php echo (!empty($endpoint) && $endpoint['method'] == ProtectEndpointSettings::REQUEST_METHOD_DELETE ? 'selected' : '');?>
+                    >
+                        <?php echo __("DELETE", "simple-jwt-login");?>
+                    </option>
+                </optgroup>
+            </select>
+            <input type="text"
+                   name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP . "[" . $type . "][]");?>"
+                   class="form-control"
+                   value="<?php echo !empty($endpoint) ? esc_attr($endpoint['url']) : ""; ?>"
+                   placeholder="<?php echo __('Endpoint path', 'simple-jwt-login'); ?>"
+            />
+            <div class="input-group-addon auth-code-delete-container">
+                <a href="javascript:void(0)"
+                   onclick="jwt_login_remove_endpoint_row(jQuery(this));"
+                   title="<?php echo __('delete', 'simple-jwt-login'); ?>"
+                >
+                    <i class="delete-auth-code" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <?php
+}
+
 /**
  * @var SettingsErrors $settingsErrors
  * @var SimpleJWTLoginSettings $jwtSettings
@@ -61,7 +135,6 @@ if (!defined('ABSPATH')) {
     </div>
 </div>
 <hr/>
-
 
 <div class="row">
     <div class="col-md-6">
@@ -120,33 +193,11 @@ if (!defined('ABSPATH')) {
         <div id="whitelisted-domains">
             <?php
             foreach ($jwtSettings->getProtectEndpointsSettings()->getWhitelistedDomains() as $endpoint) {
-                ?>
-                <div class="form-group endpoint_row">
-                    <div class="input-group">
-                        <input type="text"
-                               name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[whitelist][]"
-                               class="form-control"
-                               value="<?php echo esc_attr($endpoint); ?>"
-                               placeholder="<?php echo __('Endpoint path', 'simple-jwt-login'); ?>"
-                        />
-                        <div class="input-group-addon auth-code-delete-container">
-                            <a href="javascript:void(0)"
-                               onclick="jwt_login_remove_endpoint_row(jQuery(this));"
-                               title="<?php echo __('delete', 'simple-jwt-login'); ?>"
-                            >
-                                <i class="delete-auth-code" aria-hidden="true"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <?php
-            }
-            ?>
+                simple_jwt_login_draw_endpoin_row("whitelist", $endpoint);
+            }?>
         </div>
     </div>
 </div>
-
-
 
 <div class="row" id="protected_endpoints_protected">
     <div class="col-md-12">
@@ -169,26 +220,7 @@ if (!defined('ABSPATH')) {
         <div id="protected-domains">
             <?php
             foreach ($jwtSettings->getProtectEndpointsSettings()->getProtectedEndpoints() as $endpoint) {
-                ?>
-                <div class="form-group endpoint_row">
-                    <div class="input-group">
-                        <input type="text"
-                               name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[protect][]"
-                               class="form-control"
-                               value="<?php echo esc_attr($endpoint); ?>"
-                               placeholder="<?php echo __('Endpoint path', 'simple-jwt-login'); ?>"
-                        />
-                        <div class="input-group-addon auth-code-delete-container">
-                            <a href="javascript:void(0)"
-                               onclick="jwt_login_remove_endpoint_row(jQuery(this));"
-                               title="<?php echo __('delete', 'simple-jwt-login'); ?>"
-                            >
-                                <i class="delete-auth-code" aria-hidden="true"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <?php
+                simple_jwt_login_draw_endpoin_row('protect', $endpoint);
             }
             ?>
         </div>
@@ -196,45 +228,13 @@ if (!defined('ABSPATH')) {
 </div>
 <hr/>
 
-
+<?php
+    // Empty endpoint lines used by JS for inserting new rows
+?>
 <div id="endpoint_whitelist_line" style="display: none;">
-    <div class="form-group endpoint_row">
-        <div class="input-group">
-            <input type="text"
-                   name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[whitelist][]"
-                   class="form-control"
-                   value=""
-                   placeholder="<?php echo __('Endpoint path', 'simple-jwt-login'); ?>"
-            />
-            <div class="input-group-addon auth-code-delete-container">
-                <a href="javascript:void(0)"
-                   onclick="jwt_login_remove_endpoint_row(jQuery(this));"
-                   title="<?php echo __('delete', 'simple-jwt-login'); ?>"
-                >
-                    <i class="delete-auth-code" aria-hidden="true"></i>
-                </a>
-            </div>
-        </div>
-    </div>
+    <?php simple_jwt_login_draw_endpoin_row('whitelist', null);?>
 </div>
 
 <div id="endpoint_protect_line" style="display: none;">
-    <div class="form-group endpoint_row">
-        <div class="input-group">
-            <input type="text"
-                   name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP);?>[protect][]"
-                   class="form-control"
-                   value=""
-                   placeholder="<?php echo __('Endpoint path', 'simple-jwt-login'); ?>"
-            />
-            <div class="input-group-addon auth-code-delete-container">
-                <a href="javascript:void(0)"
-                   onclick="jwt_login_remove_endpoint_row(jQuery(this));"
-                   title="<?php echo __('delete', 'simple-jwt-login'); ?>"
-                >
-                    <i class="delete-auth-code" aria-hidden="true"></i>
-                </a>
-            </div>
-        </div>
-    </div>
+   <?php simple_jwt_login_draw_endpoin_row('protect', null);?>
 </div>

@@ -63,16 +63,110 @@ class ProtectEndpointSettingsTest extends TestCase
 
         $this->assertSame(
             [
-                '123',
-                ''
+                [
+                    'url' => '123',
+                    'method' => 'ALL',
+                ],
+                [
+                    'url' => '123',
+                    'method' => 'ALL',
+                ],
             ],
             $protectSettings->getProtectedEndpoints()
         );
 
         $this->assertSame(
             [
-                'abc',
-                ''
+                [
+                    'url' => 'abc',
+                    'method' => 'ALL',
+                ],
+                [
+                    'url' => 'abc',
+                    'method' => 'ALL',
+                ],
+            ],
+            $protectSettings->getWhitelistedDomains()
+        );
+    }
+
+    public function testAssignCodesFromPostWithHTTPMethods()
+    {
+        $protectSettings = (new ProtectEndpointSettings())
+            ->withSettings([])
+            ->withPost([
+                ProtectEndpointSettings::PROPERTY_GROUP => [
+                    'enabled' => '1',
+                    'action' => ProtectEndpointSettings::ALL_ENDPOINTS,
+                    'protect' => [
+                        '/protect-first',
+                        '/protect-second',
+                        '/protect-third'
+                    ],
+                    'protect_method' => [
+                        'GET',
+                        'ALL',
+                        'PUT',
+                    ],
+                    'whitelist' => [
+                        '/whitelist-first',
+                        '/whitelist-second',
+                        '/whitelist-third'
+                    ],
+                    'whitelist_method' => [
+                        'GET',
+                        'ALL',
+                        'PUT'
+                    ]
+                ]
+            ])
+            ->withWordPressData($this->wordPressData);
+        $protectSettings->initSettingsFromPost();
+
+        $this->assertSame(
+            true,
+            $protectSettings->isEnabled()
+        );
+
+        $this->assertSame(
+            ProtectEndpointSettings::ALL_ENDPOINTS,
+            $protectSettings->getAction()
+        );
+
+        $this->assertSame(
+            [
+                [
+                    'url' => '/protect-first',
+                    'method' => 'GET',
+                ],
+                [
+                    'url' => '/protect-second',
+                    'method' => 'ALL',
+                ],
+                [
+                    'url' => '/protect-third',
+                    'method' => 'PUT',
+                ],
+
+            ],
+            $protectSettings->getProtectedEndpoints()
+        );
+
+        $this->assertSame(
+            [
+                [
+                    'url' => '/whitelist-first',
+                    'method' => 'GET',
+                ],
+                [
+                    'url' => '/whitelist-second',
+                    'method' => 'ALL',
+                ],
+                [
+                    'url' => '/whitelist-third',
+                    'method' => 'PUT',
+                ],
+
             ],
             $protectSettings->getWhitelistedDomains()
         );
@@ -152,15 +246,27 @@ class ProtectEndpointSettingsTest extends TestCase
         );
         $this->assertSame(
             [
-                'test',
-                ''
+                [
+                    'url' => 'test',
+                    'method' => 'ALL',
+                ],
+                [
+                    'url' => 'test',
+                    'method' => 'ALL',
+                ],
             ],
             $settings->getProtectedEndpoints()
         );
         $this->assertSame(
             [
-                '123',
-                ''
+                [
+                    'url' => '123',
+                    'method' => 'ALL',
+                ],
+                [
+                    'url' => '123',
+                    'method' => 'ALL',
+                ],
             ],
             $settings->getWhitelistedDomains()
         );
@@ -182,15 +288,11 @@ class ProtectEndpointSettingsTest extends TestCase
             $settings->getAction()
         );
         $this->assertSame(
-            [
-                ''
-            ],
+            [],
             $settings->getWhitelistedDomains()
         );
         $this->assertSame(
-            [
-                ''
-            ],
+            [],
             $settings->getProtectedEndpoints()
         );
     }

@@ -82,9 +82,6 @@ jQuery(document).ready(
                 tempJWTLoginCopyInput = null;
             }
         );
-        // $('.multiple-checkboxes').multiselect({
-        //     includeSelectAllOption: true,
-        // });
 
         $('#simple-jwt-login #toggleHooks').on(
             'click',

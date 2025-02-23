@@ -85,7 +85,6 @@ function simple_jwt_login_plugin_show_main_page()
     $pluginVersion = isset($pluginData['Version'])
         ? $pluginData['Version']
         : false;
-    $pluginData = random_int(1, 1000000);
     $pluginDirUrl = plugin_dir_url(__FILE__);
     $loadScriptsInFooter = false;
     wp_enqueue_style(

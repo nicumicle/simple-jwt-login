@@ -113,6 +113,25 @@ class ProtectEndpointServiceTest extends TestCase
                     ]
                 ]
             ],
+            'test-enabled-all-endpoints-with-method' => [
+                'expectedResult' => true,
+                'requestMethod' => 'GET',
+                'currentUrl' => '/wp-json/v2/posts',
+                'documentRoot' => '/var/www/html',
+                'request' => [
+                    'rest_route' => '/v2/posts/'
+                ],
+                'settings' => [
+                    'enabled' => true,
+                    'action' => ProtectEndpointSettings::ALL_ENDPOINTS,
+                    'whitelist' => [
+                        '/wp-json/v2/posts'
+                    ],
+                    'whitelist_method' => [
+                        'GET',
+                    ]
+                ]
+            ],
             'test-enabled-all-endpoints-with-no-whitelist' => [
                 'expectedResult' => false,
                 'requestMethod' => 'GET',
@@ -141,6 +160,63 @@ class ProtectEndpointServiceTest extends TestCase
                     'action' => ProtectEndpointSettings::SPECIFIC_ENDPOINTS,
                     'protect' => [
                         '/wp-json/wp/v2/posts'
+                    ]
+                ]
+            ],
+            'test-enabled-specific-endpoints-with-method' => [
+                'expectedResult' => false,
+                'requestMethod' => 'GET',
+                'currentUrl' => '/wp-json/v2/posts',
+                'documentRoot' => '/var/www/html',
+                'request' => [
+                    'rest_route' => '/wp/v2/posts/'
+                ],
+                'settings' => [
+                    'enabled' => true,
+                    'action' => ProtectEndpointSettings::SPECIFIC_ENDPOINTS,
+                    'protect' => [
+                        '/wp-json/wp/v2/posts'
+                    ],
+                    'protect_method' => [
+                        'GET',
+                    ]
+                ]
+            ],
+            'test-enabled-specific-endpoints-with-method-all' => [
+                'expectedResult' => false,
+                'requestMethod' => 'GET',
+                'currentUrl' => '/wp-json/v2/posts',
+                'documentRoot' => '/var/www/html',
+                'request' => [
+                    'rest_route' => '/wp/v2/posts/'
+                ],
+                'settings' => [
+                    'enabled' => true,
+                    'action' => ProtectEndpointSettings::SPECIFIC_ENDPOINTS,
+                    'protect' => [
+                        '/wp-json/wp/v2/posts'
+                    ],
+                    'protect_method' => [
+                        'ALL',
+                    ]
+                ]
+            ],
+            'test-enabled-specific-endpoints-with-different-method' => [
+                'expectedResult' => true,
+                'requestMethod' => 'GET',
+                'currentUrl' => '/wp-json/v2/posts',
+                'documentRoot' => '/var/www/html',
+                'request' => [
+                    'rest_route' => '/wp/v2/posts/'
+                ],
+                'settings' => [
+                    'enabled' => true,
+                    'action' => ProtectEndpointSettings::SPECIFIC_ENDPOINTS,
+                    'protect' => [
+                        '/wp-json/wp/v2/posts'
+                    ],
+                    'protect_method' => [
+                        'POST',
                     ]
                 ]
             ],

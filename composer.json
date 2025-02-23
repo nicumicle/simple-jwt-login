@@ -2,10 +2,10 @@
   "name": "nicumicle/simple-jwt-login",
   "description": "Simple JWT Login WordPress plugin",
   "require": {
-    "php": ">=7.0",
+    "php": ">=8.2",
     "ext-json": "*",
-    "fakerphp/faker": "^1.23",
-    "guzzlehttp/guzzle": "^7.8"
+    "fakerphp/faker": "^1.24.1",
+    "guzzlehttp/guzzle": "^7.9.2"
   },
   "license": [
     "GPL-3.0-only",

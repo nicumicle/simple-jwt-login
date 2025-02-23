@@ -116,7 +116,6 @@ function simple_jwt_login_plugin_show_main_page()
         $loadScriptsInFooter
     );
 
-
     require_once('views/layout.php');
 }
 

@@ -10,6 +10,13 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
     const ALL_ENDPOINTS = 1;
     const SPECIFIC_ENDPOINTS = 2;
 
+    const REQUEST_METHOD_ALL = 'ALL';
+    const REQUEST_METHOD_GET = 'GET';
+    const REQUEST_METHOD_POST = 'POST';
+    const REQUEST_METHOD_PUT = 'PUT';
+    const REQUEST_METHOD_PATCH = 'PATCH';
+    const REQUEST_METHOD_DELETE = 'DELETE';
+
     public function initSettingsFromPost()
     {
         $this->assignSettingsPropertyFromPost(
@@ -36,9 +43,23 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
         );
         $this->assignSettingsPropertyFromPost(
             self::PROPERTY_GROUP,
+            'protect_method',
+            self::PROPERTY_GROUP,
+            'protect_method',
+            BaseSettings::SETTINGS_TYPE_ARRAY
+        );
+        $this->assignSettingsPropertyFromPost(
+            self::PROPERTY_GROUP,
             'whitelist',
             self::PROPERTY_GROUP,
             'whitelist',
+            BaseSettings::SETTINGS_TYPE_ARRAY
+        );
+        $this->assignSettingsPropertyFromPost(
+            self::PROPERTY_GROUP,
+            'whitelist_method',
+            self::PROPERTY_GROUP,
+            'whitelist_method',
             BaseSettings::SETTINGS_TYPE_ARRAY
         );
     }
@@ -50,7 +71,7 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
         }
 
         $filteredEndpoints = array_filter($this->getProtectedEndpoints(), function ($value) {
-            return !empty(trim($value));
+            return !empty(trim($value['url'], " "));
         });
 
         if ($this->getAction() === ProtectEndpointSettings::SPECIFIC_ENDPOINTS && empty($filteredEndpoints)) {
@@ -83,26 +104,51 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
     }
 
     /**
-     * @return string[]
+     * @return array<int,array<string,mixed>>
      */
     public function getWhitelistedDomains()
     {
-        $result = isset($this->settings[ProtectEndpointSettings::PROPERTY_GROUP]['whitelist'])
-                ? (array) $this->settings[ProtectEndpointSettings::PROPERTY_GROUP]['whitelist']
-                : [''];
-
-        return array_unique($result);
+        return $this->parseProtectSettings('whitelist_method', 'whitelist');
     }
 
     /**
-     * @return string[]
+     * @return array<int,array<string,mixed>>
      */
     public function getProtectedEndpoints()
     {
-        $result = isset($this->settings[ProtectEndpointSettings::PROPERTY_GROUP]['protect'])
-            ?  (array) $this->settings[ProtectEndpointSettings::PROPERTY_GROUP]['protect']
+        return $this->parseProtectSettings('protect_method', 'protect');
+    }
+
+    /**
+     * @param string $methodKey
+     * @param string $endpointsKey
+     * @return array<int,array<string,mixed>>
+     */
+    private function parseProtectSettings($methodKey, $endpointsKey)
+    {
+        $endpoints = isset($this->settings[ProtectEndpointSettings::PROPERTY_GROUP][$endpointsKey])
+            ? (array) $this->settings[ProtectEndpointSettings::PROPERTY_GROUP][$endpointsKey]
+            : [''];
+        $methods = isset($this->settings[ProtectEndpointSettings::PROPERTY_GROUP][$methodKey])
+            ? (array) $this->settings[ProtectEndpointSettings::PROPERTY_GROUP][$methodKey]
             : [''];
 
-        return array_unique($result);
+        $return = [];
+        foreach ($endpoints as $key => $endpointPath) {
+            $return[] = [
+                'url' => $endpointPath,
+                'method' => !empty($methods[$key])
+                    ? strtoupper($methods[$key])
+                    : self::REQUEST_METHOD_ALL,
+            ];
+        }
+
+        return array_values(array_filter($return, function ($endpoint) {
+            if (trim($endpoint['url']) === "") {
+                return false;
+            };
+
+            return true;
+        }));
     }
 }

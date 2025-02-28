@@ -452,6 +452,34 @@ if (!defined('ABSPATH')) {
         </p>
     </div>
 </div>
+<div class="row">
+    <div class="col-md-12">
+        <input type="checkbox" name="wp_graphql[enabled]" id="wp_graphql_enabled"
+               value="1"
+            <?php
+            echo $jwtSettings->getGeneralSettings()->isWpGraphqlAuthenticationEnabled()
+                ? 'checked="checked"'
+                : ""
+            ?>
+        />
+        <label for="wp_graphql_enabled">
+            <span class="beta">beta</span>
+            <?php echo __(
+                sprintf('Authenticate user to %sWPGraphQL%s', '<a href="https://www.wpgraphql.com/" target="_blank">', "</a>"),
+                'simple-jwt-login'
+            );?>
+        </label><br/>
+        <p class="text-muted">
+            * <?php
+            echo __(
+                'If the JWT is provided on WPGraphQL queries, the plugin will try to authenticate'
+                . ' the user from the JWT before performing the query.',
+                'simple-jwt-login'
+            );
+            ?>
+        </p>
+    </div>
+</div>
 
 
 <div class="row">

@@ -2,25 +2,28 @@
 
 Contributors: nicu_m
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PK9BCD6AYF58Y&source=url
-Tags: jwt, API, auto login, register, tokens
+Tags: jwt, API, auto login, register, tokens, protect endpoints
 Requires at least: 4.4.0
 Tested up to: 6.7
 Requires PHP: 5.5
 Stable tag: 3.5.8
 License: GPLv3
-License URI: https://www.gnu.org/licenses/quick-guide-gplv3.html
+License URI: https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE
 
-The main purpose of this plugin is to allow Mobile apps, or other websites to access the content via REST endpoints in a secure way.
+Enhance the WordPress REST API with JSON Web Token (JWT) authentication, ensuring a secure connection for mobile apps, external websites, and third-party services to access your WordPress content via REST endpoints.
 
 == Description ==
 
-Simple JWT Login is a FREE WordPress plugin that allows you to use a JWT on WordPress REST endpoints.
+Simple JWT Login is a **FREE** WordPress plugin that enables secure authentication for your WordPress REST API using **JSON Web Tokens** (JWT).
 
-This plugin allows you to log in, register, authenticate, delete and change user password to a WordPress website using a JWT.
+With this powerful plugin, you can:
+- Log in, register, and authenticate users effortlessly
+- Connect mobile apps, external websites, or third-party services to WordPress with ease
+- Change or delete user passwords securely
 
-It's main purpose is to allow you to connect a mobile App or other websites with WordPress. 
+Whether you're building a headless WordPress setup or integrating with external platforms, Simple JWT Login provides a fast, secure, and reliable authentication solution.
 
-Plugin Documentation Site: [https://simplejwtlogin.com](https://simplejwtlogin.com)
+You can read more on our plugin documentation website [https://simplejwtlogin.com](https://simplejwtlogin.com).
 
 == Some awesome features ==
 
@@ -39,7 +42,8 @@ Plugin Documentation Site: [https://simplejwtlogin.com](https://simplejwtlogin.c
 * Allow access private endpoints with JWT
 * Protect endpoints with JWT
 * **beta** Google OAuth Integration
-* **beta** Use Google JWT on all endpoints
+* **beta** Google JWT on all endpoints
+* **beta** [WPGraphQL](https://wordpress.org/plugins/wp-graphql/) integration
 
 Check the plugin [website](https://simplejwtlogin.com) for more features.
 
@@ -333,6 +337,7 @@ or
 9. Available Hooks
 10. CORS
 11. Protect endpoints
+12. Applications
 
 == Installation ==
 

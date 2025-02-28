@@ -105,6 +105,14 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
             false
         );
         $this->assignSettingsPropertyFromPost(
+            'wp_graphql',
+            'enabled',
+            'wp_graphql',
+            'enabled',
+            BaseSettings::SETTINGS_TYPE_BOL,
+            false
+        );
+        $this->assignSettingsPropertyFromPost(
             'request_keys',
             'url',
             'request_keys',
@@ -402,6 +410,16 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
         return isset($this->settings['api_middleware'])
             && isset($this->settings['api_middleware']['enabled'])
             && !empty($this->settings['api_middleware']['enabled']);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isWpGraphqlAuthenticationEnabled()
+    {
+        return isset($this->settings['wp_graphql'])
+            && isset($this->settings['wp_graphql']['enabled'])
+            && !empty($this->settings['wp_graphql']['enabled']);
     }
 
     public function isSafeRedirectEnabled()

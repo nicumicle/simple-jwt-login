@@ -106,6 +106,27 @@ if (! defined('ABSPATH')) {
                 </button>
             </span>
         </div>
+        <div>
+            <b><?php echo __('OR', 'simple-jwt-login');?></b>: 
+        </div>
+        <div class="generated-code">
+            <span class="method">POST:</span>
+            <span class="code">
+                <?php
+                $sampleUrlParams = [
+                    'username'    => __('Username', 'simple-jwt-login'),
+                    'password' => __('Password', 'simple-jwt-login')
+                ];
+
+                echo esc_html($jwtSettings->generateExampleLink(RouteService::AUTHENTICATION_ROUTE, $sampleUrlParams));
+                ?>
+            </span>
+            <span class="copy-button">
+                <button class="btn btn-secondary btn-xs">
+                    <?php echo __('Copy', 'simple-jwt-login'); ?>
+                </button>
+            </span>
+        </div>
     </div>
 </div>
 <hr/>

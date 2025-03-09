@@ -4,6 +4,7 @@
 - CI: Check plugin code syntax with PHP 8.3 and 8.4
 - Add support for configuring request methods on Protect endpoints [#129](https://github.com/nicumicle/simple-jwt-login/issues/129)
 - Beta: Authenticate user when performing queries with WPGraphQL [#32](https://github.com/nicumicle/simple-jwt-login/issues/32)
+- Code refactorization and UI improvements
 
 ## 3.5.8 (14 Feb 2025)
 - Use wp_safe_redirect for redirects [#115](https://github.com/nicumicle/simple-jwt-login/issues/115)

@@ -84,4 +84,4 @@ jobs:
             echo "🔖 WordPress Version:  $(php wp-cli.phar core version)"
             echo "🔖 PHP Version: $(php -v)"
             cd /var/www/html/wp-content/plugins/
-              vendor/bin/phpunit --testsuite "Feature" --testdox --do-not-cache-result
+            vendor/bin/phpunit --testsuite "Feature" --testdox --do-not-cache-result

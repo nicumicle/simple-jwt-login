@@ -215,6 +215,7 @@ class TestBase extends TestCase
             'body' => json_encode(
                 [
                     'email' => $email,
+                    'user_login' => md5($email),
                     'password' => $password,
                 ]
             ),

@@ -89,9 +89,9 @@ class AuthenticateService extends BaseService implements ServiceInterface
      */
     public function authenticateUser()
     {
-        if (!isset($this->request['email']) && !isset($this->request['username'])) {
+        if (!isset($this->request['email']) && !isset($this->request['username']) && !isset($this->request['login'])) {
             throw new Exception(
-                __('The email or username parameter is missing from request.', 'simple-jwt-login'),
+                __('The email, username, or login parameter is missing from the request.', 'simple-jwt-login'),
                 ErrorCodes::AUTHENTICATION_MISSING_EMAIL
             );
         }
@@ -102,13 +102,29 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
         }
 
-        $user = isset($this->request['username'])
-            ? $this->wordPressData->getUserByUserLogin(
-                $this->wordPressData->sanitizeTextField($this->request['username'])
-            )
-            : $this->wordPressData->getUserDetailsByEmail(
-                $this->wordPressData->sanitizeTextField($this->request['email'])
-            );
+        $user = null;
+        switch (true) {
+            case isset($this->request['username']):
+                // login by username
+                $user = $this->wordPressData->getUserByUserLogin(
+                    $this->wordPressData->sanitizeTextField($this->request['username'])
+                );
+                break;
+            case isset($this->request['email']):
+                // login by email
+                $user = $this->wordPressData->getUserDetailsByEmail(
+                    $this->wordPressData->sanitizeTextField($this->request['email'])
+                );
+                break;
+            case isset($this->request['login']):
+                // login by username or email
+                $loginParameter = $this->request['login'];
+                $user = $this->wordPressData->getUserByUserLogin($loginParameter);
+                if (!$user && strpos($loginParameter, '@') !== false) {
+                    $user = $this->wordPressData->getUserDetailsByEmail($loginParameter);
+                }
+                break;
+        }
 
         if (empty($user)) {
             throw new Exception(

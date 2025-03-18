@@ -68,6 +68,8 @@ jobs:
             cp -R tests /var/www/html/wp-content/plugins
             cd /var/www/html/wp-content/plugins
             composer install --prefer-dist --no-progress
+            mkdir -p .phpunit.cache/
+            touch clover.xml
       -   name: "🚧 Change /var/www/html owner"
           run: |
             sudo chown -R www-data:www-data /var/www/html
@@ -84,4 +86,4 @@ jobs:
             echo "🔖 WordPress Version:  $(php wp-cli.phar core version)"
             echo "🔖 PHP Version: $(php -v)"
             cd /var/www/html/wp-content/plugins/
-            vendor/bin/phpunit --testsuite "Feature" --testdox --do-not-cache-result
+            XDEBUG_MODE=coverage vendor/bin/phpunit --testsuite "Feature" --coverage-text --testdox --do-not-cache-result

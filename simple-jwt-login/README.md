@@ -178,7 +178,7 @@ The change password endpoint, changes the user password, based on the reset pass
 
 This plugin allows users to generate JWT tokens based from WordPress user email and password.
 
-In order to Get a new JWT, just make a POST request to */auth* route with your WordPress email and password ( or password_hash) and the response will look something like this:
+In order to Get a new JWT, just make a POST request to */auth* route with your WordPress email(or username) and password ( or password_hash) and the response will look something like this:
 
 ``
      {

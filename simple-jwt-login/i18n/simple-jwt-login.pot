@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-03-09T14:11:16+00:00\n"
+"POT-Creation-Date: 2025-03-18T18:53:31+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -339,28 +339,28 @@ msgid "The code you provided is invalid."
 msgstr ""
 
 #: src/Services/Applications/Google.php:97
-#: src/Services/AuthenticateService.php:115
-#: src/Services/AuthenticateService.php:141
+#: src/Services/AuthenticateService.php:131
+#: src/Services/AuthenticateService.php:157
 msgid "Wrong user credentials."
 msgstr ""
 
 #: src/Services/AuthenticateService.php:94
-msgid "The email or username parameter is missing from request."
+msgid "The email, username, or login parameter is missing from the request."
 msgstr ""
 
 #: src/Services/AuthenticateService.php:100
 msgid "The password or password_hash parameter is missing from request."
 msgstr ""
 
-#: src/Services/AuthenticateService.php:201
+#: src/Services/AuthenticateService.php:217
 msgid "You are not allowed to Authenticate from this IP: %s"
 msgstr ""
 
-#: src/Services/AuthenticateService.php:216
+#: src/Services/AuthenticateService.php:232
 msgid "Authentication is not enabled."
 msgstr ""
 
-#: src/Services/AuthenticateService.php:234
+#: src/Services/AuthenticateService.php:250
 #: src/Services/LoginService.php:107
 #: src/Services/RegisterUserService.php:195
 #: src/Services/ResetPasswordService.php:27
@@ -601,11 +601,12 @@ msgstr ""
 #: views/applications/google.php:160
 #: views/applications/google.php:232
 #: views/applications/google.php:288
-#: views/auth-view.php:105
-#: views/auth-view.php:126
-#: views/auth-view.php:428
-#: views/auth-view.php:476
-#: views/auth-view.php:516
+#: views/auth-view.php:106
+#: views/auth-view.php:129
+#: views/auth-view.php:151
+#: views/auth-view.php:453
+#: views/auth-view.php:501
+#: views/auth-view.php:541
 #: views/delete-view.php:68
 #: views/login-view.php:60
 #: views/register-view.php:70
@@ -801,134 +802,144 @@ msgid "to login with username"
 msgstr ""
 
 #: views/auth-view.php:88
-msgid "your password"
+msgid "to login with username or email"
 msgstr ""
 
 #: views/auth-view.php:89
+msgid "your password"
+msgstr ""
+
+#: views/auth-view.php:90
 msgid "your hashed password from the database"
 msgstr ""
 
-#: views/auth-view.php:96
+#: views/auth-view.php:97
 #: views/reset-password-view.php:118
 #: views/reset-password-view.php:342
 msgid "Email"
 msgstr ""
 
-#: views/auth-view.php:97
-#: views/auth-view.php:118
+#: views/auth-view.php:98
+#: views/auth-view.php:121
+#: views/auth-view.php:143
 msgid "Password"
 msgstr ""
 
-#: views/auth-view.php:110
+#: views/auth-view.php:112
+#: views/auth-view.php:135
 msgid "OR"
 msgstr ""
 
-#: views/auth-view.php:117
+#: views/auth-view.php:120
 msgid "Username"
 msgstr ""
 
-#: views/auth-view.php:136
+#: views/auth-view.php:142
+msgid "Username_or_email"
+msgstr ""
+
+#: views/auth-view.php:161
 msgid "Options"
 msgstr ""
 
-#: views/auth-view.php:152
+#: views/auth-view.php:177
 msgid "Authentication password/passhash is base64 encoded"
 msgstr ""
 
-#: views/auth-view.php:163
+#: views/auth-view.php:188
 msgid "JWT Header parameters"
 msgstr ""
 
-#: views/auth-view.php:206
+#: views/auth-view.php:231
 msgid "JWT Payload parameters"
 msgstr ""
 
-#: views/auth-view.php:292
+#: views/auth-view.php:317
 msgid "Verify Signature"
 msgstr ""
 
-#: views/auth-view.php:323
+#: views/auth-view.php:348
 msgid "JWT time to live"
 msgstr ""
 
-#: views/auth-view.php:326
+#: views/auth-view.php:351
 msgid "Specify the length of time (in minutes) that the token will be valid for."
 msgstr ""
 
-#: views/auth-view.php:336
-#: views/auth-view.php:370
+#: views/auth-view.php:361
+#: views/auth-view.php:395
 msgid "Number of minutes"
 msgstr ""
 
-#: views/auth-view.php:354
+#: views/auth-view.php:379
 msgid "Refresh time to live"
 msgstr ""
 
-#: views/auth-view.php:357
+#: views/auth-view.php:382
 msgid "Specify the length of time (in minutes) that the token can be refreshed within. I.E. The user can refresh their token within a 2 week window of the original token being created until they must re-authenticate.Defaults to 2 weeks"
 msgstr ""
 
-#: views/auth-view.php:379
+#: views/auth-view.php:404
 msgid "JWT Issuer (iss)"
 msgstr ""
 
-#: views/auth-view.php:382
+#: views/auth-view.php:407
 msgid "The payload issuer when a new JWT is generated"
 msgstr ""
 
-#: views/auth-view.php:393
+#: views/auth-view.php:418
 msgid "Default issuer"
 msgstr ""
 
-#: views/auth-view.php:401
+#: views/auth-view.php:426
 msgid "Refresh JWT URL Example"
 msgstr ""
 
-#: views/auth-view.php:404
+#: views/auth-view.php:429
 msgid "This route is for refreshing expired tokens. It accept as a parameter an expired token, and returns a new valid JWT."
 msgstr ""
 
-#: views/auth-view.php:434
-#: views/auth-view.php:482
-#: views/auth-view.php:522
+#: views/auth-view.php:459
+#: views/auth-view.php:507
+#: views/auth-view.php:547
 msgid "JWT can be sent via URL, SESSION, COOKIE or HEADER. Please enable the ones you want in the 'General' section."
 msgstr ""
 
-#: views/auth-view.php:448
+#: views/auth-view.php:473
 msgid "Validate JWT URL Example"
 msgstr ""
 
-#: views/auth-view.php:451
+#: views/auth-view.php:476
 msgid "This endpoint validates a JWT. If it is valid,it will return the WordPress user details and some JWT details."
 msgstr ""
 
-#: views/auth-view.php:495
+#: views/auth-view.php:520
 msgid "Revoke JWT URL Example"
 msgstr ""
 
-#: views/auth-view.php:498
+#: views/auth-view.php:523
 msgid "This endpoint revokes a JWT. If it is valid, it will be marked as invalid."
 msgstr ""
 
-#: views/auth-view.php:537
+#: views/auth-view.php:562
 msgid "Allow Authentication only from the following IP addresses"
 msgstr ""
 
-#: views/auth-view.php:546
+#: views/auth-view.php:571
 #: views/delete-view.php:208
 #: views/login-view.php:370
 #: views/register-view.php:280
 msgid "Enter IP here"
 msgstr ""
 
-#: views/auth-view.php:548
+#: views/auth-view.php:573
 #: views/delete-view.php:210
 #: views/login-view.php:372
 #: views/register-view.php:282
 msgid "If you want to add more IP's, separate them by comma"
 msgstr ""
 
-#: views/auth-view.php:550
+#: views/auth-view.php:575
 #: views/delete-view.php:212
 #: views/login-view.php:374
 #: views/register-view.php:284

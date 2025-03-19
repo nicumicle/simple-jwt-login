@@ -52,11 +52,9 @@ jobs:
             sudo rm -rf /var/www/html/*
 
             curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-            
-            sudo mkdir -p /var/www/bin
-            sudo mv wp-cli.phar /var/www/bin/wp
-            ls -la /var/www/bin
-            export PATH="/var/www/bin:$PATH"
+                        
+            sudo mv wp-cli.phar /usr/local/bin/wp
+            sudo chmod +x /usr/local/bin/wp
 
             wp core download --path=/var/www/html/
             wp config create --dbname=wordpress --dbuser=root --dbpass=$DB_PASSWORD --dbhost=localhost --dbprefix=wp_ --path=/var/www/html

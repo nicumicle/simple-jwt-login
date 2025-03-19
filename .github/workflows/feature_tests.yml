@@ -45,17 +45,11 @@ jobs:
             sudo /etc/init.d/apache2 start
       -   name: "🚧 Install WordPress"
           run: |
-            echo "current location:"
-            pwd
-            echo "php path:"
-            which php
-            php --ini
-
             sudo chmod -R 777 /var/www/html
             sudo rm -rf /var/www/html/*
             
             curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-            mv wp-cli.phar /usr/bin/wp
+            sudo mv wp-cli.phar /usr/bin/wp
 
             wp core download --path=/var/www/html/
             wp config create --dbname=wordpress --dbuser=root --dbpass=$DB_PASSWORD --dbhost=localhost --dbprefix=wp_ --path=/var/www/html

@@ -55,24 +55,26 @@ jobs:
             sudo rm -rf /var/www/html/*
             
             curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-            php wp-cli.phar core download --path=/var/www/html/
-            php wp-cli.phar config create --dbname=wordpress --dbuser=root --dbpass=$DB_PASSWORD --dbhost=localhost --dbprefix=wp_ --path=/var/www/html
+            mv wp-cli.phar /usr/bin/wp
+
+            wp core download --path=/var/www/html/
+            wp config create --dbname=wordpress --dbuser=root --dbpass=$DB_PASSWORD --dbhost=localhost --dbprefix=wp_ --path=/var/www/html
             
             chmod 600 /var/www/html/wp-config.php
             
-            php wp-cli.phar db create --path=/var/www/html
-            php wp-cli.phar db check --path=/var/www/html
-            php wp-cli.phar core install --url="$SITE_URL" --title="Test WP" --admin_user="$WP_USER" --admin_password="$WP_PASSWORD" --admin_email="$WP_EMAIL" --path=/var/www/html
-            php wp-cli.phar option get siteurl --path=/var/www/html
-            php wp-cli.phar config set --raw WP_DEBUG true --path=/var/www/html
-            php wp-cli.phar config set --raw WP_DEBUG_LOG true --path=/var/www/html
-            php wp-cli.phar config set --raw WP_DEBUG_DISPLAY true --path=/var/www/html
+            wp db create --path=/var/www/html
+            wp db check --path=/var/www/html
+            wp core install --url="$SITE_URL" --title="Test WP" --admin_user="$WP_USER" --admin_password="$WP_PASSWORD" --admin_email="$WP_EMAIL" --path=/var/www/html
+            wp option get siteurl --path=/var/www/html
+            wp config set --raw WP_DEBUG true --path=/var/www/html
+            wp config set --raw WP_DEBUG_LOG true --path=/var/www/html
+            wp config set --raw WP_DEBUG_DISPLAY true --path=/var/www/html
             
             echo "127.0.0.1 $SITE_URL" | sudo tee -a /etc/hosts
       -   name: "🚧 Init the plugin"
           run: |
             cp -R simple-jwt-login /var/www/html/wp-content/plugins
-            php wp-cli.phar plugin activate simple-jwt-login --path=/var/www/html
+            wp plugin activate simple-jwt-login --path=/var/www/html
       -   name: "🚧 Prepare Feature tests"
           run: |
             cp phpunit.xml.actions.dist /var/www/html/wp-content/plugins/phpunit.xml
@@ -96,8 +98,10 @@ jobs:
 
       -   name: "🧪 Run the Feature tests"
           run: |
-            echo "🔖 WordPress Version:  $(php wp-cli.phar core version)"
+            cd /var/www/html
+            echo "🔖 WordPress Version:  $(wp core version)"
             echo "🔖 PHP Version: $(php -v)"
+            
             cd /var/www/html/wp-content/plugins/
             echo "🧪 Running the tests..."
             XDEBUG_MODE=coverage vendor/bin/phpunit --testsuite "Feature" --coverage-text --testdox --do-not-cache-result

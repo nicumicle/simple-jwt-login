@@ -6,7 +6,7 @@ Tags: jwt, API, auto login, register, tokens, protect endpoints
 Requires at least: 4.4.0
 Tested up to: 6.7
 Requires PHP: 5.5
-Stable tag: 3.5.8
+Stable tag: 3.6.0
 License: GPLv3
 License URI: https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE
 
@@ -459,6 +459,12 @@ After that, for the create user route, simply add the AUTH code in the request, 
 == Changelog ==
 
 A complete Changelog is available on the [GitHub repository](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md).
+
+= 3.6.0 (24 Mar 2025) =
+- Add support for configuring request methods on Protect endpoints [#129](https://github.com/nicumicle/simple-jwt-login/issues/129)
+- Beta: Authenticate user when performing queries with WPGraphQL [#32](https://github.com/nicumicle/simple-jwt-login/issues/32)
+- Code refactorization and UI improvements
+- Authenticate by Username or Email (similar to WP login)[#19](https://github.com/nicumicle/simple-jwt-login/issues/19)
 
 = 3.5.8 (14 Feb 2025) =
 - Use wp_safe_redirect for redirects [#115](https://github.com/nicumicle/simple-jwt-login/issues/115)

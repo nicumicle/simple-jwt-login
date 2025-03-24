@@ -71,7 +71,7 @@ class AuthenticateServiceTest extends TestCase
                     'allow_authentication' => '1',
                 ],
                 'request' => [],
-                'exceptionMessage' => 'The email or username parameter is missing from request.'
+                'exceptionMessage' => 'The email, username, or login parameter is missing from the request.'
             ],
             [
                 'settings' => [

@@ -67,6 +67,106 @@ class SuccessTest extends TestBase
         $this->assertSame(200, $statusCode, "unable to delete the user");
     }
 
+    #[TestDox("User can authenticate with username and password")]
+    public function testAuthenticationUsername()
+    {
+        // Register random user
+        list ($email, $password, $statusCode, $response) = $this->registerRandomUser();
+
+        $this->assertSame(200, $statusCode, "Unable to register user");
+
+       // Auth new USer
+        $uri = self::API_URL . "?rest_route=/simple-jwt-login/v1/auth";
+        $result = $this->client->post($uri, [
+           'body' => json_encode([
+               'username' => md5($email),
+               'password' => $password,
+           ])
+        ]);
+
+        $this->assertSame(
+            200,
+            $result->getStatusCode(),
+            "Auth User Failed"
+        );
+        $responseArray = json_decode($result->getBody()->getContents(), true);
+        $this->assertArrayHasKey('success', $responseArray);
+        $this->assertTrue($responseArray['success']);
+        $this->assertArrayHasKey('data', $responseArray);
+        $this->assertArrayHasKey('jwt', $responseArray['data']);
+        $jwt = $responseArray['data']['jwt'];
+        // Cleanup
+        list($statusCode, $response) = $this->deleteUser($jwt);
+        $this->assertSame(200, $statusCode, "unable to delete the user");
+    }
+
+
+    #[TestDox("User can authenticate with login(username) and password")]
+    public function testAuthenticationLogin()
+    {
+        // Register random user
+        list ($email, $password, $statusCode, $response) = $this->registerRandomUser();
+
+        $this->assertSame(200, $statusCode, "Unable to register user");
+
+        // Auth new USer
+        $uri = self::API_URL . "?rest_route=/simple-jwt-login/v1/auth";
+        $result = $this->client->post($uri, [
+            'body' => json_encode([
+                'login' => md5($email),
+                'password' => $password,
+            ])
+        ]);
+
+        $this->assertSame(
+            200,
+            $result->getStatusCode(),
+            "Auth User Failed"
+        );
+        $responseArray = json_decode($result->getBody()->getContents(), true);
+        $this->assertArrayHasKey('success', $responseArray);
+        $this->assertTrue($responseArray['success']);
+        $this->assertArrayHasKey('data', $responseArray);
+        $this->assertArrayHasKey('jwt', $responseArray['data']);
+        $jwt = $responseArray['data']['jwt'];
+        // Cleanup
+        list($statusCode, $response) = $this->deleteUser($jwt);
+        $this->assertSame(200, $statusCode, "unable to delete the user");
+    }
+
+    #[TestDox("User can authenticate with login(email) and password")]
+    public function testAuthenticationLoginEmail()
+    {
+        // Register random user
+        list ($email, $password, $statusCode, $response) = $this->registerRandomUser();
+
+        $this->assertSame(200, $statusCode, "Unable to register user");
+
+        // Auth new USer
+        $uri = self::API_URL . "?rest_route=/simple-jwt-login/v1/auth";
+        $result = $this->client->post($uri, [
+            'body' => json_encode([
+                'login' => $email,
+                'password' => $password,
+            ])
+        ]);
+
+        $this->assertSame(
+            200,
+            $result->getStatusCode(),
+            "Auth User Failed"
+        );
+        $responseArray = json_decode($result->getBody()->getContents(), true);
+        $this->assertArrayHasKey('success', $responseArray);
+        $this->assertTrue($responseArray['success']);
+        $this->assertArrayHasKey('data', $responseArray);
+        $this->assertArrayHasKey('jwt', $responseArray['data']);
+        $jwt = $responseArray['data']['jwt'];
+        // Cleanup
+        list($statusCode, $response) = $this->deleteUser($jwt);
+        $this->assertSame(200, $statusCode, "unable to delete the user");
+    }
+
 
     #[TestDox("User can refresh a valid JWT")]
     public function testRefreshToken()

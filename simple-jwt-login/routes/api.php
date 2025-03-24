@@ -26,9 +26,9 @@ add_action('rest_api_init', function () {
     }
 
     $request = array_merge($_REQUEST, $parsedRequestVariables);
-
+    $wordPressData = new WordPressData();
     $serverHelper = new ServerHelper($_SERVER);
-    $jwtSettings = new SimpleJWTLoginSettings(new WordPressData());
+    $jwtSettings = new SimpleJWTLoginSettings($wordPressData);
     $routeService = new RouteService();
     $routeService->withSettings($jwtSettings);
     $routeService->withRequest($request);
@@ -65,16 +65,12 @@ add_action('rest_api_init', function () {
     }
 
     if ($jwtSettings->getGeneralSettings()->isMiddlewareEnabled()) {
-        add_filter('rest_authentication_errors', function ($errors) use ($routeService, $jwtSettings) {
+        add_filter('rest_authentication_errors', function ($errors) use ($routeService, $jwtSettings, $wordPressData, $serverHelper) {
 	        if (!empty($errors)) {
 		        return $errors;
 	        }
 
-            $currentURL =
-                "http"
-                . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "s" : "")
-                . "://" . $_SERVER['HTTP_HOST']
-                . $_SERVER['REQUEST_URI'];
+            $currentURL = $serverHelper->getCurrentURL();
             if (strpos($currentURL, $jwtSettings->getGeneralSettings()->getRouteNamespace()) !== false) {
                 //Skip middleware for simple-jwt-plugin
                 return $errors;
@@ -83,10 +79,8 @@ add_action('rest_api_init', function () {
             $jwt = $routeService->getJwtFromRequestHeaderOrCookie();
             if (!empty($jwt)) {
                 try {
-                    (new WordPressData())
-                        ->loginUser(
-                            $routeService->getUserFromJwt($jwt)
-                        );
+                    $wordPressData->loginUser($routeService->getUserFromJwt($jwt));
+
                     return true;
                 } catch (\Exception $exception) {
                     @header('Content-Type: application/json; charset=UTF-8');
@@ -122,32 +116,26 @@ add_action('rest_api_init', function () {
                 ->withServerHelper($serverHelper)
                 ->withRouteService($routeService);
 
-            $currentURL = esc_url(
-                "http"
-                . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "s" : "")
-                . "://" . esc_html($_SERVER['HTTP_HOST'])
-                . $_SERVER['REQUEST_URI']
-            );
+            $currentURL = esc_url($serverHelper->getCurrentURL());
             $currentURL = str_replace(home_url(), "", $currentURL);
-
             $documentRoot = esc_html($_SERVER['DOCUMENT_ROOT']);
 
             $hasAccess = $service->hasAccess($_SERVER['REQUEST_METHOD'], $currentURL, $documentRoot, $request);
-
-            if ($hasAccess === false) {
-                @header('Content-Type: application/json; charset=UTF-8');
-                wp_send_json_error(
-                    [
-                        'message'   => 'You are not authorized to access this endpoint.',
-                        'errorCode' => 403,
-                        'type'      => 'simple-jwt-login-route-protect'
-                    ],
-                    403
-                );
-                return false;
+            if ($hasAccess) {
+                return $endpoint;
             }
+            
+            @header('Content-Type: application/json; charset=UTF-8');
+            wp_send_json_error(
+                [
+                    'message'   => 'You are not authorized to access this endpoint.',
+                    'errorCode' => 403,
+                    'type'      => 'simple-jwt-login-route-protect'
+                ],
+                403
+            );
 
-            return $endpoint;
+            return false;
         }, 0);
     }
 
@@ -160,14 +148,12 @@ add_action('rest_api_init', function () {
                 'methods'  => $route['method'],
                 'callback' => function () use ($request, $route, $jwtSettings, $serverHelper) {
                     try {
-                        $wordPressData = $jwtSettings->getWordPressData();
-
                         if ($jwtSettings
                             ->getHooksSettings()
                             ->isHookEnable(SimpleJWTLoginHooks::HOOK_BEFORE_ENDPOINT)
                         ) {
                             /** @phpstan-ignore-next-line */
-                            $wordPressData->triggerAction(
+                            $jwtSettings->getWordPressData()->triggerAction(
                                 SimpleJWTLoginHooks::HOOK_BEFORE_ENDPOINT,
                                 $route['method'],
                                 $route['name'],
@@ -189,6 +175,7 @@ add_action('rest_api_init', function () {
                             }
                             $service->withSession($_SESSION);
                         }
+
                         return $service->makeAction();
                     } catch (Exception $exception) {
                         @header('Content-Type: application/json; charset=UTF-8');

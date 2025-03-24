@@ -85,6 +85,7 @@ if (! defined('ABSPATH')) {
             Parameters:<br />
             <b>email</b> -> <?php echo __('to login with email', 'simple-jwt-login');?><br />
             <b>username</b> -> <?php echo __('to login with username', 'simple-jwt-login');?><br />
+            <b>login</b> -> <?php echo __('to login with username or email', 'simple-jwt-login');?><br />
             <b>password</b> -> <?php echo __('your password', 'simple-jwt-login');?><br />
             <b>password_hash</b> -> <?php echo __('your hashed password from the database', 'simple-jwt-login');?><br />
         </p>
@@ -94,6 +95,51 @@ if (! defined('ABSPATH')) {
                 <?php
                 $sampleUrlParams = [
                     'email'    => __('Email', 'simple-jwt-login'),
+                    'password' => __('Password', 'simple-jwt-login')
+                ];
+
+                echo esc_html($jwtSettings->generateExampleLink(RouteService::AUTHENTICATION_ROUTE, $sampleUrlParams));
+                ?>
+            </span>
+            <span class="copy-button">
+                <button class="btn btn-secondary btn-xs">
+                    <?php echo __('Copy', 'simple-jwt-login'); ?>
+                </button>
+            </span>
+        </div>
+        
+        <div>
+            <b><?php echo __('OR', 'simple-jwt-login');?></b>: 
+        </div>
+        
+        <div class="generated-code">
+            <span class="method">POST:</span>
+            <span class="code">
+                <?php
+                $sampleUrlParams = [
+                    'username'    => __('Username', 'simple-jwt-login'),
+                    'password' => __('Password', 'simple-jwt-login')
+                ];
+
+                echo esc_html($jwtSettings->generateExampleLink(RouteService::AUTHENTICATION_ROUTE, $sampleUrlParams));
+                ?>
+            </span>
+            <span class="copy-button">
+                <button class="btn btn-secondary btn-xs">
+                    <?php echo __('Copy', 'simple-jwt-login'); ?>
+                </button>
+            </span>
+        </div>
+
+        <div>
+            <b><?php echo __('OR', 'simple-jwt-login');?></b>: 
+        </div>
+        <div class="generated-code">
+            <span class="method">POST:</span>
+            <span class="code">
+                <?php
+                $sampleUrlParams = [
+                    'login'    => __('Username_or_email', 'simple-jwt-login'),
                     'password' => __('Password', 'simple-jwt-login')
                 ];
 

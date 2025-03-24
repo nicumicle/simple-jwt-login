@@ -107,4 +107,15 @@ class ServerHelper
             ? $this->server['REQUEST_METHOD']
             : null;
     }
+
+    /**
+     * @SuppressWarnings(PHPMD.Superglobals)
+     * @return string
+     */
+    public function getCurrentURL()
+    {
+        return "http" . (isset($this->server['HTTPS']) && $this->server['HTTPS'] === 'on' ? "s" : "")
+            . "://" . $this->server['HTTP_HOST']
+            . $this->server['REQUEST_URI'];
+    }
 }

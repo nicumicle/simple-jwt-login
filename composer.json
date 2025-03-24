@@ -58,7 +58,8 @@
         "@phpmd-test-controversial",
         "@tests",
         "@tests-feature"
-    ]
+    ],
+    "gen-i18n": "wp i18n make-pot simple-jwt-login/ simple-jwt-login/i18n/simple-jwt-login.pot --allow-root"
   },
   "scripts-descriptions": {
     "check-plugin": "Check plugin code and run tests"

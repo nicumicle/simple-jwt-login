@@ -16,3 +16,4 @@ buddypress/*
 mailpoet/*
 simple-jwt-login-mailpoet/*
 wp-graphql/*
+tmp/*

@@ -147,8 +147,14 @@ class ProtectEndpointService extends BaseService
             if (empty(trim($protectedURL, '/'))) {
                 continue;
             }
+            // By default, start_with match
+            $match = strpos(strtolower($endpoint), strtolower($protectedURL)) === 0;
 
-            if (strtolower($endpoint) == strtolower($protectedURL)) {
+            if ($protectedEndpoint['match']  === ProtectEndpointSettings::ENDPOINT_MATCH_EXACT) {
+                $match = strtolower($endpoint) == strtolower($protectedURL);
+            }
+
+            if ($match) {
                 switch ($protectedEndpoint['method']) {
                     case ProtectEndpointSettings::REQUEST_METHOD_ALL:
                         $isEndpointProtected = $setValue; // Same as before.

@@ -17,6 +17,9 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
     const REQUEST_METHOD_PATCH = 'PATCH';
     const REQUEST_METHOD_DELETE = 'DELETE';
 
+    const ENDPOINT_MATCH_EXACT = 'EXACT';
+    const ENDPOINT_MATCH_START_WITH = 'STARTS_WITH';
+
     public function initSettingsFromPost()
     {
         $this->assignSettingsPropertyFromPost(
@@ -50,6 +53,13 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
         );
         $this->assignSettingsPropertyFromPost(
             self::PROPERTY_GROUP,
+            'protect_match',
+            self::PROPERTY_GROUP,
+            'protect_match',
+            BaseSettings::SETTINGS_TYPE_ARRAY
+        );
+        $this->assignSettingsPropertyFromPost(
+            self::PROPERTY_GROUP,
             'whitelist',
             self::PROPERTY_GROUP,
             'whitelist',
@@ -60,6 +70,13 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
             'whitelist_method',
             self::PROPERTY_GROUP,
             'whitelist_method',
+            BaseSettings::SETTINGS_TYPE_ARRAY
+        );
+        $this->assignSettingsPropertyFromPost(
+            self::PROPERTY_GROUP,
+            'whitelist_match',
+            self::PROPERTY_GROUP,
+            'whitelist_match',
             BaseSettings::SETTINGS_TYPE_ARRAY
         );
     }
@@ -108,7 +125,7 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
      */
     public function getWhitelistedDomains()
     {
-        return $this->parseProtectSettings('whitelist_method', 'whitelist');
+        return $this->parseProtectSettings('whitelist_method', 'whitelist', 'whitelist_match');
     }
 
     /**
@@ -116,7 +133,7 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
      */
     public function getProtectedEndpoints()
     {
-        return $this->parseProtectSettings('protect_method', 'protect');
+        return $this->parseProtectSettings('protect_method', 'protect', 'protect_match');
     }
 
     /**
@@ -124,13 +141,16 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
      * @param string $endpointsKey
      * @return array<int,array<string,mixed>>
      */
-    private function parseProtectSettings($methodKey, $endpointsKey)
+    private function parseProtectSettings($methodKey, $endpointsKey, $matchKey)
     {
         $endpoints = isset($this->settings[ProtectEndpointSettings::PROPERTY_GROUP][$endpointsKey])
             ? (array) $this->settings[ProtectEndpointSettings::PROPERTY_GROUP][$endpointsKey]
             : [''];
         $methods = isset($this->settings[ProtectEndpointSettings::PROPERTY_GROUP][$methodKey])
             ? (array) $this->settings[ProtectEndpointSettings::PROPERTY_GROUP][$methodKey]
+            : [''];
+        $match = isset($this->settings[ProtectEndpointSettings::PROPERTY_GROUP][$matchKey])
+            ? (array) $this->settings[ProtectEndpointSettings::PROPERTY_GROUP][$matchKey]
             : [''];
 
         $return = [];
@@ -140,6 +160,9 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
                 'method' => !empty($methods[$key])
                     ? strtoupper($methods[$key])
                     : self::REQUEST_METHOD_ALL,
+                'match' => !empty($match[$key])
+                    ? $match[$key]
+                    : self::ENDPOINT_MATCH_START_WITH,
             ];
         }
 

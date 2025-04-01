@@ -18,6 +18,18 @@ if (!defined('ABSPATH')) {
  */
 function simple_jwt_login_draw_endpoin_row($type, $endpoint)
 {
+    $requestMethodsOpts = [
+        ProtectEndpointSettings::REQUEST_METHOD_GET => __('GET', 'simple-jwt-login'),
+        ProtectEndpointSettings::REQUEST_METHOD_POST => __('POST', 'simple-jwt-login'),
+        ProtectEndpointSettings::REQUEST_METHOD_PUT => __('PUT', 'simple-jwt-login'),
+        ProtectEndpointSettings::REQUEST_METHOD_PATCH => __('PATCH', 'simple-jwt-login'),
+        ProtectEndpointSettings::REQUEST_METHOD_DELETE => __('DELETE', 'simple-jwt-login')
+    ];
+
+    $matchesOpts = [
+        ProtectEndpointSettings::ENDPOINT_MATCH_START_WITH => __("Starts with", "simple-jwt-login"),
+        ProtectEndpointSettings::ENDPOINT_MATCH_EXACT => __("Exact match", "simple-jwt-login")
+    ]
     ?>
     <div class="form-group endpoint_row">
         <div class="input-group">
@@ -31,37 +43,29 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
                     <?php echo __("ALL", "simple-jwt-login");?>
                 </option>
                 <optgroup label="<?php echo __('HTTP Methods', 'simple-jwt-login');?>">
-                    <option
-                        value="<?php echo esc_attr(ProtectEndpointSettings::REQUEST_METHOD_GET);?>"
-                        <?php echo (!empty($endpoint) && $endpoint['method'] == ProtectEndpointSettings::REQUEST_METHOD_GET ? 'selected' : '');?>
+                    <!-- request methods options-->
+                    <?php foreach ($requestMethodsOpts as $method => $translation) {?>
+                        <option
+                        value="<?php echo esc_attr($method);?>"
+                        <?php echo (!empty($endpoint) && $endpoint['method'] == $method ? 'selected' : '');?>
                     >
-                        <?php echo __("GET", "simple-jwt-login");?>
+                        <?php echo esc_html($translation)?>
                     </option>
-                    <option
-                        value="<?php echo esc_attr(ProtectEndpointSettings::REQUEST_METHOD_POST);?>"
-                        <?php echo (!empty($endpoint) && $endpoint['method'] == ProtectEndpointSettings::REQUEST_METHOD_POST ? 'selected' : '');?>
-                    >
-                        <?php echo __("POST", "simple-jwt-login");?>
-                    </option>
-                    <option
-                        value="<?php echo esc_attr(ProtectEndpointSettings::REQUEST_METHOD_PUT);?>""
-                        <?php echo (!empty($endpoint) && $endpoint['method'] == ProtectEndpointSettings::REQUEST_METHOD_PUT ? 'selected' : '');?>
-                    >
-                        <?php echo __("PUT", "simple-jwt-login");?>
-                    </option>
-                    <option
-                        value="<?php echo esc_attr(ProtectEndpointSettings::REQUEST_METHOD_PATCH);?>"
-                        <?php echo (!empty($endpoint) && $endpoint['method'] == ProtectEndpointSettings::REQUEST_METHOD_PATCH ? 'selected' : '');?>
-                    >
-                        <?php echo __("PATCH", "simple-jwt-login");?>
-                    </option>
-                    <option
-                        value="<?php echo esc_attr(ProtectEndpointSettings::REQUEST_METHOD_DELETE);?>"
-                        <?php echo (!empty($endpoint) && $endpoint['method'] == ProtectEndpointSettings::REQUEST_METHOD_DELETE ? 'selected' : '');?>
-                    >
-                        <?php echo __("DELETE", "simple-jwt-login");?>
-                    </option>
+                    <?php }?>
                 </optgroup>
+            </select>
+            <select
+                name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP . "[" . $type . "_match][]");?>"
+                >
+                <!-- match options -->
+                <?php foreach ($matchesOpts as $match => $translation) {?>
+                    <option
+                        value="<?php echo esc_attr($match);?>"
+                        <?php echo (!empty($endpoint) && $endpoint['match'] === $match ? 'selected' : '');?>
+                    >
+                        <?php echo esc_html($translation);?>
+                </option>   
+                <?php }?>
             </select>
             <input type="text"
                    name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP . "[" . $type . "][]");?>"

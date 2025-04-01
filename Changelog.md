@@ -1,6 +1,7 @@
 # Changelog - Releases
 
 ## Unreleased
+- Validate JWT on protect endpoints[#141](https://github.com/nicumicle/simple-jwt-login/issues/141)
 
 ## 3.6.0 (24 Mar 2025)
 - CI: Check plugin code syntax with PHP 8.3 and 8.4

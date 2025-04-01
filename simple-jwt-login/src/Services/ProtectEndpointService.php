@@ -3,6 +3,7 @@
 namespace SimpleJWTLogin\Services;
 
 use Exception;
+use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
 
 class ProtectEndpointService extends BaseService
@@ -57,21 +58,20 @@ class ProtectEndpointService extends BaseService
 
         try {
             $jwt = $this->getJwtFromRequestHeaderOrCookie();
-
             if (empty($jwt)) {
-                if ($this->routeService->wordPressData->isUserLoggedIn()) {
-                    return true;
-                }
-
-                throw new Exception('JWT is not present and we can not search for a user.');
+                throw new Exception('JWT is not present and we can not search for a user.', ErrorCodes::ERR_PROTECT_ENDPOINTS_MISSING_JWT);
             }
-
+            
             $user = $this->routeService->getUserFromJwt($jwt);
             $this->validateJwtRevoked(
                 $this->wordPressData->getUserProperty($user, 'ID'),
                 $jwt
             );
-
+           
+            
+            if ($this->routeService->wordPressData->isUserLoggedIn()) {
+                return true;
+            }
             $this->routeService->wordPressData->loginUser($user);
 
             return true;

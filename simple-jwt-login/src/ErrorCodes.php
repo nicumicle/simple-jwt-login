@@ -82,4 +82,6 @@ class ErrorCodes
     const ERR_GOOGLE_INVALID_CODE = 72;
     const ERR_GOOGLE_INVALID_ID_TOKEN = 73;
     const ERR_GOOGLE_USER_NOT_FOUND = 74;
+
+    const ERR_PROTECT_ENDPOINTS_MISSING_JWT = 75;
 }

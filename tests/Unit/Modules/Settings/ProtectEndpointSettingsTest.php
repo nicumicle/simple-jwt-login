@@ -45,7 +45,7 @@ class ProtectEndpointSettingsTest extends TestCase
                         'abc',
                         '',
                         'abc'
-                    ]
+                    ],
                 ]
             ])
             ->withWordPressData($this->wordPressData);
@@ -66,10 +66,12 @@ class ProtectEndpointSettingsTest extends TestCase
                 [
                     'url' => '123',
                     'method' => 'ALL',
+                    'match'  => 'STARTS_WITH',
                 ],
                 [
                     'url' => '123',
                     'method' => 'ALL',
+                    'match'  => 'STARTS_WITH',
                 ],
             ],
             $protectSettings->getProtectedEndpoints()
@@ -80,10 +82,12 @@ class ProtectEndpointSettingsTest extends TestCase
                 [
                     'url' => 'abc',
                     'method' => 'ALL',
+                    'match'  => 'STARTS_WITH',
                 ],
                 [
                     'url' => 'abc',
                     'method' => 'ALL',
+                    'match'  => 'STARTS_WITH',
                 ],
             ],
             $protectSettings->getWhitelistedDomains()
@@ -138,14 +142,17 @@ class ProtectEndpointSettingsTest extends TestCase
                 [
                     'url' => '/protect-first',
                     'method' => 'GET',
+                    'match'  => 'STARTS_WITH',
                 ],
                 [
                     'url' => '/protect-second',
                     'method' => 'ALL',
+                    'match'  => 'STARTS_WITH',
                 ],
                 [
                     'url' => '/protect-third',
                     'method' => 'PUT',
+                    'match'  => 'STARTS_WITH',
                 ],
 
             ],
@@ -157,14 +164,17 @@ class ProtectEndpointSettingsTest extends TestCase
                 [
                     'url' => '/whitelist-first',
                     'method' => 'GET',
+                    'match'  => 'STARTS_WITH',
                 ],
                 [
                     'url' => '/whitelist-second',
                     'method' => 'ALL',
+                    'match'  => 'STARTS_WITH',
                 ],
                 [
                     'url' => '/whitelist-third',
                     'method' => 'PUT',
+                    'match'  => 'STARTS_WITH',
                 ],
 
             ],
@@ -249,10 +259,12 @@ class ProtectEndpointSettingsTest extends TestCase
                 [
                     'url' => 'test',
                     'method' => 'ALL',
+                    'match'  => 'STARTS_WITH',
                 ],
                 [
                     'url' => 'test',
                     'method' => 'ALL',
+                    'match'  => 'STARTS_WITH',
                 ],
             ],
             $settings->getProtectedEndpoints()
@@ -262,10 +274,12 @@ class ProtectEndpointSettingsTest extends TestCase
                 [
                     'url' => '123',
                     'method' => 'ALL',
+                    'match'  => 'STARTS_WITH',
                 ],
                 [
                     'url' => '123',
                     'method' => 'ALL',
+                    'match'  => 'STARTS_WITH',
                 ],
             ],
             $settings->getWhitelistedDomains()

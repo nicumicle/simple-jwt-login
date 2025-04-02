@@ -6,7 +6,7 @@ Tags: jwt, API, auto login, register, tokens, protect endpoints
 Requires at least: 4.4.0
 Tested up to: 6.7
 Requires PHP: 5.5
-Stable tag: 3.6.0
+Stable tag: 3.6.1
 License: GPLv3
 License URI: https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE
 
@@ -459,6 +459,10 @@ After that, for the create user route, simply add the AUTH code in the request, 
 == Changelog ==
 
 A complete Changelog is available on the [GitHub repository](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md).
+
+= 3.6.1 (02 Apr 2025) =
+- Validate JWT on protect endpoints[#141](https://github.com/nicumicle/simple-jwt-login/issues/141)
+- Fix backward compatibility for protect endpoints. Add `match`/`start_with` option for endpoints.[#143](https://github.com/nicumicle/simple-jwt-login/issues/143)
 
 = 3.6.0 (24 Mar 2025) =
 - Add support for configuring request methods on Protect endpoints [#129](https://github.com/nicumicle/simple-jwt-login/issues/129)

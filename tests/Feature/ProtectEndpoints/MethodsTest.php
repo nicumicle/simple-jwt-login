@@ -175,14 +175,18 @@ class MethodsTest extends TestBase
                     'whitelist_method' => [
                         'GET',
                         'ALL',
-                    ]
+                    ],
+                    'whitelist_match' => [
+                        ProtectEndpointSettings::ENDPOINT_MATCH_EXACT,
+                        ProtectEndpointSettings::ENDPOINT_MATCH_EXACT,
+                    ],
                 ],
                 'useJWT' => false,
                 'endpoint' => '/wp/v2/posts',
                 'method' => 'GET',
                 'expectedStatusCode' => 403,
             ],
-            'should able to call an non-whitelisted endpoint with JWT' => [
+            'should be able to call an non-whitelisted endpoint with JWT' => [
                 'settings' => [
                     'enabled' => true,
                     'action' => ProtectEndpointSettings::ALL_ENDPOINTS,
@@ -195,10 +199,52 @@ class MethodsTest extends TestBase
                     'whitelist_method' => [
                         'GET',
                         'ALL',
-                    ]
+                    ],
+                    'whitelist_match' => [
+                        ProtectEndpointSettings::ENDPOINT_MATCH_EXACT,
+                        ProtectEndpointSettings::ENDPOINT_MATCH_EXACT,
+                    ],
                 ],
                 'useJWT' => true,
                 'endpoint' => '/wp/v2/posts',
+                'method' => 'GET',
+                'expectedStatusCode' => 200,
+            ],
+            'should not be able to call a non whitelisted endpoint with exact match' => [
+                'settings' => [
+                    'enabled' => true,
+                    'action' => ProtectEndpointSettings::ALL_ENDPOINTS,
+                    'whitelist' => [
+                        '/wp/v2'
+                    ],
+                    'whitelist_method' => [
+                        'ALL',
+                    ],
+                    'whitelist_match' => [
+                        ProtectEndpointSettings::ENDPOINT_MATCH_EXACT,
+                    ]
+                ],
+                'useJWT' => false,
+                'endpoint' => '/wp/v2/users',
+                'method' => 'GET',
+                'expectedStatusCode' => 403,
+            ],
+            'should be able to call protected endpoint with start match' => [
+                'settings' => [
+                    'enabled' => true,
+                    'action' => ProtectEndpointSettings::ALL_ENDPOINTS,
+                    'whitelist' => [
+                        '/wp/v2'
+                    ],
+                    'whitelist_method' => [
+                        'ALL',
+                    ],
+                    'whitelist_match' => [
+                        ProtectEndpointSettings::ENDPOINT_MATCH_START_WITH,
+                    ]
+                ],
+                'useJWT' => false,
+                'endpoint' => '/wp/v2/users',
                 'method' => 'GET',
                 'expectedStatusCode' => 200,
             ],

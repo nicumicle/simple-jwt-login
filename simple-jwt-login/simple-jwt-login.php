@@ -7,7 +7,7 @@
     Author URI: https://profiles.wordpress.org/nicu_m/
     Text Domain: simple-jwt-login
     Domain Path: /i18n
-    Version: 3.6.0
+    Version: 3.6.1
 */
 
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;

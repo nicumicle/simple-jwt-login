@@ -154,17 +154,19 @@ class ProtectEndpointService extends BaseService
                 $match = strtolower($endpoint) == strtolower($protectedURL);
             }
 
-            if ($match) {
-                switch ($protectedEndpoint['method']) {
-                    case ProtectEndpointSettings::REQUEST_METHOD_ALL:
-                        $isEndpointProtected = $setValue; // Same as before.
-                        break;
-                    default:
-                        if ($protectedEndpoint['method'] === $requestMethod) {
-                            $isEndpointProtected = $setValue;
-                        }
-                        break;
-                }
+            if (!$match) {
+                return $isEndpointProtected;
+            }
+           
+            switch ($protectedEndpoint['method']) {
+                case ProtectEndpointSettings::REQUEST_METHOD_ALL:
+                    $isEndpointProtected = $setValue; // Same as before.
+                    break;
+                default:
+                    if ($protectedEndpoint['method'] === $requestMethod) {
+                        $isEndpointProtected = $setValue;
+                    }
+                    break;
             }
         }
 

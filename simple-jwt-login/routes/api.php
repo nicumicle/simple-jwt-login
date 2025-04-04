@@ -42,8 +42,8 @@ add_action('rest_api_init', function () {
         $routeService->withSession($_SESSION);
     }
 
-    $corsService = new CorsHelper();
     if ($jwtSettings->getCorsSettings()->isCorsEnabled()) {
+        $corsService = new CorsHelper();
         if ($jwtSettings->getCorsSettings()->isAllowOriginEnabled()) {
             $corsService->addHeader(
                 'Access-Control-Allow-Origin',

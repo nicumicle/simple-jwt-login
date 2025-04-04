@@ -120,7 +120,7 @@ add_action('rest_api_init', function () {
             $currentURL = str_replace(home_url(), "", $currentURL);
             $documentRoot = esc_html($_SERVER['DOCUMENT_ROOT']);
 
-            $hasAccess = $service->hasAccess($_SERVER['REQUEST_METHOD'], $currentURL, $documentRoot, $request);
+            $hasAccess = $service->hasAccess($currentURL, $documentRoot);
             if ($hasAccess) {
                 return $endpoint;
             }

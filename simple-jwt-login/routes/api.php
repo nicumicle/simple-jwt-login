@@ -115,7 +115,13 @@ add_action('rest_api_init', function () {
                 ->withSettings($jwtSettings)
                 ->withServerHelper($serverHelper)
                 ->withRouteService($routeService);
-
+            if ($jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
+                if (empty(session_id()) && !headers_sent()) {
+                    @session_start();
+                }
+                $service->withSession($_SESSION);
+            }    
+                
             $currentURL = esc_url($serverHelper->getCurrentURL());
             $currentURL = str_replace(home_url(), "", $currentURL);
             $documentRoot = esc_html($_SERVER['DOCUMENT_ROOT']);

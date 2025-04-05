@@ -28,8 +28,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php_version }}
-          extension-csv: mbstring, intl #setup extensions
-          ini-values-csv: post_max_size=256M, short_open_tag=On #setup php.ini configuration
+          extension: mbstring, intl #setup extensions
+          ini-values: post_max_size=256M, short_open_tag=Off, error_reporting=E_ALL, display_errors=On, display_startup_errors=On  #setup php.ini configuration
           coverage: xdebug #setup coverage driver
           pecl: false
 
@@ -103,4 +103,4 @@ jobs:
             
             cd /var/www/html/wp-content/plugins/
             echo "🧪 Running the tests..."
-            XDEBUG_MODE=coverage vendor/bin/phpunit --testsuite "Feature" --coverage-text --testdox --do-not-cache-result
+            vendor/bin/phpunit --testsuite "Feature" --testdox --do-not-cache-result

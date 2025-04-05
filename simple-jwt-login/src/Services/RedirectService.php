@@ -3,7 +3,6 @@
 namespace SimpleJWTLogin\Services;
 
 use Exception;
-use PHPUnit\Util\Xml\ValidationResult;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use WP_REST_Response;

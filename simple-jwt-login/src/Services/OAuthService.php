@@ -3,7 +3,6 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
-use SimpleJWTLogin\Libraries\ServerCall;
 use SimpleJWTLogin\Services\Applications\Google;
 
 class OAuthService extends BaseService implements ServiceInterface

@@ -42,8 +42,8 @@ add_action('rest_api_init', function () {
         $routeService->withSession($_SESSION);
     }
 
-    $corsService = new CorsHelper();
     if ($jwtSettings->getCorsSettings()->isCorsEnabled()) {
+        $corsService = new CorsHelper();
         if ($jwtSettings->getCorsSettings()->isAllowOriginEnabled()) {
             $corsService->addHeader(
                 'Access-Control-Allow-Origin',
@@ -115,12 +115,18 @@ add_action('rest_api_init', function () {
                 ->withSettings($jwtSettings)
                 ->withServerHelper($serverHelper)
                 ->withRouteService($routeService);
-
+            if ($jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
+                if (empty(session_id()) && !headers_sent()) {
+                    @session_start();
+                }
+                $service->withSession($_SESSION);
+            }
+                
             $currentURL = esc_url($serverHelper->getCurrentURL());
             $currentURL = str_replace(home_url(), "", $currentURL);
             $documentRoot = esc_html($_SERVER['DOCUMENT_ROOT']);
 
-            $hasAccess = $service->hasAccess($_SERVER['REQUEST_METHOD'], $currentURL, $documentRoot, $request);
+            $hasAccess = $service->hasAccess($currentURL, $documentRoot);
             if ($hasAccess) {
                 return $endpoint;
             }

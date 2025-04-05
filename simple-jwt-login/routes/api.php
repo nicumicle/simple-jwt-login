@@ -120,7 +120,7 @@ add_action('rest_api_init', function () {
                     @session_start();
                 }
                 $service->withSession($_SESSION);
-            }    
+            }
                 
             $currentURL = esc_url($serverHelper->getCurrentURL());
             $currentURL = str_replace(home_url(), "", $currentURL);

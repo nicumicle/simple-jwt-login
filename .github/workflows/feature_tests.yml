@@ -83,7 +83,7 @@ jobs:
             cd /var/www/html/wp-content/plugins
             composer install --prefer-dist --no-progress
 
-            mkdir -p .phpunit.cache/
+            mkdir -p .phpunit.cache/code-coverage
             touch clover.xml
       -   name: "🚧 Change /var/www/html owner"
           run: |

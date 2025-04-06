@@ -26,15 +26,13 @@ class ProtectEndpointService extends BaseService
     }
 
     /**
-     * @param string $requestMethod
      * @param string $currentUrl
      * @param string $documentRoot
-     * @param array $request
      *
      * @throws Exception
      * @return bool
      */
-    public function hasAccess($requestMethod, $currentUrl, $documentRoot, $request)
+    public function hasAccess($currentUrl, $documentRoot)
     {
         if ($this->jwtSettings->getProtectEndpointsSettings()->isEnabled() === false) {
             return true;
@@ -47,10 +45,10 @@ class ProtectEndpointService extends BaseService
 
         $isEndpointsProtected = true;
         if (!empty(trim($path, '/'))) {
-            $isEndpointsProtected = $this->isEndpointProtected($requestMethod, $path);
+            $isEndpointsProtected = $this->isEndpointProtected($path);
         }
-        if (!empty($request['rest_route'])) {
-            $isEndpointsProtected = $this->isEndpointProtected($requestMethod, $request['rest_route']);
+        if (!empty($this->request['rest_route'])) {
+            $isEndpointsProtected = $this->isEndpointProtected($this->request['rest_route']);
         }
         if ($isEndpointsProtected === false) {
             return true;
@@ -81,11 +79,10 @@ class ProtectEndpointService extends BaseService
     }
 
     /**
-     * @param string $requestMethod
      * @param string $endpoint
      * @return bool
      */
-    private function isEndpointProtected($requestMethod, $endpoint)
+    private function isEndpointProtected($endpoint)
     {
         if (strpos($endpoint, '/') !== 0) {
             $endpoint = '/' . $endpoint;
@@ -111,7 +108,6 @@ class ProtectEndpointService extends BaseService
         switch ($action) {
             case ProtectEndpointSettings::ALL_ENDPOINTS:
                 return $this->parseDomainsAndGetResult(
-                    $requestMethod,
                     $endpoint,
                     $protectSettings->getWhitelistedDomains(),
                     true,
@@ -119,7 +115,6 @@ class ProtectEndpointService extends BaseService
                 );
             case ProtectEndpointSettings::SPECIFIC_ENDPOINTS:
                 return $this->parseDomainsAndGetResult(
-                    $requestMethod,
                     $endpoint,
                     $protectSettings->getProtectedEndpoints(),
                     false,
@@ -131,14 +126,13 @@ class ProtectEndpointService extends BaseService
     }
 
     /**
-     * @param string $requestMethod
      * @param string $endpoint
      * @param array $domains
      * @param bool $defaultValue
      * @param bool $setValue
      * @return bool
      */
-    private function parseDomainsAndGetResult($requestMethod, $endpoint, $domains, $defaultValue, $setValue)
+    private function parseDomainsAndGetResult($endpoint, $domains, $defaultValue, $setValue)
     {
         $isEndpointProtected = $defaultValue;
         foreach ($domains as $protectedEndpoint) {
@@ -154,17 +148,19 @@ class ProtectEndpointService extends BaseService
                 $match = strtolower($endpoint) == strtolower($protectedURL);
             }
 
-            if ($match) {
-                switch ($protectedEndpoint['method']) {
-                    case ProtectEndpointSettings::REQUEST_METHOD_ALL:
-                        $isEndpointProtected = $setValue; // Same as before.
-                        break;
-                    default:
-                        if ($protectedEndpoint['method'] === $requestMethod) {
-                            $isEndpointProtected = $setValue;
-                        }
-                        break;
-                }
+            if (!$match) {
+                return $isEndpointProtected;
+            }
+           
+            switch ($protectedEndpoint['method']) {
+                case ProtectEndpointSettings::REQUEST_METHOD_ALL:
+                    $isEndpointProtected = $setValue; // Same as before.
+                    break;
+                default:
+                    if ($protectedEndpoint['method'] === $this->requestMetod) {
+                        $isEndpointProtected = $setValue;
+                    }
+                    break;
             }
         }
 

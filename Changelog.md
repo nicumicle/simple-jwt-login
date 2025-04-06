@@ -1,6 +1,7 @@
 # Changelog - Releases
 
 ## Unreleased
+- Ensure Protect endpoints searches for JWT in session
 
 ## 3.6.1 (02 Apr 2025)
 - Validate JWT on protect endpoints[#141](https://github.com/nicumicle/simple-jwt-login/issues/141)

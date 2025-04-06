@@ -59,6 +59,7 @@ class ProtectEndpointServiceTest extends TestCase
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressData));
         $service = (new ProtectEndpointService())
             ->withRequest($request)
+            ->withRequestMethod($requestMethod)
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
             ->withRouteService($routeService)
@@ -69,7 +70,7 @@ class ProtectEndpointServiceTest extends TestCase
             )
             ->withSession([]);
 
-        $result = $service->hasAccess($requestMethod, $currentUrl, $documentRoot, $request);
+        $result = $service->hasAccess($currentUrl, $documentRoot);
         $this->assertSame($expectedResult, $result);
     }
 
@@ -324,6 +325,7 @@ class ProtectEndpointServiceTest extends TestCase
         $service = (new ProtectEndpointService())
             ->withRequest($request)
             ->withCookies([])
+            ->withRequestMethod('GET')
             ->withServerHelper(new ServerHelper([]))
             ->withRouteService($routeService)
             ->withSettings(
@@ -333,7 +335,7 @@ class ProtectEndpointServiceTest extends TestCase
             )
             ->withSession([]);
 
-        $result = $service->hasAccess('GET', '/wp-json/v2/posts', '/var/www/html', $request);
+        $result = $service->hasAccess('/wp-json/v2/posts', '/var/www/html');
         $this->assertSame(false, $result);
     }
 
@@ -370,6 +372,7 @@ class ProtectEndpointServiceTest extends TestCase
         $service = (new ProtectEndpointService())
             ->withRequest($request)
             ->withCookies([])
+            ->withRequestMethod('GET')
             ->withServerHelper(new ServerHelper([]))
             ->withRouteService($routeService)
             ->withSettings(
@@ -379,7 +382,7 @@ class ProtectEndpointServiceTest extends TestCase
             )
             ->withSession([]);
 
-        $result = $service->hasAccess('GET', '/wp-json/simple-jwt-login/v1/auth', '/var/www/html', $request);
+        $result = $service->hasAccess('/wp-json/simple-jwt-login/v1/auth', '/var/www/html');
         $this->assertTrue($result);
     }
 }

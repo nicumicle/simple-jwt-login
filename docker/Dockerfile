@@ -27,4 +27,7 @@ RUN yes | pecl install xdebug \
 
 # PHP ini changes
 RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini && \
-    sed -i -e "s/^ *memory_limit.*/memory_limit = 128M/g" /usr/local/etc/php/php.ini
+    sed -i -e "s/^ *memory_limit.*/memory_limit = 128M/g" /usr/local/etc/php/php.ini && \
+    sed -i -e "s/^display_errors = .*/display_errors = On/g" /usr/local/etc/php/php.ini && \
+    sed -i -e "s/^display_startup_errors = .*/display_startup_errors = On/g" /usr/local/etc/php/php.ini && \
+    sed -i -e "s/^error_reporting =.*/error_reporting = E_ALL/g" /usr/local/etc/php/php.ini

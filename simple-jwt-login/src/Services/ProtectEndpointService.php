@@ -38,6 +38,12 @@ class ProtectEndpointService extends BaseService
             return true;
         }
 
+        // WordPress Core or some other plugings uses the REST API to create pages/posts,etc.
+        // Need to skip the protect endpoint validation for these scenarios if user is already loggedin
+        if ($this->wordPressData->isUserLoggedIn()) {
+            return true;
+        }
+
         $parsed = parse_url($currentUrl);
 
         $path  = rtrim(str_replace($documentRoot, '', ABSPATH), '/');

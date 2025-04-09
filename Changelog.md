@@ -1,6 +1,10 @@
 # Changelog - Releases
 
 ## Unreleased
+
+
+## 3.6.2 (09 Apr 2025)
+- Fix blocked backened endpoints by ProtectEndpoints [#146](https://github.com/nicumicle/simple-jwt-login/issues/146)
 - Ensure Protect endpoints searches for JWT in session
 
 ## 3.6.1 (02 Apr 2025)

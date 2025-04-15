@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 3.6.3 (15 Apr 2025)
+- Fix protect endpoints [#149](https://github.com/nicumicle/simple-jwt-login/issues/149)
 
 ## 3.6.2 (09 Apr 2025)
 - Fix blocked backened endpoints by ProtectEndpoints [#146](https://github.com/nicumicle/simple-jwt-login/issues/146)

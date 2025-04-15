@@ -45,7 +45,8 @@ class ActiveOnSpecificEndpointsTest extends TestBase
                 "enabled" => true,
                 "action" => ProtectEndpointSettings::SPECIFIC_ENDPOINTS,
                 "protect" => [
-                    "/wp/v2/users"
+                    "/wp/v2/users",
+                    "/wp/v2/comments"
                 ],
                 "whitelist" => [
                 ],
@@ -64,13 +65,34 @@ class ActiveOnSpecificEndpointsTest extends TestBase
         $this->assertEquals(200, $resp->getStatusCode());
     }
 
-    #[TestDox("WordPress endpoint can't be accessed without JWT if protected")]
+    #[TestDox("WordPress endpoint(users) can't be accessed without JWT if protected")]
     /**
      * @return void
      */
-    public function testEndpointCanNotBeAccessedWithoutJWT()
+    public function testEndpointCanNotBeAccessedWithoutJWT1()
     {
         $resp = $this->client->get(self::API_URL . "?rest_route=/wp/v2/users");
+
+        $this->assertEquals(403, $resp->getStatusCode());
+        $contents = $resp->getBody()->getContents();
+        $contentsArr = json_decode($contents, true);
+        $this->assertSame(
+            $this->generateErrorJson(
+                "You are not authorized to access this endpoint.",
+                403,
+                ['type' => 'simple-jwt-login-route-protect']
+            ),
+            $contentsArr
+        );
+    }
+
+    #[TestDox("WordPress endpoint(comments) can't be accessed without JWT if protected")]
+    /**
+     * @return void
+     */
+    public function testEndpointCanNotBeAccessedWithoutJWT2()
+    {
+        $resp = $this->client->get(self::API_URL . "?rest_route=/wp/v2/comments");
 
         $this->assertEquals(403, $resp->getStatusCode());
         $contents = $resp->getBody()->getContents();

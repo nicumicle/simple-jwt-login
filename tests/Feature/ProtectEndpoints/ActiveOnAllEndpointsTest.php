@@ -46,19 +46,31 @@ class ActiveOnAllEndpointsTest extends TestBase
                 "action" => ProtectEndpointSettings::ALL_ENDPOINTS,
                 "protect" => [],
                 "whitelist" => [
-                    "/wp/v2/posts"
+                    "/wp/v2/posts",
+                    "/wp/v2/comments"
                 ],
             ],
         ]);
     }
 
-    #[TestDox("WordPress endpoint can be accessed without JWT if whitelisted")]
+    #[TestDox("WordPress endpoint(posts) can be accessed without JWT if whitelisted")]
     /**
      * @return void
      */
-    public function testCanAccessWhitelistedEndpoint()
+    public function testCanAccessWhitelistedEndpoint1()
     {
         $resp = $this->client->get(self::API_URL . "?rest_route=/wp/v2/posts");
+
+        $this->assertEquals(200, $resp->getStatusCode());
+    }
+
+    #[TestDox("WordPress endpoint(comments) can be accessed without JWT if whitelisted")]
+    /**
+     * @return void
+     */
+    public function testCanAccessWhitelistedEndpoint2()
+    {
+        $resp = $this->client->get(self::API_URL . "?rest_route=/wp/v2/comments");
 
         $this->assertEquals(200, $resp->getStatusCode());
     }

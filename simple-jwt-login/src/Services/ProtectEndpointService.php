@@ -155,7 +155,7 @@ class ProtectEndpointService extends BaseService
             }
 
             if (!$match) {
-                return $isEndpointProtected;
+                continue;
             }
            
             switch ($protectedEndpoint['method']) {

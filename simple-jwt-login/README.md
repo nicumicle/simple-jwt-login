@@ -2,7 +2,7 @@
 
 Contributors: nicu_m
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PK9BCD6AYF58Y&source=url
-Tags: jwt, API, auto login, register, tokens, protect endpoints
+Tags: jwt, API, auto login, register, tokens
 Requires at least: 4.4.0
 Tested up to: 6.8
 Requires PHP: 5.5
@@ -10,7 +10,7 @@ Stable tag: 3.6.4
 License: GPLv3
 License URI: https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE
 
-Enhance the WordPress REST API with JSON Web Token (JWT) authentication, ensuring a secure connection for mobile apps, external websites, and third-party services to access your WordPress content via REST endpoints.
+Enhance the WordPress REST API with JWT authentication for secure access by mobile apps, external sites, and third-party services.
 
 == Description ==
 

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 3.6.4 (17 Apr 2025)
+- Update WordPress 6.8 Compatibility
+
 ## 3.6.3 (15 Apr 2025)
 - Fix protect endpoints [#149](https://github.com/nicumicle/simple-jwt-login/issues/149)
 

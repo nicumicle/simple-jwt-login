@@ -200,6 +200,15 @@ Thanks to all our contributors!
   <img src="https://contrib.rocks/image?repo=nicumicle/simple-jwt-login" alt="Contributors"/>
 </a>
 
+
+## :blue_heart: Sponsors
+
+This project is supported by:
+
+<a href="https://www.digitalocean.com/">
+    <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/SVG/DO_Logo_horizontal_blue.svg" width="201px" alt="DigitalOcean">
+</a>
+
 ## Copyright
 
 This project is distributed under the [GNU General Public License v3.0](https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE).

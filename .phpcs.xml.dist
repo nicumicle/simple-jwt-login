@@ -54,4 +54,8 @@
       <rule ref="Squiz.Commenting.FunctionCommentThrowTag">
          <exclude name="Squiz.Commenting.FunctionCommentThrowTag.WrongNumber"/>
       </rule>
+
+    <!-- Disable header comment spacing rule -->
+    <exclude name="Squiz.Commenting.FileComment.SpacingAfterComment"/>
+      
 </ruleset>

@@ -7,7 +7,7 @@
     Author URI: https://profiles.wordpress.org/nicu_m/
     Text Domain: simple-jwt-login
     Domain Path: /i18n
-    Version: 3.6.4
+    Version: 3.6.5
 */
 
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -214,6 +214,29 @@ function simple_jwt_login_login_footer()
 }
 
 add_shortcode('simple-jwt-login-oauth', 'simple_jwt_login_oauth_shortcode');
+
+/**
+ * Sanitize CSS property values to prevent XSS attacks.
+ * Removes characters that could break out of CSS context or inject malicious code.
+ *
+ * @param string $value The CSS value to sanitize
+ * @return string The sanitized CSS value
+ */
+function simple_jwt_login_sanitize_css_value($value)
+{
+    // Remove any HTML tags
+    $value = wp_strip_all_tags($value);
+
+    // Remove characters that could break out of CSS/HTML context or inject code
+    // This includes: < > " ' ; { } ( ) \ / and backticks
+    $value = preg_replace('/[<>"\';{}()\\\\\/`]/', '', $value);
+
+    // Limit length to prevent abuse
+    $value = substr($value, 0, 100);
+
+    return $value;
+}
+
 /**
  * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  * @param ?array $parameter
@@ -240,29 +263,29 @@ function simple_jwt_login_oauth_shortcode($parameter = null)
     $border = "1px solid #ccc";
 
     if (isset($parameter['background'])) {
-        $background = $parameter['background'];
+        $background = simple_jwt_login_sanitize_css_value($parameter['background']);
     }
     if (isset($parameter['color'])) {
-        $color = $parameter['color'];
+        $color = simple_jwt_login_sanitize_css_value($parameter['color']);
     }
     if (isset($parameter['width'])) {
-        $imgwidth = $parameter['width'];
+        $imgwidth = simple_jwt_login_sanitize_css_value($parameter['width']);
     }
     if (isset($parameter['height'])) {
-        $imgheight = $parameter['height'];
+        $imgheight = simple_jwt_login_sanitize_css_value($parameter['height']);
     }
     if (isset($parameter['border'])) {
-        $border = $parameter['border'];
+        $border = simple_jwt_login_sanitize_css_value($parameter['border']);
     }
     $html = "<style>.simple-jwt-login-oauth-code .simple-jwt-login-auth-btn{
-        color: $color;
-        background-color: $background;
-        border: $border;
+        color: " . esc_attr($color) . ";
+        background-color: " . esc_attr($background) . ";
+        border: " . esc_attr($border) . ";
         cursor: pointer;
         }
         .simple-jwt-login-oauth-code .simple-jwt-login-auth-btn img {
-        width: $imgwidth;
-        height: $imgheight;
+        width: " . esc_attr($imgwidth) . ";
+        height: " . esc_attr($imgheight) . ";
         }
         </style>";
     $haveProvider = false;

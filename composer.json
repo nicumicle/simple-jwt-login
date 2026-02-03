@@ -32,7 +32,7 @@
   "scripts": {
     "tests": "vendor/bin/phpunit --testsuite 'Unit' --coverage-text ",
     "tests-feature": "vendor/bin/phpunit --testsuite 'Feature' --coverage-text",
-    "phpcs": "vendor/bin/phpcs simple-jwt-login/ tests --extensions=php",
+    "phpcs": "vendor/bin/phpcs --no-cache simple-jwt-login/ tests/ --extensions=php",
     "phpmd-design": "vendor/bin/phpmd simple-jwt-login/ text design",
     "phpmd-cleancode": "vendor/bin/phpmd simple-jwt-login/ text cleancode",
     "phpmd-unusedcode": "vendor/bin/phpmd simple-jwt-login/ text unusedcode",

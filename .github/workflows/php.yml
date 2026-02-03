@@ -12,6 +12,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3.30'
+        tools: composer
+
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
 
@@ -34,7 +40,7 @@ jobs:
     # Docs: https://getcomposer.org/doc/articles/scripts.md
 
     - name: Run PHPCS
-      run: vendor/bin/phpcs simple-jwt-login/ --extensions=php
+      run: vendor/bin/phpcs simple-jwt-login/ --extensions=php --no-cache
 
     - name: Run PHPMD design on plugin
       run: vendor/bin/phpmd simple-jwt-login/ text design
@@ -55,7 +61,7 @@ jobs:
       run: vendor/bin/phpstan analyse simple-jwt-login -c phpstan.neon --memory-limit=256M
 
     - name: Run PHPCS design on tests
-      run: vendor/bin/phpcs tests/
+      run: vendor/bin/phpcs tests/ --extensions=php --no-cache
 
     - name: Run PHPMD design on tests
       run: vendor/bin/phpmd tests text design

@@ -52,6 +52,9 @@ class ResetPasswordService extends BaseService implements ServiceInterface
     {
         $this->validateChangePassword();
         $newPassword = $this->wordPressData->sanitizeTextField($this->request['new_password']);
+        if ($this->jwtSettings->getAuthenticationSettings()->isAuthPasswordBase64Encoded()) {
+            $newPassword = base64_decode($newPassword);
+        }
         $jwtAllowed = $this->jwtSettings->getResetPasswordSettings()->isJwtAllowed();
         if ($jwtAllowed === false && empty($this->request['code'])) {
             throw new Exception(

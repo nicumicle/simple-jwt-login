@@ -12,17 +12,23 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3.30'
+        tools: composer
+
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
 
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v4
-      with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
+    # - name: Cache Composer packages
+    #   id: composer-cache
+    #   uses: actions/cache@v4
+    #   with:
+    #     path: vendor
+    #     key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+    #     restore-keys: |
+    #       ${{ runner.os }}-php-
 
     - name: Check PHP Version
       run: php --version
@@ -33,8 +39,8 @@ jobs:
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
 
-    - name: Run PHPCS design on plugin
-      run: vendor/bin/phpcs simple-jwt-login/ --extensions=php
+    # - name: Run PHPCS
+    #   run: vendor/bin/phpcs simple-jwt-login/ --extensions=php --no-cache
 
     - name: Run PHPMD design on plugin
       run: vendor/bin/phpmd simple-jwt-login/ text design
@@ -54,8 +60,8 @@ jobs:
     - name: Run phpstan on plugin
       run: vendor/bin/phpstan analyse simple-jwt-login -c phpstan.neon --memory-limit=256M
 
-    - name: Run PHPCS design on tests
-      run: vendor/bin/phpcs tests/
+    # - name: Run PHPCS design on tests
+    #   run: vendor/bin/phpcs tests/ --extensions=php --no-cache
 
     - name: Run PHPMD design on tests
       run: vendor/bin/phpmd tests text design

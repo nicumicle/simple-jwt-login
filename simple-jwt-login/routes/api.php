@@ -36,10 +36,7 @@ add_action('rest_api_init', function () {
     $routeService->withServerHelper($serverHelper);
 
     if ($jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
-        if (empty(session_id()) && !headers_sent()) {
-            @session_start();
-        }
-        $routeService->withSession($_SESSION);
+        $routeService->withSession(simple_jwt_login_init_session());
     }
 
     if ($jwtSettings->getCorsSettings()->isCorsEnabled()) {
@@ -116,10 +113,7 @@ add_action('rest_api_init', function () {
                 ->withServerHelper($serverHelper)
                 ->withRouteService($routeService);
             if ($jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
-                if (empty(session_id()) && !headers_sent()) {
-                    @session_start();
-                }
-                $service->withSession($_SESSION);
+                $service->withSession(simple_jwt_login_init_session());
             }
                 
             $currentURL = esc_url($serverHelper->getCurrentURL());
@@ -176,10 +170,7 @@ add_action('rest_api_init', function () {
                             ->withServerHelper($serverHelper)
                             ->withSettings($jwtSettings);
                         if ($jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
-                            if (empty(session_id()) && !headers_sent()) {
-                                @session_start();
-                            }
-                            $service->withSession($_SESSION);
+                            $service->withSession(simple_jwt_login_init_session());
                         }
 
                         return $service->makeAction();
@@ -201,3 +192,28 @@ add_action('rest_api_init', function () {
         );
     }
 });
+
+
+/**
+ * @SuppressWarnings(PHPMD.Superglobals)
+ * @return array
+ */
+function simple_jwt_login_init_session()
+{
+    switch (session_status()) {
+        case PHP_SESSION_DISABLED:
+            return [];
+        case PHP_SESSION_NONE:
+            if (headers_sent()) {
+                return [];
+            }
+
+            session_start();
+            
+            return $_SESSION;
+        case PHP_SESSION_ACTIVE:
+            return $_SESSION;
+        default:
+            return [];
+    }
+}

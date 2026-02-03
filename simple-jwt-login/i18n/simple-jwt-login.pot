@@ -1,17 +1,17 @@
-# Copyright (C) 2025 Nicu Micle
+# Copyright (C) 2026 Nicu Micle
 # This file is distributed under the same license as the Simple-JWT-Login plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Simple-JWT-Login 3.6.0\n"
+"Project-Id-Version: Simple-JWT-Login 3.6.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/simple-jwt-login\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-03-24T05:29:44+00:00\n"
+"POT-Creation-Date: 2026-02-03T05:09:31+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.11.0\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-jwt-login\n"
 
 #. Plugin Name of the plugin
@@ -86,6 +86,7 @@ msgstr ""
 
 #: src/Libraries/JWT/JWT.php:135
 #: src/Libraries/JWT/JWT.php:147
+#, php-format
 msgid "Cannot handle token prior to %s"
 msgstr ""
 
@@ -102,6 +103,7 @@ msgid "Unsupported sign function"
 msgstr ""
 
 #: src/Libraries/JWT/JWT.php:277
+#, php-format
 msgid "OpenSSL error: %s"
 msgstr ""
 
@@ -131,6 +133,7 @@ msgid "Malformed UTF-8 characters"
 msgstr ""
 
 #: src/Libraries/JWT/JWT.php:430
+#, php-format
 msgid "Unknown JSON error: %s"
 msgstr ""
 
@@ -214,7 +217,7 @@ msgstr ""
 msgid "Invalid custom URL provided."
 msgstr ""
 
-#: src/Modules/Settings/ProtectEndpointSettings.php:79
+#: src/Modules/Settings/ProtectEndpointSettings.php:96
 msgid "You need to add at least one endpoint."
 msgstr ""
 
@@ -353,6 +356,7 @@ msgid "The password or password_hash parameter is missing from request."
 msgstr ""
 
 #: src/Services/AuthenticateService.php:217
+#, php-format
 msgid "You are not allowed to Authenticate from this IP: %s"
 msgstr ""
 
@@ -361,21 +365,24 @@ msgid "Authentication is not enabled."
 msgstr ""
 
 #: src/Services/AuthenticateService.php:250
-#: src/Services/LoginService.php:107
+#: src/Services/LoginService.php:104
 #: src/Services/RegisterUserService.php:195
 #: src/Services/ResetPasswordService.php:27
+#, php-format
 msgid "Invalid Auth Code ( %s ) provided."
 msgstr ""
 
-#: src/Services/BaseService.php:148
+#: src/Services/BaseService.php:147
+#, php-format
 msgid "Unable to find user %s property in JWT.( Settings: %s )"
 msgstr ""
 
-#: src/Services/BaseService.php:164
+#: src/Services/BaseService.php:163
+#, php-format
 msgid "Unable to find user %s property in JWT."
 msgstr ""
 
-#: src/Services/BaseService.php:233
+#: src/Services/BaseService.php:232
 #: src/Services/RefreshTokenService.php:77
 msgid "This JWT is invalid."
 msgstr ""
@@ -392,16 +399,18 @@ msgid "The `jwt` parameter is missing."
 msgstr ""
 
 #: src/Services/DeleteUserService.php:47
+#, php-format
 msgid "Missing AUTH KEY ( %s )."
 msgstr ""
 
 #: src/Services/DeleteUserService.php:58
+#, php-format
 msgid "You are not allowed to delete users from this IP: %s"
 msgstr ""
 
 #: src/Services/DeleteUserService.php:86
 #: src/Services/DeleteUserService.php:100
-#: src/Services/LoginService.php:56
+#: src/Services/LoginService.php:53
 #: src/Services/RevokeTokenService.php:40
 #: src/Services/ValidateTokenService.php:45
 msgid "User not found."
@@ -411,32 +420,33 @@ msgstr ""
 msgid "User was successfully deleted."
 msgstr ""
 
-#: src/Services/LoginService.php:90
+#: src/Services/LoginService.php:87
 msgid "Auto-login is not enabled on this website."
 msgstr ""
 
-#: src/Services/LoginService.php:98
+#: src/Services/LoginService.php:95
 msgid "Wrong Request."
 msgstr ""
 
-#: src/Services/LoginService.php:119
+#: src/Services/LoginService.php:116
+#, php-format
 msgid "This IP[ %s ] is not allowed to auto-login."
 msgstr ""
 
-#: src/Services/LoginService.php:134
+#: src/Services/LoginService.php:131
 msgid "The JWT issuer(iss) is not allowed to auto-login."
 msgstr ""
 
-#: src/Services/OAuthService.php:24
-#: src/Services/OAuthService.php:43
+#: src/Services/OAuthService.php:23
+#: src/Services/OAuthService.php:42
 msgid "The Oauth provider is invalid."
 msgstr ""
 
-#: src/Services/OAuthService.php:33
+#: src/Services/OAuthService.php:32
 msgid "This Oauth provider is not available."
 msgstr ""
 
-#: src/Services/RedirectService.php:83
+#: src/Services/RedirectService.php:82
 msgid "User was logged in."
 msgstr ""
 
@@ -465,6 +475,7 @@ msgid "Register is not allowed."
 msgstr ""
 
 #: src/Services/RegisterUserService.php:206
+#, php-format
 msgid "This IP[%s] is not allowed to register users."
 msgstr ""
 
@@ -558,7 +569,7 @@ msgstr ""
 #: views/delete-view.php:96
 #: views/login-view.php:27
 #: views/login-view.php:87
-#: views/protect-endpoints-view.php:105
+#: views/protect-endpoints-view.php:109
 #: views/register-view.php:30
 #: views/register-view.php:90
 #: views/reset-password-view.php:33
@@ -574,7 +585,7 @@ msgstr ""
 #: views/delete-view.php:106
 #: views/login-view.php:33
 #: views/login-view.php:94
-#: views/protect-endpoints-view.php:121
+#: views/protect-endpoints-view.php:125
 #: views/register-view.php:42
 #: views/register-view.php:100
 #: views/reset-password-view.php:47
@@ -753,15 +764,17 @@ msgstr ""
 
 #: views/auth-codes-view.php:122
 #: views/layout.php:291
-#: views/protect-endpoints-view.php:75
+#: views/protect-endpoints-view.php:79
 msgid "delete"
 msgstr ""
 
 #: views/auth-codes-view.php:140
+#, php-format
 msgid " %sAuthentication Key%s: This is the actual code that you have to add in the request."
 msgstr ""
 
 #: views/auth-codes-view.php:151
+#, php-format
 msgid ""
 "%sWordPress new User Role%s:' \n"
 "                . ' can be used when you want to create multiple user types with the create user endpoint.' \n"
@@ -774,6 +787,7 @@ msgid "More details"
 msgstr ""
 
 #: views/auth-codes-view.php:167
+#, php-format
 msgid "%sExpiration Date%s: This allows you to set an expiration date for you auth codes. The format is `Y-M-D H:m:s'. Example : 2020-12-24 23:00:00 If you leave it blank, it will never expired."
 msgstr ""
 
@@ -1381,10 +1395,12 @@ msgid "Leave blank to allow all request parameters"
 msgstr ""
 
 #: views/login-view.php:320
+#, php-format
 msgid "Allow redirect to a specific URL if `%s` is present in the request. This option will overwrite previous redirect that was set."
 msgstr ""
 
 #: views/login-view.php:331
+#, php-format
 msgid "You can attach to your redirect an URL parameter `%s` that will be used for redirect instead of the defined ones."
 msgstr ""
 
@@ -1440,72 +1456,80 @@ msgstr ""
 msgid "Leave blank to allow all issuers (iss)"
 msgstr ""
 
-#: views/protect-endpoints-view.php:31
-msgid "ALL"
-msgstr ""
-
-#: views/protect-endpoints-view.php:33
-msgid "HTTP Methods"
-msgstr ""
-
-#: views/protect-endpoints-view.php:38
+#: views/protect-endpoints-view.php:22
 msgid "GET"
 msgstr ""
 
-#: views/protect-endpoints-view.php:44
+#: views/protect-endpoints-view.php:23
 msgid "POST"
 msgstr ""
 
-#: views/protect-endpoints-view.php:50
+#: views/protect-endpoints-view.php:24
 msgid "PUT"
 msgstr ""
 
-#: views/protect-endpoints-view.php:56
+#: views/protect-endpoints-view.php:25
 msgid "PATCH"
 msgstr ""
 
-#: views/protect-endpoints-view.php:62
+#: views/protect-endpoints-view.php:26
 msgid "DELETE"
 msgstr ""
 
-#: views/protect-endpoints-view.php:70
+#: views/protect-endpoints-view.php:30
+msgid "Starts with"
+msgstr ""
+
+#: views/protect-endpoints-view.php:31
+msgid "Exact match"
+msgstr ""
+
+#: views/protect-endpoints-view.php:43
+msgid "ALL"
+msgstr ""
+
+#: views/protect-endpoints-view.php:45
+msgid "HTTP Methods"
+msgstr ""
+
+#: views/protect-endpoints-view.php:74
 msgid "Endpoint path"
 msgstr ""
 
-#: views/protect-endpoints-view.php:92
+#: views/protect-endpoints-view.php:96
 msgid "Protect endpoints enabled"
 msgstr ""
 
-#: views/protect-endpoints-view.php:127
+#: views/protect-endpoints-view.php:131
 msgid "The endpoints will require a JWT in order to be accessed. If no JWT is provided, rest endpoints will provide an error instead of the actual content."
 msgstr ""
 
-#: views/protect-endpoints-view.php:157
+#: views/protect-endpoints-view.php:161
 msgid "Apply on All REST Endpoints"
 msgstr ""
 
-#: views/protect-endpoints-view.php:167
+#: views/protect-endpoints-view.php:171
 msgid "Apply only on Specific REST endpoints"
 msgstr ""
 
-#: views/protect-endpoints-view.php:178
+#: views/protect-endpoints-view.php:182
 msgid "Whitelisted endpoints"
 msgstr ""
 
-#: views/protect-endpoints-view.php:181
+#: views/protect-endpoints-view.php:185
 msgid "These endpoints will skip the check for the JWT."
 msgstr ""
 
-#: views/protect-endpoints-view.php:188
-#: views/protect-endpoints-view.php:215
+#: views/protect-endpoints-view.php:192
+#: views/protect-endpoints-view.php:219
 msgid "Add Endpoint"
 msgstr ""
 
-#: views/protect-endpoints-view.php:205
+#: views/protect-endpoints-view.php:209
 msgid "Protected endpoints"
 msgstr ""
 
-#: views/protect-endpoints-view.php:208
+#: views/protect-endpoints-view.php:212
 msgid "The JWT will be required on the following endpoints."
 msgstr ""
 
@@ -1661,6 +1685,7 @@ msgid "Plain text"
 msgstr ""
 
 #: views/reset-password-view.php:277
+#, php-format
 msgid "For the email content, you need to add %s as a variable"
 msgstr ""
 

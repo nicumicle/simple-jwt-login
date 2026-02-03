@@ -24,16 +24,16 @@ class SuccessTest extends TestBase
             "decryption_key" => self::JWT_SECRET_KEY,
             // Register user
             "allow_register" => true,
-	        "new_user_profile" => "subscriber",
-	        "register_ip" => "",
-	        "register_domain" => "",
-	        "require_register_auth" => false,
+            "new_user_profile" => "subscriber",
+            "register_ip" => "",
+            "register_domain" => "",
+            "require_register_auth" => false,
             // Delete user
             "allow_delete" => true,
             "require_delete_auth" => false,
-	        "delete_ip" => "",
-	        "delete_user_by" => 0,
-	        "jwt_delete_by_parameter" => "email",
+            "delete_ip" => "",
+            "delete_user_by" => 0,
+            "jwt_delete_by_parameter" => "email",
             // Autologin: We need this for refresh token
             "jwt_login_by" => 0,
             "jwt_login_by_parameter" => "email",

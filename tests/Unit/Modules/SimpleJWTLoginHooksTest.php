@@ -9,7 +9,7 @@ use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 class SimpleJWTLoginHooksTest extends TestCase
 {
     public function testGetHooksDetails()
-	{
+    {
         $result = SimpleJWTLoginHooks::getHooksDetails();
         foreach ($result as $item) {
             $this->assertArrayHasKey('name', $item);

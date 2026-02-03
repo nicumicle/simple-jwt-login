@@ -33,7 +33,7 @@ jobs:
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
 
-    - name: Run PHPCS design on plugin
+    - name: Run PHPCS
       run: vendor/bin/phpcs simple-jwt-login/ --extensions=php
 
     - name: Run PHPMD design on plugin

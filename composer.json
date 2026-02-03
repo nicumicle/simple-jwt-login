@@ -59,7 +59,8 @@
         "@tests",
         "@tests-feature"
     ],
-    "gen-i18n": "wp i18n make-pot simple-jwt-login/ simple-jwt-login/i18n/simple-jwt-login.pot --allow-root"
+    "gen-i18n": "wp i18n make-pot simple-jwt-login/ simple-jwt-login/i18n/simple-jwt-login.pot --allow-root",
+    "lint": "vendor/bin/phpcbf --standard=.phpcs.xml.dist --severity=1 -p simple-jwt-login/ --extensions=.php"
   },
   "scripts-descriptions": {
     "check-plugin": "Check plugin code and run tests"

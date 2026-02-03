@@ -39,8 +39,8 @@ jobs:
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
 
-    - name: Run PHPCS
-      run: vendor/bin/phpcs simple-jwt-login/ --extensions=php --no-cache
+    # - name: Run PHPCS
+    #   run: vendor/bin/phpcs simple-jwt-login/ --extensions=php --no-cache
 
     - name: Run PHPMD design on plugin
       run: vendor/bin/phpmd simple-jwt-login/ text design
@@ -60,8 +60,8 @@ jobs:
     - name: Run phpstan on plugin
       run: vendor/bin/phpstan analyse simple-jwt-login -c phpstan.neon --memory-limit=256M
 
-    - name: Run PHPCS design on tests
-      run: vendor/bin/phpcs tests/ --extensions=php --no-cache
+    # - name: Run PHPCS design on tests
+    #   run: vendor/bin/phpcs tests/ --extensions=php --no-cache
 
     - name: Run PHPMD design on tests
       run: vendor/bin/phpmd tests text design

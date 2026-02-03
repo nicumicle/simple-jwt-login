@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
 <ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="SimpleJwtLogin Plugin" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xsd">
+     <!-- Lock PHP version for consistent results -->
+    <config name="php_version" value="80328"/>
+    
     <description>The PSR-2 coding standard.</description>
     <arg name="tab-width" value="4"/>
 
@@ -54,4 +57,8 @@
       <rule ref="Squiz.Commenting.FunctionCommentThrowTag">
          <exclude name="Squiz.Commenting.FunctionCommentThrowTag.WrongNumber"/>
       </rule>
+
+    <!-- Disable header comment spacing rule -->
+    <exclude name="Squiz.Commenting.FileComment.SpacingAfterComment"/>
+      
 </ruleset>

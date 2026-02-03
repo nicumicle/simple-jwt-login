@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Fix PHP session initialization warning [#159](https://github.com/nicumicle/simple-jwt-login/issues/159)
+- Update WordPress 6.9 Compatibility
 
 ## 3.6.4 (17 Apr 2025)
 - Update WordPress 6.8 Compatibility

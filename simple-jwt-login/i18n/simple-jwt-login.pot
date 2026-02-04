@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-02-03T05:09:31+00:00\n"
+"POT-Creation-Date: 2026-02-04T03:58:10+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -392,7 +392,7 @@ msgid "Delete is not enabled."
 msgstr ""
 
 #: src/Services/DeleteUserService.php:37
-#: src/Services/ResetPasswordService.php:259
+#: src/Services/ResetPasswordService.php:262
 #: src/Services/RevokeTokenService.php:29
 #: src/Services/ValidateTokenService.php:33
 msgid "The `jwt` parameter is missing."
@@ -499,45 +499,45 @@ msgstr ""
 msgid "Route called with invalid request method."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:58
+#: src/Services/ResetPasswordService.php:61
 msgid "Missing code parameter."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:67
+#: src/Services/ResetPasswordService.php:70
 msgid "User Password has been changed."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:88
-#: src/Services/ResetPasswordService.php:187
+#: src/Services/ResetPasswordService.php:91
+#: src/Services/ResetPasswordService.php:190
 msgid "Missing email parameter."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:95
+#: src/Services/ResetPasswordService.php:98
 msgid "Missing new_password parameter."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:113
+#: src/Services/ResetPasswordService.php:116
 msgid "Wrong user."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:120
+#: src/Services/ResetPasswordService.php:123
 msgid "The Code has been saved into the database."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:126
-#: src/Services/ResetPasswordService.php:153
+#: src/Services/ResetPasswordService.php:129
+#: src/Services/ResetPasswordService.php:156
 msgid "Reset password email has been sent."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:157
+#: src/Services/ResetPasswordService.php:160
 msgid "Invalid flow type."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:271
+#: src/Services/ResetPasswordService.php:274
 msgid "This JWT can not change your password."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:290
+#: src/Services/ResetPasswordService.php:293
 msgid "Invalid code provided."
 msgstr ""
 
@@ -982,13 +982,17 @@ msgstr ""
 msgid "Login status"
 msgstr ""
 
-#: views/dashboard-view.php:38
-#: views/dashboard-view.php:60
-#: views/dashboard-view.php:82
-#: views/dashboard-view.php:103
-#: views/dashboard-view.php:129
-#: views/dashboard-view.php:153
-#: views/dashboard-view.php:220
+#: views/dashboard-view.php:33
+msgid "Allows users to authenticate automatically using a valid JWT token."
+msgstr ""
+
+#: views/dashboard-view.php:47
+#: views/dashboard-view.php:78
+#: views/dashboard-view.php:109
+#: views/dashboard-view.php:139
+#: views/dashboard-view.php:174
+#: views/dashboard-view.php:207
+#: views/dashboard-view.php:301
 #: views/general-view.php:286
 #: views/general-view.php:326
 #: views/general-view.php:367
@@ -996,13 +1000,13 @@ msgstr ""
 msgid "On"
 msgstr ""
 
-#: views/dashboard-view.php:39
-#: views/dashboard-view.php:61
-#: views/dashboard-view.php:83
-#: views/dashboard-view.php:104
-#: views/dashboard-view.php:130
-#: views/dashboard-view.php:154
-#: views/dashboard-view.php:221
+#: views/dashboard-view.php:48
+#: views/dashboard-view.php:79
+#: views/dashboard-view.php:110
+#: views/dashboard-view.php:140
+#: views/dashboard-view.php:175
+#: views/dashboard-view.php:208
+#: views/dashboard-view.php:302
 #: views/general-view.php:279
 #: views/general-view.php:317
 #: views/general-view.php:358
@@ -1010,37 +1014,69 @@ msgstr ""
 msgid "Off"
 msgstr ""
 
-#: views/dashboard-view.php:49
+#: views/dashboard-view.php:58
 msgid "Register Status"
 msgstr ""
 
-#: views/dashboard-view.php:71
+#: views/dashboard-view.php:63
+msgid "Enables user registration through the JWT register endpoint."
+msgstr ""
+
+#: views/dashboard-view.php:89
 msgid "Delete Status"
 msgstr ""
 
-#: views/dashboard-view.php:93
+#: views/dashboard-view.php:94
+msgid "Allows users to delete their account using a JWT-authenticated request."
+msgstr ""
+
+#: views/dashboard-view.php:120
 msgid "Authentication Status"
 msgstr ""
 
-#: views/dashboard-view.php:116
+#: views/dashboard-view.php:125
+msgid "Enables JWT authentication for protected REST API endpoints."
+msgstr ""
+
+#: views/dashboard-view.php:152
 msgid "CORS Status"
 msgstr ""
 
-#: views/dashboard-view.php:140
-msgid "Reset Password Status"
-msgstr ""
-
-#: views/dashboard-view.php:165
-msgid "Number of active hooks"
+#: views/dashboard-view.php:157
+msgid "Controls whether cross-origin requests are allowed for JWT endpoints."
 msgstr ""
 
 #: views/dashboard-view.php:185
+msgid "Reset Password Status"
+msgstr ""
+
+#: views/dashboard-view.php:190
+msgid "Allows users to reset their password using a secure JWT endpoint."
+msgstr ""
+
+#: views/dashboard-view.php:219
+msgid "Number of active hooks"
+msgstr ""
+
+#: views/dashboard-view.php:224
+msgid "Shows how many Simple-JWT-Login hooks are currently enabled."
+msgstr ""
+
+#: views/dashboard-view.php:248
 msgid "Number of Auth Codes"
 msgstr ""
 
-#: views/dashboard-view.php:207
+#: views/dashboard-view.php:253
+msgid "Displays the total number of active authentication codes."
+msgstr ""
+
+#: views/dashboard-view.php:279
 #: views/layout.php:91
 msgid "Protect endpoints"
+msgstr ""
+
+#: views/dashboard-view.php:284
+msgid "Restricts selected REST API endpoints to authenticated JWT requests only."
 msgstr ""
 
 #: views/delete-view.php:21

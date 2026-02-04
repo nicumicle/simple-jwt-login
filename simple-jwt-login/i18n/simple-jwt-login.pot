@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-02-04T03:58:10+00:00\n"
+"POT-Creation-Date: 2026-02-04T04:18:25+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -993,10 +993,10 @@ msgstr ""
 #: views/dashboard-view.php:174
 #: views/dashboard-view.php:207
 #: views/dashboard-view.php:301
-#: views/general-view.php:286
-#: views/general-view.php:326
-#: views/general-view.php:367
-#: views/general-view.php:408
+#: views/general-view.php:294
+#: views/general-view.php:334
+#: views/general-view.php:375
+#: views/general-view.php:416
 msgid "On"
 msgstr ""
 
@@ -1007,10 +1007,10 @@ msgstr ""
 #: views/dashboard-view.php:175
 #: views/dashboard-view.php:208
 #: views/dashboard-view.php:302
-#: views/general-view.php:279
-#: views/general-view.php:317
-#: views/general-view.php:358
-#: views/general-view.php:399
+#: views/general-view.php:287
+#: views/general-view.php:325
+#: views/general-view.php:366
+#: views/general-view.php:407
 msgid "Off"
 msgstr ""
 
@@ -1169,97 +1169,112 @@ msgstr ""
 msgid "Route Namespace"
 msgstr ""
 
-#: views/general-view.php:39
+#: views/general-view.php:34
+msgid "Base URL used for all Simple JWT Login endpoints. Change only if you need to avoid conflicts."
+msgstr ""
+
+#: views/general-view.php:42
 msgid "Default route namespace"
 msgstr ""
 
-#: views/general-view.php:57
-msgid "Decryption key source"
+#: views/general-view.php:52
+msgid "Configure how incoming JWTs are verified."
 msgstr ""
 
-#: views/general-view.php:72
-msgid "Plugin Settings"
+#: views/general-view.php:63
+msgid "Where is your JWT secret stored?"
 msgstr ""
 
-#: views/general-view.php:86
-#: views/reset-password-view.php:343
-msgid "Code"
+#: views/general-view.php:67
+msgid "Choose where the plugin should read the JWT verification key from."
 msgstr ""
 
-#: views/general-view.php:99
-msgid "JWT Decrypt Algorithm"
+#: views/general-view.php:81
+msgid "Plugin Settings (recommended)"
 msgstr ""
 
-#: views/general-view.php:103
-msgid "The algorithm that should be used to verify the JWT signature."
+#: views/general-view.php:95
+msgid "Code (wp-config.php or custom plugin)"
 msgstr ""
 
-#: views/general-view.php:151
-msgid "JWT Decryption Key"
+#: views/general-view.php:108
+msgid "JWT Algorithm"
 msgstr ""
 
-#: views/general-view.php:154
-msgid "JWT decryption signature | JWT Verify Signature"
+#: views/general-view.php:111
+msgid "Must match the algorithm used to sign the JWT (check the \"alg\" value in the token header)."
 msgstr ""
 
-#: views/general-view.php:163
+#: views/general-view.php:155
+msgid "JWT Verification Key"
+msgstr ""
+
+#: views/general-view.php:158
+msgid "Secret or key used to verify incoming JWTs."
+msgstr ""
+
+#: views/general-view.php:165
 msgid "JWT decryption key here"
 msgstr ""
 
-#: views/general-view.php:170
+#: views/general-view.php:172
 msgid "Toggle decryption key"
 msgstr ""
 
-#: views/general-view.php:179
+#: views/general-view.php:181
 msgid "Strength"
 msgstr ""
 
-#: views/general-view.php:198
+#: views/general-view.php:200
 msgid "JWT Decryption Key is base64 encoded"
 msgstr ""
 
-#: views/general-view.php:223
+#: views/general-view.php:225
 msgid "You have to defined in your code the following constants"
 msgstr ""
 
-#: views/general-view.php:224
+#: views/general-view.php:226
 msgid "for example in wp-config.php"
 msgstr ""
 
-#: views/general-view.php:255
-msgid "Get JWT token from"
+#: views/general-view.php:257
+msgid "Where should the plugin look for the JWT?"
 msgstr ""
 
-#: views/general-view.php:268
-#: views/general-view.php:385
+#: views/general-view.php:260
+msgid "Enable one or more locations where the JWT may be provided with the request."
+msgstr ""
+
+#: views/general-view.php:276
+#: views/general-view.php:393
 msgid "Parameter name"
 msgstr ""
 
-#: views/general-view.php:421
+#: views/general-view.php:429
 msgid "If the JWT is present in multiple places, the higher number of the option overwrites the smaller number."
 msgstr ""
 
-#: views/general-view.php:442
+#: views/general-view.php:450
 msgid "All WordPress endpoints checks for JWT authentication"
 msgstr ""
 
-#: views/general-view.php:446
+#: views/general-view.php:454
 msgid "If the JWT is provided on other endpoints, the plugin will try to authenticate the user from the JWT in order to perform that API call."
 msgstr ""
 
-#: views/general-view.php:474
+#: views/general-view.php:482
 msgid "If the JWT is provided on WPGraphQL queries, the plugin will try to authenticate the user from the JWT before performing the query."
 msgstr ""
 
-#: views/general-view.php:488
+#: views/general-view.php:496
 msgid "Security"
 msgstr ""
 
-#: views/general-view.php:501
+#: views/general-view.php:509
 msgid "Enable safe redirects"
 msgstr ""
 
-#: views/general-view.php:505
+#: views/general-view.php:513
 msgid "Use wp_safe_redirect for all the redirects"
 msgstr ""
 
@@ -1743,6 +1758,10 @@ msgstr ""
 
 #: views/reset-password-view.php:327
 msgid "New password for the user"
+msgstr ""
+
+#: views/reset-password-view.php:343
+msgid "Code"
 msgstr ""
 
 #: views/reset-password-view.php:344

@@ -216,7 +216,7 @@ if (!defined('ABSPATH')) {
             <b>code</b> -> <?php echo __('the code you received from OAuth flow', 'simple-jwt-login'); ?><br/>
         </p>
         <div class="generated-code">
-            <span class="method">POST:</span>
+            <span class="method">POST</span>
             <span class="code">
                 <?php
                 $sampleUrlParams = [
@@ -272,7 +272,7 @@ if (!defined('ABSPATH')) {
         <b>id_token</b> -> <?php echo __('the `id_token` from your OAuth process', 'simple-jwt-login'); ?><br/>
     </p>
     <div class="generated-code">
-        <span class="method">POST:</span>
+        <span class="method">POST</span>
         <span class="code">
                 <?php
                 $sampleUrlParams = [

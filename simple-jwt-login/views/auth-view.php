@@ -90,7 +90,7 @@ if (! defined('ABSPATH')) {
             <b>password_hash</b> -> <?php echo __('your hashed password from the database', 'simple-jwt-login');?><br />
         </p>
         <div class="generated-code">
-            <span class="method">POST:</span>
+            <span class="method">POST</span>
             <span class="code">
                 <?php
                 $sampleUrlParams = [
@@ -113,7 +113,7 @@ if (! defined('ABSPATH')) {
         </div>
         
         <div class="generated-code">
-            <span class="method">POST:</span>
+            <span class="method">POST</span>
             <span class="code">
                 <?php
                 $sampleUrlParams = [
@@ -135,7 +135,7 @@ if (! defined('ABSPATH')) {
             <b><?php echo __('OR', 'simple-jwt-login');?></b>: 
         </div>
         <div class="generated-code">
-            <span class="method">POST:</span>
+            <span class="method">POST</span>
             <span class="code">
                 <?php
                 $sampleUrlParams = [
@@ -434,7 +434,7 @@ if (! defined('ABSPATH')) {
             ?>
         </p>
         <div class="generated-code">
-            <span class="method">POST:</span>
+            <span class="method">POST</span>
             <span class="code">
                 <?php
                 $sampleUrlParams = [
@@ -482,7 +482,7 @@ if (! defined('ABSPATH')) {
         </p>
         <div class="generated-code">
             <span class="method">GET</span>
-            <span class="method">POST:</span>
+            <span class="method">POST</span>
             <span class="code">
                 <?php
                 $sampleUrlParams = [
@@ -527,7 +527,7 @@ if (! defined('ABSPATH')) {
             ?>
         </p>
         <div class="generated-code">
-            <span class="method">POST:</span>
+            <span class="method">POST</span>
             <span class="code">
                 <?php
                 $sampleUrlParams = [

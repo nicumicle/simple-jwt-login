@@ -51,7 +51,7 @@ if (!defined('ABSPATH')) {
     <div class="col-md-12">
         <h3 class="section-title"><?php echo __('URL Example', 'simple-jwt-login'); ?></h3>
         <div class="generated-code">
-            <span class="method">POST:</span>
+            <span class="method">POST</span>
             <span class="code">
                 <?php
                 $sampleUrlParams = [

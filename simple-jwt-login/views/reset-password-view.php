@@ -18,7 +18,11 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title"><?php
-            echo __('Allow Reset Password', 'simple-jwt-login'); ?></h3>
+            echo __('Allow Password Reset', 'simple-jwt-login'); ?></h3>
+
+        <p class="text-muted">
+            <?php echo __('Allow users to reset their passwords via JWT API endpoints.', 'simple-jwt-login'); ?>
+        </p>
         <div class="form-group">
             <input type="radio" id="allow_reset_password_no" name="allow_reset_password" class="form-control"
                    value="0"
@@ -55,8 +59,11 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title"><?php
-            echo __('Reset Password Requires Auth Code', 'simple-jwt-login'); ?>
+            echo __('Require Authentication Code for Password Reset', 'simple-jwt-login'); ?>
         </h3>
+        <p class="text-muted">
+            <?php echo __('If enabled, an additional authentication code must be provided for password reset requests.', 'simple-jwt-login'); ?>
+        </p>
         <div class="form-group">
             <input type="radio" id="reset_password_auth_code_no" name="reset_password_requires_auth_code"
                    class="form-control"
@@ -87,7 +94,10 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title"><?php
-            echo __('Send Reset Password Example URL', 'simple-jwt-login'); ?></h3>
+            echo __('Password Reset Request', 'simple-jwt-login'); ?></h3>
+        <p class="text-muted">
+            <?php echo __('Configure how password reset requests are handled and sent.', 'simple-jwt-login'); ?>
+        </p>
         <p>
             <?php
             echo __(
@@ -140,8 +150,11 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title"><?php
-            echo __('Reset password flow', 'simple-jwt-login'); ?>
+            echo __('Password Reset Flow', 'simple-jwt-login'); ?>
         </h3>
+        <p class="text-muted">
+            <?php echo __('Choose how the password reset process is handled.', 'simple-jwt-login'); ?>
+        </p>
         <ul>
             <li>
                 <input type="radio"
@@ -302,7 +315,10 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title"><?php
-            echo __('Change user password', 'simple-jwt-login'); ?></h3>
+            echo __('Password Change Endpoint', 'simple-jwt-login'); ?></h3>
+        <p class="text-muted">
+            <?php echo __('Configure the endpoint for actually changing the user password using the reset code.', 'simple-jwt-login'); ?>
+        </p>
         <p>
             <?php
             echo __(
@@ -366,7 +382,7 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h4 class="sub-section-title">
-            <?php echo __('Reset password with JWT', 'simple-jwt-login'); ?>
+            <?php echo __('JWT-Based Password Reset', 'simple-jwt-login'); ?>
         </h4>
 
         <input type="checkbox" name="reset_password_jwt"

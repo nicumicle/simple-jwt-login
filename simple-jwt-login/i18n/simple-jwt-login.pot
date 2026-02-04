@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-02-04T04:18:25+00:00\n"
+"POT-Creation-Date: 2026-02-04T04:34:38+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -567,8 +567,8 @@ msgstr ""
 #: views/cors-view.php:22
 #: views/delete-view.php:29
 #: views/delete-view.php:96
-#: views/login-view.php:27
-#: views/login-view.php:87
+#: views/login-view.php:30
+#: views/login-view.php:93
 #: views/protect-endpoints-view.php:109
 #: views/register-view.php:30
 #: views/register-view.php:90
@@ -583,8 +583,8 @@ msgstr ""
 #: views/cors-view.php:33
 #: views/delete-view.php:42
 #: views/delete-view.php:106
-#: views/login-view.php:33
-#: views/login-view.php:94
+#: views/login-view.php:36
+#: views/login-view.php:100
 #: views/protect-endpoints-view.php:125
 #: views/register-view.php:42
 #: views/register-view.php:100
@@ -619,7 +619,7 @@ msgstr ""
 #: views/auth-view.php:501
 #: views/auth-view.php:541
 #: views/delete-view.php:68
-#: views/login-view.php:60
+#: views/login-view.php:63
 #: views/register-view.php:70
 #: views/reset-password-view.php:133
 #: views/reset-password-view.php:359
@@ -675,7 +675,6 @@ msgid "google_id_token "
 msgstr ""
 
 #: views/applications/google.php:298
-#: views/login-view.php:265
 msgid "Other options"
 msgstr ""
 
@@ -941,21 +940,21 @@ msgstr ""
 
 #: views/auth-view.php:571
 #: views/delete-view.php:208
-#: views/login-view.php:370
+#: views/login-view.php:396
 #: views/register-view.php:280
 msgid "Enter IP here"
 msgstr ""
 
 #: views/auth-view.php:573
 #: views/delete-view.php:210
-#: views/login-view.php:372
+#: views/login-view.php:398
 #: views/register-view.php:282
 msgid "If you want to add more IP's, separate them by comma"
 msgstr ""
 
 #: views/auth-view.php:575
 #: views/delete-view.php:212
-#: views/login-view.php:374
+#: views/login-view.php:400
 #: views/register-view.php:284
 msgid "Leave blank to allow all IP addresses"
 msgstr ""
@@ -1084,18 +1083,18 @@ msgid "Allow Delete"
 msgstr ""
 
 #: views/delete-view.php:51
-#: views/login-view.php:43
+#: views/login-view.php:46
 #: views/register-view.php:52
 msgid "URL Example"
 msgstr ""
 
 #: views/delete-view.php:57
-#: views/login-view.php:49
+#: views/login-view.php:52
 msgid "JWT"
 msgstr ""
 
 #: views/delete-view.php:61
-#: views/login-view.php:53
+#: views/login-view.php:56
 #: views/register-view.php:63
 #: views/reset-password-view.php:122
 #: views/reset-password-view.php:348
@@ -1103,7 +1102,7 @@ msgid "AUTH_KEY_VALUE"
 msgstr ""
 
 #: views/delete-view.php:74
-#: views/login-view.php:67
+#: views/login-view.php:70
 msgid "You can also send the JWT in Authorization header. Example:"
 msgstr ""
 
@@ -1120,7 +1119,6 @@ msgid "JWT Delete User Config"
 msgstr ""
 
 #: views/delete-view.php:145
-#: views/login-view.php:120
 msgid "Action"
 msgstr ""
 
@@ -1137,27 +1135,27 @@ msgid "Delete User by WordPress Username"
 msgstr ""
 
 #: views/delete-view.php:175
-#: views/login-view.php:147
+#: views/login-view.php:156
 msgid "JWT parameter key | JWT payload data id (key name where the option is saved)"
 msgstr ""
 
 #: views/delete-view.php:185
-#: views/login-view.php:159
+#: views/login-view.php:168
 msgid "JWT Parameter here. Example: email"
 msgstr ""
 
 #: views/delete-view.php:189
-#: views/login-view.php:163
+#: views/login-view.php:172
 msgid "You can use `.` (dot) as a separator for sub-array values."
 msgstr ""
 
 #: views/delete-view.php:191
-#: views/login-view.php:165
+#: views/login-view.php:174
 msgid "Example: Use `id` for getting the `id` key from the JWT payload."
 msgstr ""
 
 #: views/delete-view.php:193
-#: views/login-view.php:167
+#: views/login-view.php:176
 msgid "Example: Use `user.id` for getting the `id` key from the array `user`"
 msgstr ""
 
@@ -1318,7 +1316,7 @@ msgid "Settings successfully saved"
 msgstr ""
 
 #: views/layout.php:31
-#: views/login-view.php:196
+#: views/login-view.php:208
 msgid "Dashboard"
 msgstr ""
 
@@ -1370,140 +1368,184 @@ msgstr ""
 msgid "Allow Auto-Login"
 msgstr ""
 
-#: views/login-view.php:80
-msgid "Auto-Login Requires Auth Code"
+#: views/login-view.php:23
+msgid "Allow users to automatically log in using a JWT token via URL or header."
 msgstr ""
 
-#: views/login-view.php:113
-msgid "JWT Login Settings"
+#: views/login-view.php:83
+msgid "Require Authentication Code for Auto-Login"
 msgstr ""
 
-#: views/login-view.php:128
+#: views/login-view.php:85
+msgid "If enabled, an additional authentication code must be provided along with the JWT for login."
+msgstr ""
+
+#: views/login-view.php:119
+msgid "JWT Login Configuration"
+msgstr ""
+
+#: views/login-view.php:122
+msgid "Configure how the JWT payload is used to identify and log in users."
+msgstr ""
+
+#: views/login-view.php:129
+msgid "How to Identify User"
+msgstr ""
+
+#: views/login-view.php:137
 msgid "Log in by Email"
 msgstr ""
 
-#: views/login-view.php:135
+#: views/login-view.php:144
 msgid "Log in by WordPress User ID"
 msgstr ""
 
-#: views/login-view.php:142
+#: views/login-view.php:151
 msgid "Log in by WordPress Username"
 msgstr ""
 
-#: views/login-view.php:185
+#: views/login-view.php:194
 msgid "Redirect after Auto-Login"
 msgstr ""
 
-#: views/login-view.php:206
+#: views/login-view.php:197
+msgid "Choose where to redirect users after successful auto-login."
+msgstr ""
+
+#: views/login-view.php:218
 msgid "Homepage"
 msgstr ""
 
-#: views/login-view.php:217
+#: views/login-view.php:229
 msgid "No Redirect"
 msgstr ""
 
-#: views/login-view.php:227
+#: views/login-view.php:239
 msgid "Custom"
 msgstr ""
 
-#: views/login-view.php:230
-#: views/login-view.php:354
+#: views/login-view.php:242
+#: views/login-view.php:375
 #: views/register-view.php:138
 #: views/register-view.php:339
 msgid "Example"
 msgstr ""
 
-#: views/login-view.php:245
-msgid "Redirect on Fail autologin"
+#: views/login-view.php:257
+msgid "Redirect on Login Failure"
 msgstr ""
 
-#: views/login-view.php:253
+#: views/login-view.php:263
+msgid "Specify a URL to redirect to if auto-login fails (e.g., invalid token)."
+msgstr ""
+
+#: views/login-view.php:268
 msgid "Redirect URL"
 msgstr ""
 
-#: views/login-view.php:255
+#: views/login-view.php:270
 msgid "Leave it blank if you do not want to redirect"
 msgstr ""
 
-#: views/login-view.php:277
+#: views/login-view.php:280
+msgid "Additional Options"
+msgstr ""
+
+#: views/login-view.php:283
+msgid "Fine-tune the auto-login behavior with these extra settings."
+msgstr ""
+
+#: views/login-view.php:295
 msgid "Include request parameters used for login link in the REDIRECT URL"
 msgstr ""
 
-#: views/login-view.php:284
+#: views/login-view.php:302
 msgid "Remove the following query parameters on redirect"
 msgstr ""
 
-#: views/login-view.php:297
+#: views/login-view.php:309
+msgid "Specify parameters to strip from the URL after redirect for security."
+msgstr ""
+
+#: views/login-view.php:318
 msgid "Enter parameters here"
 msgstr ""
 
-#: views/login-view.php:300
+#: views/login-view.php:321
 msgid "If you want to add more parameters, separate them by comma"
 msgstr ""
 
-#: views/login-view.php:302
+#: views/login-view.php:323
 msgid "Leave blank to allow all request parameters"
 msgstr ""
 
-#: views/login-view.php:320
+#: views/login-view.php:341
 #, php-format
 msgid "Allow redirect to a specific URL if `%s` is present in the request. This option will overwrite previous redirect that was set."
 msgstr ""
 
-#: views/login-view.php:331
+#: views/login-view.php:352
 #, php-format
 msgid "You can attach to your redirect an URL parameter `%s` that will be used for redirect instead of the defined ones."
 msgstr ""
 
-#: views/login-view.php:342
+#: views/login-view.php:363
 msgid "You can use the following variables in your URL"
 msgstr ""
 
-#: views/login-view.php:345
+#: views/login-view.php:366
 msgid "Site URL"
 msgstr ""
 
-#: views/login-view.php:346
+#: views/login-view.php:367
 msgid "Logged in user ID"
 msgstr ""
 
-#: views/login-view.php:347
+#: views/login-view.php:368
 msgid "Logged in user email"
 msgstr ""
 
-#: views/login-view.php:348
+#: views/login-view.php:369
 msgid "Logged in username"
 msgstr ""
 
-#: views/login-view.php:349
+#: views/login-view.php:370
 msgid "User first name"
 msgstr ""
 
-#: views/login-view.php:350
+#: views/login-view.php:371
 msgid "User last name"
 msgstr ""
 
-#: views/login-view.php:351
+#: views/login-view.php:372
 msgid "User nice name"
 msgstr ""
 
-#: views/login-view.php:363
-msgid "Allow Auto-Login only from the following IP addresses"
+#: views/login-view.php:386
+msgid "Restrict Auto-Login to Specific IP Addresses"
 msgstr ""
 
-#: views/login-view.php:383
+#: views/login-view.php:391
+msgid "Only allow auto-login from these IP addresses. Leave blank to allow from any IP."
+msgstr ""
+
+#: views/login-view.php:409
 msgid "JWT Allowed issuers (iss) for Auto-Login"
 msgstr ""
 
-#: views/login-view.php:388
+#: views/login-view.php:412
+msgid "Restrict auto-login to JWTs issued by these entities (iss claim). Leave blank to allow any issuer."
+msgstr ""
+
+#: views/login-view.php:417
 msgid "Enter allowed iss here"
 msgstr ""
 
-#: views/login-view.php:390
+#: views/login-view.php:419
 msgid "If you want to add more issuers (iss), separate them by comma"
 msgstr ""
 
-#: views/login-view.php:392
+#: views/login-view.php:421
 msgid "Leave blank to allow all issuers (iss)"
 msgstr ""
 

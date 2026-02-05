@@ -148,6 +148,13 @@ if (!function_exists('esc_attr')) {
     }
 }
 
+if (!function_exists('esc_attr__')) {
+    function esc_attr__($parameter, $domain)
+    {
+        return $parameter;
+    }
+}
+
 if (!function_exists('esc_url')) {
     function esc_url($parameter)
     {

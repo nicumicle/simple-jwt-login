@@ -17,7 +17,10 @@ $hooks = SimpleJWTLoginHooks::getHooksDetails();
 ?>
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Hooks', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo __('WordPress Hooks Integration', 'simple-jwt-login'); ?></h3>
+        <p class="text-muted">
+            <?php echo __('Enable specific WordPress hooks to extend JWT functionality. Only enabled hooks will be triggered.', 'simple-jwt-login'); ?>
+        </p>
         <p>
             <?php
             echo __(

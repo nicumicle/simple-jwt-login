@@ -30,6 +30,9 @@ if (!defined('ABSPATH')) {
             ?>
             <?php echo __('Route Namespace', 'simple-jwt-login'); ?> <span class="required">*</span>
         </h3>
+         <p class="text-muted">
+            <?php echo __('Base URL used for all Simple JWT Login endpoints. Change only if you need to avoid conflicts.', 'simple-jwt-login'); ?>
+        </p>
         <div class="form-group">
             <input
                     type="text"
@@ -44,7 +47,10 @@ if (!defined('ABSPATH')) {
 <hr/>
 <div class="row">
     <div class="col-md-12">
-        <h2 class="section-title">JWT Signature</h2>
+        <h2 class="section-title">JWT Verification Settings</h2>
+         <p class="text-muted">
+            <?php echo __('Configure how incoming JWTs are verified.', 'simple-jwt-login'); ?>
+        </p>
     </div>
 </div>
 
@@ -54,9 +60,12 @@ if (!defined('ABSPATH')) {
             <h2 class="section-title" >
                 <span class="step-number">1</span>&nbsp;
                 <?php
-                echo __('Decryption key source', 'simple-jwt-login');
+                    echo __('Where is your JWT secret stored?', 'simple-jwt-login');
                 ?>
             </h2>
+             <p class="text-muted">
+                <?php echo __('Choose where the plugin should read the JWT verification key from.', 'simple-jwt-login'); ?>
+            </p>
             <select id="decryption_source" name="decryption_source" class="form-control">
                 <option
                     value="<?php echo GeneralSettings::DECRYPTION_SOURCE_SETTINGS;?>"
@@ -69,7 +78,7 @@ if (!defined('ABSPATH')) {
                     ?>
                 >
                     <?php
-                    echo __('Plugin Settings', 'simple-jwt-login');
+                    echo __('Plugin Settings (recommended)', 'simple-jwt-login');
                     ?>
                 </option>
                 <option
@@ -83,7 +92,7 @@ if (!defined('ABSPATH')) {
                     ?>
                 >
                     <?php
-                    echo __('Code', 'simple-jwt-login');
+                    echo __('Code (wp-config.php or custom plugin)', 'simple-jwt-login');
                     ?>
                 </option>
             </select>
@@ -96,16 +105,11 @@ if (!defined('ABSPATH')) {
         <h3 class="section-title">
             <span class="step-number">2</span>
             <spam> </spam>
-            <?php echo __('JWT Decrypt Algorithm', 'simple-jwt-login'); ?>
+            <?php echo __('JWT Algorithm', 'simple-jwt-login'); ?>
         </h3>
-        <div class="info">
-            <?php
-            echo __(
-                'The algorithm that should be used to verify the JWT signature.',
-                'simple-jwt-login'
-            );
-            ?>
-        </div>
+         <p class="text-muted">
+            <?php echo __('Must match the algorithm used to sign the JWT (check the "alg" value in the token header).', 'simple-jwt-login'); ?>
+        </p>
         <div class="form-group">
             <select name="jwt_algorithm" class="form-control" id="simple-jwt-login-jwt-algorithm">
                 <?php
@@ -148,13 +152,11 @@ if (!defined('ABSPATH')) {
                 ? '<span class="simple-jwt-error">!</span>'
                 : '';
             ?>
-            <?php echo __('JWT Decryption Key', 'simple-jwt-login'); ?>
+            <?php echo __('JWT Verification Key', 'simple-jwt-login'); ?>
         </h3>
-        <div class="info">
-            <?php echo __('JWT decryption signature | JWT Verify Signature', 'simple-jwt-login'); ?>
-        </div>
-        <br />
-
+         <p class="text-muted">
+            <?php echo __('Secret or key used to verify incoming JWTs.', 'simple-jwt-login'); ?>
+        </p>
         <div class="form-group decryption-input-group">
             <div class="input-group" id="decryption_key_container">
                 <input type="password" name="decryption_key" class="form-control"
@@ -252,8 +254,14 @@ if (!defined('ABSPATH')) {
                 ? '<span class="simple-jwt-error">!</span>'
                 : ''
             ?>
-            <?php echo __('Get JWT token from', 'simple-jwt-login'); ?>
+            <?php echo __('Where should the plugin look for the JWT?', 'simple-jwt-login'); ?>
         </h3>
+        <p class="text-muted">
+            <?php echo __(
+                'Enable one or more locations where the JWT may be provided with the request.',
+                'simple-jwt-login'
+            ); ?>
+        </p>
     </div>
 </div>
 

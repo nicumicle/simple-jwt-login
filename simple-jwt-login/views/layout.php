@@ -116,7 +116,7 @@ $settingsPages = [
         }
     }
     ?>
-    <input type="hidden" name="active_tab" id="active_tab" value="<?php echo $activeTab;?>"/>
+    <input type="hidden" name="active_tab" id="active_tab" value="<?php echo esc_attr($activeTab);?>"/>
     <?php
     $jwtSettings
         ->getWordPressData()

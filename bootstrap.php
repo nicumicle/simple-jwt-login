@@ -535,3 +535,59 @@ if (!class_exists('WP_Error')) {
         }
     }
 }
+
+if (!function_exists('wp_unslash')) {
+    /**
+     * @param string|array $value
+     * @return string|array
+     */
+    function wp_unslash($value) {
+        return $value;
+    }
+}
+
+if (!function_exists('wp_strip_all_tags')) {
+    /**
+     * @param string $text
+     * @param bool $remove_breaks
+     * @return string
+     */
+    function wp_strip_all_tags($text, $remove_breaks = false) {
+        return strip_tags($text);
+    }
+}
+
+if (!function_exists('esc_html__')) {
+    /**
+     * @param string $text
+     * @param string $domain
+     * @return string
+     */
+    function esc_html__($text, $domain = 'default') {
+        return $text;
+    }
+}
+
+if (!function_exists('simple_jwt_login_sanitize_css_value')) {
+    /**
+     * Sanitize CSS property values to prevent XSS attacks.
+     * Removes characters that could break out of CSS context or inject malicious code.
+     *
+     * @param string $value The CSS value to sanitize
+     * @return string The sanitized CSS value
+     */
+    function simple_jwt_login_sanitize_css_value($value)
+    {
+        // Remove any HTML tags
+        $value = wp_strip_all_tags($value);
+
+        // Remove characters that could break out of CSS/HTML context or inject code
+        // This includes: < > " ' ; { } ( ) \ / and backticks
+        $value = preg_replace('/[<>"\';{}()\\\\\/`]/', '', $value);
+
+        // Limit length to prevent abuse
+        $value = substr($value, 0, 100);
+
+        return $value;
+    }
+}

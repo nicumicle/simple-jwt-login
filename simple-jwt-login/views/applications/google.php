@@ -233,65 +233,69 @@ if (!defined('ABSPATH')) {
                     </button>
                 </span>
         </div>
-        <hr/>
+        
     </div>
 </div>
 <hr/>
 
 <div class="row">
-    <h3 class="section-title">
-        <?php echo esc_html(__('Exchange Google "id_token" with a WordPress "jwt"', 'simple-jwt-login')); ?>
-    </h3>
-    <br/>
-    <p>
-        <?php
-        echo esc_html(
-            __(
-                'This route allows you to exchange the Google `id_token` with a Simple-JWT-Login JWT',
-                'simple-jwt-login'
-            )
-        );
-        ?>
-    </p>
-    <p>
-        <input type="checkbox" name="google[enable_exchange_id_token]" id="google_enable_exchange_id_token"
-               value="1"
+    <div class="col-md-12">
+        <h3 class="section-title">
+            <?php echo esc_html(__('Exchange Google "id_token" with a WordPress "jwt"', 'simple-jwt-login')); ?>
+        </h3>
+    <div class="col-md-12">
+    
+    <div class="col-md-12">
+        <p>
             <?php
-            echo $jwtSettings->getApplicationsSettings()->isGoogleExchangeIdTokenEnabled()
-                ? esc_html('checked="checked"')
-                : ""
+            echo esc_html(
+                __(
+                    'This route allows you to exchange the Google `id_token` with a Simple-JWT-Login JWT',
+                    'simple-jwt-login'
+                )
+            );
             ?>
-        />
-        <label for="google_enable_exchange_id_token">
-            <?php echo __('Enable Exchange Google id_token with a WordPress JWT', 'simple-jwt-login'); ?>
-        </label>
-    </p>
-    <p class="text-muted">
-        Parameters:<br/>
-        <b>provider</b> -> <?php echo esc_html('google');?><br/>
-        <b>id_token</b> -> <?php echo __('the `id_token` from your OAuth process', 'simple-jwt-login'); ?><br/>
-    </p>
-    <div class="generated-code">
-        <span class="method">POST</span>
-        <span class="code">
+        </p>
+        <p>
+            <input type="checkbox" name="google[enable_exchange_id_token]" id="google_enable_exchange_id_token"
+                value="1"
                 <?php
-                $sampleUrlParams = [
-                    'provider' => esc_html('google'),
-                    'id_token' => __('google_id_token ', 'simple-jwt-login')
-                ];
-
-                echo esc_html($jwtSettings->generateExampleLink(RouteService::OAUTH_TOKEN, $sampleUrlParams));
+                echo $jwtSettings->getApplicationsSettings()->isGoogleExchangeIdTokenEnabled()
+                    ? esc_html('checked="checked"')
+                    : ""
                 ?>
-            </span>
-        <span class="copy-button">
-                <button class="btn btn-secondary btn-xs">
-                    <?php echo __('Copy', 'simple-jwt-login'); ?>
-                </button>
-            </span>
+            />
+            <label for="google_enable_exchange_id_token">
+                <?php echo __('Enable Exchange Google id_token with a WordPress JWT', 'simple-jwt-login'); ?>
+            </label>
+        </p>
+        <p class="text-muted">
+            Parameters:<br/>
+            <b>provider</b> -> <?php echo esc_html('google');?><br/>
+            <b>id_token</b> -> <?php echo __('the `id_token` from your OAuth process', 'simple-jwt-login'); ?><br/>
+        </p>
+        <div class="generated-code">
+            <span class="method">POST</span>
+            <span class="code">
+                    <?php
+                    $sampleUrlParams = [
+                        'provider' => esc_html('google'),
+                        'id_token' => __('google_id_token ', 'simple-jwt-login')
+                    ];
+
+                    echo esc_html($jwtSettings->generateExampleLink(RouteService::OAUTH_TOKEN, $sampleUrlParams));
+                    ?>
+                </span>
+            <span class="copy-button">
+                    <button class="btn btn-secondary btn-xs">
+                        <?php echo __('Copy', 'simple-jwt-login'); ?>
+                    </button>
+                </span>
+        </div>
     </div>
 </div>
-
 <hr/>
+
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title">

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-02-04T06:17:08+00:00\n"
+"POT-Creation-Date: 2026-02-05T05:34:49+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -611,7 +611,7 @@ msgstr ""
 
 #: views/applications/google.php:160
 #: views/applications/google.php:232
-#: views/applications/google.php:288
+#: views/applications/google.php:291
 #: views/auth-view.php:115
 #: views/auth-view.php:138
 #: views/auth-view.php:160
@@ -654,51 +654,51 @@ msgstr ""
 msgid "your_code "
 msgstr ""
 
-#: views/applications/google.php:243
+#: views/applications/google.php:244
 msgid "Exchange Google \"id_token\" with a WordPress \"jwt\""
 msgstr ""
 
-#: views/applications/google.php:249
+#: views/applications/google.php:252
 msgid "This route allows you to exchange the Google `id_token` with a Simple-JWT-Login JWT"
 msgstr ""
 
-#: views/applications/google.php:266
+#: views/applications/google.php:269
 msgid "Enable Exchange Google id_token with a WordPress JWT"
 msgstr ""
 
-#: views/applications/google.php:272
+#: views/applications/google.php:275
 msgid "the `id_token` from your OAuth process"
 msgstr ""
 
-#: views/applications/google.php:280
+#: views/applications/google.php:283
 msgid "google_id_token "
 msgstr ""
 
-#: views/applications/google.php:298
+#: views/applications/google.php:302
 msgid "Other options"
 msgstr ""
 
-#: views/applications/google.php:311
+#: views/applications/google.php:315
 msgid "Allow usage of Google id_token on all endpoints"
 msgstr ""
 
-#: views/applications/google.php:315
+#: views/applications/google.php:319
 msgid "This option will allow the usage of Google `id_token` on all endpoints."
 msgstr ""
 
-#: views/applications/google.php:320
+#: views/applications/google.php:324
 msgid "The plugin will search for the user that has the email with the one specified in the JWT payload."
 msgstr ""
 
-#: views/applications/google.php:325
+#: views/applications/google.php:329
 msgid "In order for this option to work, you also need to enable the `All WordPress endpoints checks for JWT authentication` from General."
 msgstr ""
 
-#: views/applications/google.php:342
+#: views/applications/google.php:346
 msgid "Create user if not exists"
 msgstr ""
 
-#: views/applications/google.php:346
+#: views/applications/google.php:350
 msgid "This option will allow to create a new user if the email from JWT is not assigned to a WordPress user."
 msgstr ""
 
@@ -929,7 +929,7 @@ msgid "Specify the length of time (in minutes) that the token can be refreshed w
 msgstr ""
 
 #: views/auth-view.php:431
-msgid "JWT Issuer"
+msgid "JWT Issuer (iss)"
 msgstr ""
 
 #: views/auth-view.php:434
@@ -1016,7 +1016,7 @@ msgid "Leave blank to allow all IP addresses"
 msgstr ""
 
 #: views/cors-view.php:15
-msgid "Enable CORS Support"
+msgid "Allow CORS Support"
 msgstr ""
 
 #: views/cors-view.php:17

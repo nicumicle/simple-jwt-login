@@ -428,7 +428,7 @@ if (! defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title">
-            <?php echo __('JWT Issuer', 'simple-jwt-login') ?>
+            <?php echo __('JWT Issuer (iss)', 'simple-jwt-login') ?>
         </h3>
         <p class="text-muted">
             <?php echo __('Specify the issuer claim for generated JWT tokens.', 'simple-jwt-login'); ?>

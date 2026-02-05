@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 ?>
 <div class="row">
 	<div class="col-md-12">
-		<h3 class="section-title"><?php echo __('Enable CORS Support', 'simple-jwt-login'); ?></h3>
+		<h3 class="section-title"><?php echo __('Allow CORS Support', 'simple-jwt-login'); ?></h3>
 		<p class="text-muted">
 			<?php echo __('Allow cross-origin requests to JWT API endpoints.', 'simple-jwt-login'); ?>
 		</p>

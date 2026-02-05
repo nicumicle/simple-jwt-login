@@ -38,7 +38,7 @@ class SimpleJWTLoginHooks
                 'parameters' => [
                     'Wp_User $user'
                 ],
-                'description' => __('This hook is called after the user is logged in.', 'simple-jwt-login'),
+                'description' => __('Triggered after a successful user login via JWT.', 'simple-jwt-login'),
             ],
             [
                 'name' => self::LOGIN_REDIRECT_NAME,
@@ -49,8 +49,7 @@ class SimpleJWTLoginHooks
                 ],
                 'description' =>
                     __(
-                        'This hook is called before the user is redirected to the page' .
-                        'that he specified in the login section.',
+                        'Called before redirecting the user to their specified login destination.',
                         'simple-jwt-login'
                     ),
             ],
@@ -62,7 +61,7 @@ class SimpleJWTLoginHooks
                     'string $password'
                 ],
                 'description' => __(
-                    'This hook is called after a new user is created.',
+                    'Triggered after a new user account is successfully created.',
                     'simple-jwt-login'
                 ),
             ],
@@ -73,7 +72,7 @@ class SimpleJWTLoginHooks
                     'Wp_User $user'
                 ],
                 'description' => __(
-                    'This hook is called right after the user was deleted.',
+                    'Executed immediately after a user account is deleted.',
                     'simple-jwt-login'
                 ),
             ],
@@ -86,8 +85,7 @@ class SimpleJWTLoginHooks
                 ],
                 'return' => 'array $payload',
                 'description' => __(
-                    'This hook is called on /auth endpoint.'
-                    . 'Here you can modify payload parameters.',
+                    'Allows modification of JWT payload parameters during authentication.',
                     'simple-jwt-login'
                 ),
             ],
@@ -100,8 +98,7 @@ class SimpleJWTLoginHooks
                 ],
                 'return' => 'array $response',
                 'description' => __(
-                    'This hook is called on /autologin endpoint when the option'
-                    . '`No Redirect` is selected. You can customize the message and add parameters.',
+                    'Customizes the response for autologin when no redirect is configured.',
                     'simple-jwt-login'
                 ),
             ],
@@ -114,8 +111,7 @@ class SimpleJWTLoginHooks
                 ],
                 'return' => 'string $template',
                 'description' => __(
-                    'This is executed when POST /user/reset_password is called.'
-                    . ' It will replace the email template that has been added in Reset Password settings',
+                    'Replaces the default reset password email template with a custom one.',
                     'simple-jwt-login'
                 ),
             ],
@@ -128,7 +124,7 @@ class SimpleJWTLoginHooks
                 ],
                 'return' => 'array $response',
                 'description' => __(
-                    'This is executed before displaying the response of auth endpoint.',
+                    'Allows customization of the authentication endpoint response.',
                     'simple-jwt-login'
                 ),
             ],
@@ -141,7 +137,7 @@ class SimpleJWTLoginHooks
                 ],
                 'return' => 'array $response',
                 'description' => __(
-                    'This is executed before displaying the response of delete user endpoint.',
+                    'Allows customization of the delete user endpoint response.',
                     'simple-jwt-login'
                 ),
             ],
@@ -154,7 +150,7 @@ class SimpleJWTLoginHooks
                 ],
                 'return' => 'array $response',
                 'description' => __(
-                    'This is executed before displaying the response of refresh token endpoint.',
+                    'Allows customization of the refresh token endpoint response.',
                     'simple-jwt-login'
                 ),
             ],
@@ -167,7 +163,7 @@ class SimpleJWTLoginHooks
                 ],
                 'return' => 'array $response',
                 'description' => __(
-                    'This is executed before displaying the response of register user endpoint.',
+                    'Allows customization of the register user endpoint response.',
                     'simple-jwt-login'
                 ),
             ],
@@ -180,7 +176,7 @@ class SimpleJWTLoginHooks
                 ],
                 'return' => 'array $response',
                 'description' => __(
-                    'This is executed before displaying the response of send reset password endpoint.',
+                    'Allows customization of the send reset password endpoint response.',
                     'simple-jwt-login'
                 ),
             ],
@@ -193,7 +189,7 @@ class SimpleJWTLoginHooks
                 ],
                 'return' => 'array $response',
                 'description' => __(
-                    'This is executed before displaying the response of change user password endpoint.',
+                    'Allows customization of the change user password endpoint response.',
                     'simple-jwt-login'
                 ),
             ],
@@ -206,7 +202,7 @@ class SimpleJWTLoginHooks
                 ],
                 'return' => 'array $response',
                 'description' => __(
-                    'This is executed before displaying the response of revoke token endpoint.',
+                    'Allows customization of the revoke token endpoint response.',
                     'simple-jwt-login'
                 ),
             ],
@@ -219,7 +215,7 @@ class SimpleJWTLoginHooks
                 ],
                 'return' => 'array $response',
                 'description' => __(
-                    'This is executed before displaying the response of validate token endpoint.',
+                    'Allows customization of the validate token endpoint response.',
                     'simple-jwt-login'
                 ),
             ],
@@ -250,7 +246,7 @@ class SimpleJWTLoginHooks
                     'array $request'
                 ],
                 'description' => __(
-                    'This is executed before the simple-jwt-login rest route is initialized.',
+                    'Runs before any Simple JWT Login REST endpoint is processed.',
                     'simple-jwt-login'
                 ),
             ],

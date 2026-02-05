@@ -26,6 +26,15 @@ if (! defined('ABSPATH')) {
             <div class="card-body text-center">
                 <h5 class="card-title">
 					<?php echo __('Login status', 'simple-jwt-login'); ?>
+                     <span
+                        class="dashicons dashicons-info-outline sjl-tooltip"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        title="<?php echo esc_attr__(
+                            'Allows users to authenticate automatically using a valid JWT token.',
+                            'simple-jwt-login'
+                        ); ?>"
+                    ></span>
                 </h5>
                 <div class="box-status box-status-<?php echo $jwtSettings->getLoginSettings()->isAutologinEnabled()
                     ? "on"
@@ -47,6 +56,15 @@ if (! defined('ABSPATH')) {
             <div class="card-body text-center">
                 <h5 class="card-title">
 					<?php echo __('Register Status', 'simple-jwt-login'); ?>
+                     <span
+                        class="dashicons dashicons-info-outline sjl-tooltip"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        title="<?php echo esc_attr__(
+                            'Enables user registration through the JWT register endpoint.',
+                            'simple-jwt-login'
+                        ); ?>"
+                    ></span>
                 </h5>
                 <div class="box-status box-status-<?php
                 echo $jwtSettings->getRegisterSettings()->isRegisterAllowed()
@@ -69,6 +87,15 @@ if (! defined('ABSPATH')) {
             <div class="card-body text-center">
                 <h5 class="card-title">
 					<?php echo __('Delete Status', 'simple-jwt-login'); ?>
+                    <span
+                        class="dashicons dashicons-info-outline sjl-tooltip"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        title="<?php echo esc_attr__(
+                            'Allows users to delete their account using a JWT-authenticated request.',
+                            'simple-jwt-login'
+                        ); ?>"
+                    ></span>
                 </h5>
                 <div class="box-status box-status-<?php
                     echo $jwtSettings->getDeleteUserSettings()->isDeleteAllowed()
@@ -91,6 +118,15 @@ if (! defined('ABSPATH')) {
             <div class="card-body text-center">
                 <h5 class="card-title">
 					<?php echo __('Authentication Status', 'simple-jwt-login'); ?>
+                    <span
+                        class="dashicons dashicons-info-outline sjl-tooltip"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        title="<?php echo esc_attr__(
+                            'Enables JWT authentication for protected REST API endpoints.',
+                            'simple-jwt-login'
+                        ); ?>"
+                    ></span>
                 </h5>
                 <div class="box-status box-status-<?php
                     echo $jwtSettings->getAuthenticationSettings()->isAuthenticationEnabled()
@@ -114,6 +150,15 @@ if (! defined('ABSPATH')) {
             <div class="card-body text-center">
                 <h5 class="card-title">
 					<?php echo __('CORS Status', 'simple-jwt-login'); ?>
+                    <span
+                        class="dashicons dashicons-info-outline sjl-tooltip"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        title="<?php echo esc_attr__(
+                            'Controls whether cross-origin requests are allowed for JWT endpoints.',
+                            'simple-jwt-login'
+                        ); ?>"
+                    ></span>
                 </h5>
                 <div
                         class="box-status box-status-<?php
@@ -138,6 +183,15 @@ if (! defined('ABSPATH')) {
             <div class="card-body text-center">
                 <h5 class="card-title">
                     <?php echo __('Reset Password Status', 'simple-jwt-login'); ?>
+                    <span
+                        class="dashicons dashicons-info-outline sjl-tooltip"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        title="<?php echo esc_attr__(
+                            'Allows users to reset their password using a secure JWT endpoint.',
+                            'simple-jwt-login'
+                        ); ?>"
+                    ></span>
                 </h5>
                 <div
                         class="box-status box-status-<?php
@@ -163,6 +217,15 @@ if (! defined('ABSPATH')) {
             <div class="card-body text-center">
                 <h5 class="card-title">
                     <?php echo __('Number of active hooks', 'simple-jwt-login'); ?>
+                    <span
+                        class="dashicons dashicons-info-outline sjl-tooltip"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        title="<?php echo esc_attr__(
+                            'Shows how many Simple-JWT-Login hooks are currently enabled.',
+                            'simple-jwt-login'
+                        ); ?>"
+                    ></span>
                 </h5>
                 <div class="box-status  box-status-<?php
                 echo count($jwtSettings->getHooksSettings()->getEnabledHooks()) > 0
@@ -183,6 +246,15 @@ if (! defined('ABSPATH')) {
             <div class="card-body text-center">
                 <h5 class="card-title">
                     <?php echo __('Number of Auth Codes', 'simple-jwt-login'); ?>
+                    <span
+                        class="dashicons dashicons-info-outline sjl-tooltip"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        title="<?php echo esc_attr__(
+                            'Displays the total number of active authentication codes.',
+                            'simple-jwt-login'
+                        ); ?>"
+                    ></span>
                 </h5>
                 <div class="box-status  box-status-<?php
                 echo count($jwtSettings->getAuthCodesSettings()->getAuthCodes()) > 0
@@ -205,6 +277,15 @@ if (! defined('ABSPATH')) {
             <div class="card-body text-center">
                 <h5 class="card-title">
 					<?php echo __('Protect endpoints', 'simple-jwt-login'); ?>
+                    <span
+                        class="dashicons dashicons-info-outline sjl-tooltip"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        title="<?php echo esc_attr__(
+                            'Restricts selected REST API endpoints to authenticated JWT requests only.',
+                            'simple-jwt-login'
+                        ); ?>"
+                    ></span>
                 </h5>
                 <div
                         class="box-status box-status-<?php
@@ -224,16 +305,4 @@ if (! defined('ABSPATH')) {
             </div>
         </div>
     </div>
-    
-    <div class="col-lg-3 col-md-6 col-xs-12">
-
-    </div>
-    
-    <div class="col-lg-3 col-md-6 col-xs-12">
-
-    </div>
-    <div class="col-lg-3 col-md-6 col-xs-12">
-        
-    </div>
-    
 </div>

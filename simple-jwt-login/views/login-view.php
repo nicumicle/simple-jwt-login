@@ -19,6 +19,9 @@ if (! defined('ABSPATH')) {
         <h3 class="section-title">
             <?php echo __('Allow Auto-Login', 'simple-jwt-login'); ?>
         </h3>
+        <p class="text-muted">
+            <?php echo __('Allow users to automatically log in using a JWT token via URL or header.', 'simple-jwt-login'); ?>
+        </p>
 
         <div class="form-group">
             <input type="radio" id="allow_autologin_no" name="allow_autologin" class="form-control"
@@ -42,7 +45,7 @@ if (! defined('ABSPATH')) {
     <div class="col-md-12">
         <h3 class=section-title><?php echo __('URL Example', 'simple-jwt-login'); ?></h3>
         <div class="generated-code">
-            <span class="method">GET:</span>
+            <span class="method">GET</span>
             <span class="code">
             <?php
             $sampleUrlParams = [
@@ -77,7 +80,10 @@ if (! defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Auto-Login Requires Auth Code', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo __('Require Authentication Code for Auto-Login', 'simple-jwt-login'); ?></h3>
+        <p class="text-muted">
+            <?php echo __('If enabled, an additional authentication code must be provided along with the JWT for login.', 'simple-jwt-login'); ?>
+        </p>
         <div class="form-group">
             <input type="radio" id="require_login_auth_no" name="require_login_auth" class="form-control"
                    value="0"
@@ -110,14 +116,17 @@ if (! defined('ABSPATH')) {
                 ? '<span class="simple-jwt-error">!</span>'
                 : ''
             ?>
-            <?php echo __('JWT Login Settings', 'simple-jwt-login'); ?>
+            <?php echo __('JWT Login Configuration', 'simple-jwt-login'); ?>
         </h3>
+        <p class="text-muted">
+            <?php echo __('Configure how the JWT payload is used to identify and log in users.', 'simple-jwt-login'); ?>
+        </p>
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-6">
-        <label for="jwt_login_by"><?php echo __('Action', 'simple-jwt-login'); ?></label>
+        <label for="jwt_login_by"><?php echo __('How to Identify User', 'simple-jwt-login'); ?></label>
         <select name="jwt_login_by" class="form-control" id="jwt_login_by">
             <option value="0"
 				<?php
@@ -184,6 +193,9 @@ if (! defined('ABSPATH')) {
             ?>
             <?php echo __('Redirect after Auto-Login', 'simple-jwt-login'); ?>
         </h3>
+        <p class="text-muted">
+            <?php echo __('Choose where to redirect users after successful auto-login.', 'simple-jwt-login'); ?>
+        </p>
         <div class="form-group">
             <input type="radio" id="redirect_dashboard" name="redirect" class="form-control"
                    value="<?php echo esc_attr(LoginSettings::REDIRECT_DASHBOARD); ?>"
@@ -243,10 +255,13 @@ if (! defined('ABSPATH')) {
     <div class="col-md-12">
         <h3 class="section-title">
             <?php echo __(
-                'Redirect on Fail autologin',
+                'Redirect on Login Failure',
                 'simple-jwt-login'
             ); ?>:
         </h3>
+        <p class="text-muted">
+            <?php echo __('Specify a URL to redirect to if auto-login fails (e.g., invalid token).', 'simple-jwt-login'); ?>
+        </p>
         <div class="form-group">
             <input type="text" id="login_fail_redirect" name="login_fail_redirect" class="form-control"
                    value="<?php echo esc_attr($jwtSettings->getLoginSettings()->getAutologinRedirectOnFail()); ?>"
@@ -262,8 +277,11 @@ if (! defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title">
-            <?php echo __('Other options', 'simple-jwt-login');?>
+            <?php echo __('Additional Options', 'simple-jwt-login');?>
         </h3>
+        <p class="text-muted">
+            <?php echo __('Fine-tune the auto-login behavior with these extra settings.', 'simple-jwt-login'); ?>
+        </p>
     </div>
     <div class="col-md-12">
         <input
@@ -287,6 +305,9 @@ if (! defined('ABSPATH')) {
                 ); ?>
             </b>:
         </div>
+        <p class="text-muted">
+            <?php echo __('Specify parameters to strip from the URL after redirect for security.', 'simple-jwt-login'); ?>
+        </p>
         <div class="form-group">
             <input
                    type="text"
@@ -352,7 +373,9 @@ if (! defined('ABSPATH')) {
             </ol>
             <br />
             <?php echo __('Example', 'simple-jwt-login');?>:
-            https://<?php echo site_url();?>?param1={{site_url}}&amp;param2={{user_id}}
+            <code>
+                <?php echo site_url();?>?param1={{site_url}}&amp;param2={{user_id}}
+            </code>
         </div>
     </div>
 </div>
@@ -361,9 +384,12 @@ if (! defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title"><?php echo __(
-            'Allow Auto-Login only from the following IP addresses',
+            'Restrict Auto-Login to Specific IP Addresses',
             'simple-jwt-login'
         ); ?>:</h3>
+        <p class="text-muted">
+            <?php echo __('Only allow auto-login from these IP addresses. Leave blank to allow from any IP.', 'simple-jwt-login'); ?>
+        </p>
         <div class="form-group">
             <input type="text" id="login_ip" name="login_ip" class="form-control"
                    value="<?php echo esc_attr($jwtSettings->getLoginSettings()->getAllowedLoginIps()); ?>"
@@ -382,6 +408,9 @@ if (! defined('ABSPATH')) {
         <h3 class="section-title">
             <?php echo __('JWT Allowed issuers (iss) for Auto-Login', 'simple-jwt-login');?>:
         </h3>
+        <p class="text-muted">
+            <?php echo __('Restrict auto-login to JWTs issued by these entities (iss claim). Leave blank to allow any issuer.', 'simple-jwt-login'); ?>
+        </p>
         <div class="form-group">
             <input type="text" id="login_iss" name="login_iss" class="form-control"
                    value="<?php echo esc_attr($jwtSettings->getLoginSettings()->getAllowedLoginIss()); ?>"

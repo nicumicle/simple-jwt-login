@@ -16,7 +16,10 @@ if (! defined('ABSPATH')) {
 ?>
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Allow Authentication', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo __('Allow JWT Authentication', 'simple-jwt-login'); ?></h3>
+        <p class="text-muted">
+            <?php echo __('Allow users to authenticate and receive JWT tokens via API endpoints.', 'simple-jwt-login'); ?>
+        </p>
         <div class="form-group">
             <input type="radio" id="allow_authentication_no" name="allow_authentication" class="form-control"
                    value="0"
@@ -48,7 +51,10 @@ if (! defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Authentication Requires Auth Code', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo __('Require Authentication Code for JWT Generation', 'simple-jwt-login'); ?></h3>
+        <p class="text-muted">
+            <?php echo __('If enabled, an additional authentication code must be provided to generate JWT tokens.', 'simple-jwt-login'); ?>
+        </p>
         <div class="form-group">
             <input type="radio" id="require_auth_code_no" name="auth_requires_auth_code" class="form-control"
                    value="0"
@@ -71,7 +77,10 @@ if (! defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Authentication Example URL', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo __('JWT Generation Endpoint', 'simple-jwt-login'); ?></h3>
+        <p class="text-muted">
+            <?php echo __('Configure the endpoint for generating JWT tokens using user credentials.', 'simple-jwt-login'); ?>
+        </p>
         <p>
 			<?php
             echo __(
@@ -90,7 +99,7 @@ if (! defined('ABSPATH')) {
             <b>password_hash</b> -> <?php echo __('your hashed password from the database', 'simple-jwt-login');?><br />
         </p>
         <div class="generated-code">
-            <span class="method">POST:</span>
+            <span class="method">POST</span>
             <span class="code">
                 <?php
                 $sampleUrlParams = [
@@ -113,7 +122,7 @@ if (! defined('ABSPATH')) {
         </div>
         
         <div class="generated-code">
-            <span class="method">POST:</span>
+            <span class="method">POST</span>
             <span class="code">
                 <?php
                 $sampleUrlParams = [
@@ -135,7 +144,7 @@ if (! defined('ABSPATH')) {
             <b><?php echo __('OR', 'simple-jwt-login');?></b>: 
         </div>
         <div class="generated-code">
-            <span class="method">POST:</span>
+            <span class="method">POST</span>
             <span class="code">
                 <?php
                 $sampleUrlParams = [
@@ -158,7 +167,10 @@ if (! defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Options', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo __('Authentication Options', 'simple-jwt-login'); ?></h3>
+        <p class="text-muted">
+            <?php echo __('Additional settings for the authentication process.', 'simple-jwt-login'); ?>
+        </p>
         <div class="form-group">
             <div class="input-group" style="margin-top:10px">
                 <input
@@ -185,7 +197,10 @@ if (! defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('JWT Header parameters', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo __('JWT Header Configuration', 'simple-jwt-login'); ?></h3>
+        <p class="text-muted">
+            <?php echo __('The standard header included in generated JWT tokens.', 'simple-jwt-login'); ?>
+        </p>
         <div id="authentication_header_data" class="authentication_jwt_container">
             <ul>
                 <li>{</li>
@@ -228,8 +243,11 @@ if (! defined('ABSPATH')) {
                 ? '<span class="simple-jwt-error">!</span>'
                 : ''
             ?>
-            <?php echo __('JWT Payload parameters', 'simple-jwt-login'); ?>
+            <?php echo __('JWT Payload Configuration', 'simple-jwt-login'); ?>
         </h3>
+        <p class="text-muted">
+            <?php echo __('Select which user data to include in the JWT payload.', 'simple-jwt-login'); ?>
+        </p>
         <div id="authentication_payload_data" class="authentication_jwt_container">
             <ul>
                 <li>{</li>
@@ -314,8 +332,11 @@ if (! defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title">
-			<?php echo __('Verify Signature', 'simple-jwt-login'); ?>
+			<?php echo __('JWT Signature Verification', 'simple-jwt-login'); ?>
         </h3>
+        <p class="text-muted">
+            <?php echo __('How the JWT signature is verified for authenticity.', 'simple-jwt-login'); ?>
+        </p>
         <div id="authentication_signature" class="authentication_jwt_container">
             <ul>
                 <li>HMACSHA256(</li>
@@ -345,8 +366,11 @@ if (! defined('ABSPATH')) {
                 ? '<span class="simple-jwt-error">!</span>'
                 : ''
             ?>
-			<?php echo __('JWT time to live', 'simple-jwt-login') ?>
+			<?php echo __('JWT Expiration Time', 'simple-jwt-login') ?>
         </h3>
+        <p class="text-muted">
+            <?php echo __('Set how long generated JWT tokens remain valid.', 'simple-jwt-login'); ?>
+        </p>
         <label for="jwt_auth_ttl">
 			<?php echo __(
                 'Specify the length of time (in minutes) that the token will be valid for.',
@@ -376,8 +400,11 @@ if (! defined('ABSPATH')) {
                 ? '<span class="simple-jwt-error">!</span>'
                 : ''
             ?>
-			<?php echo __('Refresh time to live', 'simple-jwt-login') ?>
+			<?php echo __('JWT Refresh Window', 'simple-jwt-login') ?>
         </h3>
+        <p class="text-muted">
+            <?php echo __('Set the time window during which expired tokens can be refreshed.', 'simple-jwt-login'); ?>
+        </p>
         <label for="jwt_auth_refresh_ttl">
 			<?php echo __(
                 'Specify the length of time (in minutes) that the token can be refreshed within.'
@@ -403,6 +430,9 @@ if (! defined('ABSPATH')) {
         <h3 class="section-title">
             <?php echo __('JWT Issuer (iss)', 'simple-jwt-login') ?>
         </h3>
+        <p class="text-muted">
+            <?php echo __('Specify the issuer claim for generated JWT tokens.', 'simple-jwt-login'); ?>
+        </p>
         <label for="jwt_auth_ttl">
             <?php echo __(
                 'The payload issuer when a new JWT is generated',
@@ -423,7 +453,10 @@ if (! defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Refresh JWT URL Example', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo __('JWT Refresh Endpoint', 'simple-jwt-login'); ?></h3>
+        <p class="text-muted">
+            <?php echo __('Endpoint for refreshing expired JWT tokens.', 'simple-jwt-login'); ?>
+        </p>
         <p>
 			<?php
             echo __(
@@ -434,7 +467,7 @@ if (! defined('ABSPATH')) {
             ?>
         </p>
         <div class="generated-code">
-            <span class="method">POST:</span>
+            <span class="method">POST</span>
             <span class="code">
                 <?php
                 $sampleUrlParams = [
@@ -470,7 +503,10 @@ if (! defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Validate JWT URL Example', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo __('JWT Validation Endpoint', 'simple-jwt-login'); ?></h3>
+        <p class="text-muted">
+            <?php echo __('Endpoint for validating JWT tokens and retrieving user details.', 'simple-jwt-login'); ?>
+        </p>
         <p>
 			<?php
             echo __(
@@ -482,7 +518,7 @@ if (! defined('ABSPATH')) {
         </p>
         <div class="generated-code">
             <span class="method">GET</span>
-            <span class="method">POST:</span>
+            <span class="method">POST</span>
             <span class="code">
                 <?php
                 $sampleUrlParams = [
@@ -517,7 +553,10 @@ if (! defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Revoke JWT URL Example', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo __('JWT Revocation Endpoint', 'simple-jwt-login'); ?></h3>
+        <p class="text-muted">
+            <?php echo __('Endpoint for revoking valid JWT tokens.', 'simple-jwt-login'); ?>
+        </p>
         <p>
             <?php
             echo __(
@@ -527,7 +566,7 @@ if (! defined('ABSPATH')) {
             ?>
         </p>
         <div class="generated-code">
-            <span class="method">POST:</span>
+            <span class="method">POST</span>
             <span class="code">
                 <?php
                 $sampleUrlParams = [
@@ -560,11 +599,14 @@ if (! defined('ABSPATH')) {
         <h3 class="section-title">
             <?php
             echo __(
-                'Allow Authentication only from the following IP addresses',
+                'Restrict Authentication to Specific IP Addresses',
                 'simple-jwt-login'
             );
             ?>:
         </h3>
+        <p class="text-muted">
+            <?php echo __('Only allow JWT authentication from these IP addresses. Leave blank to allow from any IP.', 'simple-jwt-login'); ?>
+        </p>
         <div class="form-group">
             <input type="text" id="auth_ip" name="auth_ip" class="form-control"
                    value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAllowedIps()); ?>"

@@ -226,7 +226,7 @@ if (!defined('ABSPATH')) {
         <input type="text" name="random_password_length"
                id="random_password_length"
                value="<?php
-                    echo $jwtSettings->getRegisterSettings()->getRandomPasswordLength();
+                    echo esc_attr($jwtSettings->getRegisterSettings()->getRandomPasswordLength());
                 ?>"
         />
     </div>

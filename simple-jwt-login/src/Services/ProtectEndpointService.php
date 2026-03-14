@@ -46,8 +46,9 @@ class ProtectEndpointService extends BaseService
 
         $parsed = parse_url($currentUrl);
 
-        $path  = rtrim(str_replace($documentRoot, '', ABSPATH), '/');
-        $path = str_replace($path . '/wp-json', '', $parsed['path']);
+        //Initialize $path safely, checking if 'path' is available in $parsed
+		$basePath  = rtrim(str_replace($documentRoot, '', ABSPATH), '/');
+		$path = isset($parsed['path']) ? str_replace($basePath . '/wp-json', '', $parsed['path']) : '';
 
         $isEndpointsProtected = true;
         if (!empty(trim($path, '/'))) {

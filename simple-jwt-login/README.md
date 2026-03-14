@@ -6,7 +6,7 @@ Tags: jwt, API, auto login, register, tokens
 Requires at least: 4.4.0
 Tested up to: 6.9
 Requires PHP: 5.5
-Stable tag: 3.6.4
+Stable tag: 3.6.5
 License: GPLv3
 License URI: https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE
 
@@ -459,6 +459,12 @@ After that, for the create user route, simply add the AUTH code in the request, 
 == Changelog ==
 
 A complete Changelog is available on the [GitHub repository](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md).
+
+= 3.6.5 (14 Mar 2026) =
+- Fix  CVE-2025-58648 - Stored Cross-Site Scripting vulnerability[PR](https://github.com/nicumicle/simple-jwt-login/pull/162)
+- Fix for bug: Reset password function doesn't use base64 encoding logic and doesn't allow user to use any special character [#161](https://github.com/nicumicle/simple-jwt-login/issues/161) [#163](https://github.com/nicumicle/simple-jwt-login/pull/163)
+- Fix PHP session initialization warning [#159](https://github.com/nicumicle/simple-jwt-login/issues/159)
+- Update WordPress 6.9 Compatibility
 
 = 3.6.4 (17 Apr 2025) =
 - Update WordPress 6.8 Compatibility

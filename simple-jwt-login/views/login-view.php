@@ -374,7 +374,7 @@ if (! defined('ABSPATH')) {
             <br />
             <?php echo __('Example', 'simple-jwt-login');?>:
             <code>
-                <?php echo site_url();?>?param1={{site_url}}&amp;param2={{user_id}}
+                <?php echo esc_url(site_url());?>?param1={{site_url}}&amp;param2={{user_id}}
             </code>
         </div>
     </div>

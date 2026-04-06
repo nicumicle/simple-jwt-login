@@ -2,7 +2,7 @@
    Setup Wizard
    ============================================================================= */
 
-/* Wizard trigger button — sits next to the page title */
+/* Wizard trigger button - sits next to the page title */
 #sjl-wizard-btn {
     font-size: 11px;
     padding: 3px 10px;
@@ -184,8 +184,34 @@ body.sjl-wizard-open {
     background: #eef2f5;
 }
 .sjl-wizard-card-icon {
-    font-size: 22px;
     margin-bottom: 5px;
+    line-height: 1;
+}
+.sjl-wizard-btn-icon {
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+    margin-right: 4px;
+    filter: brightness(0) invert(1);
+}
+.sjl-wizard-icon {
+    width: 28px;
+    height: 28px;
+    display: inline-block;
+    vertical-align: middle;
+    color: #263544;
+}
+.sjl-wizard-icon--header {
+    width: 18px;
+    height: 18px;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+.sjl-wizard-icon--summary {
+    width: 14px;
+    height: 14px;
+    margin-right: 4px;
+    vertical-align: middle;
 }
 .sjl-wizard-card-name {
     font-size: 12px;

@@ -150,7 +150,8 @@ $settingsPages = [
                     <h1 class="main-title">
                         <?php echo __('Simple JWT Login Settings', 'simple-jwt-login'); ?>
                         <button type="button" id="sjl-wizard-btn">
-                            ✨ <?php echo esc_html(__('Setup Wizard', 'simple-jwt-login')); ?>
+                            <img src="<?php echo esc_url(plugin_dir_url(__FILE__) . '../images/wizard/wand.svg'); ?>" class="sjl-wizard-btn-icon" alt="" aria-hidden="true">
+                            <?php echo esc_html(__('Setup Wizard', 'simple-jwt-login')); ?>
                         </button>
                     </h1>
                 </div>

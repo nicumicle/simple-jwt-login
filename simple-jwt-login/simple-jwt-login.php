@@ -7,6 +7,8 @@
     Author URI: https://profiles.wordpress.org/nicu_m/
     Text Domain: simple-jwt-login
     Domain Path: /i18n
+    License: GPLv3
+    License URI: https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE
     Version: 3.6.5
 */
 
@@ -99,6 +101,12 @@ function simple_jwt_login_plugin_show_main_page()
         [],
         $pluginVersion
     );
+    wp_enqueue_style(
+        'simple-jwt-login-wizard',
+        $pluginDirUrl . 'css/wizard.css',
+        [],
+        $pluginVersion
+    );
 
     wp_enqueue_script(
         'simple-jwt-bootstrap-min',
@@ -114,6 +122,20 @@ function simple_jwt_login_plugin_show_main_page()
         [ 'simple-jwt-bootstrap-min' ],
         $pluginVersion,
         $loadScriptsInFooter
+    );
+
+    wp_enqueue_script(
+        'simple-jwt-login-wizard',
+        $pluginDirUrl . 'js/wizard.js',
+        [ 'simple-jwt-login-scripts', 'wp-i18n' ],
+        $pluginVersion,
+        $loadScriptsInFooter
+    );
+
+    wp_set_script_translations(
+        'simple-jwt-login-wizard',
+        'simple-jwt-login',
+        plugin_dir_path(__FILE__) . 'i18n/'
     );
 
     require_once('views/layout.php');
@@ -187,7 +209,7 @@ function simple_jwt_login_login_message()
     if ($hasError) {
         ?>
         <div class="notice notice-error">
-            <?php echo esc_html(__("OAuth Error: ", 'simple-jwt-login') . $_REQUEST['error']);?>
+            <?php echo esc_html(__("OAuth Error:", 'simple-jwt-login') . ' ' . $_REQUEST['error']);?>
         </div>
         <?php
     }

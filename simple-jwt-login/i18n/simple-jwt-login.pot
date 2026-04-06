@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-03-13T05:03:06+00:00\n"
+"POT-Creation-Date: 2026-03-15T06:42:38+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -39,8 +39,8 @@ msgstr ""
 msgid "https://profiles.wordpress.org/nicu_m/"
 msgstr ""
 
-#: simple-jwt-login.php:190
-msgid "OAuth Error: "
+#: simple-jwt-login.php:210
+msgid "OAuth Error:"
 msgstr ""
 
 #: src/Libraries/JWT/JWT.php:71
@@ -651,7 +651,7 @@ msgid "the code you received from OAuth flow"
 msgstr ""
 
 #: views/applications/google.php:224
-msgid "your_code "
+msgid "your_code"
 msgstr ""
 
 #: views/applications/google.php:244
@@ -671,7 +671,7 @@ msgid "the `id_token` from your OAuth process"
 msgstr ""
 
 #: views/applications/google.php:283
-msgid "google_id_token "
+msgid "google_id_token"
 msgstr ""
 
 #: views/applications/google.php:302
@@ -745,24 +745,24 @@ msgstr ""
 
 #: views/auth-codes-view.php:73
 #: views/auth-codes-view.php:105
-#: views/layout.php:268
+#: views/layout.php:272
 msgid "Authentication Key"
 msgstr ""
 
 #: views/auth-codes-view.php:76
 #: views/auth-codes-view.php:91
-#: views/layout.php:274
+#: views/layout.php:278
 msgid "WordPress new user Role ( when new users are created )"
 msgstr ""
 
 #: views/auth-codes-view.php:79
 #: views/auth-codes-view.php:95
-#: views/layout.php:283
+#: views/layout.php:287
 msgid "Expiration date: YYYY-MM-DD HH:MM:SS ( Example: 2020-12-23 23:34:59)"
 msgstr ""
 
 #: views/auth-codes-view.php:122
-#: views/layout.php:291
+#: views/layout.php:295
 #: views/protect-endpoints-view.php:79
 msgid "delete"
 msgstr ""
@@ -1196,6 +1196,7 @@ msgstr ""
 
 #: views/delete-view.php:154
 #: views/login-view.php:129
+#: js/wizard.js:113
 msgid "How to Identify User"
 msgstr ""
 
@@ -1249,6 +1250,7 @@ msgid "Only allow user deletion from these IP addresses. Leave blank to allow fr
 msgstr ""
 
 #: views/general-view.php:31
+#: js/wizard.js:39
 msgid "Route Namespace"
 msgstr ""
 
@@ -1281,6 +1283,7 @@ msgid "Code (wp-config.php or custom plugin)"
 msgstr ""
 
 #: views/general-view.php:108
+#: js/wizard.js:46
 msgid "JWT Algorithm"
 msgstr ""
 
@@ -1421,10 +1424,12 @@ msgid "Register User"
 msgstr ""
 
 #: views/layout.php:55
+#: js/wizard.js:150
 msgid "Delete User"
 msgstr ""
 
 #: views/layout.php:61
+#: js/wizard.js:169
 msgid "Reset Password"
 msgstr ""
 
@@ -1444,15 +1449,19 @@ msgstr ""
 msgid "Applications"
 msgstr ""
 
-#: views/layout.php:150
+#: views/layout.php:151
 msgid "Simple JWT Login Settings"
 msgstr ""
 
 #: views/layout.php:153
+msgid "Setup Wizard"
+msgstr ""
+
+#: views/layout.php:158
 msgid "Save"
 msgstr ""
 
-#: views/layout.php:245
+#: views/layout.php:250
 msgid "View file does not exists."
 msgstr ""
 
@@ -1956,4 +1965,260 @@ msgstr ""
 
 #: views/reset-password-view.php:397
 msgid "If this option is selected, the <b>code</b> parameter is no longer required. The plugin will search for the USER that is present in the JWT. Also, the JWT should be valid."
+msgstr ""
+
+#: views/wizard-modal.php:9
+msgid "Simple JWT Login — Setup Wizard"
+msgstr ""
+
+#: views/wizard-modal.php:11
+msgid "Close"
+msgstr ""
+
+#: views/wizard-modal.php:16
+#: js/wizard.js:780
+msgid "Step 1 — Select features"
+msgstr ""
+
+#: views/wizard-modal.php:31
+msgid "Previous"
+msgstr ""
+
+#: views/wizard-modal.php:35
+msgid "Next"
+msgstr ""
+
+#: views/wizard-modal.php:38
+msgid "Save Settings"
+msgstr ""
+
+#: js/wizard.js:34
+msgid "General Settings"
+msgstr ""
+
+#: js/wizard.js:35
+msgid "These settings are required for all plugin features to work correctly."
+msgstr ""
+
+#: js/wizard.js:42
+msgid "Base URL path for all Simple JWT Login REST endpoints. Change only if you need to avoid conflicts."
+msgstr ""
+
+#: js/wizard.js:49
+msgid "Algorithm used to sign JWT tokens. Must match what your client applications use."
+msgstr ""
+
+#: js/wizard.js:54
+msgid "JWT Secret Key"
+msgstr ""
+
+#: js/wizard.js:56
+msgid "Enter a strong secret key"
+msgstr ""
+
+#: js/wizard.js:57
+msgid "Secret used to sign and verify JWT tokens. Keep this private!"
+msgstr ""
+
+#: js/wizard.js:63
+msgid "Public Key"
+msgstr ""
+
+#: js/wizard.js:66
+msgid "PEM-formatted RSA public key used to verify incoming JWT tokens."
+msgstr ""
+
+#: js/wizard.js:71
+msgid "Private Key"
+msgstr ""
+
+#: js/wizard.js:74
+msgid "PEM-formatted RSA private key used to sign JWT tokens."
+msgstr ""
+
+#: js/wizard.js:96
+msgid "Auto Login"
+msgstr ""
+
+#: js/wizard.js:97
+msgid "Let users log in automatically via a JWT in the URL or Authorization header."
+msgstr ""
+
+#: js/wizard.js:104
+msgid "Enable Auto Login?"
+msgstr ""
+
+#: js/wizard.js:107
+msgid "Yes — enable auto login"
+msgstr ""
+
+#: js/wizard.js:108
+#: js/wizard.js:143
+#: js/wizard.js:162
+#: js/wizard.js:181
+#: js/wizard.js:200
+#: js/wizard.js:234
+msgid "No — keep disabled"
+msgstr ""
+
+#: js/wizard.js:116
+msgid "Choose which WordPress user attribute the JWT payload value is matched against."
+msgstr ""
+
+#: js/wizard.js:121
+msgid "JWT Parameter Key"
+msgstr ""
+
+#: js/wizard.js:123
+msgid "Example: email"
+msgstr ""
+
+#: js/wizard.js:124
+msgid "The key name in the JWT payload that holds the user identifier. Use dot notation for nested values (e.g. user.id)."
+msgstr ""
+
+#: js/wizard.js:131
+msgid "User Registration"
+msgstr ""
+
+#: js/wizard.js:132
+msgid "Allow new WordPress users to register through the JWT REST API."
+msgstr ""
+
+#: js/wizard.js:139
+msgid "Allow User Registration?"
+msgstr ""
+
+#: js/wizard.js:142
+msgid "Yes — allow registrations"
+msgstr ""
+
+#: js/wizard.js:151
+msgid "Let users delete their own WordPress accounts via the JWT API."
+msgstr ""
+
+#: js/wizard.js:158
+msgid "Enable User Deletion?"
+msgstr ""
+
+#: js/wizard.js:161
+msgid "Yes — allow account deletion"
+msgstr ""
+
+#: js/wizard.js:170
+msgid "Allow users to trigger a WordPress password reset via the JWT API."
+msgstr ""
+
+#: js/wizard.js:177
+msgid "Enable Password Reset?"
+msgstr ""
+
+#: js/wizard.js:180
+msgid "Yes — allow password resets"
+msgstr ""
+
+#: js/wizard.js:188
+msgid "JWT Authentication"
+msgstr ""
+
+#: js/wizard.js:189
+msgid "Generate JWT tokens by authenticating with WordPress credentials."
+msgstr ""
+
+#: js/wizard.js:196
+msgid "Enable JWT Authentication?"
+msgstr ""
+
+#: js/wizard.js:199
+msgid "Yes — enable token generation"
+msgstr ""
+
+#: js/wizard.js:205
+msgid "JWT Payload Fields"
+msgstr ""
+
+#: js/wizard.js:207
+msgid "Select which user data to include in the JWT payload. \"iat\" (issued at) is always included automatically."
+msgstr ""
+
+#: js/wizard.js:210
+msgid "exp — Expiration time"
+msgstr ""
+
+#: js/wizard.js:211
+msgid "email — User email"
+msgstr ""
+
+#: js/wizard.js:212
+msgid "id — User ID"
+msgstr ""
+
+#: js/wizard.js:213
+msgid "site — Site URL"
+msgstr ""
+
+#: js/wizard.js:214
+msgid "username — Username"
+msgstr ""
+
+#: js/wizard.js:215
+msgid "iss — Issuer"
+msgstr ""
+
+#: js/wizard.js:222
+msgid "CORS Support"
+msgstr ""
+
+#: js/wizard.js:223
+msgid "Allow browser requests from other domains to the JWT API endpoints."
+msgstr ""
+
+#: js/wizard.js:230
+msgid "Enable CORS Support?"
+msgstr ""
+
+#: js/wizard.js:233
+msgid "Yes — allow cross-origin requests"
+msgstr ""
+
+#: js/wizard.js:466
+msgid "What would you like to enable?"
+msgstr ""
+
+#: js/wizard.js:467
+msgid "Select the features you want to configure. You can always adjust individual settings later."
+msgstr ""
+
+#: js/wizard.js:481
+msgid "General settings (JWT key & algorithm) will always be configured in the next step."
+msgstr ""
+
+#: js/wizard.js:511
+msgid "Review your setup ✅"
+msgstr ""
+
+#: js/wizard.js:512
+msgid "Click \"Save Settings\" to apply and save everything."
+msgstr ""
+
+#: js/wizard.js:528
+msgid "No features selected — only General settings will be applied."
+msgstr ""
+
+#: js/wizard.js:536
+msgid "Click to jump to this tab"
+msgstr ""
+
+#: js/wizard.js:551
+msgid "not set"
+msgstr ""
+
+#: js/wizard.js:560
+msgid "none selected"
+msgstr ""
+
+#. translators: 1: current step number, 2: total step count
+#: js/wizard.js:783
+#, js-format
+msgid "Step %1$d of %2$d"
 msgstr ""

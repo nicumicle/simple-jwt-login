@@ -1,5 +1,5 @@
 # Copyright (C) 2026 Nicu Micle
-# This file is distributed under the same license as the Simple-JWT-Login plugin.
+# This file is distributed under the GPLv3.
 msgid ""
 msgstr ""
 "Project-Id-Version: Simple-JWT-Login 3.6.5\n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-03-15T06:42:38+00:00\n"
+"POT-Creation-Date: 2026-04-06T06:29:29+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -39,7 +39,7 @@ msgstr ""
 msgid "https://profiles.wordpress.org/nicu_m/"
 msgstr ""
 
-#: simple-jwt-login.php:210
+#: simple-jwt-login.php:212
 msgid "OAuth Error:"
 msgstr ""
 
@@ -564,32 +564,34 @@ msgstr ""
 #: views/applications/google.php:67
 #: views/auth-view.php:33
 #: views/auth-view.php:64
-#: views/cors-view.php:25
+#: views/cors-view.php:26
 #: views/delete-view.php:32
 #: views/delete-view.php:102
 #: views/login-view.php:30
 #: views/login-view.php:93
 #: views/protect-endpoints-view.php:109
-#: views/register-view.php:33
-#: views/register-view.php:96
+#: views/register-view.php:34
+#: views/register-view.php:97
 #: views/reset-password-view.php:37
 #: views/reset-password-view.php:76
+#: js/wizard.js:671
 msgid "No"
 msgstr ""
 
 #: views/applications/google.php:80
 #: views/auth-view.php:45
 #: views/auth-view.php:71
-#: views/cors-view.php:36
+#: views/cors-view.php:37
 #: views/delete-view.php:45
 #: views/delete-view.php:112
 #: views/login-view.php:36
 #: views/login-view.php:100
 #: views/protect-endpoints-view.php:125
-#: views/register-view.php:45
-#: views/register-view.php:106
+#: views/register-view.php:46
+#: views/register-view.php:107
 #: views/reset-password-view.php:51
 #: views/reset-password-view.php:86
+#: js/wizard.js:670
 msgid "Yes"
 msgstr ""
 
@@ -620,7 +622,7 @@ msgstr ""
 #: views/auth-view.php:580
 #: views/delete-view.php:71
 #: views/login-view.php:63
-#: views/register-view.php:73
+#: views/register-view.php:74
 #: views/reset-password-view.php:143
 #: views/reset-password-view.php:375
 msgid "Copy"
@@ -781,7 +783,7 @@ msgid ""
 msgstr ""
 
 #: views/auth-codes-view.php:162
-#: views/register-view.php:151
+#: views/register-view.php:152
 msgid "More details"
 msgstr ""
 
@@ -997,43 +999,43 @@ msgstr ""
 #: views/auth-view.php:613
 #: views/delete-view.php:222
 #: views/login-view.php:396
-#: views/register-view.php:294
+#: views/register-view.php:295
 msgid "Enter IP here"
 msgstr ""
 
 #: views/auth-view.php:615
 #: views/delete-view.php:224
 #: views/login-view.php:398
-#: views/register-view.php:296
+#: views/register-view.php:297
 msgid "If you want to add more IP's, separate them by comma"
 msgstr ""
 
 #: views/auth-view.php:617
 #: views/delete-view.php:226
 #: views/login-view.php:400
-#: views/register-view.php:298
+#: views/register-view.php:299
 msgid "Leave blank to allow all IP addresses"
 msgstr ""
 
-#: views/cors-view.php:15
+#: views/cors-view.php:16
 msgid "Allow CORS Support"
 msgstr ""
 
-#: views/cors-view.php:17
+#: views/cors-view.php:18
 msgid "Allow cross-origin requests to JWT API endpoints."
 msgstr ""
 
-#: views/cors-view.php:45
+#: views/cors-view.php:46
 msgid "CORS Headers Configuration"
 msgstr ""
 
-#: views/cors-view.php:47
+#: views/cors-view.php:48
 msgid "Configure which CORS headers to include in API responses."
 msgstr ""
 
-#: views/cors-view.php:64
-#: views/cors-view.php:83
-#: views/cors-view.php:101
+#: views/cors-view.php:65
+#: views/cors-view.php:84
+#: views/cors-view.php:102
 msgid "Read more"
 msgstr ""
 
@@ -1056,10 +1058,10 @@ msgstr ""
 #: views/dashboard-view.php:174
 #: views/dashboard-view.php:207
 #: views/dashboard-view.php:301
-#: views/general-view.php:294
-#: views/general-view.php:334
-#: views/general-view.php:375
-#: views/general-view.php:416
+#: views/general-view.php:295
+#: views/general-view.php:335
+#: views/general-view.php:376
+#: views/general-view.php:417
 msgid "On"
 msgstr ""
 
@@ -1070,10 +1072,10 @@ msgstr ""
 #: views/dashboard-view.php:175
 #: views/dashboard-view.php:208
 #: views/dashboard-view.php:302
-#: views/general-view.php:287
-#: views/general-view.php:325
-#: views/general-view.php:366
-#: views/general-view.php:407
+#: views/general-view.php:288
+#: views/general-view.php:326
+#: views/general-view.php:367
+#: views/general-view.php:408
 msgid "Off"
 msgstr ""
 
@@ -1152,7 +1154,7 @@ msgstr ""
 
 #: views/delete-view.php:54
 #: views/login-view.php:46
-#: views/register-view.php:55
+#: views/register-view.php:56
 msgid "URL Example"
 msgstr ""
 
@@ -1163,7 +1165,7 @@ msgstr ""
 
 #: views/delete-view.php:64
 #: views/login-view.php:56
-#: views/register-view.php:66
+#: views/register-view.php:67
 #: views/reset-password-view.php:132
 #: views/reset-password-view.php:364
 msgid "AUTH_KEY_VALUE"
@@ -1196,7 +1198,7 @@ msgstr ""
 
 #: views/delete-view.php:154
 #: views/login-view.php:129
-#: js/wizard.js:113
+#: js/wizard.js:92
 msgid "How to Identify User"
 msgstr ""
 
@@ -1249,118 +1251,118 @@ msgstr ""
 msgid "Only allow user deletion from these IP addresses. Leave blank to allow from any IP."
 msgstr ""
 
-#: views/general-view.php:31
+#: views/general-view.php:32
 #: js/wizard.js:39
 msgid "Route Namespace"
 msgstr ""
 
-#: views/general-view.php:34
+#: views/general-view.php:35
 msgid "Base URL used for all Simple JWT Login endpoints. Change only if you need to avoid conflicts."
 msgstr ""
 
-#: views/general-view.php:42
+#: views/general-view.php:43
 msgid "Default route namespace"
 msgstr ""
 
-#: views/general-view.php:52
+#: views/general-view.php:53
 msgid "Configure how incoming JWTs are verified."
 msgstr ""
 
-#: views/general-view.php:63
+#: views/general-view.php:64
 msgid "Where is your JWT secret stored?"
 msgstr ""
 
-#: views/general-view.php:67
+#: views/general-view.php:68
 msgid "Choose where the plugin should read the JWT verification key from."
 msgstr ""
 
-#: views/general-view.php:81
+#: views/general-view.php:82
 msgid "Plugin Settings (recommended)"
 msgstr ""
 
-#: views/general-view.php:95
+#: views/general-view.php:96
 msgid "Code (wp-config.php or custom plugin)"
 msgstr ""
 
-#: views/general-view.php:108
+#: views/general-view.php:109
 #: js/wizard.js:46
 msgid "JWT Algorithm"
 msgstr ""
 
-#: views/general-view.php:111
+#: views/general-view.php:112
 msgid "Must match the algorithm used to sign the JWT (check the \"alg\" value in the token header)."
 msgstr ""
 
-#: views/general-view.php:155
+#: views/general-view.php:156
 msgid "JWT Verification Key"
 msgstr ""
 
-#: views/general-view.php:158
+#: views/general-view.php:159
 msgid "Secret or key used to verify incoming JWTs."
 msgstr ""
 
-#: views/general-view.php:165
+#: views/general-view.php:166
 msgid "JWT decryption key here"
 msgstr ""
 
-#: views/general-view.php:172
+#: views/general-view.php:173
 msgid "Toggle decryption key"
 msgstr ""
 
-#: views/general-view.php:181
+#: views/general-view.php:182
 msgid "Strength"
 msgstr ""
 
-#: views/general-view.php:200
+#: views/general-view.php:201
 msgid "JWT Decryption Key is base64 encoded"
 msgstr ""
 
-#: views/general-view.php:225
+#: views/general-view.php:226
 msgid "You have to defined in your code the following constants"
 msgstr ""
 
-#: views/general-view.php:226
+#: views/general-view.php:227
 msgid "for example in wp-config.php"
 msgstr ""
 
-#: views/general-view.php:257
+#: views/general-view.php:258
 msgid "Where should the plugin look for the JWT?"
 msgstr ""
 
-#: views/general-view.php:260
+#: views/general-view.php:261
 msgid "Enable one or more locations where the JWT may be provided with the request."
 msgstr ""
 
-#: views/general-view.php:276
-#: views/general-view.php:393
+#: views/general-view.php:277
+#: views/general-view.php:394
 msgid "Parameter name"
 msgstr ""
 
-#: views/general-view.php:429
+#: views/general-view.php:430
 msgid "If the JWT is present in multiple places, the higher number of the option overwrites the smaller number."
 msgstr ""
 
-#: views/general-view.php:450
+#: views/general-view.php:451
 msgid "All WordPress endpoints checks for JWT authentication"
 msgstr ""
 
-#: views/general-view.php:454
+#: views/general-view.php:455
 msgid "If the JWT is provided on other endpoints, the plugin will try to authenticate the user from the JWT in order to perform that API call."
 msgstr ""
 
-#: views/general-view.php:482
+#: views/general-view.php:483
 msgid "If the JWT is provided on WPGraphQL queries, the plugin will try to authenticate the user from the JWT before performing the query."
 msgstr ""
 
-#: views/general-view.php:496
+#: views/general-view.php:497
 msgid "Security"
 msgstr ""
 
-#: views/general-view.php:509
+#: views/general-view.php:510
 msgid "Enable safe redirects"
 msgstr ""
 
-#: views/general-view.php:513
+#: views/general-view.php:514
 msgid "Use wp_safe_redirect for all the redirects"
 msgstr ""
 
@@ -1424,12 +1426,12 @@ msgid "Register User"
 msgstr ""
 
 #: views/layout.php:55
-#: js/wizard.js:150
+#: js/wizard.js:160
 msgid "Delete User"
 msgstr ""
 
 #: views/layout.php:61
-#: js/wizard.js:169
+#: js/wizard.js:194
 msgid "Reset Password"
 msgstr ""
 
@@ -1523,8 +1525,8 @@ msgstr ""
 
 #: views/login-view.php:242
 #: views/login-view.php:375
-#: views/register-view.php:147
-#: views/register-view.php:356
+#: views/register-view.php:148
+#: views/register-view.php:357
 msgid "Example"
 msgstr ""
 
@@ -1723,131 +1725,131 @@ msgstr ""
 msgid "The JWT will be required on the following endpoints."
 msgstr ""
 
-#: views/register-view.php:20
+#: views/register-view.php:21
 msgid "Allow User Registration"
 msgstr ""
 
-#: views/register-view.php:22
+#: views/register-view.php:23
 msgid "Allow new users to register via JWT API endpoints."
 msgstr ""
 
-#: views/register-view.php:61
+#: views/register-view.php:62
 msgid "NEW_USER_EMAIL"
 msgstr ""
 
-#: views/register-view.php:62
+#: views/register-view.php:63
 msgid "NEW_USER_PASSWORD"
 msgstr ""
 
-#: views/register-view.php:83
+#: views/register-view.php:84
 msgid "Require Authentication Code for Registration"
 msgstr ""
 
-#: views/register-view.php:85
+#: views/register-view.php:86
 msgid "If enabled, an additional authentication code must be provided for user registration."
 msgstr ""
 
-#: views/register-view.php:114
+#: views/register-view.php:115
 msgid " Warning! It's not recommended to allow register without Auth Codes"
 msgstr ""
 
-#: views/register-view.php:141
+#: views/register-view.php:142
 msgid "Default User Role"
 msgstr ""
 
-#: views/register-view.php:144
+#: views/register-view.php:145
 msgid "Specify the WordPress role assigned to newly registered users."
 msgstr ""
 
-#: views/register-view.php:156
+#: views/register-view.php:157
 msgid "New user profile name"
 msgstr ""
 
-#: views/register-view.php:187
+#: views/register-view.php:188
 msgid "User Creation Settings"
 msgstr ""
 
-#: views/register-view.php:190
+#: views/register-view.php:191
 msgid "Configure how new user accounts are created during registration."
 msgstr ""
 
-#: views/register-view.php:197
+#: views/register-view.php:198
 msgid "Generate a random password when a new user is created"
 msgstr ""
 
-#: views/register-view.php:202
+#: views/register-view.php:203
 msgid "If this option is selected, the password is no more required when a new user is created."
 msgstr ""
 
-#: views/register-view.php:214
+#: views/register-view.php:215
 msgid "Random password length"
 msgstr ""
 
-#: views/register-view.php:219
+#: views/register-view.php:220
 msgid "The number of characters for the random generated password"
 msgstr ""
 
-#: views/register-view.php:243
+#: views/register-view.php:244
 msgid "Initialize force login after register"
 msgstr ""
 
-#: views/register-view.php:248
+#: views/register-view.php:249
 msgid "Automatically log in the user after successful registration, following the login configuration settings. Requires auto-login to be enabled."
 msgstr ""
 
-#: views/register-view.php:263
+#: views/register-view.php:264
 msgid "Return JWT on Registration"
 msgstr ""
 
-#: views/register-view.php:268
+#: views/register-view.php:269
 msgid "If this option is selected, a JWT will be added in the response. By default, it will contain email, id and username in the payload. If the Authentication is enabled, payload will be generated using authentication configuration."
 msgstr ""
 
-#: views/register-view.php:283
+#: views/register-view.php:284
 msgid "Restrict Registration to Specific IP Addresses"
 msgstr ""
 
-#: views/register-view.php:289
+#: views/register-view.php:290
 msgid "Only allow user registration from these IP addresses. Leave blank to allow from any IP."
 msgstr ""
 
-#: views/register-view.php:308
+#: views/register-view.php:309
 msgid "Restrict Registration to Specific Email Domains"
 msgstr ""
 
-#: views/register-view.php:320
+#: views/register-view.php:321
 msgid "For example, if you want to allow registration only for users that use their gmail account, add `gmail.com`"
 msgstr ""
 
-#: views/register-view.php:326
+#: views/register-view.php:327
 msgid "For multiple domains, separate them by comma"
 msgstr ""
 
-#: views/register-view.php:328
+#: views/register-view.php:329
 msgid "Leave blank to allow all domains"
 msgstr ""
 
-#: views/register-view.php:336
+#: views/register-view.php:337
 msgid "Allowed User Meta Keys"
 msgstr ""
 
-#: views/register-view.php:338
+#: views/register-view.php:339
 msgid "Specify which user meta keys can be set during registration. Leave blank to disallow all."
 msgstr ""
 
-#: views/register-view.php:348
+#: views/register-view.php:349
 msgid "Separate user_meta keys by comma. If no user_meta is specified, then users will not be able to add user_meta via register user."
 msgstr ""
 
-#: views/register-view.php:363
+#: views/register-view.php:364
 msgid "Available User Properties"
 msgstr ""
 
-#: views/register-view.php:365
+#: views/register-view.php:366
 msgid "These properties can be included in the registration request to set user details."
 msgstr ""
 
-#: views/register-view.php:370
+#: views/register-view.php:371
 msgid "This properties can be passed in the request when the new user is created."
 msgstr ""
 
@@ -1967,28 +1969,28 @@ msgstr ""
 msgid "If this option is selected, the <b>code</b> parameter is no longer required. The plugin will search for the USER that is present in the JWT. Also, the JWT should be valid."
 msgstr ""
 
-#: views/wizard-modal.php:9
+#: views/wizard-modal.php:16
 msgid "Simple JWT Login — Setup Wizard"
 msgstr ""
 
-#: views/wizard-modal.php:11
+#: views/wizard-modal.php:18
 msgid "Close"
 msgstr ""
 
-#: views/wizard-modal.php:16
-#: js/wizard.js:780
+#: views/wizard-modal.php:23
+#: js/wizard.js:912
 msgid "Step 1 — Select features"
 msgstr ""
 
-#: views/wizard-modal.php:31
+#: views/wizard-modal.php:38
 msgid "Previous"
 msgstr ""
 
-#: views/wizard-modal.php:35
+#: views/wizard-modal.php:42
 msgid "Next"
 msgstr ""
 
-#: views/wizard-modal.php:38
+#: views/wizard-modal.php:45
 msgid "Save Settings"
 msgstr ""
 
@@ -2036,189 +2038,264 @@ msgstr ""
 msgid "PEM-formatted RSA private key used to sign JWT tokens."
 msgstr ""
 
-#: js/wizard.js:96
-msgid "Auto Login"
+#: js/wizard.js:81
+msgid "Check JWT on all WordPress endpoints?"
 msgstr ""
 
-#: js/wizard.js:97
-msgid "Let users log in automatically via a JWT in the URL or Authorization header."
+#: js/wizard.js:83
+msgid "If a JWT is provided on any endpoint, the plugin will try to authenticate the user from that JWT in order to perform the API call."
 msgstr ""
 
-#: js/wizard.js:104
-msgid "Enable Auto Login?"
+#: js/wizard.js:85
+msgid "Yes — check for JWT on all REST endpoints"
 msgstr ""
 
-#: js/wizard.js:107
-msgid "Yes — enable auto login"
-msgstr ""
-
-#: js/wizard.js:108
-#: js/wizard.js:143
-#: js/wizard.js:162
-#: js/wizard.js:181
-#: js/wizard.js:200
-#: js/wizard.js:234
+#: js/wizard.js:86
+#: js/wizard.js:134
+#: js/wizard.js:153
+#: js/wizard.js:172
+#: js/wizard.js:206
+#: js/wizard.js:225
+#: js/wizard.js:259
 msgid "No — keep disabled"
 msgstr ""
 
-#: js/wizard.js:116
+#: js/wizard.js:95
 msgid "Choose which WordPress user attribute the JWT payload value is matched against."
 msgstr ""
 
-#: js/wizard.js:121
+#: js/wizard.js:99
+#: js/wizard.js:177
 msgid "JWT Parameter Key"
 msgstr ""
 
-#: js/wizard.js:123
+#: js/wizard.js:101
+#: js/wizard.js:179
 msgid "Example: email"
 msgstr ""
 
-#: js/wizard.js:124
+#: js/wizard.js:102
 msgid "The key name in the JWT payload that holds the user identifier. Use dot notation for nested values (e.g. user.id)."
 msgstr ""
 
-#: js/wizard.js:131
+#: js/wizard.js:122
+msgid "Auto Login"
+msgstr ""
+
+#: js/wizard.js:123
+msgid "Let users log in automatically via a JWT in the URL or Authorization header."
+msgstr ""
+
+#: js/wizard.js:130
+msgid "Enable Auto Login?"
+msgstr ""
+
+#: js/wizard.js:133
+msgid "Yes — enable auto login"
+msgstr ""
+
+#: js/wizard.js:141
 msgid "User Registration"
 msgstr ""
 
-#: js/wizard.js:132
+#: js/wizard.js:142
 msgid "Allow new WordPress users to register through the JWT REST API."
 msgstr ""
 
-#: js/wizard.js:139
+#: js/wizard.js:149
 msgid "Allow User Registration?"
 msgstr ""
 
-#: js/wizard.js:142
+#: js/wizard.js:152
 msgid "Yes — allow registrations"
 msgstr ""
 
-#: js/wizard.js:151
+#: js/wizard.js:161
 msgid "Let users delete their own WordPress accounts via the JWT API."
 msgstr ""
 
-#: js/wizard.js:158
+#: js/wizard.js:168
 msgid "Enable User Deletion?"
 msgstr ""
 
-#: js/wizard.js:161
+#: js/wizard.js:171
 msgid "Yes — allow account deletion"
 msgstr ""
 
-#: js/wizard.js:170
+#: js/wizard.js:180
+msgid "The key name in the JWT payload that holds the user identifier for deletion. Use dot notation for nested values (e.g. user.id)."
+msgstr ""
+
+#: js/wizard.js:185
+msgid "Require Authentication Code for Deletion?"
+msgstr ""
+
+#: js/wizard.js:187
+msgid "Require an additional authentication code in the request to delete the user account."
+msgstr ""
+
+#: js/wizard.js:195
 msgid "Allow users to trigger a WordPress password reset via the JWT API."
 msgstr ""
 
-#: js/wizard.js:177
+#: js/wizard.js:202
 msgid "Enable Password Reset?"
 msgstr ""
 
-#: js/wizard.js:180
+#: js/wizard.js:205
 msgid "Yes — allow password resets"
 msgstr ""
 
-#: js/wizard.js:188
+#: js/wizard.js:213
 msgid "JWT Authentication"
 msgstr ""
 
-#: js/wizard.js:189
+#: js/wizard.js:214
 msgid "Generate JWT tokens by authenticating with WordPress credentials."
 msgstr ""
 
-#: js/wizard.js:196
+#: js/wizard.js:221
 msgid "Enable JWT Authentication?"
 msgstr ""
 
-#: js/wizard.js:199
+#: js/wizard.js:224
 msgid "Yes — enable token generation"
 msgstr ""
 
-#: js/wizard.js:205
+#: js/wizard.js:230
 msgid "JWT Payload Fields"
 msgstr ""
 
-#: js/wizard.js:207
+#: js/wizard.js:232
 msgid "Select which user data to include in the JWT payload. \"iat\" (issued at) is always included automatically."
 msgstr ""
 
-#: js/wizard.js:210
+#: js/wizard.js:235
 msgid "exp — Expiration time"
 msgstr ""
 
-#: js/wizard.js:211
+#: js/wizard.js:236
 msgid "email — User email"
 msgstr ""
 
-#: js/wizard.js:212
+#: js/wizard.js:237
 msgid "id — User ID"
 msgstr ""
 
-#: js/wizard.js:213
+#: js/wizard.js:238
 msgid "site — Site URL"
 msgstr ""
 
-#: js/wizard.js:214
+#: js/wizard.js:239
 msgid "username — Username"
 msgstr ""
 
-#: js/wizard.js:215
+#: js/wizard.js:240
 msgid "iss — Issuer"
 msgstr ""
 
-#: js/wizard.js:222
+#: js/wizard.js:247
 msgid "CORS Support"
 msgstr ""
 
-#: js/wizard.js:223
+#: js/wizard.js:248
 msgid "Allow browser requests from other domains to the JWT API endpoints."
 msgstr ""
 
-#: js/wizard.js:230
+#: js/wizard.js:255
 msgid "Enable CORS Support?"
 msgstr ""
 
-#: js/wizard.js:233
+#: js/wizard.js:258
 msgid "Yes — allow cross-origin requests"
 msgstr ""
 
-#: js/wizard.js:466
+#: js/wizard.js:264
+msgid "Access-Control-Allow-Origin"
+msgstr ""
+
+#: js/wizard.js:266
+msgid "Include the Access-Control-Allow-Origin header in responses."
+msgstr ""
+
+#: js/wizard.js:271
+msgid "Allowed Origin(s)"
+msgstr ""
+
+#: js/wizard.js:274
+msgid "Comma-separated list of origins to allow, or \"*\" for all."
+msgstr ""
+
+#: js/wizard.js:279
+msgid "Access-Control-Allow-Methods"
+msgstr ""
+
+#: js/wizard.js:281
+msgid "Include the Access-Control-Allow-Methods header in responses."
+msgstr ""
+
+#: js/wizard.js:286
+msgid "Allowed Methods"
+msgstr ""
+
+#: js/wizard.js:289
+msgid "Methods to allow when using CORS. Comma-separated."
+msgstr ""
+
+#: js/wizard.js:294
+msgid "Access-Control-Allow-Headers"
+msgstr ""
+
+#: js/wizard.js:296
+msgid "Include the Access-Control-Allow-Headers header in responses."
+msgstr ""
+
+#: js/wizard.js:301
+msgid "Allowed Headers"
+msgstr ""
+
+#: js/wizard.js:304
+msgid "Headers browsers are allowed to send in cross-origin requests. Comma-separated."
+msgstr ""
+
+#: js/wizard.js:572
 msgid "What would you like to enable?"
 msgstr ""
 
-#: js/wizard.js:467
+#: js/wizard.js:573
 msgid "Select the features you want to configure. You can always adjust individual settings later."
 msgstr ""
 
-#: js/wizard.js:481
+#: js/wizard.js:587
 msgid "General settings (JWT key & algorithm) will always be configured in the next step."
 msgstr ""
 
-#: js/wizard.js:511
+#: js/wizard.js:623
 msgid "Review your setup ✅"
 msgstr ""
 
-#: js/wizard.js:512
+#: js/wizard.js:624
 msgid "Click \"Save Settings\" to apply and save everything."
 msgstr ""
 
-#: js/wizard.js:528
+#: js/wizard.js:640
 msgid "No features selected — only General settings will be applied."
 msgstr ""
 
-#: js/wizard.js:536
+#: js/wizard.js:648
 msgid "Click to jump to this tab"
 msgstr ""
 
-#: js/wizard.js:551
+#: js/wizard.js:663
 msgid "not set"
 msgstr ""
 
-#: js/wizard.js:560
+#: js/wizard.js:676
 msgid "none selected"
 msgstr ""
 
 #. translators: 1: current step number, 2: total step count
-#: js/wizard.js:783
+#: js/wizard.js:915
 #, js-format
 msgid "Step %1$d of %2$d"
 msgstr ""

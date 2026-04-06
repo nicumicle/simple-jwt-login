@@ -138,6 +138,14 @@ function simple_jwt_login_plugin_show_main_page()
         plugin_dir_path(__FILE__) . 'i18n/'
     );
 
+    wp_localize_script(
+        'simple-jwt-login-wizard',
+        'sjlWizardData',
+        [
+            'imagesUrl' => $pluginDirUrl . 'images/wizard/',
+        ]
+    );
+
     require_once('views/layout.php');
 }
 

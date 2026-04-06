@@ -1970,7 +1970,7 @@ msgid "If this option is selected, the <b>code</b> parameter is no longer requir
 msgstr ""
 
 #: views/wizard-modal.php:16
-msgid "Simple JWT Login — Setup Wizard"
+msgid "Simple JWT Login - Setup Wizard"
 msgstr ""
 
 #: views/wizard-modal.php:18
@@ -1979,7 +1979,7 @@ msgstr ""
 
 #: views/wizard-modal.php:23
 #: js/wizard.js:912
-msgid "Step 1 — Select features"
+msgid "Step 1 - Select features"
 msgstr ""
 
 #: views/wizard-modal.php:38
@@ -2047,7 +2047,7 @@ msgid "If a JWT is provided on any endpoint, the plugin will try to authenticate
 msgstr ""
 
 #: js/wizard.js:85
-msgid "Yes — check for JWT on all REST endpoints"
+msgid "Yes - check for JWT on all REST endpoints"
 msgstr ""
 
 #: js/wizard.js:86
@@ -2057,7 +2057,7 @@ msgstr ""
 #: js/wizard.js:206
 #: js/wizard.js:225
 #: js/wizard.js:259
-msgid "No — keep disabled"
+msgid "No - keep disabled"
 msgstr ""
 
 #: js/wizard.js:95
@@ -2091,7 +2091,7 @@ msgid "Enable Auto Login?"
 msgstr ""
 
 #: js/wizard.js:133
-msgid "Yes — enable auto login"
+msgid "Yes - enable auto login"
 msgstr ""
 
 #: js/wizard.js:141
@@ -2107,7 +2107,7 @@ msgid "Allow User Registration?"
 msgstr ""
 
 #: js/wizard.js:152
-msgid "Yes — allow registrations"
+msgid "Yes - allow registrations"
 msgstr ""
 
 #: js/wizard.js:161
@@ -2119,7 +2119,7 @@ msgid "Enable User Deletion?"
 msgstr ""
 
 #: js/wizard.js:171
-msgid "Yes — allow account deletion"
+msgid "Yes - allow account deletion"
 msgstr ""
 
 #: js/wizard.js:180
@@ -2143,7 +2143,7 @@ msgid "Enable Password Reset?"
 msgstr ""
 
 #: js/wizard.js:205
-msgid "Yes — allow password resets"
+msgid "Yes - allow password resets"
 msgstr ""
 
 #: js/wizard.js:213
@@ -2159,7 +2159,7 @@ msgid "Enable JWT Authentication?"
 msgstr ""
 
 #: js/wizard.js:224
-msgid "Yes — enable token generation"
+msgid "Yes - enable token generation"
 msgstr ""
 
 #: js/wizard.js:230
@@ -2171,27 +2171,27 @@ msgid "Select which user data to include in the JWT payload. \"iat\" (issued at)
 msgstr ""
 
 #: js/wizard.js:235
-msgid "exp — Expiration time"
+msgid "exp - Expiration time"
 msgstr ""
 
 #: js/wizard.js:236
-msgid "email — User email"
+msgid "email - User email"
 msgstr ""
 
 #: js/wizard.js:237
-msgid "id — User ID"
+msgid "id - User ID"
 msgstr ""
 
 #: js/wizard.js:238
-msgid "site — Site URL"
+msgid "site - Site URL"
 msgstr ""
 
 #: js/wizard.js:239
-msgid "username — Username"
+msgid "username - Username"
 msgstr ""
 
 #: js/wizard.js:240
-msgid "iss — Issuer"
+msgid "iss - Issuer"
 msgstr ""
 
 #: js/wizard.js:247
@@ -2207,7 +2207,7 @@ msgid "Enable CORS Support?"
 msgstr ""
 
 #: js/wizard.js:258
-msgid "Yes — allow cross-origin requests"
+msgid "Yes - allow cross-origin requests"
 msgstr ""
 
 #: js/wizard.js:264
@@ -2279,7 +2279,7 @@ msgid "Click \"Save Settings\" to apply and save everything."
 msgstr ""
 
 #: js/wizard.js:640
-msgid "No features selected — only General settings will be applied."
+msgid "No features selected - only General settings will be applied."
 msgstr ""
 
 #: js/wizard.js:648

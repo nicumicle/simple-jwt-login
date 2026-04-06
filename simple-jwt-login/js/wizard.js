@@ -627,7 +627,7 @@
 
     function renderSummary() {
         setStepHeader(
-            __('Review your setup ✅', 'simple-jwt-login'),
+            __('Review your setup', 'simple-jwt-login'),
             __('Click "Save Settings" to apply and save everything.', 'simple-jwt-login')
         );
 

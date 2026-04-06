@@ -2,22 +2,39 @@
    Setup Wizard
    ============================================================================= */
 
-/* Wizard trigger button - sits next to the page title */
+/* Header action bar - wizard + save grouped on the right */
+.sjl-header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+/* Wizard trigger button - outlined secondary style */
 #sjl-wizard-btn {
-    font-size: 11px;
-    padding: 3px 10px;
-    margin-left: 10px;
-    vertical-align: middle;
-    background: #263544;
-    color: #fff;
-    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    padding: 5px 12px;
+    background: transparent;
+    color: #263544;
+    border: 1.5px solid #263544;
     border-radius: 0.3em;
     cursor: pointer;
     line-height: 1.4;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+}
+#sjl-wizard-btn .sjl-wizard-btn-icon {
+    filter: none;
 }
 #sjl-wizard-btn:hover {
-    background: #1a252f;
+    background: #263544;
     color: #fff;
+}
+#sjl-wizard-btn:hover .sjl-wizard-btn-icon {
+    filter: brightness(0) invert(1);
 }
 
 /* Prevent body scroll while modal is open */
@@ -191,7 +208,11 @@ body.sjl-wizard-open {
     width: 14px;
     height: 14px;
     vertical-align: middle;
-    margin-right: 4px;
+    flex-shrink: 0;
+}
+
+/* The finish button (btn-success, dark bg) always needs white icon */
+#sjl-wizard-btn-finish .sjl-wizard-btn-icon {
     filter: brightness(0) invert(1);
 }
 .sjl-wizard-icon {

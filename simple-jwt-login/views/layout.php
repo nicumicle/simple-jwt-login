@@ -146,16 +146,16 @@ $settingsPages = [
         ?>
         <div class="">
             <div class="row main-title-container">
-                <div class="col-md-10">
+                <div class="col-md-8">
                     <h1 class="main-title">
                         <?php echo __('Simple JWT Login Settings', 'simple-jwt-login'); ?>
-                        <button type="button" id="sjl-wizard-btn">
-                            <img src="<?php echo esc_url(plugin_dir_url(__FILE__) . '../images/wizard/wand.svg'); ?>" class="sjl-wizard-btn-icon" alt="" aria-hidden="true">
-                            <?php echo esc_html(__('Setup Wizard', 'simple-jwt-login')); ?>
-                        </button>
                     </h1>
                 </div>
-                <div class="col-md-2 text-right">
+                <div class="col-md-4 sjl-header-actions">
+                    <button type="button" id="sjl-wizard-btn">
+                        <img src="<?php echo esc_url(plugin_dir_url(__FILE__) . '../images/wizard/wand.svg'); ?>" class="sjl-wizard-btn-icon" alt="" aria-hidden="true">
+                        <?php echo esc_html(__('Setup Wizard', 'simple-jwt-login')); ?>
+                    </button>
                     <input type="submit" class="btn btn-dark" value="<?php echo __('Save', 'simple-jwt-login');?>">
                 </div>
             </div>

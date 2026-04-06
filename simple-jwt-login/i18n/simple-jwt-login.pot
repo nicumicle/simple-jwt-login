@@ -2271,7 +2271,7 @@ msgid "General settings (JWT key & algorithm) will always be configured in the n
 msgstr ""
 
 #: js/wizard.js:623
-msgid "Review your setup ✅"
+msgid "Review your setup"
 msgstr ""
 
 #: js/wizard.js:624

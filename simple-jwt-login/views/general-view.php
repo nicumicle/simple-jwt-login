@@ -10,6 +10,7 @@ if (!defined('ABSPATH')) {
     /** @phpstan-ignore-next-line  */
     exit;
 } // Exit if accessed directly
+
 /**
  * @var SettingsErrors $settingsErrors
  * @var SimpleJWTLoginSettings $jwtSettings
@@ -159,7 +160,7 @@ if (!defined('ABSPATH')) {
         </p>
         <div class="form-group decryption-input-group">
             <div class="input-group" id="decryption_key_container">
-                <input type="password" name="decryption_key" class="form-control"
+                <input type="password" name="decryption_key" class="form-control" autocomplete="off"
                        id="decryption_key"
                        value="<?php echo esc_attr($jwtSettings->getGeneralSettings()->getDecryptionKey()); ?>"
                        placeholder="<?php echo __('JWT decryption key here', 'simple-jwt-login'); ?>"

@@ -147,7 +147,12 @@ $settingsPages = [
         <div class="">
             <div class="row main-title-container">
                 <div class="col-md-10">
-                    <h1 class="main-title"><?php echo __('Simple JWT Login Settings', 'simple-jwt-login');?></h1>
+                    <h1 class="main-title">
+                        <?php echo __('Simple JWT Login Settings', 'simple-jwt-login'); ?>
+                        <button type="button" id="sjl-wizard-btn">
+                            ✨ <?php echo esc_html(__('Setup Wizard', 'simple-jwt-login')); ?>
+                        </button>
+                    </h1>
                 </div>
                 <div class="col-md-2 text-right">
                     <input type="submit" class="btn btn-dark" value="<?php echo __('Save', 'simple-jwt-login');?>">
@@ -258,7 +263,6 @@ $settingsPages = [
     </div>
 </form>
 
-
 <div id="code_line" style="display:none">
     <div class="form-group auth_row">
         <div class="input-group">
@@ -297,3 +301,6 @@ $settingsPages = [
     </div>
 </div>
 
+<?php
+
+include_once "wizard-modal.php";

@@ -221,7 +221,7 @@ if (!defined('ABSPATH')) {
                 <?php
                 $sampleUrlParams = [
                     'provider' => 'google',
-                    'code' => __('your_code ', 'simple-jwt-login')
+                    'code' => __('your_code', 'simple-jwt-login')
                 ];
 
                 echo esc_html($jwtSettings->generateExampleLink(RouteService::OAUTH_TOKEN, $sampleUrlParams));
@@ -280,7 +280,7 @@ if (!defined('ABSPATH')) {
                     <?php
                     $sampleUrlParams = [
                         'provider' => esc_html('google'),
-                        'id_token' => __('google_id_token ', 'simple-jwt-login')
+                        'id_token' => __('google_id_token', 'simple-jwt-login')
                     ];
 
                     echo esc_html($jwtSettings->generateExampleLink(RouteService::OAUTH_TOKEN, $sampleUrlParams));

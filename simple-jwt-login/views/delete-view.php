@@ -15,217 +15,174 @@ if (! defined('ABSPATH')) {
  * @var SimpleJWTLoginSettings $jwtSettings
  */
 ?>
-<div class="row">
-    <div class="col-md-12">
-        <h3 class="section-title">
-            <?php echo __('Allow Delete', 'simple-jwt-login'); ?>
-        </h3>
-        <p class="text-muted">
-            <?php echo __('Allow users to delete their accounts via JWT API endpoints.', 'simple-jwt-login'); ?>
-        </p>
-        <div class="form-group">
-            <input type="radio" id="allow_delete_no" name="allow_delete" class="form-control"
-                   value="0"
-				<?php echo $jwtSettings->getDeleteUserSettings()->isDeleteAllowed() === false ? 'checked' : ''; ?>
-            />
-            <label for="allow_delete_no">
-				<?php echo __('No', 'simple-jwt-login'); ?>
-            </label>
 
-            <input type="radio" id="allow_delete_yes" name="allow_delete" class="form-control"
-                   value="1"
-                <?php
-                echo($jwtSettings->getDeleteUserSettings()->isDeleteAllowed() === true
-                    ? 'checked'
-                    : ''
-                );
-                ?>
-            />
-            <label for="allow_delete_yes">
-				<?php echo __('Yes', 'simple-jwt-login'); ?>
+<div class="sjl-gen-card">
+    <div class="sjl-gen-card-header">
+        <span class="dashicons dashicons-trash"></span>
+        <div>
+            <h3 class="sjl-gen-card-title"><?php echo __('Delete User', 'simple-jwt-login'); ?></h3>
+            <p class="sjl-gen-card-desc">
+                <?php echo __('Allow users to delete their accounts via the JWT API endpoint.', 'simple-jwt-login'); ?>
+            </p>
+        </div>
+    </div>
+    <div class="sjl-gen-card-body">
+
+        <div class="sjl-gen-radio-group">
+            <label class="sjl-gen-radio-option">
+                <input type="radio" name="allow_delete" value="0"
+                    <?php echo $jwtSettings->getDeleteUserSettings()->isDeleteAllowed() === false ? 'checked' : ''; ?>
+                />
+                <span class="sjl-gen-radio-label"><?php echo __('Disabled', 'simple-jwt-login'); ?></span>
             </label>
+            <label class="sjl-gen-radio-option">
+                <input type="radio" name="allow_delete" value="1"
+                    <?php echo $jwtSettings->getDeleteUserSettings()->isDeleteAllowed() === true ? 'checked' : ''; ?>
+                />
+                <span class="sjl-gen-radio-label"><?php echo __('Enabled', 'simple-jwt-login'); ?></span>
+            </label>
+        </div>
+
+        <div class="sjl-gen-url-example">
+            <p class="sjl-gen-url-example-label"><?php echo __('Endpoint example:', 'simple-jwt-login'); ?></p>
+            <div class="generated-code">
+                <span class="method">DELETE</span>
+                <span class="code">
+                    <?php
+                    $sampleUrlParams = [
+                        $jwtSettings->getGeneralSettings()->getRequestKeyUrl() => __('JWT', 'simple-jwt-login'),
+                    ];
+                    if ($jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete()) {
+                        $sampleUrlParams[$jwtSettings->getAuthCodesSettings()->getAuthCodeKey()] =
+                            __('AUTH_KEY_VALUE', 'simple-jwt-login');
+                    }
+                    echo esc_html($jwtSettings->generateExampleLink(RouteService::USER_ROUTE, $sampleUrlParams));
+                    ?>
+                </span>
+                <span class="copy-button">
+                    <button class="btn btn-secondary btn-xs"><?php echo __('Copy', 'simple-jwt-login'); ?></button>
+                </span>
+            </div>
+            <p class="sjl-gen-card-desc" style="margin-top:6px;">
+                <?php echo __('You can also pass the JWT in the Authorization header:', 'simple-jwt-login'); ?>
+                <code class="sjl-gen-example-code">Authorization: Bearer <strong>YOUR_JWT</strong></code>
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<div class="sjl-gen-card">
+    <div class="sjl-gen-card-header">
+        <span class="dashicons dashicons-lock"></span>
+        <div>
+            <h3 class="sjl-gen-card-title"><?php echo __('Require Authentication Code', 'simple-jwt-login'); ?></h3>
+            <p class="sjl-gen-card-desc">
+                <?php echo __('If enabled, an additional Auth Code must be included in the deletion request. Configure Auth Codes in the Auth Codes tab.', 'simple-jwt-login'); ?>
+            </p>
+        </div>
+    </div>
+    <div class="sjl-gen-card-body">
+        <div class="sjl-gen-radio-group">
+            <label class="sjl-gen-radio-option">
+                <input type="radio" name="require_delete_auth" value="0"
+                    <?php echo $jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete() === false ? 'checked' : ''; ?>
+                />
+                <span class="sjl-gen-radio-label"><?php echo __('Not required', 'simple-jwt-login'); ?></span>
+            </label>
+            <label class="sjl-gen-radio-option">
+                <input type="radio" name="require_delete_auth" value="1"
+                    <?php echo $jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete() === true ? 'checked' : ''; ?>
+                />
+                <span class="sjl-gen-radio-label"><?php echo __('Required', 'simple-jwt-login'); ?></span>
+            </label>
+        </div>
+        <div id="require_delete_auth_alert"
+             class="sjl-gen-warning-banner"
+             style="<?php echo $jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete() === true ? 'display:none;' : ''; ?>"
+        >
+            <span class="dashicons dashicons-warning"></span>
+            <?php echo __('Allowing account deletion without an Auth Code is not recommended. Any valid JWT holder could delete accounts.', 'simple-jwt-login'); ?>
         </div>
     </div>
 </div>
-<hr />
 
-<div class="row">
-    <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('URL Example', 'simple-jwt-login'); ?></h3>
-        <div class="generated-code">
-            <span class="method">DELETE</span>
-            <span class="code">
+<div class="sjl-gen-card">
+    <div class="sjl-gen-card-header">
+        <span class="dashicons dashicons-id"></span>
+        <div>
+            <h3 class="sjl-gen-card-title">
                 <?php
-                $sampleUrlParams = [
-                    $jwtSettings->getGeneralSettings()->getRequestKeyUrl() => __('JWT', 'simple-jwt-login'),
-                ];
-                if ($jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete()) {
-                    $sampleUrlParams[ $jwtSettings->getAuthCodesSettings()->getAuthCodeKey() ] =
-                        __('AUTH_KEY_VALUE', 'simple-jwt-login');
-                }
-                echo esc_html($jwtSettings->generateExampleLink(RouteService::USER_ROUTE, $sampleUrlParams));
+                echo isset($errorCode)
+                && $settingsErrors->generateCode(
+                    SettingsErrors::PREFIX_DELETE,
+                    SettingsErrors::ERR_DELETE_MISSING_JWT_PARAM
+                ) === $errorCode
+                    ? '<span class="simple-jwt-error">!</span> '
+                    : '';
                 ?>
-            </span>
-            <span class="copy-button">
-                <button class="btn btn-secondary btn-xs">
-                    <?php echo __('Copy', 'simple-jwt-login'); ?>
-                </button>
-            </span>
-        </div>
-        <div class="code-info">
-            * <?php
-            echo __(
-                'You can also send the JWT in Authorization header. Example:',
-                'simple-jwt-login'
-            )
-            ?> <b>Authorization: Bearer YOURJWTTOKEN</b>
+                <?php echo __('User Identification', 'simple-jwt-login'); ?>
+            </h3>
+            <p class="sjl-gen-card-desc">
+                <?php echo __('Configure which JWT payload field is used to find the user to delete.', 'simple-jwt-login'); ?>
+            </p>
         </div>
     </div>
-</div>
-<hr/>
-
-<div class="row">
-    <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Require Authentication Code for Deletion', 'simple-jwt-login'); ?></h3>
-        <p class="text-muted">
-            <?php echo __('If enabled, an additional authentication code must be provided for user deletion.', 'simple-jwt-login'); ?>
-        </p>
-        <div class="form-group">
-            <input type="radio" id="require_delete_auth_no" name="require_delete_auth" class="form-control"
-                   value="0"
-				<?php echo $jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete() === false
-                    ? 'checked'
-                    : ''
-                ?>
-            />
-            <label for="require_delete_auth_no">
-				<?php echo __('No', 'simple-jwt-login'); ?>
-            </label>
-            <input type="radio" id="require_delete_auth_yes" name="require_delete_auth" class="form-control"
-                   value="1"
-				<?php echo $jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete() === true
-                    ? 'checked'
-                    : ''
-                ?>
-            />
-            <label for="require_delete_auth_yes">
-				<?php echo __('Yes', 'simple-jwt-login'); ?>
-            </label>
-            <div id="require_delete_auth_alert" class="alert alert-warning" role="alert"
-                 style="
-                 <?php
-                     echo $jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete() === true
-                         ? 'display:none;'
-                         : '';
-                    ?>"
-            />
-            <?php echo __(
-                " Warning! It's not recommended to allow delete users without Auth Codes",
-                'simple-jwt-login'
-            ); ?>.
+    <div class="sjl-gen-card-body">
+        <div class="sjl-gen-two-col">
+            <div class="sjl-gen-two-col-left">
+                <label class="sjl-gen-field-label" for="delete_user_by">
+                    <?php echo __('Identify user by', 'simple-jwt-login'); ?>
+                </label>
+                <select name="delete_user_by" class="form-control" id="delete_user_by">
+                    <option value="0"
+                        <?php echo $jwtSettings->getDeleteUserSettings()->getDeleteUserBy() === DeleteUserSettings::DELETE_USER_BY_EMAIL ? 'selected' : ''; ?>
+                    ><?php echo __('Email address', 'simple-jwt-login'); ?></option>
+                    <option value="1"
+                        <?php echo $jwtSettings->getDeleteUserSettings()->getDeleteUserBy() === DeleteUserSettings::DELETE_USER_BY_ID ? 'selected' : ''; ?>
+                    ><?php echo __('WordPress User ID', 'simple-jwt-login'); ?></option>
+                    <option value="2"
+                        <?php echo $jwtSettings->getDeleteUserSettings()->getDeleteUserBy() === DeleteUserSettings::DELETE_USER_BY_USER_LOGIN ? 'selected' : ''; ?>
+                    ><?php echo __('WordPress Username', 'simple-jwt-login'); ?></option>
+                </select>
+            </div>
+            <div class="sjl-gen-two-col-right">
+                <label class="sjl-gen-field-label" for="jwt_delete_by_parameter">
+                    <?php echo __('JWT payload key', 'simple-jwt-login'); ?>
+                </label>
+                <input type="text" name="jwt_delete_by_parameter" class="form-control"
+                       id="jwt_delete_by_parameter"
+                       value="<?php echo esc_attr($jwtSettings->getDeleteUserSettings()->getJwtDeleteByParameter()); ?>"
+                       placeholder="<?php echo __('e.g. email', 'simple-jwt-login'); ?>"
+                />
+                <p class="sjl-gen-card-desc" style="margin-top:6px;">
+                    <?php echo __('Use dot notation for nested values, e.g. <code>user.id</code> reads the <code>id</code> field inside the <code>user</code> object.', 'simple-jwt-login'); ?>
+                </p>
             </div>
         </div>
     </div>
 </div>
-<hr/>
 
-<div class="row">
-    <div class="col-md-12">
-
-        <h3 class="section-title">
-            <?php
-            echo isset($errorCode)
-            && $settingsErrors->generateCode(
-                SettingsErrors::PREFIX_DELETE,
-                SettingsErrors::ERR_DELETE_MISSING_JWT_PARAM
-            ) === $errorCode
-                ? '<span class="simple-jwt-error">!</span>'
-                : ''
-            ?>
-            <?php echo __('User Deletion Configuration', 'simple-jwt-login'); ?>
-        </h3>
-        <p class="text-muted">
-            <?php echo __('Configure how the JWT payload is used to identify users for deletion.', 'simple-jwt-login'); ?>
-        </p>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-6">
-        <label for="delete_user_by"><?php echo __('How to Identify User', 'simple-jwt-login'); ?></label>
-        <select name="delete_user_by" class="form-control" id="delete_user_by">
-            <option value="0"
-				<?php
-                echo $jwtSettings->getDeleteUserSettings()->getDeleteUserBy()
-                === DeleteUserSettings::DELETE_USER_BY_EMAIL
-                    ? 'selected'
-                    : ''
-                ?>
-            ><?php echo __('Delete User by Email', 'simple-jwt-login'); ?></option>
-            <option value="1"
-				<?php
-                echo $jwtSettings->getDeleteUserSettings()->getDeleteUserBy() === DeleteUserSettings::DELETE_USER_BY_ID
-                    ? 'selected'
-                    : ''
-                ?>
-            ><?php echo __('Delete User by WordPress User ID', 'simple-jwt-login'); ?></option>
-            <option value="2"
-                <?php
-                echo $jwtSettings->getDeleteUserSettings()->getDeleteUserBy()
-                === DeleteUserSettings::DELETE_USER_BY_USER_LOGIN
-                    ? 'selected'
-                    : ''
-                ?>
-            ><?php echo __('Delete User by WordPress Username', 'simple-jwt-login'); ?></option>
-        </select>
-    </div>
-    <div class="col-md-4">
-        <label for="jwt_login_by_paramter">
-            <?php
-            echo __(
-                'JWT parameter key | JWT payload data id (key name where the option is saved)',
-                'simple-jwt-login'
-            );
-            ?>
-        </label>
-
-        <input type="text" name="jwt_delete_by_parameter" class="form-control"
-               id="jwt_delete_by_parameter"
-               value="<?php echo esc_attr($jwtSettings->getDeleteUserSettings()->getJwtDeleteByParameter()); ?>"
-               placeholder="<?php echo __('JWT Parameter here. Example: email', 'simple-jwt-login'); ?>"
-        />
-        <br/>
-        <p class="text-muted">
-			<?php echo __('You can use `.` (dot) as a separator for sub-array values.', 'simple-jwt-login'); ?>
-            <br/>
-			<?php echo __('Example: Use `id` for getting the `id` key from the JWT payload.', 'simple-jwt-login'); ?>
-            <br />
-			<?php echo __('Example: Use `user.id` for getting the `id` key from the array `user`', 'simple-jwt-login'); ?>
-            <br />
-            <?php echo __('This key should correspond to the user identifier selected above.', 'simple-jwt-login'); ?>
-        </p>
-    </div>
-</div>
-<hr/>
-
-<div class="row">
-    <div class="col-md-12">
-        <h3 class="section-title"><?php echo __(
-            'Restrict Deletion to Specific IP Addresses',
-            'simple-jwt-login'
-        ); ?>:</h3>
-        <p class="text-muted">
-            <?php echo __('Only allow user deletion from these IP addresses. Leave blank to allow from any IP.', 'simple-jwt-login'); ?>
-        </p>
-        <div class="form-group">
-            <input type="text" id="delete_ip" name="delete_ip" class="form-control"
-                   value="<?php echo esc_attr($jwtSettings->getDeleteUserSettings()->getAllowedDeleteIps()); ?>"
-                   placeholder="<?php echo __('Enter IP here', 'simple-jwt-login'); ?>"/>
-            <p class="text-muted">
-				<?php echo __("If you want to add more IP's, separate them by comma", 'simple-jwt-login'); ?>.
-                <br/>
-				<?php echo __('Leave blank to allow all IP addresses', 'simple-jwt-login'); ?>.
+<div class="sjl-gen-card">
+    <div class="sjl-gen-card-header">
+        <span class="dashicons dashicons-shield-alt"></span>
+        <div>
+            <h3 class="sjl-gen-card-title"><?php echo __('Access Control', 'simple-jwt-login'); ?></h3>
+            <p class="sjl-gen-card-desc">
+                <?php echo __('Restrict account deletion to specific IP addresses. Leave blank to allow all.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
+    <div class="sjl-gen-card-body">
+        <label class="sjl-gen-field-label" for="delete_ip">
+            <?php echo __('Allowed IP Addresses', 'simple-jwt-login'); ?>
+        </label>
+        <input type="text" id="delete_ip" name="delete_ip" class="form-control sjl-gen-input-medium"
+               value="<?php echo esc_attr($jwtSettings->getDeleteUserSettings()->getAllowedDeleteIps()); ?>"
+               placeholder="<?php echo __('e.g. 192.168.1.1, 10.0.0.0', 'simple-jwt-login'); ?>"
+        />
+        <p class="sjl-gen-card-desc" style="margin-top:4px;">
+            <?php echo __('Comma-separated. Leave blank to allow all IPs.', 'simple-jwt-login'); ?>
+        </p>
+    </div>
 </div>
-

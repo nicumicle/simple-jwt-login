@@ -153,7 +153,7 @@ $settingsPages = [
                 </div>
                 <div class="col-md-4 sjl-header-actions">
                     <button type="button" id="sjl-wizard-btn">
-                        <img src="<?php echo esc_url(plugin_dir_url(__FILE__) . '../images/wizard/wand.svg'); ?>" class="sjl-wizard-btn-icon" alt="" aria-hidden="true">
+                        <span class="dashicons dashicons-admin-tools sjl-wizard-btn-icon" aria-hidden="true"></span>
                         <?php echo esc_html(__('Setup Wizard', 'simple-jwt-login')); ?>
                     </button>
                     <input type="submit" class="btn btn-dark" value="<?php echo __('Save', 'simple-jwt-login');?>">

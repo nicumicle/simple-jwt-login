@@ -202,6 +202,15 @@ jQuery(document).ready(
             $('#active_tab').val($(this).attr('data-index'));
             $(this).tab('show');
         });
+
+        // Dashboard cards — clicking navigates to the corresponding settings tab
+        $('#simple-jwt-login [data-sjl-tab]').on('click', function () {
+            var tabIndex = $(this).data('sjl-tab');
+            var $tab = $('#simple-jwt-login-tabs a[data-index="' + tabIndex + '"]');
+            if ($tab.length) {
+                $tab.trigger('click');
+            }
+        });
     }(jQuery)
 );
 

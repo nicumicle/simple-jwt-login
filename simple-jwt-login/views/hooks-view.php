@@ -15,83 +15,88 @@ if (! defined('ABSPATH')) {
 $hooks = SimpleJWTLoginHooks::getHooksDetails();
 
 ?>
-<div class="row">
-    <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('WordPress Hooks Integration', 'simple-jwt-login'); ?></h3>
-        <p class="text-muted">
-            <?php echo __('Enable specific WordPress hooks to extend JWT functionality. Only enabled hooks will be triggered.', 'simple-jwt-login'); ?>
-        </p>
-        <p>
-            <?php
-            echo __(
-                'Make sure that the hook you are trying to use is enabled.'
-                . ' Otherwise, the hook will not be called.',
-                'simple-jwt-login'
-            );
-            ?>
-        </p>
-        <table class="table table-bordered">
-            <thead class="thead-dark">
-            <tr>
-                <th scope="col">
-                    <input type="checkbox" id="toggleHooks" />
-                    <label for="toggleHooks">
-                        <?php echo __('Enabled', 'simple-jwt-login'); ?>
-                    </label>
-                </th>
-                <th scope="col"><?php echo __('Hook Name', 'simple-jwt-login'); ?></th>
-                <th scope="col"><?php echo __('Hook Type', 'simple-jwt-login'); ?></th>
-                <th scope="col"><?php echo __('Parameters', 'simple-jwt-login'); ?></th>
-                <th scope="col"><?php echo __('Return', 'simple-jwt-login'); ?></th>
-                <th scope="col"><?php echo __('Description', 'simple-jwt-login'); ?></th>
-            </tr>
-            </thead>
-			<?php
-            if (! empty($hooks)) {
-                foreach ($hooks as $singleHook) {
-                    ?>
-                    <tr>
-                        <td>
-                            <input
-                                    type="checkbox"
-                                    name="enabled_hooks[]"
-                                    id="hook_<?php echo esc_attr($singleHook['name']); ?>"
-                                    value="<?php echo esc_attr($singleHook['name']); ?>"
-                                    <?php echo $jwtSettings->getHooksSettings()->isHookEnable($singleHook['name'])
-                                        ? 'checked'
-                                        : ''
-                                    ?>
-                            />
-                        </td>
-                        <td>
-                            <label for="hook_<?php echo esc_attr($singleHook['name']); ?>">
-                                <?php echo esc_attr($singleHook['name']); ?>
-                            </label>
-                        </td>
-                        <td><?php echo esc_html($singleHook['type']); ?></td>
-                        <td><?php
-                        if (! empty($singleHook['parameters'])) {
-                            echo esc_html(implode(', ', $singleHook['parameters']));
-                        } ?>
-                        </td>
-                        <td>
-                            <?php
-                            if (isset($singleHook['return'])) {
-                                echo esc_html($singleHook['return']);
-                            } else {
-                                echo "void";
-                            } ?>
-                        </td>
-                        <td>
-                            <p><?php echo str_replace("\n", "<br />", esc_html($singleHook['description'])); ?></p>
-                        </td>
-                    </tr>
-					<?php
-                }
-            }
-            ?>
 
-        </table>
+<div class="sjl-gen-card">
+    <div class="sjl-gen-card-header">
+        <span class="dashicons dashicons-embed-generic"></span>
+        <div>
+            <h3 class="sjl-gen-card-title"><?php echo __('WordPress Hooks Integration', 'simple-jwt-login'); ?></h3>
+            <p class="sjl-gen-card-desc">
+                <?php echo __('Enable specific WordPress hooks to extend JWT functionality. Only enabled hooks will be triggered.', 'simple-jwt-login'); ?>
+            </p>
+        </div>
+    </div>
+    <div class="sjl-gen-card-body">
+
+        <div class="sjl-hooks-header">
+            <label class="sjl-hooks-toggle-all">
+                <input type="checkbox" id="toggleHooks" />
+                <?php echo __('Toggle all', 'simple-jwt-login'); ?>
+            </label>
+        </div>
+
+        <div class="sjl-hooks-list">
+            <?php if (! empty($hooks)) {
+                foreach ($hooks as $singleHook) {
+                    $isEnabled = $jwtSettings->getHooksSettings()->isHookEnable($singleHook['name']);
+                    ?>
+                <div class="sjl-hook-item<?php echo $isEnabled ? ' sjl-hook-item--enabled' : ''; ?>">
+
+                    <div class="sjl-hook-item-toggle">
+                        <input
+                            type="checkbox"
+                            name="enabled_hooks[]"
+                            id="hook_<?php echo esc_attr($singleHook['name']); ?>"
+                            value="<?php echo esc_attr($singleHook['name']); ?>"
+                            <?php echo $isEnabled ? 'checked' : ''; ?>
+                        />
+                    </div>
+
+                    <div class="sjl-hook-item-body">
+                        <div class="sjl-hook-item-title">
+                            <label for="hook_<?php echo esc_attr($singleHook['name']); ?>">
+                                <code class="sjl-gen-var-chip sjl-hook-name-chip"><?php echo esc_html($singleHook['name']); ?></code>
+                            </label>
+                            <span class="sjl-badge <?php echo $singleHook['type'] === 'filter' ? 'sjl-badge-count' : 'sjl-badge-on'; ?>">
+                                <?php echo esc_html($singleHook['type']); ?>
+                            </span>
+                        </div>
+
+                        <div class="sjl-hook-item-meta">
+                            <?php if (! empty($singleHook['parameters'])) { ?>
+                            <div class="sjl-hook-meta-row">
+                                <span class="sjl-hook-meta-label"><?php echo __('Parameters', 'simple-jwt-login'); ?></span>
+                                <span class="sjl-hook-meta-value">
+                                    <?php foreach ($singleHook['parameters'] as $param) { ?>
+                                        <code class="sjl-gen-var-chip"><?php echo esc_html($param); ?></code>
+                                    <?php } ?>
+                                </span>
+                            </div>
+                            <?php } ?>
+
+                            <div class="sjl-hook-meta-row">
+                                <span class="sjl-hook-meta-label"><?php echo __('Return', 'simple-jwt-login'); ?></span>
+                                <span class="sjl-hook-meta-value">
+                                    <?php if (isset($singleHook['return'])) {
+                                        echo '<code class="sjl-gen-var-chip">' . esc_html($singleHook['return']) . '</code>';
+                                    } else { ?>
+                                        <code class="sjl-gen-var-chip">void</code>
+                                    <?php } ?>
+                                </span>
+                            </div>
+
+                            <div class="sjl-hook-meta-row sjl-hook-meta-desc">
+                                <span class="sjl-hook-meta-label"><?php echo __('Description', 'simple-jwt-login'); ?></span>
+                                <span class="sjl-hook-meta-value sjl-gen-card-desc">
+                                    <?php echo str_replace("\n", "<br />", esc_html($singleHook['description'])); ?>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <?php }
+            } ?>
+        </div>
     </div>
 </div>
-

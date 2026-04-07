@@ -15,11 +15,9 @@
     var __ = wp.i18n.__;
     var sprintf = wp.i18n.sprintf;
 
-    var SJL_IMAGES_URL = (window.sjlWizardData && window.sjlWizardData.imagesUrl) ? window.sjlWizardData.imagesUrl : '';
-
-    function featureIconImg(icon, cssClass) {
+    function featureIconDashicon(icon, cssClass) {
         if (!icon) { return ''; }
-        return '<img src="' + SJL_IMAGES_URL + icon + '" class="' + cssClass + '" alt="" aria-hidden="true">';
+        return '<span class="dashicons ' + icon + ' ' + cssClass + '" aria-hidden="true"></span>';
     }
 
     // =========================================================================
@@ -58,7 +56,7 @@
             // HS* / EdDSA / ES* - single shared secret ----------------------
             {
                 type:        'password',
-                label:       __('JWT Secret Key', 'simple-jwt-login'),
+                label:       __('JWT Verification Key', 'simple-jwt-login'),
                 name:        'decryption_key',
                 placeholder: __('Enter a strong secret key', 'simple-jwt-login'),
                 help:        __('Secret used to sign and verify JWT tokens. Keep this private!', 'simple-jwt-login'),
@@ -85,7 +83,7 @@
             // API middleware ---------------------------------------------
             {
                 type:    'radio',
-                label:   __('Check JWT on all WordPress endpoints?', 'simple-jwt-login'),
+                label:   __('JWT Middleware for all WordPress endpoints', 'simple-jwt-login'),
                 name:    'api_middleware[enabled]',
                 help:  __('If a JWT is provided on any endpoint, the plugin will try to authenticate the user from that JWT in order to perform the API call.', 'simple-jwt-login'),
                 options: [
@@ -96,14 +94,14 @@
             // User identification ----------------------------------------
             {
                 type:     'select-clone',
-                label:    __('How to Identify User', 'simple-jwt-login'),
+                label:    __('Identify user by', 'simple-jwt-login'),
                 name:     'jwt_login_by',
                 sourceId: 'jwt_login_by',
                 help:     __('Choose which WordPress user attribute the JWT payload value is matched against.', 'simple-jwt-login')
             },
             {
                 type:        'text',
-                label:       __('JWT Parameter Key', 'simple-jwt-login'),
+                label:       __('JWT payload key', 'simple-jwt-login'),
                 name:        'jwt_login_by_parameter',
                 placeholder: __('Example: email', 'simple-jwt-login'),
                 help:        __('The key name in the JWT payload that holds the user identifier. Use dot notation for nested values (e.g. user.id).', 'simple-jwt-login')
@@ -128,13 +126,13 @@
             id:          'autologin',
             label:       __('Auto Login', 'simple-jwt-login'),
             description: __('Let users log in automatically via a JWT in the URL or Authorization header.', 'simple-jwt-login'),
-            icon:        'key.svg',
+            icon:        'dashicons-migrate',
             tabId:       'simple-jwt-login-tab-login',
             tabIndex:    '2',
             fields: [
                 {
                     type:  'radio',
-                    label: __('Enable Auto Login?', 'simple-jwt-login'),
+                    label: __('Auto-Login', 'simple-jwt-login'),
                     name:  'allow_autologin',
                     options: [
                         { value: '1', label: __('Yes - enable auto login', 'simple-jwt-login') },
@@ -147,13 +145,13 @@
             id:          'register',
             label:       __('User Registration', 'simple-jwt-login'),
             description: __('Allow new WordPress users to register through the JWT REST API.', 'simple-jwt-login'),
-            icon:        'user.svg',
+            icon:        'dashicons-admin-users',
             tabId:       'simple-jwt-login-tab-register',
             tabIndex:    '3',
             fields: [
                 {
                     type:  'radio',
-                    label: __('Allow User Registration?', 'simple-jwt-login'),
+                    label: __('User Registration', 'simple-jwt-login'),
                     name:  'allow_register',
                     options: [
                         { value: '1', label: __('Yes - allow registrations', 'simple-jwt-login') },
@@ -166,13 +164,13 @@
             id:          'delete',
             label:       __('Delete User', 'simple-jwt-login'),
             description: __('Let users delete their own WordPress accounts via the JWT API.', 'simple-jwt-login'),
-            icon:        'trash.svg',
+            icon:        'dashicons-trash',
             tabId:       'simple-jwt-login-tab-delete',
             tabIndex:    '4',
             fields: [
                 {
                     type:  'radio',
-                    label: __('Enable User Deletion?', 'simple-jwt-login'),
+                    label: __('Delete User', 'simple-jwt-login'),
                     name:  'allow_delete',
                     options: [
                         { value: '1', label: __('Yes - allow account deletion', 'simple-jwt-login') },
@@ -181,7 +179,7 @@
                 },
                 {
                     type:        'text',
-                    label:       __('JWT Parameter Key', 'simple-jwt-login'),
+                    label:       __('JWT payload key', 'simple-jwt-login'),
                     name:        'jwt_delete_by_parameter',
                     placeholder: __('Example: email', 'simple-jwt-login'),
                     help:        __('The key name in the JWT payload that holds the user identifier for deletion. Use dot notation for nested values (e.g. user.id).', 'simple-jwt-login'),
@@ -189,7 +187,7 @@
                 },
                 {
                     type:     'checkbox',
-                    label:    __('Require Authentication Code for Deletion?', 'simple-jwt-login'),
+                    label:    __('Require Authentication Code', 'simple-jwt-login'),
                     name:     'require_auth_code_for_delete',
                     help:     __('Require an additional authentication code in the request to delete the user account.', 'simple-jwt-login'),
                     showWhen: { field: 'allow_delete', matches: /^1$/ }
@@ -200,13 +198,13 @@
             id:          'reset_password',
             label:       __('Reset Password', 'simple-jwt-login'),
             description: __('Allow users to trigger a WordPress password reset via the JWT API.', 'simple-jwt-login'),
-            icon:        'lock.svg',
+            icon:        'dashicons-lock',
             tabId:       'simple-jwt-login-tab-reset-password',
             tabIndex:    '5',
             fields: [
                 {
                     type:  'radio',
-                    label: __('Enable Password Reset?', 'simple-jwt-login'),
+                    label: __('Password Reset', 'simple-jwt-login'),
                     name:  'allow_reset_password',
                     options: [
                         { value: '1', label: __('Yes - allow password resets', 'simple-jwt-login') },
@@ -219,13 +217,13 @@
             id:          'authentication',
             label:       __('JWT Authentication', 'simple-jwt-login'),
             description: __('Generate JWT tokens by authenticating with WordPress credentials.', 'simple-jwt-login'),
-            icon:        'shield.svg',
+            icon:        'dashicons-shield',
             tabId:       'auth-tab-login',
             tabIndex:    '6',
             fields: [
                 {
                     type:  'radio',
-                    label: __('Enable JWT Authentication?', 'simple-jwt-login'),
+                    label: __('Allow JWT Authentication', 'simple-jwt-login'),
                     name:  'allow_authentication',
                     options: [
                         { value: '1', label: __('Yes - enable token generation', 'simple-jwt-login') },
@@ -234,7 +232,7 @@
                 },
                 {
                     type:     'checkbox-group',
-                    label:    __('JWT Payload Fields', 'simple-jwt-login'),
+                    label:    __('JWT Payload Configuration', 'simple-jwt-login'),
                     name:     'jwt_payload',
                     help:     __('Select which user data to include in the JWT payload. "iat" (issued at) is always included automatically.', 'simple-jwt-login'),
                     showWhen: { field: 'allow_authentication', matches: /^1$/ },
@@ -253,13 +251,13 @@
             id:          'cors',
             label:       __('CORS Support', 'simple-jwt-login'),
             description: __('Allow browser requests from other domains to the JWT API endpoints.', 'simple-jwt-login'),
-            icon:        'globe.svg',
+            icon:        'dashicons-admin-site',
             tabId:       'simple-jwt-login-tab-cors',
             tabIndex:    '9',
             fields: [
                 {
                     type:  'radio',
-                    label: __('Enable CORS Support?', 'simple-jwt-login'),
+                    label: __('Allow CORS Support', 'simple-jwt-login'),
                     name:  'cors[enabled]',
                     options: [
                         { value: '1', label: __('Yes - allow cross-origin requests', 'simple-jwt-login') },
@@ -584,7 +582,7 @@
         $.each(SJL_WIZARD_FEATURES, function (i, feature) {
             var isSel = state.selectedFeatures.indexOf(feature.id) !== -1;
             html += '<div class="sjl-wizard-card' + (isSel ? ' sjl-selected' : '') + '" data-feature-id="' + escAttr(feature.id) + '" role="checkbox" aria-checked="' + (isSel ? 'true' : 'false') + '" tabindex="0">';
-            html += '  <div class="sjl-wizard-card-icon">'  + featureIconImg(feature.icon, 'sjl-wizard-icon')  + '</div>';
+            html += '  <div class="sjl-wizard-card-icon">'  + featureIconDashicon(feature.icon, 'sjl-wizard-icon')  + '</div>';
             html += '  <div class="sjl-wizard-card-name">'  + escHtml(feature.label)        + '</div>';
             html += '  <div class="sjl-wizard-card-desc">'  + escHtml(feature.description)  + '</div>';
             html += '  <div class="sjl-wizard-card-check">&#10003;</div>';
@@ -617,7 +615,7 @@
 
     function renderGenericStep(stepConfig) {
         state.currentStepConfig = stepConfig;
-        var iconHtml = stepConfig.icon ? featureIconImg(stepConfig.icon, 'sjl-wizard-icon sjl-wizard-icon--header') : '';
+        var iconHtml = stepConfig.icon ? featureIconDashicon(stepConfig.icon, 'sjl-wizard-icon sjl-wizard-icon--header') : '';
         setStepHeader(iconHtml + escHtml(stepConfig.label), stepConfig.description);
         setContent(buildFieldsHtml(stepConfig.fields));
         populateWizardFields(stepConfig.fields);
@@ -639,7 +637,7 @@
         $.each(SJL_WIZARD_FEATURES, function (i, feature) {
             if (state.selectedFeatures.indexOf(feature.id) !== -1) {
                 hasFeatures = true;
-                html += summarySection(featureIconImg(feature.icon, 'sjl-wizard-icon sjl-wizard-icon--summary') + ' ' + escHtml(feature.label), feature.tabIndex, feature.fields);
+                html += summarySection(featureIconDashicon(feature.icon, 'sjl-wizard-icon sjl-wizard-icon--summary') + ' ' + escHtml(feature.label), feature.tabIndex, feature.fields);
             }
         });
 

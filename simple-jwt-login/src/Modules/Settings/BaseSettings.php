@@ -10,6 +10,7 @@ abstract class BaseSettings
     const SETTINGS_TYPE_BOL = 1;
     const SETTINGS_TYPE_STRING = 2;
     const SETTINGS_TYPE_ARRAY = 3;
+    const SETTINGS_TYPE_TEXTAREA = 4;
 
     /**
      * @var SettingsErrors $settingsErrors

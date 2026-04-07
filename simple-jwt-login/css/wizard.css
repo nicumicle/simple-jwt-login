@@ -26,15 +26,9 @@
     white-space: nowrap;
     transition: background 0.15s, color 0.15s;
 }
-#sjl-wizard-btn .sjl-wizard-btn-icon {
-    filter: none;
-}
 #sjl-wizard-btn:hover {
     background: #263544;
     color: #fff;
-}
-#sjl-wizard-btn:hover .sjl-wizard-btn-icon {
-    filter: brightness(0) invert(1);
 }
 
 /* Prevent body scroll while modal is open */
@@ -205,17 +199,20 @@ body.sjl-wizard-open {
     line-height: 1;
 }
 .sjl-wizard-btn-icon {
-    width: 14px;
-    height: 14px;
+    font-size: 16px !important;
+    width: 16px;
+    height: 16px;
     vertical-align: middle;
     flex-shrink: 0;
+    color: inherit;
 }
 
-/* The finish button (btn-success, dark bg) always needs white icon */
+/* Finish button is on a dark background - dashicons inherit color automatically */
 #sjl-wizard-btn-finish .sjl-wizard-btn-icon {
-    filter: brightness(0) invert(1);
+    color: #fff;
 }
 .sjl-wizard-icon {
+    font-size: 28px !important;
     width: 28px;
     height: 28px;
     display: inline-block;
@@ -223,12 +220,14 @@ body.sjl-wizard-open {
     color: #263544;
 }
 .sjl-wizard-icon--header {
+    font-size: 18px !important;
     width: 18px;
     height: 18px;
     margin-right: 5px;
     vertical-align: middle;
 }
 .sjl-wizard-icon--summary {
+    font-size: 14px !important;
     width: 14px;
     height: 14px;
     margin-right: 4px;

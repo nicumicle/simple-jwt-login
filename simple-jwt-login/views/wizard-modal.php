@@ -42,7 +42,7 @@ if (!defined('ABSPATH')) {
                     <?php echo esc_html(__('Next', 'simple-jwt-login')); ?> &rarr;
                 </button>
                 <button type="button" id="sjl-wizard-btn-finish" class="btn btn-success sjl-hidden">
-                    <img src="<?php echo esc_url(plugin_dir_url(__FILE__) . '../images/correct.svg'); ?>" class="sjl-wizard-btn-icon" alt="" aria-hidden="true">
+                    <span class="dashicons dashicons-yes sjl-wizard-btn-icon" aria-hidden="true"></span>
                     <?php echo esc_html(__('Save Settings', 'simple-jwt-login')); ?>
                 </button>
             </div>

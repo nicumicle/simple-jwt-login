@@ -13,77 +13,87 @@ if (!defined('ABSPATH')) {
  * @var SimpleJWTLoginSettings $jwtSettings
  */
 ?>
-<div class="row">
-    <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Authorization Codes', 'simple-jwt-login'); ?></h3>
-        <p class="text-justify">
-            <?php echo __('Add authorization codes for authentication to this WordPress', 'simple-jwt-login'); ?>.
-            <br/>
-            <?php echo __(
-                'One of this codes should be added in the request parameters for each API request',
-                'simple-jwt-login'
-); ?>.
-            <br/>
-            <?php echo __('For security reasons please use some random strings', 'simple-jwt-login'); ?>.
-            <br/>
-            <p class="text-muted"><?php echo __('Example: THISISMySpeCiaLAUthCode', 'simple-jwt-login'); ?></p>
-        </p>
-        <br/>
+
+<div class="sjl-gen-card">
+    <div class="sjl-gen-card-header">
+        <span class="dashicons dashicons-tickets-alt"></span>
+        <div>
+            <h3 class="sjl-gen-card-title"><?php echo __('Authorization Codes', 'simple-jwt-login'); ?></h3>
+            <p class="sjl-gen-card-desc">
+                <?php echo __('Auth codes act as a shared secret that must accompany API requests when required. Use a random, hard-to-guess string for each code.', 'simple-jwt-login'); ?>
+            </p>
+        </div>
+    </div>
+    <div class="sjl-gen-card-body">
+        <div class="sjl-gen-code-block">
+            <p class="sjl-gen-code-block-intro"><?php echo __('Example auth code:', 'simple-jwt-login'); ?></p>
+            <code class="sjl-gen-example-code">THISISMySpeCiaLAUthCode</code>
+        </div>
     </div>
 </div>
-<hr/>
 
-<div class="row">
-    <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Config', 'simple-jwt-login'); ?></h3>
-        <label for="auth_code_key"><b><?php echo __('Auth Code URL Key', 'simple-jwt-login'); ?></b></label> :
+<div class="sjl-gen-card">
+    <div class="sjl-gen-card-header">
+        <span class="dashicons dashicons-admin-settings"></span>
+        <div>
+            <h3 class="sjl-gen-card-title"><?php echo __('Configuration', 'simple-jwt-login'); ?></h3>
+            <p class="sjl-gen-card-desc">
+                <?php echo __('Set the URL query parameter name used to pass the auth code in API requests.', 'simple-jwt-login'); ?>
+            </p>
+        </div>
+    </div>
+    <div class="sjl-gen-card-body">
+        <label class="sjl-gen-field-label" for="auth_code_key">
+            <?php echo __('Auth Code URL Key', 'simple-jwt-login'); ?>
+        </label>
         <input
-                name="auth_code_key"
-                value="<?php echo esc_attr($jwtSettings->getAuthCodesSettings()->getAuthCodeKey()); ?>"
-                class="form-control"
-                id="auth_code_key"
-                placeholder="<?php echo __('Auth Code Key', 'simple-jwt-login'); ?>"
+            name="auth_code_key"
+            id="auth_code_key"
+            class="form-control sjl-gen-input-medium"
+            value="<?php echo esc_attr($jwtSettings->getAuthCodesSettings()->getAuthCodeKey()); ?>"
+            placeholder="<?php echo __('Auth Code Key', 'simple-jwt-login'); ?>"
         />
     </div>
 </div>
-<hr/>
 
-<div class="row">
-    <div class="col-md-12">
-        <h3 class="section-title">
-            <?php
-            echo isset($errorCode)
-            && $settingsErrors->generateCode(
-                SettingsErrors::PREFIX_AUTH_CODES,
-                SettingsErrors::ERR_INVALID_ROLE
-            ) === $errorCode
-                ? '<span class="simple-jwt-error">!</span>'
-                : ''
-            ?>
-            <?php echo __('Auth Codes', 'simple-jwt-login'); ?>
-        </h3>
-        <input type="button" class="btn btn-dark" value="<?php echo __('Add Auth Code', 'simple-jwt-login'); ?> +"
-               id="add_code"/>
-        <br/>
-        <br/>
+<div class="sjl-gen-card">
+    <div class="sjl-gen-card-header">
+        <span class="dashicons dashicons-list-view"></span>
+        <div>
+            <h3 class="sjl-gen-card-title">
+                <?php
+                echo isset($errorCode)
+                && $settingsErrors->generateCode(
+                    SettingsErrors::PREFIX_AUTH_CODES,
+                    SettingsErrors::ERR_INVALID_ROLE
+                ) === $errorCode
+                    ? '<span class="simple-jwt-error">!</span> '
+                    : '';
+                ?>
+                <?php echo __('Auth Codes', 'simple-jwt-login'); ?>
+            </h3>
+            <p class="sjl-gen-card-desc">
+                <?php echo __('Manage the list of active authentication codes. Each code can optionally target a specific WordPress user role and carry an expiration date.', 'simple-jwt-login'); ?>
+            </p>
+        </div>
     </div>
-</div>
-<div class="row text-center">
-    <div class="col-4">
-        <b><?php echo __('Authentication Key', 'simple-jwt-login'); ?></b>
-    </div>
-    <div class="col-4">
-        <b><?php echo __('WordPress new user Role ( when new users are created )', 'simple-jwt-login'); ?></b>
-    </div>
-    <div class="col-4">
-        <b><?php echo __(
-            'Expiration date: YYYY-MM-DD HH:MM:SS ( Example: 2020-12-23 23:34:59)',
-            'simple-jwt-login'
-        ); ?></b>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
+    <div class="sjl-gen-card-body">
+
+        <div style="margin-bottom: 14px;">
+            <input type="button" class="btn btn-dark" id="add_code"
+                   value="<?php echo __('Add Auth Code', 'simple-jwt-login'); ?> +"
+            />
+        </div>
+
+        <!-- Column headers -->
+        <div class="sjl-gen-auth-codes-header">
+            <span><?php echo __('Authentication Key', 'simple-jwt-login'); ?></span>
+            <span><?php echo __('WordPress User Role', 'simple-jwt-login'); ?></span>
+            <span><?php echo __('Expiration Date', 'simple-jwt-login'); ?></span>
+            <span></span>
+        </div>
+
+        <!-- Code rows -->
         <div id="auth_codes">
             <?php
             foreach ($jwtSettings->getAuthCodesSettings()->getAuthCodes() as $code) {
@@ -95,7 +105,8 @@ if (!defined('ABSPATH')) {
                 $authCodeExpirationDatePlaceholder = __(
                     'Expiration date: YYYY-MM-DD HH:MM:SS ( Example: 2020-12-23 23:34:59)',
                     'simple-jwt-login'
-                ); ?>
+                );
+                ?>
                 <div class="form-group auth_row">
                     <div class="input-group">
                         <input type="text"
@@ -126,52 +137,36 @@ if (!defined('ABSPATH')) {
                         </div>
                     </div>
                 </div>
-                <?php
-            }
-            ?>
+            <?php } ?>
         </div>
-    </div>
-</div>
-<hr/>
-<div class="row">
-    <div class="col-md-12">
-        <p>
-            <?php echo sprintf(
-                __(
-                    ' %sAuthentication Key%s: '
-                    . 'This is the actual code that you have to add in the request.',
-                    'simple-jwt-login'
-                ),
-                '<b>',
-                '</b>'
-            ); ?>
-        </p>
-        <p>
-            <?php echo sprintf(
-                __(
-                    "%sWordPress new User Role%s:' 
-                . ' can be used when you want to create multiple user types with the create user endpoint.' 
-                . ' If you leave it blank, the value configured in the 'Register Settings' will be used.",
-                    'simple-jwt-login'
-                ),
-                '<b>',
-                '</b>'
-            );
-?>
-            <a href="https://wordpress.org/support/article/roles-and-capabilities/" target="_blank">
-                <?php echo __('More details', 'simple-jwt-login'); ?>
-            </a>
-        </p>
-        <p>
-            <?php echo sprintf(
-                __("%sExpiration Date%s: This allows you to set an expiration date for you auth codes."
-                . " The format is `Y-M-D H:m:s'. Example : 2020-12-24 23:00:00"
-                . ' If you leave it blank, it will never expired.', 'simple-jwt-login'),
-                '<b>',
-                '</b>'
-);
-?>
-        </p>
-    </div>
-</div>
 
+        <!-- Field legend -->
+        <div class="sjl-gen-variables-box" style="margin-top: 16px;">
+            <p class="sjl-gen-variables-title"><?php echo __('Field reference:', 'simple-jwt-login'); ?></p>
+            <div class="sjl-gen-params-table">
+                <div class="sjl-gen-param-def">
+                    <code class="sjl-gen-var-chip"><?php echo __('Authentication Key', 'simple-jwt-login'); ?></code>
+                    <span class="sjl-gen-card-desc">
+                        <?php echo __('The code that must be included in the request.', 'simple-jwt-login'); ?>
+                    </span>
+                </div>
+                <div class="sjl-gen-param-def">
+                    <code class="sjl-gen-var-chip"><?php echo __('WordPress User Role', 'simple-jwt-login'); ?></code>
+                    <span class="sjl-gen-card-desc">
+                        <?php echo __('Assigns a WordPress role when a new user is created via this code. Leave blank to use the default role from Register Settings.', 'simple-jwt-login'); ?>
+                        <a href="https://wordpress.org/support/article/roles-and-capabilities/" target="_blank">
+                            <?php echo __('More details', 'simple-jwt-login'); ?>
+                        </a>
+                    </span>
+                </div>
+                <div class="sjl-gen-param-def">
+                    <code class="sjl-gen-var-chip"><?php echo __('Expiration Date', 'simple-jwt-login'); ?></code>
+                    <span class="sjl-gen-card-desc">
+                        <?php echo __('Optional expiry in <code>YYYY-MM-DD HH:MM:SS</code> format (e.g. 2020-12-24 23:00:00). Leave blank for no expiration.', 'simple-jwt-login'); ?>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -509,4 +509,9 @@ class WordPressData implements WordPressDataInterface
     {
         return is_user_logged_in();
     }
+
+    public function wpUnslash($value)
+    {
+        return wp_unslash($value);
+    }
 }

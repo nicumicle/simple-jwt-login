@@ -1,6 +1,9 @@
 # Changelog - Releases
 
 ## Unreleased
+- Add Setup Wizard
+- New design for Plugin Settings 
+- Fix double encoding for Reset Password email body[#165](https://github.com/nicumicle/simple-jwt-login/issues/165)
 
 ## 3.6.5 (14 Mar 2026)
 - Fix  CVE-2025-58648 - Stored Cross-Site Scripting vulnerability[PR](https://github.com/nicumicle/simple-jwt-login/pull/162)

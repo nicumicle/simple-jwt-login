@@ -273,6 +273,12 @@ body.sjl-wizard-open {
     color: #263544;
     margin-bottom: 4px;
 }
+.sjl-wizard-required,
+.required {
+    color: #d63638;
+    font-weight: bold;
+    margin-left: 2px;
+}
 .sjl-wizard-help {
     font-size: 10px;
     color: #6c757d;

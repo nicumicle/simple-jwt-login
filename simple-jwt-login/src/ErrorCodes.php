@@ -84,4 +84,5 @@ class ErrorCodes
     const ERR_GOOGLE_USER_NOT_FOUND = 74;
 
     const ERR_PROTECT_ENDPOINTS_MISSING_JWT = 75;
+    const ERR_EMPTY_CUSTOM_EMAIL_SUBJECT = 76;
 }

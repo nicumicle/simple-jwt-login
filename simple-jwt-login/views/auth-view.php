@@ -245,6 +245,7 @@ if (! defined('ABSPATH')) {
                     : '';
                 ?>
                 <?php echo __('JWT Payload Configuration', 'simple-jwt-login'); ?>
+                <span class="required">*</span>
             </h3>
             <p class="sjl-gen-card-desc">
                 <?php echo __('Select which user data to include in the JWT payload.', 'simple-jwt-login'); ?>
@@ -384,6 +385,7 @@ if (! defined('ABSPATH')) {
             <div class="sjl-gen-step-content">
                 <label class="sjl-gen-step-label" for="jwt_auth_ttl">
                     <?php echo __('JWT Expiration Time', 'simple-jwt-login'); ?>
+                    <span class="required">*</span>
                 </label>
                 <p class="sjl-gen-step-desc">
                     <?php echo __('Specify the length of time (in minutes) that the token will be valid for.', 'simple-jwt-login'); ?>
@@ -401,6 +403,7 @@ if (! defined('ABSPATH')) {
             <div class="sjl-gen-step-content">
                 <label class="sjl-gen-step-label" for="jwt_auth_refresh_ttl">
                     <?php echo __('JWT Refresh Window', 'simple-jwt-login'); ?>
+                    <span class="required">*</span>
                 </label>
                 <p class="sjl-gen-step-desc">
                     <?php echo __('Specify the length of time (in minutes) that the token can be refreshed within. The user can refresh their token within this window of the original token being created until they must re-authenticate. Defaults to 2 weeks.', 'simple-jwt-login'); ?>

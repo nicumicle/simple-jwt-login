@@ -22,8 +22,6 @@ if (!defined('ABSPATH')) {
         <span class="dashicons dashicons-networking"></span>
         <div>
             <h3 class="sjl-gen-card-title">
-                <?php echo __('Route Namespace', 'simple-jwt-login'); ?>
-                <span class="required">*</span>
                 <?php
                 echo isset($errorCode)
                 && $settingsErrors->generateCode(
@@ -33,6 +31,8 @@ if (!defined('ABSPATH')) {
                     ? '<span class="simple-jwt-error">!</span>'
                     : '';
                 ?>
+                <?php echo __('Route Namespace', 'simple-jwt-login'); ?>
+                <span class="required">*</span>
             </h3>
             <p class="sjl-gen-card-desc">
                 <?php echo __('Base URL prefix for all Simple JWT Login REST endpoints. Change only if you need to avoid conflicts with other plugins.', 'simple-jwt-login'); ?>
@@ -132,6 +132,7 @@ if (!defined('ABSPATH')) {
             <div class="sjl-gen-step-content">
                 <label class="sjl-gen-step-label">
                     <?php echo __('JWT Verification Key', 'simple-jwt-login'); ?>
+                    <span class="required">*</span>
                 </label>
                 <p class="sjl-gen-step-desc">
                     <?php echo __('Secret or key used to verify incoming JWTs.', 'simple-jwt-login'); ?>

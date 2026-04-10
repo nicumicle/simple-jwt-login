@@ -60,6 +60,7 @@
                 name:        'decryption_key',
                 placeholder: __('Enter a strong secret key', 'simple-jwt-login'),
                 help:        __('Secret used to sign and verify JWT tokens. Keep this private!', 'simple-jwt-login'),
+                required:    true,
                 showWhen:    { field: 'jwt_algorithm', notMatches: /^RS/ }
             },
             // RS* - asymmetric key pair --------------------------------------
@@ -735,7 +736,9 @@
             var hidden = (field.showWhen && !evalShowWhen(field.showWhen)) ? ' style="display:none"' : '';
             html += '<div class="sjl-wizard-field" data-field-name="' + escAttr(field.name) + '"' + hidden + '>';
             if (field.type !== 'checkbox') {
-                html += '<label class="sjl-wizard-label">' + escHtml(field.label) + '</label>';
+                html += '<label class="sjl-wizard-label">' + escHtml(field.label) +
+                        (field.required ? ' <span class="sjl-wizard-required" aria-hidden="true">*</span>' : '') +
+                        '</label>';
             }
             if (field.help) {
                 html += '<p class="sjl-wizard-help">' + escHtml(field.help) + '</p>';

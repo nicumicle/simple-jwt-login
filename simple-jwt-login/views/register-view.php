@@ -131,12 +131,14 @@ if (!defined('ABSPATH')) {
         <!-- Default Role -->
         <div class="sjl-gen-feature-item">
             <label class="sjl-gen-feature-label" for="new_user_profile">
-                <?php echo __('Default User Role', 'simple-jwt-login'); ?>
                 <?php
                 if ($hasRoleError) {
                     echo '<span class="simple-jwt-error">!</span>';
                 }
                 ?>
+                <?php echo __('Default User Role', 'simple-jwt-login'); ?>
+                 <span class="required">*</span>
+               
             </label>
             <p class="sjl-gen-feature-desc">
                 <?php echo __('WordPress role assigned to new users.', 'simple-jwt-login'); ?>

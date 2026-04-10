@@ -149,6 +149,7 @@ if (! defined('ABSPATH')) {
             <div class="sjl-gen-two-col-right">
                 <label class="sjl-gen-field-label" for="jwt_delete_by_parameter">
                     <?php echo __('JWT payload key', 'simple-jwt-login'); ?>
+                     <span class="required">*</span>
                 </label>
                 <input type="text" name="jwt_delete_by_parameter" class="form-control"
                        id="jwt_delete_by_parameter"

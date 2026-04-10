@@ -44,7 +44,10 @@ if (!defined('ABSPATH')) {
     <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-editor-code"></span>
         <div>
-            <h3 class="sjl-gen-card-title"><?php echo __('CORS Headers Configuration', 'simple-jwt-login'); ?></h3>
+            <h3 class="sjl-gen-card-title">
+                <?php echo __('CORS Headers Configuration', 'simple-jwt-login'); ?>
+                <span class="required">*</span>
+            </h3>
             <p class="sjl-gen-card-desc">
                 <?php echo __('Configure which CORS headers to include in API responses. Enable a header and set its value.', 'simple-jwt-login'); ?>
             </p>

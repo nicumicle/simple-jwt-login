@@ -1,5 +1,6 @@
 <?php
 
+use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Modules\Settings\ResetPasswordSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -27,7 +28,6 @@ if (!defined('ABSPATH')) {
         </div>
     </div>
     <div class="sjl-gen-card-body">
-
         <div class="sjl-gen-radio-group">
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="allow_reset_password" value="0"
@@ -122,10 +122,22 @@ if (!defined('ABSPATH')) {
     <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-editor-ul"></span>
         <div>
-            <h3 class="sjl-gen-card-title"><?php echo __('Reset Flow', 'simple-jwt-login'); ?></h3>
+            <h3 class="sjl-gen-card-title">
+                <?php
+                $hasRoleError = isset($errorCode) && (
+                    $settingsErrors->generateCode(SettingsErrors::PREFIX_RESET_PASSWORD, ErrorCodes::ERR_EMPTY_CUSTOM_EMAIL_SUBJECT) === $errorCode
+                    || $settingsErrors->generateCode(SettingsErrors::PREFIX_RESET_PASSWORD, ErrorCodes::ERR_MISSING_CODE_FROM_EMAIL_BODY) === $errorCode
+                );
+                if ($hasRoleError) {
+                    echo '<span class="simple-jwt-error">!</span> ';
+                }
+                ?>
+                <?php echo __('Reset Flow', 'simple-jwt-login'); ?>
+            </h3>
             <p class="sjl-gen-card-desc">
                 <?php echo __('Choose how the reset code is delivered to the user.', 'simple-jwt-login'); ?>
             </p>
+           
         </div>
     </div>
     <div class="sjl-gen-card-body">
@@ -183,6 +195,7 @@ if (!defined('ABSPATH')) {
             <div class="sjl-gen-feature-item">
                 <label class="sjl-gen-feature-label" for="jwt_email_subject">
                     <?php echo __('Email Subject', 'simple-jwt-login'); ?>
+                    <span class="required">*</span>
                 </label>
                 <input type="text" name="jwt_email_subject" id="jwt_email_subject"
                        class="form-control"
@@ -194,6 +207,7 @@ if (!defined('ABSPATH')) {
             <div class="sjl-gen-feature-item">
                 <label class="sjl-gen-feature-label" for="reset_password_email_body">
                     <?php echo __('Email Body', 'simple-jwt-login'); ?>
+                    <span class="required">*</span>
                 </label>
                 <textarea class="form-control" name="jwt_reset_password_email_body"
                           id="reset_password_email_body"

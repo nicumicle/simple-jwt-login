@@ -74,17 +74,30 @@ class ResetPasswordSettings extends BaseSettings implements SettingsInterface
      */
     public function validateSettings()
     {
-        if ($this->isResetPasswordEnabled()
-            && $this->getFlowType() == self::FLOW_SEND_CUSTOM_EMAIL
-            && strpos($this->getResetPasswordEmailBody(), '{{CODE}}') === false
-        ) {
-            throw new Exception(
-                __('You need to add the {{CODE}} variable in email body.', 'simple-jwt-login'),
-                $this->settingsErrors->generateCode(
-                    SettingsErrors::PREFIX_RESET_PASSWORD,
-                    ErrorCodes::ERR_MISSING_CODE_FROM_EMAIL_BODY
-                )
-            );
+        if (!$this->isResetPasswordEnabled()){
+            return;
+        }
+        switch ($this->getFlowType()) {
+            case self::FLOW_SEND_CUSTOM_EMAIL:
+                if (strpos($this->getResetPasswordEmailBody(), '{{CODE}}') === false) {
+                    throw new Exception(
+                        __('You need to add the {{CODE}} variable in email body.', 'simple-jwt-login'),
+                        $this->settingsErrors->generateCode(
+                            SettingsErrors::PREFIX_RESET_PASSWORD,
+                            ErrorCodes::ERR_MISSING_CODE_FROM_EMAIL_BODY
+                        )
+                    );
+                }
+                if ($this->getResetPasswordEmailSubject() === '') {
+                    throw new Exception(
+                        __('The Reset Password custom email subject is empty.', 'simple-jwt-login'),
+                        $this->settingsErrors->generateCode(
+                            SettingsErrors::PREFIX_RESET_PASSWORD,
+                            ErrorCodes::ERR_EMPTY_CUSTOM_EMAIL_SUBJECT
+                        )
+                    );
+                }
+                break;
         }
     }
 

@@ -2,6 +2,24 @@ jQuery(document).ready(
     function ($) {
         $('#auth_codes').append($('#code_line').html());
 
+        // Applications: card catalog panel switching
+        $('#simple-jwt-login .sjl-app-card[data-app]').on('click keypress', function (e) {
+            if (e.type === 'keypress' && e.which !== 13) {
+                return;
+            }
+            var $card  = $(this);
+            var appId  = $card.data('app');
+            var isOpen = $card.hasClass('active');
+
+            $('#simple-jwt-login .sjl-app-card').removeClass('active').attr('aria-expanded', 'false');
+            $('#simple-jwt-login .sjl-app-panel').hide();
+
+            if (!isOpen) {
+                $card.addClass('active').attr('aria-expanded', 'true');
+                $('#simple-jwt-login #sjl-app-panel-' + appId).show();
+            }
+        });
+
         $('#simple-jwt-login #add_code').click(
             function () {
                 $('#auth_codes').append($('#code_line').html());

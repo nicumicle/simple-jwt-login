@@ -85,4 +85,9 @@ class ErrorCodes
 
     const ERR_PROTECT_ENDPOINTS_MISSING_JWT = 75;
     const ERR_EMPTY_CUSTOM_EMAIL_SUBJECT = 76;
+
+    const ERR_MISSING_AUTH0_PARAM    = 77;
+    const ERR_AUTH0_INVALID_CODE     = 78;
+    const ERR_AUTH0_INVALID_TOKEN    = 79;
+    const ERR_AUTH0_USER_NOT_FOUND   = 80;
 }

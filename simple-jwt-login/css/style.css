@@ -1108,3 +1108,13 @@
     background-repeat: no-repeat;
     background-position: center;
 }
+
+#simple-jwt-login .logo.auth0 {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    background-image: url("../images/applications/auth0-60x60.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}

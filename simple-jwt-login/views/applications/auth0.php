@@ -17,26 +17,30 @@ if (!defined('ABSPATH')) {
  * @var SimpleJWTLoginSettings $jwtSettings
  */
 
-$google = $jwtSettings->getApplicationsSettings()->google();
+$auth0 = $jwtSettings->getApplicationsSettings()->auth0();
 ?>
 
 <div class="sjl-gen-card">
     <div class="sjl-gen-card-header">
-        <div class="google logo"></div>
+        <div class="auth0 logo"></div>
         <div>
             <h3 class="sjl-gen-card-title">
-                <?php echo __('Google', 'simple-jwt-login'); ?>
+                <?php echo __('Auth0', 'simple-jwt-login'); ?>
                 <span class="beta">beta</span>
                 <?php
                 echo isset($errorCode)
                 && (
                     $settingsErrors->generateCode(
                         SettingsErrors::PREFIX_APPLICATIONS,
-                        SettingsErrors::ERR_GOOGLE_CLIENT_ID_REQUIRED
+                        SettingsErrors::ERR_AUTH0_DOMAIN_REQUIRED
                     ) === $errorCode
                     || $settingsErrors->generateCode(
                         SettingsErrors::PREFIX_APPLICATIONS,
-                        SettingsErrors::ERR_GOOGLE_CLIENT_SECRET_REQUIRED
+                        SettingsErrors::ERR_AUTH0_CLIENT_ID_REQUIRED
+                    ) === $errorCode
+                    || $settingsErrors->generateCode(
+                        SettingsErrors::PREFIX_APPLICATIONS,
+                        SettingsErrors::ERR_AUTH0_CLIENT_SECRET_REQUIRED
                     ) === $errorCode
                 )
                     ? '<span class="simple-jwt-error">!</span>'
@@ -44,8 +48,8 @@ $google = $jwtSettings->getApplicationsSettings()->google();
                 ?>
             </h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __('Integrate Google OAuth into your WordPress website.', 'simple-jwt-login'); ?>
-                <a href="https://simplejwtlogin.com/docs/applications/google/setup" target="_blank">
+                <?php echo __('Integrate Auth0 OAuth2 / OIDC into your WordPress website.', 'simple-jwt-login'); ?>
+                <a href="https://auth0.com/docs" target="_blank">
                     <?php echo __('Read more', 'simple-jwt-login'); ?>
                 </a>
             </p>
@@ -54,14 +58,14 @@ $google = $jwtSettings->getApplicationsSettings()->google();
     <div class="sjl-gen-card-body">
         <div class="sjl-gen-radio-group">
             <label class="sjl-gen-radio-option">
-                <input type="radio" name="google[enabled]" id="social_google_enabled_no" value="0"
-                    <?php echo $google->isEnabled() === false ? 'checked' : ''; ?>
+                <input type="radio" name="auth0[enabled]" id="social_auth0_enabled_no" value="0"
+                    <?php echo $auth0->isEnabled() === false ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo __('Disabled', 'simple-jwt-login'); ?></span>
             </label>
             <label class="sjl-gen-radio-option">
-                <input type="radio" name="google[enabled]" id="social_google_enabled_yes" value="1"
-                    <?php echo $google->isEnabled() ? 'checked' : ''; ?>
+                <input type="radio" name="auth0[enabled]" id="social_auth0_enabled_yes" value="1"
+                    <?php echo $auth0->isEnabled() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo __('Enabled', 'simple-jwt-login'); ?></span>
             </label>
@@ -76,35 +80,49 @@ $google = $jwtSettings->getApplicationsSettings()->google();
         <div>
             <h3 class="sjl-gen-card-title"><?php echo __('Credentials', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __('Enter your Google OAuth application credentials from the Google Cloud Console.', 'simple-jwt-login'); ?>
+                <?php echo __('Enter your Auth0 application credentials from the Auth0 Dashboard.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
     <div class="sjl-gen-card-body">
+
+        <div class="sjl-gen-feature-item">
+            <label class="sjl-gen-field-label" for="auth0_domain">
+                <?php echo __('Domain', 'simple-jwt-login'); ?>
+                <span class="required">*</span>
+            </label>
+            <input type="text" name="auth0[domain]" id="auth0_domain"
+                   class="form-control sjl-gen-input-medium"
+                   value="<?php echo esc_attr($auth0->getDomain()); ?>"
+                   placeholder="<?php echo esc_attr(__('your-tenant.auth0.com', 'simple-jwt-login')); ?>"
+            />
+        </div>
+
         <div class="sjl-gen-two-col">
             <div class="sjl-gen-two-col-left">
-                <label class="sjl-gen-field-label" for="google_client_id">
+                <label class="sjl-gen-field-label" for="auth0_client_id">
                     <?php echo __('Client ID', 'simple-jwt-login'); ?>
                     <span class="required">*</span>
                 </label>
-                <input type="text" name="google[client_id]" id="google_client_id"
+                <input type="text" name="auth0[client_id]" id="auth0_client_id"
                        class="form-control"
-                       value="<?php echo esc_attr($google->getClientId()); ?>"
+                       value="<?php echo esc_attr($auth0->getClientId()); ?>"
                        placeholder="<?php echo esc_attr(__('Client ID', 'simple-jwt-login')); ?>"
                 />
             </div>
             <div class="sjl-gen-two-col-right">
-                <label class="sjl-gen-field-label" for="google_client_secret">
+                <label class="sjl-gen-field-label" for="auth0_client_secret">
                     <?php echo __('Client Secret', 'simple-jwt-login'); ?>
                     <span class="required">*</span>
                 </label>
-                <input type="text" name="google[client_secret]" id="google_client_secret"
+                <input type="text" name="auth0[client_secret]" id="auth0_client_secret"
                        class="form-control"
-                       value="<?php echo esc_attr($google->getClientSecret()); ?>"
+                       value="<?php echo esc_attr($auth0->getClientSecret()); ?>"
                        placeholder="<?php echo esc_attr(__('Client Secret', 'simple-jwt-login')); ?>"
                 />
             </div>
         </div>
+
     </div>
 </div>
 
@@ -114,32 +132,35 @@ $google = $jwtSettings->getApplicationsSettings()->google();
         <div>
             <h3 class="sjl-gen-card-title"><?php echo __('OAuth on Login / Register', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __('Display a "Continue with Google" button on the WordPress login and registration page.', 'simple-jwt-login'); ?>
+                <?php echo __('Display a "Continue with Auth0" button on the WordPress login and registration page.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
     <div class="sjl-gen-card-body">
         <div class="sjl-gen-feature-toggle">
             <div class="sjl-gen-feature-toggle-check">
-                <input type="checkbox" name="google[enable_oauth]" id="google_enable_oauth" value="1"
-                    <?php echo $google->isOauthEnabled() ? 'checked="checked"' : ''; ?>
+                <input type="checkbox" name="auth0[enable_oauth]" id="auth0_enable_oauth" value="1"
+                    <?php echo $auth0->isOauthEnabled() ? 'checked="checked"' : ''; ?>
                 />
             </div>
             <div class="sjl-gen-feature-toggle-text">
-                <label for="google_enable_oauth" class="sjl-gen-feature-label">
+                <label for="auth0_enable_oauth" class="sjl-gen-feature-label">
                     <?php echo esc_html(__('Enable OAuth on WordPress login', 'simple-jwt-login')); ?>
                 </label>
                 <p class="sjl-gen-feature-desc">
                     <?php echo sprintf(
-                        __('Set the following Redirect URI in your <a href="%s" target="_blank">Google Cloud Console</a> for the OAuth flow to work correctly.', 'simple-jwt-login'),
-                        'https://console.cloud.google.com/'
+                        __(
+                            'Set the following Redirect URI in your <a href="%s" target="_blank">Auth0 Dashboard</a> for the OAuth flow to work correctly.',
+                            'simple-jwt-login'
+                        ),
+                        'https://manage.auth0.com/'
                     ); ?>
                 </p>
                 <div class="sjl-gen-url-example">
                     <p class="sjl-gen-url-example-label"><?php echo __('Redirect URI:', 'simple-jwt-login'); ?></p>
                     <div class="generated-code">
                         <span class="code">
-                            <?php echo esc_html($jwtSettings->generateExampleLink(RouteService::OAUTH_TOKEN, ['provider' => 'google'])); ?>
+                            <?php echo esc_html($jwtSettings->generateExampleLink(RouteService::OAUTH_TOKEN, ['provider' => 'auth0'])); ?>
                         </span>
                         <span class="copy-button">
                             <button class="btn btn-secondary btn-xs"><?php echo __('Copy', 'simple-jwt-login'); ?></button>
@@ -156,10 +177,10 @@ $google = $jwtSettings->getApplicationsSettings()->google();
         <span class="dashicons dashicons-randomize"></span>
         <div>
             <h3 class="sjl-gen-card-title">
-                <?php echo esc_html(__('Exchange Google OAuth "code" for Google "id_token"', 'simple-jwt-login')); ?>
+                <?php echo esc_html(__('Exchange Auth0 OAuth "code" for Auth0 tokens', 'simple-jwt-login')); ?>
             </h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __('Exchange the code obtained in the OAuth flow for a Google id_token.', 'simple-jwt-login'); ?>
+                <?php echo __('Exchange the authorization code obtained in the OAuth flow for Auth0 tokens.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
@@ -167,25 +188,25 @@ $google = $jwtSettings->getApplicationsSettings()->google();
 
         <div class="sjl-gen-feature-toggle">
             <div class="sjl-gen-feature-toggle-check">
-                <input type="checkbox" name="google[enable_exchange_code]" id="google_enable_exchange_code" value="1"
-                    <?php echo $google->isExchangeCodeEnabled() ? 'checked="checked"' : ''; ?>
+                <input type="checkbox" name="auth0[enable_exchange_code]" id="auth0_enable_exchange_code" value="1"
+                    <?php echo $auth0->isExchangeCodeEnabled() ? 'checked="checked"' : ''; ?>
                 />
             </div>
             <div class="sjl-gen-feature-toggle-text">
-                <label for="google_enable_exchange_code" class="sjl-gen-feature-label">
-                    <?php echo __('Enable exchange of Google OAuth code for Google id_token', 'simple-jwt-login'); ?>
+                <label for="auth0_enable_exchange_code" class="sjl-gen-feature-label">
+                    <?php echo __('Enable exchange of Auth0 OAuth code for Auth0 tokens', 'simple-jwt-login'); ?>
                 </label>
             </div>
         </div>
 
         <div class="sjl-gen-feature-item">
-            <label class="sjl-gen-field-label" for="google_redirect_uri_exchange_code">
+            <label class="sjl-gen-field-label" for="auth0_redirect_uri_exchange_code">
                 <?php echo __('Redirect URI', 'simple-jwt-login'); ?>
             </label>
-            <input type="text" id="google_redirect_uri_exchange_code"
+            <input type="text" id="auth0_redirect_uri_exchange_code"
                    class="form-control sjl-gen-input-medium"
-                   name="google[redirect_uri_exchange_code]"
-                   value="<?php echo esc_attr($google->getExchangeCodeRedirectUri()); ?>"
+                   name="auth0[redirect_uri_exchange_code]"
+                   value="<?php echo esc_attr($auth0->getExchangeCodeRedirectUri()); ?>"
                    placeholder="<?php echo __('Redirect URI', 'simple-jwt-login'); ?>"
             />
         </div>
@@ -196,7 +217,7 @@ $google = $jwtSettings->getApplicationsSettings()->google();
                 <div class="sjl-gen-params-table">
                     <div class="sjl-gen-param-def">
                         <code class="sjl-gen-var-chip">provider</code>
-                        <span class="sjl-gen-card-desc"><?php echo __('google', 'simple-jwt-login'); ?></span>
+                        <span class="sjl-gen-card-desc"><?php echo __('auth0', 'simple-jwt-login'); ?></span>
                     </div>
                     <div class="sjl-gen-param-def">
                         <code class="sjl-gen-var-chip">code</code>
@@ -209,7 +230,7 @@ $google = $jwtSettings->getApplicationsSettings()->google();
                 <span class="code">
                     <?php
                     echo esc_html($jwtSettings->generateExampleLink(RouteService::OAUTH_TOKEN, [
-                        'provider' => 'google',
+                        'provider' => 'auth0',
                         'code'     => __('your_code', 'simple-jwt-login'),
                     ]));
                     ?>
@@ -228,10 +249,10 @@ $google = $jwtSettings->getApplicationsSettings()->google();
         <span class="dashicons dashicons-update"></span>
         <div>
             <h3 class="sjl-gen-card-title">
-                <?php echo esc_html(__('Exchange Google "id_token" for a WordPress JWT', 'simple-jwt-login')); ?>
+                <?php echo esc_html(__('Exchange Auth0 "access_token" for a WordPress JWT', 'simple-jwt-login')); ?>
             </h3>
             <p class="sjl-gen-card-desc">
-                <?php echo esc_html(__('Exchange a Google id_token for a Simple-JWT-Login JWT.', 'simple-jwt-login')); ?>
+                <?php echo esc_html(__('Exchange an Auth0 access_token for a Simple-JWT-Login WordPress JWT.', 'simple-jwt-login')); ?>
             </p>
         </div>
     </div>
@@ -239,13 +260,13 @@ $google = $jwtSettings->getApplicationsSettings()->google();
 
         <div class="sjl-gen-feature-toggle">
             <div class="sjl-gen-feature-toggle-check">
-                <input type="checkbox" name="google[enable_exchange_id_token]" id="google_enable_exchange_id_token" value="1"
-                    <?php echo $google->isExchangeIdTokenEnabled() ? esc_html('checked="checked"') : ''; ?>
+                <input type="checkbox" name="auth0[enable_exchange_token]" id="auth0_enable_exchange_token" value="1"
+                    <?php echo $auth0->isExchangeTokenEnabled() ? esc_html('checked="checked"') : ''; ?>
                 />
             </div>
             <div class="sjl-gen-feature-toggle-text">
-                <label for="google_enable_exchange_id_token" class="sjl-gen-feature-label">
-                    <?php echo __('Enable exchange of Google id_token for a WordPress JWT', 'simple-jwt-login'); ?>
+                <label for="auth0_enable_exchange_token" class="sjl-gen-feature-label">
+                    <?php echo __('Enable exchange of Auth0 access_token for a WordPress JWT', 'simple-jwt-login'); ?>
                 </label>
             </div>
         </div>
@@ -256,11 +277,11 @@ $google = $jwtSettings->getApplicationsSettings()->google();
                 <div class="sjl-gen-params-table">
                     <div class="sjl-gen-param-def">
                         <code class="sjl-gen-var-chip">provider</code>
-                        <span class="sjl-gen-card-desc"><?php echo esc_html('google'); ?></span>
+                        <span class="sjl-gen-card-desc"><?php echo esc_html('auth0'); ?></span>
                     </div>
                     <div class="sjl-gen-param-def">
-                        <code class="sjl-gen-var-chip">id_token</code>
-                        <span class="sjl-gen-card-desc"><?php echo __('the id_token from your OAuth process', 'simple-jwt-login'); ?></span>
+                        <code class="sjl-gen-var-chip">access_token</code>
+                        <span class="sjl-gen-card-desc"><?php echo __('the access_token from your Auth0 OAuth process', 'simple-jwt-login'); ?></span>
                     </div>
                 </div>
             </div>
@@ -269,8 +290,8 @@ $google = $jwtSettings->getApplicationsSettings()->google();
                 <span class="code">
                     <?php
                     echo esc_html($jwtSettings->generateExampleLink(RouteService::OAUTH_TOKEN, [
-                        'provider' => esc_html('google'),
-                        'id_token' => __('google_id_token', 'simple-jwt-login'),
+                        'provider'     => 'auth0',
+                        'access_token' => __('your_access_token', 'simple-jwt-login'),
                     ]));
                     ?>
                 </span>
@@ -289,7 +310,7 @@ $google = $jwtSettings->getApplicationsSettings()->google();
         <div>
             <h3 class="sjl-gen-card-title"><?php echo __('Other Options', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __('Additional settings for the Google integration.', 'simple-jwt-login'); ?>
+                <?php echo __('Additional settings for the Auth0 integration.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
@@ -297,32 +318,32 @@ $google = $jwtSettings->getApplicationsSettings()->google();
 
         <div class="sjl-gen-feature-toggle">
             <div class="sjl-gen-feature-toggle-check">
-                <input type="checkbox" name="google[allow_on_all_endpoints]" id="google_all_endpoints" value="1"
-                    <?php echo $google->isAllowedOnAllEndpoints() ? 'checked="checked"' : ''; ?>
+                <input type="checkbox" name="auth0[allow_on_all_endpoints]" id="auth0_all_endpoints" value="1"
+                    <?php echo $auth0->isAllowedOnAllEndpoints() ? 'checked="checked"' : ''; ?>
                 />
             </div>
             <div class="sjl-gen-feature-toggle-text">
-                <label for="google_all_endpoints" class="sjl-gen-feature-label">
-                    <?php echo __('Allow usage of Google id_token on all endpoints', 'simple-jwt-login'); ?>
+                <label for="auth0_all_endpoints" class="sjl-gen-feature-label">
+                    <?php echo __('Allow usage of Auth0 access_token on all endpoints', 'simple-jwt-login'); ?>
                 </label>
                 <p class="sjl-gen-feature-desc">
-                    <?php echo __('The plugin will search for a WordPress user matching the email in the Google JWT payload. You must also enable "All WordPress endpoints check for JWT authentication" in General settings.', 'simple-jwt-login'); ?>
+                    <?php echo __('The plugin will search for a WordPress user matching the email returned by Auth0\'s userinfo endpoint. You must also enable "All WordPress endpoints check for JWT authentication" in General settings.', 'simple-jwt-login'); ?>
                 </p>
             </div>
         </div>
 
         <div class="sjl-gen-feature-toggle">
             <div class="sjl-gen-feature-toggle-check">
-                <input type="checkbox" name="google[create_user_if_not_exists]" id="google_create_user_if_not_exists" value="1"
-                    <?php echo $google->isCreateUserIfNotExistsEnabled() ? 'checked="checked"' : ''; ?>
+                <input type="checkbox" name="auth0[create_user_if_not_exists]" id="auth0_create_user_if_not_exists" value="1"
+                    <?php echo $auth0->isCreateUserIfNotExistsEnabled() ? 'checked="checked"' : ''; ?>
                 />
             </div>
             <div class="sjl-gen-feature-toggle-text">
-                <label for="google_create_user_if_not_exists" class="sjl-gen-feature-label">
+                <label for="auth0_create_user_if_not_exists" class="sjl-gen-feature-label">
                     <?php echo __('Create user if not exists', 'simple-jwt-login'); ?>
                 </label>
                 <p class="sjl-gen-feature-desc">
-                    <?php echo __('Automatically create a new WordPress user if no account is found matching the email in the Google JWT payload.', 'simple-jwt-login'); ?>
+                    <?php echo __('Automatically create a new WordPress user if no account is found matching the email returned by Auth0.', 'simple-jwt-login'); ?>
                 </p>
             </div>
         </div>

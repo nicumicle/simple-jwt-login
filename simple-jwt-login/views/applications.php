@@ -19,8 +19,17 @@ $sjlApps = [
         'name'       => __('Google', 'simple-jwt-login'),
         'desc'       => __('OAuth 2.0', 'simple-jwt-login'),
         'logo_class' => 'google',
-        'enabled'    => $jwtSettings->getApplicationsSettings()->isGoogleEnabled(),
+        'enabled'    => $jwtSettings->getApplicationsSettings()->google()->isEnabled(),
         'view'       => plugin_dir_path(__FILE__) . 'applications/google.php',
+        'beta'       => true,
+    ],
+    [
+        'id'         => 'auth0',
+        'name'       => __('Auth0', 'simple-jwt-login'),
+        'desc'       => __('OAuth 2.0 / OIDC', 'simple-jwt-login'),
+        'logo_class' => 'auth0',
+        'enabled'    => $jwtSettings->getApplicationsSettings()->auth0()->isEnabled(),
+        'view'       => plugin_dir_path(__FILE__) . 'applications/auth0.php',
         'beta'       => true,
     ],
 ];

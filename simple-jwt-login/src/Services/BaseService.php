@@ -249,8 +249,8 @@ abstract class BaseService
         if (isset($jwtParts['payload']['iss'])) {
             switch ($jwtParts['payload']['iss']) {
                 case Google::IIS:
-                    if ($this->jwtSettings->getApplicationsSettings()->isGoogleEnabled()
-                        && $this->jwtSettings->getApplicationsSettings()->isGoogleJwtAllowedOnAllEndpoints()) {
+                    $googleSettings = $this->jwtSettings->getApplicationsSettings()->google();
+                    if ($googleSettings->isEnabled() && $googleSettings->isAllowedOnAllEndpoints()) {
                         Google::validateIdToken($this->jwt);
 
                         return $jwtParts['payload']['email'];

@@ -20,7 +20,7 @@ if (! defined('ABSPATH')) {
  */
 ?>
 <form method="POST" action="<?php echo esc_url(Google::AUTH_URL);?>" class="simple-jwt-login-oauth-app google">
-    <input type="hidden" name="client_id" value="<?php echo esc_attr($jwtSettings->getApplicationsSettings()->getGoogleClientID());?>" />
+    <input type="hidden" name="client_id" value="<?php echo esc_attr($jwtSettings->getApplicationsSettings()->google()->getClientId());?>" />
     <input type="hidden" name="response_type" value="code" />
     <input type="hidden" name="scope" value="email" />
     <input type="hidden" name="redirect_uri" value="<?php echo esc_url($jwtSettings->generateExampleLink(RouteService::OAUTH_TOKEN, ['provider' => 'google']));?>" />

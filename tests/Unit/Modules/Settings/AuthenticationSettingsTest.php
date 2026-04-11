@@ -5,7 +5,7 @@ namespace SimpleJwtLoginTests\Unit\Modules\Settings;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 
 class AuthenticationSettingsTest extends TestCase
 {
@@ -117,6 +117,7 @@ class AuthenticationSettingsTest extends TestCase
             ->withPost(
                 [
                     'allow_authentication' => 1,
+                    'allow_refresh_token' => 1,
                     'jwt_auth_ttl' => 120,
                     'jwt_auth_refresh_ttl' => -1,
                     'jwt_payload' => [
@@ -127,5 +128,138 @@ class AuthenticationSettingsTest extends TestCase
             )
             ->withWordPressData($this->wordPressData);
         $authSettings->validateSettings();
+    }
+
+    public function testValidationRefreshTokenKeyRequiredWhenEnabled()
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Refresh Token Secret Key is required.');
+        $authSettings = (new AuthenticationSettings())
+            ->withSettings([])
+            ->withPost(
+                [
+                    'allow_authentication' => 1,
+                    'allow_refresh_token' => 1,
+                    'jwt_auth_ttl' => 120,
+                    'jwt_auth_refresh_ttl' => 20160,
+                    'refresh_token_key' => '',
+                    'jwt_payload' => [
+                        'exp',
+                        'id'
+                    ]
+                ]
+            )
+            ->withWordPressData($this->wordPressData);
+        $authSettings->validateSettings();
+    }
+
+    public function testValidationRefreshTokenKeyWhitespaceOnlyWhenEnabled()
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Refresh Token Secret Key is required.');
+        $authSettings = (new AuthenticationSettings())
+            ->withSettings([])
+            ->withPost(
+                [
+                    'allow_authentication' => 1,
+                    'allow_refresh_token' => 1,
+                    'jwt_auth_ttl' => 120,
+                    'jwt_auth_refresh_ttl' => 20160,
+                    'refresh_token_key' => '   ',
+                    'jwt_payload' => [
+                        'exp',
+                        'id'
+                    ]
+                ]
+            )
+            ->withWordPressData($this->wordPressData);
+        $authSettings->validateSettings();
+    }
+
+    public function testValidationRefreshTokenKeyNotRequiredWhenDisabled()
+    {
+        $authSettings = (new AuthenticationSettings())
+            ->withSettings([])
+            ->withPost(
+                [
+                    'allow_authentication' => 1,
+                    'allow_refresh_token' => 0,
+                    'jwt_auth_ttl' => 120,
+                    'jwt_payload' => [
+                        'exp',
+                        'id'
+                    ]
+                ]
+            )
+            ->withWordPressData($this->wordPressData);
+        $authSettings->initSettingsFromPost();
+        $authSettings->validateSettings();
+
+        $this->assertFalse($authSettings->isRefreshTokenEnabled());
+    }
+
+    public function testIsRefreshTokenEnabledFromSettings()
+    {
+        $authSettings = (new AuthenticationSettings())
+            ->withSettings(['allow_refresh_token' => '1'])
+            ->withPost([])
+            ->withWordPressData($this->wordPressData);
+
+        $this->assertTrue($authSettings->isRefreshTokenEnabled());
+    }
+
+    public function testIsRefreshTokenDisabledByDefault()
+    {
+        $authSettings = (new AuthenticationSettings())
+            ->withSettings([])
+            ->withPost([])
+            ->withWordPressData($this->wordPressData);
+
+        $this->assertFalse($authSettings->isRefreshTokenEnabled());
+    }
+
+    public function testGetRefreshTokenKey()
+    {
+        $authSettings = (new AuthenticationSettings())
+            ->withSettings(['refresh_token_key' => 'my-secret-key'])
+            ->withPost([])
+            ->withWordPressData($this->wordPressData);
+
+        $this->assertSame('my-secret-key', $authSettings->getRefreshTokenKey());
+    }
+
+    public function testGetRefreshTokenKeyDefaultsToEmpty()
+    {
+        $authSettings = (new AuthenticationSettings())
+            ->withSettings([])
+            ->withPost([])
+            ->withWordPressData($this->wordPressData);
+
+        $this->assertSame('', $authSettings->getRefreshTokenKey());
+    }
+
+    public function testValidationPassesWithRefreshTokenEnabledAndValidKey()
+    {
+        $authSettings = (new AuthenticationSettings())
+            ->withSettings([])
+            ->withPost(
+                [
+                    'allow_authentication' => 1,
+                    'allow_refresh_token' => 1,
+                    'jwt_auth_ttl' => 120,
+                    'jwt_auth_refresh_ttl' => 20160,
+                    'refresh_token_key' => 'valid-secret-key',
+                    'jwt_payload' => [
+                        'exp',
+                        'id'
+                    ]
+                ]
+            )
+            ->withWordPressData($this->wordPressData);
+        $authSettings->initSettingsFromPost();
+        $authSettings->validateSettings();
+
+        $this->assertTrue($authSettings->isRefreshTokenEnabled());
+        $this->assertSame('valid-secret-key', $authSettings->getRefreshTokenKey());
     }
 }

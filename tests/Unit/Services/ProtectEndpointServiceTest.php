@@ -8,7 +8,7 @@ use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Modules\WordPressData;
+use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 use SimpleJWTLogin\Services\ProtectEndpointService;
 use SimpleJWTLogin\Services\RouteService;
 
@@ -23,7 +23,7 @@ class ProtectEndpointServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->wordPressData = $this->getMockBuilder(WordPressData::class)
+        $this->wordPressData = $this->getMockBuilder(WordPressRepository::class)
             ->getMock();
         $this->wordPressData->method('getSiteUrl')
             ->willReturn('http://test.com');

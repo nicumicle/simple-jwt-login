@@ -8,7 +8,7 @@ use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use WP_REST_Response;
 use Exception;
 use WP_User;
@@ -66,6 +66,27 @@ class AuthenticateService extends BaseService implements ServiceInterface
             $payload = $wordPressData->triggerFilter(SimpleJWTLoginHooks::HOOK_GENERATE_PAYLOAD, $payload, $user);
         }
 
+        return $payload;
+    }
+
+    /**
+     * @param array $payload
+     * @param WordPressDataInterface $wordPressData
+     * @param SimpleJWTLoginSettings $jwtSettings
+     * @param WP_User $user
+     *
+     * @return array
+     */
+    public static function generateRefreshTokenPayload(
+        $payload,
+        $wordPressData,
+        $jwtSettings,
+        $user
+    ) {
+        $payload[AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT] = time();
+        $payload[AuthenticationSettings::JWT_PAYLOAD_PARAM_EXP] = time() + ($jwtSettings->getAuthenticationSettings()->getAuthJwtRefreshTtl() * 60);
+        $payload[AuthenticationSettings::JWT_PAYLOAD_PARAM_ID] = $wordPressData->getUserProperty($user, 'ID');
+        
         return $payload;
     }
 
@@ -184,15 +205,30 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
         }
 
+        $jwt = JWT::encode(
+            $payload,
+            JwtKeyFactory::getFactory($this->jwtSettings)->getPrivateKey(),
+            $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm()
+        );
+
+        $responseData = ['jwt' => $jwt];
+
+        if ($this->jwtSettings->getAuthenticationSettings()->isRefreshTokenEnabled()) {
+            $refreshToken = $this->generateRefreshToken();
+            $tokenExpiresAt = time() + ($this->jwtSettings->getAuthenticationSettings()->getAuthJwtRefreshTtl() * 60);
+
+            $this->tokenRepository->insert(
+                $this->wordPressData->getUserProperty($user, 'ID'),
+                $this->encryptRefreshToken($refreshToken),
+                $tokenExpiresAt
+            );
+
+            $responseData['refresh_token'] = $refreshToken;
+        }
+
         $response = [
             'success' => true,
-            'data' => [
-                'jwt' => JWT::encode(
-                    $payload,
-                    JwtKeyFactory::getFactory($this->jwtSettings)->getPrivateKey(),
-                    $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm()
-                )
-            ]
+            'data'    => $responseData,
         ];
         if ($this->jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::HOOK_RESPONSE_AUTH_USER)) {
             $response = $this->wordPressData->triggerFilter(
@@ -203,6 +239,31 @@ class AuthenticateService extends BaseService implements ServiceInterface
         }
 
         return $this->wordPressData->createResponse($response);
+    }
+
+    /**
+     * Generate a cryptographically secure random refresh token
+     * @return string
+     */
+    protected function generateRefreshToken()
+    {
+        return bin2hex(random_bytes(32));
+    }
+
+    /**
+     * Encrypt refresh token using HMAC-SHA256 with the configured key
+     * Falls back to JWT decryption key for backward compatibility
+     * @param string $refreshToken
+     * @return string
+     */
+    protected function encryptRefreshToken($refreshToken)
+    {
+        $key = $this->jwtSettings->getAuthenticationSettings()->getRefreshTokenKey();
+        if (empty($key)) {
+            $key = $this->jwtSettings->getGeneralSettings()->getDecryptionKey();
+        }
+
+        return hash_hmac('sha256', $refreshToken, $key);
     }
 
     /**

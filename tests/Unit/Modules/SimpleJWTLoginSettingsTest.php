@@ -14,7 +14,7 @@ use SimpleJWTLogin\Modules\Settings\HooksSettings;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\Settings\RegisterSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 
 class SimpleJWTLoginSettingsTest extends TestCase
 {
@@ -196,14 +196,44 @@ class SimpleJWTLoginSettingsTest extends TestCase
         $simpleJWTSettings = new SimpleJWTLoginSettings($wordPressDataMock);
         $result = $simpleJWTSettings->watchForUpdates(
             [
-                '_wpnonce' => '123',
-                'test'     => '123',
-                'route_namespace' => 'test',
-                'request_jwt_url' => true,
+                '_wpnonce'         => '123',
+                'test'             => '123',
+                'route_namespace'  => 'test',
+                'request_jwt_url'  => true,
                 'new_user_profile' => 'subscriber',
             ]
         );
         $this->assertTrue($result);
+    }
+
+    public function testWatchForUpdatesFailsWhenRefreshTokenKeyIsMissingAndRefreshEnabled(): void
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Refresh Token Secret Key is required.');
+
+        $wordPressDataMock = $this->getMockBuilder(WordPressDataInterface::class)
+            ->getMock();
+        $wordPressDataMock->method('checkNonce')
+            ->willReturn(true);
+        $wordPressDataMock->method('roleExists')
+            ->willReturn(true);
+        $wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(false);
+        $simpleJWTSettings = new SimpleJWTLoginSettings($wordPressDataMock);
+        $simpleJWTSettings->watchForUpdates(
+            [
+                '_wpnonce'              => '123',
+                'route_namespace'       => 'test',
+                'request_jwt_url'       => true,
+                'new_user_profile'      => 'subscriber',
+                'allow_authentication'  => 1,
+                'jwt_payload'           => ['exp', 'id'],
+                'jwt_auth_ttl'          => 60,
+                'allow_refresh_token'   => 1,
+                'jwt_auth_refresh_ttl'  => 20160,
+                'refresh_token_key'     => '',
+            ]
+        );
     }
 
     /**

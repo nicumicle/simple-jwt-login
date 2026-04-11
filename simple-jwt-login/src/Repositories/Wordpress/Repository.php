@@ -1,11 +1,12 @@
 <?php
-namespace SimpleJWTLogin\Modules;
+
+namespace SimpleJWTLogin\Repositories\Wordpress;
 
 use Exception;
 use WP_REST_Response;
 use WP_User;
 
-interface WordPressDataInterface
+interface Repository
 {
     /**
      * @param int $userID
@@ -27,6 +28,7 @@ interface WordPressDataInterface
      * @return mixed
      */
     public function getUserIdFromUser($user);
+
     /**
      * @param \WP_User $user
      */
@@ -178,7 +180,7 @@ interface WordPressDataInterface
     public function addUserMeta($userId, $metaKey, $value);
 
     /**
-     * @param WP_User$user
+     * @param WP_User $user
      *
      * @return mixed
      */

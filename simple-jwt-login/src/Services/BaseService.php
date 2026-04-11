@@ -8,9 +8,10 @@ use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\AuthCodeBuilder;
+use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepositoryInterface;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\Applications\Google;
 use WP_User;
 
@@ -57,6 +58,11 @@ abstract class BaseService
      * @var ServerHelper
      */
     protected $serverHelper;
+
+    /**
+     * @var RefreshTokenRepositoryInterface
+     */
+    protected $tokenRepository;
 
     /**
      * @param string $requestMethod
@@ -124,6 +130,17 @@ abstract class BaseService
     public function withServerHelper(ServerHelper $serverHelper)
     {
         $this->serverHelper = $serverHelper;
+
+        return $this;
+    }
+
+    /**
+     * @param RefreshTokenRepositoryInterface $repository
+     * @return $this
+     */
+    public function withRefreshTokenRepository(RefreshTokenRepositoryInterface $repository)
+    {
+        $this->tokenRepository = $repository;
 
         return $this;
     }

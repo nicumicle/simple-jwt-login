@@ -37,6 +37,9 @@ class SuccessTest extends TestBase
             // Autologin: We need this for refresh token
             "jwt_login_by" => 0,
             "jwt_login_by_parameter" => "email",
+            // Refresh token
+            "allow_refresh_token" => 1,
+            "refresh_token_key" => "test_refresh_secret_key",
         ]);
     }
 
@@ -186,10 +189,13 @@ class SuccessTest extends TestBase
         );
         $responseArray = json_decode($responseContents, true);
         $jwt = $responseArray['data']['jwt'];
+        $refreshToken = $responseArray['data']['refresh_token'];
+
+        $this->assertArrayHasKey('refresh_token', $responseArray['data'], "Refresh token should be present in auth response");
 
         $refreshResponse = $this->client->post(self::API_URL . "?rest_route=/simple-jwt-login/v1/auth/refresh", [
             'body' => json_encode([
-                'JWT' => $jwt
+                'refresh_token' => $refreshToken
             ]),
         ]);
 
@@ -199,6 +205,7 @@ class SuccessTest extends TestBase
         $this->assertTrue($refreshResponseArray['success']);
         $this->assertArrayHasKey('data', $refreshResponseArray);
         $this->assertArrayHasKey('jwt', $refreshResponseArray['data']);
+        $this->assertArrayHasKey('refresh_token', $refreshResponseArray['data'], "New refresh token should be present in refresh response");
 
         // Cleanup
         list($statusCode, $response) = $this->deleteUser($jwt);

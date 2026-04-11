@@ -210,6 +210,51 @@ jQuery(document).ready(
             document.getElementById("decryption_progress").value = simple_jwt_login_progress_percent;
         }
 
+        function calculate_strength_refreshTokenKey()
+        {
+            var refreshTokenKey = jQuery('#refresh_token_key').val();
+
+            if (refreshTokenKey.length === 0) {
+                document.getElementById("refresh_token_progress_label").innerHTML = "0%";
+                document.getElementById("refresh_token_progress").value = "0";
+                return;
+            }
+            // Check progress
+            var progress = [/[$@$!%*#?&]/, /[A-Z]/, /[0-9]/, /[a-z]/]
+                .reduce((memo, test) => memo + test.test(refreshTokenKey), 0);
+
+            // Length must be at least 8 chars
+            if (progress > 2 && refreshTokenKey.length > 7) {
+                progress++;
+            }
+
+            var progressPercent = "";
+            switch (progress) {
+                case 0:
+                case 1:
+                case 2:
+                    progressPercent = "25";
+                    break;
+                case 3:
+                    progressPercent = "50";
+                    break;
+                case 4:
+                    progressPercent = "75";
+                    break;
+                case 5:
+                    progressPercent = "100";
+                    break;
+            }
+
+            document.getElementById("refresh_token_progress_label").innerHTML = progressPercent + '%';
+            document.getElementById("refresh_token_progress").value = progressPercent;
+        }
+
+        // Bind refresh token key strength calculation
+        jQuery('#simple-jwt-login #refresh_token_key').on('keyup', function () {
+            calculate_strength_refreshTokenKey();
+        });
+
         simple_jwt_bind_decryption_key();
         simple_jwt_bind_reset_password();
         simple_jwt_bind_protected_endpoints();
@@ -255,6 +300,37 @@ function showDecryptionKey()
 
     jQuery('#decryption_key').attr('type', elementType);
 
+}
+
+function showRefreshTokenKey()
+{
+    var elementType = 'text';
+    if (jQuery('#refresh_token_key').attr('type') === 'text') {
+        jQuery('#refresh_token_key_container .toggle-image').removeClass('toggle_visible');
+        elementType = 'password';
+    } else {
+        jQuery('#refresh_token_key_container .toggle-image').addClass('toggle_visible');
+    }
+
+    jQuery('#refresh_token_key').attr('type', elementType);
+}
+
+function generateRefreshTokenKey()
+{
+    var array = new Uint8Array(32);
+    window.crypto.getRandomValues(array);
+    var hex = Array.from(array, function (byte) {
+        return ('0' + byte.toString(16)).slice(-2);
+    }).join('');
+    jQuery('#refresh_token_key').val(hex).attr('type', 'text').trigger('keyup');
+    jQuery('#refresh_token_key_container .toggle-image').addClass('toggle_visible');
+
+    var $msg = jQuery('#refresh_token_generated_msg');
+    $msg.text('New key generated!').addClass('sjl-gen-generated-msg--visible');
+    clearTimeout(window._sjlGenMsgTimer);
+    window._sjlGenMsgTimer = setTimeout(function () {
+        $msg.removeClass('sjl-gen-generated-msg--visible');
+    }, 2500);
 }
 
 function simple_jwt_bind_reset_password()

@@ -74,7 +74,7 @@ class ResetPasswordSettings extends BaseSettings implements SettingsInterface
      */
     public function validateSettings()
     {
-        if (!$this->isResetPasswordEnabled()){
+        if (!$this->isResetPasswordEnabled()) {
             return;
         }
         switch ($this->getFlowType()) {

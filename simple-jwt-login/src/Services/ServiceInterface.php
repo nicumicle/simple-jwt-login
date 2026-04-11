@@ -5,6 +5,7 @@ namespace SimpleJWTLogin\Services;
 use Exception;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepositoryInterface;
 
 interface ServiceInterface
 {
@@ -43,6 +44,12 @@ interface ServiceInterface
      * @return $this
      */
     public function withServerHelper(ServerHelper $serverHelper);
+
+    /**
+     * @param RefreshTokenRepositoryInterface $repository
+     * @return $this
+     */
+    public function withRefreshTokenRepository(RefreshTokenRepositoryInterface $repository);
 
     /**
      * @return mixed

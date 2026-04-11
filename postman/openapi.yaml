@@ -406,6 +406,10 @@ paths:
                         type: string
                         description: JWT
                         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                      refresh_token:
+                        type: string
+                        description: Refresh token for obtaining new JWTs
+                        example: "a1b2c3d4e5f678901234567890123456789012345678901234567890123456789012"
   /auth/refresh:
     post:
       tags:
@@ -450,6 +454,10 @@ paths:
                         type: string
                         description: New refreshed JWT
                         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                      refresh_token:
+                        type: string
+                        description: New refresh token
+                        example: "f6e7g8h9i0j123456789012345678901234567890123456789012345678901234567"
   /auth/validate:
     get:
       tags:
@@ -728,16 +736,16 @@ components:
     authRefreshBody:
       type: object
       properties:
-        JWT:
+        refresh_token:
           type: string
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
-          description: Expired JWT.
+          example: "a1b2c3d4e5f678901234567890123456789012345678901234567890123456789012"
+          description: Refresh token obtained from auth endpoint.
         AUTH_CODE:
           type: string
           example: "MY_SUPER_SECRET_AUTH_CODE"
           description: Required when "Authentication Requires Auth Code" is enabled
       required:
-        - JWT
+        - refresh_token
     authRevokeBody:
       type: object
       properties:

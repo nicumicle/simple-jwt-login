@@ -54,6 +54,6 @@ class GoogleProviderSettings extends AbstractProviderSettings
     /** @return bool */
     public function isExchangeIdTokenEnabled()
     {
-        return $this->is('enable_exchange_id_token');
+        return $this->isFieldEnabled('enable_exchange_id_token');
     }
 }

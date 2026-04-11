@@ -114,6 +114,7 @@ abstract class AbstractOAuthApplication extends BaseApplication
      * @param string $code
      * @param string $redirectUri
      * @return array{status_code: int, response: array}
+     * @SuppressWarnings(StaticAccess)
      */
     public function exchangeCode($code, $redirectUri)
     {
@@ -170,7 +171,7 @@ abstract class AbstractOAuthApplication extends BaseApplication
             $email = $this->getEmailFromTokenResponse($result['response']);
             $user  = $this->wordPressData->getUserDetailsByEmail($email);
 
-            if ($user === null) {
+            if (empty($user)) {
                 if ($this->isCreateUserEnabled()) {
                     $user = $this->createUser($email);
                     $this->wordPressData->loginUser($user);
@@ -194,7 +195,6 @@ abstract class AbstractOAuthApplication extends BaseApplication
     /**
      * Validate a provider token, look up the matching WP user, and return a WP JWT.
      *
-     * @param string $token  Provider-issued token (id_token, access_token, …).
      * @param string $email  Email extracted from the token (or empty to derive it internally).
      * @return array
      * @throws Exception

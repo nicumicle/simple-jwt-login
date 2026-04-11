@@ -17,6 +17,8 @@ use SimpleJWTLogin\Modules\Settings\ResetPasswordSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsFactory;
 use SimpleJWTLogin\Modules\Settings\SettingsInterface;
 use SimpleJWTLogin\Modules\Settings\ApplicationsSettings;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
+use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -197,7 +199,7 @@ class SimpleJWTLoginSettings
             return false;
         }
         $result = $this->wordPressData
-            ->checkNonce($post['_wpnonce'], WordPressData::NONCE_NAME);
+            ->checkNonce($post['_wpnonce'], WordPressRepository::NONCE_NAME);
         if ($result === false) {
             throw new Exception(
                 'Something is wrong. We can not save the settings.',

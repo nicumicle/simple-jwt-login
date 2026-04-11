@@ -1,7 +1,7 @@
 <?php
 
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Modules\WordPressData;
+use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 
 ## Force Login
 add_filter(
@@ -13,7 +13,7 @@ add_filter(
             . "://" . sanitize_text_field(wp_unslash($_SERVER['HTTP_HOST']))
             . sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']));
 
-        $jwtSettings = new SimpleJWTLoginSettings(new WordPressData());
+        $jwtSettings = new SimpleJWTLoginSettings(new WordPressRepository());
 
         $simpleJwtLoginUrl = $jwtSettings->getWordPressData()->getSiteUrl()
                . '/?rest_route=/'

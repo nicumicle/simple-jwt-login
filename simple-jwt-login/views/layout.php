@@ -2,14 +2,14 @@
 
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Modules\WordPressData;
+use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 
 if (! defined('ABSPATH')) {
     /** @phpstan-ignore-next-line  */
     exit;
 } // Exit if accessed directly
 
-$jwtSettings   = new SimpleJWTLoginSettings(new WordPressData());
+$jwtSettings   = new SimpleJWTLoginSettings(new WordPressRepository());
 $saved         = false;
 $message       = __('Settings successfully saved', 'simple-jwt-login');
 $showStatusBar = false;
@@ -120,7 +120,7 @@ $settingsPages = [
     <?php
     $jwtSettings
         ->getWordPressData()
-        ->insertNonce(WordPressData::NONCE_NAME);
+        ->insertNonce(WordPressRepository::NONCE_NAME);
     ?>
     <div id="simple-jwt-login" class="wrapper">
 		<?php

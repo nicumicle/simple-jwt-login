@@ -73,6 +73,20 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             'jwt_auth_iss',
             BaseSettings::SETTINGS_TYPE_STRING
         );
+        $this->assignSettingsPropertyFromPost(
+            null,
+            'allow_refresh_token',
+            null,
+            'allow_refresh_token',
+            BaseSettings::SETTINGS_TYPE_STRING
+        );
+        $this->assignSettingsPropertyFromPost(
+            null,
+            'refresh_token_key',
+            null,
+            'refresh_token_key',
+            BaseSettings::SETTINGS_TYPE_STRING
+        );
     }
 
     /**
@@ -115,19 +129,36 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             );
         }
 
-        if (!isset($this->post['jwt_auth_refresh_ttl'])
-            || empty((int)$this->post['jwt_auth_refresh_ttl'])
-            || (int)$this->post['jwt_auth_refresh_ttl'] < 0) {
-            throw new Exception(
-                __(
-                    'Authentication JWT Refresh time to live should be greater than zero.',
-                    'simple-jwt-login'
-                ),
-                $this->settingsErrors->generateCode(
-                    SettingsErrors::PREFIX_AUTHENTICATION,
-                    SettingsErrors::ERR_AUTHENTICATION_REFRESH_TTL_ZERO
-                )
-            );
+        if (isset($this->post['allow_refresh_token'])
+            && (int)$this->post['allow_refresh_token'] === 1
+        ) {
+            if (!isset($this->post['jwt_auth_refresh_ttl'])
+                || empty((int)$this->post['jwt_auth_refresh_ttl'])
+                || (int)$this->post['jwt_auth_refresh_ttl'] < 0
+            ) {
+                throw new Exception(
+                    __(
+                        'Authentication JWT Refresh time to live should be greater than zero.',
+                        'simple-jwt-login'
+                    ),
+                    $this->settingsErrors->generateCode(
+                        SettingsErrors::PREFIX_AUTHENTICATION,
+                        SettingsErrors::ERR_AUTHENTICATION_REFRESH_TTL_ZERO
+                    )
+                );
+            }
+
+            if (!isset($this->post['refresh_token_key'])
+                || empty(trim($this->post['refresh_token_key']))
+            ) {
+                throw new Exception(
+                    __('Refresh Token Secret Key is required.', 'simple-jwt-login'),
+                    $this->settingsErrors->generateCode(
+                        SettingsErrors::PREFIX_AUTHENTICATION,
+                        SettingsErrors::ERR_AUTHENTICATION_REFRESH_TOKEN_KEY_REQUIRED
+                    )
+                );
+            }
         }
     }
 
@@ -224,5 +255,24 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
         return isset($this->settings['auth_password_base64'])
             ? (bool) $this->settings['auth_password_base64']
             : false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRefreshTokenEnabled()
+    {
+        return isset($this->settings['allow_refresh_token'])
+            && !empty($this->settings['allow_refresh_token']);
+    }
+
+    /**
+     * @return string
+     */
+    public function getRefreshTokenKey()
+    {
+        return isset($this->settings['refresh_token_key'])
+            ? $this->settings['refresh_token_key']
+            : '';
     }
 }

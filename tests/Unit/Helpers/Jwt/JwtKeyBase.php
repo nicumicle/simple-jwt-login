@@ -4,7 +4,7 @@ namespace SimpleJwtLoginTests\Unit\Helpers\Jwt;
 
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Modules\WordPressData;
+use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 
 class JwtKeyBase extends TestCase
 {
@@ -14,7 +14,7 @@ class JwtKeyBase extends TestCase
      */
     public function getSettingsMock($settingsArray)
     {
-        $wordPressDataMock = $this->getMockBuilder(WordPressData::class)
+        $wordPressDataMock = $this->getMockBuilder(WordPressRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
         $wordPressDataMock->method('getOptionFromDatabase')

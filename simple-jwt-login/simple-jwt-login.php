@@ -13,12 +13,14 @@
 */
 
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Modules\WordPressData;
+use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 
 if (! defined('ABSPATH')) {
     /** @phpstan-ignore-next-line  */
     exit;
 } // Exit if accessed directly
+
+define('SIMPLE_JWT_LOGIN_DB_VERSION', '1.0');
 
 include_once 'autoload.php';
 
@@ -145,12 +147,16 @@ function simple_jwt_login_plugin_show_main_page()
 register_uninstall_hook(__FILE__, 'simple_jwt_plugin_uninstall');
 
 /**
- * Delete options on plugin uninstall
+ * Delete options and custom table on plugin uninstall
  * @since 1.3
  */
 function simple_jwt_plugin_uninstall()
 {
     delete_option(SimpleJWTLoginSettings::OPTIONS_KEY);
+    delete_option('simple_jwt_login_db_version');
+    global $wpdb;
+    //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.NoCaching
+    $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}simple_jwt_login_refresh_tokens");
 }
 
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'simple_jwt_login_add_plugin_action_links');
@@ -196,11 +202,18 @@ add_action('login_message', 'simple_jwt_login_login_message');
  */
 function simple_jwt_login_login_message()
 {
-    $wordpressData = new WordPressData();
+    $wordpressData = new WordPressRepository();
     $jwtSettings   = new SimpleJWTLoginSettings($wordpressData);
     $hasError = false;
     // GOOGLE
-    if ($jwtSettings->getApplicationsSettings()->isGoogleEnabled() && $jwtSettings->getApplicationsSettings()->isOauthEnabled()) {
+    if ($jwtSettings->getApplicationsSettings()->google()->isEnabled() && $jwtSettings->getApplicationsSettings()->google()->isOauthEnabled()) {
+        if (isset($_REQUEST['error'])) {
+            $hasError = true;
+        }
+    }
+    // AUTH0
+    if ($jwtSettings->getApplicationsSettings()->auth0()->isEnabled()
+        && $jwtSettings->getApplicationsSettings()->auth0()->isOauthEnabled()) {
         if (isset($_REQUEST['error'])) {
             $hasError = true;
         }
@@ -223,14 +236,19 @@ add_action('login_footer', 'simple_jwt_login_login_footer');
  */
 function simple_jwt_login_login_footer()
 {
-    $wordpressData = new WordPressData();
+    $wordpressData = new WordPressRepository();
     $jwtSettings = new SimpleJWTLoginSettings($wordpressData);
     $pluginDirUrl = plugin_dir_url(__FILE__);
     switch (true) {
         // GOOGLE
-        case $jwtSettings->getApplicationsSettings()->isGoogleEnabled()
-            && $jwtSettings->getApplicationsSettings()->isOauthEnabled():
+        case $jwtSettings->getApplicationsSettings()->google()->isEnabled()
+            && $jwtSettings->getApplicationsSettings()->google()->isOauthEnabled():
             include_once "views/applications/google-form.php";
+            break;
+        // AUTH0
+        case $jwtSettings->getApplicationsSettings()->auth0()->isEnabled()
+            && $jwtSettings->getApplicationsSettings()->auth0()->isOauthEnabled():
+            include_once "views/applications/auth0-form.php";
             break;
     }
 }
@@ -266,7 +284,7 @@ function simple_jwt_login_sanitize_css_value($value)
  */
 function simple_jwt_login_oauth_shortcode($parameter = null)
 {
-    $wordpressData = new WordPressData();
+    $wordpressData = new WordPressRepository();
     $jwtSettings   = new SimpleJWTLoginSettings($wordpressData);
     $pluginDirUrl = plugin_dir_url(__FILE__);
 
@@ -313,11 +331,20 @@ function simple_jwt_login_oauth_shortcode($parameter = null)
     $haveProvider = false;
     switch ($parameter['provider']) {
         case 'google':
-            if ($jwtSettings->getApplicationsSettings()->isGoogleEnabled()
-                && $jwtSettings->getApplicationsSettings()->isOauthEnabled()) {
+            if ($jwtSettings->getApplicationsSettings()->google()->isEnabled()
+                && $jwtSettings->getApplicationsSettings()->google()->isOauthEnabled()) {
                 $haveProvider = true;
                 ob_start();
                 include_once "views/applications/google-form.php";
+                $html .= ob_get_clean();
+            }
+            break;
+        case 'auth0':
+            if ($jwtSettings->getApplicationsSettings()->auth0()->isEnabled()
+                && $jwtSettings->getApplicationsSettings()->auth0()->isOauthEnabled()) {
+                $haveProvider = true;
+                ob_start();
+                include_once "views/applications/auth0-form.php";
                 $html .= ob_get_clean();
             }
             break;
@@ -328,6 +355,95 @@ function simple_jwt_login_oauth_shortcode($parameter = null)
     }
 
     return "<span class='simple-jwt-login-oauth-code'>" . $html . "</span>";
+}
+
+// Plugin activation hook
+register_activation_hook(__FILE__, 'simple_jwt_login_activate_plugin');
+
+/**
+ * Plugin activation: create table, generate key if needed, schedule cleanup cron
+ */
+function simple_jwt_login_activate_plugin()
+{
+    simple_jwt_login_create_refresh_tokens_table();
+    simple_jwt_login_ensure_refresh_token_key();
+    update_option('simple_jwt_login_db_version', SIMPLE_JWT_LOGIN_DB_VERSION);
+    if (!wp_next_scheduled('simple_jwt_login_cleanup_refresh_tokens')) {
+        wp_schedule_event(time(), 'daily', 'simple_jwt_login_cleanup_refresh_tokens');
+    }
+}
+
+// Plugin deactivation: clear scheduled cron
+register_deactivation_hook(__FILE__, 'simple_jwt_login_deactivate_plugin');
+
+function simple_jwt_login_deactivate_plugin()
+{
+    wp_clear_scheduled_hook('simple_jwt_login_cleanup_refresh_tokens');
+}
+
+// Backward-compatible migration for existing installs upgrading from older versions
+add_action('plugins_loaded', 'simple_jwt_login_check_db_version');
+
+function simple_jwt_login_check_db_version()
+{
+    if (get_option('simple_jwt_login_db_version') !== SIMPLE_JWT_LOGIN_DB_VERSION) {
+        simple_jwt_login_create_refresh_tokens_table();
+        simple_jwt_login_ensure_refresh_token_key();
+        update_option('simple_jwt_login_db_version', SIMPLE_JWT_LOGIN_DB_VERSION);
+    }
+}
+
+// Daily cron: remove expired refresh tokens
+add_action('simple_jwt_login_cleanup_refresh_tokens', 'simple_jwt_login_run_cleanup_refresh_tokens');
+
+function simple_jwt_login_run_cleanup_refresh_tokens()
+{
+    $wordPressData = new WordPressRepository();
+    $wordPressData->cleanupExpiredRefreshTokens();
+}
+
+/**
+ * Auto-generate a refresh token key if one is not already configured.
+ * This ensures existing installations are not silently falling back
+ * to the JWT decryption key for refresh token encryption.
+ */
+function simple_jwt_login_ensure_refresh_token_key()
+{
+    $raw = get_option(SimpleJWTLoginSettings::OPTIONS_KEY);
+    $settings = is_string($raw) ? json_decode($raw, true) : [];
+    if (!is_array($settings)) {
+        $settings = [];
+    }
+    if (empty($settings['refresh_token_key'])) {
+        $settings['refresh_token_key'] = bin2hex(random_bytes(32));
+        update_option(SimpleJWTLoginSettings::OPTIONS_KEY, json_encode($settings));
+    }
+}
+
+/**
+ * Create (or update) the refresh tokens table via dbDelta
+ */
+function simple_jwt_login_create_refresh_tokens_table()
+{
+    global $wpdb;
+    
+    $tableName = $wpdb->prefix . 'simple_jwt_login_refresh_tokens';
+    $charsetCollate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE $tableName (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        user_id bigint(20) NOT NULL,
+        refresh_token varchar(255) NOT NULL,
+        expires_at datetime NOT NULL,
+        created_at datetime DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (id),
+        UNIQUE KEY refresh_token (refresh_token),
+        KEY user_id (user_id),
+        KEY expires_at (expires_at)
+    ) $charsetCollate;";
+    
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta($sql);
 }
 
 //REST API ROUTES

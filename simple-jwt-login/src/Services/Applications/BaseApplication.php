@@ -3,7 +3,7 @@
 namespace SimpleJWTLogin\Services\Applications;
 
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 
 class BaseApplication
 {

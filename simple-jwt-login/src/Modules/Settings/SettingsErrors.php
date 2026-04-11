@@ -23,6 +23,7 @@ class SettingsErrors extends \Exception
     const ERR_AUTHENTICATION_EMPTY_PAYLOAD = 1;
     const ERR_AUTHENTICATION_TTL = 2;
     const ERR_AUTHENTICATION_REFRESH_TTL_ZERO = 3;
+    const ERR_AUTHENTICATION_REFRESH_TOKEN_KEY_REQUIRED = 4;
 
     #general
     const ERR_GENERAL_EMPTY_NAMESPACE = 1;
@@ -32,6 +33,7 @@ class SettingsErrors extends \Exception
     const ERR_GENERAL_DECRYPTION_KEY_REQUIRED = 5;
     const ERR_GENERAL_GET_JWT_FROM = 7;
     const ERR_GENERAL_REQUEST_KEYS = 8;
+    const ERR_GENERAL_REFRESH_TOKEN_KEY_REQUIRED = 9;
 
     #auth-codes
     const ERR_EMPTY_AUTH_CODES = 1;

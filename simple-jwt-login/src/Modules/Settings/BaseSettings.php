@@ -2,7 +2,7 @@
 
 namespace SimpleJWTLogin\Modules\Settings;
 
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 
 abstract class BaseSettings
 {

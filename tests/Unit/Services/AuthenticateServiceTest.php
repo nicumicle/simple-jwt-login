@@ -5,10 +5,11 @@ use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Helpers\ServerHelper;
+use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepositoryInterface;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\AuthenticateService;
 
 class AuthenticateServiceTest extends TestCase
@@ -18,11 +19,20 @@ class AuthenticateServiceTest extends TestCase
      */
     private $wordPressDataMock;
 
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|RefreshTokenRepositoryInterface
+     */
+    private $refreshTokenRepoMock;
+
     public function setUp(): void
     {
         parent::setUp();
         $this->wordPressDataMock = $this
             ->getMockBuilder(WordPressDataInterface::class)
+            ->getMock();
+
+        $this->refreshTokenRepoMock = $this
+            ->getMockBuilder(RefreshTokenRepositoryInterface::class)
             ->getMock();
     }
 
@@ -44,7 +54,8 @@ class AuthenticateServiceTest extends TestCase
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
         $authService->makeAction();
     }
 
@@ -112,7 +123,8 @@ class AuthenticateServiceTest extends TestCase
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['HTTP_CLIENT_IP' => '127.0.0.2']))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
         $authService->makeAction();
     }
 
@@ -133,7 +145,8 @@ class AuthenticateServiceTest extends TestCase
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
         $authService->makeAction();
     }
 
@@ -154,7 +167,8 @@ class AuthenticateServiceTest extends TestCase
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
         $authService->makeAction();
     }
 
@@ -184,7 +198,8 @@ class AuthenticateServiceTest extends TestCase
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
         $authService->makeAction();
     }
 
@@ -214,7 +229,8 @@ class AuthenticateServiceTest extends TestCase
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
         $authService->makeAction();
     }
 
@@ -237,7 +253,8 @@ class AuthenticateServiceTest extends TestCase
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
         $authService->makeAction();
     }
 
@@ -279,6 +296,8 @@ class AuthenticateServiceTest extends TestCase
         $this->wordPressDataMock
             ->method('createResponse')
             ->willReturn(true);
+        $this->refreshTokenRepoMock->method('insert')->willReturn(true);
+
         $authService = (new AuthenticateService())
             ->withRequest(
                 [
@@ -289,7 +308,8 @@ class AuthenticateServiceTest extends TestCase
             )
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
         $result = $authService->makeAction();
         $this->assertTrue($result);
     }
@@ -332,6 +352,8 @@ class AuthenticateServiceTest extends TestCase
         $this->wordPressDataMock
             ->method('createResponse')
             ->willReturn(true);
+        $this->refreshTokenRepoMock->method('insert')->willReturn(true);
+
         $authService = (new AuthenticateService())
             ->withRequest(
                 [
@@ -342,8 +364,77 @@ class AuthenticateServiceTest extends TestCase
             )
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
         $result = $authService->makeAction();
         $this->assertTrue($result);
+    }
+
+    public function testAuthResponseContainsRefreshToken()
+    {
+        $capturedResponse = null;
+
+        $this->wordPressDataMock
+            ->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication'   => 1,
+                'allow_refresh_token'    => 1,
+                'decryption_key'         => 'test-secret',
+                'jwt_auth_refresh_ttl'   => 60,
+            ]));
+        $this->wordPressDataMock->method('getUserByUserLogin')->willReturn('user');
+        $this->wordPressDataMock->method('getUserPassword')->willReturn('pass');
+        $this->wordPressDataMock->method('checkPassword')->willReturn(true);
+        $this->wordPressDataMock->method('createResponse')
+            ->willReturnCallback(function ($response) use (&$capturedResponse) {
+                $capturedResponse = $response;
+                return true;
+            });
+        $this->refreshTokenRepoMock->method('insert')->willReturn(true);
+
+        $authService = (new AuthenticateService())
+            ->withRequest(['username' => 'test', 'password' => 'pass'])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+        $authService->makeAction();
+
+        $this->assertNotNull($capturedResponse);
+        $this->assertArrayHasKey('data', $capturedResponse);
+        $this->assertArrayHasKey('refresh_token', $capturedResponse['data']);
+        $this->assertNotEmpty($capturedResponse['data']['refresh_token']);
+    }
+
+    public function testInsertRefreshTokenIsCalledOnSuccessfulAuth()
+    {
+        $this->wordPressDataMock
+            ->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication' => 1,
+                'allow_refresh_token'  => 1,
+                'decryption_key'       => 'test-secret',
+                'jwt_auth_refresh_ttl' => 60,
+            ]));
+        $this->wordPressDataMock->method('getUserByUserLogin')->willReturn('user');
+        $this->wordPressDataMock->method('getUserPassword')->willReturn('pass');
+        $this->wordPressDataMock->method('checkPassword')->willReturn(true);
+        $this->wordPressDataMock->method('createResponse')->willReturn(true);
+
+        $this->refreshTokenRepoMock->expects($this->once())
+            ->method('insert')
+            ->with(
+                $this->anything(),
+                $this->isString(),
+                $this->isInt()
+            );
+
+        $authService = (new AuthenticateService())
+            ->withRequest(['username' => 'test', 'password' => 'pass'])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+        $authService->makeAction();
     }
 }

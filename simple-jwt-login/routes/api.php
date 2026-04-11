@@ -7,8 +7,9 @@ use SimpleJWTLogin\Libraries\ParseRequest;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Services\ProtectEndpointService;
 use SimpleJWTLogin\Services\RouteService;
+use SimpleJWTLogin\Repositories\RefreshToken\RefreshTokenRepository;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Modules\WordPressData;
+use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 use SimpleJWTLogin\Services\ServiceInterface;
 
 if (! defined('ABSPATH')) {
@@ -26,9 +27,11 @@ add_action('rest_api_init', function () {
     }
 
     $request = array_merge($_REQUEST, $parsedRequestVariables);
-    $wordPressData = new WordPressData();
+    $wordPressData = new WordPressRepository();
     $serverHelper = new ServerHelper($_SERVER);
     $jwtSettings = new SimpleJWTLoginSettings($wordPressData);
+    global $wpdb;
+    $refreshTokenRepository = new RefreshTokenRepository($wpdb);
     $routeService = new RouteService();
     $routeService->withSettings($jwtSettings);
     $routeService->withRequest($request);
@@ -120,11 +123,26 @@ add_action('rest_api_init', function () {
             $currentURL = str_replace(home_url(), "", $currentURL);
             $documentRoot = esc_html($_SERVER['DOCUMENT_ROOT']);
 
-            $hasAccess = $service->hasAccess($currentURL, $documentRoot);
+            try {
+                $hasAccess = $service->hasAccess($currentURL, $documentRoot);
+            } catch (Exception $exception) {
+                @header('Content-Type: application/json; charset=UTF-8');
+                wp_send_json_error(
+                    [
+                        'message'   => $exception->getMessage(),
+                        'errorCode' => $exception->getCode(),
+                        'type'      => 'simple-jwt-login-route-protect'
+                    ],
+                    StatusCodeHelper::getStatusCodeFromExeption($exception, 400)
+                );
+
+                return false;
+            }
+
             if ($hasAccess) {
                 return $endpoint;
             }
-            
+
             @header('Content-Type: application/json; charset=UTF-8');
             wp_send_json_error(
                 [
@@ -146,7 +164,7 @@ add_action('rest_api_init', function () {
             $route['name'],
             [
                 'methods'  => $route['method'],
-                'callback' => function () use ($request, $route, $jwtSettings, $serverHelper) {
+                'callback' => function () use ($request, $route, $jwtSettings, $serverHelper, $refreshTokenRepository) {
                     try {
                         if ($jwtSettings
                             ->getHooksSettings()
@@ -168,7 +186,8 @@ add_action('rest_api_init', function () {
                             ->withRequest($request)
                             ->withCookies($_COOKIE)
                             ->withServerHelper($serverHelper)
-                            ->withSettings($jwtSettings);
+                            ->withSettings($jwtSettings)
+                            ->withRefreshTokenRepository($refreshTokenRepository);
                         if ($jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
                             $service->withSession(simple_jwt_login_init_session());
                         }

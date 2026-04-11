@@ -184,17 +184,17 @@ In order to Get a new JWT, just make a POST request to */auth* route with your W
      {
          "success": true,
          "data": {
-             "jwt": "NEW_GENERATED_JWT_HERE"
+             "jwt": "GENERATED_JWT_HERE",
+             "refresh_token": "GENERATED_REFRESH_TOKEN_HERE"
          }
      }
 ``
 
 If you want to add extra parameters in the JWT payload, just send the parameter `payload` on `/auth` endpoint, and add a json with the values you want to be added in the payload.
 
-At some point, the JWT will expire.
-So, if you want to renew it without having to ask again for user and password, you will have to make a POST request to the *auth/refresh* route.
+The `/auth` endpoint returns both a `jwt` (short-lived) and a `refresh_token` (long-lived, stored in database).
 
-This will generate a response with a new JWT, similar to the one that `/auth` generates.
+To renew a JWT without having to ask again for user and password, make a POST request to the *auth/refresh* route with the `refresh_token` parameter. This will generate a response with a new JWT and a new refresh token.
 
 If you want to get some details about a JWT, and validate that JWT, you can call `/auth/validate`. If you have a valid JWT, details about the available WordPress user will be returned, and some JWT details.
 

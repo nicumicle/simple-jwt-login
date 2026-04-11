@@ -258,12 +258,23 @@
     border: 1px solid #EEE;
 }
 
+#simple-jwt-login .input-group .form-control {
+    height: 35px;
+}
+
+#simple-jwt-login .input-group-addon {
+    display: flex;
+    align-items: stretch;
+}
+
 #simple-jwt-login .auth-code-delete-container,
 #simple-jwt-login .toggle_key_button {
     width: 35px;
     background: var(--sjl-primary);
     height: 35px;
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-bottom-right-radius: 0.3em;
     border-top-right-radius: 0.3em;
     fill: #FFF;
@@ -289,10 +300,11 @@
     background-image: url("../images/eye-visible.svg");
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 25px;
-    width: 100%;
-    height: 100%;
+    background-size: 20px;
+    width: 25px;
+    height: 25px;
     display: block;
+    flex-shrink: 0;
 }
 
 #simple-jwt-login .toggle_key_button .toggle-image.toggle_visible {
@@ -819,6 +831,54 @@
 }
 #simple-jwt-login .sjl-gen-checkbox-row input[type="checkbox"] { margin: 0; }
 
+/* Generate key button + feedback */
+#simple-jwt-login .sjl-gen-key-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+#simple-jwt-login .sjl-gen-btn-generate {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    background: var(--sjl-primary);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    line-height: 1.5;
+    transition: background 0.15s ease;
+}
+
+#simple-jwt-login .sjl-gen-btn-generate:hover,
+#simple-jwt-login .sjl-gen-btn-generate:focus {
+    background: #1a2630;
+    outline: none;
+}
+
+#simple-jwt-login .sjl-gen-btn-generate .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+#simple-jwt-login .sjl-gen-generated-msg {
+    font-size: 12px;
+    color: #46b450;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+#simple-jwt-login .sjl-gen-generated-msg--visible {
+    opacity: 1;
+}
+
 /* ============================================
    Shared: Layout helpers
    ============================================ */
@@ -1099,22 +1159,18 @@
 }
 
 /* App logo variants */
-#simple-jwt-login .logo.google {
+#simple-jwt-login .logo{
     width: 40px;
     height: 40px;
     flex-shrink: 0;
-    background-image: url("../images/applications/google-60x60.png");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
 }
+#simple-jwt-login .logo.google {
+    background-image: url("../images/applications/google-60x60.png");
+}
 
 #simple-jwt-login .logo.auth0 {
-    width: 40px;
-    height: 40px;
-    flex-shrink: 0;
     background-image: url("../images/applications/auth0-60x60.png");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
 }

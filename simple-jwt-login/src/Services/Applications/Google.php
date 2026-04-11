@@ -58,7 +58,7 @@ class Google extends AbstractOAuthApplication implements ApplicationInterface
                 $idToken = $this->request['id_token'];
                 $this->validateProviderToken($idToken);
                 $decoded = JWT::extractDataFromJwt($idToken);
-                $email   = $decoded['payload']['email'] ?? '';
+                $email   = isset($decoded['payload']['email']) ? $decoded['payload']['email'] : '';
 
                 return $this->createWpJwtForEmail($email);
         }
@@ -114,7 +114,7 @@ class Google extends AbstractOAuthApplication implements ApplicationInterface
     {
         $jwt = JWT::extractDataFromJwt($tokenResponse['id_token']);
 
-        return $jwt['payload']['email'] ?? '';
+        return isset($jwt['payload']['email']) ? $jwt['payload']['email'] : '';
     }
 
     /**

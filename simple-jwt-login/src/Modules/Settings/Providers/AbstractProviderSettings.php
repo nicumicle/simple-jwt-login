@@ -5,7 +5,7 @@ namespace SimpleJWTLogin\Modules\Settings\Providers;
 use Exception;
 use SimpleJWTLogin\Modules\Settings\BaseSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 
 /**
  * Base class for every OAuth / OIDC provider settings block.
@@ -110,17 +110,18 @@ abstract class AbstractProviderSettings
      * Read the provider's POST slice and return a sanitised settings array.
      *
      * @param array $post Full POST array.
-     * @param WordPressDataInterface $wp
+     * @param WordPressDataInterface $wpData
      * @return array<string, mixed>
      */
-    public function processPost($post, WordPressDataInterface $wp)
+    public function processPost($post, WordPressDataInterface $wpData)
     {
         $group  = $this->getGroup();
         $result = [];
 
-        foreach ($this->allFields() as [$name, $type]) {
-            $raw          = $post[$group][$name] ?? null;
-            $result[$name] = $this->castValue($raw, $type, $wp);
+        foreach ($this->allFields() as $field) {
+            list($name, $type) = $field;
+            $raw               = isset($post[$group][$name]) ? $post[$group][$name] : null;
+            $result[$name]     = $this->castValue($raw, $type, $wpData);
         }
 
         return $result;
@@ -136,7 +137,7 @@ abstract class AbstractProviderSettings
     public function validate($post)
     {
         $group     = $this->getGroup();
-        $groupPost = $post[$group] ?? [];
+        $groupPost = isset($post[$group]) ? $post[$group] : [];
 
         if (empty($groupPost['enabled'])) {
             return;
@@ -174,13 +175,13 @@ abstract class AbstractProviderSettings
     /** @return string */
     public function getClientId()
     {
-        return $this->data['client_id'] ?? '';
+        return isset($this->data['client_id']) ? $this->data['client_id'] : '';
     }
 
     /** @return string */
     public function getClientSecret()
     {
-        return $this->data['client_secret'] ?? '';
+        return isset($this->data['client_secret']) ? $this->data['client_secret'] : '';
     }
 
     /** @return bool */
@@ -210,7 +211,7 @@ abstract class AbstractProviderSettings
     /** @return string */
     public function getExchangeCodeRedirectUri()
     {
-        return $this->data['redirect_uri_exchange_code'] ?? '';
+        return isset($this->data['redirect_uri_exchange_code']) ? $this->data['redirect_uri_exchange_code'] : '';
     }
 
     // =========================================================================
@@ -226,7 +227,7 @@ abstract class AbstractProviderSettings
      */
     public function get($key, $default = '')
     {
-        return (string)($this->data[$key] ?? $default);
+        return (string)(isset($this->data[$key]) ? $this->data[$key] : $default);
     }
 
     /**
@@ -235,7 +236,7 @@ abstract class AbstractProviderSettings
      * @param string $key
      * @return bool
      */
-    public function is($key)
+    public function isFieldEnabled($key)
     {
         return !empty($this->data[$key]);
     }
@@ -304,7 +305,8 @@ abstract class AbstractProviderSettings
      */
     private function checkRequiredFields($groupPost)
     {
-        foreach ($this->getRequiredFieldValidations() as [$field, $errorCode, $label]) {
+        foreach ($this->getRequiredFieldValidations() as $validation) {
+            list($field, $errorCode, $label) = $validation;
             if (empty($groupPost[$field])) {
                 throw new Exception(
                     // translators: %s = field label (e.g. "Google Client ID")
@@ -339,10 +341,10 @@ abstract class AbstractProviderSettings
     /**
      * @param mixed $value
      * @param int $type
-     * @param WordPressDataInterface $wp
+     * @param WordPressDataInterface $wpData
      * @return bool|int|string
      */
-    private function castValue($value, $type, WordPressDataInterface $wp)
+    private function castValue($value, $type, WordPressDataInterface $wpData)
     {
         if ($value === null) {
             switch ($type) {
@@ -361,9 +363,9 @@ abstract class AbstractProviderSettings
             case BaseSettings::SETTINGS_TYPE_BOL:
                 return (bool)$value;
             case BaseSettings::SETTINGS_TYPE_STRING:
-                return $wp->sanitizeTextField($value);
+                return $wpData->sanitizeTextField($value);
             default:
-                return $wp->sanitizeTextField($value);
+                return $wpData->sanitizeTextField($value);
         }
     }
 }

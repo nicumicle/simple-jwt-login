@@ -90,4 +90,6 @@ class ErrorCodes
     const ERR_AUTH0_INVALID_CODE     = 78;
     const ERR_AUTH0_INVALID_TOKEN    = 79;
     const ERR_AUTH0_USER_NOT_FOUND   = 80;
+
+    const ERR_REFRESH_TOKEN_NOT_ENABLED = 81;
 }

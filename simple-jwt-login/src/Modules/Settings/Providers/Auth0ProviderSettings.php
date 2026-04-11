@@ -62,6 +62,6 @@ class Auth0ProviderSettings extends AbstractProviderSettings
     /** @return bool */
     public function isExchangeTokenEnabled()
     {
-        return $this->is('enable_exchange_token');
+        return $this->isFieldEnabled('enable_exchange_token');
     }
 }

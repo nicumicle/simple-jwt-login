@@ -81,6 +81,9 @@ class ProtectEndpointService extends BaseService
 
             return true;
         } catch (Exception $e) {
+            if ($e->getCode() === ErrorCodes::ERR_REVOKED_TOKEN) {
+                throw $e;
+            }
             return false;
         }
     }

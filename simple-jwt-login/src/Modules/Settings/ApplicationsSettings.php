@@ -2,6 +2,7 @@
 
 namespace SimpleJWTLogin\Modules\Settings;
 
+use InvalidArgumentException;
 use SimpleJWTLogin\Modules\Settings\Providers\AbstractProviderSettings;
 use SimpleJWTLogin\Modules\Settings\Providers\Auth0ProviderSettings;
 use SimpleJWTLogin\Modules\Settings\Providers\GoogleProviderSettings;
@@ -78,10 +79,10 @@ class ApplicationsSettings extends BaseSettings implements SettingsInterface
     public function getProvider($slug)
     {
         if (!isset($this->providers[$slug])) {
-            throw new \InvalidArgumentException("Unknown OAuth provider: {$slug}");
+            throw new InvalidArgumentException("Unknown OAuth provider: {$slug}");
         }
 
-        return (clone $this->providers[$slug])->withSettings($this->settings[$slug] ?? []);
+        return (clone $this->providers[$slug])->withSettings(isset($this->settings[$slug]) ? $this->settings[$slug] : []);
     }
 
     /**

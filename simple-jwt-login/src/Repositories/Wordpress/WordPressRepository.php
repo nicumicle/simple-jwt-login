@@ -1,13 +1,14 @@
 <?php
 
-namespace SimpleJWTLogin\Modules;
+namespace SimpleJWTLogin\Repositories\Wordpress;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Modules\UserProperties;
 use WP_REST_Response;
 use WP_User;
 
-class WordPressData implements WordPressDataInterface
+class WordPressRepository implements Repository
 {
     const NONCE_NAME = 'simple-jwt-login-nonce';
 
@@ -147,7 +148,7 @@ class WordPressData implements WordPressDataInterface
             );
         }
 
-        $user   = new WP_User($result);
+        $user = new WP_User($result);
         $user->set_role($role);
 
         return $user;
@@ -239,6 +240,7 @@ class WordPressData implements WordPressDataInterface
 
         return $array;
     }
+
     /**
      * @param WP_User $user
      *
@@ -291,7 +293,7 @@ class WordPressData implements WordPressDataInterface
     }
 
     /**
-     * @param WP_User$user
+     * @param WP_User $user
      *
      * @return mixed
      */
@@ -513,5 +515,17 @@ class WordPressData implements WordPressDataInterface
     public function wpUnslash($value)
     {
         return wp_unslash($value);
+    }
+
+    public function cleanupExpiredRefreshTokens()
+    {
+        global $wpdb;
+        $tableName = $wpdb->prefix . 'simple_jwt_login_refresh_tokens';
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM {$tableName} WHERE expires_at < %s",
+                gmdate('Y-m-d H:i:s')
+            )
+        );
     }
 }

@@ -300,6 +300,143 @@ if (!function_exists('delete_option')) {
     }
 }
 
+if (!class_exists('wpdb')) {
+    class wpdb
+    {
+        /** @var string */
+        public $prefix = '';
+
+        /**
+         * @param string $table
+         * @param array  $data
+         * @param array  $format
+         * @return int|false
+         */
+        public function insert($table, $data, $format = [])
+        {
+            return false;
+        }
+
+        /**
+         * @param string $query
+         * @return string
+         */
+        public function prepare($query, ...$args)
+        {
+            return '';
+        }
+
+        /**
+         * @param string $query
+         * @return object|null
+         */
+        public function get_row($query)
+        {
+            return null;
+        }
+
+        /**
+         * @param string $table
+         * @param array  $where
+         * @param array  $where_format
+         * @return int|false
+         */
+        public function delete($table, $where, $where_format = [])
+        {
+            return false;
+        }
+
+        /**
+         * @param string $query
+         * @return int|bool
+         */
+        public function query($query)
+        {
+            return false;
+        }
+
+        /**
+         * @return string
+         */
+        public function get_charset_collate()
+        {
+            return '';
+        }
+    }
+}
+
+if (!function_exists('register_activation_hook')) {
+    /**
+     * @param string   $file
+     * @param callable $callback
+     * @return void
+     */
+    function register_activation_hook($file, $callback)
+    {
+    }
+}
+
+if (!function_exists('register_deactivation_hook')) {
+    /**
+     * @param string   $file
+     * @param callable $callback
+     * @return void
+     */
+    function register_deactivation_hook($file, $callback)
+    {
+    }
+}
+
+if (!function_exists('wp_next_scheduled')) {
+    /**
+     * @param string $hook
+     * @param array  $args
+     * @return int|false
+     */
+    function wp_next_scheduled($hook, $args = [])
+    {
+        return false;
+    }
+}
+
+if (!function_exists('wp_schedule_event')) {
+    /**
+     * @param int    $timestamp
+     * @param string $recurrence
+     * @param string $hook
+     * @param array  $args
+     * @return bool|WP_Error
+     */
+    function wp_schedule_event($timestamp, $recurrence, $hook, $args = [])
+    {
+        return true;
+    }
+}
+
+if (!function_exists('wp_clear_scheduled_hook')) {
+    /**
+     * @param string $hook
+     * @param array  $args
+     * @return int|false
+     */
+    function wp_clear_scheduled_hook($hook, $args = [])
+    {
+        return false;
+    }
+}
+
+if (!function_exists('dbDelta')) {
+    /**
+     * @param string|string[] $queries
+     * @param bool            $execute
+     * @return array
+     */
+    function dbDelta($queries = '', $execute = true)
+    {
+        return [];
+    }
+}
+
 if (!function_exists('register_uninstall_hook')) {
     /**
      * @param string|null $file

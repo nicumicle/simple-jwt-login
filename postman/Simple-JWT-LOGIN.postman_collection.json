@@ -275,8 +275,8 @@
 					"mode": "formdata",
 					"formdata": [
 						{
-							"key": "JWT",
-							"value": "{{JWT}}",
+							"key": "refresh_token",
+							"value": "{{refresh_token}}",
 							"type": "text"
 						}
 					]
@@ -296,7 +296,7 @@
 						}
 					]
 				},
-				"description": "This route is for refreshing expired tokens. It accept as a parameter an expired token, and returns a new valid JWT."
+				"description": "This route is for refreshing expired JWTs using a refresh token. It accepts a refresh_token parameter and returns a new JWT and refresh token."
 			},
 			"response": []
 		},

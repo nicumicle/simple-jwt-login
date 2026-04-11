@@ -4,7 +4,7 @@ namespace SimpleJwtLoginTests\Unit\Modules\Settings;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\GeneralSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 
 class GeneralSettingsTest extends TestCase
 {

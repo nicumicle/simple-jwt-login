@@ -11,14 +11,17 @@ jQuery(document).ready(
             var appId  = $card.data('app');
             var isOpen = $card.hasClass('active');
 
+            // Always show at least one panel - prevent deselection
+            if (isOpen) {
+                return;
+            }
+
             $('#simple-jwt-login .sjl-app-card').removeClass('active').attr('aria-expanded', 'false');
             $('#simple-jwt-login .sjl-app-panel').hide();
 
-            if (!isOpen) {
-                $card.addClass('active').attr('aria-expanded', 'true');
-                $('#simple-jwt-login #sjl-app-panel-' + appId).show();
-                $('#active_app_panel').val(appId);
-            }
+            $card.addClass('active').attr('aria-expanded', 'true');
+            $('#simple-jwt-login #sjl-app-panel-' + appId).show();
+            $('#active_app_panel').val(appId);
         });
 
         $('#simple-jwt-login #add_code').click(

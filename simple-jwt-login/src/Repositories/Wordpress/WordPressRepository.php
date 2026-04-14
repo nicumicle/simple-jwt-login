@@ -96,6 +96,9 @@ class WordPressRepository implements Repository
     public function getLoginURL($params)
     {
         $url = wp_login_url();
+        if (empty($url)) {
+            return null;
+        }
         if (!empty($params) && is_array($params)) {
             $separator = (strpos($url, "?") === false ? "?" : "&");
             foreach ($params as $key => $value) {
@@ -139,7 +142,7 @@ class WordPressRepository implements Repository
         $userParameters = (new UserProperties())->build($userParameters, $extraParameters);
 
         $result = wp_insert_user($userParameters);
-        if (!is_int($result)) {
+        if ($result instanceof \WP_Error) {
             throw new Exception(
                 $result->get_error_message(
                     $result->get_error_code()
@@ -225,20 +228,23 @@ class WordPressRepository implements Repository
      */
     public function sanitizeArray($array)
     {
-        if (is_array($array)) {
-            foreach ($array as $key => $value) {
-                $key = $this->sanitizeTextField($key);
-                if (is_string($value)) {
-                    $array[$key] = $this->sanitizeTextField($value);
-                } elseif (is_numeric($value)) {
-                    $array[$key] = $value;
-                } elseif (is_array($value)) {
-                    $array[$key] = $this->sanitizeArray($value);
-                }
+        if (!is_array($array)) {
+            return $array;
+        }
+
+        $sanitized = [];
+        foreach ($array as $key => $value) {
+            $sanitizedKey = $this->sanitizeTextField((string) $key);
+            if (is_string($value)) {
+                $sanitized[$sanitizedKey] = $this->sanitizeTextField($value);
+            } elseif (is_numeric($value)) {
+                $sanitized[$sanitizedKey] = $value;
+            } elseif (is_array($value)) {
+                $sanitized[$sanitizedKey] = $this->sanitizeArray($value);
             }
         }
 
-        return $array;
+        return $sanitized;
     }
 
     /**
@@ -484,10 +490,9 @@ class WordPressRepository implements Repository
      * @param string $role
      * @return bool
      */
-    /** * @SuppressWarnings(PHPMD.Superglobals) */
     public function roleExists($role)
     {
-        return isset($GLOBALS['wp_roles']) && $GLOBALS['wp_roles']->is_role($role);
+        return wp_roles()->is_role($role);
     }
 
     /**
@@ -515,17 +520,5 @@ class WordPressRepository implements Repository
     public function wpUnslash($value)
     {
         return wp_unslash($value);
-    }
-
-    public function cleanupExpiredRefreshTokens()
-    {
-        global $wpdb;
-        $tableName = $wpdb->prefix . 'simple_jwt_login_refresh_tokens';
-        $wpdb->query(
-            $wpdb->prepare(
-                "DELETE FROM {$tableName} WHERE expires_at < %s",
-                gmdate('Y-m-d H:i:s')
-            )
-        );
     }
 }

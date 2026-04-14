@@ -4,6 +4,9 @@ namespace SimpleJWTLogin\Modules\Settings;
 
 use Exception;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class SettingsFactory
 {
     const AUTH_CODES_SETTINGS = 0;
@@ -17,11 +20,12 @@ class SettingsFactory
     const RESET_PASSWORD_SETTINGS = 8;
     const PROTECT_ENDPOINTS_SETTINGS = 9;
     const APPLICATIONS_SETTINGS = 10;
+    const AUDIT_LOG_SETTINGS = 11;
 
     /**
      * @param int $type
      *
-     * @return AuthCodesSettings|AuthenticationSettings|CorsSettings|DeleteUserSettings|GeneralSettings|HooksSettings|LoginSettings|RegisterSettings|ResetPasswordSettings|ProtectEndpointSettings|ApplicationsSettings
+     * @return AuthCodesSettings|AuthenticationSettings|AuditLogSettings|CorsSettings|DeleteUserSettings|GeneralSettings|HooksSettings|LoginSettings|RegisterSettings|ResetPasswordSettings|ProtectEndpointSettings|ApplicationsSettings
      * @throws Exception
      */
     public static function getFactory($type)
@@ -31,6 +35,8 @@ class SettingsFactory
                 return new AuthCodesSettings();
             case self::AUTHENTICATION_SETTINGS:
                 return new AuthenticationSettings();
+            case self::AUDIT_LOG_SETTINGS:
+                return new AuditLogSettings();
             case self::CORS_SETTINGS:
                 return new CorsSettings();
             case self::DELETE_USER_SETTINGS:
@@ -61,6 +67,7 @@ class SettingsFactory
     {
         return [
             self::AUTHENTICATION_SETTINGS => new AuthenticationSettings(),
+            self::AUDIT_LOG_SETTINGS => new AuditLogSettings(),
             self::CORS_SETTINGS => new CorsSettings(),
             self::DELETE_USER_SETTINGS => new DeleteUserSettings(),
             self::GENERAL_SETTINGS => new GeneralSettings(),

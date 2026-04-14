@@ -40,7 +40,7 @@ class RefreshTokenRepository implements Repository
             [
                 'user_id'       => $userId,
                 'refresh_token' => $refreshToken,
-                'expires_at'    => date('Y-m-d H:i:s', $expiresAt),
+                'expires_at'    => gmdate('Y-m-d H:i:s', $expiresAt),
             ],
             ['%d', '%s', '%s']
         );
@@ -54,9 +54,11 @@ class RefreshTokenRepository implements Repository
      */
     public function getByToken($refreshToken)
     {
+        $tableName = $this->tableName();
+        //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         return $this->wpdb->get_row(
             $this->wpdb->prepare(
-                "SELECT * FROM {$this->tableName()} WHERE refresh_token = %s AND expires_at > NOW()",
+                "SELECT * FROM `{$tableName}` WHERE refresh_token = %s AND expires_at > NOW()",
                 $refreshToken
             )
         );
@@ -97,10 +99,46 @@ class RefreshTokenRepository implements Repository
      */
     public function cleanupExpired()
     {
-        $result = $this->wpdb->query(
-            "DELETE FROM {$this->tableName()} WHERE expires_at <= NOW()"
-        );
+        $tableName = $this->tableName();
+        //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+        $result = $this->wpdb->query("DELETE FROM `{$tableName}` WHERE expires_at <= NOW()");
 
         return $result !== false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function dropTable()
+    {
+        $tableName = $this->tableName();
+        //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.NoCaching
+        $result = $this->wpdb->query("DROP TABLE IF EXISTS `{$tableName}`");
+
+        return $result !== false;
+    }
+
+    /**
+     * @return void
+     */
+    public function createTable()
+    {
+        $charsetCollate = $this->wpdb->get_charset_collate();
+        $tableName      = $this->tableName();
+
+        $sql = "CREATE TABLE $tableName (
+            id bigint(20) NOT NULL AUTO_INCREMENT,
+            user_id bigint(20) NOT NULL,
+            refresh_token varchar(255) NOT NULL,
+            expires_at datetime NOT NULL,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY refresh_token (refresh_token),
+            KEY user_id (user_id),
+            KEY expires_at (expires_at)
+        ) $charsetCollate;";
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
     }
 }

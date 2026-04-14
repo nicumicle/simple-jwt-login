@@ -4,9 +4,12 @@ use SimpleJWTLogin\Helpers\CorsHelper;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Helpers\StatusCodeHelper;
 use SimpleJWTLogin\Libraries\ParseRequest;
+use SimpleJWTLogin\Modules\AuditEvents;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
+use SimpleJWTLogin\Services\AuditLoggerService;
 use SimpleJWTLogin\Services\ProtectEndpointService;
 use SimpleJWTLogin\Services\RouteService;
+use SimpleJWTLogin\Repositories\AuditLog\AuditLogRepository;
 use SimpleJWTLogin\Repositories\RefreshToken\RefreshTokenRepository;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
@@ -32,6 +35,81 @@ add_action('rest_api_init', function () {
     $jwtSettings = new SimpleJWTLoginSettings($wordPressData);
     global $wpdb;
     $refreshTokenRepository = new RefreshTokenRepository($wpdb);
+    $auditLogRepository     = new AuditLogRepository($wpdb);
+    $auditLogger            = new AuditLoggerService(
+        $auditLogRepository,
+        $jwtSettings->getAuditLogSettings(),
+        $serverHelper
+    );
+
+    add_action(SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_SUCCESS, function ($userId, $userEmail) use ($auditLogger) {
+        $auditLogger->log(AuditEvents::AUTH_LOGIN_SUCCESS, $userId, $userEmail, 'success');
+    }, 10, 2);
+
+    add_action(SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_FAILED, function ($userId, $userEmail, $message) use ($auditLogger) {
+        $auditLogger->log(AuditEvents::AUTH_LOGIN_FAILED, $userId, $userEmail, 'failure', $message);
+    }, 10, 3);
+
+    add_action(SimpleJWTLoginHooks::AUDIT_AUTH_LOGOUT_SUCCESS, function ($userId, $userEmail) use ($auditLogger) {
+        $auditLogger->log(AuditEvents::AUTH_LOGOUT_SUCCESS, $userId, $userEmail, 'success');
+    }, 10, 2);
+
+    add_action(SimpleJWTLoginHooks::AUDIT_AUTH_LOGOUT_FAILED, function ($userId, $userEmail, $message) use ($auditLogger) {
+        $auditLogger->log(AuditEvents::AUTH_LOGOUT_FAILED, $userId, $userEmail, 'failure', $message);
+    }, 10, 3);
+
+    add_action(SimpleJWTLoginHooks::AUDIT_AUTH_REGISTER_SUCCESS, function ($userId, $userEmail) use ($auditLogger) {
+        $auditLogger->log(AuditEvents::AUTH_REGISTER_SUCCESS, $userId, $userEmail, 'success');
+    }, 10, 2);
+
+    add_action(SimpleJWTLoginHooks::AUDIT_AUTH_REGISTER_FAILED, function ($userId, $userEmail, $message) use ($auditLogger) {
+        $auditLogger->log(AuditEvents::AUTH_REGISTER_FAILED, $userId, $userEmail, 'failure', $message);
+    }, 10, 3);
+
+    add_action(SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_REQUEST, function ($userId, $userEmail) use ($auditLogger) {
+        $auditLogger->log(AuditEvents::AUTH_PASSWORD_RESET_REQUEST, $userId, $userEmail, 'success');
+    }, 10, 2);
+
+    add_action(SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_SUCCESS, function ($userId, $userEmail) use ($auditLogger) {
+        $auditLogger->log(AuditEvents::AUTH_PASSWORD_RESET_SUCCESS, $userId, $userEmail, 'success');
+    }, 10, 2);
+
+    add_action(SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_FAILED, function ($userId, $userEmail, $message) use ($auditLogger) {
+        $auditLogger->log(AuditEvents::AUTH_PASSWORD_RESET_FAILED, $userId, $userEmail, 'failure', $message);
+    }, 10, 3);
+
+    add_action(SimpleJWTLoginHooks::AUDIT_AUTH_DELETE_USER_SUCCESS, function ($userId, $userEmail) use ($auditLogger) {
+        $auditLogger->log(AuditEvents::AUTH_DELETE_USER_SUCCESS, $userId, $userEmail, 'success');
+    }, 10, 2);
+
+    add_action(SimpleJWTLoginHooks::AUDIT_AUTH_DELETE_USER_FAILED, function ($userId, $userEmail, $message) use ($auditLogger) {
+        $auditLogger->log(AuditEvents::AUTH_DELETE_USER_FAILED, $userId, $userEmail, 'failure', $message);
+    }, 10, 3);
+
+    add_action(SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_SESSION_SUCCESS, function ($userId, $userEmail) use ($auditLogger) {
+        $auditLogger->log(AuditEvents::AUTH_LOGIN_SESSION_SUCCESS, $userId, $userEmail, 'success');
+    }, 10, 2);
+
+    add_action(SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_SESSION_FAILED, function ($userId, $userEmail, $message) use ($auditLogger) {
+        $auditLogger->log(AuditEvents::AUTH_LOGIN_SESSION_FAILED, $userId, $userEmail, 'failure', $message);
+    }, 10, 3);
+
+    add_action(SimpleJWTLoginHooks::AUDIT_AUTH_REFRESH_TOKEN_SUCCESS, function ($userId, $userEmail) use ($auditLogger) {
+        $auditLogger->log(AuditEvents::AUTH_REFRESH_TOKEN_SUCCESS, $userId, $userEmail, 'success');
+    }, 10, 2);
+
+    add_action(SimpleJWTLoginHooks::AUDIT_AUTH_REFRESH_TOKEN_FAILED, function ($userId, $userEmail, $message) use ($auditLogger) {
+        $auditLogger->log(AuditEvents::AUTH_REFRESH_TOKEN_FAILED, $userId, $userEmail, 'failure', $message);
+    }, 10, 3);
+
+    add_action(SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_SUCCESS, function ($userId, $userEmail) use ($auditLogger) {
+        $auditLogger->log(AuditEvents::AUTH_OAUTH_SUCCESS, $userId, $userEmail, 'success');
+    }, 10, 2);
+
+    add_action(SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED, function ($userId, $userEmail, $message) use ($auditLogger) {
+        $auditLogger->log(AuditEvents::AUTH_OAUTH_FAILED, $userId, $userEmail, 'failure', $message);
+    }, 10, 3);
+
     $routeService = new RouteService();
     $routeService->withSettings($jwtSettings);
     $routeService->withRequest($request);

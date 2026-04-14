@@ -9,6 +9,7 @@ use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepository;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\RevokeTokenService;
 use WP_User;
@@ -20,11 +21,19 @@ class RevokeTokenServiceTest extends TestCase
      */
     private $wordPressDataMock;
 
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|RefreshTokenRepository
+     */
+    private $tokenRepositoryMock;
+
     public function setUp(): void
     {
         parent::setUp();
         $this->wordPressDataMock = $this
             ->getMockBuilder(WordPressDataInterface::class)
+            ->getMock();
+        $this->tokenRepositoryMock = $this
+            ->getMockBuilder(RefreshTokenRepository::class)
             ->getMock();
     }
 
@@ -140,7 +149,8 @@ class RevokeTokenServiceTest extends TestCase
                 'REQUEST_METHOD' => 'POST',
                 'HTTP_CLIENT_IP' => '127.0.0.1',
             ]))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->tokenRepositoryMock);
         $result = $revokeService->makeAction();
         $this->assertTrue($result);
     }

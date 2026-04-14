@@ -15,7 +15,17 @@ class DeleteUserService extends BaseService implements ServiceInterface
      */
     public function makeAction()
     {
-        return $this->deleteUser();
+        try {
+            return $this->deleteUser();
+        } catch (Exception $e) {
+            $this->wordPressData->triggerAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_DELETE_USER_FAILED,
+                null,
+                null,
+                $e->getMessage()
+            );
+            throw $e;
+        }
     }
 
     /**
@@ -88,10 +98,11 @@ class DeleteUserService extends BaseService implements ServiceInterface
             );
         }
 
-        $this->validateJwtRevoked(
-            $this->wordPressData->getUserProperty($user, 'ID'),
-            $this->jwt
-        );
+        $userId = $this->wordPressData->getUserProperty($user, 'ID');
+
+        $this->validateJwtRevoked($userId, $this->jwt);
+
+        $this->tokenRepository->deleteByUserId($userId);
 
         $result = $this->wordPressData->deleteUser($user);
 
@@ -101,6 +112,12 @@ class DeleteUserService extends BaseService implements ServiceInterface
                 ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND
             );
         }
+
+        $this->wordPressData->triggerAction(
+            SimpleJWTLoginHooks::AUDIT_AUTH_DELETE_USER_SUCCESS,
+            $this->wordPressData->getUserProperty($user, 'ID'),
+            $this->wordPressData->getUserProperty($user, 'user_email')
+        );
 
         if ($this->jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME)) {
             $this->wordPressData->triggerAction(SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME, $user);

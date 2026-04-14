@@ -18,6 +18,7 @@ class SettingsErrors extends \Exception
     const PREFIX_RESET_PASSWORD = 10;
     const PREFIX_PROTECT_ENDPOINTS = 11;
     const PREFIX_APPLICATIONS = 12;
+    const PREFIX_AUDIT_LOGS = 13;
 
     #authentication
     const ERR_AUTHENTICATION_EMPTY_PAYLOAD = 1;

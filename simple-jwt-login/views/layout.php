@@ -1,8 +1,12 @@
 <?php
 
+use SimpleJWTLogin\Helpers\ServerHelper;
+use SimpleJWTLogin\Modules\AuditEvents;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Repositories\AuditLog\AuditLogRepository;
 use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
+use SimpleJWTLogin\Services\AuditLoggerService;
 
 if (! defined('ABSPATH')) {
     /** @phpstan-ignore-next-line  */
@@ -19,6 +23,23 @@ $errorCode = null;
 try {
     $saved         = $jwtSettings->watchForUpdates($_POST);
     $showStatusBar = $saved;
+    if ($saved) {
+        global $wpdb;
+        $auditLogger = new AuditLoggerService(
+            new AuditLogRepository($wpdb),
+            $jwtSettings->getAuditLogSettings(),
+            new ServerHelper($_SERVER)
+        );
+        $currentUser = wp_get_current_user();
+        $diff        = $jwtSettings->getLastSettingsDiff();
+        $auditLogger->log(
+            AuditEvents::SETTINGS_SAVE_SUCCESS,
+            $currentUser->ID ?: null,
+            $currentUser->user_email ?: null,
+            'success',
+            !empty($diff) ? (string) json_encode($diff) : null
+        );
+    }
 } catch (\Exception $e) {
     $showStatusBar = true;
     $message       = $e->getMessage();
@@ -102,16 +123,26 @@ $settingsPages = [
         ),
         'index' => SettingsErrors::PREFIX_APPLICATIONS,
     ],
+    [
+        'id'   => 'simple-jwt-login-tab-audit-logs',
+        'name' => __('Audit Logs', 'simple-jwt-login'),
+        'has_error' => (
+            $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_AUDIT_LOGS
+        ),
+        'index' => SettingsErrors::PREFIX_AUDIT_LOGS,
+    ],
 ];
 
 ?>
 <form method="post">
     <?php
     $activeTab = $settingsPages[0]['index'];
-    if (isset($_POST['active_tab'])) {
+    //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $activeTabRaw = isset($_POST['active_tab']) ? $_POST['active_tab'] : (isset($_GET['active_tab']) ? $_GET['active_tab'] : null);
+    if ($activeTabRaw !== null) {
         foreach ($settingsPages as $item) {
-            if ($item['index'] === (int)esc_attr($_POST['active_tab'])) {
-                $activeTab = (int)esc_attr($_POST['active_tab']);
+            if ($item['index'] === (int) esc_attr($activeTabRaw)) {
+                $activeTab = (int) esc_attr($activeTabRaw);
             }
         }
     }
@@ -246,6 +277,9 @@ $settingsPages = [
                                         break;
                                     case SettingsErrors::PREFIX_APPLICATIONS:
                                         include_once plugin_dir_path(__FILE__) . "applications.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_AUDIT_LOGS:
+                                        include_once plugin_dir_path(__FILE__) . "audit-logs-view.php";
                                         break;
                                     default:
                                         echo __("View file does not exists.", 'simple-jwt-login');

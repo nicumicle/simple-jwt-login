@@ -26,6 +26,24 @@ class SimpleJWTLoginHooks
     const HOOK_GENERATE_PAYLOAD = 'simple_jwt_login_generate_payload';
     const HOOK_BEFORE_ENDPOINT = 'simple_jwt_login_before_endpoint';
 
+    const AUDIT_AUTH_LOGIN_SUCCESS          = 'simple_jwt_login_audit_auth_login_success';
+    const AUDIT_AUTH_LOGIN_FAILED           = 'simple_jwt_login_audit_auth_login_failed';
+    const AUDIT_AUTH_LOGOUT_SUCCESS         = 'simple_jwt_login_audit_auth_logout_success';
+    const AUDIT_AUTH_LOGOUT_FAILED          = 'simple_jwt_login_audit_auth_logout_failed';
+    const AUDIT_AUTH_REGISTER_SUCCESS       = 'simple_jwt_login_audit_auth_register_success';
+    const AUDIT_AUTH_REGISTER_FAILED        = 'simple_jwt_login_audit_auth_register_failed';
+    const AUDIT_AUTH_PASSWORD_RESET_REQUEST = 'simple_jwt_login_audit_password_reset_request';
+    const AUDIT_AUTH_PASSWORD_RESET_SUCCESS = 'simple_jwt_login_audit_password_reset_success';
+    const AUDIT_AUTH_PASSWORD_RESET_FAILED  = 'simple_jwt_login_audit_password_reset_failed';
+    const AUDIT_AUTH_DELETE_USER_SUCCESS    = 'simple_jwt_login_audit_delete_user_success';
+    const AUDIT_AUTH_DELETE_USER_FAILED     = 'simple_jwt_login_audit_delete_user_failed';
+    const AUDIT_AUTH_LOGIN_SESSION_SUCCESS  = 'simple_jwt_login_audit_login_session_success';
+    const AUDIT_AUTH_LOGIN_SESSION_FAILED   = 'simple_jwt_login_audit_login_session_failed';
+    const AUDIT_AUTH_REFRESH_TOKEN_SUCCESS  = 'simple_jwt_login_audit_refresh_token_success';
+    const AUDIT_AUTH_REFRESH_TOKEN_FAILED   = 'simple_jwt_login_audit_refresh_token_failed';
+    const AUDIT_AUTH_OAUTH_SUCCESS          = 'simple_jwt_login_audit_oauth_success';
+    const AUDIT_AUTH_OAUTH_FAILED           = 'simple_jwt_login_audit_oauth_failed';
+
     /**
      * @return array[]
      */

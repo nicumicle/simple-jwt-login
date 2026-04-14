@@ -16,7 +16,9 @@ parameters:
        path: simple-jwt-login/src
     -
        message : '#Calling exit\(\) is forbidden.*#'
-       path: simple-jwt-login/src/Repositories/Wordpress/WordPressRepository.php
+       paths:
+         - simple-jwt-login/src/Repositories/Wordpress/WordPressRepository.php
+         - simple-jwt-login/views/
     -
        message : '#If condition is always true\.#'
        path: simple-jwt-login/views/applications.php

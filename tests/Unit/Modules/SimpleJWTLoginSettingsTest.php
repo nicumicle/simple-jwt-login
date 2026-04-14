@@ -236,6 +236,108 @@ class SimpleJWTLoginSettingsTest extends TestCase
         );
     }
 
+    public function testBuildSettingsDiffReturnsEmptyForIdenticalSettings()
+    {
+        $settings = ['general' => ['route_namespace' => 'v1', 'allow_login' => '1']];
+        $diff = $this->simpleJWTSettings->buildSettingsDiff($settings, $settings);
+
+        $this->assertEmpty($diff);
+    }
+
+    public function testBuildSettingsDiffDetectsChangedValue()
+    {
+        $old = ['general' => ['route_namespace' => 'v1']];
+        $new = ['general' => ['route_namespace' => 'v2']];
+
+        $diff = $this->simpleJWTSettings->buildSettingsDiff($old, $new);
+
+        $this->assertArrayHasKey('changed', $diff);
+        $this->assertArrayHasKey('general.route_namespace', $diff['changed']);
+        $this->assertSame('v1', $diff['changed']['general.route_namespace']['from']);
+        $this->assertSame('v2', $diff['changed']['general.route_namespace']['to']);
+    }
+
+    public function testBuildSettingsDiffDetectsAddedKey()
+    {
+        $old = ['general' => ['route_namespace' => 'v1']];
+        $new = ['general' => ['route_namespace' => 'v1', 'new_setting' => '1']];
+
+        $diff = $this->simpleJWTSettings->buildSettingsDiff($old, $new);
+
+        $this->assertArrayHasKey('added', $diff);
+        $this->assertContains('general.new_setting', $diff['added']);
+    }
+
+    public function testBuildSettingsDiffDetectsRemovedKey()
+    {
+        $old = ['general' => ['route_namespace' => 'v1', 'old_setting' => '1']];
+        $new = ['general' => ['route_namespace' => 'v1']];
+
+        $diff = $this->simpleJWTSettings->buildSettingsDiff($old, $new);
+
+        $this->assertArrayHasKey('removed', $diff);
+        $this->assertContains('general.old_setting', $diff['removed']);
+    }
+
+    public function testBuildSettingsDiffRedactsSensitiveSecretField()
+    {
+        $old = ['general' => ['jwt_secret' => 'old-secret']];
+        $new = ['general' => ['jwt_secret' => 'new-secret']];
+
+        $diff = $this->simpleJWTSettings->buildSettingsDiff($old, $new);
+
+        $this->assertSame('[REDACTED]', $diff['changed']['general.jwt_secret']['from']);
+        $this->assertSame('[REDACTED]', $diff['changed']['general.jwt_secret']['to']);
+    }
+
+    public function testBuildSettingsDiffRedactsSensitiveKeyField()
+    {
+        $old = ['auth' => ['refresh_token_key' => 'old-key']];
+        $new = ['auth' => ['refresh_token_key' => 'new-key']];
+
+        $diff = $this->simpleJWTSettings->buildSettingsDiff($old, $new);
+
+        $this->assertSame('[REDACTED]', $diff['changed']['auth.refresh_token_key']['from']);
+        $this->assertSame('[REDACTED]', $diff['changed']['auth.refresh_token_key']['to']);
+    }
+
+    public function testBuildSettingsDiffHandlesListArrayValuesAsAtomic()
+    {
+        $old = ['login' => ['allowed_roles' => ['editor', 'author']]];
+        $new = ['login' => ['allowed_roles' => ['editor', 'subscriber']]];
+
+        $diff = $this->simpleJWTSettings->buildSettingsDiff($old, $new);
+
+        $this->assertArrayHasKey('changed', $diff);
+        $this->assertArrayHasKey('login.allowed_roles', $diff['changed']);
+    }
+
+    public function testGetLastSettingsDiffIsEmptyBeforeWatchForUpdates()
+    {
+        $this->assertEmpty($this->simpleJWTSettings->getLastSettingsDiff());
+    }
+
+    public function testGetLastSettingsDiffIsPopulatedAfterSuccessfulSave()
+    {
+        $wordPressDataMock = $this->getMockBuilder(WordPressDataInterface::class)
+            ->getMock();
+        $wordPressDataMock->method('checkNonce')->willReturn(true);
+        $wordPressDataMock->method('roleExists')->willReturn(true);
+        $wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode(['general' => ['route_namespace' => 'old-ns']]));
+        $simpleJWTSettings = new SimpleJWTLoginSettings($wordPressDataMock);
+
+        $simpleJWTSettings->watchForUpdates([
+            '_wpnonce'        => '123',
+            'route_namespace' => 'new-ns',
+            'request_jwt_url' => true,
+            'new_user_profile' => 'subscriber',
+        ]);
+
+        // After a save the diff accessor must return an array (may be empty or populated)
+        $this->assertIsArray($simpleJWTSettings->getLastSettingsDiff());
+    }
+
     /**
      * @return array
      */

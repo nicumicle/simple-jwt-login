@@ -11,11 +11,21 @@ class RevokeTokenService extends AuthenticateService
 {
     public function makeAction()
     {
-        $this->checkAuthenticationEnabled();
-        $this->checkAllowedIPAddress();
-        $this->validateAuthenticationAuthKey(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED);
+        try {
+            $this->checkAuthenticationEnabled();
+            $this->checkAllowedIPAddress();
+            $this->validateAuthenticationAuthKey(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED);
 
-        return $this->revokeToken();
+            return $this->revokeToken();
+        } catch (Exception $e) {
+            $this->wordPressData->triggerAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_LOGOUT_FAILED,
+                null,
+                null,
+                $e->getMessage()
+            );
+            throw $e;
+        }
     }
 
     /**
@@ -51,10 +61,20 @@ class RevokeTokenService extends AuthenticateService
         );
         $this->checkIfTokenIsAlreadyRevoked($userRevokedTokens);
 
+        $userId = $this->wordPressData->getUserProperty($user, 'ID');
+
         $this->wordPressData->addUserMeta(
-            $this->wordPressData->getUserProperty($user, 'ID'),
+            $userId,
             SimpleJWTLoginSettings::REVOKE_TOKEN_KEY,
             $this->jwt
+        );
+
+        $this->tokenRepository->deleteByUserId($userId);
+
+        $this->wordPressData->triggerAction(
+            SimpleJWTLoginHooks::AUDIT_AUTH_LOGOUT_SUCCESS,
+            $userId,
+            $this->wordPressData->getUserProperty($user, 'user_email')
         );
 
         $response =  [

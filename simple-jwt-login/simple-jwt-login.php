@@ -14,13 +14,15 @@
 
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
+use SimpleJWTLogin\Repositories\RefreshToken\RefreshTokenRepository;
+use SimpleJWTLogin\Repositories\AuditLog\AuditLogRepository;
 
 if (! defined('ABSPATH')) {
     /** @phpstan-ignore-next-line  */
     exit;
 } // Exit if accessed directly
 
-define('SIMPLE_JWT_LOGIN_DB_VERSION', '1.0');
+define('SIMPLE_JWT_LOGIN_DB_VERSION', '1.2');
 
 include_once 'autoload.php';
 
@@ -155,8 +157,8 @@ function simple_jwt_plugin_uninstall()
     delete_option(SimpleJWTLoginSettings::OPTIONS_KEY);
     delete_option('simple_jwt_login_db_version');
     global $wpdb;
-    //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.NoCaching
-    $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}simple_jwt_login_refresh_tokens");
+    (new RefreshTokenRepository($wpdb))->dropTable();
+    (new AuditLogRepository($wpdb))->dropTable();
 }
 
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'simple_jwt_login_add_plugin_action_links');
@@ -231,7 +233,6 @@ function simple_jwt_login_login_message()
 add_action('login_footer', 'simple_jwt_login_login_footer');
 /**
  * @SuppressWarnings(PHPMD.UnusedLocalVariable)
- * @SuppressWarnings(PHPMD.Superglobals)
  * @return void
  */
 function simple_jwt_login_login_footer()
@@ -239,17 +240,17 @@ function simple_jwt_login_login_footer()
     $wordpressData = new WordPressRepository();
     $jwtSettings = new SimpleJWTLoginSettings($wordpressData);
     $pluginDirUrl = plugin_dir_url(__FILE__);
-    switch (true) {
-        // GOOGLE
-        case $jwtSettings->getApplicationsSettings()->google()->isEnabled()
-            && $jwtSettings->getApplicationsSettings()->google()->isOauthEnabled():
-            include_once "views/applications/google-form.php";
-            break;
-        // AUTH0
-        case $jwtSettings->getApplicationsSettings()->auth0()->isEnabled()
-            && $jwtSettings->getApplicationsSettings()->auth0()->isOauthEnabled():
-            include_once "views/applications/auth0-form.php";
-            break;
+
+    if ($jwtSettings->getApplicationsSettings()->google()->isEnabled()
+        && $jwtSettings->getApplicationsSettings()->google()->isOauthEnabled()
+    ) {
+        include_once "views/applications/google-form.php";
+    }
+
+    if ($jwtSettings->getApplicationsSettings()->auth0()->isEnabled()
+        && $jwtSettings->getApplicationsSettings()->auth0()->isOauthEnabled()
+    ) {
+        include_once "views/applications/auth0-form.php";
     }
 }
 
@@ -366,10 +367,14 @@ register_activation_hook(__FILE__, 'simple_jwt_login_activate_plugin');
 function simple_jwt_login_activate_plugin()
 {
     simple_jwt_login_create_refresh_tokens_table();
+    simple_jwt_login_create_audit_logs_table();
     simple_jwt_login_ensure_refresh_token_key();
     update_option('simple_jwt_login_db_version', SIMPLE_JWT_LOGIN_DB_VERSION);
     if (!wp_next_scheduled('simple_jwt_login_cleanup_refresh_tokens')) {
         wp_schedule_event(time(), 'daily', 'simple_jwt_login_cleanup_refresh_tokens');
+    }
+    if (!wp_next_scheduled('simple_jwt_login_cleanup_audit_logs')) {
+        wp_schedule_event(time(), 'daily', 'simple_jwt_login_cleanup_audit_logs');
     }
 }
 
@@ -379,6 +384,7 @@ register_deactivation_hook(__FILE__, 'simple_jwt_login_deactivate_plugin');
 function simple_jwt_login_deactivate_plugin()
 {
     wp_clear_scheduled_hook('simple_jwt_login_cleanup_refresh_tokens');
+    wp_clear_scheduled_hook('simple_jwt_login_cleanup_audit_logs');
 }
 
 // Backward-compatible migration for existing installs upgrading from older versions
@@ -388,6 +394,7 @@ function simple_jwt_login_check_db_version()
 {
     if (get_option('simple_jwt_login_db_version') !== SIMPLE_JWT_LOGIN_DB_VERSION) {
         simple_jwt_login_create_refresh_tokens_table();
+        simple_jwt_login_create_audit_logs_table();
         simple_jwt_login_ensure_refresh_token_key();
         update_option('simple_jwt_login_db_version', SIMPLE_JWT_LOGIN_DB_VERSION);
     }
@@ -398,8 +405,24 @@ add_action('simple_jwt_login_cleanup_refresh_tokens', 'simple_jwt_login_run_clea
 
 function simple_jwt_login_run_cleanup_refresh_tokens()
 {
-    $wordPressData = new WordPressRepository();
-    $wordPressData->cleanupExpiredRefreshTokens();
+    global $wpdb;
+    $refreshTokenRepo = new RefreshTokenRepository($wpdb);
+    $refreshTokenRepo->cleanupExpired();
+}
+
+// Daily cron: remove old audit log entries
+add_action('simple_jwt_login_cleanup_audit_logs', 'simple_jwt_login_run_cleanup_audit_logs');
+
+function simple_jwt_login_run_cleanup_audit_logs()
+{
+    global $wpdb;
+    $jwtSettings   = new SimpleJWTLoginSettings(new WordPressRepository());
+    $retentionDays = $jwtSettings->getAuditLogSettings()->getRetentionDays();
+    if ($retentionDays <= 0) {
+        return;
+    }
+    $before = gmdate('Y-m-d H:i:s', strtotime("-{$retentionDays} days"));
+    (new AuditLogRepository($wpdb))->deleteOlderThan($before);
 }
 
 /**
@@ -421,29 +444,21 @@ function simple_jwt_login_ensure_refresh_token_key()
 }
 
 /**
+ * Create (or update) the audit logs table via dbDelta
+ */
+function simple_jwt_login_create_audit_logs_table()
+{
+    global $wpdb;
+    (new AuditLogRepository($wpdb))->createTable();
+}
+
+/**
  * Create (or update) the refresh tokens table via dbDelta
  */
 function simple_jwt_login_create_refresh_tokens_table()
 {
     global $wpdb;
-    
-    $tableName = $wpdb->prefix . 'simple_jwt_login_refresh_tokens';
-    $charsetCollate = $wpdb->get_charset_collate();
-
-    $sql = "CREATE TABLE $tableName (
-        id bigint(20) NOT NULL AUTO_INCREMENT,
-        user_id bigint(20) NOT NULL,
-        refresh_token varchar(255) NOT NULL,
-        expires_at datetime NOT NULL,
-        created_at datetime DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (id),
-        UNIQUE KEY refresh_token (refresh_token),
-        KEY user_id (user_id),
-        KEY expires_at (expires_at)
-    ) $charsetCollate;";
-    
-    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-    dbDelta($sql);
+    (new RefreshTokenRepository($wpdb))->createTable();
 }
 
 //REST API ROUTES

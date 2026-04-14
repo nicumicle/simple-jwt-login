@@ -41,6 +41,25 @@ class LoginService extends BaseService implements ServiceInterface
      */
     public function makeActionInternal()
     {
+        try {
+            return $this->doLogin();
+        } catch (Exception $e) {
+            $this->wordPressData->triggerAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_SESSION_FAILED,
+                null,
+                null,
+                $e->getMessage()
+            );
+            throw $e;
+        }
+    }
+
+    /**
+     * @return WP_REST_Response|null
+     * @throws Exception
+     */
+    private function doLogin()
+    {
         $this->validateDoLogin();
         $loginParameter = $this->validateJWTAndGetUserValueFromPayload(
             $this->jwtSettings->getLoginSettings()->getJwtLoginByParameter()
@@ -60,6 +79,13 @@ class LoginService extends BaseService implements ServiceInterface
             $this->jwt
         );
         $this->wordPressData->loginUser($user);
+
+        $this->wordPressData->triggerAction(
+            SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_SESSION_SUCCESS,
+            $this->wordPressData->getUserProperty($user, 'ID'),
+            $this->wordPressData->getUserProperty($user, 'user_email')
+        );
+
         if ($this->jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::LOGIN_ACTION_NAME)) {
             $this->wordPressData->triggerAction(SimpleJWTLoginHooks::LOGIN_ACTION_NAME, $user);
         }

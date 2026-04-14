@@ -40,4 +40,18 @@ interface Repository
      * @return bool
      */
     public function cleanupExpired();
+
+    /**
+     * Drop the refresh tokens table entirely (used on plugin uninstall).
+     *
+     * @return bool
+     */
+    public function dropTable();
+
+    /**
+     * Create (or upgrade) the refresh tokens table via dbDelta.
+     *
+     * @return void
+     */
+    public function createTable();
 }

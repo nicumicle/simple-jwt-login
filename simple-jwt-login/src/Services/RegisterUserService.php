@@ -22,9 +22,20 @@ class RegisterUserService extends BaseService implements ServiceInterface
      */
     public function makeAction()
     {
-        $this->validateRegisterUser();
+        try {
+            $this->validateRegisterUser();
 
-        return $this->createUser();
+            return $this->createUser();
+        } catch (Exception $e) {
+            $email = isset($this->request['email']) ? $this->request['email'] : null;
+            $this->wordPressData->triggerAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_REGISTER_FAILED,
+                null,
+                $email,
+                $e->getMessage()
+            );
+            throw $e;
+        }
     }
 
     /**
@@ -117,6 +128,12 @@ class RegisterUserService extends BaseService implements ServiceInterface
         if ($this->jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::REGISTER_ACTION_NAME)) {
             $this->wordPressData->triggerAction(SimpleJWTLoginHooks::REGISTER_ACTION_NAME, $user, $password);
         }
+
+        $this->wordPressData->triggerAction(
+            SimpleJWTLoginHooks::AUDIT_AUTH_REGISTER_SUCCESS,
+            $this->wordPressData->getUserIdFromUser($user),
+            $this->wordPressData->getUserProperty($user, 'user_email')
+        );
 
         if ($this->jwtSettings->getLoginSettings()->isAutologinEnabled()
             && $this->jwtSettings->getRegisterSettings()->isForceLoginAfterCreateUserEnabled()

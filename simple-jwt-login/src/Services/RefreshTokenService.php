@@ -14,13 +14,23 @@ class RefreshTokenService extends AuthenticateService
 {
     public function makeAction()
     {
-        $this->checkAuthenticationEnabled();
-        $this->checkJwtNotRevoked();
-        $this->checkRefreshTokenEnabled();
-        $this->checkAllowedIPAddress();
-        $this->validateAuthenticationAuthKey(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED);
+        try {
+            $this->checkAuthenticationEnabled();
+            $this->checkJwtNotRevoked();
+            $this->checkRefreshTokenEnabled();
+            $this->checkAllowedIPAddress();
+            $this->validateAuthenticationAuthKey(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED);
 
-        return $this->refreshJwt();
+            return $this->refreshJwt();
+        } catch (Exception $e) {
+            $this->wordPressData->triggerAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_REFRESH_TOKEN_FAILED,
+                null,
+                null,
+                $e->getMessage()
+            );
+            throw $e;
+        }
     }
 
     /**
@@ -135,6 +145,12 @@ class RefreshTokenService extends AuthenticateService
             $tokenData->user_id,
             $this->encryptRefreshToken($newRefreshToken),
             $newTokenExpiresAt
+        );
+
+        $this->wordPressData->triggerAction(
+            SimpleJWTLoginHooks::AUDIT_AUTH_REFRESH_TOKEN_SUCCESS,
+            $this->wordPressData->getUserProperty($user, 'ID'),
+            $this->wordPressData->getUserProperty($user, 'user_email')
         );
 
         $response =  [

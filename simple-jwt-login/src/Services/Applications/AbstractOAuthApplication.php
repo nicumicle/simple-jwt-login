@@ -5,7 +5,7 @@ namespace SimpleJWTLogin\Services\Applications;
 use Exception;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
 use SimpleJWTLogin\Libraries\JWT\JWT;
-use SimpleJWTLogin\Libraries\ServerCall;
+use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Services\AuthenticateService;
 use SimpleJWTLogin\Services\RouteService;
 
@@ -114,32 +114,25 @@ abstract class AbstractOAuthApplication extends BaseApplication
      * @param string $code
      * @param string $redirectUri
      * @return array{status_code: int, response: array}
-     * @SuppressWarnings(StaticAccess)
      */
     public function exchangeCode($code, $redirectUri)
     {
-        $params = [
-            'body' => [
-                'client_id'     => $this->getClientId(),
-                'client_secret' => $this->getClientSecret(),
-                'redirect_uri'  => $redirectUri,
-                'code'          => $code,
-                'grant_type'    => 'authorization_code',
-            ],
-        ];
-
-        $responseStatusCode = 500;
-        $plainResult = null;
-        $jsonResult = ServerCall::post(
+        $response = wp_remote_post(
             $this->getTokenEndpoint(),
-            $params,
-            $responseStatusCode,
-            $plainResult
+            [
+                'body' => [
+                    'client_id'     => $this->getClientId(),
+                    'client_secret' => $this->getClientSecret(),
+                    'redirect_uri'  => $redirectUri,
+                    'code'          => $code,
+                    'grant_type'    => 'authorization_code',
+                ],
+            ]
         );
 
         return [
-            'status_code' => $responseStatusCode,
-            'response'    => $jsonResult,
+            'status_code' => (int) wp_remote_retrieve_response_code($response),
+            'response'    => json_decode(wp_remote_retrieve_body($response), true),
         ];
     }
 
@@ -149,7 +142,6 @@ abstract class AbstractOAuthApplication extends BaseApplication
      *
      * @param string $code
      * @return void
-     * @SuppressWarnings(StaticAccess)
      */
     public function handleOauth($code)
     {
@@ -161,8 +153,15 @@ abstract class AbstractOAuthApplication extends BaseApplication
             $result = $this->exchangeCode($code, str_replace("&amp;", "&", $redirectUri));
 
             if ($result['status_code'] !== 200) {
+                $errorMessage = $this->handleErrorMessage($result['response']);
+                $this->wordPressData->triggerAction(
+                    SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,
+                    null,
+                    null,
+                    $errorMessage
+                );
                 $this->doRedirect($this->wordPressData->getLoginURL([
-                    'error' => $this->handleErrorMessage($result['response']),
+                    'error' => $errorMessage,
                 ]));
 
                 return;
@@ -175,19 +174,41 @@ abstract class AbstractOAuthApplication extends BaseApplication
                 if ($this->isCreateUserEnabled()) {
                     $user = $this->createUser($email);
                     $this->wordPressData->loginUser($user);
+                    $this->wordPressData->triggerAction(
+                        SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_SUCCESS,
+                        $this->wordPressData->getUserProperty($user, 'ID'),
+                        $this->wordPressData->getUserProperty($user, 'user_email')
+                    );
                     $this->doRedirect($this->wordPressData->getAdminUrl());
 
                     return;
                 }
 
+                $this->wordPressData->triggerAction(
+                    SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,
+                    null,
+                    $email,
+                    __('User not found.', 'simple-jwt-login')
+                );
                 $this->doRedirect($this->wordPressData->getLoginURL([]));
 
                 return;
             }
 
             $this->wordPressData->loginUser($user);
+            $this->wordPressData->triggerAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_SUCCESS,
+                $this->wordPressData->getUserProperty($user, 'ID'),
+                $this->wordPressData->getUserProperty($user, 'user_email')
+            );
             $this->doRedirect($this->wordPressData->getAdminUrl());
         } catch (Exception $e) {
+            $this->wordPressData->triggerAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,
+                null,
+                null,
+                $e->getMessage()
+            );
             $this->doRedirect($this->wordPressData->getLoginURL(['error' => $e->getMessage()]));
         }
     }
@@ -207,11 +228,23 @@ abstract class AbstractOAuthApplication extends BaseApplication
         );
 
         if (empty($user)) {
+            $this->wordPressData->triggerAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,
+                null,
+                $email,
+                __('Wrong user credentials.', 'simple-jwt-login')
+            );
             throw new Exception(
                 __('Wrong user credentials.', 'simple-jwt-login'),
                 $this->getUserNotFoundErrorCode()
             );
         }
+
+        $this->wordPressData->triggerAction(
+            SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_SUCCESS,
+            $this->wordPressData->getUserProperty($user, 'ID'),
+            $this->wordPressData->getUserProperty($user, 'user_email')
+        );
 
         $payload = AuthenticateService::generatePayload(
             [],
@@ -263,7 +296,7 @@ abstract class AbstractOAuthApplication extends BaseApplication
             $error = ucfirst($jsonResult['error_description']) . ".";
         }
         if (isset($jsonResult['error'])) {
-            $error .= ($error === "" ? " " : "") . ucfirst($jsonResult['error']);
+            $error .= ($error !== "" ? " " : "") . ucfirst($jsonResult['error']);
         }
 
         return $error;

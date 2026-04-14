@@ -12,6 +12,26 @@ class ResetPasswordService extends BaseService implements ServiceInterface
 {
     public function makeAction()
     {
+        try {
+            return $this->doResetPassword();
+        } catch (Exception $e) {
+            $email = isset($this->request['email']) ? $this->request['email'] : null;
+            $this->wordPressData->triggerAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_FAILED,
+                null,
+                $email,
+                $e->getMessage()
+            );
+            throw $e;
+        }
+    }
+
+    /**
+     * @return WP_REST_Response
+     * @throws Exception
+     */
+    private function doResetPassword()
+    {
         if ($this->jwtSettings->getResetPasswordSettings()->isResetPasswordEnabled() === false) {
             throw  new Exception(
                 __('Reset Password is not allowed.', 'simple-jwt-login'),
@@ -65,6 +85,13 @@ class ResetPasswordService extends BaseService implements ServiceInterface
 
         $user = $this->getUser($jwtAllowed);
         $this->wordPressData->resetPassword($user, $newPassword);
+
+        $this->wordPressData->triggerAction(
+            SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_SUCCESS,
+            $this->wordPressData->getUserProperty($user, 'ID'),
+            $this->wordPressData->getUserProperty($user, 'user_email')
+        );
+
         $response =  [
             'success' => true,
             'message' => __('User Password has been changed.', 'simple-jwt-login'),
@@ -161,6 +188,12 @@ class ResetPasswordService extends BaseService implements ServiceInterface
                     ErrorCodes::ERR_RESET_PASSWORD_INVALID_FLOW
                 );
         }
+
+        $this->wordPressData->triggerAction(
+            SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_REQUEST,
+            $this->wordPressData->getUserProperty($user, 'ID'),
+            $this->wordPressData->getUserProperty($user, 'user_email')
+        );
 
         $response = [
             'success' => true,

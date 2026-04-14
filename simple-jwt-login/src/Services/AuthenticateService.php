@@ -70,27 +70,6 @@ class AuthenticateService extends BaseService implements ServiceInterface
     }
 
     /**
-     * @param array $payload
-     * @param WordPressDataInterface $wordPressData
-     * @param SimpleJWTLoginSettings $jwtSettings
-     * @param WP_User $user
-     *
-     * @return array
-     */
-    public static function generateRefreshTokenPayload(
-        $payload,
-        $wordPressData,
-        $jwtSettings,
-        $user
-    ) {
-        $payload[AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT] = time();
-        $payload[AuthenticationSettings::JWT_PAYLOAD_PARAM_EXP] = time() + ($jwtSettings->getAuthenticationSettings()->getAuthJwtRefreshTtl() * 60);
-        $payload[AuthenticationSettings::JWT_PAYLOAD_PARAM_ID] = $wordPressData->getUserProperty($user, 'ID');
-        
-        return $payload;
-    }
-
-    /**
      * @return WP_REST_Response
      * @throws Exception
      */
@@ -148,6 +127,15 @@ class AuthenticateService extends BaseService implements ServiceInterface
         }
 
         if (empty($user)) {
+            $attemptedEmail = isset($this->request['email'])
+                ? $this->request['email']
+                : (isset($this->request['username']) ? $this->request['username'] : null);
+            $this->wordPressData->triggerAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_FAILED,
+                null,
+                $attemptedEmail,
+                __('Wrong user credentials.', 'simple-jwt-login')
+            );
             throw new Exception(
                 __('Wrong user credentials.', 'simple-jwt-login'),
                 ErrorCodes::AUTHENTICATION_WRONG_CREDENTIALS
@@ -174,6 +162,12 @@ class AuthenticateService extends BaseService implements ServiceInterface
         $passwordMatch = $this->wordPressData->checkPassword($password, $passwordHash, $dbPassword);
 
         if ($passwordMatch === false) {
+            $this->wordPressData->triggerAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_FAILED,
+                $this->wordPressData->getUserProperty($user, 'ID'),
+                $this->wordPressData->getUserProperty($user, 'user_email'),
+                __('Wrong user credentials.', 'simple-jwt-login')
+            );
             throw new Exception(
                 __('Wrong user credentials.', 'simple-jwt-login'),
                 ErrorCodes::AUTHENTICATION_WRONG_CREDENTIALS
@@ -237,6 +231,12 @@ class AuthenticateService extends BaseService implements ServiceInterface
                 $user
             );
         }
+
+        $this->wordPressData->triggerAction(
+            SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_SUCCESS,
+            $this->wordPressData->getUserProperty($user, 'ID'),
+            $this->wordPressData->getUserProperty($user, 'user_email')
+        );
 
         return $this->wordPressData->createResponse($response);
     }

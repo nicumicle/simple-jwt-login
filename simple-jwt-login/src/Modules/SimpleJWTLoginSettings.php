@@ -4,6 +4,8 @@ namespace SimpleJWTLogin\Modules;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Modules\Settings\ApplicationsSettings;
+use SimpleJWTLogin\Modules\Settings\AuditLogSettings;
 use SimpleJWTLogin\Modules\Settings\AuthCodesSettings;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Modules\Settings\CorsSettings;
@@ -16,7 +18,6 @@ use SimpleJWTLogin\Modules\Settings\RegisterSettings;
 use SimpleJWTLogin\Modules\Settings\ResetPasswordSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsFactory;
 use SimpleJWTLogin\Modules\Settings\SettingsInterface;
-use SimpleJWTLogin\Modules\Settings\ApplicationsSettings;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 
@@ -52,6 +53,11 @@ class SimpleJWTLoginSettings
      * @var SettingsInterface[]
      */
     private $settingsParsers = [];
+
+    /**
+     * @var array
+     */
+    private $lastSettingsDiff = [];
 
     /**
      * @var array
@@ -186,6 +192,14 @@ class SimpleJWTLoginSettings
     }
 
     /**
+     * @return AuditLogSettings
+     */
+    public function getAuditLogSettings()
+    {
+        return $this->getSettingsClassByType(SettingsFactory::AUDIT_LOG_SETTINGS);
+    }
+
+    /**
      * This function makes sure that when save is pressed, all the data is saved
      *
      * @param array $post
@@ -206,6 +220,9 @@ class SimpleJWTLoginSettings
                 ErrorCodes::ERR_INVALID_NONCE
             );
         }
+
+        $oldSettings = $this->settings !== null ? $this->settings : [];
+
         $this->post = $post;
         $this->settingsParsers = (new SettingsFactory())->getAll();
 
@@ -224,7 +241,102 @@ class SimpleJWTLoginSettings
         self::$settingsInstances = [];
         $this->saveSettingsInDatabase();
 
+        $this->lastSettingsDiff = $this->buildSettingsDiff($oldSettings, $this->settings);
+
         return true;
+    }
+
+    /**
+     * Returns the diff computed during the last successful watchForUpdates call.
+     *
+     * @return array
+     */
+    public function getLastSettingsDiff()
+    {
+        return $this->lastSettingsDiff;
+    }
+
+    /**
+     * Compute a flat diff between two settings arrays.
+     *
+     * @param array $old
+     * @param array $new
+     * @return array
+     */
+    public function buildSettingsDiff($old, $new)
+    {
+        $flatOld = $this->flattenSettings($old);
+        $flatNew = $this->flattenSettings($new);
+
+        $changed = [];
+        $added   = [];
+        $removed = [];
+
+        foreach ($flatNew as $key => $value) {
+            if (!array_key_exists($key, $flatOld)) {
+                $added[] = $key;
+            } elseif ($flatOld[$key] !== $value) {
+                $changed[$key] = [
+                    'from' => $this->redactIfSensitive($key, $flatOld[$key]),
+                    'to'   => $this->redactIfSensitive($key, $value),
+                ];
+            }
+        }
+
+        foreach (array_keys($flatOld) as $key) {
+            if (!array_key_exists($key, $flatNew)) {
+                $removed[] = $key;
+            }
+        }
+
+        return array_filter([
+            'changed' => $changed,
+            'added'   => $added,
+            'removed' => $removed,
+        ]);
+    }
+
+    /**
+     * Flatten a nested settings array into dot-notation keys.
+     * Indexed (list) arrays are serialised as JSON strings rather than recursed into.
+     *
+     * @param array  $settings
+     * @param string $prefix
+     * @return array<string, string>
+     */
+    private function flattenSettings($settings, $prefix = '')
+    {
+        $result = [];
+        if (!is_array($settings)) {
+            return $result;
+        }
+        foreach ($settings as $key => $value) {
+            $fullKey = $prefix !== '' ? $prefix . '.' . $key : (string) $key;
+            if (is_array($value) && !empty($value) && array_keys($value) !== range(0, count($value) - 1)) {
+                $result = array_merge($result, $this->flattenSettings($value, $fullKey));
+                continue;
+            }
+            $result[$fullKey] = is_array($value) ? (string) json_encode($value) : (string) $value;
+        }
+        return $result;
+    }
+
+    /**
+     * Replace the value with '[REDACTED]' for keys that may hold sensitive data.
+     *
+     * @param string $key
+     * @param string $value
+     * @return string
+     */
+    private function redactIfSensitive($key, $value)
+    {
+        $lowerKey = strtolower($key);
+        foreach (['secret', 'password', '_key'] as $pattern) {
+            if (strpos($lowerKey, $pattern) !== false) {
+                return '[REDACTED]';
+            }
+        }
+        return $value;
     }
 
     /**

@@ -24,7 +24,11 @@ if (! function_exists('esc_html')) {
 if (!class_exists('WP_User')) {
     class WP_User
     {
+        /** @var int */
+        public $ID = 0;
         public $user_login;
+        /** @var string */
+        public $user_email = '';
         public $roles = [];
 
         public function __construct($user)
@@ -336,6 +340,25 @@ if (!class_exists('wpdb')) {
         }
 
         /**
+         * @param string $query
+         * @return string|null
+         */
+        public function get_var($query)
+        {
+            return null;
+        }
+
+        /**
+         * @param string $query
+         * @param string $output
+         * @return array|null
+         */
+        public function get_results($query, $output = 'OBJECT')
+        {
+            return null;
+        }
+
+        /**
          * @param string $table
          * @param array  $where
          * @param array  $where_format
@@ -361,6 +384,15 @@ if (!class_exists('wpdb')) {
         public function get_charset_collate()
         {
             return '';
+        }
+
+        /**
+         * @param string $text
+         * @return string
+         */
+        public function esc_like($text)
+        {
+            return addcslashes($text, '_%\\');
         }
     }
 }
@@ -663,6 +695,20 @@ if (!function_exists('wp_remote_retrieve_body')) {
     }
 }
 
+if (!function_exists('wp_remote_post')) {
+    function wp_remote_post($url, $args = [])
+    {
+    }
+}
+
+if (!function_exists('wp_roles')) {
+    function wp_roles()
+    {
+        global $wp_roles;
+        return $wp_roles;
+    }
+}
+
 if (!class_exists('WP_REST_Response')) {
     class WP_REST_Response
     {
@@ -679,8 +725,32 @@ if (!class_exists('WP_REST_Response')) {
 if (!class_exists('WP_Error')) {
     class WP_Error
     {
+        /** @var string */
+        private $code;
+        /** @var string */
+        private $message;
+
         public function __construct($code = '', $message = '', $data = '')
         {
+            $this->code    = (string) $code;
+            $this->message = (string) $message;
+        }
+
+        /**
+         * @return string
+         */
+        public function get_error_code()
+        {
+            return $this->code;
+        }
+
+        /**
+         * @param string|int $code
+         * @return string
+         */
+        public function get_error_message($code = '')
+        {
+            return $this->message;
         }
     }
 }
@@ -713,6 +783,78 @@ if (!function_exists('esc_html__')) {
      * @return string
      */
     function esc_html__($text, $domain = 'default') {
+        return $text;
+    }
+}
+
+if (!function_exists('remove_query_arg')) {
+    /**
+     * @param string|string[] $key
+     * @param string|false $query
+     * @return string
+     */
+    function remove_query_arg($key, $query = false)
+    {
+        return '';
+    }
+}
+
+if (!function_exists('add_query_arg')) {
+    /**
+     * @param string|array $key
+     * @param string|false $value
+     * @param string|false $url
+     * @return string
+     */
+    function add_query_arg($key, $value = false, $url = false)
+    {
+        return '';
+    }
+}
+
+if (!function_exists('wp_nonce_url')) {
+    /**
+     * @param string $actionurl
+     * @param int|string $action
+     * @param string $name
+     * @return string
+     */
+    function wp_nonce_url($actionurl, $action = -1, $name = '_wpnonce')
+    {
+        return '';
+    }
+}
+
+if (!function_exists('wp_get_current_user')) {
+    /**
+     * @return WP_User
+     */
+    function wp_get_current_user()
+    {
+        return new WP_User(0);
+    }
+}
+
+if (!function_exists('wp_json_encode')) {
+    /**
+     * @param mixed $data
+     * @param int   $options
+     * @param int   $depth
+     * @return string|false
+     */
+    function wp_json_encode($data, $options = 0, $depth = 512)
+    {
+        return json_encode($data, $options, $depth);
+    }
+}
+
+if (!function_exists('esc_js')) {
+    /**
+     * @param string $text
+     * @return string
+     */
+    function esc_js($text)
+    {
         return $text;
     }
 }

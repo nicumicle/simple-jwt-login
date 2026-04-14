@@ -379,7 +379,7 @@ class SimpleJWTLoginSettings
 
         foreach ($params as $key => $value) {
             $url .= sprintf(
-                '&amp;%s=%s',
+                '&%s=%s',
                 $key,
                 $value
             );

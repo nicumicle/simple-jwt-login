@@ -132,7 +132,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
             ->willReturn(json_encode(['route_namespace' => 'v1']));
         $simpleJwtSetttings = new SimpleJWTLoginSettings($wordPressDataMock);
         $this->assertSame(
-            'https://localhost/?rest_route=/v1/auth&amp;param=1',
+            'https://localhost/?rest_route=/v1/auth&param=1',
             $simpleJwtSetttings->generateExampleLink('auth', ['param' => 1])
         );
     }

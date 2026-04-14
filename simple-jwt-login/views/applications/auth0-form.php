@@ -19,7 +19,7 @@ if (! defined('ABSPATH')) {
  * @var string $pluginDirUrl
  */
 ?>
-<form method="POST" action="<?php
+<form method="GET" action="<?php
 $auth0Domain = $jwtSettings->getApplicationsSettings()->auth0()->getDomain();
 echo esc_url($auth0Domain ? sprintf('https://%s/authorize', $auth0Domain) : '#');
 ?>"

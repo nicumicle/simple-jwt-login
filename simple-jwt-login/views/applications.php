@@ -33,14 +33,25 @@ $sjlApps = [
         'beta'       => true,
     ],
 ];
+
+$activeApp = $sjlApps[0]['id'];
+
+if (!empty($_REQUEST['active_app_panel'])) {
+    $submittedApp = sanitize_text_field($_REQUEST['active_app_panel']);
+    if (in_array($submittedApp, array_column($sjlApps, 'id'), true)) {
+        $activeApp = $submittedApp;
+    }
+}
+
 ?>
 <div class="sjl-apps-catalog">
     <?php foreach ($sjlApps as $i => $sjlApp) : ?>
-    <div class="sjl-app-card<?php echo $i === 0 ? ' active' : ''; ?>"
+    <?php $isActive = $sjlApp['id'] === $activeApp; ?>
+    <div class="sjl-app-card<?php echo $isActive ? ' active' : ''; ?>"
          data-app="<?php echo esc_attr($sjlApp['id']); ?>"
          role="button"
          tabindex="0"
-         aria-expanded="<?php echo $i === 0 ? 'true' : 'false'; ?>">
+         aria-expanded="<?php echo $isActive ? 'true' : 'false'; ?>">
         <div class="sjl-app-card-logo">
             <div class="logo <?php echo esc_attr($sjlApp['logo_class']); ?>"></div>
         </div>
@@ -60,11 +71,13 @@ $sjlApps = [
     <?php endforeach; ?>
 </div>
 
+<input type="hidden" name="active_app_panel" id="active_app_panel" value="<?php echo esc_attr($activeApp); ?>" />
 <div class="sjl-apps-panels">
     <?php foreach ($sjlApps as $i => $sjlApp) : ?>
+    <?php $isActive = $sjlApp['id'] === $activeApp; ?>
     <div class="sjl-app-panel"
          id="sjl-app-panel-<?php echo esc_attr($sjlApp['id']); ?>"
-         <?php echo $i !== 0 ? 'style="display:none;"' : ''; ?>>
+         <?php echo $isActive ? '' : 'style="display:none;"'; ?>>
         <?php include $sjlApp['view']; ?>
     </div>
     <?php endforeach; ?>

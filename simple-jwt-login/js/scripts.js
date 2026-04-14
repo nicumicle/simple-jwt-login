@@ -17,6 +17,7 @@ jQuery(document).ready(
             if (!isOpen) {
                 $card.addClass('active').attr('aria-expanded', 'true');
                 $('#simple-jwt-login #sjl-app-panel-' + appId).show();
+                $('#active_app_panel').val(appId);
             }
         });
 

@@ -101,63 +101,6 @@ if (! defined('ABSPATH')) {
 
 <div class="sjl-gen-card">
     <div class="sjl-gen-card-header">
-        <span class="dashicons dashicons-id"></span>
-        <div>
-            <h3 class="sjl-gen-card-title">
-                <?php
-                echo isset($errorCode)
-                && $settingsErrors->generateCode(
-                    SettingsErrors::PREFIX_LOGIN,
-                    SettingsErrors::ERR_LOGIN_MISSING_JWT_PARAMETER_KEY
-                ) === $errorCode
-                    ? '<span class="simple-jwt-error">!</span> '
-                    : '';
-                ?>
-                <?php echo __('User Identification', 'simple-jwt-login'); ?>
-            </h3>
-            <p class="sjl-gen-card-desc">
-                <?php echo __('Configure which JWT payload field is used to find the WordPress user.', 'simple-jwt-login'); ?>
-            </p>
-        </div>
-    </div>
-    <div class="sjl-gen-card-body">
-        <div class="sjl-gen-two-col">
-            <div class="sjl-gen-two-col-left">
-                <label class="sjl-gen-field-label" for="jwt_login_by">
-                    <?php echo __('Identify user by', 'simple-jwt-login'); ?>
-                </label>
-                <select name="jwt_login_by" class="form-control" id="jwt_login_by">
-                    <option value="0"
-                        <?php echo $jwtSettings->getLoginSettings()->getJWTLoginBy() === LoginSettings::JWT_LOGIN_BY_EMAIL ? 'selected' : ''; ?>
-                    ><?php echo __('Email address', 'simple-jwt-login'); ?></option>
-                    <option value="1"
-                        <?php echo $jwtSettings->getLoginSettings()->getJWTLoginBy() === LoginSettings::JWT_LOGIN_BY_WORDPRESS_USER_ID ? 'selected' : ''; ?>
-                    ><?php echo __('WordPress User ID', 'simple-jwt-login'); ?></option>
-                    <option value="2"
-                        <?php echo $jwtSettings->getLoginSettings()->getJWTLoginBy() === LoginSettings::JWT_LOGIN_BY_USER_LOGIN ? 'selected' : ''; ?>
-                    ><?php echo __('WordPress Username', 'simple-jwt-login'); ?></option>
-                </select>
-            </div>
-            <div class="sjl-gen-two-col-right">
-                <label class="sjl-gen-field-label" for="jwt_login_by_paramter">
-                    <?php echo __('JWT payload key', 'simple-jwt-login'); ?>
-                    <span class="required">*</span>
-                </label>
-                <input type="text" name="jwt_login_by_parameter" class="form-control"
-                       id="jwt_login_by_paramter"
-                       value="<?php echo esc_attr($jwtSettings->getLoginSettings()->getJwtLoginByParameter()); ?>"
-                       placeholder="<?php echo __('e.g. email', 'simple-jwt-login'); ?>"
-                />
-                <p class="sjl-gen-card-desc" style="margin-top:6px;">
-                    <?php echo __('Use dot notation for nested values, e.g. <code>user.id</code> reads the <code>id</code> field inside the <code>user</code> object.', 'simple-jwt-login'); ?>
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="sjl-gen-card">
-    <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-arrow-right-alt"></span>
         <div>
             <h3 class="sjl-gen-card-title">

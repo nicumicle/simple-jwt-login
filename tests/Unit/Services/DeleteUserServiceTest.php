@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Libraries\JWT\JWT;
-use SimpleJWTLogin\Modules\Settings\DeleteUserSettings;
+use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepository;
@@ -70,9 +70,9 @@ class DeleteUserServiceTest extends TestCase
         $settings = [
             'allow_delete' => true,
             'require_delete_auth' => false,
-            'delete_user_by' => DeleteUserSettings::DELETE_USER_BY_ID,
             'decryption_key' => 'test',
-            'jwt_delete_by_parameter' => 'id',
+            'jwt_login_by' => LoginSettings::JWT_LOGIN_BY_WORDPRESS_USER_ID,
+            'jwt_login_by_parameter' => 'id',
         ];
 
         $this->wordPressDataMock->method('getOptionFromDatabase')
@@ -98,9 +98,9 @@ class DeleteUserServiceTest extends TestCase
         $settings = [
             'allow_delete' => true,
             'require_delete_auth' => false,
-            'delete_user_by' => DeleteUserSettings::DELETE_USER_BY_ID,
             'decryption_key' => 'test',
-            'jwt_delete_by_parameter' => 'id',
+            'jwt_login_by' => LoginSettings::JWT_LOGIN_BY_WORDPRESS_USER_ID,
+            'jwt_login_by_parameter' => 'id',
         ];
 
         $this->wordPressDataMock->method('getOptionFromDatabase')
@@ -125,17 +125,17 @@ class DeleteUserServiceTest extends TestCase
 
     #[DataProvider('deleteByProvider')]
     /**
-     * @param int $deleteBy
+     * @param int $loginBy
      * @throws Exception
      */
-    public function testSuccessResponse($deleteBy)
+    public function testSuccessResponse($loginBy)
     {
         $settings = [
             'allow_delete' => true,
             'require_delete_auth' => false,
-            'delete_user_by' => $deleteBy,
             'decryption_key' => 'test',
-            'jwt_delete_by_parameter' => 'id',
+            'jwt_login_by' => $loginBy,
+            'jwt_login_by_parameter' => 'id',
             'enabled_hooks' => [
                 SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME,
             ]
@@ -181,9 +181,9 @@ class DeleteUserServiceTest extends TestCase
         $settings = [
             'allow_delete' => true,
             'require_delete_auth' => false,
-            'delete_user_by' => -1,
             'decryption_key' => 'test',
-            'jwt_delete_by_parameter' => 'id',
+            'jwt_login_by' => -1,
+            'jwt_login_by_parameter' => 'id',
             'enabled_hooks' => [
                 SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME,
             ]
@@ -211,15 +211,14 @@ class DeleteUserServiceTest extends TestCase
     {
         return [
             'delete-by-email' => [
-                DeleteUserSettings::DELETE_USER_BY_EMAIL,
+                LoginSettings::JWT_LOGIN_BY_EMAIL,
             ],
             'delete-by-id' => [
-                DeleteUserSettings::DELETE_USER_BY_ID,
+                LoginSettings::JWT_LOGIN_BY_WORDPRESS_USER_ID,
             ],
             'delete-by-username' => [
-                DeleteUserSettings::DELETE_USER_BY_USER_LOGIN
-            ]
-
+                LoginSettings::JWT_LOGIN_BY_USER_LOGIN,
+            ],
         ];
     }
 

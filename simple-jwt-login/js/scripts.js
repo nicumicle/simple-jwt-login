@@ -263,6 +263,104 @@ jQuery(document).ready(
         simple_jwt_bind_reset_password();
         simple_jwt_bind_protected_endpoints();
 
+        // -----------------------------------------------------------------------
+        // JWT Rules — per-row algorithm toggle and dynamic add/remove
+        // -----------------------------------------------------------------------
+
+        function sjl_rule_bind_alg($row)
+        {
+            var alg = $row.find('.sjl-rule-alg').val();
+            if (alg && alg.indexOf('RS') !== -1) {
+                $row.find('.sjl-rule-hs-fields').hide();
+                $row.find('.sjl-rule-rs-fields').show();
+            } else {
+                $row.find('.sjl-rule-hs-fields').show();
+                $row.find('.sjl-rule-rs-fields').hide();
+            }
+        }
+
+        function sjl_rule_bind_condition($row)
+        {
+            var type = $row.find('.sjl-rule-condition-type').val() || 'payload';
+            var $keyGroup = $row.find('.sjl-rule-condition-key-group');
+            var $keyInput = $row.find('.sjl-rule-condition-key');
+
+            if (type === 'iss') {
+                $keyGroup.hide();
+                $keyInput.val('iss');
+            } else {
+                $keyGroup.show();
+                if ($keyInput.val() === 'iss') {
+                    $keyInput.val('');
+                }
+            }
+        }
+
+        // Initialize algorithm and condition visibility for existing PHP-rendered rows
+        $('#sjl-jwt-rules .sjl-rule-row').each(function () {
+            sjl_rule_bind_alg($(this));
+            sjl_rule_bind_condition($(this));
+        });
+
+        // Algorithm change on any rule row
+        $(document).on('change', '#sjl-jwt-rules .sjl-rule-alg', function () {
+            sjl_rule_bind_alg($(this).closest('.sjl-rule-row'));
+        });
+
+        $(document).on('change', '#sjl-jwt-rules .sjl-rule-condition-type', function () {
+            sjl_rule_bind_condition($(this).closest('.sjl-rule-row'));
+        });
+
+        // Add new rule row by cloning the hidden template
+        $('#simple-jwt-login #sjl-add-rule').on('click', function () {
+            var $clone = $('#sjl-rule-row-template .sjl-rule-row').clone();
+            $clone.removeAttr('style');
+            $('#sjl-jwt-rules').append($clone);
+            sjl_rule_bind_alg($clone);
+            sjl_rule_bind_condition($clone);
+        });
+
+        // Remove a rule row
+        $(document).on('click', '#sjl-jwt-rules .sjl-rule-remove', function () {
+            $(this).closest('.sjl-rule-row').remove();
+        });
+
+        // Serialize rule rows to JSON before form submission
+        $('#simple-jwt-login').closest('form').on('submit', function () {
+            var rules = [];
+            $('#sjl-jwt-rules .sjl-rule-row').each(function () {
+                var $row = $(this);
+                var alg  = $row.find('.sjl-rule-alg').val() || 'HS256';
+                var conditionType = $row.find('.sjl-rule-condition-type').val() || 'payload';
+                var conditionOperator = $row.find('.sjl-rule-condition-operator').val() || 'equals';
+                var conditionKey = $row.find('.sjl-rule-condition-key').val() || '';
+                var conditionValue = $row.find('.sjl-rule-condition-value').val() || '';
+                var rule = {
+                    condition_type: conditionType,
+                    condition_operator: conditionOperator,
+                    condition_key: conditionType === 'iss' ? 'iss' : conditionKey,
+                    condition_value: conditionValue,
+                    algorithm: alg
+                };
+
+                if (conditionType === 'iss') {
+                    rule.iss = conditionValue;
+                }
+
+                if (alg.indexOf('RS') !== -1) {
+                    rule.decryption_key_public  = $row.find('.sjl-rule-pub-key').val()  || '';
+                    rule.decryption_key_private = $row.find('.sjl-rule-priv-key').val() || '';
+                } else {
+                    rule.decryption_key        = $row.find('.sjl-rule-key').val() || '';
+                    rule.decryption_key_base64 = $row.find('.sjl-rule-key-b64').is(':checked') ? 1 : 0;
+                }
+                rule.login_by           = parseInt($row.find('.sjl-rule-login-by').val(), 10) || 0;
+                rule.login_by_parameter = $row.find('.sjl-rule-login-by-param').val() || '';
+                rules.push(rule);
+            });
+            $('#jwt_rules_json').val(JSON.stringify(rules));
+        });
+
         // TABS
         $('#simple-jwt-login-tabs a').click(function (e) {
             e.preventDefault();

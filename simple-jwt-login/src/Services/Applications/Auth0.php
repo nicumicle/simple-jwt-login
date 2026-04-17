@@ -19,6 +19,7 @@ use SimpleJWTLogin\Libraries\ServerCall;
 class Auth0 extends AbstractOAuthApplication implements ApplicationInterface
 {
     const PROVIDER_SLUG         = 'auth0';
+    const IIS                   = 'accounts.auth0.com';
     const TOKEN_ENDPOINT_TPL    = 'https://%s/oauth/token';
     const AUTH_URL_TPL          = 'https://%s/authorize';
     const USERINFO_ENDPOINT_TPL = 'https://%s/userinfo';
@@ -172,6 +173,42 @@ class Auth0 extends AbstractOAuthApplication implements ApplicationInterface
     protected function getUserNotFoundErrorCode()
     {
         return ErrorCodes::ERR_AUTH0_USER_NOT_FOUND;
+    }
+
+    // -------------------------------------------------------------------------
+    // Auth0-specific public helper (used by BaseService)
+    // -------------------------------------------------------------------------
+
+    /**
+     * Validate an Auth0 JWT/access_token by calling the userinfo endpoint.
+     * Mirrors Google::validateIdToken so that BaseService can call it via an instance.
+     *
+     * @param string $jwt
+     * @param \SimpleJWTLogin\Modules\SimpleJWTLoginSettings $settings
+     * @return void
+     * @throws Exception
+     * @SuppressWarnings(StaticAccess)
+     */
+    public static function validateIdToken($jwt, $settings)
+    {
+        $domain   = $settings->getApplicationsSettings()->auth0()->getDomain();
+        $endpoint = sprintf(self::USERINFO_ENDPOINT_TPL, $domain);
+
+        $statusCode  = 400;
+        $plainResult = '';
+        ServerCall::get(
+            $endpoint,
+            ['headers' => ['Authorization' => 'Bearer ' . $jwt]],
+            $statusCode,
+            $plainResult
+        );
+
+        if ($statusCode !== 200) {
+            throw new Exception(
+                __('The provided Auth0 token is invalid.', 'simple-jwt-login'),
+                ErrorCodes::ERR_AUTH0_INVALID_TOKEN
+            );
+        }
     }
 
     // -------------------------------------------------------------------------

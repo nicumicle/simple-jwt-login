@@ -7,7 +7,9 @@
 - Added support for Auth0
 - Improved refresh token handling
 - Add Audit logs
-- 
+- Add support for multiple JWT Decryption keys based on JWT header or payload
+- Move User identification from Login to General
+- [TODO][BREAKING CHANGE] Remove User Identification from Delete, and use the one from General 
 
 ## 3.6.5 (14 Mar 2026)
 - Fix  CVE-2025-58648 - Stored Cross-Site Scripting vulnerability[PR](https://github.com/nicumicle/simple-jwt-login/pull/162)

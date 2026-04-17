@@ -484,4 +484,35 @@ class JWT
             'payload' => (array)$payload,
         ];
     }
+
+    /**
+     * @param int $leeway
+     * @return void
+     */
+    public function applyLeeway($leeway)
+    {
+        static::$leeway = $leeway;
+    }
+
+    /**
+     * @param string $jwt
+     * @param string $key
+     * @param array  $allowedAlgs
+     * @return object
+     * @throws Exception
+     */
+    public function decodeToken($jwt, $key, array $allowedAlgs = [])
+    {
+        return static::decode($jwt, $key, $allowedAlgs);
+    }
+
+    /**
+     * @param string $jwt
+     * @return array
+     * @throws Exception
+     */
+    public function extractData($jwt)
+    {
+        return static::extractDataFromJwt($jwt);
+    }
 }

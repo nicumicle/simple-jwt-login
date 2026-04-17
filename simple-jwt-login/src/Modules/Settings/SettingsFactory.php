@@ -21,11 +21,12 @@ class SettingsFactory
     const PROTECT_ENDPOINTS_SETTINGS = 9;
     const APPLICATIONS_SETTINGS = 10;
     const AUDIT_LOG_SETTINGS = 11;
+    const JWT_RULES_SETTINGS = 12;
 
     /**
      * @param int $type
      *
-     * @return AuthCodesSettings|AuthenticationSettings|AuditLogSettings|CorsSettings|DeleteUserSettings|GeneralSettings|HooksSettings|LoginSettings|RegisterSettings|ResetPasswordSettings|ProtectEndpointSettings|ApplicationsSettings
+     * @return AuthCodesSettings|AuthenticationSettings|AuditLogSettings|CorsSettings|DeleteUserSettings|GeneralSettings|HooksSettings|JwtRulesSettings|LoginSettings|RegisterSettings|ResetPasswordSettings|ProtectEndpointSettings|ApplicationsSettings
      * @throws Exception
      */
     public static function getFactory($type)
@@ -45,6 +46,8 @@ class SettingsFactory
                 return new GeneralSettings();
             case self::HOOKS_SETTINGS:
                 return new HooksSettings();
+            case self::JWT_RULES_SETTINGS:
+                return new JwtRulesSettings();
             case self::LOGIN_SETTINGS:
                 return new LoginSettings();
             case self::REGISTER_SETTINGS:
@@ -72,6 +75,7 @@ class SettingsFactory
             self::DELETE_USER_SETTINGS => new DeleteUserSettings(),
             self::GENERAL_SETTINGS => new GeneralSettings(),
             self::HOOKS_SETTINGS => new HooksSettings(),
+            self::JWT_RULES_SETTINGS => new JwtRulesSettings(),
             self::LOGIN_SETTINGS => new LoginSettings(),
             self::REGISTER_SETTINGS => new RegisterSettings(),
             self::RESET_PASSWORD_SETTINGS => new ResetPasswordSettings(),

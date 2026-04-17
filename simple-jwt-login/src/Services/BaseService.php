@@ -13,7 +13,7 @@ use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\Applications\Google;
-use WP_User;
+use SimpleJWTLogin\Services\Applications\Auth0;
 
 abstract class BaseService
 {
@@ -254,7 +254,6 @@ abstract class BaseService
     }
 
     /**
-     * @SuppressWarnings(StaticAccess)
      * @param string $parameter
      *
      * @return mixed|string
@@ -262,25 +261,40 @@ abstract class BaseService
      */
     protected function validateJWTAndGetUserValueFromPayload($parameter)
     {
-        $jwtParts = JWT::extractDataFromJwt($this->jwt);
-        if (isset($jwtParts['payload']['iss'])) {
-            switch ($jwtParts['payload']['iss']) {
-                case Google::IIS:
-                    $googleSettings = $this->jwtSettings->getApplicationsSettings()->google();
-                    if ($googleSettings->isEnabled() && $googleSettings->isAllowedOnAllEndpoints()) {
-                        Google::validateIdToken($this->jwt);
+        $jwtParts = $this->extractJwtData($this->jwt);
+        $iss = isset($jwtParts['payload']['iss']) ? (string)$jwtParts['payload']['iss'] : null;
 
-                        return $jwtParts['payload']['email'];
-                    }
-                    break;
+        if ($iss === Google::IIS) {
+            $googleSettings = $this->jwtSettings->getApplicationsSettings()->google();
+            if ($googleSettings->isEnabled() && $googleSettings->isAllowedOnAllEndpoints()) {
+                Google::validateIdToken($this->jwt);
+
+                return $jwtParts['payload']['email'];
+            }
+        }
+        if ($iss === Auth0::IIS) {
+            $auth0Settings = $this->jwtSettings->getApplicationsSettings()->auth0();
+            if ($auth0Settings->isEnabled() && $auth0Settings->isAllowedOnAllEndpoints()) {
+                Auth0::validateIdToken($this->jwt, $this->jwtSettings);
+
+                return $jwtParts['payload']['sub'];
             }
         }
 
-        JWT::$leeway = self::JWT_LEEVAY;
-        $decoded = (array)JWT::decode(
+        $ruleConfig = $this->jwtSettings->getJwtRulesSettings()->findMatchingRuleConfig($jwtParts);
+
+        $jwtKey = (new JwtKeyFactory())->getFactoryFromConfig($this->jwtSettings, $ruleConfig);
+
+        $algorithm = ($ruleConfig !== null)
+            ? $ruleConfig['algorithm']
+            : $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm();
+
+        $jwtLib = new JWT();
+        $jwtLib->applyLeeway(self::JWT_LEEVAY);
+        $decoded = (array)$jwtLib->decodeToken(
             $this->jwt,
-            JwtKeyFactory::getFactory($this->jwtSettings)->getPublicKey(),
-            [$this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm()]
+            $jwtKey->getPublicKey(),
+            [$algorithm]
         );
 
         return $this->getUserParameterValueFromPayload($decoded, $parameter);
@@ -289,7 +303,7 @@ abstract class BaseService
     /**
      * @param string $userData
      *
-     * @return WP_User|null
+     * @return object|null
      */
     protected function getUserDetails($userData)
     {
@@ -336,6 +350,15 @@ abstract class BaseService
         }
 
         return false;
+    }
+
+    /**
+     * @param string $jwt
+     * @return array
+     */
+    protected function extractJwtData($jwt)
+    {
+        return (new JWT())->extractData($jwt);
     }
 
     /**

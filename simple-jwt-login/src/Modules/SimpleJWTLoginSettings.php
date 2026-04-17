@@ -12,6 +12,7 @@ use SimpleJWTLogin\Modules\Settings\CorsSettings;
 use SimpleJWTLogin\Modules\Settings\DeleteUserSettings;
 use SimpleJWTLogin\Modules\Settings\GeneralSettings;
 use SimpleJWTLogin\Modules\Settings\HooksSettings;
+use SimpleJWTLogin\Modules\Settings\JwtRulesSettings;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
 use SimpleJWTLogin\Modules\Settings\RegisterSettings;
@@ -189,6 +190,14 @@ class SimpleJWTLoginSettings
     public function getApplicationsSettings()
     {
         return $this->getSettingsClassByType(SettingsFactory::APPLICATIONS_SETTINGS);
+    }
+
+    /**
+     * @return JwtRulesSettings
+     */
+    public function getJwtRulesSettings()
+    {
+        return $this->getSettingsClassByType(SettingsFactory::JWT_RULES_SETTINGS);
     }
 
     /**

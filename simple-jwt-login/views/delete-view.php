@@ -1,7 +1,6 @@
 <?php
 
 use SimpleJWTLogin\Services\RouteService;
-use SimpleJWTLogin\Modules\Settings\DeleteUserSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
@@ -103,63 +102,6 @@ if (! defined('ABSPATH')) {
         >
             <span class="dashicons dashicons-warning"></span>
             <?php echo __('Allowing account deletion without an Auth Code is not recommended. Any valid JWT holder could delete accounts.', 'simple-jwt-login'); ?>
-        </div>
-    </div>
-</div>
-
-<div class="sjl-gen-card">
-    <div class="sjl-gen-card-header">
-        <span class="dashicons dashicons-id"></span>
-        <div>
-            <h3 class="sjl-gen-card-title">
-                <?php
-                echo isset($errorCode)
-                && $settingsErrors->generateCode(
-                    SettingsErrors::PREFIX_DELETE,
-                    SettingsErrors::ERR_DELETE_MISSING_JWT_PARAM
-                ) === $errorCode
-                    ? '<span class="simple-jwt-error">!</span> '
-                    : '';
-                ?>
-                <?php echo __('User Identification', 'simple-jwt-login'); ?>
-            </h3>
-            <p class="sjl-gen-card-desc">
-                <?php echo __('Configure which JWT payload field is used to find the user to delete.', 'simple-jwt-login'); ?>
-            </p>
-        </div>
-    </div>
-    <div class="sjl-gen-card-body">
-        <div class="sjl-gen-two-col">
-            <div class="sjl-gen-two-col-left">
-                <label class="sjl-gen-field-label" for="delete_user_by">
-                    <?php echo __('Identify user by', 'simple-jwt-login'); ?>
-                </label>
-                <select name="delete_user_by" class="form-control" id="delete_user_by">
-                    <option value="0"
-                        <?php echo $jwtSettings->getDeleteUserSettings()->getDeleteUserBy() === DeleteUserSettings::DELETE_USER_BY_EMAIL ? 'selected' : ''; ?>
-                    ><?php echo __('Email address', 'simple-jwt-login'); ?></option>
-                    <option value="1"
-                        <?php echo $jwtSettings->getDeleteUserSettings()->getDeleteUserBy() === DeleteUserSettings::DELETE_USER_BY_ID ? 'selected' : ''; ?>
-                    ><?php echo __('WordPress User ID', 'simple-jwt-login'); ?></option>
-                    <option value="2"
-                        <?php echo $jwtSettings->getDeleteUserSettings()->getDeleteUserBy() === DeleteUserSettings::DELETE_USER_BY_USER_LOGIN ? 'selected' : ''; ?>
-                    ><?php echo __('WordPress Username', 'simple-jwt-login'); ?></option>
-                </select>
-            </div>
-            <div class="sjl-gen-two-col-right">
-                <label class="sjl-gen-field-label" for="jwt_delete_by_parameter">
-                    <?php echo __('JWT payload key', 'simple-jwt-login'); ?>
-                     <span class="required">*</span>
-                </label>
-                <input type="text" name="jwt_delete_by_parameter" class="form-control"
-                       id="jwt_delete_by_parameter"
-                       value="<?php echo esc_attr($jwtSettings->getDeleteUserSettings()->getJwtDeleteByParameter()); ?>"
-                       placeholder="<?php echo __('e.g. email', 'simple-jwt-login'); ?>"
-                />
-                <p class="sjl-gen-card-desc" style="margin-top:6px;">
-                    <?php echo __('Use dot notation for nested values, e.g. <code>user.id</code> reads the <code>id</code> field inside the <code>user</code> object.', 'simple-jwt-login'); ?>
-                </p>
-            </div>
         </div>
     </div>
 </div>

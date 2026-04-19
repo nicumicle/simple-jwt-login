@@ -9,6 +9,7 @@ use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\AuthCodeBuilder;
 use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepositoryInterface;
+use SimpleJWTLogin\Repositories\WebhookLog\Repository as WebhookLogRepositoryInterface;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
@@ -63,6 +64,11 @@ abstract class BaseService
      * @var RefreshTokenRepositoryInterface
      */
     protected $tokenRepository;
+
+    /**
+     * @var WebhookLogRepositoryInterface|null
+     */
+    protected $webhookLogRepository;
 
     /**
      * @param string $requestMethod
@@ -141,6 +147,17 @@ abstract class BaseService
     public function withRefreshTokenRepository(RefreshTokenRepositoryInterface $repository)
     {
         $this->tokenRepository = $repository;
+
+        return $this;
+    }
+
+    /**
+     * @param WebhookLogRepositoryInterface $repository
+     * @return $this
+     */
+    public function withWebhookLogRepository(WebhookLogRepositoryInterface $repository)
+    {
+        $this->webhookLogRepository = $repository;
 
         return $this;
     }

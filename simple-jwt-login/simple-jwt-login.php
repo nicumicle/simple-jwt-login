@@ -16,13 +16,14 @@ use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 use SimpleJWTLogin\Repositories\RefreshToken\RefreshTokenRepository;
 use SimpleJWTLogin\Repositories\AuditLog\AuditLogRepository;
+use SimpleJWTLogin\Repositories\WebhookLog\WebhookLogRepository;
 
 if (! defined('ABSPATH')) {
     /** @phpstan-ignore-next-line  */
     exit;
 } // Exit if accessed directly
 
-define('SIMPLE_JWT_LOGIN_DB_VERSION', '1.2');
+define('SIMPLE_JWT_LOGIN_DB_VERSION', '1.3');
 
 include_once 'autoload.php';
 
@@ -159,6 +160,7 @@ function simple_jwt_plugin_uninstall()
     global $wpdb;
     (new RefreshTokenRepository($wpdb))->dropTable();
     (new AuditLogRepository($wpdb))->dropTable();
+    (new WebhookLogRepository($wpdb))->dropTable();
 }
 
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'simple_jwt_login_add_plugin_action_links');
@@ -368,6 +370,7 @@ function simple_jwt_login_activate_plugin()
 {
     simple_jwt_login_create_refresh_tokens_table();
     simple_jwt_login_create_audit_logs_table();
+    simple_jwt_login_create_webhook_logs_table();
     simple_jwt_login_ensure_refresh_token_key();
     update_option('simple_jwt_login_db_version', SIMPLE_JWT_LOGIN_DB_VERSION);
     if (!wp_next_scheduled('simple_jwt_login_cleanup_refresh_tokens')) {
@@ -375,6 +378,9 @@ function simple_jwt_login_activate_plugin()
     }
     if (!wp_next_scheduled('simple_jwt_login_cleanup_audit_logs')) {
         wp_schedule_event(time(), 'daily', 'simple_jwt_login_cleanup_audit_logs');
+    }
+    if (!wp_next_scheduled('simple_jwt_login_cleanup_webhook_logs')) {
+        wp_schedule_event(time(), 'daily', 'simple_jwt_login_cleanup_webhook_logs');
     }
 }
 
@@ -385,6 +391,7 @@ function simple_jwt_login_deactivate_plugin()
 {
     wp_clear_scheduled_hook('simple_jwt_login_cleanup_refresh_tokens');
     wp_clear_scheduled_hook('simple_jwt_login_cleanup_audit_logs');
+    wp_clear_scheduled_hook('simple_jwt_login_cleanup_webhook_logs');
 }
 
 // Backward-compatible migration for existing installs upgrading from older versions
@@ -395,6 +402,7 @@ function simple_jwt_login_check_db_version()
     if (get_option('simple_jwt_login_db_version') !== SIMPLE_JWT_LOGIN_DB_VERSION) {
         simple_jwt_login_create_refresh_tokens_table();
         simple_jwt_login_create_audit_logs_table();
+        simple_jwt_login_create_webhook_logs_table();
         simple_jwt_login_ensure_refresh_token_key();
         update_option('simple_jwt_login_db_version', SIMPLE_JWT_LOGIN_DB_VERSION);
     }
@@ -423,6 +431,21 @@ function simple_jwt_login_run_cleanup_audit_logs()
     }
     $before = gmdate('Y-m-d H:i:s', strtotime("-{$retentionDays} days"));
     (new AuditLogRepository($wpdb))->deleteOlderThan($before);
+}
+
+// Daily cron: remove old webhook log entries
+add_action('simple_jwt_login_cleanup_webhook_logs', 'simple_jwt_login_run_cleanup_webhook_logs');
+
+function simple_jwt_login_run_cleanup_webhook_logs()
+{
+    global $wpdb;
+    $jwtSettings   = new SimpleJWTLoginSettings(new WordPressRepository());
+    $retentionDays = $jwtSettings->getWebhooksSettings()->getRetentionDays();
+    if ($retentionDays <= 0) {
+        return;
+    }
+    $before = gmdate('Y-m-d H:i:s', strtotime("-{$retentionDays} days"));
+    (new WebhookLogRepository($wpdb))->deleteOlderThan($before);
 }
 
 /**
@@ -459,6 +482,15 @@ function simple_jwt_login_create_refresh_tokens_table()
 {
     global $wpdb;
     (new RefreshTokenRepository($wpdb))->createTable();
+}
+
+/**
+ * Create (or update) the webhook logs table via dbDelta
+ */
+function simple_jwt_login_create_webhook_logs_table()
+{
+    global $wpdb;
+    (new WebhookLogRepository($wpdb))->createTable();
 }
 
 //REST API ROUTES

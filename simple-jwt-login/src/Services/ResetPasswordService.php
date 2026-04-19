@@ -5,6 +5,7 @@ namespace SimpleJWTLogin\Services;
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Modules\Settings\ResetPasswordSettings;
+use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use WP_REST_Response;
 
@@ -90,6 +91,14 @@ class ResetPasswordService extends BaseService implements ServiceInterface
             SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_SUCCESS,
             $this->wordPressData->getUserProperty($user, 'ID'),
             $this->wordPressData->getUserProperty($user, 'user_email')
+        );
+
+        (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
+            WebhooksSettings::EVENT_RESET_PASSWORD,
+            [
+                'user_id'    => $this->wordPressData->getUserProperty($user, 'ID'),
+                'user_email' => $this->wordPressData->getUserProperty($user, 'user_email'),
+            ]
         );
 
         $response =  [
@@ -193,6 +202,14 @@ class ResetPasswordService extends BaseService implements ServiceInterface
             SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_REQUEST,
             $this->wordPressData->getUserProperty($user, 'ID'),
             $this->wordPressData->getUserProperty($user, 'user_email')
+        );
+
+        (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
+            WebhooksSettings::EVENT_RESET_PASSWORD_REQUEST,
+            [
+                'user_id'    => $this->wordPressData->getUserProperty($user, 'ID'),
+                'user_email' => $this->wordPressData->getUserProperty($user, 'user_email'),
+            ]
         );
 
         $response = [

@@ -5,6 +5,7 @@ namespace SimpleJWTLogin\Services;
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
+use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 
 class DeleteUserService extends BaseService implements ServiceInterface
@@ -124,6 +125,14 @@ class DeleteUserService extends BaseService implements ServiceInterface
             SimpleJWTLoginHooks::AUDIT_AUTH_DELETE_USER_SUCCESS,
             $this->wordPressData->getUserProperty($user, 'ID'),
             $this->wordPressData->getUserProperty($user, 'user_email')
+        );
+
+        (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
+            WebhooksSettings::EVENT_DELETE_USER,
+            [
+                'user_id'    => $this->wordPressData->getUserProperty($user, 'ID'),
+                'user_email' => $this->wordPressData->getUserProperty($user, 'user_email'),
+            ]
         );
 
         if ($this->jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME)) {

@@ -1371,13 +1371,367 @@
 /* ============================================
    Audit Logs
    ============================================ */
-#simple-jwt-login #sjl-audit-logs-table .badge.badge-success {
+#simple-jwt-login .badge.badge-success {
     background: #dcfce7;
     color: #166534;
     border: 1px solid #bbf7d0;
 }
-#simple-jwt-login #sjl-audit-logs-table .badge.badge-danger {
+#simple-jwt-login .badge.badge-danger {
     background: #fddede;
     color: #9b2c2c;
     border: 1px solid #fca5a5;
+}
+/* Webhooks */
+#simple-jwt-login .sjl-webhook-row {
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background: #f8f9fa;
+}
+
+#simple-jwt-login .sjl-webhook-event-label {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 14px;
+    font-weight: normal;
+    gap: 4px;
+    cursor: pointer;
+}
+
+/* ============================================
+   Webhooks — Accordion Cards
+   ============================================ */
+
+#simple-jwt-login .sjl-webhook-item {
+    border: 1px solid var(--sjl-border);
+    border-radius: var(--sjl-radius-md);
+    margin-bottom: 10px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+#simple-jwt-login .sjl-webhook-item[data-open="false"] .sjl-webhook-item-body {
+    display: none;
+}
+
+#simple-jwt-login .sjl-webhook-item[data-open="false"] .sjl-webhook-item-header {
+    border-bottom: none;
+}
+
+#simple-jwt-login .sjl-webhook-item-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    background: var(--sjl-bg-card);
+    border-bottom: 1px solid var(--sjl-border);
+}
+
+#simple-jwt-login .sjl-webhook-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: var(--sjl-text-meta);
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    line-height: 1;
+}
+#simple-jwt-login .sjl-webhook-toggle:hover { color: var(--sjl-text); }
+
+#simple-jwt-login .sjl-webhook-url-preview {
+    flex: 1;
+    font-weight: 500;
+    color: var(--sjl-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#simple-jwt-login .sjl-method-badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #fff;
+    flex-shrink: 0;
+}
+#simple-jwt-login .sjl-method-get   { background: #0073aa; }
+#simple-jwt-login .sjl-method-post  { background: #00a32a; }
+#simple-jwt-login .sjl-method-put   { background: #e4db33; }
+#simple-jwt-login .sjl-method-patch { background: #996800; }
+#simple-jwt-login .sjl-method-delete { background: #c0392b; }
+
+#simple-jwt-login .sjl-event-tags {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+#simple-jwt-login .sjl-event-tag {
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 500;
+    background: #e0e0e0;
+    color: #888;
+    transition: background 0.15s, color 0.15s;
+}
+#simple-jwt-login .sjl-event-tag.active {
+    background: var(--sjl-primary);
+    color: #fff;
+}
+
+#simple-jwt-login .sjl-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 34px;
+    height: 18px;
+    flex-shrink: 0;
+    margin: 0;
+    cursor: pointer;
+}
+#simple-jwt-login .sjl-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+#simple-jwt-login .sjl-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ccc;
+    border-radius: 18px;
+    transition: 0.25s;
+}
+#simple-jwt-login .sjl-toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 12px;
+    width: 12px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #fff;
+    border-radius: 50%;
+    transition: 0.25s;
+}
+#simple-jwt-login .sjl-toggle-switch input:checked + .sjl-toggle-slider {
+    background-color: #00a32a;
+}
+#simple-jwt-login .sjl-toggle-switch input:checked + .sjl-toggle-slider:before {
+    transform: translateX(16px);
+}
+
+#simple-jwt-login .sjl-webhook-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: #c0392b;
+    display: flex;
+    align-items: center;
+    opacity: 0.5;
+    flex-shrink: 0;
+    line-height: 1;
+}
+#simple-jwt-login .sjl-webhook-remove:hover { opacity: 1; }
+
+#simple-jwt-login .sjl-webhook-item-body {
+    padding: 14px 16px;
+}
+
+#simple-jwt-login .sjl-webhook-field-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+#simple-jwt-login .sjl-webhook-field {
+    flex: 1;
+    min-width: 180px;
+}
+#simple-jwt-login .sjl-webhook-field-method {
+    flex: 0 0 130px;
+    max-width: 130px;
+}
+#simple-jwt-login .sjl-webhook-field > label {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--sjl-text-meta);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+}
+
+#simple-jwt-login .sjl-webhook-events {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+#simple-jwt-login .sjl-event-checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px 11px;
+    border: 1px solid var(--sjl-border);
+    border-radius: 20px;
+    background: #fff;
+    color: var(--sjl-text-meta);
+    font-size: 12px;
+    transition: all 0.15s;
+    user-select: none;
+}
+#simple-jwt-login .sjl-event-checkbox-label input { display: none; }
+#simple-jwt-login .sjl-event-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #ccc;
+    display: inline-block;
+    flex-shrink: 0;
+    transition: background 0.15s;
+}
+#simple-jwt-login .sjl-event-checkbox-label.active {
+    background: var(--sjl-primary);
+    border-color: var(--sjl-primary);
+    color: #fff;
+}
+#simple-jwt-login .sjl-event-checkbox-label.active .sjl-event-dot {
+    background: #7ecfff;
+}
+
+#simple-jwt-login .sjl-webhook-subsection {
+    border-top: 1px solid var(--sjl-border-light);
+    margin-top: 14px;
+    padding-top: 12px;
+}
+#simple-jwt-login .sjl-webhook-subsection-header {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--sjl-text-meta);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+#simple-jwt-login .sjl-header-count {
+    background: var(--sjl-bg-muted);
+    color: var(--sjl-text-muted);
+    border-radius: 10px;
+    padding: 1px 6px;
+    font-size: 10px;
+}
+
+#simple-jwt-login .sjl-webhook-header-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+#simple-jwt-login .sjl-webhook-header-row .sjl-header-key  { flex: 0 0 35%; }
+#simple-jwt-login .sjl-webhook-header-row .sjl-header-value { flex: 1; }
+#simple-jwt-login .sjl-kv-sep {
+    color: var(--sjl-text-muted);
+    font-weight: 700;
+    flex-shrink: 0;
+}
+#simple-jwt-login .sjl-header-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px;
+    color: #c0392b;
+    opacity: 0.45;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    line-height: 1;
+}
+#simple-jwt-login .sjl-header-remove:hover { opacity: 1; }
+
+#simple-jwt-login .sjl-btn-add {
+    background: none;
+    border: 1px dashed var(--sjl-border-mid);
+    border-radius: var(--sjl-radius-sm);
+    color: var(--sjl-text-meta);
+    cursor: pointer;
+    padding: 4px 10px;
+    font-size: 11px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s;
+    margin-top: 2px;
+}
+#simple-jwt-login .sjl-btn-add:hover {
+    border-color: var(--sjl-primary);
+    color: var(--sjl-primary);
+}
+
+#simple-jwt-login .sjl-vars-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 7px;
+}
+#simple-jwt-login .sjl-vars-label {
+    font-size: 11px;
+    color: var(--sjl-text-meta);
+}
+#simple-jwt-login .sjl-var-chip {
+    cursor: pointer;
+    background: #eef2ff;
+    color: #3730a3;
+    border: 1px solid #c7d2fe;
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    transition: all 0.15s;
+    user-select: none;
+}
+#simple-jwt-login .sjl-var-chip:hover {
+    background: #3730a3;
+    color: #fff;
+    border-color: #3730a3;
+}
+#simple-jwt-login .sjl-webhook-payload-template {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    width: 100%;
+    resize: vertical;
+    min-height: 80px;
+    border: 1px solid var(--sjl-border);
+    border-radius: var(--sjl-radius-sm);
+    padding: 8px 10px;
+    background: #f8f9fa;
+    color: var(--sjl-text);
+    line-height: 1.6;
+    display: block;
+}
+#simple-jwt-login .sjl-webhook-payload-template:focus {
+    outline: none;
+    border-color: #0073aa;
+    background: #fff;
+    box-shadow: 0 0 0 2px rgba(0,115,170,0.12);
+}
+#simple-jwt-login .sjl-field-hint {
+    color: var(--sjl-text-muted);
+    font-size: 11px;
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+#simple-jwt-login .sjl-webhooks-footer {
+    margin-top: 12px;
 }

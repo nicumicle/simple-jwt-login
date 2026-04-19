@@ -19,6 +19,7 @@ class SettingsErrors extends \Exception
     const PREFIX_PROTECT_ENDPOINTS = 11;
     const PREFIX_APPLICATIONS = 12;
     const PREFIX_AUDIT_LOGS = 13;
+    const PREFIX_WEBHOOKS   = 14;
 
     #authentication
     const ERR_AUTHENTICATION_EMPTY_PAYLOAD = 1;
@@ -74,6 +75,8 @@ class SettingsErrors extends \Exception
     const ERR_AUTH0_CLIENT_SECRET_REQUIRED      = 9;
     const ERR_AUTH0_REDIRECT_URI_REQUIRED       = 10;
 
+    # Webhooks
+    const ERR_WEBHOOKS_INVALID_URL = 1;
 
     /**
      * @param int $sectionPrefix

@@ -8,6 +8,7 @@ use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\AuthCodeBuilder;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
+use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\UserProperties;
 use WP_REST_Response;
@@ -133,6 +134,14 @@ class RegisterUserService extends BaseService implements ServiceInterface
             SimpleJWTLoginHooks::AUDIT_AUTH_REGISTER_SUCCESS,
             $this->wordPressData->getUserIdFromUser($user),
             $this->wordPressData->getUserProperty($user, 'user_email')
+        );
+
+        (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
+            WebhooksSettings::EVENT_REGISTER,
+            [
+                'user_id'    => $this->wordPressData->getUserIdFromUser($user),
+                'user_email' => $this->wordPressData->getUserProperty($user, 'user_email'),
+            ]
         );
 
         if ($this->jwtSettings->getLoginSettings()->isAutologinEnabled()

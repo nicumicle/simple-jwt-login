@@ -87,16 +87,15 @@ $baseUrl = add_query_arg([
         </div>
     </div>
     <div class="sjl-gen-card-body">
-        <div class="form-group">
-            <label>
-                <input
-                    type="checkbox"
-                    name="audit_log[enabled]"
-                    value="1"
-                    <?php echo $auditLogSettings->isEnabled() ? 'checked' : ''; ?>
-                />
-                <?php echo esc_html(__('Enable Audit Logging', 'simple-jwt-login')); ?>
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+            <input type="hidden" name="audit_log[enabled]" value="0">
+            <label class="sjl-toggle-switch" title="<?php echo esc_attr(__('Enable / Disable audit logging', 'simple-jwt-login')); ?>" style="margin: 0;">
+                <input type="checkbox" name="audit_log[enabled]" value="1" <?php echo $auditLogSettings->isEnabled() ? 'checked' : ''; ?>>
+                <span class="sjl-toggle-slider"></span>
             </label>
+            <span style="font-size: 12px; color: #555; white-space: nowrap;">
+                <?php echo esc_html(__('Enable Audit Logging', 'simple-jwt-login')); ?>
+            </span>
         </div>
 
         <hr/>

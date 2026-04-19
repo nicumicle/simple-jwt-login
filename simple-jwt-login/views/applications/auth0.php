@@ -21,54 +21,51 @@ $auth0 = $jwtSettings->getApplicationsSettings()->auth0();
 ?>
 
 <div class="sjl-gen-card">
-    <div class="sjl-gen-card-header">
-        <div class="auth0 logo"></div>
-        <div>
-            <h3 class="sjl-gen-card-title">
-                <?php echo __('Auth0', 'simple-jwt-login'); ?>
-                <span class="beta">beta</span>
-                <?php
-                echo isset($errorCode)
-                && (
-                    $settingsErrors->generateCode(
-                        SettingsErrors::PREFIX_APPLICATIONS,
-                        SettingsErrors::ERR_AUTH0_DOMAIN_REQUIRED
-                    ) === $errorCode
-                    || $settingsErrors->generateCode(
-                        SettingsErrors::PREFIX_APPLICATIONS,
-                        SettingsErrors::ERR_AUTH0_CLIENT_ID_REQUIRED
-                    ) === $errorCode
-                    || $settingsErrors->generateCode(
-                        SettingsErrors::PREFIX_APPLICATIONS,
-                        SettingsErrors::ERR_AUTH0_CLIENT_SECRET_REQUIRED
-                    ) === $errorCode
-                )
-                    ? '<span class="simple-jwt-error">!</span>'
-                    : '';
-                ?>
-            </h3>
-            <p class="sjl-gen-card-desc">
-                <?php echo __('Integrate Auth0 OAuth2 / OIDC into your WordPress website.', 'simple-jwt-login'); ?>
-                <a href="https://auth0.com/docs" target="_blank">
-                    <?php echo __('Read more', 'simple-jwt-login'); ?>
-                </a>
-            </p>
+    <div class="sjl-gen-card-header" style="justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="auth0 logo"></div>
+            <div>
+                <h3 class="sjl-gen-card-title">
+                    <?php echo __('Auth0', 'simple-jwt-login'); ?>
+                    <span class="beta">beta</span>
+                    <?php
+                    echo isset($errorCode)
+                    && (
+                        $settingsErrors->generateCode(
+                            SettingsErrors::PREFIX_APPLICATIONS,
+                            SettingsErrors::ERR_AUTH0_DOMAIN_REQUIRED
+                        ) === $errorCode
+                        || $settingsErrors->generateCode(
+                            SettingsErrors::PREFIX_APPLICATIONS,
+                            SettingsErrors::ERR_AUTH0_CLIENT_ID_REQUIRED
+                        ) === $errorCode
+                        || $settingsErrors->generateCode(
+                            SettingsErrors::PREFIX_APPLICATIONS,
+                            SettingsErrors::ERR_AUTH0_CLIENT_SECRET_REQUIRED
+                        ) === $errorCode
+                    )
+                        ? '<span class="simple-jwt-error">!</span>'
+                        : '';
+                    ?>
+                </h3>
+                <p class="sjl-gen-card-desc">
+                    <?php echo __('Integrate Auth0 OAuth2 / OIDC into your WordPress website.', 'simple-jwt-login'); ?>
+                    <a href="https://auth0.com/docs" target="_blank">
+                        <?php echo __('Read more', 'simple-jwt-login'); ?>
+                    </a>
+                </p>
+            </div>
         </div>
-    </div>
-    <div class="sjl-gen-card-body">
-        <div class="sjl-gen-radio-group">
-            <label class="sjl-gen-radio-option">
-                <input type="radio" name="auth0[enabled]" id="social_auth0_enabled_no" value="0"
-                    <?php echo $auth0->isEnabled() === false ? 'checked' : ''; ?>
-                />
-                <span class="sjl-gen-radio-label"><?php echo __('Disabled', 'simple-jwt-login'); ?></span>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <input type="hidden" name="auth0[enabled]" value="0">
+            <label class="sjl-toggle-switch" title="<?php echo esc_attr(__('Enable / Disable Auth0', 'simple-jwt-login')); ?>" style="margin: 0;">
+                <input type="checkbox" id="auth0_enabled" name="auth0[enabled]" value="1"
+                    <?php echo $auth0->isEnabled() ? 'checked' : ''; ?>>
+                <span class="sjl-toggle-slider"></span>
             </label>
-            <label class="sjl-gen-radio-option">
-                <input type="radio" name="auth0[enabled]" id="social_auth0_enabled_yes" value="1"
-                    <?php echo $auth0->isEnabled() ? 'checked' : ''; ?>
-                />
-                <span class="sjl-gen-radio-label"><?php echo __('Enabled', 'simple-jwt-login'); ?></span>
-            </label>
+            <span style="font-size: 12px; color: #555; white-space: nowrap;">
+                <?php echo esc_html(__('Enable', 'simple-jwt-login')); ?>
+            </span>
         </div>
     </div>
 </div>

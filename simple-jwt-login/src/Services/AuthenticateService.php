@@ -6,6 +6,7 @@ use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
+use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
@@ -236,6 +237,14 @@ class AuthenticateService extends BaseService implements ServiceInterface
             SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_SUCCESS,
             $this->wordPressData->getUserProperty($user, 'ID'),
             $this->wordPressData->getUserProperty($user, 'user_email')
+        );
+
+        (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
+            WebhooksSettings::EVENT_AUTH,
+            [
+                'user_id'    => $this->wordPressData->getUserProperty($user, 'ID'),
+                'user_email' => $this->wordPressData->getUserProperty($user, 'user_email'),
+            ]
         );
 
         return $this->wordPressData->createResponse($response);

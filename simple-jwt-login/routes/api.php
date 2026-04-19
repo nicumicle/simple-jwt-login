@@ -11,6 +11,7 @@ use SimpleJWTLogin\Services\ProtectEndpointService;
 use SimpleJWTLogin\Services\RouteService;
 use SimpleJWTLogin\Repositories\AuditLog\AuditLogRepository;
 use SimpleJWTLogin\Repositories\RefreshToken\RefreshTokenRepository;
+use SimpleJWTLogin\Repositories\WebhookLog\WebhookLogRepository;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 use SimpleJWTLogin\Services\ServiceInterface;
@@ -36,6 +37,9 @@ add_action('rest_api_init', function () {
     global $wpdb;
     $refreshTokenRepository = new RefreshTokenRepository($wpdb);
     $auditLogRepository     = new AuditLogRepository($wpdb);
+    $webhookLogRepository = $jwtSettings->getWebhooksSettings()->isWebhookLogsEnabled()
+        ? new WebhookLogRepository($wpdb)
+        : null;
     $auditLogger            = new AuditLoggerService(
         $auditLogRepository,
         $jwtSettings->getAuditLogSettings(),
@@ -242,7 +246,7 @@ add_action('rest_api_init', function () {
             $route['name'],
             [
                 'methods'  => $route['method'],
-                'callback' => function () use ($request, $route, $jwtSettings, $serverHelper, $refreshTokenRepository) {
+                'callback' => function () use ($request, $route, $jwtSettings, $serverHelper, $refreshTokenRepository, $webhookLogRepository) {
                     try {
                         if ($jwtSettings
                             ->getHooksSettings()
@@ -265,7 +269,8 @@ add_action('rest_api_init', function () {
                             ->withCookies($_COOKIE)
                             ->withServerHelper($serverHelper)
                             ->withSettings($jwtSettings)
-                            ->withRefreshTokenRepository($refreshTokenRepository);
+                            ->withRefreshTokenRepository($refreshTokenRepository)
+                            ->withWebhookLogRepository($webhookLogRepository);
                         if ($jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
                             $service->withSession(simple_jwt_login_init_session());
                         }

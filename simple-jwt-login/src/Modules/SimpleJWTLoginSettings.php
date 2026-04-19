@@ -13,6 +13,7 @@ use SimpleJWTLogin\Modules\Settings\DeleteUserSettings;
 use SimpleJWTLogin\Modules\Settings\GeneralSettings;
 use SimpleJWTLogin\Modules\Settings\HooksSettings;
 use SimpleJWTLogin\Modules\Settings\JwtRulesSettings;
+use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
 use SimpleJWTLogin\Modules\Settings\RegisterSettings;
@@ -198,6 +199,14 @@ class SimpleJWTLoginSettings
     public function getJwtRulesSettings()
     {
         return $this->getSettingsClassByType(SettingsFactory::JWT_RULES_SETTINGS);
+    }
+
+    /**
+     * @return WebhooksSettings
+     */
+    public function getWebhooksSettings()
+    {
+        return $this->getSettingsClassByType(SettingsFactory::WEBHOOKS_SETTINGS);
     }
 
     /**

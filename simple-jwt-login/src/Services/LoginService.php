@@ -5,6 +5,7 @@ namespace SimpleJWTLogin\Services;
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\ArrayHelper;
+use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use WP_REST_Response;
 use WP_User;
@@ -84,6 +85,14 @@ class LoginService extends BaseService implements ServiceInterface
             SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_SESSION_SUCCESS,
             $this->wordPressData->getUserProperty($user, 'ID'),
             $this->wordPressData->getUserProperty($user, 'user_email')
+        );
+
+        (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
+            WebhooksSettings::EVENT_LOGIN,
+            [
+                'user_id'    => $this->wordPressData->getUserProperty($user, 'ID'),
+                'user_email' => $this->wordPressData->getUserProperty($user, 'user_email'),
+            ]
         );
 
         if ($this->jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::LOGIN_ACTION_NAME)) {

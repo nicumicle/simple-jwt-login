@@ -124,6 +124,14 @@ $settingsPages = [
         'index' => SettingsErrors::PREFIX_APPLICATIONS,
     ],
     [
+        'id'   => 'simple-jwt-login-tab-webhooks',
+        'name' => __('Webhooks', 'simple-jwt-login'),
+        'has_error' => (
+            $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_WEBHOOKS
+        ),
+        'index' => SettingsErrors::PREFIX_WEBHOOKS,
+    ],
+    [
         'id'   => 'simple-jwt-login-tab-audit-logs',
         'name' => __('Audit Logs', 'simple-jwt-login'),
         'has_error' => (
@@ -280,6 +288,9 @@ $settingsPages = [
                                         break;
                                     case SettingsErrors::PREFIX_AUDIT_LOGS:
                                         include_once plugin_dir_path(__FILE__) . "audit-logs-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_WEBHOOKS:
+                                        include_once plugin_dir_path(__FILE__) . "webhooks-view.php";
                                         break;
                                     default:
                                         echo __("View file does not exists.", 'simple-jwt-login');

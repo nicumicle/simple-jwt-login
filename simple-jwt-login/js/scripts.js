@@ -359,6 +359,37 @@ jQuery(document).ready(
                 rules.push(rule);
             });
             $('#jwt_rules_json').val(JSON.stringify(rules));
+
+            // Serialize webhook rows to JSON before form submission
+            var webhooks = [];
+            $('#sjl-webhooks .sjl-webhook-item').each(function () {
+                var $row = $(this);
+                var url = $row.find('.sjl-webhook-url').val() || '';
+                var method = $row.find('.sjl-webhook-method').val() || 'POST';
+                var enabled = $row.find('.sjl-webhook-enabled').is(':checked');
+                var events = [];
+                $row.find('.sjl-webhook-event:checked').each(function () {
+                    events.push($(this).val());
+                });
+                var headers = [];
+                $row.find('.sjl-webhook-header-row').each(function () {
+                    var key = $(this).find('.sjl-header-key').val() || '';
+                    var value = $(this).find('.sjl-header-value').val() || '';
+                    if (key) {
+                        headers.push({ key: key, value: value });
+                    }
+                });
+                var payloadTemplate = $row.find('.sjl-webhook-payload-template').val() || '';
+                webhooks.push({
+                    url: url,
+                    method: method,
+                    enabled: enabled,
+                    events: events,
+                    headers: headers,
+                    payload_template: payloadTemplate
+                });
+            });
+            $('#webhooks_json').val(JSON.stringify(webhooks));
         });
 
         // TABS
@@ -366,6 +397,81 @@ jQuery(document).ready(
             e.preventDefault();
             $('#active_tab').val($(this).attr('data-index'));
             $(this).tab('show');
+        });
+
+        // Webhooks: add new webhook row by cloning the hidden template
+        $('#simple-jwt-login #sjl-add-webhook').on('click', function () {
+            var $clone = $('#sjl-webhook-row-template .sjl-webhook-item').clone();
+            $('#sjl-webhooks').append($clone);
+        });
+
+        // Webhooks: remove a webhook row
+        $(document).on('click', '#sjl-webhooks .sjl-webhook-remove', function () {
+            $(this).closest('.sjl-webhook-item').remove();
+        });
+
+        // Webhooks: toggle accordion open/closed
+        $(document).on('click', '#sjl-webhooks .sjl-webhook-toggle', function () {
+            var $item = $(this).closest('.sjl-webhook-item');
+            var isOpen = $item.attr('data-open') === 'true';
+            $item.attr('data-open', isOpen ? 'false' : 'true');
+            $(this).attr('aria-expanded', !isOpen);
+            $(this).find('.dashicons')
+                .toggleClass('dashicons-arrow-down-alt2', !isOpen)
+                .toggleClass('dashicons-arrow-right-alt2', isOpen);
+        });
+
+        // Webhooks: update URL preview in header on input
+        $(document).on('input', '#sjl-webhooks .sjl-webhook-url', function () {
+            var val = $(this).val() || 'New Webhook';
+            $(this).closest('.sjl-webhook-item').find('.sjl-webhook-url-preview').text(val);
+        });
+
+        // Webhooks: update method badge when select changes
+        $(document).on('change', '#sjl-webhooks .sjl-webhook-method', function () {
+            var method = $(this).val();
+            var $item = $(this).closest('.sjl-webhook-item');
+            $item.find('.sjl-method-badge')
+                .text(method)
+                .attr('class', 'sjl-method-badge sjl-method-' + method.toLowerCase());
+        });
+
+        // Webhooks: sync event tags in header when event checkboxes change
+        $(document).on('change', '#sjl-webhooks .sjl-webhook-event', function () {
+            var $item = $(this).closest('.sjl-webhook-item');
+            var event = $(this).val();
+            var checked = $(this).is(':checked');
+            $item.find('.sjl-event-tag[data-event="' + event + '"]').toggleClass('active', checked);
+            $(this).closest('.sjl-event-checkbox-label').toggleClass('active', checked);
+        });
+
+        // Webhooks: add a header row to a webhook
+        $(document).on('click', '#sjl-webhooks .sjl-add-header', function () {
+            var $headerRow = $('#sjl-webhook-header-row-template .sjl-webhook-header-row').clone();
+            var $subsection = $(this).closest('.sjl-webhook-subsection');
+            $subsection.find('.sjl-webhook-headers-rows').append($headerRow);
+            var count = $subsection.find('.sjl-webhook-header-row').length;
+            $subsection.find('.sjl-header-count').text(count);
+        });
+
+        // Webhooks: remove a header row
+        $(document).on('click', '#sjl-webhooks .sjl-header-remove', function () {
+            var $subsection = $(this).closest('.sjl-webhook-subsection');
+            $(this).closest('.sjl-webhook-header-row').remove();
+            var count = $subsection.find('.sjl-webhook-header-row').length;
+            $subsection.find('.sjl-header-count').text(count);
+        });
+
+        // Webhooks: insert variable chip at textarea cursor
+        $(document).on('click', '#sjl-webhooks .sjl-var-chip', function () {
+            var varText = $(this).data('var');
+            var $textarea = $(this).closest('.sjl-webhook-subsection').find('.sjl-webhook-payload-template');
+            var el = $textarea[0];
+            var start = el.selectionStart;
+            var end = el.selectionEnd;
+            el.value = el.value.substring(0, start) + varText + el.value.substring(end);
+            el.selectionStart = el.selectionEnd = start + varText.length;
+            $textarea.trigger('focus');
         });
 
         // Dashboard cards — clicking navigates to the corresponding settings tab

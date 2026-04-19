@@ -22,11 +22,12 @@ class SettingsFactory
     const APPLICATIONS_SETTINGS = 10;
     const AUDIT_LOG_SETTINGS = 11;
     const JWT_RULES_SETTINGS = 12;
+    const WEBHOOKS_SETTINGS  = 13;
 
     /**
      * @param int $type
      *
-     * @return AuthCodesSettings|AuthenticationSettings|AuditLogSettings|CorsSettings|DeleteUserSettings|GeneralSettings|HooksSettings|JwtRulesSettings|LoginSettings|RegisterSettings|ResetPasswordSettings|ProtectEndpointSettings|ApplicationsSettings
+     * @return AuthCodesSettings|AuthenticationSettings|AuditLogSettings|CorsSettings|DeleteUserSettings|GeneralSettings|HooksSettings|JwtRulesSettings|LoginSettings|RegisterSettings|ResetPasswordSettings|ProtectEndpointSettings|ApplicationsSettings|WebhooksSettings
      * @throws Exception
      */
     public static function getFactory($type)
@@ -58,6 +59,8 @@ class SettingsFactory
                 return new ProtectEndpointSettings();
             case self::APPLICATIONS_SETTINGS:
                 return new ApplicationsSettings();
+            case self::WEBHOOKS_SETTINGS:
+                return new WebhooksSettings();
             default:
                 throw new Exception('Settings implementation not found.');
         }
@@ -81,6 +84,7 @@ class SettingsFactory
             self::RESET_PASSWORD_SETTINGS => new ResetPasswordSettings(),
             self::PROTECT_ENDPOINTS_SETTINGS => new ProtectEndpointSettings(),
             self::APPLICATIONS_SETTINGS => new ApplicationsSettings(),
+            self::WEBHOOKS_SETTINGS => new WebhooksSettings(),
 
             //auth codes needs to be the last one
             self::AUTH_CODES_SETTINGS => new AuthCodesSettings(),

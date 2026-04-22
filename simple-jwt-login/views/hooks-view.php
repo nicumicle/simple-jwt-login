@@ -14,6 +14,15 @@ if (! defined('ABSPATH')) {
 
 $hooks = SimpleJWTLoginHooks::getHooksDetails();
 
+$enabledHooksCount = count(
+    array_filter(
+        $hooks,
+        function ($h) use ($jwtSettings) {
+            return $jwtSettings->getHooksSettings()->isHookEnable($h['name']);
+        }
+    )
+);
+
 ?>
 
 <div class="sjl-gen-card">
@@ -28,10 +37,20 @@ $hooks = SimpleJWTLoginHooks::getHooksDetails();
     </div>
     <div class="sjl-gen-card-body">
 
-        <div class="sjl-hooks-header">
-            <label class="sjl-hooks-toggle-all">
-                <input type="checkbox" id="toggleHooks" />
-                <?php echo __('Toggle all', 'simple-jwt-login'); ?>
+        <div class="sjl-hooks-toolbar">
+            <span class="sjl-hooks-count-label">
+                <span id="sjl-hooks-enabled-count"><?php echo $enabledHooksCount; ?></span>
+                <?php
+                echo sprintf(
+                    ' / %d %s',
+                    count($hooks),
+                    esc_html(__('enabled', 'simple-jwt-login'))
+                );
+                ?>
+            </span>
+            <label class="sjl-toggle-switch" title="<?php echo esc_attr(__('Toggle all hooks', 'simple-jwt-login')); ?>">
+                <input type="checkbox" id="toggleHooks" <?php echo $enabledHooksCount === count($hooks) && count($hooks) > 0 ? 'checked' : ''; ?> />
+                <span class="sjl-toggle-slider"></span>
             </label>
         </div>
 
@@ -43,13 +62,16 @@ $hooks = SimpleJWTLoginHooks::getHooksDetails();
                 <div class="sjl-hook-item<?php echo $isEnabled ? ' sjl-hook-item--enabled' : ''; ?>">
 
                     <div class="sjl-hook-item-toggle">
-                        <input
-                            type="checkbox"
-                            name="enabled_hooks[]"
-                            id="hook_<?php echo esc_attr($singleHook['name']); ?>"
-                            value="<?php echo esc_attr($singleHook['name']); ?>"
-                            <?php echo $isEnabled ? 'checked' : ''; ?>
-                        />
+                        <label class="sjl-toggle-switch">
+                            <input
+                                type="checkbox"
+                                name="enabled_hooks[]"
+                                id="hook_<?php echo esc_attr($singleHook['name']); ?>"
+                                value="<?php echo esc_attr($singleHook['name']); ?>"
+                                <?php echo $isEnabled ? 'checked' : ''; ?>
+                            />
+                            <span class="sjl-toggle-slider"></span>
+                        </label>
                     </div>
 
                     <div class="sjl-hook-item-body">

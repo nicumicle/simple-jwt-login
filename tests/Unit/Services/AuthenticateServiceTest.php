@@ -372,6 +372,7 @@ class AuthenticateServiceTest extends TestCase
 
     public function testAuthResponseContainsRefreshToken()
     {
+        /** @var array|null $capturedResponse */
         $capturedResponse = null;
 
         $this->wordPressDataMock

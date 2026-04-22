@@ -340,51 +340,64 @@
 /* ============================================
    Hooks
    ============================================ */
-#simple-jwt-login .sjl-hooks-header {
-    margin-bottom: 10px;
-}
-#simple-jwt-login .sjl-hooks-toggle-all {
+#simple-jwt-login .sjl-hooks-toolbar {
     display: flex;
     align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    color: var(--sjl-text-meta);
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: var(--sjl-bg-card);
+    border: 1px solid var(--sjl-border);
+    border-radius: var(--sjl-radius-sm);
+    margin-bottom: 10px;
+}
+
+#simple-jwt-login .sjl-hooks-count-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--sjl-text-muted);
+}
+
+#simple-jwt-login #sjl-hooks-enabled-count {
+    font-weight: 700;
+    color: var(--sjl-text);
 }
 
 #simple-jwt-login .sjl-hooks-list {
     display: flex;
     flex-direction: column;
-    gap: 0;
-    border: 1px solid var(--sjl-border);
-    border-radius: var(--sjl-radius-md);
-    overflow: hidden;
+    gap: 6px;
 }
 
 #simple-jwt-login .sjl-hook-item {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
+    gap: 14px;
     padding: 12px 14px;
     background: #fff;
-    border-bottom: 1px solid var(--sjl-border);
-    transition: background 0.1s ease;
+    border: 1px solid var(--sjl-border-light);
+    border-left: 3px solid var(--sjl-border-mid);
+    border-radius: var(--sjl-radius-md);
+    transition: background 0.15s ease, border-left-color 0.15s ease;
 }
-#simple-jwt-login .sjl-hook-item:last-child {
-    border-bottom: none;
+
+#simple-jwt-login .sjl-hook-item:hover {
+    background: var(--sjl-bg-muted);
 }
+
 #simple-jwt-login .sjl-hook-item--enabled {
-    background: #f8fbff;
+    background: #f0fdf4;
+    border-left-color: #00a32a;
+}
+
+#simple-jwt-login .sjl-hook-item--enabled:hover {
+    background: #e6faf0;
 }
 
 #simple-jwt-login .sjl-hook-item-toggle {
-    padding-top: 3px;
     flex-shrink: 0;
-}
-#simple-jwt-login .sjl-hook-item-toggle input[type="checkbox"] {
-    width: 15px;
-    height: 15px;
-    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding-top: 1px;
 }
 
 #simple-jwt-login .sjl-hook-item-body {
@@ -397,8 +410,9 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
+
 #simple-jwt-login .sjl-hook-name-chip {
     font-size: 12px;
     cursor: pointer;
@@ -409,12 +423,14 @@
     flex-direction: column;
     gap: 4px;
 }
+
 #simple-jwt-login .sjl-hook-meta-row {
     display: flex;
     align-items: baseline;
     flex-wrap: wrap;
     gap: 4px 8px;
 }
+
 #simple-jwt-login .sjl-hook-meta-label {
     font-size: 10px;
     font-weight: 700;
@@ -424,6 +440,7 @@
     white-space: nowrap;
     min-width: 72px;
 }
+
 #simple-jwt-login .sjl-hook-meta-value {
     display: flex;
     flex-wrap: wrap;
@@ -431,9 +448,60 @@
     gap: 4px;
 }
 
+#simple-jwt-login .sjl-hook-meta-desc {
+    align-items: flex-start;
+}
+
+#simple-jwt-login .sjl-hook-meta-desc .sjl-hook-meta-value {
+    color: var(--sjl-text-muted);
+    font-size: 11px;
+    line-height: 1.5;
+}
+
 /* ============================================
    Auth Codes
    ============================================ */
+#simple-jwt-login .sjl-auth-codes-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 30px;
+    gap: 8px;
+    align-items: center;
+    padding: 0 10px 6px;
+    border-bottom: 2px solid var(--sjl-border);
+    margin-bottom: 4px;
+}
+
+#simple-jwt-login .sjl-auth-codes-header span {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--sjl-text-meta);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+#simple-jwt-login .sjl-auth-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 30px;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 10px;
+    background: var(--sjl-bg-muted);
+    border: 1px solid var(--sjl-border);
+    border-radius: var(--sjl-radius-sm);
+    margin-top: 6px;
+}
+
+#simple-jwt-login .sjl-auth-input.form-control {
+    height: 30px !important;
+    font-size: 12px;
+    border: 1px solid var(--sjl-border);
+    border-radius: var(--sjl-radius-sm) !important;
+    padding: 0 8px;
+    background: #fff;
+    min-width: 0;
+}
+
+/* Keep old class name working for any remaining references */
 #simple-jwt-login .sjl-gen-auth-codes-header {
     display: flex;
     gap: 4px;
@@ -513,6 +581,117 @@
 #simple-jwt-login .auth_row,
 #simple-jwt-login .endpoint_row {
     margin-top: 10px;
+}
+
+/* ============================================
+   Protect Endpoints — modern rows
+   ============================================ */
+#simple-jwt-login .sjl-endpoint-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: var(--sjl-bg-muted);
+    border: 1px solid var(--sjl-border);
+    border-radius: var(--sjl-radius-sm);
+    margin-top: 8px;
+}
+
+#simple-jwt-login .sjl-endpoint-method-select {
+    flex-shrink: 0;
+    width: 88px;
+    height: 30px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--sjl-primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--sjl-radius-sm);
+    padding: 0 6px;
+    cursor: pointer;
+    appearance: auto;
+}
+
+#simple-jwt-login .sjl-endpoint-method-select option,
+#simple-jwt-login .sjl-endpoint-method-select optgroup {
+    background: #fff;
+    color: var(--sjl-text);
+    font-weight: normal;
+}
+
+#simple-jwt-login .sjl-endpoint-match-select {
+    flex-shrink: 0;
+    width: 118px;
+    height: 30px;
+    font-size: 11px;
+    border: 1px solid var(--sjl-border);
+    border-radius: var(--sjl-radius-sm);
+    background: #fff;
+    padding: 0 4px;
+}
+
+#simple-jwt-login .sjl-endpoint-url-input.form-control {
+    flex: 1;
+    min-width: 0;
+    height: 30px !important;
+    font-size: 12px;
+    border: 1px solid var(--sjl-border);
+    border-radius: var(--sjl-radius-sm) !important;
+    padding: 0 8px;
+    background: #fff;
+}
+
+#simple-jwt-login .sjl-endpoint-remove {
+    background: none;
+    border: none;
+    padding: 4px 5px;
+    cursor: pointer;
+    color: #a0a5aa;
+    border-radius: var(--sjl-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: color 0.15s, background 0.15s;
+    line-height: 1;
+}
+
+#simple-jwt-login .sjl-endpoint-remove:hover {
+    color: #d63638;
+    background: #fef2f2;
+}
+
+#simple-jwt-login .sjl-endpoint-remove .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* Count badge in whitelist / protected card headers */
+#simple-jwt-login .sjl-endpoint-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 11px;
+    background: var(--sjl-border-light);
+    color: var(--sjl-text-meta);
+    border: 1px solid var(--sjl-border);
+    flex-shrink: 0;
+    align-self: center;
+}
+
+/* Left-border accent per card type */
+#simple-jwt-login .sjl-gen-card--whitelist {
+    border-left: 3px solid #00a32a;
+}
+
+#simple-jwt-login .sjl-gen-card--protected {
+    border-left: 3px solid #d63638;
 }
 #simple-jwt-login small{
     color: var(--sjl-text-muted) !important;

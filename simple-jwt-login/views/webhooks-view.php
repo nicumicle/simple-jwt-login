@@ -50,10 +50,10 @@ $webhookLogRetention   = $jwtSettings->getWebhooksSettings()->getRetentionDays()
                 $payloadTemplate = isset($webhook['payload_template']) ? $webhook['payload_template'] : '';
                 ?>
 
-            <div class="sjl-webhook-item" data-open="true">
+            <div class="sjl-webhook-item" data-open="false">
                 <div class="sjl-webhook-item-header">
-                    <button type="button" class="sjl-webhook-toggle" aria-expanded="true">
-                        <span class="dashicons dashicons-arrow-down-alt2"></span>
+                    <button type="button" class="sjl-webhook-toggle" aria-expanded="false">
+                        <span class="dashicons dashicons-arrow-right-alt2"></span>
                     </button>
                     <span class="sjl-webhook-url-preview"><?php echo esc_html($url ?: __('New Webhook', 'simple-jwt-login')); ?></span>
                     <span class="sjl-method-badge sjl-method-<?php echo esc_attr(strtolower($method)); ?>"><?php echo esc_html($method); ?></span>
@@ -179,10 +179,12 @@ $webhookLogRetention   = $jwtSettings->getWebhooksSettings()->getRetentionDays()
         </div>
 
         <div class="sjl-webhooks-footer">
-            <button type="button" id="sjl-add-webhook" class="btn btn-secondary btn-sm">
-                <span class="dashicons dashicons-plus-alt2" style="vertical-align:middle; font-size:16px; height:16px; width:16px;"></span>
-                <?php echo __('Add Webhook', 'simple-jwt-login'); ?>
-            </button>
+            <input
+                type="button"
+                class="btn btn-outline-secondary"
+                id="sjl-add-webhook"
+                value="<?php echo __('+ Add Webhook', 'simple-jwt-login'); ?>"
+            />
         </div>
 
     </div>

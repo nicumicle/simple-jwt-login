@@ -31,48 +31,40 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
         ProtectEndpointSettings::ENDPOINT_MATCH_EXACT      => __('Exact match', 'simple-jwt-login'),
     ];
     ?>
-    <div class="form-group endpoint_row">
-        <div class="input-group">
-            <select name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP . '[' . $type . '_method][]'); ?>">
-                <option value="<?php echo esc_attr(ProtectEndpointSettings::REQUEST_METHOD_ALL); ?>"
-                    <?php echo (!empty($endpoint) && $endpoint['method'] == ProtectEndpointSettings::REQUEST_METHOD_ALL ? 'selected' : ''); ?>
-                >
-                    <?php echo __('ALL', 'simple-jwt-login'); ?>
-                </option>
-                <optgroup label="<?php echo __('HTTP Methods', 'simple-jwt-login'); ?>">
-                    <?php foreach ($requestMethodsOpts as $method => $translation) { ?>
-                        <option value="<?php echo esc_attr($method); ?>"
-                            <?php echo (!empty($endpoint) && $endpoint['method'] == $method ? 'selected' : ''); ?>
-                        >
-                            <?php echo esc_html($translation); ?>
-                        </option>
-                    <?php } ?>
-                </optgroup>
-            </select>
-            <select name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP . '[' . $type . '_match][]'); ?>">
-                <?php foreach ($matchesOpts as $match => $translation) { ?>
-                    <option value="<?php echo esc_attr($match); ?>"
-                        <?php echo (!empty($endpoint) && $endpoint['match'] === $match ? 'selected' : ''); ?>
-                    >
-                        <?php echo esc_html($translation); ?>
-                    </option>
+    <div class="endpoint_row sjl-endpoint-row">
+        <select class="sjl-endpoint-method-select"
+                name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP . '[' . $type . '_method][]'); ?>">
+            <option value="<?php echo esc_attr(ProtectEndpointSettings::REQUEST_METHOD_ALL); ?>"
+                <?php echo (!empty($endpoint) && $endpoint['method'] == ProtectEndpointSettings::REQUEST_METHOD_ALL ? 'selected' : ''); ?>
+            ><?php echo __('ALL', 'simple-jwt-login'); ?></option>
+            <optgroup label="<?php echo __('HTTP Methods', 'simple-jwt-login'); ?>">
+                <?php foreach ($requestMethodsOpts as $method => $translation) { ?>
+                    <option value="<?php echo esc_attr($method); ?>"
+                        <?php echo (!empty($endpoint) && $endpoint['method'] == $method ? 'selected' : ''); ?>
+                    ><?php echo esc_html($translation); ?></option>
                 <?php } ?>
-            </select>
-            <input type="text"
-                   name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP . '[' . $type . '][]'); ?>"
-                   class="form-control"
-                   value="<?php echo !empty($endpoint) ? esc_attr($endpoint['url']) : ''; ?>"
-                   placeholder="<?php echo __('Endpoint path', 'simple-jwt-login'); ?>"
-            />
-            <div class="input-group-addon auth-code-delete-container">
-                <a href="javascript:void(0)"
-                   onclick="jwt_login_remove_endpoint_row(jQuery(this));"
-                   title="<?php echo __('delete', 'simple-jwt-login'); ?>"
-                >
-                    <i class="delete-auth-code" aria-hidden="true"></i>
-                </a>
-            </div>
-        </div>
+            </optgroup>
+        </select>
+        <select class="sjl-endpoint-match-select"
+                name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP . '[' . $type . '_match][]'); ?>">
+            <?php foreach ($matchesOpts as $match => $translation) { ?>
+                <option value="<?php echo esc_attr($match); ?>"
+                    <?php echo (!empty($endpoint) && $endpoint['match'] === $match ? 'selected' : ''); ?>
+                ><?php echo esc_html($translation); ?></option>
+            <?php } ?>
+        </select>
+        <input type="text"
+               class="form-control sjl-endpoint-url-input"
+               name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP . '[' . $type . '][]'); ?>"
+               value="<?php echo !empty($endpoint) ? esc_attr($endpoint['url']) : ''; ?>"
+               placeholder="<?php echo __('/wp-json/namespace/endpoint', 'simple-jwt-login'); ?>"
+        />
+        <button type="button"
+                class="sjl-endpoint-remove"
+                onclick="jwt_login_remove_endpoint_row(jQuery(this));"
+                title="<?php echo __('Remove', 'simple-jwt-login'); ?>">
+            <span class="dashicons dashicons-trash"></span>
+        </button>
     </div>
     <?php
 }
@@ -161,51 +153,53 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
     </div>
 </div>
 
-<div class="sjl-gen-card" id="protected_endpoints_whitelisted">
+<div class="sjl-gen-card sjl-gen-card--whitelist" id="protected_endpoints_whitelisted">
     <div class="sjl-gen-card-header">
-        <span class="dashicons dashicons-yes-alt"></span>
-        <div>
+        <span class="dashicons dashicons-yes-alt" style="color: #00a32a;"></span>
+        <div style="flex: 1;">
             <h3 class="sjl-gen-card-title"><?php echo __('Whitelisted Endpoints', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
                 <?php echo __('These endpoints will skip the JWT check and remain publicly accessible.', 'simple-jwt-login'); ?>
             </p>
         </div>
+        <span class="sjl-endpoint-count" id="whitelist_endpoint_count">
+            <?php echo count($jwtSettings->getProtectEndpointsSettings()->getWhitelistedDomains()); ?>
+        </span>
     </div>
     <div class="sjl-gen-card-body">
-        <div style="margin-bottom: 14px;">
-            <input type="button" class="btn btn-dark" id="add_whitelist_endpoint"
-                   value="<?php echo __('Add Endpoint', 'simple-jwt-login'); ?> +"
-            />
-        </div>
         <div id="whitelisted-domains">
             <?php foreach ($jwtSettings->getProtectEndpointsSettings()->getWhitelistedDomains() as $endpoint) {
                 simple_jwt_login_draw_endpoin_row('whitelist', $endpoint);
             } ?>
         </div>
+        <button type="button" class="btn btn-outline-secondary" id="add_whitelist_endpoint" style="margin-top: 10px;">
+            <?php echo __('+ Add Endpoint', 'simple-jwt-login'); ?>
+        </button>
     </div>
 </div>
 
-<div class="sjl-gen-card" id="protected_endpoints_protected">
+<div class="sjl-gen-card sjl-gen-card--protected" id="protected_endpoints_protected">
     <div class="sjl-gen-card-header">
-        <span class="dashicons dashicons-lock"></span>
-        <div>
+        <span class="dashicons dashicons-lock" style="color: #d63638;"></span>
+        <div style="flex: 1;">
             <h3 class="sjl-gen-card-title"><?php echo __('Protected Endpoints', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
                 <?php echo __('A valid JWT will be required to access these endpoints.', 'simple-jwt-login'); ?>
             </p>
         </div>
+        <span class="sjl-endpoint-count" id="protected_endpoint_count">
+            <?php echo count($jwtSettings->getProtectEndpointsSettings()->getProtectedEndpoints()); ?>
+        </span>
     </div>
     <div class="sjl-gen-card-body">
-        <div style="margin-bottom: 14px;">
-            <input type="button" class="btn btn-dark" id="add_protect_endpoint"
-                   value="<?php echo __('Add Endpoint', 'simple-jwt-login'); ?> +"
-            />
-        </div>
         <div id="protected-domains">
             <?php foreach ($jwtSettings->getProtectEndpointsSettings()->getProtectedEndpoints() as $endpoint) {
                 simple_jwt_login_draw_endpoin_row('protect', $endpoint);
             } ?>
         </div>
+        <button type="button" class="btn btn-outline-secondary" id="add_protect_endpoint" style="margin-top: 10px;">
+            <?php echo __('+ Add Endpoint', 'simple-jwt-login'); ?>
+        </button>
     </div>
 </div>
 

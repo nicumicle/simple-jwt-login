@@ -105,11 +105,37 @@ jQuery(document).ready(
             }
         );
 
+        function sjlUpdateHooksCount() {
+            var checked = $('#simple-jwt-login-tab-hooks .sjl-hooks-list input[type="checkbox"]:checked').length;
+            $('#sjl-hooks-enabled-count').text(checked);
+        }
+
         $('#simple-jwt-login #toggleHooks').on(
             'click',
-            function (e) {
+            function () {
                 var isChecked = $(this).is(':checked');
-                $('#simple-jwt-login-tab-hooks tbody input[type="checkbox"]').attr('checked', isChecked);
+                var $checkboxes = $('#simple-jwt-login-tab-hooks .sjl-hooks-list input[type="checkbox"]');
+                $checkboxes.prop('checked', isChecked);
+                $checkboxes.each(function () {
+                    $(this).closest('.sjl-hook-item').toggleClass('sjl-hook-item--enabled', isChecked);
+                });
+                sjlUpdateHooksCount();
+            }
+        );
+
+        $(document).on(
+            'change',
+            '#simple-jwt-login-tab-hooks .sjl-hook-item-toggle input[type="checkbox"]',
+            function () {
+                var isChecked = $(this).is(':checked');
+                $(this).closest('.sjl-hook-item').toggleClass('sjl-hook-item--enabled', isChecked);
+                sjlUpdateHooksCount();
+                var $all     = $('#simple-jwt-login-tab-hooks .sjl-hooks-list input[type="checkbox"]');
+                var total    = $all.length;
+                var numChecked = $all.filter(':checked').length;
+                $('#toggleHooks')
+                    .prop('checked', numChecked === total)
+                    .prop('indeterminate', numChecked > 0 && numChecked < total);
             }
         );
 

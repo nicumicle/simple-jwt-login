@@ -79,14 +79,8 @@ if (!defined('ABSPATH')) {
     </div>
     <div class="sjl-gen-card-body">
 
-        <div style="margin-bottom: 14px;">
-            <input type="button" class="btn btn-dark" id="add_code"
-                   value="<?php echo __('Add Auth Code', 'simple-jwt-login'); ?> +"
-            />
-        </div>
-
         <!-- Column headers -->
-        <div class="sjl-gen-auth-codes-header">
+        <div class="sjl-auth-codes-header">
             <span><?php echo __('Authentication Key', 'simple-jwt-login'); ?></span>
             <span><?php echo __('WordPress User Role', 'simple-jwt-login'); ?></span>
             <span><?php echo __('Expiration Date', 'simple-jwt-login'); ?></span>
@@ -107,38 +101,38 @@ if (!defined('ABSPATH')) {
                     'simple-jwt-login'
                 );
                 ?>
-                <div class="form-group auth_row">
-                    <div class="input-group">
-                        <input type="text"
-                               name="auth_codes[code][]"
-                               class="form-control"
-                               value="<?php echo esc_attr($code->getCode()); ?>"
-                               placeholder="<?php echo __('Authentication Key', 'simple-jwt-login'); ?>"
-                        />
-                        <input type="text"
-                               name="auth_codes[role][]"
-                               class="form-control"
-                               value="<?php echo esc_attr($code->getRole()); ?>"
-                               placeholder="<?php echo esc_attr($authCodeRolePlaceholder); ?>"
-                        />
-                        <input type="text"
-                               name="auth_codes[expiration_date][]"
-                               class="form-control"
-                               value="<?php echo esc_attr($code->getExpirationDate()); ?>"
-                               placeholder="<?php echo esc_attr($authCodeExpirationDatePlaceholder); ?>"
-                        />
-                        <div class="input-group-addon auth-code-delete-container">
-                            <a href="javascript:void(0)"
-                               onclick="jwt_login_remove_auth_line(jQuery(this));"
-                               title="<?php echo __('delete', 'simple-jwt-login'); ?>"
-                            >
-                                <i class="delete-auth-code" aria-hidden="true"></i>
-                            </a>
-                        </div>
-                    </div>
+                <div class="auth_row sjl-auth-row">
+                    <input type="text"
+                           name="auth_codes[code][]"
+                           class="form-control sjl-auth-input"
+                           value="<?php echo esc_attr($code->getCode()); ?>"
+                           placeholder="<?php echo __('Authentication Key', 'simple-jwt-login'); ?>"
+                    />
+                    <input type="text"
+                           name="auth_codes[role][]"
+                           class="form-control sjl-auth-input"
+                           value="<?php echo esc_attr($code->getRole()); ?>"
+                           placeholder="<?php echo esc_attr($authCodeRolePlaceholder); ?>"
+                    />
+                    <input type="text"
+                           name="auth_codes[expiration_date][]"
+                           class="form-control sjl-auth-input"
+                           value="<?php echo esc_attr($code->getExpirationDate()); ?>"
+                           placeholder="<?php echo esc_attr($authCodeExpirationDatePlaceholder); ?>"
+                    />
+                    <button type="button"
+                            class="sjl-endpoint-remove"
+                            onclick="jwt_login_remove_auth_line(jQuery(this));"
+                            title="<?php echo __('Remove', 'simple-jwt-login'); ?>">
+                        <span class="dashicons dashicons-trash"></span>
+                    </button>
                 </div>
             <?php } ?>
         </div>
+
+        <button type="button" class="btn btn-outline-secondary" id="add_code" style="margin-top: 10px;">
+            <?php echo __('+ Add Auth Code', 'simple-jwt-login'); ?>
+        </button>
 
         <!-- Field legend -->
         <div class="sjl-gen-variables-box" style="margin-top: 16px;">

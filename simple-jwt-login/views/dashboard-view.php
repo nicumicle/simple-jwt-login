@@ -241,7 +241,7 @@ $hooksCount = count($jwtSettings->getHooksSettings()->getEnabledHooks());
             <div class="col-lg-3 col-md-6 col-xs-12">
                 <div class="sjl-dash-card card card-shadow" data-sjl-tab="<?php echo esc_attr(SettingsErrors::PREFIX_APPLICATIONS); ?>">
                     <div class="sjl-dash-card-icon">
-                        <span class="dashicons dashicons-google"></span>
+                        <span class="dashicons dashicons-share"></span>
                     </div>
                     <div class="sjl-dash-card-title">
                         <?php echo esc_html(__('Applications', 'simple-jwt-login')); ?>

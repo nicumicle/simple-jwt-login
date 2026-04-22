@@ -310,40 +310,34 @@ $settingsPages = [
 </form>
 
 <div id="code_line" style="display:none">
-    <div class="form-group auth_row">
-        <div class="input-group">
-            <input type="text"
-                   name="auth_codes[code][]"
-                   class="form-control"
-                   placeholder="<?php  echo __('Authentication Key', 'simple-jwt-login') ;?>"
-            />
-            <input type="text"
-                   name="auth_codes[role][]"
-                   class="form-control"
-                   placeholder="<?php
-                       echo __(
-                           'WordPress new user Role ( when new users are created )',
-                           'simple-jwt-login'
-                       );
-                        ?>"
-            />
-            <input type="text"
-                   name="auth_codes[expiration_date][]"
-                   class="form-control"
-                   placeholder="<?php  echo __(
-                       'Expiration date: YYYY-MM-DD HH:MM:SS ( Example: 2020-12-23 23:34:59)',
-                       'simple-jwt-login'
-                   ) ;?>"
-            />
-            <div class="input-group-addon auth-code-delete-container">
-                <a href="javascript:void(0)"
-                   onclick="jwt_login_remove_auth_line(jQuery(this));"
-                   title="<?php  echo __('delete', 'simple-jwt-login') ;?>"
-                >
-                    <i class="delete-auth-code" aria-hidden="true"></i>
-                </a>
-            </div>
-        </div>
+    <div class="auth_row sjl-auth-row">
+        <input type="text"
+               name="auth_codes[code][]"
+               class="form-control sjl-auth-input"
+               placeholder="<?php echo __('Authentication Key', 'simple-jwt-login'); ?>"
+        />
+        <input type="text"
+               name="auth_codes[role][]"
+               class="form-control sjl-auth-input"
+               placeholder="<?php echo __(
+                   'WordPress new user Role ( when new users are created )',
+                   'simple-jwt-login'
+               ); ?>"
+        />
+        <input type="text"
+               name="auth_codes[expiration_date][]"
+               class="form-control sjl-auth-input"
+               placeholder="<?php echo __(
+                   'Expiration date: YYYY-MM-DD HH:MM:SS ( Example: 2020-12-23 23:34:59)',
+                   'simple-jwt-login'
+               ); ?>"
+        />
+        <button type="button"
+                class="sjl-endpoint-remove"
+                onclick="jwt_login_remove_auth_line(jQuery(this));"
+                title="<?php echo __('Remove', 'simple-jwt-login'); ?>">
+            <span class="dashicons dashicons-trash"></span>
+        </button>
     </div>
 </div>
 

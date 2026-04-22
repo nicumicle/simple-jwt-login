@@ -408,7 +408,6 @@ $wlBaseUrl = add_query_arg([
             <span><?php echo esc_html(__('Webhook call logging is currently disabled. Toggle "Enable Logs" above and save settings to start recording calls.', 'simple-jwt-login')); ?></span>
         </div>
         <?php else : ?>
-
         <!-- Filters -->
         <div class="row mb-3">
             <div class="col-md-12">
@@ -534,7 +533,7 @@ $wlBaseUrl = add_query_arg([
         </div>
 
         <!-- Pagination -->
-        <?php if ($wlTotalPages > 1) : ?>
+			<?php if ($wlTotalPages > 1) : ?>
             <div class="row mt-3">
                 <div class="col-md-12 text-center">
                     <nav>
@@ -575,7 +574,7 @@ $wlBaseUrl = add_query_arg([
                     </p>
                 </div>
             </div>
-        <?php endif; ?>
+			<?php endif; ?>
 
         <?php endif; // end webhook_logs_enabled ?>
 

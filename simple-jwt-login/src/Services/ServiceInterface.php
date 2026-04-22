@@ -6,7 +6,7 @@ use Exception;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepositoryInterface;
-use SimpleJWTLogin\Repositories\WebhookLog\WebhookLogRepository;
+use SimpleJWTLogin\Repositories\WebhookLog\Repository as WebhookLogRepositoryInterface;
 
 interface ServiceInterface
 {
@@ -56,7 +56,7 @@ interface ServiceInterface
      * @param WebhookLogRepositoryInterface $repository
      * @return $this
      */
-    public function withWebhookLogRepository(WebhookLogRepository $repository);
+    public function withWebhookLogRepository(WebhookLogRepositoryInterface $repository);
 
     /**
      * @return mixed

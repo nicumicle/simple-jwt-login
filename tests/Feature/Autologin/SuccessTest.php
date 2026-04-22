@@ -4,7 +4,6 @@ namespace SimpleJwtLoginTests\Feature\Autologin;
 
 use GuzzleHttp\TransferStats;
 use SimpleJwtLoginTests\Feature\TestBase;
-// use WP_REST_Request;
 
 class SuccessTest extends TestBase
 {
@@ -44,7 +43,7 @@ class SuccessTest extends TestBase
     }
 
     public function testSuccessAutologin()
-    {   
+    {
         $this->initClient(
             [
                 'cookies' => true,

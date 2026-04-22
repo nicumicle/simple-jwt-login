@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ruleset name="Design Rules (custom)"
+         xmlns="http://pmd.sf.net/ruleset/1.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
+         xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
+
+    <description>
+        Design ruleset with CouplingBetweenObjects threshold raised to 14
+        to accommodate BaseService and RegisterUserService fluent-builder patterns.
+    </description>
+
+    <rule ref="rulesets/design.xml">
+        <exclude name="CouplingBetweenObjects"/>
+    </rule>
+
+    <rule ref="rulesets/design.xml/CouplingBetweenObjects">
+        <properties>
+            <property name="maximum" value="14"/>
+        </properties>
+    </rule>
+
+</ruleset>

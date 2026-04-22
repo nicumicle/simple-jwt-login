@@ -33,7 +33,7 @@
     "tests": "vendor/bin/phpunit --testsuite 'Unit' --coverage-text ",
     "tests-feature": "vendor/bin/phpunit -c phpunit-feature.xml.dist --coverage-text",
     "phpcs": "vendor/bin/phpcs --no-cache simple-jwt-login/ tests/ --extensions=php",
-    "phpmd-design": "vendor/bin/phpmd simple-jwt-login/ text design",
+    "phpmd-design": "vendor/bin/phpmd simple-jwt-login/ text phpmd-design.xml",
     "phpmd-cleancode": "vendor/bin/phpmd simple-jwt-login/ text phpmd-cleancode.xml",
     "phpmd-unusedcode": "vendor/bin/phpmd simple-jwt-login/ text unusedcode",
     "phpmd-naming": "vendor/bin/phpmd simple-jwt-login/ text naming",

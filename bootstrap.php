@@ -166,6 +166,13 @@ if (!function_exists('esc_url')) {
     }
 }
 
+if (!function_exists('esc_textarea')) {
+    function esc_textarea($text)
+    {
+        return $text;
+    }
+}
+
 if (!function_exists('wp_insert_user')) {
     function wp_insert_user($userParameters)
     {

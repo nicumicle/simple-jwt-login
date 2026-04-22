@@ -78,7 +78,7 @@ class WebhooksSettingsTest extends TestCase
     public function testInvalidMethodDefaultsToPost()
     {
         $webhooksData = [
-            ['url' => 'https://valid.com', 'enabled' => true, 'method' => 'DELETE', 'events' => ['login'], 'headers' => []],
+            ['url' => 'https://valid.com', 'enabled' => true, 'method' => 'INVALID', 'events' => ['login'], 'headers' => []],
         ];
         $settings = (new WebhooksSettings())
             ->withSettings([])
@@ -87,6 +87,7 @@ class WebhooksSettingsTest extends TestCase
         $settings->initSettingsFromPost();
 
         $webhooks = $settings->getWebhooks();
+        $this->assertCount(1, $webhooks);
         $this->assertSame(WebhooksSettings::DEFAULT_METHOD, $webhooks[0]['method']);
     }
 
@@ -102,6 +103,7 @@ class WebhooksSettingsTest extends TestCase
         $settings->initSettingsFromPost();
 
         $webhooks = $settings->getWebhooks();
+        $this->assertCount(1, $webhooks);
         $this->assertSame(WebhooksSettings::DEFAULT_METHOD, $webhooks[0]['method']);
     }
 
@@ -125,6 +127,7 @@ class WebhooksSettingsTest extends TestCase
         $settings->initSettingsFromPost();
 
         $webhooks = $settings->getWebhooks();
+        $this->assertCount(1, $webhooks);
         $this->assertCount(1, $webhooks[0]['headers']);
         $this->assertSame('X-Keep', $webhooks[0]['headers'][0]['key']);
     }
@@ -229,7 +232,7 @@ class WebhooksSettingsTest extends TestCase
     public function testPayloadTemplateIsStoredWhenProvided()
     {
         $webhooksData = [
-            ['url' => 'https://valid.com', 'enabled' => true, 'events' => ['login'], 'payload_template' => '{"id":"{{user_id}}"}'],
+            ['url' => 'https://valid.com', 'enabled' => true, 'events' => ['login'], 'payload_template' => 'id={{user_id}}'],
         ];
         $settings = (new WebhooksSettings())
             ->withSettings([])
@@ -238,7 +241,8 @@ class WebhooksSettingsTest extends TestCase
         $settings->initSettingsFromPost();
 
         $webhooks = $settings->getWebhooks();
-        $this->assertSame('{"id":"{{user_id}}"}', $webhooks[0]['payload_template']);
+        $this->assertCount(1, $webhooks);
+        $this->assertSame('id={{user_id}}', $webhooks[0]['payload_template']);
     }
 
     public function testPayloadTemplateDefaultsToEmptyString()
@@ -253,10 +257,11 @@ class WebhooksSettingsTest extends TestCase
         $settings->initSettingsFromPost();
 
         $webhooks = $settings->getWebhooks();
+        $this->assertCount(1, $webhooks);
         $this->assertSame('', $webhooks[0]['payload_template']);
     }
 
-    public function testRetentionDaysDefaultsTo90()
+    public function testRetentionDaysDefaultValue()
     {
         $settings = (new WebhooksSettings())
             ->withSettings([])

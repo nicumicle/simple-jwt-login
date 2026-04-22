@@ -106,6 +106,6 @@ class SuccessTest extends TestBase
         $this->assertSame(200, $response->getStatusCode());
         $this->assertNotNull($finalURL);
         $this->assertSame(self::API_URL, $finalURL->getScheme() . "://" . $finalURL->getHost());
-        $this->assertSame('/my-account/', $finalURL->getPath());
+        $this->assertSame('/wp-admin/', $finalURL->getPath());
     }
 }

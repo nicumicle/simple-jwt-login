@@ -2,6 +2,7 @@
 
 namespace SimpleJwtLoginTests\Feature\Authentication;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestDox;
 use SimpleJwtLoginTests\Feature\TestBase;
 
@@ -43,203 +44,94 @@ class SuccessTest extends TestBase
         ]);
     }
 
-    #[TestDox("User can authenticate with email and password")]
-    public function testAuthenticationEmail()
+    /**
+     * @return array<string, array{string, string}>
+     */
+    public static function authCredentialProvider(): array
     {
-        // Register random user
-        list ($email, $password, $statusCode, $response) = $this->registerRandomUser();
-
-        $this->assertSame(200, $statusCode, "Unable to register user");
-
-        // Auth new USer
-        list ($statusCode, $responseContents) = $this->authUser($email, $password);
-
-        $this->assertSame(
-            200,
-            $statusCode,
-            "Auth User Failed"
-        );
-        $responseArray = json_decode($responseContents, true);
-        $this->assertArrayHasKey('success', $responseArray);
-        $this->assertTrue($responseArray['success']);
-        $this->assertArrayHasKey('data', $responseArray);
-        $this->assertArrayHasKey('jwt', $responseArray['data']);
-        $jwt = $responseArray['data']['jwt'];
-        // Cleanup
-        list($statusCode, $response) = $this->deleteUser($jwt);
-        $this->assertSame(200, $statusCode, "unable to delete the user");
+        return [
+            'email field, login by email'       => ['email',    'email'],
+            'username field, login by username' => ['username', 'username'],
+            'login field, login by username'    => ['login',    'username'],
+            'login field, login by email'       => ['login',    'email'],
+        ];
     }
 
-    #[TestDox("User can authenticate with username and password")]
-    public function testAuthenticationUsername()
+    #[DataProvider('authCredentialProvider')]
+    #[TestDox("User can authenticate using the credential field and password")]
+    public function testAuthentication(string $credentialField, string $loginBy): void
     {
-        // Register random user
-        list ($email, $password, $statusCode, $response) = $this->registerRandomUser();
-
+        [$email, $password, $statusCode] = $this->registerRandomUser();
         $this->assertSame(200, $statusCode, "Unable to register user");
 
-       // Auth new USer
-        $uri = self::API_URL . "?rest_route=/simple-jwt-login/v1/auth";
-        $result = $this->client->post($uri, [
-           'body' => json_encode([
-               'username' => md5($email),
-               'password' => $password,
-           ])
-        ]);
+        $credentialValue = $loginBy === 'email' ? $email : md5($email);
 
-        $this->assertSame(
-            200,
-            $result->getStatusCode(),
-            "Auth User Failed"
-        );
-        $responseArray = json_decode($result->getBody()->getContents(), true);
-        $this->assertArrayHasKey('success', $responseArray);
-        $this->assertTrue($responseArray['success']);
-        $this->assertArrayHasKey('data', $responseArray);
-        $this->assertArrayHasKey('jwt', $responseArray['data']);
-        $jwt = $responseArray['data']['jwt'];
-        // Cleanup
-        list($statusCode, $response) = $this->deleteUser($jwt);
-        $this->assertSame(200, $statusCode, "unable to delete the user");
-    }
-
-
-    #[TestDox("User can authenticate with login(username) and password")]
-    public function testAuthenticationLogin()
-    {
-        // Register random user
-        list ($email, $password, $statusCode, $response) = $this->registerRandomUser();
-
-        $this->assertSame(200, $statusCode, "Unable to register user");
-
-        // Auth new USer
         $uri = self::API_URL . "?rest_route=/simple-jwt-login/v1/auth";
         $result = $this->client->post($uri, [
             'body' => json_encode([
-                'login' => md5($email),
-                'password' => $password,
+                $credentialField => $credentialValue,
+                'password'       => $password,
             ])
         ]);
 
-        $this->assertSame(
-            200,
-            $result->getStatusCode(),
-            "Auth User Failed"
-        );
+        $this->assertSame(200, $result->getStatusCode(), "Auth User Failed");
         $responseArray = json_decode($result->getBody()->getContents(), true);
         $this->assertArrayHasKey('success', $responseArray);
         $this->assertTrue($responseArray['success']);
         $this->assertArrayHasKey('data', $responseArray);
         $this->assertArrayHasKey('jwt', $responseArray['data']);
-        $jwt = $responseArray['data']['jwt'];
-        // Cleanup
-        list($statusCode, $response) = $this->deleteUser($jwt);
+
+        [$statusCode] = $this->deleteUser($responseArray['data']['jwt']);
         $this->assertSame(200, $statusCode, "unable to delete the user");
     }
-
-    #[TestDox("User can authenticate with login(email) and password")]
-    public function testAuthenticationLoginEmail()
-    {
-        // Register random user
-        list ($email, $password, $statusCode, $response) = $this->registerRandomUser();
-
-        $this->assertSame(200, $statusCode, "Unable to register user");
-
-        // Auth new USer
-        $uri = self::API_URL . "?rest_route=/simple-jwt-login/v1/auth";
-        $result = $this->client->post($uri, [
-            'body' => json_encode([
-                'login' => $email,
-                'password' => $password,
-            ])
-        ]);
-
-        $this->assertSame(
-            200,
-            $result->getStatusCode(),
-            "Auth User Failed"
-        );
-        $responseArray = json_decode($result->getBody()->getContents(), true);
-        $this->assertArrayHasKey('success', $responseArray);
-        $this->assertTrue($responseArray['success']);
-        $this->assertArrayHasKey('data', $responseArray);
-        $this->assertArrayHasKey('jwt', $responseArray['data']);
-        $jwt = $responseArray['data']['jwt'];
-        // Cleanup
-        list($statusCode, $response) = $this->deleteUser($jwt);
-        $this->assertSame(200, $statusCode, "unable to delete the user");
-    }
-
 
     #[TestDox("User can refresh a valid JWT")]
-    public function testRefreshToken()
+    public function testRefreshToken(): void
     {
-        // Register random user
-        list ($email, $password, $statusCode, $response ) = $this->registerRandomUser();
-
+        [$email, $password, $statusCode] = $this->registerRandomUser();
         $this->assertSame(200, $statusCode, "Unable to register user");
 
-        // Auth new USer
-        list ($statusCode, $responseContents) = $this->authUser($email, $password);
+        [$statusCode, $responseContents] = $this->authUser($email, $password);
+        $this->assertSame(200, $statusCode, "Auth User Failed");
 
-        $this->assertSame(
-            200,
-            $statusCode,
-            "Auth User Failed"
-        );
         $responseArray = json_decode($responseContents, true);
         $jwt = $responseArray['data']['jwt'];
+        $this->assertArrayHasKey('refresh_token', $responseArray['data'], "Refresh token should be present in auth response");
         $refreshToken = $responseArray['data']['refresh_token'];
 
-        $this->assertArrayHasKey('refresh_token', $responseArray['data'], "Refresh token should be present in auth response");
-
         $refreshResponse = $this->client->post(self::API_URL . "?rest_route=/simple-jwt-login/v1/auth/refresh", [
-            'body' => json_encode([
-                'refresh_token' => $refreshToken
-            ]),
+            'body' => json_encode(['refresh_token' => $refreshToken]),
         ]);
 
         $this->assertSame(200, $refreshResponse->getStatusCode(), "unable to refresh token");
         $refreshResponseArray = json_decode($refreshResponse->getBody()->getContents(), true);
-
         $this->assertTrue($refreshResponseArray['success']);
         $this->assertArrayHasKey('data', $refreshResponseArray);
         $this->assertArrayHasKey('jwt', $refreshResponseArray['data']);
         $this->assertArrayHasKey('refresh_token', $refreshResponseArray['data'], "New refresh token should be present in refresh response");
 
-        // Cleanup
-        list($statusCode, $response) = $this->deleteUser($jwt);
+        [$statusCode] = $this->deleteUser($jwt);
         $this->assertSame(200, $statusCode, "unable to delete the user");
     }
 
     #[TestDox("User can validate a JWT")]
-    public function testValidateToken()
+    public function testValidateToken(): void
     {
-        // Register random user
-        list ($email, $password, $statusCode, $response ) = $this->registerRandomUser();
-
+        [$email, $password, $statusCode] = $this->registerRandomUser();
         $this->assertSame(200, $statusCode, "Unable to register user");
 
-        // Auth new USer
-        list ($statusCode, $responseContents) = $this->authUser($email, $password);
+        [$statusCode, $responseContents] = $this->authUser($email, $password);
+        $this->assertSame(200, $statusCode, "Auth User Failed");
 
-        $this->assertSame(
-            200,
-            $statusCode,
-            "Auth User Failed"
-        );
         $responseArray = json_decode($responseContents, true);
         $jwt = $responseArray['data']['jwt'];
 
         $validateResponse = $this->client->post(self::API_URL . "?rest_route=/simple-jwt-login/v1/auth/validate", [
-            'body' => json_encode([
-                'JWT' => $jwt
-            ]),
+            'body' => json_encode(['JWT' => $jwt]),
         ]);
 
         $this->assertSame(200, $validateResponse->getStatusCode(), "unable to validate token");
         $validateRespArr = json_decode($validateResponse->getBody()->getContents(), true);
-
         $this->assertTrue($validateRespArr['success']);
         $this->assertArrayHasKey('data', $validateRespArr);
         $this->assertArrayHasKey('user', $validateRespArr['data']);
@@ -247,8 +139,7 @@ class SuccessTest extends TestBase
         $this->assertArrayHasKey('roles', $validateRespArr['data']);
         $this->assertSame($email, $validateRespArr['data']['user']['user_email']);
 
-        // Cleanup
-        list($statusCode, $response) = $this->deleteUser($jwt);
+        [$statusCode] = $this->deleteUser($jwt);
         $this->assertSame(200, $statusCode, "unable to delete the user");
     }
 }

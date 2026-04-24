@@ -30,11 +30,9 @@ class RevokeTokenServiceTest extends TestCase
     {
         parent::setUp();
         $this->wordPressDataMock = $this
-            ->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+            ->createStub(WordPressDataInterface::class);
         $this->tokenRepositoryMock = $this
-            ->getMockBuilder(RefreshTokenRepository::class)
-            ->getMock();
+            ->createStub(RefreshTokenRepository::class);
     }
 
     #[DataProvider('validationProvider')]
@@ -112,9 +110,7 @@ class RevokeTokenServiceTest extends TestCase
             ],
         ];
 
-        $user = $this->getMockBuilder(WP_User::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $user = $this->createStub(WP_User::class);
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
         $this->wordPressDataMock->method('getUserDetailsById')
@@ -127,7 +123,6 @@ class RevokeTokenServiceTest extends TestCase
             ->willReturn(true);
 
         $this->wordPressDataMock->method('getUserMeta')
-            ->with(1, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY)
             ->willReturn([
                 Jwt::encode(['exp' => 1000], 'test', 'HS256')
             ]);
@@ -207,9 +202,7 @@ class RevokeTokenServiceTest extends TestCase
             ],
         ];
 
-        $user = $this->getMockBuilder(WP_User::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $user = $this->createStub(WP_User::class);
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
         $this->wordPressDataMock->method('getUserDetailsById')
@@ -223,7 +216,6 @@ class RevokeTokenServiceTest extends TestCase
 
         $revokedJwt = JWT::encode(['id' => 1], 'test', 'HS256');
         $this->wordPressDataMock->method('getUserMeta')
-            ->with(1, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY)
             ->willReturn([
                $revokedJwt,
             ]);

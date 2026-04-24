@@ -24,8 +24,7 @@ class ResetPasswordServiceTest extends TestCase
     {
         parent::setUp();
         $this->wordPressDataMock = $this
-            ->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+            ->createStub(WordPressDataInterface::class);
     }
 
     #[DataProvider('sendUserPasswordProvider')]
@@ -141,7 +140,6 @@ class ResetPasswordServiceTest extends TestCase
             ->willReturn(['User']);
         $this->wordPressDataMock
             ->method('triggerFilter')
-            ->withAnyParameters()
             ->willReturn(true);
         $this->wordPressDataMock
             ->method('createResponse')

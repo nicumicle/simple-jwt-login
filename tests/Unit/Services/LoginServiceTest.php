@@ -25,8 +25,7 @@ class LoginServiceTest extends TestCase
     {
         parent::setUp();
         $this->wordPressDataMock = $this
-            ->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+            ->createStub(WordPressDataInterface::class);
 
         $this->wordPressDataMock->method('sanitizeTextField')
             ->willReturnCallback(

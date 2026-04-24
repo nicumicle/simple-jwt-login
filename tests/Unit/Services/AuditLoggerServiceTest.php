@@ -30,12 +30,8 @@ class AuditLoggerServiceTest extends TestCase
     {
         parent::setUp();
         $this->repositoryMock   = $this->getMockBuilder(AuditLogRepositoryInterface::class)->getMock();
-        $this->settingsMock     = $this->getMockBuilder(AuditLogSettings::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->serverHelperMock = $this->getMockBuilder(ServerHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->settingsMock     = $this->createStub(AuditLogSettings::class);
+        $this->serverHelperMock = $this->createStub(ServerHelper::class);
     }
 
     private function makeLogger()

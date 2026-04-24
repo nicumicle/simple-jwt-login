@@ -304,9 +304,7 @@ $sidebarGroups = [
                                     data-sjl-group="<?php echo esc_attr($sjlGroupId); ?>"
                                 >
                                     <span class="sjl-nav-group-label-text">
-                                        <?php if (!empty($groupEntry['icon'])) : ?>
-                                            <span class="dashicons <?php echo esc_attr($groupEntry['icon']); ?> sjl-nav-group-icon" aria-hidden="true"></span>
-                                        <?php endif; ?>
+                                        <span class="dashicons <?php echo esc_attr($groupEntry['icon']); ?> sjl-nav-group-icon" aria-hidden="true"></span>
                                         <span class="sjl-nav-label"><?php echo esc_html($groupEntry['label']); ?></span>
                                     </span>
                                     <button type="button" class="sjl-nav-group-toggle" aria-expanded="true">
@@ -314,20 +312,12 @@ $sidebarGroups = [
                                     </button>
                                 </li>
                                 <?php foreach ($groupEntry['items'] as $item) :
-                                    $idx        = $item['index'];
-                                    $pg         = $pagesByIndex[$idx];
-                                    $iName      = isset($item['name']) ? $item['name'] : $pg['name'];
-                                    $section    = isset($item['section']) ? $item['section'] : '';
-                                    $sectionAttr = $section
-                                        ? ' data-section="' . esc_attr($section) . '"'
-                                        : '';
-                                    $isActive = empty($section) && (
-                                        (empty($errorCode) && $activeTab === $idx)
-                                        || $settingsErrors->getSectionFromErrorCode($errorCode) === $idx
-                                    );
-                                    $linkId = $section
-                                        ? esc_attr($section) . '-nav-link'
-                                        : esc_attr($pg['id']) . '-tab';
+                                    $idx      = $item['index'];
+                                    $pg       = $pagesByIndex[$idx];
+                                    $iName    = isset($item['name']) ? $item['name'] : $pg['name'];
+                                    $isActive = (empty($errorCode) && $activeTab === $idx)
+                                        || $settingsErrors->getSectionFromErrorCode($errorCode) === $idx;
+                                    $linkId   = esc_attr($pg['id']) . '-tab';
                                     ?>
                                     <li class="nav-item sjl-nav-sub-item"
                                         data-sjl-group-item="<?php echo esc_attr($sjlGroupId); ?>"
@@ -336,17 +326,14 @@ $sidebarGroups = [
                                            id="<?php echo esc_attr($linkId); ?>"
                                            data-toggle="tab"
                                            data-index="<?php echo esc_attr($idx); ?>"
-                                           <?php echo $sectionAttr; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
                                            href="#<?php echo esc_attr($pg['id']); ?>"
                                            role="tab"
                                            aria-controls="<?php echo esc_attr($pg['id']); ?>"
                                            aria-selected="<?php echo $isActive ? 'true' : 'false'; ?>"
                                            title="<?php echo esc_attr($iName); ?>"
                                         >
-                                            <?php if (!empty($item['icon'])) : ?>
-                                                <span class="dashicons <?php echo esc_attr($item['icon']); ?> sjl-nav-icon" aria-hidden="true"></span>
-                                            <?php endif; ?>
-                                            <?php if ($pg['has_error'] && empty($section)) : ?>
+                                            <span class="dashicons <?php echo esc_attr($item['icon']); ?> sjl-nav-icon" aria-hidden="true"></span>
+                                            <?php if ($pg['has_error']) : ?>
                                                 <span class="simple-jwt-error">!</span>
                                             <?php endif; ?>
                                             <span class="sjl-nav-label"><?php echo esc_html($iName); ?></span>
@@ -372,9 +359,7 @@ $sidebarGroups = [
                                        aria-selected="<?php echo $isActive ? 'true' : 'false'; ?>"
                                        title="<?php echo esc_attr($iName); ?>"
                                     >
-                                        <?php if (!empty($groupEntry['icon'])) : ?>
-                                            <span class="dashicons <?php echo esc_attr($groupEntry['icon']); ?> sjl-nav-icon" aria-hidden="true"></span>
-                                        <?php endif; ?>
+                                        <span class="dashicons <?php echo esc_attr($groupEntry['icon']); ?> sjl-nav-icon" aria-hidden="true"></span>
                                         <?php if ($pg['has_error']) : ?>
                                             <span class="simple-jwt-error">!</span>
                                         <?php endif; ?>

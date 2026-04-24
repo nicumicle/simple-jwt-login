@@ -18,8 +18,7 @@ class ProtectEndpointSettingsTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->wordPressData = $this->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+        $this->wordPressData = $this->createStub(WordPressDataInterface::class);
         $this->wordPressData->method('sanitizeTextField')
             ->willReturnCallback(
                 function ($parameter) {

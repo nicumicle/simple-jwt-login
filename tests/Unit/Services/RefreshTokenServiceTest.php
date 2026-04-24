@@ -27,12 +27,9 @@ class RefreshTokenServiceTest extends TestCase
     {
         parent::setUp();
         $this->wordPressDataMock = $this
-            ->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+            ->createStub(WordPressDataInterface::class);
 
-        $this->refreshTokenRepoMock = $this
-            ->getMockBuilder(RefreshTokenRepositoryInterface::class)
-            ->getMock();
+        $this->refreshTokenRepoMock = $this->createStub(RefreshTokenRepositoryInterface::class);
     }
 
     #[DataProvider('validationProvider')]
@@ -158,6 +155,7 @@ class RefreshTokenServiceTest extends TestCase
 
     public function testOldRefreshTokenIsRotatedOnSuccess()
     {
+        $this->refreshTokenRepoMock = $this->createMock(RefreshTokenRepositoryInterface::class);
         $tokenData          = new \stdClass();
         $tokenData->user_id = 42;
 

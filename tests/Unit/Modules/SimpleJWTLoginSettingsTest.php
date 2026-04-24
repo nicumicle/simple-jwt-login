@@ -26,7 +26,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $wordPressDataMock = $this->getMockBuilder(WordPressDataInterface::class)->getMock();
+        $wordPressDataMock = $this->createStub(WordPressDataInterface::class);
         $wordPressDataMock->method('roleExists')
             ->willReturn(true);
         $this->simpleJWTSettings = new SimpleJWTLoginSettings($wordPressDataMock);
@@ -124,8 +124,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
 
     public function testGenerateExampleLink()
     {
-        $wordPressDataMock = $this->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+        $wordPressDataMock = $this->createStub(WordPressDataInterface::class);
         $wordPressDataMock->method('getSiteUrl')
             ->willReturn('https://localhost');
         $wordPressDataMock->method('getOptionFromDatabase')
@@ -139,8 +138,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
 
     public function testGenerateExampleLinkWithNoParams()
     {
-        $wordPressDataMock = $this->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+        $wordPressDataMock = $this->createStub(WordPressDataInterface::class);
         $wordPressDataMock->method('getSiteUrl')
             ->willReturn('https://localhost');
         $wordPressDataMock->method('getOptionFromDatabase')
@@ -165,8 +163,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Something is wrong. We can not save the settings.');
 
-        $wordPressDataMock = $this->getMockBuilder(WordPressDataInterface::class)
-                                  ->getMock();
+        $wordPressDataMock = $this->createStub(WordPressDataInterface::class);
         $wordPressDataMock->method('checkNonce')
                           ->willReturn(false);
         $settings = new SimpleJWTLoginSettings($wordPressDataMock);
@@ -185,8 +182,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
      */
     public function testWatchForUpdatesSuccess($settings)
     {
-        $wordPressDataMock = $this->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+        $wordPressDataMock = $this->createStub(WordPressDataInterface::class);
         $wordPressDataMock->method('checkNonce')
             ->willReturn(true);
         $wordPressDataMock->method('roleExists')
@@ -211,8 +207,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Refresh Token Secret Key is required.');
 
-        $wordPressDataMock = $this->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+        $wordPressDataMock = $this->createStub(WordPressDataInterface::class);
         $wordPressDataMock->method('checkNonce')
             ->willReturn(true);
         $wordPressDataMock->method('roleExists')
@@ -319,8 +314,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
 
     public function testGetLastSettingsDiffIsPopulatedAfterSuccessfulSave()
     {
-        $wordPressDataMock = $this->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+        $wordPressDataMock = $this->createStub(WordPressDataInterface::class);
         $wordPressDataMock->method('checkNonce')->willReturn(true);
         $wordPressDataMock->method('roleExists')->willReturn(true);
         $wordPressDataMock->method('getOptionFromDatabase')

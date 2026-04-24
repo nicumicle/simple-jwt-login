@@ -23,8 +23,7 @@ class ProtectEndpointServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->wordPressData = $this->getMockBuilder(WordPressRepository::class)
-            ->getMock();
+        $this->wordPressData = $this->createStub(WordPressRepository::class);
         $this->wordPressData->method('getSiteUrl')
             ->willReturn('http://test.com');
         $this->wordPressData->method('getAdminUrl')
@@ -50,8 +49,7 @@ class ProtectEndpointServiceTest extends TestCase
         $this->wordPressData->method('isUserLoggedIn')
             ->willReturn(false);
 
-        $routeServiceMock = $this->getMockBuilder(RouteService::class)
-            ->getMock();
+        $routeServiceMock = $this->createStub(RouteService::class);
         $routeServiceMock->method('getUserFromJwt')
             ->willThrowException(new \Exception());
 

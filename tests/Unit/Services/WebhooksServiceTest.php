@@ -24,8 +24,8 @@ class WebhooksServiceTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->wordPressDataMock = $this->getMockBuilder(WordPressDataInterface::class)->getMock();
-        $this->logRepoMock       = $this->getMockBuilder(WebhookLogRepositoryInterface::class)->getMock();
+        $this->wordPressDataMock = $this->createStub(WordPressDataInterface::class);
+        $this->logRepoMock       = $this->createStub(WebhookLogRepositoryInterface::class);
     }
 
     private function makeSettings(array $webhooks): SimpleJWTLoginSettings
@@ -169,6 +169,7 @@ class WebhooksServiceTest extends TestCase
 
     public function testDispatchLogsCallWhenRepositoryProvided()
     {
+        $this->logRepoMock = $this->createMock(WebhookLogRepositoryInterface::class);
         $webhooks = [
             ['url' => 'https://example.com', 'enabled' => true, 'method' => 'POST', 'events' => ['login'], 'headers' => []],
         ];
@@ -194,14 +195,14 @@ class WebhooksServiceTest extends TestCase
             ['url' => 'https://example.com', 'enabled' => true, 'method' => 'POST', 'events' => ['login'], 'headers' => []],
         ];
 
-        $this->logRepoMock->expects($this->never())->method('insert');
-
         $service = new WebhooksService($this->makeSettings($webhooks));
         $service->dispatch(WebhooksSettings::EVENT_LOGIN, ['user_id' => 1]);
+        $this->assertTrue(true);
     }
 
     public function testDispatchLogsOncePerWebhook()
     {
+        $this->logRepoMock = $this->createMock(WebhookLogRepositoryInterface::class);
         $webhooks = [
             ['url' => 'https://hook1.example.com', 'enabled' => true, 'method' => 'POST', 'events' => ['login'], 'headers' => []],
             ['url' => 'https://hook2.example.com', 'enabled' => true, 'method' => 'GET',  'events' => ['login'], 'headers' => []],
@@ -215,6 +216,7 @@ class WebhooksServiceTest extends TestCase
 
     public function testDispatchDoesNotLogDisabledWebhooks()
     {
+        $this->logRepoMock = $this->createMock(WebhookLogRepositoryInterface::class);
         $webhooks = [
             ['url' => 'https://enabled.example.com',  'enabled' => true,  'method' => 'POST', 'events' => ['login'], 'headers' => []],
             ['url' => 'https://disabled.example.com', 'enabled' => false, 'method' => 'POST', 'events' => ['login'], 'headers' => []],

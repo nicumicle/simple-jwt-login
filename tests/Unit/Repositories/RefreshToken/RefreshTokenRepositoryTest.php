@@ -20,9 +20,7 @@ class RefreshTokenRepositoryTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->wpdbMock = $this->getMockBuilder(\wpdb::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->wpdbMock = $this->createStub(\wpdb::class);
         $this->wpdbMock->prefix = 'wp_';
         $this->repository       = new RefreshTokenRepository($this->wpdbMock);
     }

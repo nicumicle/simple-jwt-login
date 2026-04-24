@@ -27,8 +27,7 @@ class RedirectServiceTest extends TestCase
     {
         parent::setUp();
         $this->wordPressDataMock = $this
-            ->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+            ->createStub(WordPressDataInterface::class);
         $this->wordPressDataMock->method('sanitizeTextField')
             ->willReturnCallback(
                 function ($parameter) {
@@ -36,9 +35,7 @@ class RedirectServiceTest extends TestCase
                 }
             );
 
-        $this->user = $this->getMockBuilder(WP_User::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->user = $this->createStub(WP_User::class);
     }
 
     public function testNoRedirect()
@@ -84,6 +81,11 @@ class RedirectServiceTest extends TestCase
      */
     public function testRedirectCustomUrl($extraSettings, $request, $expectedUrl)
     {
+        $this->wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $this->wordPressDataMock->method('sanitizeTextField')
+            ->willReturnCallback(function ($p) {
+                return $p;
+            });
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Correct URL');
         $settings = [
@@ -106,7 +108,8 @@ class RedirectServiceTest extends TestCase
             ->method('createResponse')
             ->willReturn(true);
 
-        $this->wordPressDataMock->method('redirect')
+        $this->wordPressDataMock->expects($this->once())
+            ->method('redirect')
             ->with($expectedUrl)
             ->willThrowException(new \Exception('Correct URL'));
 

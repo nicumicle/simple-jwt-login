@@ -33,8 +33,7 @@ class RouteServiceTest extends TestCase
     public function testUserNotFound()
     {
         $this->wordPressDataMock = $this
-            ->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+            ->createStub(WordPressDataInterface::class);
 
         $settings = [
             'decryption_key' => '123',
@@ -70,8 +69,7 @@ class RouteServiceTest extends TestCase
     public function testGetUserIdFromJWT()
     {
         $this->wordPressDataMock = $this
-            ->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+            ->createStub(WordPressDataInterface::class);
 
         $settings = [
             'decryption_key' => '123',

@@ -20,16 +20,18 @@ class AuditLogRepositoryTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->wpdbMock = $this->getMockBuilder(\wpdb::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->wpdbMock = $this->createStub(\wpdb::class);
         $this->wpdbMock->prefix = 'wp_';
         $this->repository       = new AuditLogRepository($this->wpdbMock);
     }
 
     public function testInsertReturnsTrue()
     {
-        $this->wpdbMock->expects($this->once())
+        $wpdbMock = $this->createMock(\wpdb::class);
+        $wpdbMock->prefix = 'wp_';
+        $repository = new AuditLogRepository($wpdbMock);
+
+        $wpdbMock->expects($this->once())
             ->method('insert')
             ->with(
                 'wp_simple_jwt_login_audit_logs',
@@ -44,7 +46,7 @@ class AuditLogRepositoryTest extends TestCase
             )
             ->willReturn(1);
 
-        $result = $this->repository->insert(
+        $result = $repository->insert(
             'auth.login.success',
             5,
             'test@example.com',

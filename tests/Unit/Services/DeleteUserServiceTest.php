@@ -32,11 +32,9 @@ class DeleteUserServiceTest extends TestCase
     {
         parent::setUp();
         $this->wordPressDataMock = $this
-            ->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+            ->createStub(WordPressDataInterface::class);
         $this->tokenRepositoryMock = $this
-            ->getMockBuilder(RefreshTokenRepository::class)
-            ->getMock();
+            ->createStub(RefreshTokenRepository::class);
     }
 
     #[DataProvider('validationProvider')]
@@ -105,9 +103,7 @@ class DeleteUserServiceTest extends TestCase
 
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
-        $useMock = $this->getMockBuilder(WP_User::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $useMock = $this->createStub(WP_User::class);
         $this->wordPressDataMock->method('getUserDetailsById')
             ->willReturn($useMock);
         $this->wordPressDataMock->method('deleteUser')
@@ -143,9 +139,7 @@ class DeleteUserServiceTest extends TestCase
 
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
-        $useMock = $this->getMockBuilder(WP_User::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $useMock = $this->createStub(WP_User::class);
         $this->wordPressDataMock->method('getUserDetailsById')
             ->willReturn($useMock);
         $this->wordPressDataMock->method('getUserDetailsByEmail')

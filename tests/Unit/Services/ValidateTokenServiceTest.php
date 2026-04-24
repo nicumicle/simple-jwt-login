@@ -23,8 +23,7 @@ class ValidateTokenServiceTest extends TestCase
     {
         parent::setUp();
         $this->wordPressDataMock = $this
-            ->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+            ->createStub(WordPressDataInterface::class);
     }
 
     #[DataProvider('validationProvider')]
@@ -139,11 +138,9 @@ class ValidateTokenServiceTest extends TestCase
 
         $this->wordPressDataMock
             ->method('getUserDetailsById')
-            ->withAnyParameters()
             ->willReturn([]);
         $this->wordPressDataMock
             ->method('isInstanceOfUser')
-            ->withAnyParameters()
             ->willReturn(true);
         $this->wordPressDataMock
             ->method('wordpressUserToArray')

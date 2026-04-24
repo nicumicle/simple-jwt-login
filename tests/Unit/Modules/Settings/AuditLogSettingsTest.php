@@ -18,7 +18,7 @@ class AuditLogSettingsTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->wordPressDataMock = $this->getMockBuilder(WordPressDataInterface::class)->getMock();
+        $this->wordPressDataMock = $this->createStub(WordPressDataInterface::class);
         $this->wordPressDataMock->method('sanitizeTextField')->willReturnArgument(0);
     }
 

@@ -14,9 +14,7 @@ class JwtKeyBase extends TestCase
      */
     public function getSettingsMock($settingsArray)
     {
-        $wordPressDataMock = $this->getMockBuilder(WordPressRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $wordPressDataMock = $this->createStub(WordPressRepository::class);
         $wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode($settingsArray));
 

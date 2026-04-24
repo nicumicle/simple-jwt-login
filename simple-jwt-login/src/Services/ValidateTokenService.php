@@ -16,9 +16,27 @@ class ValidateTokenService extends AuthenticateService
     public function makeAction()
     {
         $this->checkAuthenticationEnabled();
+        $this->checkValidateTokenEnabled();
         $this->checkAllowedIPAddress();
+        $this->validateAuthenticationAuthKey(
+            ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED,
+            $this->jwtSettings->getAuthenticationSettings()->isValidateAuthKeyRequired()
+        );
 
         return $this->validateAuth();
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function checkValidateTokenEnabled()
+    {
+        if ($this->jwtSettings->getAuthenticationSettings()->isValidateTokenEnabled() === false) {
+            throw new Exception(
+                __('Validate Token endpoint is not enabled.', 'simple-jwt-login'),
+                ErrorCodes::ERR_VALIDATE_TOKEN_NOT_ENABLED
+            );
+        }
     }
 
     /**

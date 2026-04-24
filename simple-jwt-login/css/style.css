@@ -21,6 +21,91 @@
     font-size: 12px;
 }
 
+/* ============================================
+   Custom Checkbox & Radio Controls
+   ============================================ */
+
+#simple-jwt-login input[type="checkbox"],
+#simple-jwt-login input[type="radio"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 17px;
+    height: 17px;
+    padding: 0;             /* block WP-admin styles from inflating the element */
+    border: 1.5px solid #c3c4c7;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 0;
+    background-image: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin: 0;
+    transition:
+        border-color 0.15s ease,
+        background-color 0.15s ease,
+        box-shadow 0.15s ease,
+        background-size 0.12s ease;
+}
+
+#simple-jwt-login input[type="checkbox"] { border-radius: 4px; }
+#simple-jwt-login input[type="radio"]    { border-radius: 50%; }
+
+/* ── Hover ── */
+#simple-jwt-login input[type="checkbox"]:hover,
+#simple-jwt-login input[type="radio"]:hover {
+    border-color: var(--sjl-primary);
+    background-color: rgba(38, 53, 68, 0.04);
+}
+
+/* ── Focus ring ── */
+#simple-jwt-login input[type="checkbox"]:focus,
+#simple-jwt-login input[type="radio"]:focus {
+    outline: none;
+    border-color: var(--sjl-primary);
+    box-shadow: 0 0 0 3px rgba(38, 53, 68, 0.18);
+}
+
+/* ── Checkbox checked: solid fill + white checkmark ── */
+#simple-jwt-login input[type="checkbox"]:checked {
+    background-color: var(--sjl-primary);
+    border-color: var(--sjl-primary);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+    background-size: 13px 13px;
+}
+
+#simple-jwt-login input[type="checkbox"]:checked:hover {
+    background-color: #1a2630;
+    border-color: #1a2630;
+}
+
+/*
+ * Radio checked: ring + dot pattern.
+ * The outer ring stays the SAME SIZE in both states, so checked and
+ * unchecked radios look visually identical in weight. Only a center
+ * dot appears on check — avoids the "filled circle looks bigger" issue.
+ */
+#simple-jwt-login input[type="radio"]:checked {
+    background-color: #fff;
+    border-color: var(--sjl-primary);
+    border-width: 1.5px;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2.5' fill='%23263544'/%3e%3c/svg%3e");
+    background-size: 9px 9px;
+}
+
+#simple-jwt-login input[type="radio"]:checked:hover {
+    border-color: #1a2630;
+    background-color: rgba(38, 53, 68, 0.04);
+}
+
+/* ── Disabled ── */
+#simple-jwt-login input[type="checkbox"]:disabled,
+#simple-jwt-login input[type="radio"]:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 #simple-jwt-login span.beta {
     background: #F11;
     border: 1px solid #E00;
@@ -53,12 +138,125 @@
 }
 
 #simple-jwt-login a.nav-link {
+    color: var(--sjl-text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px 6px 9px;
+    border-left: 3px solid transparent;
+    border-radius: 0 var(--sjl-radius-sm) var(--sjl-radius-sm) 0;
+    font-weight: 500;
+    transition: background 0.12s ease, color 0.12s ease, border-left-color 0.12s ease;
+    text-decoration: none;
+    margin-bottom: 1px;
+}
+
+#simple-jwt-login a.nav-link:hover {
+    background: var(--sjl-bg-muted);
     color: var(--sjl-primary);
+    text-decoration: none;
 }
 
 #simple-jwt-login a.nav-link.active {
-    background-color: var(--sjl-primary);
-    color: #FFF;
+    background: rgba(38, 53, 68, 0.07);
+    color: var(--sjl-primary);
+    border-left-color: var(--sjl-primary);
+    font-weight: 600;
+}
+
+#simple-jwt-login .sjl-nav-group-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--sjl-text-muted);
+    padding: 14px 8px 4px 8px;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+    gap: 4px;
+}
+
+#simple-jwt-login .sjl-nav-group-label-text {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#simple-jwt-login .sjl-nav-group-icon {
+    font-size: 12px;
+    width: 12px;
+    height: 12px;
+    opacity: 0.6;
+    flex-shrink: 0;
+}
+
+#simple-jwt-login .sjl-nav-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    opacity: 0.55;
+    color: var(--sjl-text-meta);
+    transition: opacity 0.12s ease, color 0.12s ease;
+}
+
+#simple-jwt-login a.nav-link:hover .sjl-nav-icon,
+#simple-jwt-login a.nav-link.active .sjl-nav-icon {
+    opacity: 1;
+    color: var(--sjl-primary);
+}
+
+#simple-jwt-login .sjl-nav-group-toggle {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--sjl-text-muted);
+    display: flex;
+    align-items: center;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+#simple-jwt-login .sjl-nav-group-toggle .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    transition: transform 0.18s ease;
+}
+
+#simple-jwt-login .sjl-nav-group-label.sjl-collapsed .sjl-nav-group-toggle .dashicons {
+    transform: rotate(-90deg);
+}
+
+#simple-jwt-login .sjl-nav-sub-item.sjl-group-hidden {
+    display: none;
+}
+
+#simple-jwt-login .sjl-nav-sub-item > .nav-link {
+    padding-left: 20px;
+    font-size: 11.5px;
+    color: var(--sjl-text-meta);
+    font-weight: 400;
+}
+
+#simple-jwt-login .sjl-nav-sub-item > .nav-link:hover,
+#simple-jwt-login .sjl-nav-sub-item > .nav-link.active {
+    color: var(--sjl-primary);
+}
+
+
+#simple-jwt-login .sjl-sidebar-col {
+    border-right: 1px solid var(--sjl-border-light);
+    padding-right: 0;
 }
 
 #simple-jwt-login select {
@@ -883,8 +1081,8 @@
 #simple-jwt-login .sjl-gen-feature-toggle:first-child  { padding-top: 0; }
 #simple-jwt-login .sjl-gen-feature-toggle-check        { padding-top: 2px; flex-shrink: 0; }
 #simple-jwt-login .sjl-gen-feature-toggle-check input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
+    width: 17px;
+    height: 17px;
     margin: 0;
 }
 
@@ -969,6 +1167,10 @@
     color: var(--sjl-text);
 }
 #simple-jwt-login .sjl-gen-radio-option input[type="radio"] { margin: 0; cursor: pointer; }
+#simple-jwt-login .sjl-gen-radio-option:has(input:checked) .sjl-gen-radio-label {
+    color: var(--sjl-primary);
+    font-weight: 600;
+}
 #simple-jwt-login .sjl-gen-radio-label { font-weight: 500; }
 
 /* Radio containers */
@@ -1913,4 +2115,145 @@
 
 #simple-jwt-login .sjl-webhooks-footer {
     margin-top: 12px;
+}
+
+/* ============================================
+   CORS Settings
+   ============================================ */
+#simple-jwt-login .sjl-cors-header-input {
+    margin-top: 6px;
+    margin-bottom: 4px;
+}
+
+#simple-jwt-login .sjl-cors-header-desc {
+    margin-top: 2px;
+    margin-bottom: 6px;
+    line-height: 1.5;
+}
+
+#simple-jwt-login .sjl-cors-header-row:has(input[type="checkbox"]:not(:checked)) .sjl-cors-header-input {
+    opacity: 0.4;
+    pointer-events: none;
+    background: var(--sjl-bg-muted);
+}
+
+/* ============================================
+   Responsive — Icon-only collapsed sidebar
+   At ≤1100px collapse the sidebar to 44 px wide,
+   showing only icons. Hover reveals a tooltip with
+   the full label floating to the right.
+   ============================================ */
+@media (max-width: 1100px) {
+    /* Collapse sidebar to icon strip */
+    #simple-jwt-login .sjl-sidebar-col {
+        flex: 0 0 44px !important;
+        max-width: 44px !important;
+        width: 44px !important;
+        border-right: 1px solid var(--sjl-border-light);
+        padding-right: 0;
+        padding-left: 0;
+        overflow: visible;
+        position: relative;
+        z-index: 100;
+    }
+
+    /* Content column takes the rest */
+    #simple-jwt-login .col-md-10 {
+        flex: 1 1 0 !important;
+        max-width: calc(100% - 44px) !important;
+        width: auto !important;
+        min-width: 0;
+    }
+
+    /* Keep vertical layout, allow tooltips to escape */
+    #simple-jwt-login #simple-jwt-login-tabs {
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: visible !important;
+    }
+
+    /* Show JS-collapsed sub-items (no group collapsing in icon mode) */
+    #simple-jwt-login .sjl-nav-sub-item.sjl-group-hidden {
+        display: list-item !important;
+    }
+
+    /* Group label: center the icon, hide text + toggle */
+    #simple-jwt-login .sjl-nav-group-label {
+        justify-content: center;
+        padding: 10px 0 2px;
+        position: relative;
+        overflow: visible;
+        display: none; /* hide group labels entirely in icon mode for a cleaner look */;
+    }
+
+    #simple-jwt-login .sjl-nav-group-label-text {
+        flex: 0 0 auto;
+        justify-content: center;
+    }
+
+    #simple-jwt-login .sjl-nav-group-label .sjl-nav-label,
+    #simple-jwt-login .sjl-nav-group-toggle {
+        display: none;
+    }
+
+    #simple-jwt-login .sjl-nav-group-icon {
+        font-size: 14px !important;
+        width: 14px !important;
+        height: 14px !important;
+        opacity: 0.45;
+    }
+
+    /* Nav links: center icon, hide text label */
+    #simple-jwt-login a.nav-link {
+        justify-content: center;
+        padding: 8px 0;
+        border-left: 3px solid transparent;
+        border-radius: 0;
+        position: relative;
+        overflow: visible;
+        margin-bottom: 1px;
+    }
+
+    #simple-jwt-login a.nav-link .sjl-nav-label {
+        display: none;
+    }
+
+    /* Sub-items: same centering, remove extra left padding */
+    #simple-jwt-login .sjl-nav-sub-item > .nav-link {
+        padding-left: 0;
+        color: var(--sjl-text);
+    }
+
+    /* Tooltip — label floats to the right on hover */
+    #simple-jwt-login a.nav-link:hover .sjl-nav-label,
+    #simple-jwt-login .sjl-nav-group-label:hover .sjl-nav-label {
+        display: block;
+        position: absolute;
+        left: calc(100% + 10px);
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--sjl-primary);
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: var(--sjl-radius-sm);
+        white-space: nowrap;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1.4;
+        z-index: 9999;
+        pointer-events: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
+    }
+
+    /* Arrow pointing left toward the icon */
+    #simple-jwt-login a.nav-link:hover .sjl-nav-label::before,
+    #simple-jwt-login .sjl-nav-group-label:hover .sjl-nav-label::before {
+        content: '';
+        position: absolute;
+        right: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+        border: 5px solid transparent;
+        border-right-color: var(--sjl-primary);
+    }
 }

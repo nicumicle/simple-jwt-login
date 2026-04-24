@@ -87,6 +87,41 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             'refresh_token_key',
             BaseSettings::SETTINGS_TYPE_STRING
         );
+        $this->assignSettingsPropertyFromPost(
+            null,
+            'allow_validate_token',
+            null,
+            'allow_validate_token',
+            BaseSettings::SETTINGS_TYPE_STRING
+        );
+        $this->assignSettingsPropertyFromPost(
+            null,
+            'allow_revoke_token',
+            null,
+            'allow_revoke_token',
+            BaseSettings::SETTINGS_TYPE_STRING
+        );
+        $this->assignSettingsPropertyFromPost(
+            null,
+            'refresh_requires_auth_code',
+            null,
+            'refresh_requires_auth_code',
+            BaseSettings::SETTINGS_TYPE_BOL
+        );
+        $this->assignSettingsPropertyFromPost(
+            null,
+            'validate_requires_auth_code',
+            null,
+            'validate_requires_auth_code',
+            BaseSettings::SETTINGS_TYPE_BOL
+        );
+        $this->assignSettingsPropertyFromPost(
+            null,
+            'revoke_requires_auth_code',
+            null,
+            'revoke_requires_auth_code',
+            BaseSettings::SETTINGS_TYPE_BOL
+        );
     }
 
     /**
@@ -142,7 +177,7 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
                         'simple-jwt-login'
                     ),
                     $this->settingsErrors->generateCode(
-                        SettingsErrors::PREFIX_AUTHENTICATION,
+                        SettingsErrors::PREFIX_REFRESH_TOKEN,
                         SettingsErrors::ERR_AUTHENTICATION_REFRESH_TTL_ZERO
                     )
                 );
@@ -154,7 +189,7 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
                 throw new Exception(
                     __('Refresh Token Secret Key is required.', 'simple-jwt-login'),
                     $this->settingsErrors->generateCode(
-                        SettingsErrors::PREFIX_AUTHENTICATION,
+                        SettingsErrors::PREFIX_REFRESH_TOKEN,
                         SettingsErrors::ERR_AUTHENTICATION_REFRESH_TOKEN_KEY_REQUIRED
                     )
                 );
@@ -260,6 +295,36 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
     /**
      * @return bool
      */
+    public function isRefreshAuthKeyRequired()
+    {
+        return isset($this->settings['refresh_requires_auth_code'])
+            ? (bool) $this->settings['refresh_requires_auth_code']
+            : false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isValidateAuthKeyRequired()
+    {
+        return isset($this->settings['validate_requires_auth_code'])
+            ? (bool) $this->settings['validate_requires_auth_code']
+            : false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRevokeAuthKeyRequired()
+    {
+        return isset($this->settings['revoke_requires_auth_code'])
+            ? (bool) $this->settings['revoke_requires_auth_code']
+            : false;
+    }
+
+    /**
+     * @return bool
+     */
     public function isRefreshTokenEnabled()
     {
         return isset($this->settings['allow_refresh_token'])
@@ -274,5 +339,27 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
         return isset($this->settings['refresh_token_key'])
             ? $this->settings['refresh_token_key']
             : '';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isValidateTokenEnabled()
+    {
+        if (!isset($this->settings['allow_validate_token'])) {
+            return true;
+        }
+        return !empty($this->settings['allow_validate_token']);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRevokeTokenEnabled()
+    {
+        if (!isset($this->settings['allow_revoke_token'])) {
+            return true;
+        }
+        return !empty($this->settings['allow_revoke_token']);
     }
 }

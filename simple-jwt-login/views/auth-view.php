@@ -40,74 +40,6 @@ if (! defined('ABSPATH')) {
                 <span class="sjl-gen-radio-label"><?php echo __('Enabled', 'simple-jwt-login'); ?></span>
             </label>
         </div>
-    </div>
-</div>
-
-<div class="sjl-gen-card">
-    <div class="sjl-gen-card-header">
-        <span class="dashicons dashicons-lock"></span>
-        <div>
-            <h3 class="sjl-gen-card-title"><?php echo __('Require Authentication Code for JWT Generation', 'simple-jwt-login'); ?></h3>
-            <p class="sjl-gen-card-desc">
-                <?php echo __('If enabled, an additional authentication code must be provided to generate JWT tokens.', 'simple-jwt-login'); ?>
-            </p>
-        </div>
-    </div>
-    <div class="sjl-gen-card-body">
-        <div class="sjl-gen-radio-group">
-            <label class="sjl-gen-radio-option">
-                <input type="radio" name="auth_requires_auth_code" value="0"
-                    <?php echo $jwtSettings->getAuthenticationSettings()->isAuthKeyRequired() === false ? 'checked' : ''; ?>
-                />
-                <span class="sjl-gen-radio-label"><?php echo __('Not required', 'simple-jwt-login'); ?></span>
-            </label>
-            <label class="sjl-gen-radio-option">
-                <input type="radio" name="auth_requires_auth_code" value="1"
-                    <?php echo $jwtSettings->getAuthenticationSettings()->isAuthKeyRequired() === true ? 'checked' : ''; ?>
-                />
-                <span class="sjl-gen-radio-label"><?php echo __('Required', 'simple-jwt-login'); ?></span>
-            </label>
-        </div>
-    </div>
-</div>
-
-<div class="sjl-gen-card">
-    <div class="sjl-gen-card-header">
-        <span class="dashicons dashicons-rest-api"></span>
-        <div>
-            <h3 class="sjl-gen-card-title"><?php echo __('JWT Generation Endpoint', 'simple-jwt-login'); ?></h3>
-            <p class="sjl-gen-card-desc">
-                <?php echo __('Generate a JWT using WordPress credentials. Pass one of the credential parameters along with a password.', 'simple-jwt-login'); ?>
-            </p>
-        </div>
-    </div>
-    <div class="sjl-gen-card-body">
-
-        <div class="sjl-gen-code-block" style="margin-bottom: 16px;">
-            <p class="sjl-gen-code-block-intro"><?php echo __('Accepted request parameters:', 'simple-jwt-login'); ?></p>
-            <div class="sjl-gen-params-table">
-                <div class="sjl-gen-param-def">
-                    <code class="sjl-gen-var-chip">email</code>
-                    <span class="sjl-gen-card-desc"><?php echo __('Login with email address', 'simple-jwt-login'); ?></span>
-                </div>
-                <div class="sjl-gen-param-def">
-                    <code class="sjl-gen-var-chip">username</code>
-                    <span class="sjl-gen-card-desc"><?php echo __('Login with WordPress username', 'simple-jwt-login'); ?></span>
-                </div>
-                <div class="sjl-gen-param-def">
-                    <code class="sjl-gen-var-chip">login</code>
-                    <span class="sjl-gen-card-desc"><?php echo __('Login with username or email', 'simple-jwt-login'); ?></span>
-                </div>
-                <div class="sjl-gen-param-def">
-                    <code class="sjl-gen-var-chip">password</code>
-                    <span class="sjl-gen-card-desc"><?php echo __('Your account password', 'simple-jwt-login'); ?></span>
-                </div>
-                <div class="sjl-gen-param-def">
-                    <code class="sjl-gen-var-chip">password_hash</code>
-                    <span class="sjl-gen-card-desc"><?php echo __('Hashed password from the database', 'simple-jwt-login'); ?></span>
-                </div>
-            </div>
-        </div>
 
         <div class="sjl-gen-url-example">
             <p class="sjl-gen-url-example-label"><?php echo __('Endpoint examples:', 'simple-jwt-login'); ?></p>
@@ -157,6 +89,34 @@ if (! defined('ABSPATH')) {
             </div>
         </div>
 
+    </div>
+</div>
+
+<div class="sjl-gen-card">
+    <div class="sjl-gen-card-header">
+        <span class="dashicons dashicons-lock"></span>
+        <div>
+            <h3 class="sjl-gen-card-title"><?php echo __('Require Authentication Code for JWT Generation', 'simple-jwt-login'); ?></h3>
+            <p class="sjl-gen-card-desc">
+                <?php echo __('If enabled, an additional authentication code must be provided to generate JWT tokens.', 'simple-jwt-login'); ?>
+            </p>
+        </div>
+    </div>
+    <div class="sjl-gen-card-body">
+        <div class="sjl-gen-radio-group">
+            <label class="sjl-gen-radio-option">
+                <input type="radio" name="auth_requires_auth_code" value="0"
+                    <?php echo $jwtSettings->getAuthenticationSettings()->isAuthKeyRequired() === false ? 'checked' : ''; ?>
+                />
+                <span class="sjl-gen-radio-label"><?php echo __('Not required', 'simple-jwt-login'); ?></span>
+            </label>
+            <label class="sjl-gen-radio-option">
+                <input type="radio" name="auth_requires_auth_code" value="1"
+                    <?php echo $jwtSettings->getAuthenticationSettings()->isAuthKeyRequired() === true ? 'checked' : ''; ?>
+                />
+                <span class="sjl-gen-radio-label"><?php echo __('Required', 'simple-jwt-login'); ?></span>
+            </label>
+        </div>
     </div>
 </div>
 
@@ -372,25 +332,15 @@ if (! defined('ABSPATH')) {
         </div>
     </div>
     <div class="sjl-gen-card-body">
-
-        <div class="sjl-gen-step">
-            <div class="sjl-gen-step-number">1</div>
-            <div class="sjl-gen-step-content">
-                <label class="sjl-gen-step-label" for="jwt_auth_ttl">
-                    <?php echo __('JWT Expiration Time', 'simple-jwt-login'); ?>
-                    <span class="required">*</span>
-                </label>
-                <p class="sjl-gen-step-desc">
-                    <?php echo __('Specify the length of time (in minutes) that the token will be valid for.', 'simple-jwt-login'); ?>
-                </p>
-                <input type="text" name="jwt_auth_ttl" id="jwt_auth_ttl"
-                       class="form-control sjl-gen-input-medium"
-                       value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAuthJwtTtl()); ?>"
-                       placeholder="<?php echo __('Number of minutes', 'simple-jwt-login'); ?>"
-                />
-            </div>
-        </div>
-
+        <label class="sjl-gen-field-label" for="jwt_auth_ttl">
+            <?php echo __('Expiration time (minutes)', 'simple-jwt-login'); ?>
+            <span class="required">*</span>
+        </label>
+        <input type="text" name="jwt_auth_ttl" id="jwt_auth_ttl"
+               class="form-control sjl-gen-input-medium"
+               value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAuthJwtTtl()); ?>"
+               placeholder="<?php echo __('Number of minutes', 'simple-jwt-login'); ?>"
+        />
     </div>
 </div>
 
@@ -413,210 +363,6 @@ if (! defined('ABSPATH')) {
                value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAuthIss()); ?>"
                placeholder="<?php echo __('Default issuer', 'simple-jwt-login'); ?>"
         />
-    </div>
-</div>
-
-<div class="sjl-gen-card">
-    <div class="sjl-gen-card-header">
-        <span class="dashicons dashicons-image-rotate"></span>
-        <div>
-            <h3 class="sjl-gen-card-title"><?php echo __('Allow Refresh Token Endpoint', 'simple-jwt-login'); ?></h3>
-            <p class="sjl-gen-card-desc">
-                <?php echo __('When enabled, the refresh token endpoint is active and a refresh token will be returned alongside the JWT on authentication.', 'simple-jwt-login'); ?>
-            </p>
-        </div>
-    </div>
-    <div class="sjl-gen-card-body">
-        <div class="sjl-gen-radio-group">
-            <label class="sjl-gen-radio-option">
-                <input type="radio" name="allow_refresh_token" value="0"
-                    <?php echo $jwtSettings->getAuthenticationSettings()->isRefreshTokenEnabled() === false ? 'checked' : ''; ?>
-                />
-                <span class="sjl-gen-radio-label"><?php echo __('Disabled', 'simple-jwt-login'); ?></span>
-            </label>
-            <label class="sjl-gen-radio-option">
-                <input type="radio" name="allow_refresh_token" value="1"
-                    <?php echo $jwtSettings->getAuthenticationSettings()->isRefreshTokenEnabled() === true ? 'checked' : ''; ?>
-                />
-                <span class="sjl-gen-radio-label"><?php echo __('Enabled', 'simple-jwt-login'); ?></span>
-            </label>
-        </div>
-    </div>
-</div>
-
-<div class="sjl-gen-card" id="refresh_token_key_card">
-    <div class="sjl-gen-card-header">
-        <span class="dashicons dashicons-key"></span>
-        <div>
-            <h3 class="sjl-gen-card-title">
-                <?php
-                $hasRefreshTokenError = isset($errorCode) && (
-                    $settingsErrors->generateCode(
-                        SettingsErrors::PREFIX_AUTHENTICATION,
-                        SettingsErrors::ERR_AUTHENTICATION_REFRESH_TOKEN_KEY_REQUIRED
-                    ) === $errorCode
-                    || $settingsErrors->generateCode(
-                        SettingsErrors::PREFIX_AUTHENTICATION,
-                        SettingsErrors::ERR_AUTHENTICATION_REFRESH_TTL_ZERO
-                    ) === $errorCode
-                );
-                if ($hasRefreshTokenError) {
-                    echo '<span class="simple-jwt-error">!</span> ';
-                }
-                ?>
-                <?php echo __('Refresh Token Settings', 'simple-jwt-login'); ?>
-            </h3>
-            <p class="sjl-gen-card-desc">
-                <?php echo __('Configure the refresh token lifetime and the secret key used to encrypt refresh tokens stored in the database.', 'simple-jwt-login'); ?>
-            </p>
-        </div>
-    </div>
-    <div class="sjl-gen-card-body">
-
-        <div class="form-group" style="margin-bottom: 20px;">
-            <label class="sjl-gen-field-label" for="jwt_auth_refresh_ttl">
-                <?php echo __('JWT Refresh Window', 'simple-jwt-login'); ?>
-                <span class="required">*</span>
-            </label>
-            <p class="sjl-gen-card-desc">
-                <?php echo __('Specify the length of time (in minutes) that the refresh token is valid for. Defaults to 2 weeks.', 'simple-jwt-login'); ?>
-            </p>
-            <input type="text" name="jwt_auth_refresh_ttl" id="jwt_auth_refresh_ttl"
-                   class="form-control sjl-gen-input-medium"
-                   value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAuthJwtRefreshTtl()); ?>"
-                   placeholder="<?php echo __('Number of minutes', 'simple-jwt-login'); ?>"
-            />
-        </div>
-
-        <div class="form-group">
-            <label for="refresh_token_key">
-                <?php echo __('Refresh Token Secret Key', 'simple-jwt-login'); ?>
-                <span class="required">*</span>
-            </label>
-            <div class="input-group" id="refresh_token_key_container">
-                <input type="password" name="refresh_token_key" class="form-control" autocomplete="off"
-                       id="refresh_token_key"
-                       value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getRefreshTokenKey()); ?>"
-                       placeholder="<?php echo __('Enter refresh token secret key', 'simple-jwt-login'); ?>"
-                />
-                <div class="input-group-addon">
-                    <a href="javascript:void(0)"
-                       onclick="showRefreshTokenKey()"
-                       class="toggle_key_button"
-                       title="<?php echo __('Toggle key visibility', 'simple-jwt-login'); ?>"
-                    >
-                        <i class="toggle-image" aria-hidden="true"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="sjl-gen-strength-row">
-                <span><?php echo __('Strength', 'simple-jwt-login'); ?>:</span>
-                <progress id="refresh_token_progress" value="0" max="100"></progress>
-                <span id="refresh_token_progress_label" class="sjl-gen-strength-label"></span>
-            </div>
-            <div class="sjl-gen-key-actions">
-                <button type="button"
-                        onclick="generateRefreshTokenKey()"
-                        class="sjl-gen-btn-generate"
-                        title="<?php echo __('Generate a cryptographically secure random key', 'simple-jwt-login'); ?>"
-                >
-                    <span class="dashicons dashicons-randomize" aria-hidden="true"></span>
-                    <?php echo __('Generate Secure Key', 'simple-jwt-login'); ?>
-                </button>
-                <span id="refresh_token_generated_msg" class="sjl-gen-generated-msg" aria-live="polite"></span>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="sjl-gen-card">
-    <div class="sjl-gen-card-header">
-        <span class="dashicons dashicons-update"></span>
-        <div>
-            <h3 class="sjl-gen-card-title"><?php echo __('Token Management Endpoints', 'simple-jwt-login'); ?></h3>
-            <p class="sjl-gen-card-desc">
-                <?php echo __('Endpoints for refreshing, validating, and revoking JWT tokens. JWT can be sent via URL, SESSION, COOKIE, or Authorization header.', 'simple-jwt-login'); ?>
-            </p>
-        </div>
-    </div>
-    <div class="sjl-gen-card-body">
-
-        <!-- Refresh -->
-        <div class="sjl-gen-step">
-            <div class="sjl-gen-step-number">1</div>
-            <div class="sjl-gen-step-content">
-                <span class="sjl-gen-step-label"><?php echo __('Refresh Endpoint', 'simple-jwt-login'); ?></span>
-                <p class="sjl-gen-step-desc">
-                    <?php echo __('Accepts an expired token and returns a new valid JWT.', 'simple-jwt-login'); ?>
-                </p>
-                <div class="generated-code">
-                    <span class="method">POST</span>
-                    <span class="code">
-                        <?php
-                        echo esc_html($jwtSettings->generateExampleLink(
-                            RouteService::AUTHENTICATION_REFRESH_ROUTE,
-                            [$jwtSettings->getGeneralSettings()->getRequestKeyUrl() => 'YOUR_JWT']
-                        ));
-                        ?>
-                    </span>
-                    <span class="copy-button">
-                        <button class="btn btn-secondary btn-xs"><?php echo __('Copy', 'simple-jwt-login'); ?></button>
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Validate -->
-        <div class="sjl-gen-step">
-            <div class="sjl-gen-step-number">2</div>
-            <div class="sjl-gen-step-content">
-                <span class="sjl-gen-step-label"><?php echo __('Validate Endpoint', 'simple-jwt-login'); ?></span>
-                <p class="sjl-gen-step-desc">
-                    <?php echo __('Validates a JWT and returns the WordPress user details and token metadata.', 'simple-jwt-login'); ?>
-                </p>
-                <div class="generated-code">
-                    <span class="method">GET</span>
-                    <span class="method">POST</span>
-                    <span class="code">
-                        <?php
-                        echo esc_html($jwtSettings->generateExampleLink(
-                            RouteService::AUTHENTICATION_VALIDATE_ROUTE,
-                            [$jwtSettings->getGeneralSettings()->getRequestKeyUrl() => 'YOUR_JWT']
-                        ));
-                        ?>
-                    </span>
-                    <span class="copy-button">
-                        <button class="btn btn-secondary btn-xs"><?php echo __('Copy', 'simple-jwt-login'); ?></button>
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Revoke -->
-        <div class="sjl-gen-step">
-            <div class="sjl-gen-step-number">3</div>
-            <div class="sjl-gen-step-content">
-                <span class="sjl-gen-step-label"><?php echo __('Revoke Endpoint', 'simple-jwt-login'); ?></span>
-                <p class="sjl-gen-step-desc">
-                    <?php echo __('Revokes a valid JWT, marking it as invalid for future requests.', 'simple-jwt-login'); ?>
-                </p>
-                <div class="generated-code">
-                    <span class="method">POST</span>
-                    <span class="code">
-                        <?php
-                        echo esc_html($jwtSettings->generateExampleLink(
-                            RouteService::AUTHENTICATION_REVOKE,
-                            [$jwtSettings->getGeneralSettings()->getRequestKeyUrl() => 'YOUR_JWT']
-                        ));
-                        ?>
-                    </span>
-                    <span class="copy-button">
-                        <button class="btn btn-secondary btn-xs"><?php echo __('Copy', 'simple-jwt-login'); ?></button>
-                    </span>
-                </div>
-            </div>
-        </div>
-
     </div>
 </div>
 

@@ -20,6 +20,11 @@ class SettingsErrors extends \Exception
     const PREFIX_APPLICATIONS = 12;
     const PREFIX_AUDIT_LOGS = 13;
     const PREFIX_WEBHOOKS   = 14;
+    const PREFIX_REFRESH_TOKEN  = 15;
+    const PREFIX_VALIDATE_TOKEN = 16;
+    const PREFIX_REVOKE_TOKEN   = 17;
+    const PREFIX_WEBHOOK_LOGS   = 18;
+    const PREFIX_AUDIT_LOG_LOGS = 19;
 
     #authentication
     const ERR_AUTHENTICATION_EMPTY_PAYLOAD = 1;

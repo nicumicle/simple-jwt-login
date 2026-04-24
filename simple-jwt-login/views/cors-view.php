@@ -46,7 +46,6 @@ if (!defined('ABSPATH')) {
         <div>
             <h3 class="sjl-gen-card-title">
                 <?php echo __('CORS Headers Configuration', 'simple-jwt-login'); ?>
-                <span class="required">*</span>
             </h3>
             <p class="sjl-gen-card-desc">
                 <?php echo __('Configure which CORS headers to include in API responses. Enable a header and set its value.', 'simple-jwt-login'); ?>
@@ -55,7 +54,7 @@ if (!defined('ABSPATH')) {
     </div>
     <div class="sjl-gen-card-body">
 
-        <div class="sjl-gen-feature-toggle">
+        <div class="sjl-cors-header-row sjl-gen-feature-toggle">
             <div class="sjl-gen-feature-toggle-check">
                 <input type="checkbox" name="cors[allow_origin_enabled]" id="cors_allow_origin_enabled"
                        value="1" <?php echo $jwtSettings->getCorsSettings()->isAllowOriginEnabled() ? 'checked' : ''; ?>
@@ -65,19 +64,22 @@ if (!defined('ABSPATH')) {
                 <label for="cors_allow_origin_enabled" class="sjl-gen-feature-label">
                     <code class="sjl-gen-var-chip">Access-Control-Allow-Origin</code>
                 </label>
-                <input type="text" class="form-control sjl-gen-input-medium" name="cors[allow_origin]"
-                       style="margin: 6px 0 4px;"
+                <p class="sjl-gen-feature-desc sjl-cors-header-desc">
+                    <?php echo __('Specifies which origins are permitted to access the resource. Use <code>*</code> to allow any origin, or list specific domains.', 'simple-jwt-login'); ?>
+                </p>
+                <input type="text" class="form-control sjl-gen-input-medium sjl-cors-header-input" name="cors[allow_origin]"
                        value="<?php echo esc_attr($jwtSettings->getCorsSettings()->getAllowOrigin()); ?>"
+                       placeholder="*"
                 />
                 <p class="sjl-gen-feature-desc">
                     <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin" target="_blank">
-                        <?php echo __('Read more', 'simple-jwt-login'); ?>
+                        <?php echo __('MDN Reference &nearr;', 'simple-jwt-login'); ?>
                     </a>
                 </p>
             </div>
         </div>
 
-        <div class="sjl-gen-feature-toggle">
+        <div class="sjl-cors-header-row sjl-gen-feature-toggle">
             <div class="sjl-gen-feature-toggle-check">
                 <input type="checkbox" name="cors[allow_methods_enabled]" id="cors_allow_methods_enabled"
                        value="1" <?php echo $jwtSettings->getCorsSettings()->isAllowMethodsEnabled() ? 'checked' : ''; ?>
@@ -87,19 +89,22 @@ if (!defined('ABSPATH')) {
                 <label for="cors_allow_methods_enabled" class="sjl-gen-feature-label">
                     <code class="sjl-gen-var-chip">Access-Control-Allow-Methods</code>
                 </label>
-                <input type="text" class="form-control sjl-gen-input-medium" name="cors[allow_methods]"
-                       style="margin: 6px 0 4px;"
+                <p class="sjl-gen-feature-desc sjl-cors-header-desc">
+                    <?php echo __('Specifies the HTTP methods permitted when accessing the resource in response to a preflight request.', 'simple-jwt-login'); ?>
+                </p>
+                <input type="text" class="form-control sjl-gen-input-medium sjl-cors-header-input" name="cors[allow_methods]"
                        value="<?php echo esc_attr($jwtSettings->getCorsSettings()->getAllowMethods()); ?>"
+                       placeholder="GET, POST, OPTIONS"
                 />
                 <p class="sjl-gen-feature-desc">
                     <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Methods" target="_blank">
-                        <?php echo __('Read more', 'simple-jwt-login'); ?>
+                        <?php echo __('MDN Reference &nearr;', 'simple-jwt-login'); ?>
                     </a>
                 </p>
             </div>
         </div>
 
-        <div class="sjl-gen-feature-toggle">
+        <div class="sjl-cors-header-row sjl-gen-feature-toggle">
             <div class="sjl-gen-feature-toggle-check">
                 <input type="checkbox" name="cors[allow_headers_enabled]" id="cors_allow_headers_enabled"
                        value="1" <?php echo $jwtSettings->getCorsSettings()->isAllowHeadersEnabled() ? 'checked' : ''; ?>
@@ -109,13 +114,16 @@ if (!defined('ABSPATH')) {
                 <label for="cors_allow_headers_enabled" class="sjl-gen-feature-label">
                     <code class="sjl-gen-var-chip">Access-Control-Allow-Headers</code>
                 </label>
-                <input type="text" class="form-control sjl-gen-input-medium" name="cors[allow_headers]"
-                       style="margin: 6px 0 4px;"
+                <p class="sjl-gen-feature-desc sjl-cors-header-desc">
+                    <?php echo __('Indicates which HTTP headers can be used during the actual request following a preflight.', 'simple-jwt-login'); ?>
+                </p>
+                <input type="text" class="form-control sjl-gen-input-medium sjl-cors-header-input" name="cors[allow_headers]"
                        value="<?php echo esc_attr($jwtSettings->getCorsSettings()->getAllowHeaders()); ?>"
+                       placeholder="Content-Type, Authorization"
                 />
                 <p class="sjl-gen-feature-desc">
                     <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Headers" target="_blank">
-                        <?php echo __('Read more', 'simple-jwt-login'); ?>
+                        <?php echo __('MDN Reference &nearr;', 'simple-jwt-login'); ?>
                     </a>
                 </p>
             </div>

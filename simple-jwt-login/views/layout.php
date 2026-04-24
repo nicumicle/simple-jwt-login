@@ -90,6 +90,24 @@ $settingsPages = [
         'index' => SettingsErrors::PREFIX_AUTHENTICATION,
     ],
     [
+        'id'   => 'simple-jwt-login-tab-refresh-token',
+        'name' => __('Refresh Token', 'simple-jwt-login'),
+        'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_REFRESH_TOKEN,
+        'index' => SettingsErrors::PREFIX_REFRESH_TOKEN,
+    ],
+    [
+        'id'   => 'simple-jwt-login-tab-validate-token',
+        'name' => __('Validate Token', 'simple-jwt-login'),
+        'has_error' => false,
+        'index' => SettingsErrors::PREFIX_VALIDATE_TOKEN,
+    ],
+    [
+        'id'   => 'simple-jwt-login-tab-revoke-token',
+        'name' => __('Revoke Token', 'simple-jwt-login'),
+        'has_error' => false,
+        'index' => SettingsErrors::PREFIX_REVOKE_TOKEN,
+    ],
+    [
         'id'   => 'simple-jwt-login-tab-auth-codes',
         'name' => __('Auth Codes', 'simple-jwt-login'),
         'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_AUTH_CODES,
@@ -132,6 +150,12 @@ $settingsPages = [
         'index' => SettingsErrors::PREFIX_WEBHOOKS,
     ],
     [
+        'id'   => 'simple-jwt-login-tab-webhook-logs',
+        'name' => __('Webhook Logs', 'simple-jwt-login'),
+        'has_error' => false,
+        'index' => SettingsErrors::PREFIX_WEBHOOK_LOGS,
+    ],
+    [
         'id'   => 'simple-jwt-login-tab-audit-logs',
         'name' => __('Audit Logs', 'simple-jwt-login'),
         'has_error' => (
@@ -139,6 +163,74 @@ $settingsPages = [
         ),
         'index' => SettingsErrors::PREFIX_AUDIT_LOGS,
     ],
+    [
+        'id'   => 'simple-jwt-login-tab-audit-log-logs',
+        'name' => __('Audit Log Entries', 'simple-jwt-login'),
+        'has_error' => false,
+        'index' => SettingsErrors::PREFIX_AUDIT_LOG_LOGS,
+    ],
+];
+
+$pagesByIndex = [];
+foreach ($settingsPages as $p) {
+    $pagesByIndex[$p['index']] = $p;
+}
+
+$sidebarGroups = [
+    ['type' => 'item', 'index' => SettingsErrors::PREFIX_DASHBOARD, 'icon' => 'dashicons-dashboard'],
+    ['type' => 'item', 'index' => SettingsErrors::PREFIX_GENERAL, 'icon' => 'dashicons-admin-settings'],
+    [
+        'type'  => 'group',
+        'label' => __('Routes', 'simple-jwt-login'),
+        'icon'  => 'dashicons-networking',
+        'items' => [
+            ['index' => SettingsErrors::PREFIX_LOGIN, 'icon' => 'dashicons-admin-users'],
+            ['index' => SettingsErrors::PREFIX_REGISTER, 'name' => __('Register', 'simple-jwt-login'), 'icon' => 'dashicons-plus-alt'],
+            ['index' => SettingsErrors::PREFIX_DELETE, 'name' => __('Delete', 'simple-jwt-login'), 'icon' => 'dashicons-trash'],
+            ['index' => SettingsErrors::PREFIX_RESET_PASSWORD, 'icon' => 'dashicons-lock'],
+            ['index' => SettingsErrors::PREFIX_AUTHENTICATION, 'name' => __('Authenticate', 'simple-jwt-login'), 'icon' => 'dashicons-id-alt'],
+            ['index' => SettingsErrors::PREFIX_REFRESH_TOKEN, 'name' => __('Refresh Token', 'simple-jwt-login'), 'icon' => 'dashicons-update'],
+            ['index' => SettingsErrors::PREFIX_VALIDATE_TOKEN, 'name' => __('Validate Token', 'simple-jwt-login'), 'icon' => 'dashicons-yes-alt'],
+            ['index' => SettingsErrors::PREFIX_REVOKE_TOKEN, 'name' => __('Revoke Token', 'simple-jwt-login'), 'icon' => 'dashicons-dismiss'],
+        ],
+    ],
+    [
+        'type'  => 'group',
+        'label' => __('Security', 'simple-jwt-login'),
+        'icon'  => 'dashicons-shield',
+        'items' => [
+            ['index' => SettingsErrors::PREFIX_AUTH_CODES, 'icon' => 'dashicons-tickets-alt'],
+            ['index' => SettingsErrors::PREFIX_PROTECT_ENDPOINTS, 'name' => __('Protect Endpoints', 'simple-jwt-login'), 'icon' => 'dashicons-shield-alt'],
+            ['index' => SettingsErrors::PREFIX_CORS, 'icon' => 'dashicons-randomize'],
+        ],
+    ],
+    [
+        'type'  => 'group',
+        'label' => __('Applications', 'simple-jwt-login'),
+        'icon'  => 'dashicons-admin-plugins',
+        'items' => [
+            ['index' => SettingsErrors::PREFIX_APPLICATIONS, 'name' => __('OAuth', 'simple-jwt-login'), 'icon' => 'dashicons-admin-network'],
+        ],
+    ],
+    [
+        'type'  => 'group',
+        'label' => __('Webhooks', 'simple-jwt-login'),
+        'icon'  => 'dashicons-rest-api',
+        'items' => [
+            ['index' => SettingsErrors::PREFIX_WEBHOOKS, 'name' => __('Config', 'simple-jwt-login'), 'icon' => 'dashicons-admin-settings'],
+            ['index' => SettingsErrors::PREFIX_WEBHOOK_LOGS, 'name' => __('Logs', 'simple-jwt-login'), 'icon' => 'dashicons-list-view'],
+        ],
+    ],
+    [
+        'type'  => 'group',
+        'label' => __('Audit Logs', 'simple-jwt-login'),
+        'icon'  => 'dashicons-backup',
+        'items' => [
+            ['index' => SettingsErrors::PREFIX_AUDIT_LOGS, 'name' => __('Config', 'simple-jwt-login'), 'icon' => 'dashicons-admin-settings'],
+            ['index' => SettingsErrors::PREFIX_AUDIT_LOG_LOGS, 'name' => __('Logs', 'simple-jwt-login'), 'icon' => 'dashicons-list-view'],
+        ],
+    ],
+    ['type' => 'item', 'index' => SettingsErrors::PREFIX_HOOKS, 'name' => __('Hooks', 'simple-jwt-login'), 'icon' => 'dashicons-admin-plugins'],
 ];
 
 ?>
@@ -200,38 +292,97 @@ $settingsPages = [
             </div>
             <hr/>
             <div class="row">
-                <div class="col-md-2 mb-3">
+                <div class="col-md-2 mb-3 sjl-sidebar-col">
                     <ul class="nav nav-pills flex-column nav-tabs" id="simple-jwt-login-tabs" role="tablist">
-						<?php
-                        foreach ($settingsPages as $page) {
-                            $index = $page['index'];
-                            $isActive = (empty($errorCode) && ($activeTab === $page['index']))
-                                ||  $settingsErrors->getSectionFromErrorCode($errorCode) === $index
-                            ?>
-                            <li class="nav-item">
-                                <a class="nav-link <?php echo $isActive ? 'active' : ''?>"
-                                   id="<?php echo esc_attr($page['id']); ?>-tab"
-                                   data-toggle="tab"
-                                   data-index="<?php echo esc_html($index);?>"
-                                   href="#<?php echo esc_attr($page['id']); ?>"
-                                   role="tab"
-                                   aria-controls="<?php echo esc_attr($page['id']); ?>"
-                                   aria-selected="true"
-                                   title="<?php echo esc_attr($page['name']); ?>"
+                        <?php
+                        $sjlGroupIdx = 0;
+                        foreach ($sidebarGroups as $groupEntry) : ?>
+                            <?php if ($groupEntry['type'] === 'group') :
+                                $sjlGroupId = 'sjlg-' . $sjlGroupIdx++;
+                                ?>
+                                <li class="sjl-nav-group-label"
+                                    data-sjl-group="<?php echo esc_attr($sjlGroupId); ?>"
                                 >
-                                    <?php
-                                    if ($page['has_error']) {
-                                        ?>
-                                        <span class="simple-jwt-error">!</span>
-                                        <?php
-                                    }
-
-                                    echo esc_html($page['name']); ?>
-                                </a>
-                            </li>
-							<?php
-                        }
-                        ?>
+                                    <span class="sjl-nav-group-label-text">
+                                        <?php if (!empty($groupEntry['icon'])) : ?>
+                                            <span class="dashicons <?php echo esc_attr($groupEntry['icon']); ?> sjl-nav-group-icon" aria-hidden="true"></span>
+                                        <?php endif; ?>
+                                        <span class="sjl-nav-label"><?php echo esc_html($groupEntry['label']); ?></span>
+                                    </span>
+                                    <button type="button" class="sjl-nav-group-toggle" aria-expanded="true">
+                                        <span class="dashicons dashicons-arrow-down-alt2"></span>
+                                    </button>
+                                </li>
+                                <?php foreach ($groupEntry['items'] as $item) :
+                                    $idx        = $item['index'];
+                                    $pg         = $pagesByIndex[$idx];
+                                    $iName      = isset($item['name']) ? $item['name'] : $pg['name'];
+                                    $section    = isset($item['section']) ? $item['section'] : '';
+                                    $sectionAttr = $section
+                                        ? ' data-section="' . esc_attr($section) . '"'
+                                        : '';
+                                    $isActive = empty($section) && (
+                                        (empty($errorCode) && $activeTab === $idx)
+                                        || $settingsErrors->getSectionFromErrorCode($errorCode) === $idx
+                                    );
+                                    $linkId = $section
+                                        ? esc_attr($section) . '-nav-link'
+                                        : esc_attr($pg['id']) . '-tab';
+                                    ?>
+                                    <li class="nav-item sjl-nav-sub-item"
+                                        data-sjl-group-item="<?php echo esc_attr($sjlGroupId); ?>"
+                                    >
+                                        <a class="nav-link <?php echo $isActive ? 'active' : ''; ?>"
+                                           id="<?php echo esc_attr($linkId); ?>"
+                                           data-toggle="tab"
+                                           data-index="<?php echo esc_attr($idx); ?>"
+                                           <?php echo $sectionAttr; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                                           href="#<?php echo esc_attr($pg['id']); ?>"
+                                           role="tab"
+                                           aria-controls="<?php echo esc_attr($pg['id']); ?>"
+                                           aria-selected="<?php echo $isActive ? 'true' : 'false'; ?>"
+                                           title="<?php echo esc_attr($iName); ?>"
+                                        >
+                                            <?php if (!empty($item['icon'])) : ?>
+                                                <span class="dashicons <?php echo esc_attr($item['icon']); ?> sjl-nav-icon" aria-hidden="true"></span>
+                                            <?php endif; ?>
+                                            <?php if ($pg['has_error'] && empty($section)) : ?>
+                                                <span class="simple-jwt-error">!</span>
+                                            <?php endif; ?>
+                                            <span class="sjl-nav-label"><?php echo esc_html($iName); ?></span>
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
+                            <?php else : ?>
+                                <?php
+                                $idx      = $groupEntry['index'];
+                                $pg       = $pagesByIndex[$idx];
+                                $iName    = isset($groupEntry['name']) ? $groupEntry['name'] : $pg['name'];
+                                $isActive = (empty($errorCode) && $activeTab === $idx)
+                                    || $settingsErrors->getSectionFromErrorCode($errorCode) === $idx;
+                                ?>
+                                <li class="nav-item">
+                                    <a class="nav-link <?php echo $isActive ? 'active' : ''; ?>"
+                                       id="<?php echo esc_attr($pg['id']); ?>-tab"
+                                       data-toggle="tab"
+                                       data-index="<?php echo esc_attr($idx); ?>"
+                                       href="#<?php echo esc_attr($pg['id']); ?>"
+                                       role="tab"
+                                       aria-controls="<?php echo esc_attr($pg['id']); ?>"
+                                       aria-selected="<?php echo $isActive ? 'true' : 'false'; ?>"
+                                       title="<?php echo esc_attr($iName); ?>"
+                                    >
+                                        <?php if (!empty($groupEntry['icon'])) : ?>
+                                            <span class="dashicons <?php echo esc_attr($groupEntry['icon']); ?> sjl-nav-icon" aria-hidden="true"></span>
+                                        <?php endif; ?>
+                                        <?php if ($pg['has_error']) : ?>
+                                            <span class="simple-jwt-error">!</span>
+                                        <?php endif; ?>
+                                        <span class="sjl-nav-label"><?php echo esc_html($iName); ?></span>
+                                    </a>
+                                </li>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
                     </ul>
                 </div>
 
@@ -271,6 +422,15 @@ $settingsPages = [
                                     case SettingsErrors::PREFIX_AUTHENTICATION:
                                         include_once plugin_dir_path(__FILE__) . "auth-view.php";
                                         break;
+                                    case SettingsErrors::PREFIX_REFRESH_TOKEN:
+                                        include_once plugin_dir_path(__FILE__) . "refresh-token-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_VALIDATE_TOKEN:
+                                        include_once plugin_dir_path(__FILE__) . "validate-token-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_REVOKE_TOKEN:
+                                        include_once plugin_dir_path(__FILE__) . "revoke-token-view.php";
+                                        break;
                                     case SettingsErrors::PREFIX_AUTH_CODES:
                                         include_once plugin_dir_path(__FILE__) . "auth-codes-view.php";
                                         break;
@@ -289,8 +449,14 @@ $settingsPages = [
                                     case SettingsErrors::PREFIX_AUDIT_LOGS:
                                         include_once plugin_dir_path(__FILE__) . "audit-logs-view.php";
                                         break;
+                                    case SettingsErrors::PREFIX_AUDIT_LOG_LOGS:
+                                        include_once plugin_dir_path(__FILE__) . "audit-logs-logs-view.php";
+                                        break;
                                     case SettingsErrors::PREFIX_WEBHOOKS:
                                         include_once plugin_dir_path(__FILE__) . "webhooks-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_WEBHOOK_LOGS:
+                                        include_once plugin_dir_path(__FILE__) . "webhooks-logs-view.php";
                                         break;
                                     default:
                                         echo __("View file does not exists.", 'simple-jwt-login');

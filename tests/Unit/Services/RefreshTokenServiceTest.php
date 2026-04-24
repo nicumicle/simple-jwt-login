@@ -274,10 +274,10 @@ class RefreshTokenServiceTest extends TestCase
             ],
             'test_invalid_auth_key' => [
                 'settings'         => [
-                    'allow_authentication'    => true,
-                    'allow_refresh_token'     => true,
-                    'auth_requires_auth_code' => true,
-                    'auth_codes'              => [
+                    'allow_authentication'        => true,
+                    'allow_refresh_token'         => true,
+                    'refresh_requires_auth_code'  => true,
+                    'auth_codes'                  => [
                         [
                             'code'            => 'some-key',
                             'role'            => '',

@@ -307,15 +307,17 @@ class AuthenticateService extends BaseService implements ServiceInterface
 
     /**
      * @param int $errrCode
+     * @param bool|null $isRequired
      *
      * @throws Exception
      */
-    protected function validateAuthenticationAuthKey($errrCode)
+    protected function validateAuthenticationAuthKey($errrCode, $isRequired = null)
     {
-        if ($this->jwtSettings->getAuthenticationSettings()->isAuthKeyRequired()
-            && $this->validateAuthKey() === false
-        ) {
-            throw  new Exception(
+        $required = $isRequired !== null
+            ? $isRequired
+            : $this->jwtSettings->getAuthenticationSettings()->isAuthKeyRequired();
+        if ($required && $this->validateAuthKey() === false) {
+            throw new Exception(
                 sprintf(
                     __('Invalid Auth Code ( %s ) provided.', 'simple-jwt-login'),
                     $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()

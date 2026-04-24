@@ -19,7 +19,10 @@ class RefreshTokenService extends AuthenticateService
             $this->checkJwtNotRevoked();
             $this->checkRefreshTokenEnabled();
             $this->checkAllowedIPAddress();
-            $this->validateAuthenticationAuthKey(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED);
+            $this->validateAuthenticationAuthKey(
+                ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED,
+                $this->jwtSettings->getAuthenticationSettings()->isRefreshAuthKeyRequired()
+            );
 
             return $this->refreshJwt();
         } catch (Exception $e) {

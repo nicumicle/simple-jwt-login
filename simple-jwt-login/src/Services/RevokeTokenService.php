@@ -13,8 +13,12 @@ class RevokeTokenService extends AuthenticateService
     {
         try {
             $this->checkAuthenticationEnabled();
+            $this->checkRevokeTokenEnabled();
             $this->checkAllowedIPAddress();
-            $this->validateAuthenticationAuthKey(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED);
+            $this->validateAuthenticationAuthKey(
+                ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED,
+                $this->jwtSettings->getAuthenticationSettings()->isRevokeAuthKeyRequired()
+            );
 
             return $this->revokeToken();
         } catch (Exception $e) {
@@ -25,6 +29,19 @@ class RevokeTokenService extends AuthenticateService
                 $e->getMessage()
             );
             throw $e;
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function checkRevokeTokenEnabled()
+    {
+        if ($this->jwtSettings->getAuthenticationSettings()->isRevokeTokenEnabled() === false) {
+            throw new Exception(
+                __('Revoke Token endpoint is not enabled.', 'simple-jwt-login'),
+                ErrorCodes::ERR_REVOKE_TOKEN_NOT_ENABLED
+            );
         }
     }
 

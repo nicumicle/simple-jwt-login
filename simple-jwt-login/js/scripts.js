@@ -421,8 +421,18 @@ jQuery(document).ready(
         // TABS
         $('#simple-jwt-login-tabs a').click(function (e) {
             e.preventDefault();
-            $('#active_tab').val($(this).attr('data-index'));
-            $(this).tab('show');
+            var $link = $(this);
+            $('#active_tab').val($link.attr('data-index'));
+            $link.tab('show');
+            var section = $link.attr('data-section');
+            if (section) {
+                $link.one('shown.bs.tab', function () {
+                    var el = document.getElementById(section);
+                    if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            }
         });
 
         // Webhooks: add new webhook row by cloning the hidden template
@@ -507,6 +517,56 @@ jQuery(document).ready(
             if ($tab.length) {
                 $tab.trigger('click');
             }
+        });
+
+        // -----------------------------------------------------------------------
+        // Sidebar group collapse / expand
+        // -----------------------------------------------------------------------
+
+        function sjlGetCollapsedGroups() {
+            try {
+                var raw = localStorage.getItem('sjl_nav_collapsed');
+                return raw ? JSON.parse(raw) : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function sjlSaveCollapsedGroups(state) {
+            try {
+                localStorage.setItem('sjl_nav_collapsed', JSON.stringify(state));
+            } catch (e) {}
+        }
+
+        function sjlApplyGroupCollapse(groupId, collapse) {
+            var $label = $('.sjl-nav-group-label[data-sjl-group="' + groupId + '"]');
+            var $items = $('.sjl-nav-sub-item[data-sjl-group-item="' + groupId + '"]');
+
+            // Never collapse a group that contains the active tab
+            if (collapse && $items.find('.nav-link.active').length > 0) {
+                collapse = false;
+            }
+
+            $label.toggleClass('sjl-collapsed', collapse);
+            $label.find('.sjl-nav-group-toggle').attr('aria-expanded', String(!collapse));
+            $items.toggleClass('sjl-group-hidden', collapse);
+        }
+
+        // Restore persisted state on load
+        var sjlCollapsed = sjlGetCollapsedGroups();
+        $('.sjl-nav-group-label[data-sjl-group]').each(function () {
+            var groupId = $(this).data('sjl-group');
+            sjlApplyGroupCollapse(groupId, sjlCollapsed[groupId] === true);
+        });
+
+        // Toggle on label click
+        $(document).on('click', '.sjl-nav-group-label[data-sjl-group]', function () {
+            var groupId  = $(this).data('sjl-group');
+            var collapse = !$(this).hasClass('sjl-collapsed');
+            sjlApplyGroupCollapse(groupId, collapse);
+            var state = sjlGetCollapsedGroups();
+            state[groupId] = collapse;
+            sjlSaveCollapsedGroups(state);
         });
     }(jQuery)
 );

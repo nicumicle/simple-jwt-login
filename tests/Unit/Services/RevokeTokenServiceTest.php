@@ -171,12 +171,12 @@ class RevokeTokenServiceTest extends TestCase
             ],
             'test_invalid_auth_key' => [
                 'settings' => [
-                    'allow_authentication' => true,
-                    'auth_requires_auth_code' => true,
-                    'auth_codes' => [
+                    'allow_authentication'       => true,
+                    'revoke_requires_auth_code'  => true,
+                    'auth_codes'                 => [
                         [
-                            'code' => 'some-key',
-                            'role' => '',
+                            'code'            => 'some-key',
+                            'role'            => '',
                             'expiration_date' => '',
                         ],
                     ],

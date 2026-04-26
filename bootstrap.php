@@ -69,6 +69,12 @@ if (!function_exists('get_user_meta')) {
     }
 }
 
+if (!function_exists('update_user_meta')) {
+    function update_user_meta($userId, $metaKey, $metaValue, $prevValue = '')
+    {
+    }
+}
+
 
 if (!function_exists('do_action')) {
     function do_action($actionName, $arg1 = null, $arg2 = null, $arg3 = null, $arg4 = null)
@@ -170,6 +176,20 @@ if (!function_exists('esc_textarea')) {
     function esc_textarea($text)
     {
         return $text;
+    }
+}
+
+if (!function_exists('wp_kses')) {
+    function wp_kses($string, $allowed_html)
+    {
+        return $string;
+    }
+}
+
+if (!function_exists('nl2br')) {
+    function nl2br($string)
+    {
+        return str_replace("\n", '<br />', $string);
     }
 }
 

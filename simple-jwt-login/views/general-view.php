@@ -28,11 +28,11 @@ if (!defined('ABSPATH')) {
                     ? '<span class="simple-jwt-error">!</span>'
                     : '';
                 ?>
-                <?php echo __('Route Namespace', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Route Namespace', 'simple-jwt-login'); ?>
                 <span class="required">*</span>
             </h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __('Base URL prefix for all Simple JWT Login REST endpoints. Change only if you need to avoid conflicts with other plugins.', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Base URL prefix for all Simple JWT Login REST endpoints. Change only if you need to avoid conflicts with other plugins.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
@@ -43,7 +43,7 @@ if (!defined('ABSPATH')) {
                 name="route_namespace"
                 value="<?php echo esc_attr($jwtSettings->getGeneralSettings()->getRouteNamespace()); ?>"
                 class="form-control sjl-gen-input-medium"
-                placeholder="<?php echo __('e.g. simple-jwt-login/v1', 'simple-jwt-login'); ?>"
+                placeholder="<?php echo esc_attr__('e.g. simple-jwt-login/v1', 'simple-jwt-login'); ?>"
             />
         </div>
     </div>
@@ -65,10 +65,10 @@ if (!defined('ABSPATH')) {
                     ? '<span class="simple-jwt-error">!</span> '
                     : '';
                 ?>
-                <?php echo __('JWT Input Sources', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('JWT Input Sources', 'simple-jwt-login'); ?>
             </h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __(
+                <?php echo esc_html__(
                     'Enable one or more locations where the JWT may be provided with the request. '
                     . 'When the JWT appears in multiple locations, higher-priority sources override lower ones.',
                     'simple-jwt-login'
@@ -80,10 +80,10 @@ if (!defined('ABSPATH')) {
         <table class="sjl-gen-source-table">
             <thead>
                 <tr>
-                    <th class="sjl-gen-col-source"><?php echo __('Source', 'simple-jwt-login'); ?></th>
-                    <th class="sjl-gen-col-param"><?php echo __('Parameter Name', 'simple-jwt-login'); ?></th>
-                    <th class="sjl-gen-col-status"><?php echo __('Status', 'simple-jwt-login'); ?></th>
-                    <th class="sjl-gen-col-example"><?php echo __('Example', 'simple-jwt-login'); ?></th>
+                    <th class="sjl-gen-col-source"><?php echo esc_html__('Source', 'simple-jwt-login'); ?></th>
+                    <th class="sjl-gen-col-param"><?php echo esc_html__('Parameter Name', 'simple-jwt-login'); ?></th>
+                    <th class="sjl-gen-col-status"><?php echo esc_html__('Status', 'simple-jwt-login'); ?></th>
+                    <th class="sjl-gen-col-example"><?php echo esc_html__('Example', 'simple-jwt-login'); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -98,17 +98,17 @@ if (!defined('ABSPATH')) {
                             name="request_keys[url]"
                             required="required"
                             class="form-control sjl-gen-param-input"
-                            placeholder="<?php echo __('e.g. jwt', 'simple-jwt-login'); ?>"
+                            placeholder="<?php echo esc_attr__('e.g. jwt', 'simple-jwt-login'); ?>"
                             value="<?php echo esc_attr($jwtSettings->getGeneralSettings()->getRequestKeyUrl()); ?>"
                         />
                     </td>
                     <td>
                         <select name="request_jwt_url" class="form-control onOff sjl-gen-onoff">
                             <option value="0" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromURLEnabled() === false ? 'selected' : ''; ?>>
-                                <?php echo __('Off', 'simple-jwt-login'); ?>
+                                <?php echo esc_html__('Off', 'simple-jwt-login'); ?>
                             </option>
                             <option value="1" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromURLEnabled() === true ? 'selected' : ''; ?>>
-                                <?php echo __('On', 'simple-jwt-login'); ?>
+                                <?php echo esc_html__('On', 'simple-jwt-login'); ?>
                             </option>
                         </select>
                     </td>
@@ -129,17 +129,17 @@ if (!defined('ABSPATH')) {
                             name="request_keys[session]"
                             required="required"
                             class="form-control sjl-gen-param-input"
-                            placeholder="<?php echo __('e.g. jwt', 'simple-jwt-login'); ?>"
+                            placeholder="<?php echo esc_attr__('e.g. jwt', 'simple-jwt-login'); ?>"
                             value="<?php echo esc_attr($jwtSettings->getGeneralSettings()->getRequestKeySession()); ?>"
                         />
                     </td>
                     <td>
                         <select name="request_jwt_session" class="form-control onOff sjl-gen-onoff">
                             <option value="0" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled() === false ? 'selected' : ''; ?>>
-                                <?php echo __('Off', 'simple-jwt-login'); ?>
+                                <?php echo esc_html__('Off', 'simple-jwt-login'); ?>
                             </option>
                             <option value="1" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled() === true ? 'selected' : ''; ?>>
-                                <?php echo __('On', 'simple-jwt-login'); ?>
+                                <?php echo esc_html__('On', 'simple-jwt-login'); ?>
                             </option>
                         </select>
                     </td>
@@ -159,17 +159,17 @@ if (!defined('ABSPATH')) {
                             name="request_keys[cookie]"
                             required="required"
                             class="form-control sjl-gen-param-input"
-                            placeholder="<?php echo __('e.g. jwt', 'simple-jwt-login'); ?>"
+                            placeholder="<?php echo esc_attr__('e.g. jwt', 'simple-jwt-login'); ?>"
                             value="<?php echo esc_attr($jwtSettings->getGeneralSettings()->getRequestKeyCookie()); ?>"
                         />
                     </td>
                     <td>
                         <select name="request_jwt_cookie" class="form-control onOff sjl-gen-onoff">
                             <option value="0" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromCookieEnabled() === false ? 'selected' : ''; ?>>
-                                <?php echo __('Off', 'simple-jwt-login'); ?>
+                                <?php echo esc_html__('Off', 'simple-jwt-login'); ?>
                             </option>
                             <option value="1" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromCookieEnabled() === true ? 'selected' : ''; ?>>
-                                <?php echo __('On', 'simple-jwt-login'); ?>
+                                <?php echo esc_html__('On', 'simple-jwt-login'); ?>
                             </option>
                         </select>
                     </td>
@@ -189,17 +189,17 @@ if (!defined('ABSPATH')) {
                             name="request_keys[header]"
                             required="required"
                             class="form-control sjl-gen-param-input"
-                            placeholder="<?php echo __('e.g. Authorization', 'simple-jwt-login'); ?>"
+                            placeholder="<?php echo esc_attr__('e.g. Authorization', 'simple-jwt-login'); ?>"
                             value="<?php echo esc_attr($jwtSettings->getGeneralSettings()->getRequestKeyHeader()); ?>"
                         />
                     </td>
                     <td>
                         <select name="request_jwt_header" class="form-control onOff sjl-gen-onoff">
                             <option value="0" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromHeaderEnabled() === false ? 'selected' : ''; ?>>
-                                <?php echo __('Off', 'simple-jwt-login'); ?>
+                                <?php echo esc_html__('Off', 'simple-jwt-login'); ?>
                             </option>
                             <option value="1" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromHeaderEnabled() === true ? 'selected' : ''; ?>>
-                                <?php echo __('On', 'simple-jwt-login'); ?>
+                                <?php echo esc_html__('On', 'simple-jwt-login'); ?>
                             </option>
                         </select>
                     </td>
@@ -217,9 +217,9 @@ if (!defined('ABSPATH')) {
     <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-admin-plugins"></span>
         <div>
-            <h3 class="sjl-gen-card-title"><?php echo __('Integration Options', 'simple-jwt-login'); ?></h3>
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Integration Options', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __('Control how the plugin integrates with the WordPress REST API and third-party tools.', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Control how the plugin integrates with the WordPress REST API and third-party tools.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
@@ -234,10 +234,10 @@ if (!defined('ABSPATH')) {
             </div>
             <div class="sjl-gen-feature-toggle-text">
                 <label for="api_middleware_enabled" class="sjl-gen-feature-label">
-                    <?php echo __('JWT Middleware for all WordPress endpoints', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('JWT Middleware for all WordPress endpoints', 'simple-jwt-login'); ?>
                 </label>
                 <p class="sjl-gen-feature-desc">
-                    <?php echo __(
+                    <?php echo esc_html__(
                         'When enabled, any WordPress REST API call that includes a JWT will automatically authenticate the user before processing the request.',
                         'simple-jwt-login'
                     ); ?>
@@ -255,13 +255,13 @@ if (!defined('ABSPATH')) {
             <div class="sjl-gen-feature-toggle-text">
                 <label for="wp_graphql_enabled" class="sjl-gen-feature-label">
                     <span class="beta">beta</span>
-                    <?php echo __(
+                    <?php echo esc_html__(
                         sprintf('WPGraphQL authentication (%sWPGraphQL plugin required%s)', '<a href="https://www.wpgraphql.com/" target="_blank">', '</a>'),
                         'simple-jwt-login'
                     ); ?>
                 </label>
                 <p class="sjl-gen-feature-desc">
-                    <?php echo __(
+                    <?php echo esc_html__(
                         'When a JWT is provided on WPGraphQL queries, the plugin will authenticate the user before executing the query.',
                         'simple-jwt-login'
                     ); ?>
@@ -276,9 +276,9 @@ if (!defined('ABSPATH')) {
     <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-lock"></span>
         <div>
-            <h3 class="sjl-gen-card-title"><?php echo __('Security', 'simple-jwt-login'); ?></h3>
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Security', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __('Additional security hardening options.', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Additional security hardening options.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
@@ -293,10 +293,10 @@ if (!defined('ABSPATH')) {
             </div>
             <div class="sjl-gen-feature-toggle-text">
                 <label for="security_safe_redirect" class="sjl-gen-feature-label">
-                    <?php echo __('Enable safe redirects', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('Enable safe redirects', 'simple-jwt-login'); ?>
                 </label>
                 <p class="sjl-gen-feature-desc">
-                    <?php echo __(
+                    <?php echo esc_html__(
                         'Use wp_safe_redirect() for all redirects to prevent open redirect vulnerabilities.',
                         'simple-jwt-login'
                     ); ?>

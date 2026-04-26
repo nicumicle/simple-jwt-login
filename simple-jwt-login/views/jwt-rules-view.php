@@ -47,10 +47,10 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                     echo '<span class="simple-jwt-error">!</span>';
                 }
                 ?>
-                <?php echo __('JWT Verification Rules', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('JWT Verification Rules', 'simple-jwt-login'); ?>
             </h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __(
+                <?php echo esc_html__(
                     'Define how incoming JWTs are verified. '
                     . 'Each rule matches a specific claim in the token and applies its own algorithm and key. '
                     . 'The ELSE row is the required fallback used when no rule matches.',
@@ -85,25 +85,25 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                     <!-- IF: Condition ─────────────────────────────────── -->
                     <div class="sjl-rule-if-row">
                         <span class="sjl-rule-badge sjl-rule-condition-badge">
-                            <?php echo __('IF', 'simple-jwt-login'); ?>
+                            <?php echo esc_html__('IF', 'simple-jwt-login'); ?>
                         </span>
                         <div class="sjl-rule-fields-group">
                             <div class="sjl-rule-field">
                                 <label class="sjl-rule-field-label">
-                                    <?php echo __('JWT Part', 'simple-jwt-login'); ?>
+                                    <?php echo esc_html__('JWT Part', 'simple-jwt-login'); ?>
                                 </label>
                                 <select class="form-control sjl-rule-condition-type">
                                     <option value="payload" <?php echo $conditionType === 'payload' ? 'selected' : ''; ?>>
-                                        <?php echo __('Payload claim', 'simple-jwt-login'); ?>
+                                        <?php echo esc_html__('Payload claim', 'simple-jwt-login'); ?>
                                     </option>
                                     <option value="header" <?php echo $conditionType === 'header' ? 'selected' : ''; ?>>
-                                        <?php echo __('Header claim', 'simple-jwt-login'); ?>
+                                        <?php echo esc_html__('Header claim', 'simple-jwt-login'); ?>
                                     </option>
                                 </select>
                             </div>
                             <div class="sjl-rule-field sjl-rule-condition-key-group">
                                 <label class="sjl-rule-field-label">
-                                    <?php echo __('Claim Key', 'simple-jwt-login'); ?>
+                                    <?php echo esc_html__('Claim Key', 'simple-jwt-login'); ?>
                                 </label>
                                 <input
                                     type="text"
@@ -114,20 +114,20 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                             </div>
                             <div class="sjl-rule-field">
                                 <label class="sjl-rule-field-label">
-                                    <?php echo __('Operator', 'simple-jwt-login'); ?>
+                                    <?php echo esc_html__('Operator', 'simple-jwt-login'); ?>
                                 </label>
                                 <select class="form-control sjl-rule-condition-operator">
                                     <option value="equals" <?php echo $conditionOperator === 'equals' ? 'selected' : ''; ?>>
-                                        <?php echo __('equals', 'simple-jwt-login'); ?>
+                                        <?php echo esc_html__('equals', 'simple-jwt-login'); ?>
                                     </option>
                                     <option value="contains" <?php echo $conditionOperator === 'contains' ? 'selected' : ''; ?>>
-                                        <?php echo __('contains', 'simple-jwt-login'); ?>
+                                        <?php echo esc_html__('contains', 'simple-jwt-login'); ?>
                                     </option>
                                 </select>
                             </div>
                             <div class="sjl-rule-field sjl-rule-field--grow">
                                 <label class="sjl-rule-field-label">
-                                    <?php echo __('Expected Value', 'simple-jwt-login'); ?>
+                                    <?php echo esc_html__('Expected Value', 'simple-jwt-login'); ?>
                                 </label>
                                 <input
                                     type="text"
@@ -145,12 +145,12 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                     <!-- THEN USE: Algorithm + Key ───────────────────────── -->
                     <div class="sjl-rule-then-row">
                         <span class="sjl-rule-badge sjl-rule-badge-then">
-                            <?php echo __('THEN USE', 'simple-jwt-login'); ?>
+                            <?php echo esc_html__('THEN USE', 'simple-jwt-login'); ?>
                         </span>
                         <div class="sjl-rule-fields-group">
                             <div class="sjl-rule-field">
                                 <label class="sjl-rule-field-label">
-                                    <?php echo __('Algorithm', 'simple-jwt-login'); ?>
+                                    <?php echo esc_html__('Algorithm', 'simple-jwt-login'); ?>
                                 </label>
                                 <select class="form-control sjl-gen-select sjl-rule-alg">
                                     <?php
@@ -167,7 +167,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                             <div class="sjl-rule-hs-fields sjl-rule-field sjl-rule-field--grow"
                                  <?php echo $isRS ? 'style="display:none"' : ''; ?>>
                                 <label class="sjl-rule-field-label">
-                                    <?php echo __('Secret Key', 'simple-jwt-login'); ?>
+                                    <?php echo esc_html__('Secret Key', 'simple-jwt-login'); ?>
                                 </label>
                                 <input
                                     type="password"
@@ -179,7 +179,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                                 <div class="sjl-gen-checkbox-row">
                                     <input type="checkbox" class="sjl-rule-key-b64"
                                            <?php echo $ruleKeyB64 ? 'checked' : ''; ?> />
-                                    <label><?php echo __('Key is Base64 encoded', 'simple-jwt-login'); ?></label>
+                                    <label><?php echo esc_html__('Key is Base64 encoded', 'simple-jwt-login'); ?></label>
                                 </div>
                             </div>
 
@@ -189,7 +189,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                                 <div class="sjl-rule-rs-fields-inner">
                                     <div class="sjl-rule-field sjl-rule-field--grow">
                                         <label class="sjl-rule-field-label">
-                                            <?php echo __('Public Key', 'simple-jwt-login'); ?>
+                                            <?php echo esc_html__('Public Key', 'simple-jwt-login'); ?>
                                             <span class="required">*</span>
                                         </label>
                                         <textarea class="form-control sjl-rule-pub-key" rows="4"
@@ -197,7 +197,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                                     </div>
                                     <div class="sjl-rule-field sjl-rule-field--grow">
                                         <label class="sjl-rule-field-label">
-                                            <?php echo __('Private Key', 'simple-jwt-login'); ?>
+                                            <?php echo esc_html__('Private Key', 'simple-jwt-login'); ?>
                                             <span class="required">*</span>
                                         </label>
                                         <textarea class="form-control sjl-rule-priv-key" rows="4"
@@ -215,28 +215,28 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                     ?>
                     <div class="sjl-rule-identify-row">
                         <span class="sjl-rule-badge sjl-rule-badge-identify">
-                            <?php echo __('IDENTIFY', 'simple-jwt-login'); ?>
+                            <?php echo esc_html__('IDENTIFY', 'simple-jwt-login'); ?>
                         </span>
                         <div class="sjl-rule-fields-group">
                             <div class="sjl-rule-field">
                                 <label class="sjl-rule-field-label">
-                                    <?php echo __('Identify user by', 'simple-jwt-login'); ?>
+                                    <?php echo esc_html__('Identify user by', 'simple-jwt-login'); ?>
                                 </label>
                                 <select class="form-control sjl-rule-login-by">
                                     <option value="0" <?php echo $ruleLoginBy === 0 ? 'selected' : ''; ?>>
-                                        <?php echo __('Email address', 'simple-jwt-login'); ?>
+                                        <?php echo esc_html__('Email address', 'simple-jwt-login'); ?>
                                     </option>
                                     <option value="1" <?php echo $ruleLoginBy === 1 ? 'selected' : ''; ?>>
-                                        <?php echo __('WordPress User ID', 'simple-jwt-login'); ?>
+                                        <?php echo esc_html__('WordPress User ID', 'simple-jwt-login'); ?>
                                     </option>
                                     <option value="2" <?php echo $ruleLoginBy === 2 ? 'selected' : ''; ?>>
-                                        <?php echo __('WordPress Username', 'simple-jwt-login'); ?>
+                                        <?php echo esc_html__('WordPress Username', 'simple-jwt-login'); ?>
                                     </option>
                                 </select>
                             </div>
                             <div class="sjl-rule-field sjl-rule-field--grow">
                                 <label class="sjl-rule-field-label">
-                                    <?php echo __('JWT payload key', 'simple-jwt-login'); ?>
+                                    <?php echo esc_html__('JWT payload key', 'simple-jwt-login'); ?>
                                     <span class="required">*</span>
                                 </label>
                                 <input
@@ -260,7 +260,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                 type="button"
                 class="btn btn-outline-secondary"
                 id="sjl-add-rule"
-                value="<?php echo __('+ Add Rule', 'simple-jwt-login'); ?>"
+                value="<?php echo esc_attr__('+ Add Rule', 'simple-jwt-login'); ?>"
             />
         </div>
 
@@ -271,7 +271,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
         <div class="sjl-rule-else-wrapper">
             <div class="sjl-rule-else-header">
                 <span class="sjl-rule-badge sjl-rule-badge-else">
-                    <?php echo __('ELSE (default — used when no rule matches)', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('ELSE (default — used when no rule matches)', 'simple-jwt-login'); ?>
                 </span>
                 <span class="dashicons dashicons-lock sjl-rule-lock-icon"
                       title="<?php echo esc_attr(__('Required — cannot be removed', 'simple-jwt-login')); ?>"></span>
@@ -282,17 +282,17 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                 <div class="sjl-gen-step-number">1</div>
                 <div class="sjl-gen-step-content">
                     <label class="sjl-gen-step-label" for="decryption_source">
-                        <?php echo __('Where is your JWT secret stored?', 'simple-jwt-login'); ?>
+                        <?php echo esc_html__('Where is your JWT secret stored?', 'simple-jwt-login'); ?>
                     </label>
                     <select id="decryption_source" name="decryption_source" class="form-control sjl-gen-select">
                         <option
                             value="<?php echo GeneralSettings::DECRYPTION_SOURCE_SETTINGS; ?>"
                             <?php echo ($elseSource === GeneralSettings::DECRYPTION_SOURCE_SETTINGS ? 'selected' : ''); ?>
-                        ><?php echo __('Plugin Settings (recommended)', 'simple-jwt-login'); ?></option>
+                        ><?php echo esc_html__('Plugin Settings (recommended)', 'simple-jwt-login'); ?></option>
                         <option
                             value="<?php echo GeneralSettings::DECRYPTION_SOURCE_CODE; ?>"
                             <?php echo ($elseSource === GeneralSettings::DECRYPTION_SOURCE_CODE ? 'selected' : ''); ?>
-                        ><?php echo __('Code (wp-config.php or custom plugin)', 'simple-jwt-login'); ?></option>
+                        ><?php echo esc_html__('Code (wp-config.php or custom plugin)', 'simple-jwt-login'); ?></option>
                     </select>
                 </div>
             </div>
@@ -302,7 +302,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                 <div class="sjl-gen-step-number">2</div>
                 <div class="sjl-gen-step-content">
                     <label class="sjl-gen-step-label" for="simple-jwt-login-jwt-algorithm">
-                        <?php echo __('JWT Algorithm', 'simple-jwt-login'); ?>
+                        <?php echo esc_html__('JWT Algorithm', 'simple-jwt-login'); ?>
                     </label>
                     <select name="jwt_algorithm" class="form-control sjl-gen-select"
                             id="simple-jwt-login-jwt-algorithm">
@@ -328,7 +328,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                 </div>
                 <div class="sjl-gen-step-content">
                     <label class="sjl-gen-step-label">
-                        <?php echo __('JWT Verification Key', 'simple-jwt-login'); ?>
+                        <?php echo esc_html__('JWT Verification Key', 'simple-jwt-login'); ?>
                         <span class="required">*</span>
                     </label>
 
@@ -350,7 +350,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                             </div>
                         </div>
                         <div class="sjl-gen-strength-row">
-                            <span><?php echo __('Strength', 'simple-jwt-login'); ?>:</span>
+                            <span><?php echo esc_html__('Strength', 'simple-jwt-login'); ?>:</span>
                             <progress id="decryption_progress" value="0" max="100"></progress>
                             <span id="decryption_progress_label" class="sjl-gen-strength-label"></span>
                         </div>
@@ -361,7 +361,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                                        ? esc_html('checked="checked"') : ''; ?>
                             />
                             <label for="decryption_key_base64">
-                                <?php echo __('JWT key is Base64 encoded', 'simple-jwt-login'); ?>
+                                <?php echo esc_html__('JWT key is Base64 encoded', 'simple-jwt-login'); ?>
                             </label>
                         </div>
                     </div>
@@ -370,7 +370,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                     <div class="decryption-textarea-group">
                         <div class="form-group">
                             <label for="simple-jwt-login-public-key">
-                                <?php echo __('Public Key', 'simple-jwt-login'); ?>
+                                <?php echo esc_html__('Public Key', 'simple-jwt-login'); ?>
                                 <span class="required">*</span>
                             </label>
                             <textarea class="form-control" id="simple-jwt-login-public-key"
@@ -379,7 +379,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                         </div>
                         <div class="form-group">
                             <label for="simple-jwt-login-private-key">
-                                <?php echo __('Private Key', 'simple-jwt-login'); ?>
+                                <?php echo esc_html__('Private Key', 'simple-jwt-login'); ?>
                                 <span class="required">*</span>
                             </label>
                             <textarea class="form-control" id="simple-jwt-login-private-key"
@@ -391,7 +391,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                     <!-- Code-based key info -->
                     <div class="decryption-code-info sjl-gen-code-block">
                         <p class="sjl-gen-code-block-intro">
-                            <?php echo __('Define the following constants in your code (e.g. in', 'simple-jwt-login'); ?>
+                            <?php echo esc_html__('Define the following constants in your code (e.g. in', 'simple-jwt-login'); ?>
                             <code>wp-config.php</code>):
                         </p>
                         <code class="define_private_key sjl-gen-code-line">
@@ -410,40 +410,40 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                 <div class="sjl-gen-step-number">4</div>
                 <div class="sjl-gen-step-content">
                     <label class="sjl-gen-step-label">
-                        <?php echo __('User Identification', 'simple-jwt-login'); ?>
+                        <?php echo esc_html__('User Identification', 'simple-jwt-login'); ?>
                     </label>
                     <p class="sjl-gen-step-desc">
-                        <?php echo __('Which JWT payload field identifies the WordPress user?', 'simple-jwt-login'); ?>
+                        <?php echo esc_html__('Which JWT payload field identifies the WordPress user?', 'simple-jwt-login'); ?>
                     </p>
                     <div class="sjl-gen-two-col">
                         <div class="sjl-gen-two-col-left">
                             <label class="sjl-gen-field-label" for="jwt_login_by">
-                                <?php echo __('Identify user by', 'simple-jwt-login'); ?>
+                                <?php echo esc_html__('Identify user by', 'simple-jwt-login'); ?>
                             </label>
                             <select name="jwt_login_by" class="form-control" id="jwt_login_by">
                                 <option value="0"
                                     <?php echo $jwtSettings->getLoginSettings()->getJWTLoginBy() === LoginSettings::JWT_LOGIN_BY_EMAIL ? 'selected' : ''; ?>
-                                ><?php echo __('Email address', 'simple-jwt-login'); ?></option>
+                                ><?php echo esc_html__('Email address', 'simple-jwt-login'); ?></option>
                                 <option value="1"
                                     <?php echo $jwtSettings->getLoginSettings()->getJWTLoginBy() === LoginSettings::JWT_LOGIN_BY_WORDPRESS_USER_ID ? 'selected' : ''; ?>
-                                ><?php echo __('WordPress User ID', 'simple-jwt-login'); ?></option>
+                                ><?php echo esc_html__('WordPress User ID', 'simple-jwt-login'); ?></option>
                                 <option value="2"
                                     <?php echo $jwtSettings->getLoginSettings()->getJWTLoginBy() === LoginSettings::JWT_LOGIN_BY_USER_LOGIN ? 'selected' : ''; ?>
-                                ><?php echo __('WordPress Username', 'simple-jwt-login'); ?></option>
+                                ><?php echo esc_html__('WordPress Username', 'simple-jwt-login'); ?></option>
                             </select>
                         </div>
                         <div class="sjl-gen-two-col-right">
                             <label class="sjl-gen-field-label" for="jwt_login_by_parameter">
-                                <?php echo __('JWT payload key', 'simple-jwt-login'); ?>
+                                <?php echo esc_html__('JWT payload key', 'simple-jwt-login'); ?>
                                 <span class="required">*</span>
                             </label>
                             <input type="text" name="jwt_login_by_parameter" class="form-control"
                                    id="jwt_login_by_parameter"
                                    value="<?php echo esc_attr($jwtSettings->getLoginSettings()->getJwtLoginByParameter()); ?>"
-                                   placeholder="<?php echo __('e.g. email', 'simple-jwt-login'); ?>"
+                                   placeholder="<?php echo esc_attr__('e.g. email', 'simple-jwt-login'); ?>"
                             />
                             <p class="sjl-gen-card-desc" style="margin-top:6px;">
-                                <?php echo __('Use dot notation for nested values, e.g. <code>user.id</code>.', 'simple-jwt-login'); ?>
+                                <?php echo esc_html__('Use dot notation for nested values, e.g. <code>user.id</code>.', 'simple-jwt-login'); ?>
                             </p>
                         </div>
                     </div>
@@ -462,21 +462,21 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
         <!-- IF: Condition ─────────────────────────────────── -->
         <div class="sjl-rule-if-row">
             <span class="sjl-rule-badge sjl-rule-condition-badge">
-                <?php echo __('IF', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('IF', 'simple-jwt-login'); ?>
             </span>
             <div class="sjl-rule-fields-group">
                 <div class="sjl-rule-field">
                     <label class="sjl-rule-field-label">
-                        <?php echo __('JWT Part', 'simple-jwt-login'); ?>
+                        <?php echo esc_html__('JWT Part', 'simple-jwt-login'); ?>
                     </label>
                     <select class="form-control sjl-rule-condition-type">
-                        <option value="payload"><?php echo __('Payload claim', 'simple-jwt-login'); ?></option>
-                        <option value="header"><?php echo __('Header claim', 'simple-jwt-login'); ?></option>
+                        <option value="payload"><?php echo esc_html__('Payload claim', 'simple-jwt-login'); ?></option>
+                        <option value="header"><?php echo esc_html__('Header claim', 'simple-jwt-login'); ?></option>
                     </select>
                 </div>
                 <div class="sjl-rule-field sjl-rule-condition-key-group">
                     <label class="sjl-rule-field-label">
-                        <?php echo __('Claim Key', 'simple-jwt-login'); ?>
+                        <?php echo esc_html__('Claim Key', 'simple-jwt-login'); ?>
                     </label>
                     <input
                         type="text"
@@ -487,16 +487,16 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                 </div>
                 <div class="sjl-rule-field">
                     <label class="sjl-rule-field-label">
-                        <?php echo __('Operator', 'simple-jwt-login'); ?>
+                        <?php echo esc_html__('Operator', 'simple-jwt-login'); ?>
                     </label>
                     <select class="form-control sjl-rule-condition-operator">
-                        <option value="equals"><?php echo __('equals', 'simple-jwt-login'); ?></option>
-                        <option value="contains"><?php echo __('contains', 'simple-jwt-login'); ?></option>
+                        <option value="equals"><?php echo esc_html__('equals', 'simple-jwt-login'); ?></option>
+                        <option value="contains"><?php echo esc_html__('contains', 'simple-jwt-login'); ?></option>
                     </select>
                 </div>
                 <div class="sjl-rule-field sjl-rule-field--grow">
                     <label class="sjl-rule-field-label">
-                        <?php echo __('Expected Value', 'simple-jwt-login'); ?>
+                        <?php echo esc_html__('Expected Value', 'simple-jwt-login'); ?>
                     </label>
                     <input
                         type="text"
@@ -514,12 +514,12 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
         <!-- THEN USE: Algorithm + Key ───────────────────────── -->
         <div class="sjl-rule-then-row">
             <span class="sjl-rule-badge sjl-rule-badge-then">
-                <?php echo __('THEN USE', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('THEN USE', 'simple-jwt-login'); ?>
             </span>
             <div class="sjl-rule-fields-group">
                 <div class="sjl-rule-field">
                     <label class="sjl-rule-field-label">
-                        <?php echo __('Algorithm', 'simple-jwt-login'); ?>
+                        <?php echo esc_html__('Algorithm', 'simple-jwt-login'); ?>
                     </label>
                     <select class="form-control sjl-gen-select sjl-rule-alg">
                         <?php
@@ -533,7 +533,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                 <!-- HS* key field (shown for HS algorithms) -->
                 <div class="sjl-rule-hs-fields sjl-rule-field sjl-rule-field--grow">
                     <label class="sjl-rule-field-label">
-                        <?php echo __('Secret Key', 'simple-jwt-login'); ?>
+                        <?php echo esc_html__('Secret Key', 'simple-jwt-login'); ?>
                     </label>
                     <input
                         type="password"
@@ -544,7 +544,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                     />
                     <div class="sjl-gen-checkbox-row">
                         <input type="checkbox" class="sjl-rule-key-b64" />
-                        <label><?php echo __('Key is Base64 encoded', 'simple-jwt-login'); ?></label>
+                        <label><?php echo esc_html__('Key is Base64 encoded', 'simple-jwt-login'); ?></label>
                     </div>
                 </div>
 
@@ -553,14 +553,14 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                     <div class="sjl-rule-rs-fields-inner">
                         <div class="sjl-rule-field sjl-rule-field--grow">
                             <label class="sjl-rule-field-label">
-                                <?php echo __('Public Key', 'simple-jwt-login'); ?>
+                                <?php echo esc_html__('Public Key', 'simple-jwt-login'); ?>
                                 <span class="required">*</span>
                             </label>
                             <textarea class="form-control sjl-rule-pub-key" rows="4"></textarea>
                         </div>
                         <div class="sjl-rule-field sjl-rule-field--grow">
                             <label class="sjl-rule-field-label">
-                                <?php echo __('Private Key', 'simple-jwt-login'); ?>
+                                <?php echo esc_html__('Private Key', 'simple-jwt-login'); ?>
                                 <span class="required">*</span>
                             </label>
                             <textarea class="form-control sjl-rule-priv-key" rows="4"></textarea>
@@ -573,22 +573,22 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
         <!-- IDENTIFY: User lookup ───────────────────────── -->
         <div class="sjl-rule-identify-row">
             <span class="sjl-rule-badge sjl-rule-badge-identify">
-                <?php echo __('IDENTIFY', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('IDENTIFY', 'simple-jwt-login'); ?>
             </span>
             <div class="sjl-rule-fields-group">
                 <div class="sjl-rule-field">
                     <label class="sjl-rule-field-label">
-                        <?php echo __('Identify user by', 'simple-jwt-login'); ?>
+                        <?php echo esc_html__('Identify user by', 'simple-jwt-login'); ?>
                     </label>
                     <select class="form-control sjl-rule-login-by">
-                        <option value="0"><?php echo __('Email address', 'simple-jwt-login'); ?></option>
-                        <option value="1"><?php echo __('WordPress User ID', 'simple-jwt-login'); ?></option>
-                        <option value="2"><?php echo __('WordPress Username', 'simple-jwt-login'); ?></option>
+                        <option value="0"><?php echo esc_html__('Email address', 'simple-jwt-login'); ?></option>
+                        <option value="1"><?php echo esc_html__('WordPress User ID', 'simple-jwt-login'); ?></option>
+                        <option value="2"><?php echo esc_html__('WordPress Username', 'simple-jwt-login'); ?></option>
                     </select>
                 </div>
                 <div class="sjl-rule-field sjl-rule-field--grow">
                     <label class="sjl-rule-field-label">
-                        <?php echo __('JWT payload key', 'simple-jwt-login'); ?>
+                        <?php echo esc_html__('JWT payload key', 'simple-jwt-login'); ?>
                         <span class="required">*</span>
                     </label>
                     <input

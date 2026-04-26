@@ -85,12 +85,12 @@ class AuditLogRepository implements Repository
             $params[] = '%' . $this->wpdb->esc_like($filters['user_email']) . '%';
         }
 
-        if (!empty($filters['date_from'])) {
+        if (!empty($filters['date_from']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $filters['date_from'])) {
             $where[]  = 'created_at >= %s';
             $params[] = $filters['date_from'] . ' 00:00:00';
         }
 
-        if (!empty($filters['date_to'])) {
+        if (!empty($filters['date_to']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $filters['date_to'])) {
             $where[]  = 'created_at <= %s';
             $params[] = $filters['date_to'] . ' 23:59:59';
         }

@@ -279,7 +279,7 @@ $sidebarGroups = [
             <div class="row main-title-container">
                 <div class="col-md-8">
                     <h1 class="main-title">
-                        <?php echo __('Simple JWT Login Settings', 'simple-jwt-login'); ?>
+                        <?php echo esc_html__('Simple JWT Login Settings', 'simple-jwt-login'); ?>
                     </h1>
                 </div>
                 <div class="col-md-4 sjl-header-actions">
@@ -287,7 +287,7 @@ $sidebarGroups = [
                         <span class="dashicons dashicons-admin-tools sjl-wizard-btn-icon" aria-hidden="true"></span>
                         <?php echo esc_html(__('Setup Wizard', 'simple-jwt-login')); ?>
                     </button>
-                    <input type="submit" class="btn btn-dark" value="<?php echo __('Save', 'simple-jwt-login');?>">
+                    <input type="submit" class="btn btn-dark" value="<?php echo esc_attr__('Save', 'simple-jwt-login');?>">
                 </div>
             </div>
             <hr/>
@@ -444,7 +444,7 @@ $sidebarGroups = [
                                         include_once plugin_dir_path(__FILE__) . "webhooks-logs-view.php";
                                         break;
                                     default:
-                                        echo __("View file does not exists.", 'simple-jwt-login');
+                                        echo esc_html__("View file does not exists.", 'simple-jwt-login');
                                 }
                                 ?>
                             </div>
@@ -465,12 +465,12 @@ $sidebarGroups = [
         <input type="text"
                name="auth_codes[code][]"
                class="form-control sjl-auth-input"
-               placeholder="<?php echo __('Authentication Key', 'simple-jwt-login'); ?>"
+               placeholder="<?php echo esc_attr__('Authentication Key', 'simple-jwt-login'); ?>"
         />
         <input type="text"
                name="auth_codes[role][]"
                class="form-control sjl-auth-input"
-               placeholder="<?php echo __(
+               placeholder="<?php echo esc_attr__(
                    'WordPress new user Role ( when new users are created )',
                    'simple-jwt-login'
                ); ?>"
@@ -478,7 +478,7 @@ $sidebarGroups = [
         <input type="text"
                name="auth_codes[expiration_date][]"
                class="form-control sjl-auth-input"
-               placeholder="<?php echo __(
+               placeholder="<?php echo esc_attr__(
                    'Expiration date: YYYY-MM-DD HH:MM:SS ( Example: 2020-12-23 23:34:59)',
                    'simple-jwt-login'
                ); ?>"
@@ -486,7 +486,7 @@ $sidebarGroups = [
         <button type="button"
                 class="sjl-endpoint-remove"
                 onclick="jwt_login_remove_auth_line(jQuery(this));"
-                title="<?php echo __('Remove', 'simple-jwt-login'); ?>">
+                title="<?php echo esc_attr__('Remove', 'simple-jwt-login'); ?>">
             <span class="dashicons dashicons-trash"></span>
         </button>
     </div>

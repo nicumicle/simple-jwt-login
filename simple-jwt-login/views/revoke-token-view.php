@@ -19,9 +19,9 @@ if (! defined('ABSPATH')) {
     <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-dismiss"></span>
         <div>
-            <h3 class="sjl-gen-card-title"><?php echo __('Allow Revoke Token Endpoint', 'simple-jwt-login'); ?></h3>
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Allow Revoke Token Endpoint', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __(
+                <?php echo esc_html__(
                     'When enabled, the revoke token endpoint is active and clients can invalidate'
                     . ' a JWT for future requests.',
                     'simple-jwt-login'
@@ -35,18 +35,18 @@ if (! defined('ABSPATH')) {
                 <input type="radio" name="allow_revoke_token" value="0"
                     <?php echo $jwtSettings->getAuthenticationSettings()->isRevokeTokenEnabled() === false ? 'checked' : ''; ?>
                 />
-                <span class="sjl-gen-radio-label"><?php echo __('Disabled', 'simple-jwt-login'); ?></span>
+                <span class="sjl-gen-radio-label"><?php echo esc_html__('Disabled', 'simple-jwt-login'); ?></span>
             </label>
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="allow_revoke_token" value="1"
                     <?php echo $jwtSettings->getAuthenticationSettings()->isRevokeTokenEnabled() === true ? 'checked' : ''; ?>
                 />
-                <span class="sjl-gen-radio-label"><?php echo __('Enabled', 'simple-jwt-login'); ?></span>
+                <span class="sjl-gen-radio-label"><?php echo esc_html__('Enabled', 'simple-jwt-login'); ?></span>
             </label>
         </div>
 
         <div class="sjl-gen-url-example">
-            <p class="sjl-gen-url-example-label"><?php echo __('Endpoint example:', 'simple-jwt-login'); ?></p>
+            <p class="sjl-gen-url-example-label"><?php echo esc_html__('Endpoint example:', 'simple-jwt-login'); ?></p>
             <div class="generated-code">
                 <span class="method">POST</span>
                 <span class="code">
@@ -58,7 +58,7 @@ if (! defined('ABSPATH')) {
                     ?>
                 </span>
                 <span class="copy-button">
-                    <button class="btn btn-secondary btn-xs"><?php echo __('Copy', 'simple-jwt-login'); ?></button>
+                    <button class="btn btn-secondary btn-xs"><?php echo esc_html__('Copy', 'simple-jwt-login'); ?></button>
                 </span>
             </div>
         </div>
@@ -70,9 +70,9 @@ if (! defined('ABSPATH')) {
     <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-lock"></span>
         <div>
-            <h3 class="sjl-gen-card-title"><?php echo __('Require Authentication Code', 'simple-jwt-login'); ?></h3>
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Require Authentication Code', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __('If enabled, an additional authentication code must be provided to use the revoke token endpoint.', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('If enabled, an additional authentication code must be provided to use the revoke token endpoint.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
@@ -82,13 +82,13 @@ if (! defined('ABSPATH')) {
                 <input type="radio" name="revoke_requires_auth_code" value="0"
                     <?php echo $jwtSettings->getAuthenticationSettings()->isRevokeAuthKeyRequired() === false ? 'checked' : ''; ?>
                 />
-                <span class="sjl-gen-radio-label"><?php echo __('Not required', 'simple-jwt-login'); ?></span>
+                <span class="sjl-gen-radio-label"><?php echo esc_html__('Not required', 'simple-jwt-login'); ?></span>
             </label>
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="revoke_requires_auth_code" value="1"
                     <?php echo $jwtSettings->getAuthenticationSettings()->isRevokeAuthKeyRequired() === true ? 'checked' : ''; ?>
                 />
-                <span class="sjl-gen-radio-label"><?php echo __('Required', 'simple-jwt-login'); ?></span>
+                <span class="sjl-gen-radio-label"><?php echo esc_html__('Required', 'simple-jwt-login'); ?></span>
             </label>
         </div>
     </div>

@@ -19,9 +19,9 @@ if (! defined('ABSPATH')) {
     <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-admin-network"></span>
         <div>
-            <h3 class="sjl-gen-card-title"><?php echo __('Allow JWT Authentication', 'simple-jwt-login'); ?></h3>
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Allow JWT Authentication', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __('Allow users to authenticate and receive JWT tokens via API endpoints.', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Allow users to authenticate and receive JWT tokens via API endpoints.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
@@ -31,18 +31,18 @@ if (! defined('ABSPATH')) {
                 <input type="radio" name="allow_authentication" value="0"
                     <?php echo $jwtSettings->getAuthenticationSettings()->isAuthenticationEnabled() === false ? 'checked' : ''; ?>
                 />
-                <span class="sjl-gen-radio-label"><?php echo __('Disabled', 'simple-jwt-login'); ?></span>
+                <span class="sjl-gen-radio-label"><?php echo esc_html__('Disabled', 'simple-jwt-login'); ?></span>
             </label>
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="allow_authentication" value="1"
                     <?php echo $jwtSettings->getAuthenticationSettings()->isAuthenticationEnabled() === true ? 'checked' : ''; ?>
                 />
-                <span class="sjl-gen-radio-label"><?php echo __('Enabled', 'simple-jwt-login'); ?></span>
+                <span class="sjl-gen-radio-label"><?php echo esc_html__('Enabled', 'simple-jwt-login'); ?></span>
             </label>
         </div>
 
         <div class="sjl-gen-url-example">
-            <p class="sjl-gen-url-example-label"><?php echo __('Endpoint examples:', 'simple-jwt-login'); ?></p>
+            <p class="sjl-gen-url-example-label"><?php echo esc_html__('Endpoint examples:', 'simple-jwt-login'); ?></p>
             <div class="generated-code">
                 <span class="method">POST</span>
                 <span class="code">
@@ -54,10 +54,10 @@ if (! defined('ABSPATH')) {
                     ?>
                 </span>
                 <span class="copy-button">
-                    <button class="btn btn-secondary btn-xs"><?php echo __('Copy', 'simple-jwt-login'); ?></button>
+                    <button class="btn btn-secondary btn-xs"><?php echo esc_html__('Copy', 'simple-jwt-login'); ?></button>
                 </span>
             </div>
-            <p class="sjl-gen-card-desc" style="margin: 6px 0 6px 2px;"><strong><?php echo __('OR', 'simple-jwt-login'); ?></strong></p>
+            <p class="sjl-gen-card-desc" style="margin: 6px 0 6px 2px;"><strong><?php echo esc_html__('OR', 'simple-jwt-login'); ?></strong></p>
             <div class="generated-code">
                 <span class="method">POST</span>
                 <span class="code">
@@ -69,10 +69,10 @@ if (! defined('ABSPATH')) {
                     ?>
                 </span>
                 <span class="copy-button">
-                    <button class="btn btn-secondary btn-xs"><?php echo __('Copy', 'simple-jwt-login'); ?></button>
+                    <button class="btn btn-secondary btn-xs"><?php echo esc_html__('Copy', 'simple-jwt-login'); ?></button>
                 </span>
             </div>
-            <p class="sjl-gen-card-desc" style="margin: 6px 0 6px 2px;"><strong><?php echo __('OR', 'simple-jwt-login'); ?></strong></p>
+            <p class="sjl-gen-card-desc" style="margin: 6px 0 6px 2px;"><strong><?php echo esc_html__('OR', 'simple-jwt-login'); ?></strong></p>
             <div class="generated-code">
                 <span class="method">POST</span>
                 <span class="code">
@@ -84,7 +84,7 @@ if (! defined('ABSPATH')) {
                     ?>
                 </span>
                 <span class="copy-button">
-                    <button class="btn btn-secondary btn-xs"><?php echo __('Copy', 'simple-jwt-login'); ?></button>
+                    <button class="btn btn-secondary btn-xs"><?php echo esc_html__('Copy', 'simple-jwt-login'); ?></button>
                 </span>
             </div>
         </div>
@@ -96,9 +96,9 @@ if (! defined('ABSPATH')) {
     <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-lock"></span>
         <div>
-            <h3 class="sjl-gen-card-title"><?php echo __('Require Authentication Code for JWT Generation', 'simple-jwt-login'); ?></h3>
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Require Authentication Code for JWT Generation', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __('If enabled, an additional authentication code must be provided to generate JWT tokens.', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('If enabled, an additional authentication code must be provided to generate JWT tokens.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
@@ -108,13 +108,13 @@ if (! defined('ABSPATH')) {
                 <input type="radio" name="auth_requires_auth_code" value="0"
                     <?php echo $jwtSettings->getAuthenticationSettings()->isAuthKeyRequired() === false ? 'checked' : ''; ?>
                 />
-                <span class="sjl-gen-radio-label"><?php echo __('Not required', 'simple-jwt-login'); ?></span>
+                <span class="sjl-gen-radio-label"><?php echo esc_html__('Not required', 'simple-jwt-login'); ?></span>
             </label>
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="auth_requires_auth_code" value="1"
                     <?php echo $jwtSettings->getAuthenticationSettings()->isAuthKeyRequired() === true ? 'checked' : ''; ?>
                 />
-                <span class="sjl-gen-radio-label"><?php echo __('Required', 'simple-jwt-login'); ?></span>
+                <span class="sjl-gen-radio-label"><?php echo esc_html__('Required', 'simple-jwt-login'); ?></span>
             </label>
         </div>
     </div>
@@ -124,9 +124,9 @@ if (! defined('ABSPATH')) {
     <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-admin-settings"></span>
         <div>
-            <h3 class="sjl-gen-card-title"><?php echo __('Authentication Options', 'simple-jwt-login'); ?></h3>
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Authentication Options', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __('Additional settings for the authentication process.', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Additional settings for the authentication process.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
@@ -142,10 +142,10 @@ if (! defined('ABSPATH')) {
             </div>
             <div class="sjl-gen-feature-toggle-text">
                 <label for="auth_password_base64" class="sjl-gen-feature-label">
-                    <?php echo __('Authentication password / passhash is base64 encoded', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('Authentication password / passhash is base64 encoded', 'simple-jwt-login'); ?>
                 </label>
                 <p class="sjl-gen-feature-desc">
-                    <?php echo __('Enable this if the password or password hash sent in the request is base64 encoded.', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('Enable this if the password or password hash sent in the request is base64 encoded.', 'simple-jwt-login'); ?>
                 </p>
             </div>
         </div>
@@ -156,9 +156,9 @@ if (! defined('ABSPATH')) {
     <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-editor-code"></span>
         <div>
-            <h3 class="sjl-gen-card-title"><?php echo __('JWT Header Configuration', 'simple-jwt-login'); ?></h3>
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('JWT Header Configuration', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __('The standard header included in generated JWT tokens.', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('The standard header included in generated JWT tokens.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
@@ -204,11 +204,11 @@ if (! defined('ABSPATH')) {
                     ? '<span class="simple-jwt-error">!</span> '
                     : '';
                 ?>
-                <?php echo __('JWT Payload Configuration', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('JWT Payload Configuration', 'simple-jwt-login'); ?>
                 <span class="required">*</span>
             </h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __('Select which user data to include in the JWT payload.', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Select which user data to include in the JWT payload.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
@@ -288,9 +288,9 @@ if (! defined('ABSPATH')) {
     <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-shield"></span>
         <div>
-            <h3 class="sjl-gen-card-title"><?php echo __('JWT Signature Verification', 'simple-jwt-login'); ?></h3>
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('JWT Signature Verification', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __('How the JWT signature is verified for authenticity.', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('How the JWT signature is verified for authenticity.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
@@ -324,22 +324,22 @@ if (! defined('ABSPATH')) {
                     echo '<span class="simple-jwt-error">!</span> ';
                 }
                 ?>
-                <?php echo __('JWT Expiration', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('JWT Expiration', 'simple-jwt-login'); ?>
             </h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __('Configure how long generated JWT tokens are valid.', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Configure how long generated JWT tokens are valid.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
     <div class="sjl-gen-card-body">
         <label class="sjl-gen-field-label" for="jwt_auth_ttl">
-            <?php echo __('Expiration time (minutes)', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Expiration time (minutes)', 'simple-jwt-login'); ?>
             <span class="required">*</span>
         </label>
         <input type="text" name="jwt_auth_ttl" id="jwt_auth_ttl"
                class="form-control sjl-gen-input-medium"
                value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAuthJwtTtl()); ?>"
-               placeholder="<?php echo __('Number of minutes', 'simple-jwt-login'); ?>"
+               placeholder="<?php echo esc_attr__('Number of minutes', 'simple-jwt-login'); ?>"
         />
     </div>
 </div>
@@ -348,20 +348,20 @@ if (! defined('ABSPATH')) {
     <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-admin-site"></span>
         <div>
-            <h3 class="sjl-gen-card-title"><?php echo __('JWT Issuer (iss)', 'simple-jwt-login'); ?></h3>
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('JWT Issuer (iss)', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __('Specify the issuer claim included in generated JWT tokens.', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Specify the issuer claim included in generated JWT tokens.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
     <div class="sjl-gen-card-body">
         <label class="sjl-gen-field-label" for="jwt_auth_iss">
-            <?php echo __('Issuer value (iss payload claim)', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Issuer value (iss payload claim)', 'simple-jwt-login'); ?>
         </label>
         <input type="text" name="jwt_auth_iss" id="jwt_auth_iss"
                class="form-control sjl-gen-input-medium"
                value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAuthIss()); ?>"
-               placeholder="<?php echo __('Default issuer', 'simple-jwt-login'); ?>"
+               placeholder="<?php echo esc_attr__('Default issuer', 'simple-jwt-login'); ?>"
         />
     </div>
 </div>
@@ -370,23 +370,23 @@ if (! defined('ABSPATH')) {
     <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-shield-alt"></span>
         <div>
-            <h3 class="sjl-gen-card-title"><?php echo __('Access Control', 'simple-jwt-login'); ?></h3>
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Access Control', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __('Restrict JWT authentication to specific IP addresses. Leave blank to allow from any IP.', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Restrict JWT authentication to specific IP addresses. Leave blank to allow from any IP.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
     <div class="sjl-gen-card-body">
         <label class="sjl-gen-field-label" for="auth_ip">
-            <?php echo __('Allowed IP Addresses', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Allowed IP Addresses', 'simple-jwt-login'); ?>
         </label>
         <input type="text" id="auth_ip" name="auth_ip"
                class="form-control sjl-gen-input-medium"
                value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAllowedIps()); ?>"
-               placeholder="<?php echo __('e.g. 192.168.1.1, 10.0.0.0', 'simple-jwt-login'); ?>"
+               placeholder="<?php echo esc_attr__('e.g. 192.168.1.1, 10.0.0.0', 'simple-jwt-login'); ?>"
         />
         <p class="sjl-gen-card-desc" style="margin-top: 4px;">
-            <?php echo __('Comma-separated. Leave blank to allow all IP addresses.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Comma-separated. Leave blank to allow all IP addresses.', 'simple-jwt-login'); ?>
         </p>
     </div>
 </div>

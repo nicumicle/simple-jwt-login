@@ -16,9 +16,9 @@ if (!defined('ABSPATH')) {
     <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-networking"></span>
         <div>
-            <h3 class="sjl-gen-card-title"><?php echo __('Allow CORS Support', 'simple-jwt-login'); ?></h3>
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Allow CORS Support', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __('Allow cross-origin requests to JWT API endpoints.', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Allow cross-origin requests to JWT API endpoints.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
@@ -28,13 +28,13 @@ if (!defined('ABSPATH')) {
                 <input type="radio" name="cors[enabled]" id="allow_cors_no" value="0"
                     <?php echo $jwtSettings->getCorsSettings()->isCorsEnabled() === false ? 'checked' : ''; ?>
                 />
-                <span class="sjl-gen-radio-label"><?php echo __('Disabled', 'simple-jwt-login'); ?></span>
+                <span class="sjl-gen-radio-label"><?php echo esc_html__('Disabled', 'simple-jwt-login'); ?></span>
             </label>
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="cors[enabled]" id="allow_cors_yes" value="1"
                     <?php echo $jwtSettings->getCorsSettings()->isCorsEnabled() === true ? 'checked' : ''; ?>
                 />
-                <span class="sjl-gen-radio-label"><?php echo __('Enabled', 'simple-jwt-login'); ?></span>
+                <span class="sjl-gen-radio-label"><?php echo esc_html__('Enabled', 'simple-jwt-login'); ?></span>
             </label>
         </div>
     </div>
@@ -45,10 +45,10 @@ if (!defined('ABSPATH')) {
         <span class="dashicons dashicons-editor-code"></span>
         <div>
             <h3 class="sjl-gen-card-title">
-                <?php echo __('CORS Headers Configuration', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('CORS Headers Configuration', 'simple-jwt-login'); ?>
             </h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __('Configure which CORS headers to include in API responses. Enable a header and set its value.', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Configure which CORS headers to include in API responses. Enable a header and set its value.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
@@ -65,7 +65,7 @@ if (!defined('ABSPATH')) {
                     <code class="sjl-gen-var-chip">Access-Control-Allow-Origin</code>
                 </label>
                 <p class="sjl-gen-feature-desc sjl-cors-header-desc">
-                    <?php echo __('Specifies which origins are permitted to access the resource. Use <code>*</code> to allow any origin, or list specific domains.', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('Specifies which origins are permitted to access the resource. Use <code>*</code> to allow any origin, or list specific domains.', 'simple-jwt-login'); ?>
                 </p>
                 <input type="text" class="form-control sjl-gen-input-medium sjl-cors-header-input" name="cors[allow_origin]"
                        value="<?php echo esc_attr($jwtSettings->getCorsSettings()->getAllowOrigin()); ?>"
@@ -73,7 +73,7 @@ if (!defined('ABSPATH')) {
                 />
                 <p class="sjl-gen-feature-desc">
                     <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin" target="_blank">
-                        <?php echo __('MDN Reference &nearr;', 'simple-jwt-login'); ?>
+                        <?php echo esc_html__('MDN Reference &nearr;', 'simple-jwt-login'); ?>
                     </a>
                 </p>
             </div>
@@ -90,7 +90,7 @@ if (!defined('ABSPATH')) {
                     <code class="sjl-gen-var-chip">Access-Control-Allow-Methods</code>
                 </label>
                 <p class="sjl-gen-feature-desc sjl-cors-header-desc">
-                    <?php echo __('Specifies the HTTP methods permitted when accessing the resource in response to a preflight request.', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('Specifies the HTTP methods permitted when accessing the resource in response to a preflight request.', 'simple-jwt-login'); ?>
                 </p>
                 <input type="text" class="form-control sjl-gen-input-medium sjl-cors-header-input" name="cors[allow_methods]"
                        value="<?php echo esc_attr($jwtSettings->getCorsSettings()->getAllowMethods()); ?>"
@@ -98,7 +98,7 @@ if (!defined('ABSPATH')) {
                 />
                 <p class="sjl-gen-feature-desc">
                     <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Methods" target="_blank">
-                        <?php echo __('MDN Reference &nearr;', 'simple-jwt-login'); ?>
+                        <?php echo esc_html__('MDN Reference &nearr;', 'simple-jwt-login'); ?>
                     </a>
                 </p>
             </div>
@@ -115,7 +115,7 @@ if (!defined('ABSPATH')) {
                     <code class="sjl-gen-var-chip">Access-Control-Allow-Headers</code>
                 </label>
                 <p class="sjl-gen-feature-desc sjl-cors-header-desc">
-                    <?php echo __('Indicates which HTTP headers can be used during the actual request following a preflight.', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('Indicates which HTTP headers can be used during the actual request following a preflight.', 'simple-jwt-login'); ?>
                 </p>
                 <input type="text" class="form-control sjl-gen-input-medium sjl-cors-header-input" name="cors[allow_headers]"
                        value="<?php echo esc_attr($jwtSettings->getCorsSettings()->getAllowHeaders()); ?>"
@@ -123,7 +123,7 @@ if (!defined('ABSPATH')) {
                 />
                 <p class="sjl-gen-feature-desc">
                     <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Headers" target="_blank">
-                        <?php echo __('MDN Reference &nearr;', 'simple-jwt-login'); ?>
+                        <?php echo esc_html__('MDN Reference &nearr;', 'simple-jwt-login'); ?>
                     </a>
                 </p>
             </div>

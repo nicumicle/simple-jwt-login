@@ -21,9 +21,9 @@ $allowedEvents  = WebhooksSettings::ALLOWED_EVENTS;
     <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-rest-api"></span>
         <div>
-            <h3 class="sjl-gen-card-title"><?php echo __('Webhooks', 'simple-jwt-login'); ?></h3>
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Webhooks', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __(
+                <?php echo esc_html__(
                     'Fire HTTP requests on login, register, or auth events. '
                     . 'Customize the method, headers, and payload with dynamic variables.',
                     'simple-jwt-login'
@@ -74,14 +74,14 @@ $allowedEvents  = WebhooksSettings::ALLOWED_EVENTS;
 
                     <div class="sjl-webhook-field-row">
                         <div class="sjl-webhook-field">
-                            <label><?php echo __('Endpoint URL', 'simple-jwt-login'); ?></label>
+                            <label><?php echo esc_html__('Endpoint URL', 'simple-jwt-login'); ?></label>
                             <input type="text"
                                    class="form-control sjl-webhook-url"
                                    placeholder="https://example.com/webhook"
                                    value="<?php echo esc_attr($url); ?>">
                         </div>
                         <div class="sjl-webhook-field sjl-webhook-field-method">
-                            <label><?php echo __('Method', 'simple-jwt-login'); ?></label>
+                            <label><?php echo esc_html__('Method', 'simple-jwt-login'); ?></label>
                             <select class="form-control sjl-webhook-method">
                                 <?php foreach ($allowedMethods as $m) : ?>
                                 <option value="<?php echo esc_attr($m); ?>" <?php echo $method === $m ? 'selected' : ''; ?>>
@@ -94,7 +94,7 @@ $allowedEvents  = WebhooksSettings::ALLOWED_EVENTS;
 
                     <div class="sjl-webhook-field-row">
                         <div class="sjl-webhook-field">
-                            <label><?php echo __('Trigger on Events', 'simple-jwt-login'); ?></label>
+                            <label><?php echo esc_html__('Trigger on Events', 'simple-jwt-login'); ?></label>
                             <div class="sjl-webhook-events">
                                 <?php foreach ($allowedEvents as $ev) :
                                     $checked = in_array($ev, $events, true);
@@ -115,7 +115,7 @@ $allowedEvents  = WebhooksSettings::ALLOWED_EVENTS;
                     <div class="sjl-webhook-subsection">
                         <div class="sjl-webhook-subsection-header">
                             <span class="dashicons dashicons-tag"></span>
-                            <?php echo __('Custom Headers', 'simple-jwt-login'); ?>
+                            <?php echo esc_html__('Custom Headers', 'simple-jwt-login'); ?>
                             <span class="sjl-header-count"><?php echo count($headers); ?></span>
                         </div>
                         <div class="sjl-webhook-headers-rows">
@@ -142,17 +142,17 @@ $allowedEvents  = WebhooksSettings::ALLOWED_EVENTS;
                         </div>
                         <button type="button" class="sjl-btn-add sjl-add-header">
                             <span class="dashicons dashicons-plus-alt2"></span>
-                            <?php echo __('Add Header', 'simple-jwt-login'); ?>
+                            <?php echo esc_html__('Add Header', 'simple-jwt-login'); ?>
                         </button>
                     </div>
 
                     <div class="sjl-webhook-subsection">
                         <div class="sjl-webhook-subsection-header">
                             <span class="dashicons dashicons-editor-code"></span>
-                            <?php echo __('Custom Payload', 'simple-jwt-login'); ?>
+                            <?php echo esc_html__('Custom Payload', 'simple-jwt-login'); ?>
                         </div>
                         <div class="sjl-vars-bar">
-                            <span class="sjl-vars-label"><?php echo __('Variables:', 'simple-jwt-login'); ?></span>
+                            <span class="sjl-vars-label"><?php echo esc_html__('Variables:', 'simple-jwt-login'); ?></span>
                             <span class="sjl-var-chip" data-var="{{user_id}}">{{user_id}}</span>
                             <span class="sjl-var-chip" data-var="{{user_email}}">{{user_email}}</span>
                             <span class="sjl-var-chip" data-var="{{event}}">{{event}}</span>
@@ -161,7 +161,7 @@ $allowedEvents  = WebhooksSettings::ALLOWED_EVENTS;
                                   rows="4"
                                   placeholder='{"user_id": "{{user_id}}", "email": "{{user_email}}", "event": "{{event}}"}'><?php echo esc_textarea($payloadTemplate); ?></textarea>
                         <p class="sjl-field-hint">
-                            <?php echo __(
+                            <?php echo esc_html__(
                                 'Leave empty to send the default payload. Click a variable to insert it at the cursor.',
                                 'simple-jwt-login'
                             ); ?>
@@ -178,7 +178,7 @@ $allowedEvents  = WebhooksSettings::ALLOWED_EVENTS;
                 type="button"
                 class="btn btn-outline-secondary"
                 id="sjl-add-webhook"
-                value="<?php echo __('+ Add Webhook', 'simple-jwt-login'); ?>"
+                value="<?php echo esc_attr__('+ Add Webhook', 'simple-jwt-login'); ?>"
             />
         </div>
 
@@ -192,7 +192,7 @@ $allowedEvents  = WebhooksSettings::ALLOWED_EVENTS;
             <button type="button" class="sjl-webhook-toggle" aria-expanded="true">
                 <span class="dashicons dashicons-arrow-down-alt2"></span>
             </button>
-            <span class="sjl-webhook-url-preview"><?php echo __('New Webhook', 'simple-jwt-login'); ?></span>
+            <span class="sjl-webhook-url-preview"><?php echo esc_html__('New Webhook', 'simple-jwt-login'); ?></span>
             <span class="sjl-method-badge sjl-method-post"><?php echo esc_html(WebhooksSettings::DEFAULT_METHOD); ?></span>
             <span class="sjl-event-tags">
                 <?php foreach ($allowedEvents as $ev) : ?>
@@ -211,11 +211,11 @@ $allowedEvents  = WebhooksSettings::ALLOWED_EVENTS;
         <div class="sjl-webhook-item-body">
             <div class="sjl-webhook-field-row">
                 <div class="sjl-webhook-field">
-                    <label><?php echo __('Endpoint URL', 'simple-jwt-login'); ?></label>
+                    <label><?php echo esc_html__('Endpoint URL', 'simple-jwt-login'); ?></label>
                     <input type="text" class="form-control sjl-webhook-url" placeholder="https://example.com/webhook" value="">
                 </div>
                 <div class="sjl-webhook-field sjl-webhook-field-method">
-                    <label><?php echo __('Method', 'simple-jwt-login'); ?></label>
+                    <label><?php echo esc_html__('Method', 'simple-jwt-login'); ?></label>
                     <select class="form-control sjl-webhook-method">
                         <?php foreach ($allowedMethods as $m) : ?>
                         <option value="<?php echo esc_attr($m); ?>" <?php echo $m === WebhooksSettings::DEFAULT_METHOD ? 'selected' : ''; ?>>
@@ -227,7 +227,7 @@ $allowedEvents  = WebhooksSettings::ALLOWED_EVENTS;
             </div>
             <div class="sjl-webhook-field-row">
                 <div class="sjl-webhook-field">
-                    <label><?php echo __('Trigger on Events', 'simple-jwt-login'); ?></label>
+                    <label><?php echo esc_html__('Trigger on Events', 'simple-jwt-login'); ?></label>
                     <div class="sjl-webhook-events">
                         <?php foreach ($allowedEvents as $ev) : ?>
                         <label class="sjl-event-checkbox-label">
@@ -242,22 +242,22 @@ $allowedEvents  = WebhooksSettings::ALLOWED_EVENTS;
             <div class="sjl-webhook-subsection">
                 <div class="sjl-webhook-subsection-header">
                     <span class="dashicons dashicons-tag"></span>
-                    <?php echo __('Custom Headers', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('Custom Headers', 'simple-jwt-login'); ?>
                     <span class="sjl-header-count">0</span>
                 </div>
                 <div class="sjl-webhook-headers-rows"></div>
                 <button type="button" class="sjl-btn-add sjl-add-header">
                     <span class="dashicons dashicons-plus-alt2"></span>
-                    <?php echo __('Add Header', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('Add Header', 'simple-jwt-login'); ?>
                 </button>
             </div>
             <div class="sjl-webhook-subsection">
                 <div class="sjl-webhook-subsection-header">
                     <span class="dashicons dashicons-editor-code"></span>
-                    <?php echo __('Custom Payload', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('Custom Payload', 'simple-jwt-login'); ?>
                 </div>
                 <div class="sjl-vars-bar">
-                    <span class="sjl-vars-label"><?php echo __('Variables:', 'simple-jwt-login'); ?></span>
+                    <span class="sjl-vars-label"><?php echo esc_html__('Variables:', 'simple-jwt-login'); ?></span>
                     <span class="sjl-var-chip" data-var="{{user_id}}">{{user_id}}</span>
                     <span class="sjl-var-chip" data-var="{{user_email}}">{{user_email}}</span>
                     <span class="sjl-var-chip" data-var="{{event}}">{{event}}</span>
@@ -266,7 +266,7 @@ $allowedEvents  = WebhooksSettings::ALLOWED_EVENTS;
                           rows="4"
                           placeholder='{"user_id": "{{user_id}}", "email": "{{user_email}}", "event": "{{event}}"}'></textarea>
                 <p class="sjl-field-hint">
-                    <?php echo __(
+                    <?php echo esc_html__(
                         'Leave empty to send the default payload. Click a variable to insert it at the cursor.',
                         'simple-jwt-login'
                     ); ?>

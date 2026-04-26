@@ -29,9 +29,9 @@ $enabledHooksCount = count(
     <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-embed-generic"></span>
         <div>
-            <h3 class="sjl-gen-card-title"><?php echo __('WordPress Hooks Integration', 'simple-jwt-login'); ?></h3>
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('WordPress Hooks Integration', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
-                <?php echo __('Enable specific WordPress hooks to extend JWT functionality. Only enabled hooks will be triggered.', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Enable specific WordPress hooks to extend JWT functionality. Only enabled hooks will be triggered.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
@@ -39,7 +39,7 @@ $enabledHooksCount = count(
 
         <div class="sjl-hooks-toolbar">
             <span class="sjl-hooks-count-label">
-                <span id="sjl-hooks-enabled-count"><?php echo $enabledHooksCount; ?></span>
+                <span id="sjl-hooks-enabled-count"><?php echo (int) $enabledHooksCount; ?></span>
                 <?php
                 echo sprintf(
                     ' / %d %s',
@@ -87,7 +87,7 @@ $enabledHooksCount = count(
                         <div class="sjl-hook-item-meta">
                             <?php if (! empty($singleHook['parameters'])) { ?>
                             <div class="sjl-hook-meta-row">
-                                <span class="sjl-hook-meta-label"><?php echo __('Parameters', 'simple-jwt-login'); ?></span>
+                                <span class="sjl-hook-meta-label"><?php echo esc_html__('Parameters', 'simple-jwt-login'); ?></span>
                                 <span class="sjl-hook-meta-value">
                                     <?php foreach ($singleHook['parameters'] as $param) { ?>
                                         <code class="sjl-gen-var-chip"><?php echo esc_html($param); ?></code>
@@ -97,7 +97,7 @@ $enabledHooksCount = count(
                             <?php } ?>
 
                             <div class="sjl-hook-meta-row">
-                                <span class="sjl-hook-meta-label"><?php echo __('Return', 'simple-jwt-login'); ?></span>
+                                <span class="sjl-hook-meta-label"><?php echo esc_html__('Return', 'simple-jwt-login'); ?></span>
                                 <span class="sjl-hook-meta-value">
                                     <?php if (isset($singleHook['return'])) {
                                         echo '<code class="sjl-gen-var-chip">' . esc_html($singleHook['return']) . '</code>';
@@ -108,9 +108,9 @@ $enabledHooksCount = count(
                             </div>
 
                             <div class="sjl-hook-meta-row sjl-hook-meta-desc">
-                                <span class="sjl-hook-meta-label"><?php echo __('Description', 'simple-jwt-login'); ?></span>
+                                <span class="sjl-hook-meta-label"><?php echo esc_html__('Description', 'simple-jwt-login'); ?></span>
                                 <span class="sjl-hook-meta-value sjl-gen-card-desc">
-                                    <?php echo str_replace("\n", "<br />", esc_html($singleHook['description'])); ?>
+                                    <?php echo nl2br(esc_html($singleHook['description'])); ?>
                                 </span>
                             </div>
                         </div>

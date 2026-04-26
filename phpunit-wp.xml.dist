@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        bootstrap="./bootstrap-wp.php"
+        backupGlobals="false"
+        colors="true"
+        testdox="true"
+        processIsolation="false"
+        stopOnFailure="false"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd"
+        cacheDirectory=".phpunit.cache"
+        backupStaticProperties="false"
+>
+    <php>
+        <ini name="memory_limit" value="512M"/>
+        <env name="WORDPRESS_DB_USER"         value="wordpress"      force="true"/>
+        <env name="WORDPRESS_DB_PASSWORD"     value="wordpress"      force="true"/>
+        <env name="WORDPRESS_DB_NAME"         value="wordpress_test" force="true"/>
+        <env name="WORDPRESS_DB_HOST"         value="wpdb:3308"      force="true"/>
+        <env name="WORDPRESS_TABLE_PREFIX"    value="wp_"            force="true"/>
+        <!-- Path to wp-tests-config.php, read by the wp-phpunit bootstrap wrapper -->
+        <env name="WP_PHPUNIT__TESTS_CONFIG"  value="./wp-tests-config.php" force="true"/>
+    </php>
+    <testsuites>
+        <testsuite name="WP-Integration">
+            <directory suffix="Test.php">./tests/WP</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory suffix=".php">./simple-jwt-login/src</directory>
+        </include>
+        <exclude>
+            <file>./simple-jwt-login/src/Modules/WordPressData.php</file>
+            <directory suffix=".php">./simple-jwt-login/src/Libraries/</directory>
+        </exclude>
+    </source>
+</phpunit>

@@ -180,6 +180,14 @@ interface Repository
     public function addUserMeta($userId, $metaKey, $value);
 
     /**
+     * @param int $userId
+     * @param string $metaKey
+     * @param string $value
+     * @return bool|int
+     */
+    public function updateUserMeta($userId, $metaKey, $value);
+
+    /**
      * @param WP_User $user
      *
      * @return mixed

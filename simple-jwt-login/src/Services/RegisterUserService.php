@@ -117,7 +117,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
                     if (!in_array($metaKey, $allowedUserMetaKeys)) {
                         continue;
                     }
-                    $this->wordPressData->addUserMeta(
+                    $this->wordPressData->updateUserMeta(
                         $userId,
                         $this->wordPressData->sanitizeTextField($metaKey),
                         $this->wordPressData->sanitizeTextField($metaValue)

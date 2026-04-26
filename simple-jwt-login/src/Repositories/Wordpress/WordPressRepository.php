@@ -332,6 +332,17 @@ class WordPressRepository implements Repository
     /**
      * @param int $userId
      * @param string $metaKey
+     * @param string $value
+     * @return bool|int
+     */
+    public function updateUserMeta($userId, $metaKey, $value)
+    {
+        return update_user_meta($userId, $metaKey, $value);
+    }
+
+    /**
+     * @param int $userId
+     * @param string $metaKey
      * @param string $metaValue
      * @return bool
      */

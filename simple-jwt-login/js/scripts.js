@@ -1,5 +1,9 @@
 jQuery(document).ready(
     function ($) {
+        $('#simple-jwt-login').css('visibility', 'visible');
+        $('#sjl-page-loader').addClass('sjl-loader-hidden');
+        setTimeout(function () { $('#sjl-page-loader').remove(); }, 250);
+
         $('#auth_codes').append($('#code_line').html());
 
         // Applications: card catalog panel switching

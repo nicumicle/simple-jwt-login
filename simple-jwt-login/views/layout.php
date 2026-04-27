@@ -234,6 +234,9 @@ $sidebarGroups = [
 ];
 
 ?>
+<div id="sjl-page-loader" aria-hidden="true">
+    <div class="sjl-loader-spinner"></div>
+</div>
 <form method="post">
     <?php
     $activeTab = $settingsPages[0]['index'];
@@ -253,7 +256,7 @@ $sidebarGroups = [
         ->getWordPressData()
         ->insertNonce(WordPressRepository::NONCE_NAME);
     ?>
-    <div id="simple-jwt-login" class="wrapper">
+    <div id="simple-jwt-login" class="wrapper" style="visibility:hidden">
 		<?php
         if ($showStatusBar) {
             ?>

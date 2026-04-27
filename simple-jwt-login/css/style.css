@@ -1,4 +1,36 @@
 /* ============================================
+   Page Loader (FOUC prevention)
+   ============================================ */
+#sjl-page-loader {
+    position: fixed;
+    inset: 0;
+    background: #f0f0f1;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease;
+}
+
+#sjl-page-loader.sjl-loader-hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.sjl-loader-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #c3c4c7;
+    border-top-color: #263544;
+    border-radius: 50%;
+    animation: sjl-spin 0.7s linear infinite;
+}
+
+@keyframes sjl-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ============================================
    Design Tokens + Base
    ============================================ */
 #simple-jwt-login {
@@ -22,88 +54,69 @@
 }
 
 /* ============================================
-   Custom Checkbox & Radio Controls
+   Checkbox & Radio Controls
    ============================================ */
 
+/* Strip WP-admin overrides and establish a neutral base */
 #simple-jwt-login input[type="checkbox"],
 #simple-jwt-login input[type="radio"] {
     -webkit-appearance: none;
     appearance: none;
-    width: 17px;
-    height: 17px;
-    padding: 0;             /* block WP-admin styles from inflating the element */
-    border: 1.5px solid #c3c4c7;
-    background-color: #fff;
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    padding: 0;
+    margin: 0;
+    border: 1.5px solid #b4b9be;
+    background: #fff;
     background-repeat: no-repeat;
     background-position: center;
     background-size: 0;
-    background-image: none;
+    vertical-align: middle;
     cursor: pointer;
     flex-shrink: 0;
-    margin: 0;
-    transition:
-        border-color 0.15s ease,
-        background-color 0.15s ease,
-        box-shadow 0.15s ease,
-        background-size 0.12s ease;
+    transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s;
 }
 
-#simple-jwt-login input[type="checkbox"] { border-radius: 4px; }
+#simple-jwt-login input[type="checkbox"] { border-radius: 3px; }
 #simple-jwt-login input[type="radio"]    { border-radius: 50%; }
 
-/* ── Hover ── */
+/* Hover */
 #simple-jwt-login input[type="checkbox"]:hover,
 #simple-jwt-login input[type="radio"]:hover {
     border-color: var(--sjl-primary);
-    background-color: rgba(38, 53, 68, 0.04);
 }
 
-/* ── Focus ring ── */
+/* Focus */
 #simple-jwt-login input[type="checkbox"]:focus,
 #simple-jwt-login input[type="radio"]:focus {
     outline: none;
     border-color: var(--sjl-primary);
-    box-shadow: 0 0 0 3px rgba(38, 53, 68, 0.18);
+    box-shadow: 0 0 0 2px rgba(38, 53, 68, 0.2);
 }
 
-/* ── Checkbox checked: solid fill + white checkmark ── */
+/* Checkbox checked: filled + white tick */
 #simple-jwt-login input[type="checkbox"]:checked {
     background-color: var(--sjl-primary);
     border-color: var(--sjl-primary);
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
-    background-size: 13px 13px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' d='M3 8l3.5 3.5L13 5'/%3E%3C/svg%3E");
+    background-size: 11px 11px;
 }
 
-#simple-jwt-login input[type="checkbox"]:checked:hover {
-    background-color: #1a2630;
-    border-color: #1a2630;
-}
-
-/*
- * Radio checked: ring + dot pattern.
- * The outer ring stays the SAME SIZE in both states, so checked and
- * unchecked radios look visually identical in weight. Only a center
- * dot appears on check — avoids the "filled circle looks bigger" issue.
- */
+/* Radio checked: white fill + accent dot */
 #simple-jwt-login input[type="radio"]:checked {
     background-color: #fff;
     border-color: var(--sjl-primary);
     border-width: 1.5px;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2.5' fill='%23263544'/%3e%3c/svg%3e");
-    background-size: 9px 9px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='4' fill='%23263544'/%3E%3C/svg%3E");
+    background-size: 16px 16px;
 }
 
-#simple-jwt-login input[type="radio"]:checked:hover {
-    border-color: #1a2630;
-    background-color: rgba(38, 53, 68, 0.04);
-}
-
-/* ── Disabled ── */
+/* Disabled */
 #simple-jwt-login input[type="checkbox"]:disabled,
 #simple-jwt-login input[type="radio"]:disabled {
-    opacity: 0.45;
+    opacity: 0.5;
     cursor: not-allowed;
-    pointer-events: none;
 }
 
 #simple-jwt-login span.beta {

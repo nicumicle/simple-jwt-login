@@ -37,12 +37,12 @@ class AuthenticationSettingsTest extends TestCase
 
     private function buildFromPost(array $post): AuthenticationSettings
     {
-        $s = (new AuthenticationSettings())
+        $authSettings = (new AuthenticationSettings())
             ->withWordPressData($this->wordPressData)
             ->withSettings([])
             ->withPost($post);
-        $s->initSettingsFromPost();
-        return $s;
+        $authSettings->initSettingsFromPost();
+        return $authSettings;
     }
 
     // ─── isAuthenticationEnabled ─────────────────────────────────────────────
@@ -151,8 +151,8 @@ class AuthenticationSettingsTest extends TestCase
 
     public function testGetAuthIssReturnsConfiguredValue(): void
     {
-        $s = $this->buildWithSettings(['jwt_auth_iss' => 'https://example.com']);
-        $this->assertSame('https://example.com', $s->getAuthIss());
+        $authSettings = $this->buildWithSettings(['jwt_auth_iss' => 'https://example.com']);
+        $this->assertSame('https://example.com', $authSettings->getAuthIss());
     }
 
     public function testGetAuthIssDefaultsToSiteUrl(): void
@@ -324,11 +324,11 @@ class AuthenticationSettingsTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage($exceptionMessage);
 
-        $s = (new AuthenticationSettings())
+        $authSettings = (new AuthenticationSettings())
             ->withWordPressData($this->wordPressData)
             ->withSettings([])
             ->withPost($post);
-        $s->validateSettings();
+        $authSettings->validateSettings();
     }
 
     public static function invalidSettingsProvider(): array
@@ -400,11 +400,11 @@ class AuthenticationSettingsTest extends TestCase
     #[DataProvider('validSettingsProvider')]
     public function testValidateSettingsPasses(array $post): void
     {
-        $s = (new AuthenticationSettings())
+        $authSettings = (new AuthenticationSettings())
             ->withWordPressData($this->wordPressData)
             ->withSettings([])
             ->withPost($post);
-        $s->validateSettings();
+        $authSettings->validateSettings();
         $this->addToAssertionCount(1);
     }
 

@@ -29,6 +29,8 @@ class SimpleJWTLoginSettingsTest extends TestCase
         $wordPressDataMock = $this->createStub(WordPressDataInterface::class);
         $wordPressDataMock->method('roleExists')
             ->willReturn(true);
+        $wordPressDataMock->method('wpUnslash')
+            ->willReturnArgument(0);
         $this->simpleJWTSettings = new SimpleJWTLoginSettings($wordPressDataMock);
     }
 
@@ -166,6 +168,8 @@ class SimpleJWTLoginSettingsTest extends TestCase
         $wordPressDataMock = $this->createStub(WordPressDataInterface::class);
         $wordPressDataMock->method('checkNonce')
                           ->willReturn(false);
+        $wordPressDataMock->method('wpUnslash')
+            ->willReturnArgument(0);
         $settings = new SimpleJWTLoginSettings($wordPressDataMock);
         $settings->watchForUpdates(
             [
@@ -187,6 +191,8 @@ class SimpleJWTLoginSettingsTest extends TestCase
             ->willReturn(true);
         $wordPressDataMock->method('roleExists')
             ->willReturn(true);
+        $wordPressDataMock->method('wpUnslash')
+            ->willReturnArgument(0);
         $wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn($settings);
         $simpleJWTSettings = new SimpleJWTLoginSettings($wordPressDataMock);
@@ -212,6 +218,8 @@ class SimpleJWTLoginSettingsTest extends TestCase
             ->willReturn(true);
         $wordPressDataMock->method('roleExists')
             ->willReturn(true);
+        $wordPressDataMock->method('wpUnslash')
+            ->willReturnArgument(0);
         $wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(false);
         $simpleJWTSettings = new SimpleJWTLoginSettings($wordPressDataMock);
@@ -317,6 +325,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
         $wordPressDataMock = $this->createStub(WordPressDataInterface::class);
         $wordPressDataMock->method('checkNonce')->willReturn(true);
         $wordPressDataMock->method('roleExists')->willReturn(true);
+        $wordPressDataMock->method('wpUnslash')->willReturnArgument(0);
         $wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode(['general' => ['route_namespace' => 'old-ns']]));
         $simpleJWTSettings = new SimpleJWTLoginSettings($wordPressDataMock);

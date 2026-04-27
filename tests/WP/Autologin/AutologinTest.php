@@ -8,7 +8,6 @@ use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJwtLoginTests\WP\WPTestCase;
 
 /**
  * Base autologin scenarios: JWT validation errors, user lookup by email,
@@ -17,10 +16,9 @@ use SimpleJwtLoginTests\WP\WPTestCase;
  * Config: autologin enabled, login by email, no IP/ISS/auth-code restrictions,
  * NO_REDIRECT so every successful login returns a JSON response.
  */
-class AutologinTest extends WPTestCase
+class AutologinTest extends AutologinTestCase
 {
     private const JWT_SECRET = 'autologin-base-secret';
-    private const ROUTE      = '/simple-jwt-login/v1/autologin';
 
     public static function setUpBeforeClass(): void
     {

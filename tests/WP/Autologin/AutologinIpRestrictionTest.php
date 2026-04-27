@@ -7,7 +7,6 @@ use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJwtLoginTests\WP\WPTestCase;
 
 /**
  * IP allowlist enforcement on the autologin endpoint.
@@ -16,10 +15,9 @@ use SimpleJwtLoginTests\WP\WPTestCase;
  * In the test CLI environment REMOTE_ADDR / HTTP_CLIENT_IP are not set,
  * so getClientIP() returns null, which is not in the allowlist.
  */
-class AutologinIpRestrictionTest extends WPTestCase
+class AutologinIpRestrictionTest extends AutologinTestCase
 {
     private const JWT_SECRET = 'autologin-ip-secret';
-    private const ROUTE      = '/simple-jwt-login/v1/autologin';
 
     public static function setUpBeforeClass(): void
     {

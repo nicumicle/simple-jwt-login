@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<ruleset name="Controversial Rules for Tests (custom)"
+         xmlns="http://pmd.sf.net/ruleset/1.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
+         xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
+
+    <description>
+        Controversial ruleset for tests with Superglobals excluded.
+        WPTestCase::dispatch() must write to $_REQUEST and $_SERVER to simulate
+        WordPress's HTTP environment before rest_api_init fires.
+    </description>
+
+    <rule ref="rulesets/controversial.xml">
+        <exclude name="Superglobals"/>
+    </rule>
+
+</ruleset>

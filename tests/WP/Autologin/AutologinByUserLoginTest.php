@@ -7,17 +7,15 @@ use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJwtLoginTests\WP\WPTestCase;
 
 /**
  * Autologin with jwt_login_by = JWT_LOGIN_BY_USER_LOGIN.
  *
  * The JWT payload must contain the user's user_login (WordPress username).
  */
-class AutologinByUserLoginTest extends WPTestCase
+class AutologinByUserLoginTest extends AutologinTestCase
 {
     private const JWT_SECRET = 'autologin-by-login-secret';
-    private const ROUTE      = '/simple-jwt-login/v1/autologin';
 
     public static function setUpBeforeClass(): void
     {

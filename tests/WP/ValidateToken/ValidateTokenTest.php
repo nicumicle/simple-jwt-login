@@ -81,16 +81,6 @@ class ValidateTokenTest extends WPTestCase
         return $this->makeJwt(['email' => $email]);
     }
 
-    private function jwtForUserId(int $userId): string
-    {
-        return $this->makeJwt(['id' => $userId]);
-    }
-
-    private function jwtForUserLogin(string $login): string
-    {
-        return $this->makeJwt(['login' => $login]);
-    }
-
     // ─── Feature disabled ─────────────────────────────────────────────────────
 
     #[TestDox('Returns AUTHENTICATION_IS_NOT_ENABLED when authentication is disabled')]

@@ -430,12 +430,12 @@ class ResetPasswordTest extends WPTestCase
         ]));
 
         [$email] = $this->createUser();
-        $jwtWithDifferentEmail = $this->jwtForEmail('different-' . $email);
+        $wrongEmailJwt = $this->jwtForEmail('different-' . $email);
 
         $response = $this->request('PUT', self::ROUTE, [
             'email'        => $email,
             'new_password' => 'newpassword',
-            'JWT'          => $jwtWithDifferentEmail,
+            'JWT'          => $wrongEmailJwt,
         ]);
 
         $data = $response->get_data();

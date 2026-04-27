@@ -8,17 +8,15 @@ use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJwtLoginTests\WP\WPTestCase;
 
 /**
  * JWT issuer (iss) restriction on the autologin endpoint.
  *
  * Config: login_iss = 'issuer-a,issuer-b' — only these two issuers are permitted.
  */
-class AutologinIssRestrictionTest extends WPTestCase
+class AutologinIssRestrictionTest extends AutologinTestCase
 {
     private const JWT_SECRET = 'autologin-iss-secret';
-    private const ROUTE      = '/simple-jwt-login/v1/autologin';
 
     public static function setUpBeforeClass(): void
     {

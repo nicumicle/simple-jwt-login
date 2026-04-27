@@ -241,12 +241,14 @@ class SimpleJWTLoginSettings
 
         $oldSettings = $this->settings !== null ? $this->settings : [];
 
-        $this->post = $post;
+        // WordPress applies wp_magic_quotes() to $_POST at boot; strip those slashes
+        // before processing so values are stored clean and don't grow on each save.
+        $this->post = $this->wordPressData->wpUnslash($post);
         $this->settingsParsers = (new SettingsFactory())->getAll();
 
         foreach ($this->settingsParsers as $oneParser) {
             $oneParser
-                ->withPost($post)
+                ->withPost($this->post)
                 ->withSettings($this->settings)
                 ->withWordPressData($this->wordPressData)
                 ->initSettingsFromPost();

@@ -8,18 +8,16 @@ use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJwtLoginTests\WP\WPTestCase;
 
 /**
  * Auth-code (AUTH_KEY) enforcement on the autologin endpoint.
  *
  * Config: autologin enabled, require_login_auth = true, one valid auth code.
  */
-class AutologinAuthCodeTest extends WPTestCase
+class AutologinAuthCodeTest extends AutologinTestCase
 {
     private const JWT_SECRET  = 'autologin-authcode-secret';
     private const VALID_CODE  = 'super-secret-auth-code';
-    private const ROUTE       = '/simple-jwt-login/v1/autologin';
 
     public static function setUpBeforeClass(): void
     {

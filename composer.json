@@ -46,7 +46,7 @@
     "phpmd-test-cleancode" : "vendor/bin/phpmd tests/ text cleancode",
     "phpmd-test-unusedcode" : "vendor/bin/phpmd tests/ text unusedcode",
     "phpmd-test-naming" : "vendor/bin/phpmd tests/ text naming",
-    "phpmd-test-controversial" : "vendor/bin/phpmd tests/ text controversial",
+    "phpmd-test-controversial" : "vendor/bin/phpmd tests/ text phpmd-test-controversial.xml",
     "check-plugin": [
         "@phpcs",
         "@phpmd-design",

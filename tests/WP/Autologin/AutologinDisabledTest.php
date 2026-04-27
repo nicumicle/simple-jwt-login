@@ -7,15 +7,13 @@ use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJwtLoginTests\WP\WPTestCase;
 
 /**
  * Verifies that every autologin request is rejected when the feature is disabled.
  */
-class AutologinDisabledTest extends WPTestCase
+class AutologinDisabledTest extends AutologinTestCase
 {
     private const JWT_SECRET = 'autologin-disabled-secret';
-    private const ROUTE      = '/simple-jwt-login/v1/autologin';
 
     public static function setUpBeforeClass(): void
     {

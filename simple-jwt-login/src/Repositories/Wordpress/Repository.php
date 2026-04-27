@@ -303,8 +303,8 @@ interface Repository
     public function isUserLoggedIn();
 
     /**
-     * @param string $value
-     * @return string
+     * @param string|array $value
+     * @return string|array
      */
     public function wpUnslash($value);
 }

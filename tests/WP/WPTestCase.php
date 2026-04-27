@@ -77,10 +77,8 @@ abstract class WPTestCase extends WP_UnitTestCase
      */
     private function dispatch(string $method, string $route, array $params, array $headers, bool $asJson = false): WP_REST_Response
     {
-        global $wp_rest_server;
-
         $originalRequest       = $_REQUEST;
-        $originalRequestMethod = $_SERVER['REQUEST_METHOD'] ?? null;
+        $prevMethod = $_SERVER['REQUEST_METHOD'] ?? null;
 
         // Populate $_REQUEST so the plugin's rest_api_init closure captures the params.
         $_REQUEST = array_merge($_REQUEST, $params);
@@ -111,7 +109,7 @@ abstract class WPTestCase extends WP_UnitTestCase
         add_filter('wp_die_ajax_handler', $ajaxDieInterceptor, PHP_INT_MAX);
 
         // Reset the REST server so rest_api_init re-runs with the current $_REQUEST.
-        $wp_rest_server = null;
+        $GLOBALS['wp_rest_server'] = null;
         do_action('rest_api_init');
 
         $req = new WP_REST_Request($method, $route);
@@ -145,10 +143,10 @@ abstract class WPTestCase extends WP_UnitTestCase
             remove_filter('status_header', $statusCapture, PHP_INT_MAX);
             remove_filter('wp_die_ajax_handler', $ajaxDieInterceptor, PHP_INT_MAX);
             $_REQUEST = $originalRequest;
-            if ($originalRequestMethod === null) {
+            if ($prevMethod === null) {
                 unset($_SERVER['REQUEST_METHOD']);
             } else {
-                $_SERVER['REQUEST_METHOD'] = $originalRequestMethod;
+                $_SERVER['REQUEST_METHOD'] = $prevMethod;
             }
             unset($_SERVER['HTTP_AUTHORIZATION']);
         }

@@ -2057,6 +2057,12 @@
     border-color: var(--sjl-primary);
     color: var(--sjl-primary);
 }
+#simple-jwt-login .sjl-btn-add .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    line-height: 1;
+}
 
 #simple-jwt-login .sjl-vars-bar {
     display: flex;

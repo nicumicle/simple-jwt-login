@@ -10,6 +10,10 @@
 - Add support for multiple JWT Decryption keys based on JWT header or payload
 - Move User identification from Login to General
 - [TODO][BREAKING CHANGE] Remove User Identification from Delete, and use the one from General 
+- Fix Double escaping of quotes in custom reset password email HTML [#165](https://github.com/nicumicle/simple-jwt-login/issues/165)
+- Add Webhooks
+- Improve Refresh token and allow enable/disable
+- Enable/disable Revoke and Validate token 
 
 ## 3.6.5 (14 Mar 2026)
 - Fix  CVE-2025-58648 - Stored Cross-Site Scripting vulnerability[PR](https://github.com/nicumicle/simple-jwt-login/pull/162)

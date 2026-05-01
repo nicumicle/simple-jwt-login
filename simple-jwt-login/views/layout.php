@@ -285,11 +285,7 @@ $sidebarGroups = [
                         <?php echo esc_html__('Simple JWT Login Settings', 'simple-jwt-login'); ?>
                     </h1>
                 </div>
-                <div class="col-md-4 sjl-header-actions">
-                    <button type="button" id="sjl-wizard-btn">
-                        <span class="dashicons dashicons-admin-tools sjl-wizard-btn-icon" aria-hidden="true"></span>
-                        <?php echo esc_html(__('Setup Wizard', 'simple-jwt-login')); ?>
-                    </button>
+                <div class="col-md-4 sjl-header-actions text-right">
                     <input type="submit" class="btn btn-dark" value="<?php echo esc_attr__('Save', 'simple-jwt-login');?>">
                 </div>
             </div>
@@ -494,7 +490,3 @@ $sidebarGroups = [
         </button>
     </div>
 </div>
-
-<?php
-
-include_once "wizard-modal.php";

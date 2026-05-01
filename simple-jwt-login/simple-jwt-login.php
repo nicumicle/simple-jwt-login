@@ -106,13 +106,6 @@ function simple_jwt_login_plugin_show_main_page()
         [],
         $pluginVersion
     );
-    wp_enqueue_style(
-        'simple-jwt-login-wizard',
-        $pluginDirUrl . 'css/wizard.css',
-        [],
-        $pluginVersion
-    );
-
     wp_enqueue_script(
         'simple-jwt-bootstrap-min',
         $pluginDirUrl . 'vendor/bootstrap/bootstrap.min.js',
@@ -127,20 +120,6 @@ function simple_jwt_login_plugin_show_main_page()
         [ 'simple-jwt-bootstrap-min' ],
         $pluginVersion,
         $loadScriptsInFooter
-    );
-
-    wp_enqueue_script(
-        'simple-jwt-login-wizard',
-        $pluginDirUrl . 'js/wizard.js',
-        [ 'simple-jwt-login-scripts', 'wp-i18n' ],
-        $pluginVersion,
-        $loadScriptsInFooter
-    );
-
-    wp_set_script_translations(
-        'simple-jwt-login-wizard',
-        'simple-jwt-login',
-        plugin_dir_path(__FILE__) . 'i18n/'
     );
 
     require_once('views/layout.php');

@@ -26,8 +26,15 @@ RUN yes | pecl install xdebug \
     && rm -rf /usr/local/etc/php/conf.d/opcache-recommended.ini
 
 # PHP ini changes
-RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini && \
-    sed -i -e "s/^ *memory_limit.*/memory_limit = 128M/g" /usr/local/etc/php/php.ini && \
-    sed -i -e "s/^display_errors = .*/display_errors = On/g" /usr/local/etc/php/php.ini && \
-    sed -i -e "s/^display_startup_errors = .*/display_startup_errors = On/g" /usr/local/etc/php/php.ini && \
-    sed -i -e "s/^error_reporting =.*/error_reporting = E_ALL/g" /usr/local/etc/php/php.ini
+RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
+
+# PHP error logging configuration (overrides php.ini via conf.d)
+RUN mkdir -p /var/log/php && chmod 777 /var/log/php && \
+    printf '[PHP]\n\
+memory_limit = 128M\n\
+error_reporting = E_ALL\n\
+display_errors = On\n\
+display_startup_errors = On\n\
+log_errors = On\n\
+error_log = /var/log/php/error.log\n\
+' > /usr/local/etc/php/conf.d/99-error-logging.ini

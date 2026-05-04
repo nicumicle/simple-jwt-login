@@ -7,11 +7,11 @@ use SimpleJWTLogin\Modules\AuditEvents;
 
 class AuditEventsTest extends TestCase
 {
-    public function testAllReturnsEighteenEvents()
+    public function testAllReturnsTwentySevenEvents()
     {
         $events = AuditEvents::all();
 
-        $this->assertCount(18, $events);
+        $this->assertCount(27, $events);
     }
 
     public function testAllContainsExpectedConstants()
@@ -36,6 +36,15 @@ class AuditEventsTest extends TestCase
         $this->assertContains(AuditEvents::AUTH_OAUTH_SUCCESS, $events);
         $this->assertContains(AuditEvents::AUTH_OAUTH_FAILED, $events);
         $this->assertContains(AuditEvents::SETTINGS_SAVE_SUCCESS, $events);
+        $this->assertContains(AuditEvents::API_KEY_CREATE_SUCCESS, $events);
+        $this->assertContains(AuditEvents::API_KEY_CREATE_FAILED, $events);
+        $this->assertContains(AuditEvents::API_KEY_UPDATE_SUCCESS, $events);
+        $this->assertContains(AuditEvents::API_KEY_UPDATE_FAILED, $events);
+        $this->assertContains(AuditEvents::API_KEY_REVOKE_SUCCESS, $events);
+        $this->assertContains(AuditEvents::API_KEY_REVOKE_FAILED, $events);
+        $this->assertContains(AuditEvents::API_KEY_DELETE_SUCCESS, $events);
+        $this->assertContains(AuditEvents::API_KEY_DELETE_FAILED, $events);
+        $this->assertContains(AuditEvents::API_KEY_USED, $events);
     }
 
     public function testConstantValues()
@@ -58,13 +67,22 @@ class AuditEventsTest extends TestCase
         $this->assertSame('auth.oauth.success', AuditEvents::AUTH_OAUTH_SUCCESS);
         $this->assertSame('auth.oauth.failed', AuditEvents::AUTH_OAUTH_FAILED);
         $this->assertSame('settings.save.success', AuditEvents::SETTINGS_SAVE_SUCCESS);
+        $this->assertSame('api_key.create.success', AuditEvents::API_KEY_CREATE_SUCCESS);
+        $this->assertSame('api_key.create.failed', AuditEvents::API_KEY_CREATE_FAILED);
+        $this->assertSame('api_key.update.success', AuditEvents::API_KEY_UPDATE_SUCCESS);
+        $this->assertSame('api_key.update.failed', AuditEvents::API_KEY_UPDATE_FAILED);
+        $this->assertSame('api_key.revoke.success', AuditEvents::API_KEY_REVOKE_SUCCESS);
+        $this->assertSame('api_key.revoke.failed', AuditEvents::API_KEY_REVOKE_FAILED);
+        $this->assertSame('api_key.delete.success', AuditEvents::API_KEY_DELETE_SUCCESS);
+        $this->assertSame('api_key.delete.failed', AuditEvents::API_KEY_DELETE_FAILED);
+        $this->assertSame('api_key.used', AuditEvents::API_KEY_USED);
     }
 
-    public function testLabelsReturnsEighteenEntries()
+    public function testLabelsReturnsTwentySevenEntries()
     {
         $labels = AuditEvents::labels();
 
-        $this->assertCount(18, $labels);
+        $this->assertCount(27, $labels);
         $this->assertArrayHasKey(AuditEvents::AUTH_LOGIN_SUCCESS, $labels);
         $this->assertArrayHasKey(AuditEvents::AUTH_LOGIN_FAILED, $labels);
         $this->assertArrayHasKey(AuditEvents::AUTH_LOGOUT_FAILED, $labels);
@@ -79,5 +97,14 @@ class AuditEventsTest extends TestCase
         $this->assertArrayHasKey(AuditEvents::AUTH_OAUTH_SUCCESS, $labels);
         $this->assertArrayHasKey(AuditEvents::AUTH_OAUTH_FAILED, $labels);
         $this->assertArrayHasKey(AuditEvents::SETTINGS_SAVE_SUCCESS, $labels);
+        $this->assertArrayHasKey(AuditEvents::API_KEY_CREATE_SUCCESS, $labels);
+        $this->assertArrayHasKey(AuditEvents::API_KEY_CREATE_FAILED, $labels);
+        $this->assertArrayHasKey(AuditEvents::API_KEY_UPDATE_SUCCESS, $labels);
+        $this->assertArrayHasKey(AuditEvents::API_KEY_UPDATE_FAILED, $labels);
+        $this->assertArrayHasKey(AuditEvents::API_KEY_REVOKE_SUCCESS, $labels);
+        $this->assertArrayHasKey(AuditEvents::API_KEY_REVOKE_FAILED, $labels);
+        $this->assertArrayHasKey(AuditEvents::API_KEY_DELETE_SUCCESS, $labels);
+        $this->assertArrayHasKey(AuditEvents::API_KEY_DELETE_FAILED, $labels);
+        $this->assertArrayHasKey(AuditEvents::API_KEY_USED, $labels);
     }
 }

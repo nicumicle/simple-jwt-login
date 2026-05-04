@@ -25,6 +25,7 @@ class SettingsErrors extends \Exception
     const PREFIX_REVOKE_TOKEN   = 17;
     const PREFIX_WEBHOOK_LOGS   = 18;
     const PREFIX_AUDIT_LOG_LOGS = 19;
+    const PREFIX_API_KEYS       = 20;
 
     #authentication
     const ERR_AUTHENTICATION_EMPTY_PAYLOAD = 1;

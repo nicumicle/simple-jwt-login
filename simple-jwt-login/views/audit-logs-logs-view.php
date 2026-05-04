@@ -172,6 +172,7 @@ $baseUrl = add_query_arg([
                         <th><?php echo esc_html(__('Date / Time', 'simple-jwt-login')); ?></th>
                         <th><?php echo esc_html(__('Event', 'simple-jwt-login')); ?></th>
                         <th><?php echo esc_html(__('User', 'simple-jwt-login')); ?></th>
+                        <th><?php echo esc_html(__('API Key', 'simple-jwt-login')); ?></th>
                         <th><?php echo esc_html(__('IP Address', 'simple-jwt-login')); ?></th>
                         <th><?php echo esc_html(__('Status', 'simple-jwt-login')); ?></th>
                         <th><?php echo esc_html(__('Message', 'simple-jwt-login')); ?></th>
@@ -180,7 +181,7 @@ $baseUrl = add_query_arg([
                 <tbody>
                     <?php if (empty($logItems)) : ?>
                         <tr>
-                            <td colspan="6" class="text-center text-muted">
+                            <td colspan="7" class="text-center text-muted">
                                 <?php echo esc_html(__('No log entries found.', 'simple-jwt-login')); ?>
                             </td>
                         </tr>
@@ -197,6 +198,13 @@ $baseUrl = add_query_arg([
                                         <br/><small class="text-muted">#<?php echo esc_html($log->user_id); ?></small>
                                     <?php else : ?>
                                         <small class="text-muted"><?php echo esc_html($log->user_email ?? '-'); ?></small>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php if (!empty($log->api_key_id)) : ?>
+                                        <small class="text-muted">#<?php echo esc_html($log->api_key_id); ?></small>
+                                    <?php else : ?>
+                                        <small class="text-muted">-</small>
                                     <?php endif; ?>
                                 </td>
                                 <td><small><?php echo esc_html($log->ip_address ?? '-'); ?></small></td>

@@ -89,9 +89,16 @@ $securityCards = [
     [
         'title'   => __('Auth Codes', 'simple-jwt-login'),
         'tooltip' => __('Displays the total number of active authentication codes.', 'simple-jwt-login'),
-        'icon'    => 'dashicons-admin-network',
+        'icon'    => 'dashicons-tickets-alt',
         'tab'     => SettingsErrors::PREFIX_AUTH_CODES,
         'count'   => count($jwtSettings->getAuthCodesSettings()->getAuthCodes()),
+    ],
+    [
+        'title'   => __('API Keys', 'simple-jwt-login'),
+        'tooltip' => __('Allow external clients to authenticate using scoped API keys instead of JWTs.', 'simple-jwt-login'),
+        'icon'    => 'dashicons-admin-network',
+        'tab'     => SettingsErrors::PREFIX_API_KEYS,
+        'enabled' => $jwtSettings->getApiKeysSettings()->isEnabled(),
     ],
 ];
 

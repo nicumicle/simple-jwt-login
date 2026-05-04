@@ -94,4 +94,14 @@ class ErrorCodes
     const ERR_REFRESH_TOKEN_NOT_ENABLED  = 81;
     const ERR_VALIDATE_TOKEN_NOT_ENABLED = 82;
     const ERR_REVOKE_TOKEN_NOT_ENABLED   = 83;
+
+    const ERR_API_KEY_UNAUTHORIZED        = 84;
+    const ERR_API_KEY_MISSING_NAME        = 85;
+    const ERR_API_KEY_MISSING_PERMISSIONS = 86;
+    const ERR_API_KEY_INVALID_PERMISSION  = 87;
+    const ERR_API_KEY_CREATE_FAILED       = 88;
+    const ERR_API_KEY_NOT_FOUND          = 89;
+    const ERR_API_KEY_UPDATE_FAILED       = 90;
+    const ERR_API_KEY_REVOKE_FAILED       = 91;
+    const ERR_API_KEY_DELETE_FAILED       = 92;
 }

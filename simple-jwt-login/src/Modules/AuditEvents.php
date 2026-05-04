@@ -23,6 +23,16 @@ class AuditEvents
     const AUTH_OAUTH_FAILED           = 'auth.oauth.failed';
     const SETTINGS_SAVE_SUCCESS       = 'settings.save.success';
 
+    const API_KEY_CREATE_SUCCESS = 'api_key.create.success';
+    const API_KEY_CREATE_FAILED  = 'api_key.create.failed';
+    const API_KEY_UPDATE_SUCCESS = 'api_key.update.success';
+    const API_KEY_UPDATE_FAILED  = 'api_key.update.failed';
+    const API_KEY_REVOKE_SUCCESS = 'api_key.revoke.success';
+    const API_KEY_REVOKE_FAILED  = 'api_key.revoke.failed';
+    const API_KEY_DELETE_SUCCESS = 'api_key.delete.success';
+    const API_KEY_DELETE_FAILED  = 'api_key.delete.failed';
+    const API_KEY_USED           = 'api_key.used';
+
     /**
      * @return string[]
      */
@@ -47,6 +57,15 @@ class AuditEvents
             self::AUTH_OAUTH_SUCCESS,
             self::AUTH_OAUTH_FAILED,
             self::SETTINGS_SAVE_SUCCESS,
+            self::API_KEY_CREATE_SUCCESS,
+            self::API_KEY_CREATE_FAILED,
+            self::API_KEY_UPDATE_SUCCESS,
+            self::API_KEY_UPDATE_FAILED,
+            self::API_KEY_REVOKE_SUCCESS,
+            self::API_KEY_REVOKE_FAILED,
+            self::API_KEY_DELETE_SUCCESS,
+            self::API_KEY_DELETE_FAILED,
+            self::API_KEY_USED,
         ];
     }
 
@@ -74,6 +93,15 @@ class AuditEvents
             self::AUTH_OAUTH_SUCCESS          => __('OAuth Login Success', 'simple-jwt-login'),
             self::AUTH_OAUTH_FAILED           => __('OAuth Login Failed', 'simple-jwt-login'),
             self::SETTINGS_SAVE_SUCCESS       => __('Settings Saved', 'simple-jwt-login'),
+            self::API_KEY_CREATE_SUCCESS      => __('API Key Created', 'simple-jwt-login'),
+            self::API_KEY_CREATE_FAILED       => __('API Key Create Failed', 'simple-jwt-login'),
+            self::API_KEY_UPDATE_SUCCESS      => __('API Key Updated', 'simple-jwt-login'),
+            self::API_KEY_UPDATE_FAILED       => __('API Key Update Failed', 'simple-jwt-login'),
+            self::API_KEY_REVOKE_SUCCESS      => __('API Key Revoked', 'simple-jwt-login'),
+            self::API_KEY_REVOKE_FAILED       => __('API Key Revoke Failed', 'simple-jwt-login'),
+            self::API_KEY_DELETE_SUCCESS      => __('API Key Deleted', 'simple-jwt-login'),
+            self::API_KEY_DELETE_FAILED       => __('API Key Delete Failed', 'simple-jwt-login'),
+            self::API_KEY_USED                => __('API Key Used', 'simple-jwt-login'),
         ];
     }
 }

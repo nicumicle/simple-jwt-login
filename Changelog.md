@@ -14,6 +14,7 @@
 - Add Webhooks
 - Improve Refresh token and allow enable/disable
 - Enable/disable Revoke and Validate token 
+- Add suport for API Keys (X-API-Key) to access wordpress endpoints as an authenticated user 
 
 ## 3.6.5 (14 Mar 2026)
 - Fix  CVE-2025-58648 - Stored Cross-Site Scripting vulnerability[PR](https://github.com/nicumicle/simple-jwt-login/pull/162)

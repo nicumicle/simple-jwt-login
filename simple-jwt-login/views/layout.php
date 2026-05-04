@@ -169,6 +169,12 @@ $settingsPages = [
         'has_error' => false,
         'index' => SettingsErrors::PREFIX_AUDIT_LOG_LOGS,
     ],
+    [
+        'id'   => 'simple-jwt-login-tab-api-keys',
+        'name' => __('API Keys', 'simple-jwt-login'),
+        'has_error' => false,
+        'index' => SettingsErrors::PREFIX_API_KEYS,
+    ],
 ];
 
 $pagesByIndex = [];
@@ -202,6 +208,7 @@ $sidebarGroups = [
             ['index' => SettingsErrors::PREFIX_AUTH_CODES, 'icon' => 'dashicons-tickets-alt'],
             ['index' => SettingsErrors::PREFIX_PROTECT_ENDPOINTS, 'name' => __('Protect Endpoints', 'simple-jwt-login'), 'icon' => 'dashicons-shield-alt'],
             ['index' => SettingsErrors::PREFIX_CORS, 'icon' => 'dashicons-randomize'],
+            ['index' => SettingsErrors::PREFIX_API_KEYS, 'name' => __('API Keys', 'simple-jwt-login'), 'icon' => 'dashicons-admin-network'],
         ],
     ],
     [
@@ -441,6 +448,9 @@ $sidebarGroups = [
                                         break;
                                     case SettingsErrors::PREFIX_WEBHOOK_LOGS:
                                         include_once plugin_dir_path(__FILE__) . "webhooks-logs-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_API_KEYS:
+                                        include_once plugin_dir_path(__FILE__) . "api-keys-view.php";
                                         break;
                                     default:
                                         echo esc_html__("View file does not exists.", 'simple-jwt-login');

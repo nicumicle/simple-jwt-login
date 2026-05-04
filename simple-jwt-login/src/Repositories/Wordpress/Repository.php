@@ -307,4 +307,15 @@ interface Repository
      * @return string|array
      */
     public function wpUnslash($value);
+
+    /**
+     * @param string $capability
+     * @return bool
+     */
+    public function currentUserCan($capability);
+
+    /**
+     * @return int
+     */
+    public function getCurrentUserId();
 }

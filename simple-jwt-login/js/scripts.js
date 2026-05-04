@@ -640,3 +640,90 @@ function simple_jwt_bind_reset_password()
         jQuery('#simple-jwt-login #simple_jwt_reset_password_email_container').hide();
     }
 }
+
+/* ── API Key management ─────────────────────────────────────────────────── */
+
+function sjlCreateApiKey()
+{
+    var cfg  = window._sjlAkConfig;
+    var name = jQuery('#sjl-ak-name').val().trim();
+    var expires = jQuery('#sjl-ak-expires').val();
+    var perms = [];
+    jQuery('.sjl-ak-perm-check:checked').each(function () { perms.push(jQuery(this).val()); });
+    var msg = jQuery('#sjl-ak-create-msg');
+    msg.text('').removeClass('sjl-ak-msg--error sjl-ak-msg--ok');
+
+    if (!name) { msg.text('Name is required.').addClass('sjl-ak-msg--error'); return; }
+    if (!perms.length) { msg.text('Select at least one permission.').addClass('sjl-ak-msg--error'); return; }
+
+    jQuery.ajax({
+        url: cfg.restBase,
+        method: 'POST',
+        contentType: 'application/json',
+        beforeSend: function (xhr) { xhr.setRequestHeader('X-WP-Nonce', cfg.nonce); },
+        data: JSON.stringify({ name: name, permissions: perms, expires_at: expires || null }),
+        success: function (res) {
+            if (res.data && res.data.key) {
+                jQuery('#sjl-ak-raw-key').text(res.data.key);
+                jQuery('#sjl-ak-modal').show();
+            }
+        },
+        error: function (xhr) {
+            var errMsg = 'Failed to create API key.';
+            try { errMsg = JSON.parse(xhr.responseText).message || errMsg; } catch (e) {}
+            msg.text(errMsg).addClass('sjl-ak-msg--error');
+        }
+    });
+}
+
+function sjlRevokeApiKey(id)
+{
+    if (!window.confirm('Revoke this API key? This cannot be undone.')) { return; }
+    var cfg = window._sjlAkConfig;
+    jQuery.ajax({
+        url: cfg.restBase + '/' + id,
+        method: 'DELETE',
+        beforeSend: function (xhr) { xhr.setRequestHeader('X-WP-Nonce', cfg.nonce); },
+        success: function () { window.location.reload(); },
+        error: function () { alert('Failed to revoke API key.'); }
+    });
+}
+
+function sjlDeleteApiKey(id)
+{
+    if (!window.confirm('Permanently delete this API key? This cannot be undone.')) { return; }
+    var cfg = window._sjlAkConfig;
+    jQuery.ajax({
+        url: cfg.restBaseSingle + '/' + id + '/delete',
+        method: 'DELETE',
+        beforeSend: function (xhr) { xhr.setRequestHeader('X-WP-Nonce', cfg.nonce); },
+        success: function () { window.location.reload(); },
+        error: function () { alert('Failed to delete API key.'); }
+    });
+}
+
+function sjlCopyApiKey()
+{
+    var key = jQuery('#sjl-ak-raw-key').text();
+    if (!key) { return; }
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(key).then(function () {
+            jQuery('#sjl-ak-copy-msg').text('Copied!');
+        });
+    } else {
+        var ta = document.createElement('textarea');
+        ta.value = key;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        jQuery('#sjl-ak-copy-msg').text('Copied!');
+    }
+}
+
+function sjlCloseApiKeyModal()
+{
+    jQuery('#sjl-ak-modal').hide();
+    jQuery('#sjl-ak-copy-msg').text('');
+    window.location.reload();
+}

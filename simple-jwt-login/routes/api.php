@@ -1,14 +1,23 @@
 <?php
 
+use SimpleJWTLogin\Helpers\ApiKeyPermissions;
 use SimpleJWTLogin\Helpers\CorsHelper;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Helpers\StatusCodeHelper;
 use SimpleJWTLogin\Libraries\ParseRequest;
+use SimpleJWTLogin\Middleware\ApiKeyAuthMiddleware;
 use SimpleJWTLogin\Modules\AuditEvents;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
+use SimpleJWTLogin\Services\ApiKeys\ApiKeyServiceInterface;
+use SimpleJWTLogin\Services\ApiKeys\CreateApiKeyService;
+use SimpleJWTLogin\Services\ApiKeys\DeleteApiKeyService;
+use SimpleJWTLogin\Services\ApiKeys\ListApiKeysService;
+use SimpleJWTLogin\Services\ApiKeys\RevokeApiKeyService;
+use SimpleJWTLogin\Services\ApiKeys\UpdateApiKeyService;
 use SimpleJWTLogin\Services\AuditLoggerService;
 use SimpleJWTLogin\Services\ProtectEndpointService;
 use SimpleJWTLogin\Services\RouteService;
+use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepository;
 use SimpleJWTLogin\Repositories\AuditLog\AuditLogRepository;
 use SimpleJWTLogin\Repositories\RefreshToken\RefreshTokenRepository;
 use SimpleJWTLogin\Repositories\WebhookLog\WebhookLogRepository;
@@ -37,6 +46,7 @@ add_action('rest_api_init', function () {
     global $wpdb;
     $refreshTokenRepository = new RefreshTokenRepository($wpdb);
     $auditLogRepository     = new AuditLogRepository($wpdb);
+    $apiKeyRepository       = new ApiKeyRepository($wpdb);
     $webhookLogRepository = $jwtSettings->getWebhooksSettings()->isWebhookLogsEnabled()
         ? new WebhookLogRepository($wpdb)
         : null;
@@ -146,8 +156,22 @@ add_action('rest_api_init', function () {
         }
     }
 
-    if ($jwtSettings->getGeneralSettings()->isMiddlewareEnabled()) {
-        add_filter('rest_authentication_errors', function ($errors) use ($routeService, $jwtSettings, $wordPressData, $serverHelper) {
+    if ($jwtSettings->getGeneralSettings()->isMiddlewareEnabled() || $jwtSettings->getApiKeysSettings()->isEnabled()) {
+        add_filter('rest_post_dispatch', function ($response) {
+            $data = $response->get_data();
+            if (!is_array($data) || !isset($data['code'])) {
+                return $response;
+            }
+            if (strpos((string) $data['code'], 'simple_jwt_login_') !== 0) {
+                return $response;
+            }
+            $extraData = isset($data['data']) && is_array($data['data']) ? (array) $data['data'] : [];
+            unset($extraData['status']);
+            $response->set_data(['success' => false, 'data' => ['message' => (string) $data['message']] + $extraData]);
+            return $response;
+        }, 0);
+
+        add_filter('rest_authentication_errors', function ($errors) use ($routeService, $jwtSettings, $wordPressData, $serverHelper, $apiKeyRepository, $auditLogger) {
 	        if (!empty($errors)) {
 		        return $errors;
 	        }
@@ -158,29 +182,57 @@ add_action('rest_api_init', function () {
                 return $errors;
             }
 
-            $jwt = $routeService->getJwtFromRequestHeaderOrCookie();
-            if (!empty($jwt)) {
-                try {
-                    $wordPressData->loginUser($routeService->getUserFromJwt($jwt));
+            if ($jwtSettings->getGeneralSettings()->isMiddlewareEnabled()) {
+                $jwt = $routeService->getJwtFromRequestHeaderOrCookie();
+                if (!empty($jwt)) {
+                    try {
+                        $wordPressData->loginUser($routeService->getUserFromJwt($jwt));
 
-                    return true;
-                } catch (\Exception $exception) {
-                    @header('Content-Type: application/json; charset=UTF-8');
+                        return true;
+                    } catch (\Exception $exception) {
+                        $status = StatusCodeHelper::getStatusCodeFromExeption($exception, 400);
+                        return new WP_Error(
+                            'simple_jwt_login_middleware_error',
+                            $exception->getMessage(),
+                            [
+                                'status'    => $status,
+                                'errorCode' => $exception->getCode(),
+                                'type'      => 'simple-jwt-login-middleware',
+                            ]
+                        );
+                    }
+                }
+            }
 
-                    wp_send_json_error(
-                        [
-                        'message'   => $exception->getMessage(),
-                        'errorCode' => $exception->getCode(),
-                        'type'      => 'simple-jwt-login-middleware'
-                        ],
-                        StatusCodeHelper::getStatusCodeFromExeption($exception, 400)
+            if ($jwtSettings->getApiKeysSettings()->isEnabled()) {
+                $headers          = array_change_key_case($serverHelper->getHeaders(), CASE_LOWER);
+                $configuredHeader = strtolower($jwtSettings->getApiKeysSettings()->getHeaderName());
+                $apiKeyHeader     = isset($headers[$configuredHeader]) ? trim((string) $headers[$configuredHeader]) : '';
+
+                if ($apiKeyHeader !== '') {
+                    $requiredPermission = ApiKeyPermissions::httpMethodToPermission($serverHelper->getRequestMethod());
+                    $keyData            = null;
+                    if ($requiredPermission !== null) {
+                        $keyData = (new ApiKeyAuthMiddleware($apiKeyRepository))
+                            ->validate($serverHelper, $requiredPermission, $configuredHeader);
+                    }
+                    if ($keyData === null) {
+                        return new WP_Error(
+                            'simple_jwt_login_api_key_error',
+                            __('Invalid or unauthorized API key.', 'simple-jwt-login'),
+                            ['status' => 401]
+                        );
+                    }
+                    $wordPressData->loginUser($wordPressData->getUserDetailsById((int) $keyData['user_id']));
+                    $auditLogger->log(
+                        AuditEvents::API_KEY_USED,
+                        (int) $keyData['user_id'],
+                        null,
+                        'success',
+                        null,
+                        (int) $keyData['id']
                     );
-
-	                /* The wp_send_json_error call breaks the filter chain; the return statement will never be reached.
-	                   however if we remove above lines, this will cause a change in the api error response format */
-
-	                $status = StatusCodeHelper::getStatusCodeFromExeption($exception, 400);
-	                return new WP_Error($exception->getCode(), $exception->getMessage(), ["status" => $status]);
+                    return true;
                 }
             }
 
@@ -290,6 +342,111 @@ add_action('rest_api_init', function () {
                     }
                 },
                 'permission_callback' => '__return_true',
+            ]
+        );
+    }
+
+    $apiKeysCrudRoutes = [
+        [
+            'name'    => RouteService::API_KEYS_ROUTE,
+            'method'  => RouteService::METHOD_GET,
+            'service' => ListApiKeysService::class,
+        ],
+        [
+            'name'          => RouteService::API_KEYS_ROUTE,
+            'method'        => RouteService::METHOD_POST,
+            'service'       => CreateApiKeyService::class,
+            'audit_success' => AuditEvents::API_KEY_CREATE_SUCCESS,
+            'audit_failure' => AuditEvents::API_KEY_CREATE_FAILED,
+        ],
+        [
+            'name'          => RouteService::API_KEYS_SINGLE_ROUTE,
+            'method'        => RouteService::METHOD_PUT,
+            'service'       => UpdateApiKeyService::class,
+            'audit_success' => AuditEvents::API_KEY_UPDATE_SUCCESS,
+            'audit_failure' => AuditEvents::API_KEY_UPDATE_FAILED,
+        ],
+        [
+            'name'          => RouteService::API_KEYS_SINGLE_ROUTE,
+            'method'        => RouteService::METHOD_DELETE,
+            'service'       => RevokeApiKeyService::class,
+            'audit_success' => AuditEvents::API_KEY_REVOKE_SUCCESS,
+            'audit_failure' => AuditEvents::API_KEY_REVOKE_FAILED,
+        ],
+        [
+            'name'          => RouteService::API_KEYS_HARD_DELETE_ROUTE,
+            'method'        => RouteService::METHOD_DELETE,
+            'service'       => DeleteApiKeyService::class,
+            'audit_success' => AuditEvents::API_KEY_DELETE_SUCCESS,
+            'audit_failure' => AuditEvents::API_KEY_DELETE_FAILED,
+        ],
+    ];
+
+    foreach ($apiKeysCrudRoutes as $route) {
+        register_rest_route(
+            rtrim($jwtSettings->getGeneralSettings()->getRouteNamespace(), '/\\'),
+            $route['name'],
+            [
+                'methods'             => $route['method'],
+                'callback'            => function ($wpRequest) use ($route, $jwtSettings, $serverHelper, $apiKeyRepository, $refreshTokenRepository, $webhookLogRepository, $request, $auditLogger) {
+                    $urlParams     = is_object($wpRequest) ? (array) $wpRequest->get_url_params() : [];
+                    $mergedRequest = array_merge($request, $urlParams);
+                    $keyId         = isset($mergedRequest['id']) ? (int) $mergedRequest['id'] : null;
+
+                    try {
+                        /** @var ApiKeyServiceInterface $service */
+                        $service = new $route['service']();
+                        $service
+                            ->withRequestMethod($route['method'])
+                            ->withRequest($mergedRequest)
+                            ->withCookies($_COOKIE)
+                            ->withServerHelper($serverHelper)
+                            ->withSettings($jwtSettings)
+                            ->withRefreshTokenRepository($refreshTokenRepository)
+                            ->withWebhookLogRepository($webhookLogRepository)
+                            ->withApiKeyRepository($apiKeyRepository);
+
+                        $result = $service->makeAction();
+
+                        if (!empty($route['audit_success'])) {
+                            $userId = $jwtSettings->getWordPressData()->getCurrentUserId();
+                            $auditLogger->log(
+                                $route['audit_success'],
+                                $userId ?: null,
+                                null,
+                                'success',
+                                null,
+                                $keyId ?: null
+                            );
+                        }
+
+                        return $result;
+                    } catch (Exception $exception) {
+                        if (!empty($route['audit_failure'])) {
+                            $userId = $jwtSettings->getWordPressData()->getCurrentUserId();
+                            $auditLogger->log(
+                                $route['audit_failure'],
+                                $userId ?: null,
+                                null,
+                                'failure',
+                                $exception->getMessage(),
+                                $keyId ?: null
+                            );
+                        }
+
+                        return new \WP_Error(
+                            'simple_jwt_login_api_key_error',
+                            $exception->getMessage(),
+                            [
+                                'status'    => StatusCodeHelper::getStatusCodeFromExeption($exception, 400),
+                                'errorCode' => $exception->getCode(),
+                            ]
+                        );
+                    }
+                },
+                'permission_callback' => function () {
+                    return is_user_logged_in();
+                },
             ]
         );
     }

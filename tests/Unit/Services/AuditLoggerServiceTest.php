@@ -76,6 +76,7 @@ class AuditLoggerServiceTest extends TestCase
                 'test@example.com',
                 '1.2.3.4',
                 'success',
+                null,
                 null
             );
 
@@ -96,7 +97,8 @@ class AuditLoggerServiceTest extends TestCase
                 'bad@example.com',
                 '10.0.0.1',
                 'failure',
-                'Wrong user credentials.'
+                'Wrong user credentials.',
+                null
             );
 
         $this->makeLogger()->log(
@@ -122,9 +124,52 @@ class AuditLoggerServiceTest extends TestCase
                 $this->anything(),
                 '192.168.1.100',
                 $this->anything(),
+                $this->anything(),
                 $this->anything()
             );
 
         $this->makeLogger()->log(AuditEvents::AUTH_REGISTER_SUCCESS, 3, 'new@example.com', 'success');
+    }
+
+    public function testLogPassesApiKeyId()
+    {
+        $this->settingsMock->method('isEnabled')->willReturn(true);
+        $this->settingsMock->method('isEventEnabled')->willReturn(true);
+        $this->serverHelperMock->method('getClientIP')->willReturn('1.2.3.4');
+
+        $this->repositoryMock->expects($this->once())
+            ->method('insert')
+            ->with(
+                AuditEvents::API_KEY_USED,
+                10,
+                null,
+                '1.2.3.4',
+                'success',
+                null,
+                42
+            );
+
+        $this->makeLogger()->log(AuditEvents::API_KEY_USED, 10, null, 'success', null, 42);
+    }
+
+    public function testLogWithoutApiKeyIdDefaultsToNull()
+    {
+        $this->settingsMock->method('isEnabled')->willReturn(true);
+        $this->settingsMock->method('isEventEnabled')->willReturn(true);
+        $this->serverHelperMock->method('getClientIP')->willReturn('1.2.3.4');
+
+        $this->repositoryMock->expects($this->once())
+            ->method('insert')
+            ->with(
+                AuditEvents::AUTH_LOGIN_SUCCESS,
+                1,
+                'a@b.com',
+                '1.2.3.4',
+                'success',
+                null,
+                null
+            );
+
+        $this->makeLogger()->log(AuditEvents::AUTH_LOGIN_SUCCESS, 1, 'a@b.com', 'success');
     }
 }

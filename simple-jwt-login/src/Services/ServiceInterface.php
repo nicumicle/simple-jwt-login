@@ -52,7 +52,7 @@ interface ServiceInterface
      */
     public function withRefreshTokenRepository(RefreshTokenRepositoryInterface $repository);
 
-      /**
+    /**
      * @param WebhookLogRepositoryInterface $repository
      * @return $this
      */

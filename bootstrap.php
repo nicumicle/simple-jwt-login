@@ -337,6 +337,9 @@ if (!class_exists('wpdb')) {
         /** @var string */
         public $prefix = '';
 
+        /** @var int */
+        public $insert_id = 0;
+
         /**
          * @param string $table
          * @param array  $data
@@ -383,6 +386,19 @@ if (!class_exists('wpdb')) {
         public function get_results($query, $output = 'OBJECT')
         {
             return null;
+        }
+
+        /**
+         * @param string     $table
+         * @param array      $data
+         * @param array|null $where
+         * @param array|null $format
+         * @param array|null $where_format
+         * @return int|false
+         */
+        public function update($table, $data, $where, $format = null, $where_format = null)
+        {
+            return false;
         }
 
         /**
@@ -704,6 +720,27 @@ if (!function_exists('is_user_logged_in')) {
     }
 }
 
+if (!function_exists('current_user_can')) {
+    /**
+     * @param string $capability
+     * @return bool
+     */
+    function current_user_can($capability)
+    {
+        return false;
+    }
+}
+
+if (!function_exists('get_current_user_id')) {
+    /**
+     * @return int
+     */
+    function get_current_user_id()
+    {
+        return 0;
+    }
+}
+
 if (!function_exists('wp_remote_request')) {
     function wp_remote_request($url, $args)
     {
@@ -890,6 +927,39 @@ if (!function_exists('esc_js')) {
     function esc_js($text)
     {
         return $text;
+    }
+}
+
+if (!function_exists('rest_url')) {
+    /**
+     * @param string $path
+     * @return string
+     */
+    function rest_url($path = '')
+    {
+        return 'http://example.com/wp-json/' . ltrim($path, '/');
+    }
+}
+
+if (!function_exists('wp_create_nonce')) {
+    /**
+     * @param string|int $action
+     * @return string
+     */
+    function wp_create_nonce($action = -1)
+    {
+        return '';
+    }
+}
+
+if (!function_exists('trailingslashit')) {
+    /**
+     * @param string $string
+     * @return string
+     */
+    function trailingslashit($string)
+    {
+        return rtrim($string, '/\\') . '/';
     }
 }
 

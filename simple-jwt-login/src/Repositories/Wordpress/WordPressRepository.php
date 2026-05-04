@@ -532,4 +532,21 @@ class WordPressRepository implements Repository
     {
         return wp_unslash($value);
     }
+
+    /**
+     * @param string $capability
+     * @return bool
+     */
+    public function currentUserCan($capability)
+    {
+        return current_user_can($capability);
+    }
+
+    /**
+     * @return int
+     */
+    public function getCurrentUserId()
+    {
+        return get_current_user_id();
+    }
 }

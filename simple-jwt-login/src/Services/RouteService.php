@@ -17,6 +17,10 @@ class RouteService extends BaseService
     const RESET_PASSWORD_LINK = 'user/reset_password';
     const OAUTH_TOKEN = 'oauth/token';
 
+    const API_KEYS_ROUTE               = 'api-keys';
+    const API_KEYS_SINGLE_ROUTE        = 'api-keys/(?P<id>\d+)';
+    const API_KEYS_HARD_DELETE_ROUTE   = 'api-keys/(?P<id>\d+)/delete';
+
     const METHOD_POST = 'POST';
     const METHOD_GET = 'GET';
     const METHOD_DELETE = 'DELETE';

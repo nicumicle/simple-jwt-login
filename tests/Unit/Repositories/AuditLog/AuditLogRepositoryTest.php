@@ -42,6 +42,7 @@ class AuditLogRepositoryTest extends TestCase
                     'ip_address' => '127.0.0.1',
                     'status'     => 'success',
                     'message'    => null,
+                    'api_key_id' => null,
                 ]
             )
             ->willReturn(1);
@@ -58,6 +59,41 @@ class AuditLogRepositoryTest extends TestCase
         $this->assertTrue($result);
     }
 
+    public function testInsertWithApiKeyId()
+    {
+        $wpdbMock = $this->createMock(\wpdb::class);
+        $wpdbMock->prefix = 'wp_';
+        $repository = new AuditLogRepository($wpdbMock);
+
+        $wpdbMock->expects($this->once())
+            ->method('insert')
+            ->with(
+                'wp_simple_jwt_login_audit_logs',
+                [
+                    'event_type' => 'api_key.used',
+                    'user_id'    => 3,
+                    'user_email' => null,
+                    'ip_address' => '10.0.0.1',
+                    'status'     => 'success',
+                    'message'    => null,
+                    'api_key_id' => 7,
+                ]
+            )
+            ->willReturn(1);
+
+        $result = $repository->insert(
+            'api_key.used',
+            3,
+            null,
+            '10.0.0.1',
+            'success',
+            null,
+            7
+        );
+
+        $this->assertTrue($result);
+    }
+
     public function testInsertReturnsFalseOnWpdbError()
     {
         $this->wpdbMock->method('insert')->willReturn(false);
@@ -68,7 +104,8 @@ class AuditLogRepositoryTest extends TestCase
             'bad@example.com',
             '10.0.0.1',
             'failure',
-            'Wrong credentials.'
+            'Wrong credentials.',
+            null
         );
 
         $this->assertFalse($result);

@@ -17,13 +17,14 @@ use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 use SimpleJWTLogin\Repositories\RefreshToken\RefreshTokenRepository;
 use SimpleJWTLogin\Repositories\AuditLog\AuditLogRepository;
 use SimpleJWTLogin\Repositories\WebhookLog\WebhookLogRepository;
+use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepository;
 
 if (! defined('ABSPATH')) {
     /** @phpstan-ignore-next-line  */
     exit;
 } // Exit if accessed directly
 
-define('SIMPLE_JWT_LOGIN_DB_VERSION', '1.3');
+define('SIMPLE_JWT_LOGIN_DB_VERSION', '1.6');
 
 include_once 'autoload.php';
 
@@ -140,6 +141,7 @@ function simple_jwt_plugin_uninstall()
     (new RefreshTokenRepository($wpdb))->dropTable();
     (new AuditLogRepository($wpdb))->dropTable();
     (new WebhookLogRepository($wpdb))->dropTable();
+    (new ApiKeyRepository($wpdb))->dropTable();
 }
 
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'simple_jwt_login_add_plugin_action_links');
@@ -350,6 +352,7 @@ function simple_jwt_login_activate_plugin()
     simple_jwt_login_create_refresh_tokens_table();
     simple_jwt_login_create_audit_logs_table();
     simple_jwt_login_create_webhook_logs_table();
+    simple_jwt_login_create_api_keys_table();
     simple_jwt_login_ensure_refresh_token_key();
     update_option('simple_jwt_login_db_version', SIMPLE_JWT_LOGIN_DB_VERSION);
     if (!wp_next_scheduled('simple_jwt_login_cleanup_refresh_tokens')) {
@@ -382,6 +385,7 @@ function simple_jwt_login_check_db_version()
         simple_jwt_login_create_refresh_tokens_table();
         simple_jwt_login_create_audit_logs_table();
         simple_jwt_login_create_webhook_logs_table();
+        simple_jwt_login_create_api_keys_table();
         simple_jwt_login_ensure_refresh_token_key();
         update_option('simple_jwt_login_db_version', SIMPLE_JWT_LOGIN_DB_VERSION);
     }
@@ -470,6 +474,15 @@ function simple_jwt_login_create_webhook_logs_table()
 {
     global $wpdb;
     (new WebhookLogRepository($wpdb))->createTable();
+}
+
+/**
+ * Create (or update) the API keys table via dbDelta
+ */
+function simple_jwt_login_create_api_keys_table()
+{
+    global $wpdb;
+    (new ApiKeyRepository($wpdb))->createTable();
 }
 
 //REST API ROUTES

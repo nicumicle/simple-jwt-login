@@ -46,9 +46,10 @@ class AuditLoggerService
      * @param string|null $userEmail
      * @param string      $status    'success' or 'failure'
      * @param string|null $message
+     * @param int|null    $apiKeyId
      * @return void
      */
-    public function log($eventType, $userId, $userEmail, $status, $message = null)
+    public function log($eventType, $userId, $userEmail, $status, $message = null, $apiKeyId = null)
     {
         if (!$this->settings->isEnabled()) {
             return;
@@ -64,7 +65,8 @@ class AuditLoggerService
             $userEmail,
             $this->serverHelper->getClientIP(),
             $status,
-            $message
+            $message,
+            $apiKeyId
         );
     }
 }

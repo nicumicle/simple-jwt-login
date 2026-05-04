@@ -11,9 +11,10 @@ interface Repository
      * @param string|null $ipAddress
      * @param string      $status
      * @param string|null $message
+     * @param int|null    $apiKeyId
      * @return bool
      */
-    public function insert($eventType, $userId, $userEmail, $ipAddress, $status, $message);
+    public function insert($eventType, $userId, $userEmail, $ipAddress, $status, $message, $apiKeyId = null);
 
     /**
      * Returns paginated log entries matching the given filters.

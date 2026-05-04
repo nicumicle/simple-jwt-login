@@ -4,6 +4,7 @@ namespace SimpleJWTLogin\Modules;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Modules\Settings\ApiKeysSettings;
 use SimpleJWTLogin\Modules\Settings\ApplicationsSettings;
 use SimpleJWTLogin\Modules\Settings\AuditLogSettings;
 use SimpleJWTLogin\Modules\Settings\AuthCodesSettings;
@@ -215,6 +216,14 @@ class SimpleJWTLoginSettings
     public function getAuditLogSettings()
     {
         return $this->getSettingsClassByType(SettingsFactory::AUDIT_LOG_SETTINGS);
+    }
+
+    /**
+     * @return ApiKeysSettings
+     */
+    public function getApiKeysSettings()
+    {
+        return $this->getSettingsClassByType(SettingsFactory::API_KEYS_SETTINGS);
     }
 
     /**

@@ -12,6 +12,13 @@
 
     <rule ref="rulesets/design.xml">
         <exclude name="CouplingBetweenObjects"/>
+        <exclude name="NumberOfChildren"/>
+    </rule>
+
+    <rule ref="rulesets/design.xml/NumberOfChildren">
+        <properties>
+            <property name="minimum" value="16"/>
+        </properties>
     </rule>
 
     <rule ref="rulesets/design.xml/CouplingBetweenObjects">

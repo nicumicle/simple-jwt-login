@@ -38,21 +38,23 @@ class AuditLogRepository implements Repository
      * @param string|null $ipAddress
      * @param string      $status
      * @param string|null $message
+     * @param int|null    $apiKeyId
      * @return bool
      */
-    public function insert($eventType, $userId, $userEmail, $ipAddress, $status, $message)
+    public function insert($eventType, $userId, $userEmail, $ipAddress, $status, $message, $apiKeyId = null)
     {
         $result = $this->wpdb->insert(
             $this->tableName(),
             [
-                'event_type' => $eventType,
-                'user_id'    => $userId,
-                'user_email' => $userEmail,
-                'ip_address' => $ipAddress,
-                'status'     => $status,
-                'message'    => $message,
+                'event_type'  => $eventType,
+                'user_id'     => $userId,
+                'user_email'  => $userEmail,
+                'ip_address'  => $ipAddress,
+                'status'      => $status,
+                'message'     => $message,
+                'api_key_id'  => $apiKeyId,
             ],
-            ['%s', '%d', '%s', '%s', '%s', '%s']
+            ['%s', '%d', '%s', '%s', '%s', '%s', '%d']
         );
 
         return $result !== false;
@@ -181,10 +183,12 @@ class AuditLogRepository implements Repository
             ip_address varchar(45) DEFAULT NULL,
             status varchar(20) NOT NULL DEFAULT 'success',
             message text DEFAULT NULL,
+            api_key_id bigint(20) DEFAULT NULL,
             created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
             KEY event_type (event_type),
             KEY user_id (user_id),
+            KEY api_key_id (api_key_id),
             KEY created_at (created_at)
         ) $charsetCollate;";
 

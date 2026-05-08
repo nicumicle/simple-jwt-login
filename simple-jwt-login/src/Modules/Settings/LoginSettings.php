@@ -111,7 +111,7 @@ class LoginSettings extends BaseSettings implements SettingsInterface
             throw  new Exception(
                 __('JWT Parameter key from LoginSettings Config is missing.', 'simple-jwt-login'),
                 $this->settingsErrors->generateCode(
-                    SettingsErrors::PREFIX_LOGIN,
+                    SettingsErrors::PREFIX_GENERAL,
                     SettingsErrors::ERR_LOGIN_MISSING_JWT_PARAMETER_KEY
                 )
             );
@@ -160,18 +160,6 @@ class LoginSettings extends BaseSettings implements SettingsInterface
     {
         return isset($this->settings['jwt_login_by_parameter'])
             ? $this->settings['jwt_login_by_parameter']
-            : $this->getOldVersionJWTEmailParameter();
-    }
-
-    /**
-     * Return JWT parameter for old version plugins
-     * @return string
-     * @deprecated  since v 1.2.0
-     */
-    private function getOldVersionJWTEmailParameter()
-    {
-        return isset($this->settings['jwt_email_parameter'])
-            ? $this->settings['jwt_email_parameter']
             : '';
     }
 

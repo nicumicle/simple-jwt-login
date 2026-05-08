@@ -345,6 +345,62 @@ class ResetPasswordServiceTest extends TestCase
         $this->assertSame(true, $result);
     }
 
+    public function testChangePasswordWithSpecialCharacters()
+    {
+        $specialPassword = 'P@$$w0rd!#&*()';
+        $mock = $this->createMock(WordPressDataInterface::class);
+        $settings = [
+            'allow_reset_password'              => 1,
+            'reset_password_requires_auth_code' => 0,
+        ];
+        $request  = [
+            'email'        => 'email@email.com',
+            'code'         => '123',
+            'new_password' => $specialPassword,
+        ];
+        $mock->method('getOptionFromDatabase')->willReturn(json_encode($settings));
+        $mock->method('checkPasswordResetKeyByEmail')->willReturn(['User']);
+        $mock->method('createResponse')->willReturn(true);
+        $mock->expects($this->once())
+            ->method('resetPassword')
+            ->with($this->anything(), $specialPassword);
+        $resetService = (new ResetPasswordService())
+            ->withRequest($request)
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'PUT']))
+            ->withSettings(new SimpleJWTLoginSettings($mock));
+        $resetService->makeAction();
+    }
+
+    public function testChangePasswordWithBase64Encoding()
+    {
+        $plainPassword   = 'P@$$w0rd!#&*()';
+        $encodedPassword = base64_encode($plainPassword);
+        $mock = $this->createMock(WordPressDataInterface::class);
+        $settings = [
+            'allow_reset_password'              => 1,
+            'reset_password_requires_auth_code' => 0,
+            'auth_password_base64'              => 1,
+        ];
+        $request  = [
+            'email'        => 'email@email.com',
+            'code'         => '123',
+            'new_password' => $encodedPassword,
+        ];
+        $mock->method('getOptionFromDatabase')->willReturn(json_encode($settings));
+        $mock->method('checkPasswordResetKeyByEmail')->willReturn(['User']);
+        $mock->method('createResponse')->willReturn(true);
+        $mock->expects($this->once())
+            ->method('resetPassword')
+            ->with($this->anything(), $plainPassword);
+        $resetService = (new ResetPasswordService())
+            ->withRequest($request)
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'PUT']))
+            ->withSettings(new SimpleJWTLoginSettings($mock));
+        $resetService->makeAction();
+    }
+
     public function testInvalidRouteMethod()
     {
         $settings = [

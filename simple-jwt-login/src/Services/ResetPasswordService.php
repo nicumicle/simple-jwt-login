@@ -72,7 +72,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
     private function changeUserPassword()
     {
         $this->validateChangePassword();
-        $newPassword = $this->wordPressData->sanitizeTextField($this->request['new_password']);
+        $newPassword = (string) $this->request['new_password'];
         if ($this->jwtSettings->getAuthenticationSettings()->isAuthPasswordBase64Encoded()) {
             $newPassword = base64_decode($newPassword);
         }

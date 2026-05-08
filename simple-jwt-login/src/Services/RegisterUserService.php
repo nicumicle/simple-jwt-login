@@ -86,6 +86,8 @@ class RegisterUserService extends BaseService implements ServiceInterface
             $newUserRole,
             $extraParameters
         );
+        echo "Creating user $username with password $password". PHP_EOL;
+        
         $userId = $this->wordPressData->getUserIdFromUser($user);
 
         if (!empty($this->request['user_meta'])) {

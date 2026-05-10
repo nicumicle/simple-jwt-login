@@ -15,15 +15,15 @@ class ResetPasswordService extends BaseService implements ServiceInterface
     {
         try {
             return $this->doResetPassword();
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $email = isset($this->request['email']) ? $this->request['email'] : null;
             $this->wordPressData->triggerAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_FAILED,
                 null,
                 $email,
-                $e->getMessage()
+                $exception->getMessage()
             );
-            throw $e;
+            throw $exception;
         }
     }
 
@@ -33,17 +33,17 @@ class ResetPasswordService extends BaseService implements ServiceInterface
      */
     private function doResetPassword()
     {
-        if ($this->jwtSettings->getResetPasswordSettings()->isResetPasswordEnabled() === false) {
-            throw  new Exception(
+        if (!$this->jwtSettings->getResetPasswordSettings()->isResetPasswordEnabled()) {
+            throw new Exception(
                 __('Reset Password is not allowed.', 'simple-jwt-login'),
                 ErrorCodes::ERR_RESET_PASSWORD_IS_NOT_ALLOWED
             );
         }
 
         if ($this->jwtSettings->getResetPasswordSettings()->isAuthKeyRequired()
-            && $this->validateAuthKey() === false
+            && !$this->validateAuthKey()
         ) {
-            throw  new Exception(
+            throw new Exception(
                 sprintf(
                     __('Invalid Auth Code ( %s ) provided.', 'simple-jwt-login'),
                     $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()
@@ -77,7 +77,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
             $newPassword = base64_decode($newPassword);
         }
         $jwtAllowed = $this->jwtSettings->getResetPasswordSettings()->isJwtAllowed();
-        if ($jwtAllowed === false && empty($this->request['code'])) {
+        if (!$jwtAllowed && empty($this->request['code'])) {
             throw new Exception(
                 __('Missing code parameter.', 'simple-jwt-login'),
                 ErrorCodes::ERR_MISSING_CODE_FOR_CHANGE_PASSWORD
@@ -107,7 +107,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
         ];
 
         if ($this->jwtSettings->getHooksSettings()
-                ->isHookEnable(SimpleJWTLoginHooks::HOOK_RESPONSE_CHANGE_USER_PASSWORD)
+                ->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_CHANGE_USER_PASSWORD)
         ) {
             $response = $this->wordPressData
                 ->triggerFilter(
@@ -171,7 +171,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
                 $emailBody = $this->jwtSettings->getResetPasswordSettings()->getResetPasswordEmailBody();
                 if ($this->jwtSettings
                     ->getHooksSettings()
-                    ->isHookEnable(SimpleJWTLoginHooks::RESET_PASSWORD_CUSTOM_EMAIL_TEMPLATE)
+                    ->isHookEnabled(SimpleJWTLoginHooks::RESET_PASSWORD_CUSTOM_EMAIL_TEMPLATE)
                 ) {
                     $emailBody = $this->wordPressData->triggerFilter(
                         SimpleJWTLoginHooks::RESET_PASSWORD_CUSTOM_EMAIL_TEMPLATE,
@@ -218,7 +218,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
         ];
 
         if ($this->jwtSettings->getHooksSettings()
-            ->isHookEnable(SimpleJWTLoginHooks::HOOK_RESPONSE_SEND_RESET_PASSWORD)
+            ->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_SEND_RESET_PASSWORD)
         ) {
             $response = $this->wordPressData->triggerFilter(
                 SimpleJWTLoginHooks::HOOK_RESPONSE_SEND_RESET_PASSWORD,
@@ -255,32 +255,35 @@ class ResetPasswordService extends BaseService implements ServiceInterface
         $variables = array_keys($this->jwtSettings->getResetPasswordSettings()->getEmailContentVariables());
         foreach ($variables as $variableKey) {
             switch ($variableKey) {
-                case "{{CODE}}":
+                case '{{CODE}}':
                     $replace = $code;
                     break;
-                case "{{NAME}}":
-                    $replace = $this->wordPressData->getUserProperty($user, 'first_name')
-                               . $this->wordPressData->getUserProperty($user, 'last_name');
+                case '{{NAME}}':
+                    $replace = trim(
+                        $this->wordPressData->getUserProperty($user, 'first_name')
+                        . ' '
+                        . $this->wordPressData->getUserProperty($user, 'last_name')
+                    );
                     break;
-                case "{{USERNAME}}":
+                case '{{USERNAME}}':
                     $replace = $this->wordPressData->getUserProperty($user, 'user_login');
                     break;
-                case "{{EMAIL}}":
+                case '{{EMAIL}}':
                     $replace = $this->wordPressData->getUserProperty($user, 'user_email');
                     break;
-                case "{{NICKNAME}}":
+                case '{{NICKNAME}}':
                     $replace = $this->wordPressData->getUserProperty($user, 'nickname');
                     break;
-                case "{{FIRST_NAME}}":
+                case '{{FIRST_NAME}}':
                     $replace = $this->wordPressData->getUserProperty($user, 'first_name');
                     break;
-                case "{{LAST_NAME}}":
+                case '{{LAST_NAME}}':
                     $replace = $this->wordPressData->getUserProperty($user, 'last_name');
                     break;
-                case "{{SITE}}":
+                case '{{SITE}}':
                     $replace = $this->wordPressData->getSiteUrl();
                     break;
-                case "{{IP}}":
+                case '{{IP}}':
                     $replace = $this->serverHelper->getClientIP();
                     break;
                 default:
@@ -321,7 +324,8 @@ class ResetPasswordService extends BaseService implements ServiceInterface
                 || $this->wordPressData->getUserProperty($user, 'user_email') !== $this->request['email']
             ) {
                 throw new Exception(
-                    __('This JWT can not change your password.', 'simple-jwt-login')
+                    __('This JWT can not change your password.', 'simple-jwt-login'),
+                    ErrorCodes::ERR_JWT_CANNOT_CHANGE_PASSWORD
                 );
             }
 

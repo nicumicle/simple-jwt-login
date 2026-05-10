@@ -18,7 +18,7 @@ $enabledHooksCount = count(
     array_filter(
         $hooks,
         function ($h) use ($jwtSettings) {
-            return $jwtSettings->getHooksSettings()->isHookEnable($h['name']);
+            return $jwtSettings->getHooksSettings()->isHookEnabled($h['name']);
         }
     )
 );
@@ -57,7 +57,7 @@ $enabledHooksCount = count(
         <div class="sjl-hooks-list">
             <?php if (! empty($hooks)) {
                 foreach ($hooks as $singleHook) {
-                    $isEnabled = $jwtSettings->getHooksSettings()->isHookEnable($singleHook['name']);
+                    $isEnabled = $jwtSettings->getHooksSettings()->isHookEnabled($singleHook['name']);
                     ?>
                 <div class="sjl-hook-item<?php echo $isEnabled ? ' sjl-hook-item--enabled' : ''; ?>">
 

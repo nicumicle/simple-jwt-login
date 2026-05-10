@@ -65,7 +65,7 @@ class SettingsFactory
             case self::API_KEYS_SETTINGS:
                 return new ApiKeysSettings();
             default:
-                throw new Exception('Settings implementation not found.');
+                throw new Exception(__('Settings implementation not found.', 'simple-jwt-login'));
         }
     }
 
@@ -90,7 +90,7 @@ class SettingsFactory
             self::WEBHOOKS_SETTINGS => new WebhooksSettings(),
             self::API_KEYS_SETTINGS => new ApiKeysSettings(),
 
-            //auth codes needs to be the last one
+            // auth codes must be last - validation depends on all other settings being loaded first
             self::AUTH_CODES_SETTINGS => new AuthCodesSettings(),
         ];
     }

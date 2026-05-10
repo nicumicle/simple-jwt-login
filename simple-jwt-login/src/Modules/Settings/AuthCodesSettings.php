@@ -11,7 +11,7 @@ class AuthCodesSettings extends BaseSettings implements SettingsInterface
     public function initSettingsFromPost()
     {
         $authCodes = [];
-        if (isset($this->post['auth_codes']) && isset($this->post['auth_codes']['code'])) {
+        if (isset($this->post['auth_codes']['code'])) {
             $codes = $this->post['auth_codes']['code'];
             foreach ($codes as $key => $code) {
                 if (trim($code) === ''
@@ -42,16 +42,11 @@ class AuthCodesSettings extends BaseSettings implements SettingsInterface
 
     public function validateSettings()
     {
-        if (!empty($this->settings['require_login_auth'])
-            && !empty($this->settings['allow_autologin'])
-            || !empty($this->settings['require_register_auth'])
-            && !empty($this->settings['allow_register'])
-            || !empty($this->settings['require_delete_auth'])
-            && !empty($this->settings['allow_delete'])
-            || !empty($this->settings['auth_requires_auth_code'])
-            && !empty($this->settings['allow_authentication'])
-            || !empty($this->settings['reset_password_requires_auth_code'])
-            && !empty($this->settings['allow_reset_password'])
+        if ((!empty($this->settings['require_login_auth']) && !empty($this->settings['allow_autologin']))
+            || (!empty($this->settings['require_register_auth']) && !empty($this->settings['allow_register']))
+            || (!empty($this->settings['require_delete_auth']) && !empty($this->settings['allow_delete']))
+            || (!empty($this->settings['auth_requires_auth_code']) && !empty($this->settings['allow_authentication']))
+            || (!empty($this->settings['reset_password_requires_auth_code']) && !empty($this->settings['allow_reset_password']))
         ) {
             if (empty($this->settings['auth_codes'])) {
                 throw new Exception(

@@ -33,6 +33,7 @@ class ValidationsTest extends TestBase
                 'email'  => null,
                 'username' => null,
                 'password' => null,
+                'expectedStatusCode' => 400,
                 'expectedError' => self::generateErrorJson(
                     'Missing email or password.',
                     ErrorCodes::ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD
@@ -42,6 +43,7 @@ class ValidationsTest extends TestBase
                 'email'  => "",
                 'username' => "",
                 'password' => "",
+                'expectedStatusCode' => 400,
                 'expectedError' => self::generateErrorJson(
                     'Missing email or password.',
                     ErrorCodes::ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD
@@ -51,6 +53,7 @@ class ValidationsTest extends TestBase
                 'email'  => "abc",
                 'username' => null,
                 'password' => "123",
+                'expectedStatusCode' => 422,
                 'expectedError' => self::generateErrorJson(
                     'Invalid email address.',
                     ErrorCodes::ERR_REGISTER_INVALID_EMAIL_ADDRESS
@@ -60,6 +63,7 @@ class ValidationsTest extends TestBase
                 'email'  => "test@simplejwtlogin",
                 'username' => null,
                 'password' => null,
+                'expectedStatusCode' => 400,
                 'expectedError' => self::generateErrorJson(
                     'Missing email or password.',
                     ErrorCodes::ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD
@@ -69,6 +73,7 @@ class ValidationsTest extends TestBase
                 'email'  => null,
                 'username' => "admin",
                 'password' => null,
+                'expectedStatusCode' => 400,
                 'expectedError' => self::generateErrorJson(
                     'Missing email or password.',
                     ErrorCodes::ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD
@@ -84,12 +89,12 @@ class ValidationsTest extends TestBase
      * @return void
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function testRegisterValidationErrors($email, $username, $password, $expectedError)
+    public function testRegisterValidationErrors($email, $username, $password, $expectedStatusCode, $expectedError)
     {
         $uri = self::API_URL . "?rest_route=/simple-jwt-login/v1/users";
         $result = $this->client->post($uri . $this->initParams('query', $email, $username, $password));
         $this->assertSame(
-            400,
+            $expectedStatusCode,
             $result->getStatusCode()
         );
 
@@ -108,14 +113,14 @@ class ValidationsTest extends TestBase
      * @return void
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function testRegisterValidationErrorsBodyJSON($email, $username, $password, $expectedError)
+    public function testRegisterValidationErrorsBodyJSON($email, $username, $password, $expectedStatusCode, $expectedError)
     {
         $uri = self::API_URL . "?rest_route=/simple-jwt-login/v1/users";
         $result = $this->client->post($uri, [
             'body' => json_encode($this->initParams('body', $email, $username, $password)),
         ]);
         $this->assertSame(
-            400,
+            $expectedStatusCode,
             $result->getStatusCode()
         );
 
@@ -134,14 +139,14 @@ class ValidationsTest extends TestBase
      * @return void
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function testRegisterValidationErrorsBodyFormParams($email, $username, $password, $expectedError)
+    public function testRegisterValidationErrorsBodyFormParams($email, $username, $password, $expectedStatusCode, $expectedError)
     {
         $uri = self::API_URL . "?rest_route=/simple-jwt-login/v1/users";
         $result = $this->client->post($uri, [
             'form_params' => $this->initParams('form_params', $email, $username, $password),
         ]);
         $this->assertSame(
-            400,
+            $expectedStatusCode,
             $result->getStatusCode()
         );
 

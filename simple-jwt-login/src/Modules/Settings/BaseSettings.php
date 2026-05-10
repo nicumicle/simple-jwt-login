@@ -94,7 +94,7 @@ abstract class BaseSettings
         $base64Encode = null
     ) {
         $postKeyExists = $postKeyGroup !== null
-            ? isset($this->post[$postKeyGroup]) && isset($this->post[$postKeyGroup][$postKey])
+            ? isset($this->post[$postKeyGroup][$postKey])
             : isset($this->post[$postKey]);
 
         if (!$postKeyExists) {
@@ -102,12 +102,14 @@ abstract class BaseSettings
                 $defaultValue = $base64Encode
                     ? base64_encode($defaultValue)
                     : $defaultValue;
-
                 $this->assignProperty($defaultValue, $propertyName, $propertyGroup);
-            } elseif ($type === self::SETTINGS_TYPE_ARRAY) {
-                $defaultValue = [];
-                $this->assignProperty($defaultValue, $propertyName, $propertyGroup);
-            } elseif ($type == self::SETTINGS_TYPE_BOL) {
+                return;
+            }
+            if ($type === self::SETTINGS_TYPE_ARRAY) {
+                $this->assignProperty([], $propertyName, $propertyGroup);
+                return;
+            }
+            if ($type === self::SETTINGS_TYPE_BOL) {
                 $this->assignProperty(false, $propertyName, $propertyGroup);
             }
             return;
@@ -118,7 +120,7 @@ abstract class BaseSettings
             : $this->post[$postKey];
         switch ($type) {
             case self::SETTINGS_TYPE_INT:
-                $value = intval($postValue);
+                $value = (int) $postValue;
                 break;
             case self::SETTINGS_TYPE_BOL:
                 $value = (bool)$postValue;
@@ -157,18 +159,25 @@ abstract class BaseSettings
      */
     private function sanitizeArray($array)
     {
+        $result = [];
         foreach ($array as $key => $value) {
-            $key = $this->wordPressData->sanitizeTextField($key);
+            $sanitizedKey = $this->wordPressData->sanitizeTextField($key);
 
             if (is_array($value)) {
-                $array[$key] = $this->sanitizeArray($value);
-            } elseif (is_string($value) || is_int($value) || is_numeric($value)) {
-                $array[$key] = $this->wordPressData->sanitizeTextField($value);
-            } elseif (is_null($value)) {
-                $array[$key] = null;
+                $result[$sanitizedKey] = $this->sanitizeArray($value);
+                continue;
             }
+            if (is_string($value) || is_int($value) || is_numeric($value)) {
+                $result[$sanitizedKey] = $this->wordPressData->sanitizeTextField($value);
+                continue;
+            }
+            if (is_null($value)) {
+                $result[$sanitizedKey] = null;
+                continue;
+            }
+            $result[$sanitizedKey] = $value;
         }
 
-        return $array;
+        return $result;
     }
 }

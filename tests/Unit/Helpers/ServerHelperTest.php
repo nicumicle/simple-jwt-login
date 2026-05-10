@@ -211,6 +211,12 @@ class ServerHelperTest extends TestCase
                 false
             ],
             [
+                // Regression: non-matching wildcard must not short-circuit the loop.
+                // 127.*.*.2 does not match 127.0.0.1, but 127.0.0.* does.
+                '127.*.*.2, 127.0.0.*',
+                true
+            ],
+            [
                 '127.0.0.1',
                 true
             ]

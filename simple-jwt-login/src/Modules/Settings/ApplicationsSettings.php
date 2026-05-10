@@ -15,7 +15,7 @@ use SimpleJWTLogin\Modules\Settings\Providers\GoogleProviderSettings;
  *  2. Add it to buildProviders() below.
  *  3. Optionally expose a typed convenience accessor (like google() / auth0()).
  *
- * Everything else — field registration, sanitisation, validation — is handled
+ * Everything else - field registration, sanitisation, validation - is handled
  * by the abstract base class automatically.
  */
 class ApplicationsSettings extends BaseSettings implements SettingsInterface
@@ -32,7 +32,7 @@ class ApplicationsSettings extends BaseSettings implements SettingsInterface
     }
 
     // =========================================================================
-    // Provider registry — add new providers here
+    // Provider registry - add new providers here
     // =========================================================================
 
     /**
@@ -82,7 +82,9 @@ class ApplicationsSettings extends BaseSettings implements SettingsInterface
             throw new InvalidArgumentException("Unknown OAuth provider: {$slug}");
         }
 
-        return (clone $this->providers[$slug])->withSettings(isset($this->settings[$slug]) ? $this->settings[$slug] : []);
+        return (clone $this->providers[$slug])->withSettings(
+            isset($this->settings[$slug]) ? $this->settings[$slug] : []
+        );
     }
 
     /**

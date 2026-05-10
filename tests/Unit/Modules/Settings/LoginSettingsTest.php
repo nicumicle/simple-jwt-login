@@ -47,7 +47,7 @@ class LoginSettingsTest extends TestCase
         $loginSettings->initSettingsFromPost();
         $loginSettings->validateSettings();
 
-        $this->assertSame(true, $loginSettings->isAutologinEnabled());
+        $this->assertTrue($loginSettings->isAutologinEnabled());
         $this->assertSame(
             LoginSettings::JWT_LOGIN_BY_EMAIL,
             $loginSettings->getJWTLoginBy()
@@ -62,7 +62,7 @@ class LoginSettingsTest extends TestCase
         );
         $this->assertSame(
             true,
-            $loginSettings->getShouldIncludeRequestParameters()
+            $loginSettings->isRequestParametersIncluded()
         );
 
         $this->assertSame(

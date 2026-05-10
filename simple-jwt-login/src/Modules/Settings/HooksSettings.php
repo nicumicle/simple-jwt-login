@@ -33,9 +33,9 @@ class HooksSettings extends BaseSettings implements SettingsInterface
      * @param string $hookName
      * @return bool
      */
-    public function isHookEnable($hookName)
+    public function isHookEnabled($hookName)
     {
         return !empty($this->settings['enabled_hooks'])
-            && in_array($hookName, $this->settings['enabled_hooks']);
+            && in_array($hookName, $this->settings['enabled_hooks'], true);
     }
 }

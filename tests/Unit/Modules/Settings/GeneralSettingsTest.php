@@ -59,21 +59,21 @@ class GeneralSettingsTest extends TestCase
         $generalSettings->validateSettings();
 
         $this->assertSame('0', $generalSettings->getDecryptionSource());
-        $this->assertSame(false, $generalSettings->isDecryptionKeyBase64Encoded());
+        $this->assertFalse($generalSettings->isDecryptionKeyBase64Encoded());
         $this->assertSame('123', $generalSettings->getDecryptionKey());
         $this->assertSame('', $generalSettings->getDecryptionKeyPublic());
         $this->assertSame('', $generalSettings->getDecryptionKeyPrivate());
         $this->assertSame('HS256', $generalSettings->getJWTDecryptAlgorithm());
         $this->assertSame('jwt/', $generalSettings->getRouteNamespace());
-        $this->assertSame(true, $generalSettings->isJwtFromURLEnabled());
-        $this->assertSame(true, $generalSettings->isJwtFromCookieEnabled());
-        $this->assertSame(true, $generalSettings->isJwtFromHeaderEnabled());
-        $this->assertSame(true, $generalSettings->isJwtFromSessionEnabled());
+        $this->assertTrue($generalSettings->isJwtFromURLEnabled());
+        $this->assertTrue($generalSettings->isJwtFromCookieEnabled());
+        $this->assertTrue($generalSettings->isJwtFromHeaderEnabled());
+        $this->assertTrue($generalSettings->isJwtFromSessionEnabled());
         $this->assertSame('jwt1', $generalSettings->getRequestKeyUrl());
         $this->assertSame('jwt2', $generalSettings->getRequestKeySession());
         $this->assertSame('jwt3', $generalSettings->getRequestKeyCookie());
         $this->assertSame('jwt4', $generalSettings->getRequestKeyHeader());
-        $this->assertSame(true, $generalSettings->isMiddlewareEnabled());
+        $this->assertTrue($generalSettings->isMiddlewareEnabled());
     }
 
     public function testValidationFailsEmptyNamespace()
@@ -241,7 +241,7 @@ class GeneralSettingsTest extends TestCase
     public function testValidationGetJWTTokenFrom()
     {
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('You have to have at least on option enabled in \'Get JWT token From\'');
+        $this->expectExceptionMessage('You have to have at least one option enabled in \'Get JWT token From\'');
         $generalSettings = (new GeneralSettings())
             ->withSettings([])
             ->withWordPressData($this->wordPressData)

@@ -54,7 +54,7 @@ class RegisterSettingsTest extends TestCase
         );
         $this->assertSame(
             'subscriber',
-            $registerSettings->getNewUSerProfile()
+            $registerSettings->getNewUserProfile()
         );
         $this->assertSame(
             '127.0.0.1',

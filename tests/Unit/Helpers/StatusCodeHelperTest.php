@@ -139,7 +139,7 @@ class StatusCodeHelperTest extends TestCase
 
         $this->assertSame(
             $expectedStatus,
-            StatusCodeHelper::getStatusCodeFromExeption($exception, 400)
+            StatusCodeHelper::getStatusCodeFromException($exception, 400)
         );
     }
 
@@ -147,8 +147,8 @@ class StatusCodeHelperTest extends TestCase
     {
         $exception = new Exception('', 9999);
 
-        $this->assertSame(400, StatusCodeHelper::getStatusCodeFromExeption($exception, 400));
-        $this->assertSame(503, StatusCodeHelper::getStatusCodeFromExeption($exception, 503));
+        $this->assertSame(400, StatusCodeHelper::getStatusCodeFromException($exception, 400));
+        $this->assertSame(503, StatusCodeHelper::getStatusCodeFromException($exception, 503));
     }
 
     public function testDefaultStatusCodeIsRespected(): void
@@ -156,7 +156,7 @@ class StatusCodeHelperTest extends TestCase
         $exception = new Exception('', 9999);
 
         foreach ([400, 500, 503] as $default) {
-            $this->assertSame($default, StatusCodeHelper::getStatusCodeFromExeption($exception, $default));
+            $this->assertSame($default, StatusCodeHelper::getStatusCodeFromException($exception, $default));
         }
     }
 
@@ -164,6 +164,6 @@ class StatusCodeHelperTest extends TestCase
     {
         $exception = new Exception('message with no code');
 
-        $this->assertSame(400, StatusCodeHelper::getStatusCodeFromExeption($exception, 400));
+        $this->assertSame(400, StatusCodeHelper::getStatusCodeFromException($exception, 400));
     }
 }

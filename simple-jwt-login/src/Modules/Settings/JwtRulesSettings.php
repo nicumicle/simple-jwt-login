@@ -291,14 +291,17 @@ class JwtRulesSettings extends BaseSettings implements SettingsInterface
             return false;
         }
 
+        $valueToCheck = '';
         if ($conditionType === 'iss') {
             $valueToCheck = isset($jwtParts['payload']['iss']) ? (string)$jwtParts['payload']['iss'] : '';
-        } elseif ($conditionType === 'payload') {
+        }
+        if ($conditionType === 'payload') {
             if ($conditionKey === '') {
                 return false;
             }
             $valueToCheck = isset($jwtParts['payload'][$conditionKey]) ? (string)$jwtParts['payload'][$conditionKey] : '';
-        } elseif ($conditionType === 'header') {
+        }
+        if ($conditionType === 'header') {
             if ($conditionKey === '') {
                 return false;
             }

@@ -63,7 +63,7 @@ $eventLabels      = AuditEvents::labels();
                                 value="<?php echo esc_attr($event); ?>"
                                 <?php echo $auditLogSettings->isEventEnabled($event) ? 'checked' : ''; ?>
                             />
-                            <?php echo esc_html($eventLabels[$event] ?? $event); ?>
+                            <?php echo esc_html(isset($eventLabels[$event]) ? $eventLabels[$event] : $event); ?>
                             <small class="text-muted">(<?php echo esc_html($event); ?>)</small>
                         </label>
                     </div>

@@ -14,8 +14,8 @@ class ListApiKeysService extends BaseApiKeyService
     {
         $this->requireLoggedIn();
 
-        $page    = max(1, (int) ($this->request['page'] ?? 1));
-        $perPage = max(1, min(100, (int) ($this->request['per_page'] ?? 20)));
+        $page    = max(1, (int) (isset($this->request['page']) ? $this->request['page'] : 1));
+        $perPage = max(1, min(100, (int) (isset($this->request['per_page']) ? $this->request['per_page'] : 20)));
         $isAdmin = $this->wordPressData->currentUserCan('manage_options');
 
         $result = $isAdmin
@@ -32,7 +32,7 @@ class ListApiKeysService extends BaseApiKeyService
                     'id'           => (int) $item->id,
                     'name'         => $item->name,
                     'key_prefix'   => $item->key_prefix . '****',
-                    'permissions'  => json_decode($item->permissions, true) ?? [],
+                    'permissions'  => (array) json_decode($item->permissions, true),
                     'expires_at'   => $item->expires_at,
                     'last_used_at' => $item->last_used_at,
                     'created_at'   => $item->created_at,

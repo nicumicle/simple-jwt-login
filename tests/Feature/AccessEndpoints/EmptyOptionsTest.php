@@ -102,7 +102,7 @@ class EmptyOptionsTest extends TestBase
         $uri = self::API_URL . "?rest_route=/simple-jwt-login/v1" . $endpoint;
         $result = $this->client->request($method, $uri);
         $this->assertSame(
-            400,
+            403,
             $result->getStatusCode()
         );
 

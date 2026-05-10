@@ -133,6 +133,7 @@ class ListApiKeysServiceTest extends TestCase
     {
         $item              = new \stdClass();
         $item->id          = 1;
+        $item->user_id     = 1;
         $item->name        = 'Test Key';
         $item->key_prefix  = 'sjl_1234';
         $item->permissions = json_encode(['login']);
@@ -173,6 +174,7 @@ class ListApiKeysServiceTest extends TestCase
     {
         $item              = new \stdClass();
         $item->id          = 2;
+        $item->user_id     = 2;
         $item->name        = 'Another Key';
         $item->key_prefix  = 'sjl_5678';
         $item->permissions = json_encode(['register']);

@@ -12,7 +12,7 @@ class CorsHelperTest extends TestCase
         $corsHelper = new CorsHelper();
         $headerName = 'TEST';
         $headerValue = '123';
+        $this->expectNotToPerformAssertions();
         $corsHelper->addHeader($headerName, $headerValue);
-        $this->assertTrue(true);
     }
 }

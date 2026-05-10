@@ -38,9 +38,7 @@ class DeleteUserSettings extends BaseSettings implements SettingsInterface
      */
     public function isDeleteAllowed()
     {
-        return isset($this->settings['allow_delete'])
-            ? (bool)$this->settings['allow_delete']
-            : false;
+        return !empty($this->settings['allow_delete']);
     }
 
     /**

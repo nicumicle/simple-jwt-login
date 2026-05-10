@@ -295,7 +295,7 @@ class RegisterUserServiceTest extends TestCase
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
 
         $result = $service->makeAction();
-        $this->assertSame(null, $result);
+        $this->assertNull($result);
     }
 
     public function testRegisterSuccessWithJwtFromAuth()
@@ -305,7 +305,7 @@ class RegisterUserServiceTest extends TestCase
         $this->wordPressDataMock->method('checkUserExistsByUsernameAndEmail')
             ->willReturn(false);
         $this->wordPressDataMock->method('getSiteUrl')
-            ->willReturn("http://test.com");
+            ->willReturn('http://test.com');
 
         $authSettings = new AuthenticationSettings();
         $authSettings->withWordPressData($this->wordPressDataMock);
@@ -376,7 +376,7 @@ class RegisterUserServiceTest extends TestCase
         $this->wordPressDataMock->method('checkUserExistsByUsernameAndEmail')
             ->willReturn(false);
         $this->wordPressDataMock->method('getSiteUrl')
-            ->willReturn("http://test.com");
+            ->willReturn('http://test.com');
         $this->wordPressDataMock->method('createUser')
             ->willReturn([]);
         $this->wordPressDataMock->method('getUserIdFromUser')

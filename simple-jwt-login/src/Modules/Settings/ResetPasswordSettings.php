@@ -168,13 +168,13 @@ class ResetPasswordSettings extends BaseSettings implements SettingsInterface
     public function getEmailContentVariables()
     {
         return [
-            '{{CODE}}' => __('Reset password code', 'simple-jwt_login'),
+            '{{CODE}}' => __('Reset password code', 'simple-jwt-login'),
             '{{NAME}}' => __('User first and last name', 'simple-jwt-login'),
-            '{{USERNAME}}' => __('User name', 'simple-jwt_login'),
-            '{{EMAIL}}' => __('User email', 'simple-jwt_login'),
-            '{{NICKNAME}}' => __('User nickname', 'simple-jwt_login'),
-            '{{FIRST_NAME}}' => __('User first name', 'simple-jwt_login'),
-            '{{LAST_NAME}}' => __('User last name', 'simple-jwt_login'),
+            '{{USERNAME}}' => __('User name', 'simple-jwt-login'),
+            '{{EMAIL}}' => __('User email', 'simple-jwt-login'),
+            '{{NICKNAME}}' => __('User nickname', 'simple-jwt-login'),
+            '{{FIRST_NAME}}' => __('User first name', 'simple-jwt-login'),
+            '{{LAST_NAME}}' => __('User last name', 'simple-jwt-login'),
             '{{SITE}}' => __('Website URL', 'simple-jwt-login'),
             '{{IP}}' => __('Client IP address', 'simple-jwt-login')
         ];

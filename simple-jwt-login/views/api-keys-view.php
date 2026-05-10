@@ -26,7 +26,6 @@ if (! defined('ABSPATH')) {
 $namespace  = rtrim($jwtSettings->getGeneralSettings()->getRouteNamespace(), '/');
 $restBase   = rest_url($namespace);
 $restNonce  = wp_create_nonce('wp_rest');
-$allPerms   = ApiKeyPermissions::ALL;
 
 global $wpdb;
 $apiKeyRepo  = new ApiKeyRepository($wpdb);
@@ -100,7 +99,7 @@ $akPages  = $akTotal > 0 ? (int) ceil($akTotal / $akPerPage) : 1;
         <div>
             <h3 class="sjl-gen-card-title"><?php echo esc_html__('Create API Key', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
-                <?php echo esc_html__('The raw key is shown only once at creation — store it securely.', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('The raw key is shown only once at creation - store it securely.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
@@ -125,7 +124,7 @@ $akPages  = $akTotal > 0 ? (int) ceil($akTotal / $akPerPage) : 1;
             <label class="col-sm-2 col-form-label"><?php echo esc_html__('Permissions', 'simple-jwt-login'); ?></label>
             <div class="col-sm-10">
                 <div class="sjl-ak-permissions-grid">
-                    <?php foreach ($allPerms as $perm) :
+                    <?php foreach (ApiKeyPermissions::$all as $perm) :
                         $label = $permissionLabels[$perm];
                         ?>
                     <label class="sjl-ak-perm-card sjl-ak-perm-card--<?php echo esc_attr($perm); ?>">
@@ -201,8 +200,8 @@ $akPages  = $akTotal > 0 ? (int) ceil($akTotal / $akPerPage) : 1;
                                 <span class="sjl-ak-method sjl-method-<?php echo esc_attr(strtolower($method)); ?>"><?php echo esc_html($p); ?></span>
                             <?php endforeach; ?>
                         </td>
-                        <td><?php echo esc_html($ak->expires_at ?: '—'); ?></td>
-                        <td><?php echo esc_html($ak->last_used_at ?: '—'); ?></td>
+                        <td><?php echo esc_html($ak->expires_at ?: '-'); ?></td>
+                        <td><?php echo esc_html($ak->last_used_at ?: '-'); ?></td>
                         <td>
                             <div class="sjl-ak-actions">
                                 <?php if ($ak->revoked_at) : ?>
@@ -248,7 +247,7 @@ $akPages  = $akTotal > 0 ? (int) ceil($akTotal / $akPerPage) : 1;
             <span class="dashicons dashicons-admin-network"></span>
             <div>
                 <h3 class="sjl-ak-modal-title"><?php echo esc_html__('API Key Created', 'simple-jwt-login'); ?></h3>
-                <p class="sjl-ak-modal-desc"><?php echo esc_html__('Copy the key below — it will not be shown again.', 'simple-jwt-login'); ?></p>
+                <p class="sjl-ak-modal-desc"><?php echo esc_html__('Copy the key below - it will not be shown again.', 'simple-jwt-login'); ?></p>
             </div>
         </div>
         <div class="sjl-ak-modal-body">

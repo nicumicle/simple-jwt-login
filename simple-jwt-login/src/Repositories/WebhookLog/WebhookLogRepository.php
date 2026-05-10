@@ -75,7 +75,8 @@ class WebhookLogRepository implements Repository
         if (!empty($filters['status'])) {
             if ($filters['status'] === 'success') {
                 $where[] = 'status_code >= 200 AND status_code < 300';
-            } elseif ($filters['status'] === 'failure') {
+            }
+            if ($filters['status'] === 'failure') {
                 $where[] = '(status_code IS NULL OR status_code < 200 OR status_code >= 300)';
             }
         }

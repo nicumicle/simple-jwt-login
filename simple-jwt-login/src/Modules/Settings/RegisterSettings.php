@@ -103,7 +103,7 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
             );
         }
 
-        if ($this->wordPressData->roleExists($this->post['new_user_profile']) === false) {
+        if (!$this->wordPressData->roleExists($this->post['new_user_profile'])) {
             throw new Exception(
                 __('Invalid user role provided.', 'simple-jwt-login'),
                 $this->settingsErrors->generateCode(
@@ -154,7 +154,7 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
     /**
      * @return string
      */
-    public function getNewUSerProfile()
+    public function getNewUserProfile()
     {
         return isset($this->settings['new_user_profile'])
             ? $this->settings['new_user_profile']
@@ -196,9 +196,7 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
      */
     public function isRandomPasswordForCreateUserEnabled()
     {
-        return isset($this->settings['random_password'])
-            ? (bool)$this->settings['random_password']
-            : false;
+        return !empty($this->settings['random_password']);
     }
 
     /**
@@ -216,9 +214,7 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
      */
     public function isForceLoginAfterCreateUserEnabled()
     {
-        return isset($this->settings['register_force_login'])
-            ? (bool)$this->settings['register_force_login']
-            : false;
+        return !empty($this->settings['register_force_login']);
     }
 
     /**
@@ -236,8 +232,6 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
      */
     public function isJwtEnabled()
     {
-        return isset($this->settings['register_jwt'])
-            ? (bool) $this->settings['register_jwt']
-            : false;
+        return !empty($this->settings['register_jwt']);
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SimpleJwtLoginTests\Feature\ProtectEndpoints;
 
 use PHPUnit\Framework\Attributes\TestDox;
+use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
 use SimpleJwtLoginTests\Feature\TestBase;
 
@@ -73,14 +74,13 @@ class ActiveOnSpecificEndpointsTest extends TestBase
     {
         $resp = $this->client->get(self::API_URL . "?rest_route=/wp/v2/users");
 
-        $this->assertEquals(403, $resp->getStatusCode());
+        $this->assertEquals(401, $resp->getStatusCode());
         $contents = $resp->getBody()->getContents();
         $contentsArr = json_decode($contents, true);
         $this->assertSame(
             $this->generateErrorJson(
                 "You are not authorized to access this endpoint.",
-                403,
-                ['type' => 'simple-jwt-login-route-protect']
+                ErrorCodes::ERR_PROTECT_ENDPOINTS_MISSING_JWT
             ),
             $contentsArr
         );
@@ -94,14 +94,13 @@ class ActiveOnSpecificEndpointsTest extends TestBase
     {
         $resp = $this->client->get(self::API_URL . "?rest_route=/wp/v2/comments");
 
-        $this->assertEquals(403, $resp->getStatusCode());
+        $this->assertEquals(401, $resp->getStatusCode());
         $contents = $resp->getBody()->getContents();
         $contentsArr = json_decode($contents, true);
         $this->assertSame(
             $this->generateErrorJson(
                 "You are not authorized to access this endpoint.",
-                403,
-                ['type' => 'simple-jwt-login-route-protect']
+                ErrorCodes::ERR_PROTECT_ENDPOINTS_MISSING_JWT
             ),
             $contentsArr
         );

@@ -4,7 +4,6 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
-use SimpleJWTLogin\Helpers\ArrayHelper;
 use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use WP_REST_Response;
@@ -16,14 +15,14 @@ class LoginService extends BaseService implements ServiceInterface
     {
         try {
             return $this->makeActionInternal();
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $redirectOnFail = $this->jwtSettings->getLoginSettings()->getAutologinRedirectOnFail();
             if (!empty($redirectOnFail)) {
                 $redirectOnFail = $this->includeRequestParameters($redirectOnFail);
                 $redirectOnFail .= (strpos($redirectOnFail, '?') !== false ? '&' : '?')
                     . http_build_query([
-                        'error_message' => $e->getMessage(),
-                        'error_code' => $e->getCode()
+                        'error_message' => $exception->getMessage(),
+                        'error_code' => $exception->getCode()
                     ]);
 
                 if ($this->jwtSettings->getGeneralSettings()->isSafeRedirectEnabled()) {
@@ -32,7 +31,7 @@ class LoginService extends BaseService implements ServiceInterface
 
                 return $this->wordPressData->redirect($redirectOnFail);
             }
-            throw new Exception($e->getMessage(), $e->getCode(), $e);
+            throw new Exception($exception->getMessage(), $exception->getCode(), $exception);
         }
     }
 
@@ -44,14 +43,14 @@ class LoginService extends BaseService implements ServiceInterface
     {
         try {
             return $this->doLogin();
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->wordPressData->triggerAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_SESSION_FAILED,
                 null,
                 null,
-                $e->getMessage()
+                $exception->getMessage()
             );
-            throw $e;
+            throw $exception;
         }
     }
 
@@ -95,7 +94,7 @@ class LoginService extends BaseService implements ServiceInterface
             ]
         );
 
-        if ($this->jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::LOGIN_ACTION_NAME)) {
+        if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::LOGIN_ACTION_NAME)) {
             $this->wordPressData->triggerAction(SimpleJWTLoginHooks::LOGIN_ACTION_NAME, $user);
         }
 
@@ -110,21 +109,18 @@ class LoginService extends BaseService implements ServiceInterface
     }
 
     /**
-     * @SuppressWarnings(StaticAccess)
      * @throws Exception
      */
     private function validateDoLogin()
     {
-        // Validate Autologin is enabled
         $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
-        if ($this->jwtSettings->getLoginSettings()->isAutologinEnabled() === false) {
+        if (!$this->jwtSettings->getLoginSettings()->isAutologinEnabled()) {
             throw new Exception(
                 __('Auto-login is not enabled on this website.', 'simple-jwt-login'),
                 ErrorCodes::ERR_AUTO_LOGIN_NOT_ENABLED
             );
         }
 
-        // Check if JWT is present
         if (empty($this->jwt)) {
             throw new Exception(
                 __('Wrong Request.', 'simple-jwt-login'),
@@ -132,9 +128,8 @@ class LoginService extends BaseService implements ServiceInterface
             );
         }
 
-        // Validate AUTH KEY
-        if ($this->jwtSettings->getLoginSettings()->isAuthKeyRequiredOnLogin() && $this->validateAuthKey() === false) {
-            throw  new Exception(
+        if ($this->jwtSettings->getLoginSettings()->isAuthKeyRequiredOnLogin() && !$this->validateAuthKey()) {
+            throw new Exception(
                 sprintf(
                     __('Invalid Auth Code ( %s ) provided.', 'simple-jwt-login'),
                     $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()
@@ -159,9 +154,9 @@ class LoginService extends BaseService implements ServiceInterface
         $allowedIss = $this->jwtSettings->getLoginSettings()->getAllowedLoginIss();
         if (!empty($allowedIss)) {
             $payload = $this->getPayloadFromJWT($this->jwt);
-            if ($payload == null  ||
+            if ($payload === null ||
                 !isset($payload['iss']) ||
-                !in_array($payload['iss'], ArrayHelper::convertStringToArray($allowedIss))) {
+                !in_array($payload['iss'], array_map('trim', explode(',', $allowedIss)), true)) {
                 throw new Exception(
                     __('The JWT issuer(iss) is not allowed to auto-login.', 'simple-jwt-login'),
                     ErrorCodes::ERR_INVALID_IIS_LOGIN

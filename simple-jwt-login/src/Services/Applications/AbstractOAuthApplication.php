@@ -19,7 +19,7 @@ use SimpleJWTLogin\Services\RouteService;
 abstract class AbstractOAuthApplication extends BaseApplication
 {
     // -------------------------------------------------------------------------
-    // Template-method hooks — implement in each concrete provider
+    // Template-method hooks - implement in each concrete provider
     // -------------------------------------------------------------------------
 
     /**
@@ -150,7 +150,7 @@ abstract class AbstractOAuthApplication extends BaseApplication
                 RouteService::OAUTH_TOKEN,
                 ['provider' => $this->getProviderSlug()]
             );
-            $result = $this->exchangeCode($code, str_replace("&amp;", "&", $redirectUri));
+            $result = $this->exchangeCode($code, str_replace('&amp;', '&', $redirectUri));
 
             if ($result['status_code'] !== 200) {
                 $errorMessage = $this->handleErrorMessage($result['response']);
@@ -202,14 +202,14 @@ abstract class AbstractOAuthApplication extends BaseApplication
                 $this->wordPressData->getUserProperty($user, 'user_email')
             );
             $this->doRedirect($this->wordPressData->getAdminUrl());
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->wordPressData->triggerAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,
                 null,
                 null,
-                $e->getMessage()
+                $exception->getMessage()
             );
-            $this->doRedirect($this->wordPressData->getLoginURL(['error' => $e->getMessage()]));
+            $this->doRedirect($this->wordPressData->getLoginURL(['error' => $exception->getMessage()]));
         }
     }
 
@@ -219,7 +219,6 @@ abstract class AbstractOAuthApplication extends BaseApplication
      * @param string $email  Email extracted from the token (or empty to derive it internally).
      * @return array
      * @throws Exception
-     * @SuppressWarnings(StaticAccess)
      */
     protected function createWpJwtForEmail($email)
     {
@@ -290,13 +289,13 @@ abstract class AbstractOAuthApplication extends BaseApplication
      */
     protected function handleErrorMessage($jsonResult)
     {
-        $error = "";
+        $error = '';
 
         if (isset($jsonResult['error_description'])) {
-            $error = ucfirst($jsonResult['error_description']) . ".";
+            $error = ucfirst($jsonResult['error_description']) . '.';
         }
         if (isset($jsonResult['error'])) {
-            $error .= ($error !== "" ? " " : "") . ucfirst($jsonResult['error']);
+            $error .= ($error !== '' ? ' ' : '') . ucfirst($jsonResult['error']);
         }
 
         return $error;

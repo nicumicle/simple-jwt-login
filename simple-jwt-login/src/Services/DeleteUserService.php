@@ -18,14 +18,14 @@ class DeleteUserService extends BaseService implements ServiceInterface
     {
         try {
             return $this->deleteUser();
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->wordPressData->triggerAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_DELETE_USER_FAILED,
                 null,
                 null,
-                $e->getMessage()
+                $exception->getMessage()
             );
-            throw $e;
+            throw $exception;
         }
     }
 
@@ -35,8 +35,8 @@ class DeleteUserService extends BaseService implements ServiceInterface
      */
     public function deleteUser()
     {
-        if ($this->jwtSettings->getDeleteUserSettings()->isDeleteAllowed() === false) {
-            throw  new Exception(
+        if (!$this->jwtSettings->getDeleteUserSettings()->isDeleteAllowed()) {
+            throw new Exception(
                 __('Delete is not enabled.', 'simple-jwt-login'),
                 ErrorCodes::ERR_DELETE_IS_NOT_ENABLED
             );
@@ -51,7 +51,7 @@ class DeleteUserService extends BaseService implements ServiceInterface
         }
 
         if ($this->jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete()
-            && $this->validateAuthKey() === false
+            && !$this->validateAuthKey()
         ) {
             throw new Exception(
                 sprintf(
@@ -135,7 +135,7 @@ class DeleteUserService extends BaseService implements ServiceInterface
             ]
         );
 
-        if ($this->jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME)) {
+        if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME)) {
             $this->wordPressData->triggerAction(SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME, $user);
         }
 
@@ -144,7 +144,7 @@ class DeleteUserService extends BaseService implements ServiceInterface
             'id' => $result
         ];
         if ($this->jwtSettings->getHooksSettings()
-            ->isHookEnable(SimpleJWTLoginHooks::HOOK_RESPONSE_DELETE_USER)
+            ->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_DELETE_USER)
         ) {
             $response = $this->wordPressData
                 ->triggerFilter(

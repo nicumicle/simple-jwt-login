@@ -25,7 +25,7 @@ interface ApiKeyRepositoryInterface
     public function getByKeyHash($keyHash);
 
     /**
-     * Return a paginated list of all keys (including revoked) — never includes key_hash.
+     * Return a paginated list of all keys (including revoked) - never includes key_hash.
      *
      * @param int $page    1-based page number
      * @param int $perPage Rows per page
@@ -34,7 +34,7 @@ interface ApiKeyRepositoryInterface
     public function findAll($page, $perPage);
 
     /**
-     * Return a paginated list of keys belonging to a specific user — never includes key_hash.
+     * Return a paginated list of keys belonging to a specific user - never includes key_hash.
      *
      * @param int $userId
      * @param int $page    1-based page number

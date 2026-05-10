@@ -43,7 +43,7 @@ class SuccessTest extends TestBase
         $this->assertJson($contents);
         $json = json_decode($contents, true);
         $this->assertArrayHasKey('success', $json);
-        $this->assertSame(true, $json['success']);
+        $this->assertTrue($json['success']);
     }
 
     #[TestDox("User can register with form data")]
@@ -67,7 +67,7 @@ class SuccessTest extends TestBase
         $this->assertJson($contents);
         $json = json_decode($contents, true);
         $this->assertArrayHasKey('success', $json);
-        $this->assertSame(true, $json['success']);
+        $this->assertTrue($json['success']);
     }
 
     #[TestDox("User can register with JSON body")]
@@ -91,7 +91,7 @@ class SuccessTest extends TestBase
         $this->assertJson($contents);
         $json = json_decode($contents, true);
         $this->assertArrayHasKey('success', $json);
-        $this->assertSame(true, $json['success']);
+        $this->assertTrue($json['success']);
     }
 
     #[TestDox("User can register with custom user_meta")]
@@ -126,7 +126,7 @@ class SuccessTest extends TestBase
         $this->assertJson($contents);
         $json = json_decode($contents, true);
         $this->assertArrayHasKey('success', $json);
-        $this->assertSame(true, $json['success']);
+        $this->assertTrue($json['success']);
         $this->assertArrayHasKey('user', $json);
         $this->assertArrayHasKey('ID', $json['user']);
 

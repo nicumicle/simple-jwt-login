@@ -15,7 +15,7 @@ class UpdateApiKeyService extends BaseApiKeyService
     {
         $this->requireLoggedIn();
 
-        $keyId = (int) ($this->request['id'] ?? 0);
+        $keyId = (int) (isset($this->request['id']) ? $this->request['id'] : 0);
         if ($keyId <= 0) {
             throw new Exception(
                 __('Invalid API key ID.', 'simple-jwt-login'),
@@ -25,7 +25,7 @@ class UpdateApiKeyService extends BaseApiKeyService
 
         $this->requireKeyOwnership($keyId);
 
-        $name = trim((string) ($this->request['name'] ?? ''));
+        $name = trim((string) (isset($this->request['name']) ? $this->request['name'] : ''));
         if ($name === '') {
             throw new Exception(
                 __('API key name is required.', 'simple-jwt-login'),
@@ -33,7 +33,9 @@ class UpdateApiKeyService extends BaseApiKeyService
             );
         }
 
-        $permissions = $this->normalizeAndValidatePermissions($this->request['permissions'] ?? []);
+        $permissions = $this->normalizeAndValidatePermissions(
+            isset($this->request['permissions']) ? $this->request['permissions'] : []
+        );
 
         $expiresAt = !empty($this->request['expires_at'])
             ? (string) $this->request['expires_at']

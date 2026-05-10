@@ -243,7 +243,7 @@ class SimpleJWTLoginSettings
             ->checkNonce($post['_wpnonce'], WordPressRepository::NONCE_NAME);
         if ($result === false) {
             throw new Exception(
-                'Something is wrong. We can not save the settings.',
+                __('Something is wrong. We can not save the settings.', 'simple-jwt-login'),
                 ErrorCodes::ERR_INVALID_NONCE
             );
         }
@@ -304,7 +304,9 @@ class SimpleJWTLoginSettings
         foreach ($flatNew as $key => $value) {
             if (!array_key_exists($key, $flatOld)) {
                 $added[] = $key;
-            } elseif ($flatOld[$key] !== $value) {
+                continue;
+            }
+            if ($flatOld[$key] !== $value) {
                 $changed[$key] = [
                     'from' => $this->redactIfSensitive($key, $flatOld[$key]),
                     'to'   => $this->redactIfSensitive($key, $value),
@@ -389,7 +391,6 @@ class SimpleJWTLoginSettings
     }
 
     /**
-     * @SuppressWarnings(StaticAccess)
      * @param string $route
      * @param array $params
      *

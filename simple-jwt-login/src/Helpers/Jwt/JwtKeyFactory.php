@@ -61,7 +61,7 @@ class JwtKeyFactory
      *
      * @return JwtKeyInterface
      */
-    public function getFactoryFromConfig($settings, $ruleConfig)
+    public static function getFactoryFromConfig($settings, $ruleConfig)
     {
         if ($ruleConfig !== null) {
             return new JwtKeyRule($ruleConfig);

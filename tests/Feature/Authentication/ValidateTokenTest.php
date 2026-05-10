@@ -88,7 +88,7 @@ class ValidateTokenTest extends FeatureTestCase
             'JWT' => 'not.a.valid.jwt',
         ]);
 
-        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame(401, $response->getStatusCode());
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
     }

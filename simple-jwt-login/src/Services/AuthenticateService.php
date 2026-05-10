@@ -34,7 +34,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
 
         foreach ($jwtSettings->getAuthenticationSettings()->getJwtPayloadParameters() as $parameter) {
             if ($parameter === AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT
-                || $jwtSettings->getAuthenticationSettings()->isPayloadDataEnabled($parameter) === false
+                || !$jwtSettings->getAuthenticationSettings()->isPayloadDataEnabled($parameter)
             ) {
                 continue;
             }
@@ -63,7 +63,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
         }
         
         // Allow developers to create their own payload values inside of the returned JWT
-        if ($jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::HOOK_GENERATE_PAYLOAD)) {
+        if ($jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::HOOK_GENERATE_PAYLOAD)) {
             $payload = $wordPressData->triggerFilter(SimpleJWTLoginHooks::HOOK_GENERATE_PAYLOAD, $payload, $user);
         }
 
@@ -84,7 +84,6 @@ class AuthenticateService extends BaseService implements ServiceInterface
     }
 
     /**
-     * @SuppressWarnings(StaticAccess)
      * @return WP_REST_Response
      * @throws Exception
      */
@@ -162,7 +161,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
         $dbPassword = $this->wordPressData->getUserPassword($user);
         $passwordMatch = $this->wordPressData->checkPassword($password, $passwordHash, $dbPassword);
 
-        if ($passwordMatch === false) {
+        if (!$passwordMatch) {
             $this->wordPressData->triggerAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_FAILED,
                 $this->wordPressData->getUserProperty($user, 'ID'),
@@ -175,7 +174,6 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
         }
 
-        //Generate payload
         $payload = isset($this->request['payload'])
             ? json_decode(
                 stripslashes(
@@ -192,7 +190,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
             $user
         );
 
-        if ($this->jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME)) {
+        if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME)) {
             $payload = $this->wordPressData->triggerFilter(
                 SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME,
                 $payload,
@@ -225,7 +223,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
             'success' => true,
             'data'    => $responseData,
         ];
-        if ($this->jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::HOOK_RESPONSE_AUTH_USER)) {
+        if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_AUTH_USER)) {
             $response = $this->wordPressData->triggerFilter(
                 SimpleJWTLoginHooks::HOOK_RESPONSE_AUTH_USER,
                 $response,
@@ -297,7 +295,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
      */
     protected function checkAuthenticationEnabled()
     {
-        if ($this->jwtSettings->getAuthenticationSettings()->isAuthenticationEnabled() === false) {
+        if (!$this->jwtSettings->getAuthenticationSettings()->isAuthenticationEnabled()) {
             throw new Exception(
                 __('Authentication is not enabled.', 'simple-jwt-login'),
                 ErrorCodes::AUTHENTICATION_IS_NOT_ENABLED
@@ -306,23 +304,23 @@ class AuthenticateService extends BaseService implements ServiceInterface
     }
 
     /**
-     * @param int $errrCode
+     * @param int $errCode
      * @param bool|null $isRequired
      *
      * @throws Exception
      */
-    protected function validateAuthenticationAuthKey($errrCode, $isRequired = null)
+    protected function validateAuthenticationAuthKey($errCode, $isRequired = null)
     {
         $required = $isRequired !== null
             ? $isRequired
             : $this->jwtSettings->getAuthenticationSettings()->isAuthKeyRequired();
-        if ($required && $this->validateAuthKey() === false) {
+        if ($required && !$this->validateAuthKey()) {
             throw new Exception(
                 sprintf(
                     __('Invalid Auth Code ( %s ) provided.', 'simple-jwt-login'),
                     $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()
                 ),
-                $errrCode
+                $errCode
             );
         }
     }

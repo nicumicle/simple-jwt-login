@@ -165,9 +165,9 @@ $monitoringCards = [
  */
 function sjl_render_dash_card(array $card): void
 {
-    $link       = $card['link'] ?? __('Configure', 'simple-jwt-login');
+    $link       = isset($card['link']) ? $card['link'] : __('Configure', 'simple-jwt-login');
     $hasCount   = array_key_exists('count', $card);
-    $countLabel = $card['count_label'] ?? __('active', 'simple-jwt-login');
+    $countLabel = isset($card['count_label']) ? $card['count_label'] : __('active', 'simple-jwt-login');
     ?>
     <div class="col-lg-3 col-md-6 col-xs-12">
         <div class="sjl-dash-card card card-shadow" data-sjl-tab="<?php echo esc_attr((string) $card['tab']); ?>">

@@ -41,7 +41,7 @@ class LoginSettings extends BaseSettings implements SettingsInterface
         );
         if (isset($this->post['redirect'])) {
             $this->settings['redirect'] = (int)$this->post['redirect'];
-            $this->settings['redirect_url'] = (int)$this->post['redirect'] === LoginSettings::REDIRECT_CUSTOM
+            $this->settings['redirect_url'] = (int)$this->post['redirect'] === self::REDIRECT_CUSTOM
             && isset($this->post['redirect_url'])
                 ? (string)$this->post['redirect_url']
                 : '';
@@ -108,7 +108,7 @@ class LoginSettings extends BaseSettings implements SettingsInterface
         if (isset($this->post['allow_autologin']) && (int)$this->post['allow_autologin'] === 1
             && (!isset($this->post['jwt_login_by_parameter']) || empty(trim($this->post['jwt_login_by_parameter'])))
         ) {
-            throw  new Exception(
+            throw new Exception(
                 __('JWT Parameter key from LoginSettings Config is missing.', 'simple-jwt-login'),
                 $this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_GENERAL,
@@ -118,7 +118,7 @@ class LoginSettings extends BaseSettings implements SettingsInterface
         }
 
         if (isset($this->post['redirect']) &&
-            (int)$this->post['redirect'] === LoginSettings::REDIRECT_CUSTOM &&
+            (int)$this->post['redirect'] === self::REDIRECT_CUSTOM &&
             (
                 empty($this->post['redirect_url']) ||
                 !filter_var($this->post['redirect_url'], FILTER_VALIDATE_URL)
@@ -158,9 +158,13 @@ class LoginSettings extends BaseSettings implements SettingsInterface
      */
     public function getJwtLoginByParameter()
     {
-        return isset($this->settings['jwt_login_by_parameter'])
-            ? $this->settings['jwt_login_by_parameter']
-            : '';
+        if (isset($this->settings['jwt_login_by_parameter'])) {
+            return $this->settings['jwt_login_by_parameter'];
+        }
+        if (isset($this->settings['jwt_email_parameter'])) {
+            return $this->settings['jwt_email_parameter'];
+        }
+        return '';
     }
 
     /**
@@ -173,7 +177,10 @@ class LoginSettings extends BaseSettings implements SettingsInterface
             : self::REDIRECT_DASHBOARD;
     }
 
-    public function getShouldIncludeRequestParameters()
+    /**
+     * @return bool
+     */
+    public function isRequestParametersIncluded()
     {
         return isset($this->settings['include_login_request_parameters'])
             ? (bool)$this->settings['include_login_request_parameters']
@@ -215,9 +222,7 @@ class LoginSettings extends BaseSettings implements SettingsInterface
      */
     public function isAuthKeyRequiredOnLogin()
     {
-        return isset($this->settings['require_login_auth'])
-            ? (bool)$this->settings['require_login_auth']
-            : false;
+        return !empty($this->settings['require_login_auth']);
     }
 
     /**
@@ -225,9 +230,7 @@ class LoginSettings extends BaseSettings implements SettingsInterface
      */
     public function isRedirectParameterAllowed()
     {
-        return isset($this->settings['allow_usage_redirect_parameter'])
-            ? (bool)$this->settings['allow_usage_redirect_parameter']
-            : false;
+        return !empty($this->settings['allow_usage_redirect_parameter']);
     }
 
     /**
@@ -245,7 +248,7 @@ class LoginSettings extends BaseSettings implements SettingsInterface
      */
     public function getDangerousQueryParameters()
     {
-        $default =  [
+        $default = [
             'rest_route',
             'jwt',
             'JWT',

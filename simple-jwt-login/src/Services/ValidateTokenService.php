@@ -31,7 +31,7 @@ class ValidateTokenService extends AuthenticateService
      */
     private function checkValidateTokenEnabled()
     {
-        if ($this->jwtSettings->getAuthenticationSettings()->isValidateTokenEnabled() === false) {
+        if (!$this->jwtSettings->getAuthenticationSettings()->isValidateTokenEnabled()) {
             throw new Exception(
                 __('Validate Token endpoint is not enabled.', 'simple-jwt-login'),
                 ErrorCodes::ERR_VALIDATE_TOKEN_NOT_ENABLED
@@ -40,7 +40,7 @@ class ValidateTokenService extends AuthenticateService
     }
 
     /**
-     * @return  WP_REST_Response
+     * @return WP_REST_Response
      * @throws Exception
      */
     private function validateAuth()
@@ -71,14 +71,12 @@ class ValidateTokenService extends AuthenticateService
         );
 
         $userArray = $this->wordPressData->wordpressUserToArray($user);
-        if (isset($userArray['user_pass'])) {
-            unset($userArray['user_pass']);
-        }
-        $jwtParameters          = [];
-        $jwtParameters['token'] = $this->jwt;
-        list($header, $payload) = explode('.', $this->jwt);
-        $jwtParameters['header']  = json_decode(base64_decode($header), true);
-        $jwtParameters['payload'] = json_decode(base64_decode($payload), true);
+        unset($userArray['user_pass']);
+        $jwtData                  = $this->extractJwtData($this->jwt);
+        $jwtParameters            = [];
+        $jwtParameters['token']   = $this->jwt;
+        $jwtParameters['header']  = $jwtData['header'];
+        $jwtParameters['payload'] = $jwtData['payload'];
         if (isset($jwtParameters['payload']['exp'])) {
             $jwtParameters['expire_in'] = $jwtParameters['payload']['exp'] - time();
         }
@@ -95,7 +93,7 @@ class ValidateTokenService extends AuthenticateService
         ];
 
         if ($this->jwtSettings->getHooksSettings()
-            ->isHookEnable(SimpleJWTLoginHooks::HOOK_RESPONSE_VALIDATE_TOKEN)
+            ->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_VALIDATE_TOKEN)
         ) {
             $response = $this->wordPressData
                 ->triggerFilter(

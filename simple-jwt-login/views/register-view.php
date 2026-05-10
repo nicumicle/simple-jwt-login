@@ -151,7 +151,7 @@ if (!defined('ABSPATH')) {
                 &mdash; <a href="https://wordpress.org/support/article/roles-and-capabilities/" target="_blank"><?php echo esc_html__('full list', 'simple-jwt-login'); ?></a>
             </p>
             <input type="text" name="new_user_profile" id="new_user_profile" class="form-control sjl-gen-input-medium"
-                   value="<?php echo esc_attr($jwtSettings->getRegisterSettings()->getNewUSerProfile()); ?>"
+                   value="<?php echo esc_attr($jwtSettings->getRegisterSettings()->getNewUserProfile()); ?>"
                    placeholder="<?php echo esc_attr__('e.g. subscriber', 'simple-jwt-login'); ?>"
             />
         </div>

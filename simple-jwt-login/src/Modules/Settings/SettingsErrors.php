@@ -67,14 +67,14 @@ class SettingsErrors extends \Exception
     #protect endpoints
     const ERR_EMPTY_SPECIFIC_ENDPOINT = 1;
 
-    # Applications — Google
+    # Applications - Google
     const ERR_GOOGLE_AT_LEAST_ONE_OPTION_ENABLED = 1;
     const ERR_GOOGLE_CLIENT_ID_REQUIRED = 2;
     const ERR_GOOGLE_CLIENT_SECRET_REQUIRED = 3;
     const ERR_GOOGLE_REDIRECT_URI_REQUIRED_FOR_EXCHANGE_CODE = 4;
     const ERR_GOOGLE_REDIRECT_URI_REQUIRED_FOR_EXCHANGE_ID_TOKEN = 5;
 
-    # Applications — Auth0
+    # Applications - Auth0
     const ERR_AUTH0_AT_LEAST_ONE_OPTION_ENABLED = 6;
     const ERR_AUTH0_DOMAIN_REQUIRED             = 7;
     const ERR_AUTH0_CLIENT_ID_REQUIRED          = 8;
@@ -104,6 +104,6 @@ class SettingsErrors extends \Exception
             return 0;
         }
 
-        return intval($errorCode / self::PREFIX_LEEWAY);
+        return (int) ($errorCode / self::PREFIX_LEEWAY);
     }
 }

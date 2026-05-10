@@ -125,7 +125,7 @@ class RedirectServiceTest extends TestCase
             ->withSession([])
             ->makeAction();
 
-        $this->assertSame(null, $response);
+        $this->assertNull($response);
     }
 
     public function testRedirectHomepage()
@@ -156,7 +156,7 @@ class RedirectServiceTest extends TestCase
             ->withSession([])
             ->withUser($this->user)
             ->makeAction();
-        $this->assertSame(null, $response);
+        $this->assertNull($response);
     }
 
     public static function redirectCustomURLProvider()

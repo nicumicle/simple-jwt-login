@@ -29,7 +29,7 @@ class ServerHelper
 
         $headers = [];
         foreach ($this->server as $name => $value) {
-            if (substr($name, 0, 5) == 'HTTP_') {
+            if (substr($name, 0, 5) === 'HTTP_') {
                 $key = str_replace(
                     ' ',
                     '-',
@@ -47,16 +47,16 @@ class ServerHelper
      */
     public function getClientIP()
     {
-        $clientIp = null;
-        if (!empty($this->server['HTTP_CLIENT_IP'])) {   //check ip from share internet
-            $clientIp = $this->server['HTTP_CLIENT_IP'];
-        } elseif (!empty($this->server['HTTP_X_FORWARDED_FOR'])) {   //to check ip is pass from proxy
-            $clientIp = $this->server['HTTP_X_FORWARDED_FOR'];
-        } elseif (!empty($this->server['REMOTE_ADDR'])) {
-            $clientIp = $this->server['REMOTE_ADDR'];
+        if (!empty($this->server['HTTP_CLIENT_IP'])) {
+            return $this->server['HTTP_CLIENT_IP'];
         }
-
-        return $clientIp;
+        if (!empty($this->server['HTTP_X_FORWARDED_FOR'])) {
+            return $this->server['HTTP_X_FORWARDED_FOR'];
+        }
+        if (!empty($this->server['REMOTE_ADDR'])) {
+            return $this->server['REMOTE_ADDR'];
+        }
+        return null;
     }
 
     /**
@@ -71,15 +71,23 @@ class ServerHelper
                 return true;
             }
             if (strpos($ip, '*') !== false) {
+                if ($clientIp === null) {
+                    continue;
+                }
                 $clientIpParts = explode('.', $clientIp);
                 $ipParts = explode('.', trim($ip));
                 $equalParts = 0;
                 foreach ($clientIpParts as $key => $ipPart) {
+                    if (!isset($ipParts[$key])) {
+                        break;
+                    }
                     if ($ipPart === $ipParts[$key] || $ipParts[$key] === '*') {
                         $equalParts++;
                     }
                 }
-                return $equalParts === 4;
+                if ($equalParts === 4) {
+                    return true;
+                }
             }
         }
 
@@ -109,13 +117,12 @@ class ServerHelper
     }
 
     /**
-     * @SuppressWarnings(PHPMD.Superglobals)
      * @return string
      */
     public function getCurrentURL()
     {
-        return "http" . (isset($this->server['HTTPS']) && $this->server['HTTPS'] === 'on' ? "s" : "")
-            . "://" . $this->server['HTTP_HOST']
+        return 'http' . (isset($this->server['HTTPS']) && $this->server['HTTPS'] === 'on' ? 's' : '')
+            . '://' . $this->server['HTTP_HOST']
             . $this->server['REQUEST_URI'];
     }
 }

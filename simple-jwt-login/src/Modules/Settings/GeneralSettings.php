@@ -185,7 +185,7 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
         }
         if (!empty($this->post['jwt_algorithm'])) {
             if (isset($this->post['decryption_source'])
-                && $this->post['decryption_source'] === GeneralSettings::DECRYPTION_SOURCE_CODE
+                && $this->post['decryption_source'] === self::DECRYPTION_SOURCE_CODE
             ) {
                 if (strpos($this->post['jwt_algorithm'], 'RS') !== false
                     && (!defined(JwtKeyWpConfig::SIMPLE_JWT_PUBLIC_KEY)
@@ -198,7 +198,8 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
                             SettingsErrors::ERR_GENERAL_PRIVATE_KEY_MISSING_FROM_CODE_RS
                         )
                     );
-                } elseif (!defined(JwtKeyWpConfig::SIMPLE_JWT_PRIVATE_KEY)) {
+                }
+                if (!defined(JwtKeyWpConfig::SIMPLE_JWT_PRIVATE_KEY)) {
                     throw new Exception(
                         __('Private key is not defined in code.', 'simple-jwt-login'),
                         $this->settingsErrors->generateCode(
@@ -208,24 +209,25 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
                     );
                 }
             }
-            if (strpos($this->post['jwt_algorithm'], 'RS') !== false) {
-                if (!isset($this->post['decryption_key_public'])
+            if (strpos($this->post['jwt_algorithm'], 'RS') !== false
+                && (!isset($this->post['decryption_key_public'])
                     || empty(trim($this->post['decryption_key_public']))
                     || !isset($this->post['decryption_key_private'])
-                    || empty(trim($this->post['decryption_key_private']))
-                ) {
-                    throw  new Exception(
-                        __('JWT Decryption public and private key are required.', 'simple-jwt-login'),
-                        $this->settingsErrors->generateCode(
-                            SettingsErrors::PREFIX_GENERAL,
-                            SettingsErrors::ERR_GENERAL_MISSING_PRIVATE_AND_PUBLIC_KEY
-                        )
-                    );
-                }
-            } elseif (!isset($this->post['decryption_key'])
-                      || empty(trim($this->post['decryption_key']))
+                    || empty(trim($this->post['decryption_key_private'])))
             ) {
-                throw  new Exception(
+                throw new Exception(
+                    __('JWT Decryption public and private key are required.', 'simple-jwt-login'),
+                    $this->settingsErrors->generateCode(
+                        SettingsErrors::PREFIX_GENERAL,
+                        SettingsErrors::ERR_GENERAL_MISSING_PRIVATE_AND_PUBLIC_KEY
+                    )
+                );
+            }
+            if (strpos($this->post['jwt_algorithm'], 'RS') === false
+                && (!isset($this->post['decryption_key'])
+                    || empty(trim($this->post['decryption_key'])))
+            ) {
+                throw new Exception(
                     __('JWT Decryption key is required.', 'simple-jwt-login'),
                     $this->settingsErrors->generateCode(
                         SettingsErrors::PREFIX_GENERAL,
@@ -241,7 +243,7 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
             && empty($this->post['request_jwt_session'])
         ) {
             throw new Exception(
-                __('You have to have at least on option enabled in \'Get JWT token From\'', 'simple-jwt-login'),
+                __('You have to have at least one option enabled in \'Get JWT token From\'', 'simple-jwt-login'),
                 $this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_GENERAL,
                     SettingsErrors::ERR_GENERAL_GET_JWT_FROM
@@ -367,7 +369,7 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
      */
     public function getRequestKeyUrl()
     {
-        return isset($this->settings['request_keys']) && isset($this->settings['request_keys']['url'])
+        return isset($this->settings['request_keys']['url'])
             ? esc_html($this->settings['request_keys']['url'])
             : 'JWT';
     }
@@ -377,7 +379,7 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
      */
     public function getRequestKeySession()
     {
-        return isset($this->settings['request_keys']) && isset($this->settings['request_keys']['session'])
+        return isset($this->settings['request_keys']['session'])
             ? esc_html($this->settings['request_keys']['session'])
             : 'simple-jwt-login-token';
     }
@@ -387,7 +389,7 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
      */
     public function getRequestKeyCookie()
     {
-        return isset($this->settings['request_keys']) && isset($this->settings['request_keys']['cookie'])
+        return isset($this->settings['request_keys']['cookie'])
             ? esc_html($this->settings['request_keys']['cookie'])
             : 'simple-jwt-login-token';
     }
@@ -397,7 +399,7 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
      */
     public function getRequestKeyHeader()
     {
-        return isset($this->settings['request_keys']) && isset($this->settings['request_keys']['header'])
+        return isset($this->settings['request_keys']['header'])
             ? esc_html($this->settings['request_keys']['header'])
             : 'Authorization';
     }
@@ -407,9 +409,7 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
      */
     public function isMiddlewareEnabled()
     {
-        return isset($this->settings['api_middleware'])
-            && isset($this->settings['api_middleware']['enabled'])
-            && !empty($this->settings['api_middleware']['enabled']);
+        return !empty($this->settings['api_middleware']['enabled']);
     }
 
     /**
@@ -417,15 +417,11 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
      */
     public function isWpGraphqlAuthenticationEnabled()
     {
-        return isset($this->settings['wp_graphql'])
-            && isset($this->settings['wp_graphql']['enabled'])
-            && !empty($this->settings['wp_graphql']['enabled']);
+        return !empty($this->settings['wp_graphql']['enabled']);
     }
 
     public function isSafeRedirectEnabled()
     {
-        return isset($this->settings['security'])
-            && isset($this->settings['security']['safe_redirect'])
-            && !empty($this->settings['security']['safe_redirect']);
+        return !empty($this->settings['security']['safe_redirect']);
     }
 }

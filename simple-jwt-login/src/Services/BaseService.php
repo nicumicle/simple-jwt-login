@@ -21,14 +21,14 @@ abstract class BaseService
     /**
      * @var string
      */
-    protected $requestMetod;
+    protected $requestMethod;
 
     /**
      * @var SimpleJWTLoginSettings
      */
     protected $jwtSettings;
 
-    const JWT_LEEVAY = 60; //seconds
+    const JWT_LEEWAY = 60; // seconds
 
     /**
      * @var array
@@ -76,7 +76,7 @@ abstract class BaseService
      */
     public function withRequestMethod($requestMethod)
     {
-        $this->requestMetod = $requestMethod;
+        $this->requestMethod = $requestMethod;
         return $this;
     }
 
@@ -212,18 +212,18 @@ abstract class BaseService
         if ($this->jwtSettings->getGeneralSettings()->isJwtFromHeaderEnabled()) {
             $headers = array_change_key_case($this->serverHelper->getHeaders(), CASE_LOWER);
             $headerKey = strtolower($this->jwtSettings->getGeneralSettings()->getRequestKeyHeader());
-	        if (isset($headers[$headerKey])) {
-		        $matches = [];
-		        $match = preg_match(
-			        '/^(?:(\w+)\s+)?([\w\-.]+)$/mi',
-			        $headers[$headerKey],
-			        $matches
-		        );
+            if (isset($headers[$headerKey])) {
+                $matches = [];
+                $match = preg_match(
+                    '/^(?:(\w+)\s+)?([\w\-.]+)$/mi',
+                    $headers[$headerKey],
+                    $matches
+                );
 
-		        if ($match && (empty($matches[1]) || strtolower($matches[1]) == "bearer")) {
-			        return $matches[2];
-		        }
-	        }
+                if ($match && (empty($matches[1]) || strtolower($matches[1]) === 'bearer')) {
+                    return $matches[2];
+                }
+            }
         }
         if ($this->jwtSettings->getGeneralSettings()->isJwtFromCookieEnabled()) {
             if (isset($this->cookie[$this->jwtSettings->getGeneralSettings()->getRequestKeyCookie()])) {
@@ -300,14 +300,14 @@ abstract class BaseService
 
         $ruleConfig = $this->jwtSettings->getJwtRulesSettings()->findMatchingRuleConfig($jwtParts);
 
-        $jwtKey = (new JwtKeyFactory())->getFactoryFromConfig($this->jwtSettings, $ruleConfig);
+        $jwtKey = JwtKeyFactory::getFactoryFromConfig($this->jwtSettings, $ruleConfig);
 
         $algorithm = ($ruleConfig !== null)
             ? $ruleConfig['algorithm']
             : $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm();
 
         $jwtLib = new JWT();
-        $jwtLib->applyLeeway(self::JWT_LEEVAY);
+        $jwtLib->applyLeeway(self::JWT_LEEWAY);
         $decoded = (array)$jwtLib->decodeToken(
             $this->jwt,
             $jwtKey->getPublicKey(),
@@ -337,7 +337,7 @@ abstract class BaseService
                 break;
         }
 
-        if ($this->wordPressData->isInstanceOfuser($user) === false) {
+        if (!$this->wordPressData->isInstanceOfuser($user)) {
             return null;
         }
 
@@ -359,7 +359,7 @@ abstract class BaseService
             if (!empty($authCodeBuilder->getExpirationDate())
                 && (strtotime($authCodeBuilder->getExpirationDate()) < time())
             ) {
-                return false;
+                continue;
             }
             if ($authCodeBuilder->getCode() === $this->request[$authCodeKey]) {
                 return true;
@@ -385,9 +385,15 @@ abstract class BaseService
     protected function getPayloadFromJWT($jwt)
     {
         $jwtParts = explode('.', $jwt);
-        return isset($jwtParts[1])
-            ? json_decode(base64_decode($jwtParts[1]), true)
-            : null;
+        if (!isset($jwtParts[1])) {
+            return null;
+        }
+        $segment = $jwtParts[1];
+        $remainder = strlen($segment) % 4;
+        if ($remainder !== 0) {
+            $segment .= str_repeat('=', 4 - $remainder);
+        }
+        return json_decode(base64_decode(strtr($segment, '-_', '+/')), true);
     }
 
     /**
@@ -396,7 +402,7 @@ abstract class BaseService
      */
     protected function includeRequestParameters($url)
     {
-        if ($this->jwtSettings->getLoginSettings()->getShouldIncludeRequestParameters()) {
+        if ($this->jwtSettings->getLoginSettings()->isRequestParametersIncluded()) {
             $requestParams = $this->request;
 
             $dangerousKeys = array_map(function ($value) {

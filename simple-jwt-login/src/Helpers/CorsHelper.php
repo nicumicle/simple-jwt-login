@@ -10,6 +10,6 @@ class CorsHelper
      */
     public function addHeader($headerName, $value)
     {
-        header($headerName . ": " . $value);
+        header($headerName . ': ' . $value);
     }
 }

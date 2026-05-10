@@ -114,6 +114,32 @@ class LoginServiceTest extends TestCase
                 ],
                 'exceptionMessage' => 'Invalid Auth Code ( AUTH_KEY ) provided.',
             ],
+            'expired_code_before_valid_code_still_passes_auth_check' => [
+                // Regression: expired codes must be skipped, not abort the whole loop.
+                // Auth key check should succeed when a valid code follows an expired one.
+                'settings' => [
+                    'allow_autologin' => true,
+                    'require_login_auth' => true,
+                    'auth_codes' => [
+                        [
+                            'code' => 'expired-code',
+                            'role' => '',
+                            'expiration_date' => '2000-01-01',
+                        ],
+                        [
+                            'code' => 'valid-code',
+                            'role' => '',
+                            'expiration_date' => '',
+                        ],
+                    ],
+                ],
+                'request' => [
+                    'JWT' => 'not.a.valid.jwt',
+                    'AUTH_KEY' => 'valid-code',
+                ],
+                // Auth key passes; failure is at JWT decode, not at auth code validation.
+                'exceptionMessage' => 'Wrong number of segments',
+            ],
             'ip_not_allowed' => [
                 'settings' => [
                     'allow_autologin' => true,
@@ -412,8 +438,8 @@ class LoginServiceTest extends TestCase
                 $this->assertArrayHasKey($key, $params);
                 $this->assertSame($params[$key], $value);
             }
-            if ($includeParams === false) {
-                $this->assertFalse(isset($params[$key]));
+            if (!$includeParams) {
+                $this->assertArrayNotHasKey($key, $params);
             }
         }
     }

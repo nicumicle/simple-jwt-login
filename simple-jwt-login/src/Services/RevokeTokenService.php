@@ -21,14 +21,14 @@ class RevokeTokenService extends AuthenticateService
             );
 
             return $this->revokeToken();
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->wordPressData->triggerAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_LOGOUT_FAILED,
                 null,
                 null,
-                $e->getMessage()
+                $exception->getMessage()
             );
-            throw $e;
+            throw $exception;
         }
     }
 
@@ -37,7 +37,7 @@ class RevokeTokenService extends AuthenticateService
      */
     private function checkRevokeTokenEnabled()
     {
-        if ($this->jwtSettings->getAuthenticationSettings()->isRevokeTokenEnabled() === false) {
+        if (!$this->jwtSettings->getAuthenticationSettings()->isRevokeTokenEnabled()) {
             throw new Exception(
                 __('Revoke Token endpoint is not enabled.', 'simple-jwt-login'),
                 ErrorCodes::ERR_REVOKE_TOKEN_NOT_ENABLED
@@ -94,7 +94,7 @@ class RevokeTokenService extends AuthenticateService
             $this->wordPressData->getUserProperty($user, 'user_email')
         );
 
-        $response =  [
+        $response = [
             'success' => true,
             'message' => __('Token was revoked.', 'simple-jwt-login'),
             'data'    => [
@@ -104,9 +104,8 @@ class RevokeTokenService extends AuthenticateService
             ]
         ];
 
-
         if ($this->jwtSettings->getHooksSettings()
-            ->isHookEnable(SimpleJWTLoginHooks::HOOK_RESPONSE_REVOKE_TOKEN)
+            ->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_REVOKE_TOKEN)
         ) {
             $response = $this->wordPressData
                 ->triggerFilter(
@@ -154,7 +153,10 @@ class RevokeTokenService extends AuthenticateService
         }
         foreach ($userRevokedTokens as $token) {
             if ($token === $this->jwt) {
-                throw new Exception('Token was already revoked.');
+                throw new Exception(
+                    __('Token was already revoked.', 'simple-jwt-login'),
+                    ErrorCodes::ERR_REVOKED_TOKEN
+                );
             }
         }
 

@@ -34,76 +34,28 @@ class SimpleJWTLoginSettingsTest extends TestCase
         $this->simpleJWTSettings = new SimpleJWTLoginSettings($wordPressDataMock);
     }
 
-    public function testGetGeneralSettings()
+    #[DataProvider('getterInstanceOfProvider')]
+    public function testGetterReturnsCorrectInstance(string $getter, string $expectedClass): void
     {
-        $this->assertInstanceOf(
-            GeneralSettings::class,
-            $this->simpleJWTSettings->getGeneralSettings()
-        );
+        $this->assertInstanceOf($expectedClass, $this->simpleJWTSettings->$getter());
     }
 
-    public function testGetAuthCodesSettings()
+    /**
+     * @return array<string, array{string, string}>
+     */
+    public static function getterInstanceOfProvider(): array
     {
-        $this->assertInstanceOf(
-            AuthCodesSettings::class,
-            $this->simpleJWTSettings->getAuthCodesSettings()
-        );
-    }
-
-    public function testGetAuthenticationSettings()
-    {
-        $this->assertInstanceOf(
-            AuthenticationSettings::class,
-            $this->simpleJWTSettings->getAuthenticationSettings()
-        );
-    }
-
-    public function testGetHooksSettings()
-    {
-        $this->assertInstanceOf(
-            HooksSettings::class,
-            $this->simpleJWTSettings->getHooksSettings()
-        );
-    }
-
-    public function testGetCorsSettings()
-    {
-        $this->assertInstanceOf(
-            CorsSettings::class,
-            $this->simpleJWTSettings->getCorsSettings()
-        );
-    }
-
-    public function testGetDeleteUserSettings()
-    {
-        $this->assertInstanceOf(
-            DeleteUserSettings::class,
-            $this->simpleJWTSettings->getDeleteUserSettings()
-        );
-    }
-
-    public function testGetLoginSettings()
-    {
-        $this->assertInstanceOf(
-            LoginSettings::class,
-            $this->simpleJWTSettings->getLoginSettings()
-        );
-    }
-
-    public function testGetRegisterSettings()
-    {
-        $this->assertInstanceOf(
-            RegisterSettings::class,
-            $this->simpleJWTSettings->getRegisterSettings()
-        );
-    }
-
-    public function testGetWordPressData()
-    {
-        $this->assertInstanceOf(
-            WordPressDataInterface::class,
-            $this->simpleJWTSettings->getWordPressData()
-        );
+        return [
+            'getGeneralSettings'        => ['getGeneralSettings',        GeneralSettings::class],
+            'getAuthCodesSettings'      => ['getAuthCodesSettings',      AuthCodesSettings::class],
+            'getAuthenticationSettings' => ['getAuthenticationSettings', AuthenticationSettings::class],
+            'getHooksSettings'          => ['getHooksSettings',          HooksSettings::class],
+            'getCorsSettings'           => ['getCorsSettings',           CorsSettings::class],
+            'getDeleteUserSettings'     => ['getDeleteUserSettings',     DeleteUserSettings::class],
+            'getLoginSettings'          => ['getLoginSettings',          LoginSettings::class],
+            'getRegisterSettings'       => ['getRegisterSettings',       RegisterSettings::class],
+            'getWordPressData'          => ['getWordPressData',          WordPressDataInterface::class],
+        ];
     }
 
     public function testWatchForUpdatesWithEmptyPost()

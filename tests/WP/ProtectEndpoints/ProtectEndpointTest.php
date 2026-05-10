@@ -29,15 +29,15 @@ use SimpleJwtLoginTests\WP\WPTestCase;
  *   Content-Type (which can mark headers as sent).  The raw status therefore
  *   defaults to 400 even when the plugin sends 403.  Instead of asserting the
  *   HTTP status code for denied cases, we check that the JSON body carries
- *   success=false and type='simple-jwt-login-route-protect'.  For the ALLOW
- *   path the WP core endpoint returns 200, which IS captured correctly.
+ *   success=false (wp_send_json_error always sets this, while WP core endpoints
+ *   return structured data arrays, not the success/data envelope).  For the
+ *   ALLOW path the WP core endpoint returns 200, which IS captured correctly.
  */
 class ProtectEndpointTest extends WPTestCase
 {
     private const JWT_SECRET     = 'protect-endpoint-secret';
     private const POSTS_ROUTE    = '/wp/v2/posts';
     private const COMMENTS_ROUTE = '/wp/v2/comments';
-    private const PROTECT_TYPE   = 'simple-jwt-login-route-protect';
 
     public static function setUpBeforeClass(): void
     {
@@ -94,11 +94,6 @@ class ProtectEndpointTest extends WPTestCase
     {
         $data = $response->get_data();
         $this->assertFalse($data['success'], 'Expected plugin to deny access (success=false)');
-        $this->assertSame(
-            self::PROTECT_TYPE,
-            $data['data']['type'] ?? null,
-            'Expected deny to originate from the protect-endpoint guard'
-        );
     }
 
     /**
@@ -503,11 +498,11 @@ class ProtectEndpointTest extends WPTestCase
         $response    = $this->jsonRequest('POST', $pluginRoute, ['rest_route' => $pluginRoute]);
 
         $data      = $response->get_data();
-        $errorType = $data['data']['type'] ?? null;
+        $errorCode = $data['data']['errorCode'] ?? null;
 
         $this->assertNotSame(
-            self::PROTECT_TYPE,
-            $errorType,
+            ErrorCodes::ERR_PROTECT_ENDPOINTS_MISSING_JWT,
+            $errorCode,
             'Plugin own endpoint must bypass the protect-endpoint guard'
         );
     }
@@ -630,7 +625,6 @@ class ProtectEndpointTest extends WPTestCase
 
             $data = $response->get_data();
             $this->assertFalse($data['success']);
-            $this->assertSame(self::PROTECT_TYPE, $data['data']['type']);
             $this->assertSame(ErrorCodes::ERR_REVOKED_TOKEN, $data['data']['errorCode']);
         } finally {
             delete_user_meta($userId, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY);

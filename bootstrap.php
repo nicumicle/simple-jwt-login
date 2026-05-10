@@ -172,6 +172,13 @@ if (!function_exists('esc_url')) {
     }
 }
 
+if (!function_exists('esc_url_raw')) {
+    function esc_url_raw($parameter)
+    {
+        return $parameter;
+    }
+}
+
 if (!function_exists('esc_textarea')) {
     function esc_textarea($text)
     {

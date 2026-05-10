@@ -152,13 +152,14 @@ class AuditLogSettingsTest extends TestCase
             ->withSettings([])
             ->withPost($post);
 
+        $this->expectNotToPerformAssertions();
         // Should not throw
         $settings->validateSettings();
-        $this->assertTrue(true);
     }
 
     public function testValidateSettingsSkipsWhenNoPostGroup()
     {
+        $this->expectNotToPerformAssertions();
         $settings = (new AuditLogSettings())
             ->withWordPressData($this->wordPressDataMock)
             ->withSettings([])
@@ -166,6 +167,5 @@ class AuditLogSettingsTest extends TestCase
 
         // Should not throw when audit_log not in POST
         $settings->validateSettings();
-        $this->assertTrue(true);
     }
 }

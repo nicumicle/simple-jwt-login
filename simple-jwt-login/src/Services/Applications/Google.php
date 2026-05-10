@@ -30,7 +30,6 @@ class Google extends AbstractOAuthApplication implements ApplicationInterface
     }
 
     /**
-     * @SuppressWarnings(StaticAccess)
      * @throws Exception
      */
     public function call()
@@ -108,7 +107,6 @@ class Google extends AbstractOAuthApplication implements ApplicationInterface
     /**
      * @param array $tokenResponse
      * @return string
-     * @SuppressWarnings(StaticAccess)
      */
     protected function getEmailFromTokenResponse($tokenResponse)
     {
@@ -121,7 +119,6 @@ class Google extends AbstractOAuthApplication implements ApplicationInterface
      * @param string $token
      * @return void
      * @throws Exception
-     * @SuppressWarnings(StaticAccess)
      */
     protected function validateProviderToken($token)
     {
@@ -148,7 +145,6 @@ class Google extends AbstractOAuthApplication implements ApplicationInterface
      * @param string $idToken
      * @return void
      * @throws Exception
-     * @SuppressWarnings(StaticAccess)
      */
     public static function validateIdToken($idToken)
     {

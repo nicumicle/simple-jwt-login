@@ -9,12 +9,10 @@ class ApiKeyPermissions
     const UPDATE = 'update';
     const DELETE = 'delete';
 
-    const ALL = [
-        self::READ,
-        self::CREATE,
-        self::UPDATE,
-        self::DELETE,
-    ];
+    /**
+     * @var string[]
+     */
+    public static $all = ['read', 'create', 'update', 'delete'];
 
     /**
      * Maps an HTTP method to the required WordPress endpoint permission.
@@ -22,7 +20,7 @@ class ApiKeyPermissions
      * @param string $method
      * @return string|null
      */
-    public static function httpMethodToPermission(string $method): ?string
+    public static function httpMethodToPermission($method)
     {
         $map = [
             'GET'    => self::READ,
@@ -31,12 +29,17 @@ class ApiKeyPermissions
             'PATCH'  => self::UPDATE,
             'DELETE' => self::DELETE,
         ];
+        $upper = strtoupper($method);
 
-        return $map[strtoupper($method)] ?? null;
+        return isset($map[$upper]) ? $map[$upper] : null;
     }
 
-    public static function isValid(string $permission): bool
+    /**
+     * @param string $permission
+     * @return bool
+     */
+    public static function isValid($permission)
     {
-        return in_array($permission, self::ALL, true);
+        return in_array($permission, self::$all, true);
     }
 }

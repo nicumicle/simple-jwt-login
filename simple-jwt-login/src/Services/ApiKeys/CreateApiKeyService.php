@@ -15,7 +15,7 @@ class CreateApiKeyService extends BaseApiKeyService
     {
         $this->requireLoggedIn();
 
-        $name = trim((string) ($this->request['name'] ?? ''));
+        $name = trim((string) (isset($this->request['name']) ? $this->request['name'] : ''));
         if ($name === '') {
             throw new Exception(
                 __('API key name is required.', 'simple-jwt-login'),
@@ -23,13 +23,15 @@ class CreateApiKeyService extends BaseApiKeyService
             );
         }
 
-        $permissions = $this->normalizeAndValidatePermissions($this->request['permissions'] ?? []);
+        $permissions = $this->normalizeAndValidatePermissions(
+            isset($this->request['permissions']) ? $this->request['permissions'] : []
+        );
 
         $expiresAt = !empty($this->request['expires_at'])
             ? (string) $this->request['expires_at']
             : null;
 
-        $rawKey    = 'sjl_' . bin2hex(random_bytes(16));
+        $rawKey    = 'sjl_' . bin2hex(openssl_random_pseudo_bytes(16));
         $keyHash   = hash('sha256', $rawKey);
         $keyPrefix = substr($rawKey, 0, 8);
         $createdAt = gmdate('Y-m-d H:i:s');

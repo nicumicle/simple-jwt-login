@@ -10,9 +10,9 @@ use SimpleJWTLogin\Libraries\ServerCall;
  * Auth0 OAuth2 / OIDC provider.
  *
  * Supports three flows that mirror the Google integration:
- *  1. Browser OAuth redirect — exchange authorization code via the WP login page button.
- *  2. Code exchange (API)   — POST ?provider=auth0&code={code} → returns raw token response.
- *  3. Token exchange (API)  — POST ?provider=auth0&access_token={token} → returns a WP JWT.
+ *  1. Browser OAuth redirect - exchange authorization code via the WP login page button.
+ *  2. Code exchange (API)   - POST ?provider=auth0&code={code} → returns raw token response.
+ *  3. Token exchange (API)  - POST ?provider=auth0&access_token={token} → returns a WP JWT.
  *
  * Auth0 is domain-based, so all endpoint URLs are derived from the configured domain.
  */
@@ -39,7 +39,6 @@ class Auth0 extends AbstractOAuthApplication implements ApplicationInterface
     }
 
     /**
-     * @SuppressWarnings(StaticAccess)
      * @throws Exception
      */
     public function call()
@@ -123,7 +122,6 @@ class Auth0 extends AbstractOAuthApplication implements ApplicationInterface
      * @param array $tokenResponse
      * @return string
      * @throws Exception
-     * @SuppressWarnings(StaticAccess)
      */
     protected function getEmailFromTokenResponse($tokenResponse)
     {
@@ -144,7 +142,6 @@ class Auth0 extends AbstractOAuthApplication implements ApplicationInterface
      * @param string $token
      * @return void
      * @throws Exception
-     * @SuppressWarnings(StaticAccess)
      */
     protected function validateProviderToken($token)
     {
@@ -187,7 +184,6 @@ class Auth0 extends AbstractOAuthApplication implements ApplicationInterface
      * @param \SimpleJWTLogin\Modules\SimpleJWTLoginSettings $settings
      * @return void
      * @throws Exception
-     * @SuppressWarnings(StaticAccess)
      */
     public static function validateIdToken($jwt, $settings)
     {
@@ -221,7 +217,6 @@ class Auth0 extends AbstractOAuthApplication implements ApplicationInterface
      * @param string $accessToken
      * @return string
      * @throws Exception
-     * @SuppressWarnings(StaticAccess)
      */
     private function getUserEmailFromUserinfo($accessToken)
     {

@@ -142,7 +142,7 @@ class DeleteUserTest extends TestBase
 
         // Make sure the user does not exist anymore
         list ($statusCode) = $this->authUser($email, $password);
-        $this->assertSame(400, $statusCode);
+        $this->assertSame(401, $statusCode);
     }
 
     #[TestDox("Delete User by passing the JWT in query params")]
@@ -162,6 +162,6 @@ class DeleteUserTest extends TestBase
 
         // Make sure the user does not exist anymore
         list ($statusCode) = $this->authUser($email, $password);
-        $this->assertSame(400, $statusCode);
+        $this->assertSame(401, $statusCode);
     }
 }

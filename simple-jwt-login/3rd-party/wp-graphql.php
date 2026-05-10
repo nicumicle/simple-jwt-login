@@ -54,7 +54,7 @@ add_action('init_graphql_request', function () {
                 'errorCode' => $exception->getCode(),
                 'type'      => 'simple-jwt-login-middleware'
             ],
-            StatusCodeHelper::getStatusCodeFromExeption($exception, 400)
+            StatusCodeHelper::getStatusCodeFromException($exception, 400)
         );
 
         return;

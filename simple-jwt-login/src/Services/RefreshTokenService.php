@@ -24,14 +24,14 @@ class RefreshTokenService extends AuthenticateService
             );
 
             return $this->refreshJwt();
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->wordPressData->triggerAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_REFRESH_TOKEN_FAILED,
                 null,
                 null,
-                $e->getMessage()
+                $exception->getMessage()
             );
-            throw $e;
+            throw $exception;
         }
     }
 
@@ -60,11 +60,11 @@ class RefreshTokenService extends AuthenticateService
                     $jwt
                 );
             }
-        } catch (Exception $e) {
-            if ($e->getCode() === ErrorCodes::ERR_REVOKED_TOKEN) {
-                throw $e;
+        } catch (Exception $exception) {
+            if ($exception->getCode() === ErrorCodes::ERR_REVOKED_TOKEN) {
+                throw $exception;
             }
-            // Ignore other JWT errors — the refresh endpoint uses opaque tokens
+            // Ignore other JWT errors - the refresh endpoint uses opaque tokens
         }
     }
 
@@ -73,7 +73,7 @@ class RefreshTokenService extends AuthenticateService
      */
     private function checkRefreshTokenEnabled()
     {
-        if ($this->jwtSettings->getAuthenticationSettings()->isRefreshTokenEnabled() === false) {
+        if (!$this->jwtSettings->getAuthenticationSettings()->isRefreshTokenEnabled()) {
             throw new Exception(
                 __('Refresh Token endpoint is not enabled.', 'simple-jwt-login'),
                 ErrorCodes::ERR_REFRESH_TOKEN_NOT_ENABLED
@@ -82,7 +82,6 @@ class RefreshTokenService extends AuthenticateService
     }
 
     /**
-     * @SuppressWarnings(StaticAccess)
      * @return WP_REST_Response
      * @throws Exception
      */
@@ -129,7 +128,7 @@ class RefreshTokenService extends AuthenticateService
             $user
         );
 
-        if ($this->jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME)) {
+        if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME)) {
             $newPayload = $this->wordPressData->triggerFilter(
                 SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME,
                 $newPayload,
@@ -155,7 +154,7 @@ class RefreshTokenService extends AuthenticateService
             $this->wordPressData->getUserProperty($user, 'user_email')
         );
 
-        $response =  [
+        $response = [
             'success' => true,
             'data'    => [
                 'jwt' => JWT::encode(
@@ -168,7 +167,7 @@ class RefreshTokenService extends AuthenticateService
         ];
 
         if ($this->jwtSettings->getHooksSettings()
-            ->isHookEnable(SimpleJWTLoginHooks::HOOK_RESPONSE_REFRESH_TOKEN)
+            ->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_REFRESH_TOKEN)
         ) {
             $response = $this->wordPressData
                 ->triggerFilter(
@@ -178,7 +177,6 @@ class RefreshTokenService extends AuthenticateService
                 );
         }
 
-        //Display result
         return $this->wordPressData->createResponse($response);
     }
 }

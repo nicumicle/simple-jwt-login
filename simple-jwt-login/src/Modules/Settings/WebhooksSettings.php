@@ -193,11 +193,9 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
      */
     public function getRetentionDays()
     {
-        if (isset($this->settings[self::SETTING_RETENTION_DAYS])) {
-            return (int) $this->settings[self::SETTING_RETENTION_DAYS];
-        }
-
-        return self::DEFAULT_RETENTION_DAYS;
+        return isset($this->settings[self::SETTING_RETENTION_DAYS])
+            ? (int) $this->settings[self::SETTING_RETENTION_DAYS]
+            : self::DEFAULT_RETENTION_DAYS;
     }
 
     /**

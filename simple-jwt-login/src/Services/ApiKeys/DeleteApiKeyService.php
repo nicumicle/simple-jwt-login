@@ -15,7 +15,7 @@ class DeleteApiKeyService extends BaseApiKeyService
     {
         $this->requireLoggedIn();
 
-        $keyId = (int) ($this->request['id'] ?? 0);
+        $keyId = (int) (isset($this->request['id']) ? $this->request['id'] : 0);
         if ($keyId <= 0) {
             throw new Exception(
                 __('Invalid API key ID.', 'simple-jwt-login'),

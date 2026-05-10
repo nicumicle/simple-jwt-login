@@ -1,5 +1,6 @@
 <?php
 
+use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\ApiKeyPermissions;
 use SimpleJWTLogin\Helpers\CorsHelper;
 use SimpleJWTLogin\Helpers\ServerHelper;
@@ -190,14 +191,13 @@ add_action('rest_api_init', function () {
 
                         return true;
                     } catch (\Exception $exception) {
-                        $status = StatusCodeHelper::getStatusCodeFromExeption($exception, 400);
+                        $status = StatusCodeHelper::getStatusCodeFromException($exception, 400);
                         return new WP_Error(
                             'simple_jwt_login_middleware_error',
                             $exception->getMessage(),
                             [
                                 'status'    => $status,
                                 'errorCode' => $exception->getCode(),
-                                'type'      => 'simple-jwt-login-middleware',
                             ]
                         );
                     }
@@ -220,7 +220,7 @@ add_action('rest_api_init', function () {
                         return new WP_Error(
                             'simple_jwt_login_api_key_error',
                             __('Invalid or unauthorized API key.', 'simple-jwt-login'),
-                            ['status' => 401]
+                            ['status' => 401, 'errorCode' => ErrorCodes::ERR_API_KEY_UNAUTHORIZED]
                         );
                     }
                     $wordPressData->loginUser($wordPressData->getUserDetailsById((int) $keyData['user_id']));
@@ -253,8 +253,8 @@ add_action('rest_api_init', function () {
                 $service->withSession(simple_jwt_login_init_session());
             }
                 
-            $currentURL = esc_url($serverHelper->getCurrentURL());
-            $currentURL = str_replace(home_url(), "", $currentURL);
+            $currentURL = esc_url_raw($serverHelper->getCurrentURL());
+            $currentURL = str_replace(home_url(), '', $currentURL);
             $documentRoot = esc_html($_SERVER['DOCUMENT_ROOT']);
 
             try {
@@ -265,9 +265,8 @@ add_action('rest_api_init', function () {
                     [
                         'message'   => $exception->getMessage(),
                         'errorCode' => $exception->getCode(),
-                        'type'      => 'simple-jwt-login-route-protect'
                     ],
-                    StatusCodeHelper::getStatusCodeFromExeption($exception, 400)
+                    StatusCodeHelper::getStatusCodeFromException($exception, 400)
                 );
 
                 return false;
@@ -280,11 +279,10 @@ add_action('rest_api_init', function () {
             @header('Content-Type: application/json; charset=UTF-8');
             wp_send_json_error(
                 [
-                    'message'   => 'You are not authorized to access this endpoint.',
-                    'errorCode' => 403,
-                    'type'      => 'simple-jwt-login-route-protect'
+                    'message'   => __('You are not authorized to access this endpoint.', 'simple-jwt-login'),
+                    'errorCode' => ErrorCodes::ERR_PROTECT_ENDPOINTS_MISSING_JWT,
                 ],
-                403
+                401
             );
 
             return false;
@@ -302,7 +300,7 @@ add_action('rest_api_init', function () {
                     try {
                         if ($jwtSettings
                             ->getHooksSettings()
-                            ->isHookEnable(SimpleJWTLoginHooks::HOOK_BEFORE_ENDPOINT)
+                            ->isHookEnabled(SimpleJWTLoginHooks::HOOK_BEFORE_ENDPOINT)
                         ) {
                             /** @phpstan-ignore-next-line */
                             $jwtSettings->getWordPressData()->triggerAction(
@@ -335,7 +333,7 @@ add_action('rest_api_init', function () {
                             'message'   => $exception->getMessage(),
                             'errorCode' => $exception->getCode()
                             ],
-                            StatusCodeHelper::getStatusCodeFromExeption($exception, 400)
+                            StatusCodeHelper::getStatusCodeFromException($exception, 400)
                         );
 
                         return false;
@@ -438,14 +436,26 @@ add_action('rest_api_init', function () {
                             'simple_jwt_login_api_key_error',
                             $exception->getMessage(),
                             [
-                                'status'    => StatusCodeHelper::getStatusCodeFromExeption($exception, 400),
+                                'status'    => StatusCodeHelper::getStatusCodeFromException($exception, 400),
                                 'errorCode' => $exception->getCode(),
                             ]
                         );
                     }
                 },
-                'permission_callback' => function () {
-                    return is_user_logged_in();
+                'permission_callback' => function () use ($routeService, $wordPressData) {
+                    if (is_user_logged_in()) {
+                        return true;
+                    }
+                    $jwt = $routeService->getJwtFromRequestHeaderOrCookie();
+                    if ($jwt === null) {
+                        return false;
+                    }
+                    try {
+                        $wordPressData->loginUser($routeService->getUserFromJwt($jwt));
+                        return true;
+                    } catch (Exception $exception) {
+                        return false;
+                    }
                 },
             ]
         );

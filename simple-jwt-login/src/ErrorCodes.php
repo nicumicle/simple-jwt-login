@@ -104,4 +104,6 @@ class ErrorCodes
     const ERR_API_KEY_UPDATE_FAILED       = 90;
     const ERR_API_KEY_REVOKE_FAILED       = 91;
     const ERR_API_KEY_DELETE_FAILED       = 92;
+
+    const ERR_JWT_CANNOT_CHANGE_PASSWORD = 93;
 }

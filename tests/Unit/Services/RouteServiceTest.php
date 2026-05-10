@@ -50,7 +50,7 @@ class RouteServiceTest extends TestCase
             ->method('getUserDetailsByEmail')
             ->willReturn(null);
 
-        $routeServie = (new RouteService())
+        $routeService = (new RouteService())
             ->withSession([])
             ->withSettings(
                 new SimpleJWTLoginSettings(
@@ -63,7 +63,7 @@ class RouteServiceTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('WordPress User not found.');
         $jwt = JWT::encode(['user' => 'test'], '123');
-        $routeServie->getUserIdFromJWT($jwt);
+        $routeService->getUserIdFromJWT($jwt);
     }
 
     public function testGetUserIdFromJWT()
@@ -89,7 +89,7 @@ class RouteServiceTest extends TestCase
             ->method('getUserProperty')
             ->willReturn(2);
 
-        $routeServie = (new RouteService())
+        $routeService = (new RouteService())
             ->withSession([])
             ->withSettings(
                 new SimpleJWTLoginSettings(
@@ -100,7 +100,7 @@ class RouteServiceTest extends TestCase
             ->withCookies([]);
 
         $jwt = JWT::encode(['user' => 'test'], '123');
-        $userId = $routeServie->getUserIdFromJWT($jwt);
+        $userId = $routeService->getUserIdFromJWT($jwt);
         $this->assertSame(2, $userId);
     }
 }

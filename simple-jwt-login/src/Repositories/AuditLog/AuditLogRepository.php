@@ -92,7 +92,7 @@ class AuditLogRepository implements Repository
         }
 
         if (!empty($filters['date_from']) && $this->isValidDate($filters['date_from'])) {
-             $where[]  = 'created_at >= %s';
+            $where[]  = 'created_at >= %s';
             $params[] = $filters['date_from'] . ' 00:00:00';
         }
 

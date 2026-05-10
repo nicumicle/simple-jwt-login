@@ -31,14 +31,15 @@ class ApiKeyAuthMiddleware
      * @param string       $headerName         Header to read the raw key from (default: x-api-key)
      * @return array|null
      */
-    public function validate(ServerHelper $serverHelper, string $requiredPermission, string $headerName = 'x-api-key'): ?array
+    public function validate(ServerHelper $serverHelper, $requiredPermission, $headerName = 'x-api-key')
     {
         if (!ApiKeyPermissions::isValid($requiredPermission)) {
             return null;
         }
 
-        $headers = array_change_key_case($serverHelper->getHeaders(), CASE_LOWER);
-        $rawKey  = isset($headers[strtolower($headerName)]) ? trim((string) $headers[strtolower($headerName)]) : '';
+        $headers    = array_change_key_case($serverHelper->getHeaders(), CASE_LOWER);
+        $headerKey  = strtolower($headerName);
+        $rawKey     = isset($headers[$headerKey]) ? trim((string) $headers[$headerKey]) : '';
 
         if ($rawKey === '') {
             return null;

@@ -70,7 +70,7 @@ class RedirectService extends BaseService implements ServiceInterface
 
         $url = $this->includeRequestParameters($url);
 
-        if ($this->jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::LOGIN_REDIRECT_NAME)) {
+        if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::LOGIN_REDIRECT_NAME)) {
             $this->wordPressData->triggerAction(SimpleJWTLoginHooks::LOGIN_REDIRECT_NAME, $url, $this->request);
         }
 
@@ -83,7 +83,7 @@ class RedirectService extends BaseService implements ServiceInterface
             ];
             if ($this->jwtSettings
                 ->getHooksSettings()
-                ->isHookEnable(SimpleJWTLoginHooks::NO_REDIRECT_RESPONSE)
+                ->isHookEnabled(SimpleJWTLoginHooks::NO_REDIRECT_RESPONSE)
             ) {
                 $response = $this->wordPressData->triggerFilter(
                     SimpleJWTLoginHooks::NO_REDIRECT_RESPONSE,
@@ -112,22 +112,20 @@ class RedirectService extends BaseService implements ServiceInterface
      */
     private function replaceVariables($url, $user)
     {
-        /** @var array<string,string> $replace */
-        $replace = [
-            '{{site_url}}' => $this->wordPressData->getSiteUrl() ? $this->wordPressData->getSiteUrl() : '{{site_url}}',
-            '{{user_id}}' => $this->wordPressData->getUserProperty($user, 'ID') ?
-                $this->wordPressData->getUserProperty($user, 'ID') : '{{user_id}}',
-            '{{user_email}}' => $this->wordPressData->getUserProperty($user, 'user_email') ?
-                $this->wordPressData->getUserProperty($user, 'user_email') : '{{user_email}}',
-            '{{user_login}}' => $this->wordPressData->getUserProperty($user, 'user_login') ?
-                $this->wordPressData->getUserProperty($user, 'user_login') : '{{user_login}}',
-            '{{user_first_name}}' => $this->wordPressData->getUserProperty($user, 'first_name')
-                ? $this->wordPressData->getUserProperty($user, 'first_name') : '{{user_first_name}}',
-            '{{user_last_name}}' => $this->wordPressData->getUserProperty($user, 'last_name') ?
-                $this->wordPressData->getUserProperty($user, 'last_name') : '{{user_last_name}}',
-            '{{user_nicename}}' => $this->wordPressData->getUserProperty($user, 'user_nicename') ?
-                $this->wordPressData->getUserProperty($user, 'user_nicename') : '{{user_nicename}}',
+        $candidates = [
+            '{{site_url}}'        => $this->wordPressData->getSiteUrl(),
+            '{{user_id}}'         => $this->wordPressData->getUserProperty($user, 'ID'),
+            '{{user_email}}'      => $this->wordPressData->getUserProperty($user, 'user_email'),
+            '{{user_login}}'      => $this->wordPressData->getUserProperty($user, 'user_login'),
+            '{{user_first_name}}' => $this->wordPressData->getUserProperty($user, 'first_name'),
+            '{{user_last_name}}'  => $this->wordPressData->getUserProperty($user, 'last_name'),
+            '{{user_nicename}}'   => $this->wordPressData->getUserProperty($user, 'user_nicename'),
         ];
+
+        $replace = [];
+        foreach ($candidates as $key => $value) {
+            $replace[$key] = $value ?: $key;
+        }
 
         return str_replace(array_keys($replace), array_values($replace), $url);
     }

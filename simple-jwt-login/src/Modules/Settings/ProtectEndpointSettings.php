@@ -83,15 +83,15 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
 
     public function validateSettings()
     {
-        if ($this->isEnabled() === false) {
+        if (!$this->isEnabled()) {
             return true;
         }
 
         $filteredEndpoints = array_filter($this->getProtectedEndpoints(), function ($value) {
-            return !empty(trim($value['url'], " "));
+            return !empty(trim($value['url'], ' '));
         });
 
-        if ($this->getAction() === ProtectEndpointSettings::SPECIFIC_ENDPOINTS && empty($filteredEndpoints)) {
+        if ($this->getAction() === self::SPECIFIC_ENDPOINTS && empty($filteredEndpoints)) {
             throw new Exception(
                 __('You need to add at least one endpoint.', 'simple-jwt-login'),
                 $this->settingsErrors->generateCode(
@@ -107,7 +107,7 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
      */
     public function isEnabled()
     {
-        return !empty($this->settings[ProtectEndpointSettings::PROPERTY_GROUP]['enabled']);
+        return !empty($this->settings[self::PROPERTY_GROUP]['enabled']);
     }
 
     /**
@@ -115,8 +115,8 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
      */
     public function getAction()
     {
-        return isset($this->settings[ProtectEndpointSettings::PROPERTY_GROUP]['action'])
-            ? (int) $this->settings[ProtectEndpointSettings::PROPERTY_GROUP]['action']
+        return isset($this->settings[self::PROPERTY_GROUP]['action'])
+            ? (int) $this->settings[self::PROPERTY_GROUP]['action']
             : 0;
     }
 
@@ -139,18 +139,19 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
     /**
      * @param string $methodKey
      * @param string $endpointsKey
+     * @param string $matchKey
      * @return array<int,array<string,mixed>>
      */
     private function parseProtectSettings($methodKey, $endpointsKey, $matchKey)
     {
-        $endpoints = isset($this->settings[ProtectEndpointSettings::PROPERTY_GROUP][$endpointsKey])
-            ? (array) $this->settings[ProtectEndpointSettings::PROPERTY_GROUP][$endpointsKey]
+        $endpoints = isset($this->settings[self::PROPERTY_GROUP][$endpointsKey])
+            ? (array) $this->settings[self::PROPERTY_GROUP][$endpointsKey]
             : [''];
-        $methods = isset($this->settings[ProtectEndpointSettings::PROPERTY_GROUP][$methodKey])
-            ? (array) $this->settings[ProtectEndpointSettings::PROPERTY_GROUP][$methodKey]
+        $methods = isset($this->settings[self::PROPERTY_GROUP][$methodKey])
+            ? (array) $this->settings[self::PROPERTY_GROUP][$methodKey]
             : [''];
-        $match = isset($this->settings[ProtectEndpointSettings::PROPERTY_GROUP][$matchKey])
-            ? (array) $this->settings[ProtectEndpointSettings::PROPERTY_GROUP][$matchKey]
+        $match = isset($this->settings[self::PROPERTY_GROUP][$matchKey])
+            ? (array) $this->settings[self::PROPERTY_GROUP][$matchKey]
             : [''];
 
         $return = [];
@@ -167,11 +168,7 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
         }
 
         return array_values(array_filter($return, function ($endpoint) {
-            if (trim($endpoint['url']) === "") {
-                return false;
-            };
-
-            return true;
+            return trim($endpoint['url']) !== '';
         }));
     }
 }

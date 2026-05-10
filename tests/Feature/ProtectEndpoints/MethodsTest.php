@@ -84,7 +84,7 @@ class MethodsTest extends TestBase
                 'useJWT' => false,
                 'endpoint' => '/wp/v2/users',
                 'method' => 'GET',
-                'expectedStatusCode' => 403,
+                'expectedStatusCode' => 401,
             ],
             'should be able to call protected endpoint with JWT' => [
                 'settings' => [
@@ -184,7 +184,7 @@ class MethodsTest extends TestBase
                 'useJWT' => false,
                 'endpoint' => '/wp/v2/posts',
                 'method' => 'GET',
-                'expectedStatusCode' => 403,
+                'expectedStatusCode' => 401,
             ],
             'should be able to call an non-whitelisted endpoint with JWT' => [
                 'settings' => [
@@ -227,7 +227,7 @@ class MethodsTest extends TestBase
                 'useJWT' => false,
                 'endpoint' => '/wp/v2/users',
                 'method' => 'GET',
-                'expectedStatusCode' => 403,
+                'expectedStatusCode' => 401,
             ],
             'should be able to call protected endpoint with start match' => [
                 'settings' => [

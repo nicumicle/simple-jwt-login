@@ -51,7 +51,7 @@ class BaseApplication
      */
     protected function createUser($email)
     {
-        $username = "user_" . $this->randomString(6);
+        $username = 'user_' . $this->randomString(6);
         $password = $this->wordPressData->generatePassword(
             $this->settings->getRegisterSettings()->getRandomPasswordLength()
         );
@@ -59,7 +59,7 @@ class BaseApplication
             $username,
             $email,
             $password,
-            $this->settings->getRegisterSettings()->getNewUSerProfile(),
+            $this->settings->getRegisterSettings()->getNewUserProfile(),
             []
         );
 
@@ -76,7 +76,7 @@ class BaseApplication
         $charLength = strlen($chars);
         $result = '';
         for ($i = 0; $i < $length; $i++) {
-            $result .= $chars[rand(0, $charLength - 1)];
+            $result .= $chars[random_int(0, $charLength - 1)];
         }
 
         return $result;

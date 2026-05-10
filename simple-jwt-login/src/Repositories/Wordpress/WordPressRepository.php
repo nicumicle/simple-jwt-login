@@ -100,10 +100,10 @@ class WordPressRepository implements Repository
             return null;
         }
         if (!empty($params) && is_array($params)) {
-            $separator = (strpos($url, "?") === false ? "?" : "&");
+            $separator = strpos($url, '?') === false ? '?' : '&';
             foreach ($params as $key => $value) {
-                $url .= sprintf("%s%s=%s", $separator, urlencode($key), urlencode($value));
-                $separator = "&";
+                $url .= sprintf('%s%s=%s', $separator, urlencode($key), urlencode($value));
+                $separator = '&';
             }
         }
 
@@ -237,9 +237,13 @@ class WordPressRepository implements Repository
             $sanitizedKey = $this->sanitizeTextField((string) $key);
             if (is_string($value)) {
                 $sanitized[$sanitizedKey] = $this->sanitizeTextField($value);
-            } elseif (is_numeric($value)) {
+                continue;
+            }
+            if (is_numeric($value)) {
                 $sanitized[$sanitizedKey] = $value;
-            } elseif (is_array($value)) {
+                continue;
+            }
+            if (is_array($value)) {
                 $sanitized[$sanitizedKey] = $this->sanitizeArray($value);
             }
         }
@@ -362,7 +366,8 @@ class WordPressRepository implements Repository
     {
         if ($password !== null) {
             return wp_check_password($password, $dbPassword);
-        } elseif ($passwordHash !== null) {
+        }
+        if ($passwordHash !== null) {
             return hash_equals($dbPassword, $passwordHash);
         }
 
@@ -404,7 +409,7 @@ class WordPressRepository implements Repository
     public function checkPasswordResetKeyByEmail($code, $email)
     {
         $user = $this->getUserDetailsByEmail($email);
-        if ($user instanceof WP_User === false) {
+        if (!($user instanceof WP_User)) {
             return false;
         }
 

@@ -25,7 +25,7 @@ class AuthCodeBuilder
      */
     public function __construct($data)
     {
-        $newMode = is_array($data) && isset($data['code']) && isset($data['role']) && isset($data['expiration_date']);
+        $newMode = is_array($data) && isset($data['code'], $data['role'], $data['expiration_date']);
 
         $this->code = $newMode
             ? $data['code']

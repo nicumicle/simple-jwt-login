@@ -334,7 +334,7 @@ class ProtectEndpointServiceTest extends TestCase
             ->withSession([]);
 
         $result = $service->hasAccess('/wp-json/v2/posts', '/var/www/html');
-        $this->assertSame(false, $result);
+        $this->assertFalse($result);
     }
 
     public function testSimpleJwtLoginEndpointsAreNotProtected()

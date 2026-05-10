@@ -34,21 +34,21 @@ class ProtectEndpointService extends BaseService
      */
     public function hasAccess($currentUrl, $documentRoot)
     {
-        if ($this->jwtSettings->getProtectEndpointsSettings()->isEnabled() === false) {
+        if (!$this->jwtSettings->getProtectEndpointsSettings()->isEnabled()) {
             return true;
         }
 
-        // WordPress Core or some other plugings uses the REST API to create pages/posts,etc.
-        // Need to skip the protect endpoint validation for these scenarios if user is already loggedin
+        // WordPress Core or some other plugins use the REST API to create pages/posts, etc.
+        // Skip protect endpoint validation for these scenarios if the user is already logged in.
         if ($this->wordPressData->isUserLoggedIn()) {
             return true;
         }
 
         $parsed = parse_url($currentUrl);
 
-        //Initialize $path safely, checking if 'path' is available in $parsed
-		$basePath  = rtrim(str_replace($documentRoot, '', ABSPATH), '/');
-		$path = isset($parsed['path']) ? str_replace($basePath . '/wp-json', '', $parsed['path']) : '';
+        // Initialize $path safely: parse_url() may not include 'path' for some URL forms.
+        $basePath  = rtrim(str_replace($documentRoot, '', ABSPATH), '/');
+        $path = isset($parsed['path']) ? str_replace($basePath . '/wp-json', '', $parsed['path']) : '';
 
         $isEndpointsProtected = true;
         if (!empty(trim($path, '/'))) {
@@ -57,14 +57,17 @@ class ProtectEndpointService extends BaseService
         if (!empty($this->request['rest_route'])) {
             $isEndpointsProtected = $this->isEndpointProtected($this->request['rest_route']);
         }
-        if ($isEndpointsProtected === false) {
+        if (!$isEndpointsProtected) {
             return true;
         }
 
         try {
             $jwt = $this->getJwtFromRequestHeaderOrCookie();
             if (empty($jwt)) {
-                throw new Exception('JWT is not present and we can not search for a user.', ErrorCodes::ERR_PROTECT_ENDPOINTS_MISSING_JWT);
+                throw new Exception(
+                    __('JWT is not present and we can not search for a user.', 'simple-jwt-login'),
+                    ErrorCodes::ERR_PROTECT_ENDPOINTS_MISSING_JWT
+                );
             }
             
             $user = $this->routeService->getUserFromJwt($jwt);
@@ -72,17 +75,13 @@ class ProtectEndpointService extends BaseService
                 $this->wordPressData->getUserProperty($user, 'ID'),
                 $jwt
             );
-           
-            
-            if ($this->routeService->wordPressData->isUserLoggedIn()) {
-                return true;
-            }
-            $this->routeService->wordPressData->loginUser($user);
+
+            $this->wordPressData->loginUser($user);
 
             return true;
-        } catch (Exception $e) {
-            if ($e->getCode() === ErrorCodes::ERR_REVOKED_TOKEN) {
-                throw $e;
+        } catch (Exception $exception) {
+            if ($exception->getCode() === ErrorCodes::ERR_REVOKED_TOKEN) {
+                throw $exception;
             }
             return false;
         }
@@ -110,7 +109,7 @@ class ProtectEndpointService extends BaseService
         );
         if (strpos($endpoint, $skipNamespace) === 0
             || strpos(trim($endpoint, '/'), $adminPath) === 0) {
-            //Skip simple jwt login endpoints and wp-admin
+            // Skip simple-jwt-login endpoints and wp-admin.
             return false;
         }
 
@@ -154,8 +153,8 @@ class ProtectEndpointService extends BaseService
             // By default, start_with match
             $match = strpos(strtolower($endpoint), strtolower($protectedURL)) === 0;
 
-            if ($protectedEndpoint['match']  === ProtectEndpointSettings::ENDPOINT_MATCH_EXACT) {
-                $match = strtolower($endpoint) == strtolower($protectedURL);
+            if ($protectedEndpoint['match'] === ProtectEndpointSettings::ENDPOINT_MATCH_EXACT) {
+                $match = strtolower($endpoint) === strtolower($protectedURL);
             }
 
             if (!$match) {
@@ -167,7 +166,7 @@ class ProtectEndpointService extends BaseService
                     $isEndpointProtected = $setValue; // Same as before.
                     break;
                 default:
-                    if ($protectedEndpoint['method'] === $this->requestMetod) {
+                    if ($protectedEndpoint['method'] === $this->requestMethod) {
                         $isEndpointProtected = $setValue;
                     }
                     break;

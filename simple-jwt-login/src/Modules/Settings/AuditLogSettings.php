@@ -70,8 +70,7 @@ class AuditLogSettings extends BaseSettings implements SettingsInterface
      */
     public function isEnabled()
     {
-        return isset($this->settings[self::SETTINGS_GROUP][self::SETTING_ENABLED])
-            && (bool) $this->settings[self::SETTINGS_GROUP][self::SETTING_ENABLED] === true;
+        return !empty($this->settings[self::SETTINGS_GROUP][self::SETTING_ENABLED]);
     }
 
     /**
@@ -103,10 +102,8 @@ class AuditLogSettings extends BaseSettings implements SettingsInterface
      */
     public function getRetentionDays()
     {
-        if (isset($this->settings[self::SETTINGS_GROUP][self::SETTING_RETENTION_DAYS])) {
-            return (int) $this->settings[self::SETTINGS_GROUP][self::SETTING_RETENTION_DAYS];
-        }
-
-        return self::DEFAULT_RETENTION_DAYS;
+        return isset($this->settings[self::SETTINGS_GROUP][self::SETTING_RETENTION_DAYS])
+            ? (int) $this->settings[self::SETTINGS_GROUP][self::SETTING_RETENTION_DAYS]
+            : self::DEFAULT_RETENTION_DAYS;
     }
 }

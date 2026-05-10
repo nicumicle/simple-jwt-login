@@ -42,7 +42,7 @@ class OAuthService extends BaseService implements ServiceInterface
         /** @var ApplicationInterface $app */
         $app = ($this->providerFactories[$provider])(
             $this->request,
-            $this->requestMetod,
+            $this->requestMethod,
             $this->jwtSettings,
             $this->wordPressData
         );

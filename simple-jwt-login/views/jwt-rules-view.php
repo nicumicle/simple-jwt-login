@@ -267,14 +267,14 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
         <!-- Hidden JSON carrier for the IF / ELSE IF rules -->
         <input type="hidden" name="jwt_rules" id="jwt_rules_json" value="[]" />
 
-        <!-- ELSE row — required default, backed by GeneralSettings fields -->
+        <!-- ELSE row - required default, backed by GeneralSettings fields -->
         <div class="sjl-rule-else-wrapper">
             <div class="sjl-rule-else-header">
                 <span class="sjl-rule-badge sjl-rule-badge-else">
-                    <?php echo esc_html__('ELSE (default — used when no rule matches)', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('ELSE (default - used when no rule matches)', 'simple-jwt-login'); ?>
                 </span>
                 <span class="dashicons dashicons-lock sjl-rule-lock-icon"
-                      title="<?php echo esc_attr(__('Required — cannot be removed', 'simple-jwt-login')); ?>"></span>
+                      title="<?php echo esc_attr(__('Required - cannot be removed', 'simple-jwt-login')); ?>"></span>
             </div>
 
             <!-- Key source -->

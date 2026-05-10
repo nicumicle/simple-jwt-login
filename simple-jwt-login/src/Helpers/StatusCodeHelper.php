@@ -49,6 +49,8 @@ class StatusCodeHelper
         ErrorCodes::ERR_AUTH0_INVALID_TOKEN,
         // IIS login
         ErrorCodes::ERR_INVALID_IIS_LOGIN,
+        // JWT cannot be used to change password
+        ErrorCodes::ERR_JWT_CANNOT_CHANGE_PASSWORD,
     ];
 
     /** @var list<int> */
@@ -123,7 +125,7 @@ class StatusCodeHelper
      * @param int $defaultStatusCode
      * @return int
      */
-    public static function getStatusCodeFromExeption($exception, $defaultStatusCode)
+    public static function getStatusCodeFromException($exception, $defaultStatusCode)
     {
         $map = [
             401 => self::$codes401,

@@ -15,6 +15,10 @@
 - Improve Refresh token and allow enable/disable
 - Enable/disable Revoke and Validate token 
 - Add suport for API Keys (X-API-Key) to access wordpress endpoints as an authenticated user 
+- Allow JWT authentication on the API Keys endpoint (in addition to cookie-based login)
+- Fix typos in method and constant names (`getStatusCodeFromException`, `JWT_LEEWAY`, `isHookEnabled`)
+- Improve error codes: `ERR_JWT_CANNOT_CHANGE_PASSWORD` added; protect-endpoint auth failure now returns 401 instead of 403
+- Code quality: enforce strict equality, early returns, static `JwtKeyFactory::getFactoryFromConfig`, and consistent single-quoted strings throughout
 
 ## 3.6.5 (14 Mar 2026)
 - Fix  CVE-2025-58648 - Stored Cross-Site Scripting vulnerability[PR](https://github.com/nicumicle/simple-jwt-login/pull/162)

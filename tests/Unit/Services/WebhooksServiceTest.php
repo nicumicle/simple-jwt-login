@@ -37,43 +37,44 @@ class WebhooksServiceTest extends TestCase
 
     public function testDispatchWithNoWebhooksDoesNotThrow()
     {
+        $this->expectNotToPerformAssertions();
         $service = new WebhooksService($this->makeSettings([]));
         $service->dispatch(WebhooksSettings::EVENT_LOGIN, ['user_id' => 1]);
-        $this->assertTrue(true);
     }
 
     public function testDispatchWithDisabledWebhookDoesNotThrow()
     {
+        $this->expectNotToPerformAssertions();
         $webhooks = [
             ['url' => 'https://example.com', 'enabled' => false, 'events' => ['login']],
         ];
         $service = new WebhooksService($this->makeSettings($webhooks));
         $service->dispatch(WebhooksSettings::EVENT_LOGIN, ['user_id' => 1]);
-        $this->assertTrue(true);
     }
 
     public function testDispatchWithEnabledWebhookDoesNotThrow()
     {
+        $this->expectNotToPerformAssertions();
         $webhooks = [
             ['url' => 'https://example.com', 'enabled' => true, 'method' => 'POST', 'events' => ['login'], 'headers' => []],
         ];
         $service = new WebhooksService($this->makeSettings($webhooks));
         $service->dispatch(WebhooksSettings::EVENT_LOGIN, ['user_id' => 1]);
-        $this->assertTrue(true);
     }
 
     public function testDispatchWithCustomMethodDoesNotThrow()
     {
+        $this->expectNotToPerformAssertions();
         $webhooks = [
             ['url' => 'https://example.com', 'enabled' => true, 'method' => 'PUT', 'events' => ['login'], 'headers' => []],
         ];
         $service = new WebhooksService($this->makeSettings($webhooks));
         $service->dispatch(WebhooksSettings::EVENT_LOGIN, ['user_id' => 1]);
-        $this->assertTrue(true);
     }
 
     public function testDispatchWithCustomHeadersDoesNotThrow()
     {
+        $this->expectNotToPerformAssertions();
         $webhooks = [
             [
                 'url'     => 'https://example.com',
@@ -88,7 +89,6 @@ class WebhooksServiceTest extends TestCase
         ];
         $service = new WebhooksService($this->makeSettings($webhooks));
         $service->dispatch(WebhooksSettings::EVENT_LOGIN, ['user_id' => 1]);
-        $this->assertTrue(true);
     }
 
     public function testOnlyWebhooksMatchingEventAreSelected()
@@ -119,6 +119,7 @@ class WebhooksServiceTest extends TestCase
 
     public function testDispatchWithPayloadTemplateDoesNotThrow()
     {
+        $this->expectNotToPerformAssertions();
         $webhooks = [
             [
                 'url'              => 'https://example.com',
@@ -131,11 +132,11 @@ class WebhooksServiceTest extends TestCase
         ];
         $service = new WebhooksService($this->makeSettings($webhooks));
         $service->dispatch(WebhooksSettings::EVENT_LOGIN, ['user_id' => 42, 'user_email' => 'test@example.com']);
-        $this->assertTrue(true);
     }
 
     public function testDispatchWithEmptyPayloadTemplateUsesDefaultPayload()
     {
+        $this->expectNotToPerformAssertions();
         $webhooks = [
             [
                 'url'              => 'https://example.com',
@@ -148,7 +149,6 @@ class WebhooksServiceTest extends TestCase
         ];
         $service = new WebhooksService($this->makeSettings($webhooks));
         $service->dispatch(WebhooksSettings::EVENT_LOGIN, ['user_id' => 1]);
-        $this->assertTrue(true);
     }
 
     public function testDisabledWebhookIsNotSelectedForDispatch()
@@ -191,13 +191,13 @@ class WebhooksServiceTest extends TestCase
 
     public function testDispatchDoesNotLogWhenNoRepository()
     {
+        $this->expectNotToPerformAssertions();
         $webhooks = [
             ['url' => 'https://example.com', 'enabled' => true, 'method' => 'POST', 'events' => ['login'], 'headers' => []],
         ];
 
         $service = new WebhooksService($this->makeSettings($webhooks));
         $service->dispatch(WebhooksSettings::EVENT_LOGIN, ['user_id' => 1]);
-        $this->assertTrue(true);
     }
 
     public function testDispatchLogsOncePerWebhook()

@@ -211,13 +211,13 @@ class WebhooksSettingsTest extends TestCase
             ]])
             ->withWordPressData($this->wordPressData)
             ->withPost([]);
+        $this->expectNotToPerformAssertions();
         $settings->validateSettings();
-
-        $this->assertTrue(true);
     }
 
     public function testValidatePassesWithValidUrl()
     {
+        $this->expectNotToPerformAssertions();
         $settings = (new WebhooksSettings())
             ->withSettings(['webhooks' => [
                 ['url' => 'https://example.com/hook', 'enabled' => true, 'events' => ['login']],
@@ -225,8 +225,6 @@ class WebhooksSettingsTest extends TestCase
             ->withWordPressData($this->wordPressData)
             ->withPost([]);
         $settings->validateSettings();
-
-        $this->assertTrue(true);
     }
 
     public function testPayloadTemplateIsStoredWhenProvided()

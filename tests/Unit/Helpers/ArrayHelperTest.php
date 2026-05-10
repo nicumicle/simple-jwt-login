@@ -18,7 +18,7 @@ class ArrayHelperTest extends TestCase
     {
         $data = ArrayHelper::convertStringToArray($string);
 
-        $this->assertEquals(
+        $this->assertSame(
             $result,
             $data
         );

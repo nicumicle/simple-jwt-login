@@ -10,7 +10,7 @@ class ApiKeyPermissionsTest extends TestCase
 {
     public function testAllConstantHasExactlyFourItems()
     {
-        $this->assertCount(4, ApiKeyPermissions::ALL);
+        $this->assertCount(4, ApiKeyPermissions::$all);
     }
 
     #[DataProvider('validPermissionsProvider')]
@@ -39,7 +39,7 @@ class ApiKeyPermissionsTest extends TestCase
     {
         return array_map(
             fn($perm) => [$perm],
-            ApiKeyPermissions::ALL
+            ApiKeyPermissions::$all
         );
     }
 

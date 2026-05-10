@@ -12,11 +12,11 @@ use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
  *
  * Subclasses declare their own data via four hook methods:
  *
- *  - getExtraFields()                 — additional fields beyond the common set
- *  - getToggleableFeatures()          — feature-flag field names ("at least one" check)
- *  - getRequiredFieldValidations()    — [field, errorCode, label] tuples
- *  - getAtLeastOneEnabledErrorCode()  — code used in the "at least one" exception
- *  - getRedirectUriRequiredErrorCode()— code used when redirect URI is missing
+ *  - getExtraFields()                 - additional fields beyond the common set
+ *  - getToggleableFeatures()          - feature-flag field names ("at least one" check)
+ *  - getRequiredFieldValidations()    - [field, errorCode, label] tuples
+ *  - getAtLeastOneEnabledErrorCode()  - code used in the "at least one" exception
+ *  - getRedirectUriRequiredErrorCode()- code used when redirect URI is missing
  *
  * Registering a new provider only requires:
  *  1. Create a subclass that fills in the five hooks above.
@@ -37,7 +37,7 @@ abstract class AbstractProviderSettings
     }
 
     // =========================================================================
-    // Abstract identity — subclasses must implement these
+    // Abstract identity - subclasses must implement these
     // =========================================================================
 
     /**
@@ -55,7 +55,7 @@ abstract class AbstractProviderSettings
     abstract public function getName();
 
     // =========================================================================
-    // Hook methods — override in subclasses to customise behaviour
+    // Hook methods - override in subclasses to customise behaviour
     // =========================================================================
 
     /**
@@ -103,7 +103,7 @@ abstract class AbstractProviderSettings
     abstract protected function getRedirectUriRequiredErrorCode();
 
     // =========================================================================
-    // Lifecycle — called by ApplicationsSettings
+    // Lifecycle - called by ApplicationsSettings
     // =========================================================================
 
     /**
@@ -163,7 +163,7 @@ abstract class AbstractProviderSettings
     }
 
     // =========================================================================
-    // Common getters — available on every provider
+    // Common getters - available on every provider
     // =========================================================================
 
     /** @return bool */
@@ -359,7 +359,7 @@ abstract class AbstractProviderSettings
 
         switch ($type) {
             case BaseSettings::SETTINGS_TYPE_INT:
-                return intval($value);
+                return (int) $value;
             case BaseSettings::SETTINGS_TYPE_BOL:
                 return (bool)$value;
             case BaseSettings::SETTINGS_TYPE_STRING:

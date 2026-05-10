@@ -80,7 +80,7 @@ if (!defined('ABSPATH')) {
     <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-editor-help"></span>
         <div>
-            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Step 1 — Request Reset Link', 'simple-jwt-login'); ?></h3>
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Step 1 - Request Reset Link', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
                 <?php echo esc_html__('Sends a reset code to the provided email address.', 'simple-jwt-login'); ?>
             </p>
@@ -264,7 +264,7 @@ if (!defined('ABSPATH')) {
     <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-update-alt"></span>
         <div>
-            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Step 2 — Set New Password', 'simple-jwt-login'); ?></h3>
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Step 2 - Set New Password', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
                 <?php echo esc_html__('Submits the reset code received by email along with the new password to complete the reset.', 'simple-jwt-login'); ?>
             </p>

@@ -40,8 +40,8 @@ class DeleteUserSettingsTest extends TestCase
         $deleteUserSettings->initSettingsFromPost();
         $deleteUserSettings->validateSettings();
 
-        $this->assertSame(true, $deleteUserSettings->isDeleteAllowed());
-        $this->assertSame(false, $deleteUserSettings->isAuthKeyRequiredOnDelete());
+        $this->assertTrue($deleteUserSettings->isDeleteAllowed());
+        $this->assertFalse($deleteUserSettings->isAuthKeyRequiredOnDelete());
         $this->assertSame('127.0.0.1', $deleteUserSettings->getAllowedDeleteIps());
     }
 }

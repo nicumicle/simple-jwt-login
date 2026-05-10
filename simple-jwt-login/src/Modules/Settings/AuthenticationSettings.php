@@ -202,8 +202,7 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
      */
     public function isAuthenticationEnabled()
     {
-        return isset($this->settings['allow_authentication'])
-         && !empty($this->settings['allow_authentication']);
+        return !empty($this->settings['allow_authentication']);
     }
 
     /**
@@ -213,7 +212,7 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
     public function isPayloadDataEnabled($name)
     {
         return !empty($this->settings['jwt_payload'])
-            && in_array($name, $this->settings['jwt_payload']);
+            && in_array($name, $this->settings['jwt_payload'], true);
     }
 
     /**
@@ -327,8 +326,7 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
      */
     public function isRefreshTokenEnabled()
     {
-        return isset($this->settings['allow_refresh_token'])
-            && !empty($this->settings['allow_refresh_token']);
+        return !empty($this->settings['allow_refresh_token']);
     }
 
     /**

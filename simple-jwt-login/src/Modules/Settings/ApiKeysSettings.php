@@ -36,8 +36,7 @@ class ApiKeysSettings extends BaseSettings implements SettingsInterface
      */
     public function isEnabled()
     {
-        return isset($this->settings[self::SETTINGS_GROUP][self::SETTING_ENABLED])
-            && (bool) $this->settings[self::SETTINGS_GROUP][self::SETTING_ENABLED] === true;
+        return !empty($this->settings[self::SETTINGS_GROUP][self::SETTING_ENABLED]);
     }
 
     /**

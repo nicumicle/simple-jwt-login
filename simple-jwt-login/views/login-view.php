@@ -209,7 +209,7 @@ if (! defined('ABSPATH')) {
             <div class="sjl-gen-feature-toggle-check">
                 <input type="checkbox" name="include_login_request_parameters"
                        id="include_login_request_parameters" value="1"
-                    <?php echo $jwtSettings->getLoginSettings()->getShouldIncludeRequestParameters() ? 'checked' : ''; ?>
+                    <?php echo $jwtSettings->getLoginSettings()->isRequestParametersIncluded() ? 'checked' : ''; ?>
                 />
             </div>
             <div class="sjl-gen-feature-toggle-text">

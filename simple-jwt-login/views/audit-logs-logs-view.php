@@ -111,7 +111,7 @@ $baseUrl = add_query_arg([
                             <option value=""><?php echo esc_html(__('All Events', 'simple-jwt-login')); ?></option>
                             <?php foreach ($allEvents as $event) : ?>
                                 <option value="<?php echo esc_attr($event); ?>" <?php echo $filterEvent === $event ? 'selected' : ''; ?>>
-                                    <?php echo esc_html($eventLabels[$event] ?? $event); ?>
+                                    <?php echo esc_html(isset($eventLabels[$event]) ? $eventLabels[$event] : $event); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -194,10 +194,10 @@ $baseUrl = add_query_arg([
                                 </td>
                                 <td>
                                     <?php if (!empty($log->user_id)) : ?>
-                                        <small><?php echo esc_html($log->user_email ?? ''); ?></small>
+                                        <small><?php echo esc_html(isset($log->user_email) ? $log->user_email : ''); ?></small>
                                         <br/><small class="text-muted">#<?php echo esc_html($log->user_id); ?></small>
                                     <?php else : ?>
-                                        <small class="text-muted"><?php echo esc_html($log->user_email ?? '-'); ?></small>
+                                        <small class="text-muted"><?php echo esc_html(isset($log->user_email) ? $log->user_email : '-'); ?></small>
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -207,7 +207,7 @@ $baseUrl = add_query_arg([
                                         <small class="text-muted">-</small>
                                     <?php endif; ?>
                                 </td>
-                                <td><small><?php echo esc_html($log->ip_address ?? '-'); ?></small></td>
+                                <td><small><?php echo esc_html(isset($log->ip_address) ? $log->ip_address : '-'); ?></small></td>
                                 <td>
                                     <?php if ($log->status === 'success') : ?>
                                         <span class="badge badge-success"><?php echo esc_html(__('Success', 'simple-jwt-login')); ?></span>
@@ -215,7 +215,7 @@ $baseUrl = add_query_arg([
                                         <span class="badge badge-danger"><?php echo esc_html(__('Failure', 'simple-jwt-login')); ?></span>
                                     <?php endif; ?>
                                 </td>
-                                <td><small><?php echo esc_html($log->message ?? ''); ?></small></td>
+                                <td><small><?php echo esc_html(isset($log->message) ? $log->message : ''); ?></small></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>

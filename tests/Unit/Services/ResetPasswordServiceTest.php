@@ -150,7 +150,7 @@ class ResetPasswordServiceTest extends TestCase
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'POST']))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
         $result = $resetService->makeAction();
-        $this->assertSame(true, $result);
+        $this->assertTrue($result);
     }
 
     public static function flowTypeProvider()
@@ -342,7 +342,7 @@ class ResetPasswordServiceTest extends TestCase
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'PUT']))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
         $result = $resetService->makeAction();
-        $this->assertSame(true, $result);
+        $this->assertTrue($result);
     }
 
     public function testChangePasswordWithSpecialCharacters()

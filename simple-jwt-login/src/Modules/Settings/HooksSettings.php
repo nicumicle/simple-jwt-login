@@ -4,6 +4,11 @@ namespace SimpleJWTLogin\Modules\Settings;
 
 class HooksSettings extends BaseSettings implements SettingsInterface
 {
+    protected function getSectionKey()
+    {
+        return 'hooks';
+    }
+
     public function initSettingsFromPost()
     {
         $this->assignSettingsPropertyFromPost(

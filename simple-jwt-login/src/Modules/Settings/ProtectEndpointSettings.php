@@ -7,6 +7,7 @@ use Exception;
 class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
 {
     const PROPERTY_GROUP = 'protect_endpoints';
+
     const ALL_ENDPOINTS = 1;
     const SPECIFIC_ENDPOINTS = 2;
 
@@ -20,62 +21,67 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
     const ENDPOINT_MATCH_EXACT = 'EXACT';
     const ENDPOINT_MATCH_START_WITH = 'STARTS_WITH';
 
+    protected function getSectionKey()
+    {
+        return 'protect_endpoint';
+    }
+
     public function initSettingsFromPost()
     {
         $this->assignSettingsPropertyFromPost(
-            self::PROPERTY_GROUP,
+            null,
             'enabled',
-            self::PROPERTY_GROUP,
+            'protect_endpoints',
             'enabled',
             BaseSettings::SETTINGS_TYPE_INT
         );
 
         $this->assignSettingsPropertyFromPost(
-            self::PROPERTY_GROUP,
+            null,
             'action',
-            self::PROPERTY_GROUP,
+            'protect_endpoints',
             'action',
             BaseSettings::SETTINGS_TYPE_INT
         );
         $this->assignSettingsPropertyFromPost(
-            self::PROPERTY_GROUP,
+            null,
             'protect',
-            self::PROPERTY_GROUP,
+            'protect_endpoints',
             'protect',
             BaseSettings::SETTINGS_TYPE_ARRAY
         );
         $this->assignSettingsPropertyFromPost(
-            self::PROPERTY_GROUP,
+            null,
             'protect_method',
-            self::PROPERTY_GROUP,
+            'protect_endpoints',
             'protect_method',
             BaseSettings::SETTINGS_TYPE_ARRAY
         );
         $this->assignSettingsPropertyFromPost(
-            self::PROPERTY_GROUP,
+            null,
             'protect_match',
-            self::PROPERTY_GROUP,
+            'protect_endpoints',
             'protect_match',
             BaseSettings::SETTINGS_TYPE_ARRAY
         );
         $this->assignSettingsPropertyFromPost(
-            self::PROPERTY_GROUP,
+            null,
             'whitelist',
-            self::PROPERTY_GROUP,
+            'protect_endpoints',
             'whitelist',
             BaseSettings::SETTINGS_TYPE_ARRAY
         );
         $this->assignSettingsPropertyFromPost(
-            self::PROPERTY_GROUP,
+            null,
             'whitelist_method',
-            self::PROPERTY_GROUP,
+            'protect_endpoints',
             'whitelist_method',
             BaseSettings::SETTINGS_TYPE_ARRAY
         );
         $this->assignSettingsPropertyFromPost(
-            self::PROPERTY_GROUP,
+            null,
             'whitelist_match',
-            self::PROPERTY_GROUP,
+            'protect_endpoints',
             'whitelist_match',
             BaseSettings::SETTINGS_TYPE_ARRAY
         );
@@ -107,7 +113,7 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
      */
     public function isEnabled()
     {
-        return !empty($this->settings[self::PROPERTY_GROUP]['enabled']);
+        return !empty($this->settings['enabled']);
     }
 
     /**
@@ -115,8 +121,8 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
      */
     public function getAction()
     {
-        return isset($this->settings[self::PROPERTY_GROUP]['action'])
-            ? (int) $this->settings[self::PROPERTY_GROUP]['action']
+        return isset($this->settings['action'])
+            ? (int) $this->settings['action']
             : 0;
     }
 
@@ -144,14 +150,14 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
      */
     private function parseProtectSettings($methodKey, $endpointsKey, $matchKey)
     {
-        $endpoints = isset($this->settings[self::PROPERTY_GROUP][$endpointsKey])
-            ? (array) $this->settings[self::PROPERTY_GROUP][$endpointsKey]
+        $endpoints = isset($this->settings[$endpointsKey])
+            ? (array) $this->settings[$endpointsKey]
             : [''];
-        $methods = isset($this->settings[self::PROPERTY_GROUP][$methodKey])
-            ? (array) $this->settings[self::PROPERTY_GROUP][$methodKey]
+        $methods = isset($this->settings[$methodKey])
+            ? (array) $this->settings[$methodKey]
             : [''];
-        $match = isset($this->settings[self::PROPERTY_GROUP][$matchKey])
-            ? (array) $this->settings[self::PROPERTY_GROUP][$matchKey]
+        $match = isset($this->settings[$matchKey])
+            ? (array) $this->settings[$matchKey]
             : [''];
 
         $return = [];

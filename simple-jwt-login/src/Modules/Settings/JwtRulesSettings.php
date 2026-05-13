@@ -6,10 +6,15 @@ use Exception;
 
 class JwtRulesSettings extends BaseSettings implements SettingsInterface
 {
+    protected function getSectionKey()
+    {
+        return 'jwt_rules';
+    }
+
     public function initSettingsFromPost()
     {
         if (!isset($this->post['jwt_rules'])) {
-            $this->settings['jwt_rules'] = [];
+            $this->settings['rules'] = [];
             return;
         }
 
@@ -20,7 +25,7 @@ class JwtRulesSettings extends BaseSettings implements SettingsInterface
         }
 
         if (!is_array($raw)) {
-            $this->settings['jwt_rules'] = [];
+            $this->settings['rules'] = [];
             return;
         }
 
@@ -107,7 +112,7 @@ class JwtRulesSettings extends BaseSettings implements SettingsInterface
             $rules[] = $rule;
         }
 
-        $this->settings['jwt_rules'] = $rules;
+        $this->settings['rules'] = $rules;
     }
 
     /**
@@ -216,8 +221,8 @@ class JwtRulesSettings extends BaseSettings implements SettingsInterface
      */
     public function getRules()
     {
-        return isset($this->settings['jwt_rules']) && is_array($this->settings['jwt_rules'])
-            ? $this->settings['jwt_rules']
+        return isset($this->settings['rules']) && is_array($this->settings['rules'])
+            ? $this->settings['rules']
             : [];
     }
 

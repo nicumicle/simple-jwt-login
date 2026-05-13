@@ -4,25 +4,30 @@ namespace SimpleJWTLogin\Modules\Settings;
 
 class DeleteUserSettings extends BaseSettings implements SettingsInterface
 {
+    protected function getSectionKey()
+    {
+        return 'delete_user';
+    }
+
     public function initSettingsFromPost()
     {
         $this->assignSettingsPropertyFromPost(
             null,
-            'allow_delete',
+            'enabled',
             null,
             'allow_delete',
             BaseSettings::SETTINGS_TYPE_BOL
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'require_delete_auth',
+            'auth_code',
             null,
             'require_delete_auth',
             BaseSettings::SETTINGS_TYPE_BOL
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'delete_ip',
+            'ip_whitelist',
             null,
             'delete_ip',
             BaseSettings::SETTINGS_TYPE_STRING
@@ -38,7 +43,7 @@ class DeleteUserSettings extends BaseSettings implements SettingsInterface
      */
     public function isDeleteAllowed()
     {
-        return !empty($this->settings['allow_delete']);
+        return !empty($this->settings['enabled']);
     }
 
     /**
@@ -46,8 +51,8 @@ class DeleteUserSettings extends BaseSettings implements SettingsInterface
      */
     public function isAuthKeyRequiredOnDelete()
     {
-        return isset($this->settings['require_delete_auth'])
-            ? (bool)$this->settings['require_delete_auth']
+        return isset($this->settings['auth_code'])
+            ? (bool)$this->settings['auth_code']
             : true;
     }
 
@@ -56,8 +61,8 @@ class DeleteUserSettings extends BaseSettings implements SettingsInterface
      */
     public function getAllowedDeleteIps()
     {
-        return isset($this->settings['delete_ip'])
-            ? $this->settings['delete_ip']
+        return isset($this->settings['ip_whitelist'])
+            ? $this->settings['ip_whitelist']
             : '';
     }
 }

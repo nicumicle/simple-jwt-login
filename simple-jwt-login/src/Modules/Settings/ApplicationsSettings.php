@@ -31,6 +31,11 @@ class ApplicationsSettings extends BaseSettings implements SettingsInterface
         $this->providers = $this->buildProviders();
     }
 
+    protected function getSectionKey()
+    {
+        return 'applications';
+    }
+
     // =========================================================================
     // Provider registry - add new providers here
     // =========================================================================

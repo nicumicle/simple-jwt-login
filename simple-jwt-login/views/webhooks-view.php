@@ -12,9 +12,10 @@ if (! defined('ABSPATH')) {
  * @var SimpleJWTLoginSettings $jwtSettings
  */
 
-$webhooks       = $jwtSettings->getWebhooksSettings()->getWebhooks();
-$allowedMethods = WebhooksSettings::ALLOWED_METHODS;
-$allowedEvents  = WebhooksSettings::ALLOWED_EVENTS;
+$webhooksEnabled = $jwtSettings->getWebhooksSettings()->isEnabled();
+$webhooks        = $jwtSettings->getWebhooksSettings()->getWebhooks();
+$allowedMethods  = WebhooksSettings::ALLOWED_METHODS;
+$allowedEvents   = WebhooksSettings::ALLOWED_EVENTS;
 ?>
 
 <div class="sjl-gen-card">
@@ -32,6 +33,19 @@ $allowedEvents  = WebhooksSettings::ALLOWED_EVENTS;
         </div>
     </div>
     <div class="sjl-gen-card-body">
+
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+            <input type="hidden" name="webhooks_enabled" value="0">
+            <label class="sjl-toggle-switch" title="<?php echo esc_attr__('Enable / Disable Webhooks', 'simple-jwt-login'); ?>" style="margin: 0;">
+                <input type="checkbox" name="webhooks_enabled" value="1" <?php echo $webhooksEnabled ? 'checked' : ''; ?>>
+                <span class="sjl-toggle-slider"></span>
+            </label>
+            <span style="font-size: 12px; color: #555; white-space: nowrap;">
+                <?php echo esc_html__('Enable Webhooks', 'simple-jwt-login'); ?>
+            </span>
+        </div>
+
+        <hr/>
 
         <input type="hidden" id="webhooks_json" name="webhooks_json" value="">
 
@@ -173,15 +187,24 @@ $allowedEvents  = WebhooksSettings::ALLOWED_EVENTS;
             <?php endforeach; ?>
         </div>
 
-        <div class="sjl-webhooks-footer">
-            <input
-                type="button"
-                class="btn btn-outline-secondary"
-                id="sjl-add-webhook"
-                value="<?php echo esc_attr__('+ Add Webhook', 'simple-jwt-login'); ?>"
-            />
-        </div>
+    </div>
+</div>
 
+<div class="sjl-gen-card">
+    <div class="sjl-gen-card-header">
+        <span class="dashicons dashicons-plus-alt2"></span>
+        <div>
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Add Webhook', 'simple-jwt-login'); ?></h3>
+            <p class="sjl-gen-card-desc">
+                <?php echo esc_html__('Register a new HTTP endpoint to receive event notifications.', 'simple-jwt-login'); ?>
+            </p>
+        </div>
+    </div>
+    <div class="sjl-gen-card-body">
+        <button type="button" id="sjl-add-webhook" class="btn btn-outline-secondary">
+            <span class="dashicons dashicons-plus-alt2" style="vertical-align: middle;"></span>
+            <?php echo esc_html__('Add Webhook', 'simple-jwt-login'); ?>
+        </button>
     </div>
 </div>
 

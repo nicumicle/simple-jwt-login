@@ -316,7 +316,7 @@ class ProtectEndpointSettingsTest extends TestCase
             ->withPost([])
             ->withWordPressData($this->wordPressData)
             ->withSettings([
-                ProtectEndpointSettings::PROPERTY_GROUP => [
+                'protect_endpoint' => [
                     'enabled' => false
                 ]
             ]);
@@ -334,7 +334,7 @@ class ProtectEndpointSettingsTest extends TestCase
             ->withPost([])
             ->withWordPressData($this->wordPressData)
             ->withSettings([
-                ProtectEndpointSettings::PROPERTY_GROUP => [
+                'protect_endpoint' => [
                     'enabled' => true,
                     'action' => ProtectEndpointSettings::SPECIFIC_ENDPOINTS,
                     'protect' => $endpointLists

@@ -14,11 +14,16 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
     const JWT_PAYLOAD_PARAM_USERNAME = 'username';
     const JWT_PAYLOAD_PARAM_ISS = 'iss';
 
+    protected function getSectionKey()
+    {
+        return 'authorization';
+    }
+
     public function initSettingsFromPost()
     {
         $this->assignSettingsPropertyFromPost(
             null,
-            'allow_authentication',
+            'enabled',
             null,
             'allow_authentication',
             BaseSettings::SETTINGS_TYPE_STRING
@@ -32,35 +37,35 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'jwt_auth_ttl',
+            'ttl',
             null,
             'jwt_auth_ttl',
             BaseSettings::SETTINGS_TYPE_STRING
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'jwt_auth_refresh_ttl',
+            'refresh_ttl',
             null,
             'jwt_auth_refresh_ttl',
             BaseSettings::SETTINGS_TYPE_STRING
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'auth_ip',
+            'ip_whitelist',
             null,
             'auth_ip',
             BaseSettings::SETTINGS_TYPE_STRING
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'auth_requires_auth_code',
+            'auth_code',
             null,
             'auth_requires_auth_code',
             BaseSettings::SETTINGS_TYPE_BOL
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'auth_password_base64',
+            'password_base64',
             null,
             'auth_password_base64',
             BaseSettings::SETTINGS_TYPE_BOL,
@@ -68,14 +73,14 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'jwt_auth_iss',
+            'iss',
             null,
             'jwt_auth_iss',
             BaseSettings::SETTINGS_TYPE_STRING
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'allow_refresh_token',
+            'refresh_token_enabled',
             null,
             'allow_refresh_token',
             BaseSettings::SETTINGS_TYPE_STRING
@@ -89,35 +94,35 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'allow_validate_token',
+            'validate_token_enabled',
             null,
             'allow_validate_token',
             BaseSettings::SETTINGS_TYPE_STRING
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'allow_revoke_token',
+            'revoke_token_enabled',
             null,
             'allow_revoke_token',
             BaseSettings::SETTINGS_TYPE_STRING
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'refresh_requires_auth_code',
+            'refresh_auth_code',
             null,
             'refresh_requires_auth_code',
             BaseSettings::SETTINGS_TYPE_BOL
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'validate_requires_auth_code',
+            'validate_auth_code',
             null,
             'validate_requires_auth_code',
             BaseSettings::SETTINGS_TYPE_BOL
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'revoke_requires_auth_code',
+            'revoke_auth_code',
             null,
             'revoke_requires_auth_code',
             BaseSettings::SETTINGS_TYPE_BOL
@@ -202,7 +207,7 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
      */
     public function isAuthenticationEnabled()
     {
-        return !empty($this->settings['allow_authentication']);
+        return !empty($this->settings['enabled']);
     }
 
     /**
@@ -236,8 +241,8 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
      */
     public function getAuthJwtTtl()
     {
-        return isset($this->settings['jwt_auth_ttl'])
-            ? (int)$this->settings['jwt_auth_ttl']
+        return isset($this->settings['ttl'])
+            ? (int)$this->settings['ttl']
             : 60;
     }
 
@@ -246,8 +251,8 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
      */
     public function getAuthJwtRefreshTtl()
     {
-        return isset($this->settings['jwt_auth_refresh_ttl'])
-            ? (int)$this->settings['jwt_auth_refresh_ttl']
+        return isset($this->settings['refresh_ttl'])
+            ? (int)$this->settings['refresh_ttl']
             : 20160;
     }
 
@@ -256,8 +261,8 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
      */
     public function getAuthIss()
     {
-        return isset($this->settings['jwt_auth_iss'])
-            ? (string)$this->settings['jwt_auth_iss']
+        return isset($this->settings['iss'])
+            ? (string)$this->settings['iss']
             : $this->wordPressData->getSiteUrl();
     }
 
@@ -266,8 +271,8 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
      */
     public function getAllowedIps()
     {
-        return isset($this->settings['auth_ip'])
-            ? (string) $this->settings['auth_ip']
+        return isset($this->settings['ip_whitelist'])
+            ? (string) $this->settings['ip_whitelist']
             : '';
     }
 
@@ -276,8 +281,8 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
      */
     public function isAuthKeyRequired()
     {
-        return isset($this->settings['auth_requires_auth_code'])
-            ? (bool) $this->settings['auth_requires_auth_code']
+        return isset($this->settings['auth_code'])
+            ? (bool) $this->settings['auth_code']
             : false;
     }
 
@@ -286,8 +291,8 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
      */
     public function isAuthPasswordBase64Encoded()
     {
-        return isset($this->settings['auth_password_base64'])
-            ? (bool) $this->settings['auth_password_base64']
+        return isset($this->settings['password_base64'])
+            ? (bool) $this->settings['password_base64']
             : false;
     }
 
@@ -296,8 +301,8 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
      */
     public function isRefreshAuthKeyRequired()
     {
-        return isset($this->settings['refresh_requires_auth_code'])
-            ? (bool) $this->settings['refresh_requires_auth_code']
+        return isset($this->settings['refresh_auth_code'])
+            ? (bool) $this->settings['refresh_auth_code']
             : false;
     }
 
@@ -306,8 +311,8 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
      */
     public function isValidateAuthKeyRequired()
     {
-        return isset($this->settings['validate_requires_auth_code'])
-            ? (bool) $this->settings['validate_requires_auth_code']
+        return isset($this->settings['validate_auth_code'])
+            ? (bool) $this->settings['validate_auth_code']
             : false;
     }
 
@@ -316,8 +321,8 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
      */
     public function isRevokeAuthKeyRequired()
     {
-        return isset($this->settings['revoke_requires_auth_code'])
-            ? (bool) $this->settings['revoke_requires_auth_code']
+        return isset($this->settings['revoke_auth_code'])
+            ? (bool) $this->settings['revoke_auth_code']
             : false;
     }
 
@@ -326,7 +331,7 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
      */
     public function isRefreshTokenEnabled()
     {
-        return !empty($this->settings['allow_refresh_token']);
+        return !empty($this->settings['refresh_token_enabled']);
     }
 
     /**
@@ -344,10 +349,10 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
      */
     public function isValidateTokenEnabled()
     {
-        if (!isset($this->settings['allow_validate_token'])) {
+        if (!isset($this->settings['validate_token_enabled'])) {
             return true;
         }
-        return !empty($this->settings['allow_validate_token']);
+        return !empty($this->settings['validate_token_enabled']);
     }
 
     /**
@@ -355,9 +360,9 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
      */
     public function isRevokeTokenEnabled()
     {
-        if (!isset($this->settings['allow_revoke_token'])) {
+        if (!isset($this->settings['revoke_token_enabled'])) {
             return true;
         }
-        return !empty($this->settings['allow_revoke_token']);
+        return !empty($this->settings['revoke_token_enabled']);
     }
 }

@@ -8,19 +8,23 @@ class AuthCodesSettings extends BaseSettings implements SettingsInterface
 {
     const DEFAULT_AUTH_CODE_KEY = 'AUTH_KEY';
 
+    protected function getSectionKey()
+    {
+        return 'auth_codes';
+    }
+
     public function initSettingsFromPost()
     {
-        $authCodes = [];
+        $codes = [];
         if (isset($this->post['auth_codes']['code'])) {
-            $codes = $this->post['auth_codes']['code'];
-            foreach ($codes as $key => $code) {
+            foreach ($this->post['auth_codes']['code'] as $key => $code) {
                 if (trim($code) === ''
                     || !isset($this->post['auth_codes']['role'][$key])
                     || !isset($this->post['auth_codes']['expiration_date'][$key])
                 ) {
                     continue;
                 }
-                $authCodes[] = [
+                $codes[] = [
                     'code' => $this->wordPressData->sanitizeTextField($code),
                     'role' => $this->wordPressData->sanitizeTextField($this->post['auth_codes']['role'][$key]),
                     'expiration_date' => $this->wordPressData->sanitizeTextField(
@@ -29,11 +33,11 @@ class AuthCodesSettings extends BaseSettings implements SettingsInterface
                 ];
             }
         }
-        $this->settings['auth_codes'] = $authCodes;
+        $this->settings['codes'] = $codes;
 
         $this->assignSettingsPropertyFromPost(
             null,
-            'auth_code_key',
+            'key',
             null,
             'auth_code_key',
             BaseSettings::SETTINGS_TYPE_STRING
@@ -42,13 +46,24 @@ class AuthCodesSettings extends BaseSettings implements SettingsInterface
 
     public function validateSettings()
     {
-        if ((!empty($this->settings['require_login_auth']) && !empty($this->settings['allow_autologin']))
-            || (!empty($this->settings['require_register_auth']) && !empty($this->settings['allow_register']))
-            || (!empty($this->settings['require_delete_auth']) && !empty($this->settings['allow_delete']))
-            || (!empty($this->settings['auth_requires_auth_code']) && !empty($this->settings['allow_authentication']))
-            || (!empty($this->settings['reset_password_requires_auth_code']) && !empty($this->settings['allow_reset_password']))
+        $loginEnabled   = !empty($this->fullSettings['login']['enabled']);
+        $loginAuthCode  = !empty($this->fullSettings['login']['auth_code']);
+        $regEnabled     = !empty($this->fullSettings['register']['enabled']);
+        $regAuthCode    = !empty($this->fullSettings['register']['auth_code']);
+        $deleteEnabled  = !empty($this->fullSettings['delete_user']['enabled']);
+        $deleteAuthCode = !empty($this->fullSettings['delete_user']['auth_code']);
+        $authEnabled    = !empty($this->fullSettings['authorization']['enabled']);
+        $authAuthCode   = !empty($this->fullSettings['authorization']['auth_code']);
+        $rpEnabled      = !empty($this->fullSettings['reset_password']['enabled']);
+        $rpAuthCode     = !empty($this->fullSettings['reset_password']['auth_code']);
+
+        if (($loginAuthCode && $loginEnabled)
+            || ($regAuthCode && $regEnabled)
+            || ($deleteAuthCode && $deleteEnabled)
+            || ($authAuthCode && $authEnabled)
+            || ($rpAuthCode && $rpEnabled)
         ) {
-            if (empty($this->settings['auth_codes'])) {
+            if (empty($this->settings['codes'])) {
                 throw new Exception(
                     __(
                         'Missing Auth Codes. Please add at least one Auth Code.',
@@ -62,7 +77,7 @@ class AuthCodesSettings extends BaseSettings implements SettingsInterface
             }
         }
 
-        foreach ($this->settings['auth_codes'] as $code) {
+        foreach ($this->settings['codes'] as $code) {
             if (!empty($code['role']) && !$this->wordPressData->roleExists($code['role'])) {
                 throw new Exception(
                     __(
@@ -83,8 +98,8 @@ class AuthCodesSettings extends BaseSettings implements SettingsInterface
      */
     public function getAuthCodes()
     {
-        return isset($this->settings['auth_codes'])
-            ? $this->settings['auth_codes']
+        return isset($this->settings['codes'])
+            ? $this->settings['codes']
             : [];
     }
 
@@ -93,8 +108,8 @@ class AuthCodesSettings extends BaseSettings implements SettingsInterface
      */
     public function getAuthCodeKey()
     {
-        return !empty($this->settings['auth_code_key'])
-            ? $this->settings['auth_code_key']
+        return !empty($this->settings['key'])
+            ? $this->settings['key']
             : self::DEFAULT_AUTH_CODE_KEY;
     }
 }

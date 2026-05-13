@@ -12,6 +12,11 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
 
     const DEFAULT_ROUTE_NAMESPACE = 'simple-jwt-login/v1/';
 
+    protected function getSectionKey()
+    {
+        return 'general';
+    }
+
     public function initSettingsFromPost()
     {
         $this->assignSettingsPropertyFromPost(

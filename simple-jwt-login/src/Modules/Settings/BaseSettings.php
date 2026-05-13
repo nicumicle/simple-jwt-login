@@ -26,6 +26,10 @@ abstract class BaseSettings
      */
     protected $settings;
     /**
+     * @var array
+     */
+    protected $fullSettings = [];
+    /**
      * @var array|null
      */
     protected $post;
@@ -35,11 +39,18 @@ abstract class BaseSettings
     protected $wordPressData;
 
     /**
+     * Returns the DB section key for this settings class (e.g. 'login', 'register').
+     *
+     * @return string
+     */
+    abstract protected function getSectionKey();
+
+    /**
      * @return array|null
      */
     public function getSettings()
     {
-        return $this->settings;
+        return [$this->getSectionKey() => $this->settings];
     }
 
     /**
@@ -59,7 +70,9 @@ abstract class BaseSettings
      */
     public function withSettings($settings)
     {
-        $this->settings = $settings;
+        $this->fullSettings = is_array($settings) ? $settings : [];
+        $key = $this->getSectionKey();
+        $this->settings = isset($settings[$key]) ? $settings[$key] : [];
 
         return $this;
     }

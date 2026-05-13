@@ -19,6 +19,7 @@ use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
 use SimpleJWTLogin\Modules\Settings\RegisterSettings;
 use SimpleJWTLogin\Modules\Settings\ResetPasswordSettings;
+use SimpleJWTLogin\Modules\Settings\Migrations\SettingsMigrationService;
 use SimpleJWTLogin\Modules\Settings\SettingsFactory;
 use SimpleJWTLogin\Modules\Settings\SettingsInterface;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
@@ -31,6 +32,7 @@ class SimpleJWTLoginSettings
 {
     const REVOKE_TOKEN_KEY = 'simple_jwt_login_revoked_token';
     const OPTIONS_KEY = 'simple_jwt_login_settings';
+    const SCHEMA_VERSION = 2;
 
     /**
      * @var null|array
@@ -78,7 +80,10 @@ class SimpleJWTLoginSettings
         $data = $this->wordPressData->getOptionFromDatabase(self::OPTIONS_KEY);
         $this->settings = [];
         if ($data !== null) {
-            $this->settings = json_decode($data, true);
+            $raw = json_decode($data, true);
+            $this->settings = SettingsMigrationService::migrate(
+                is_array($raw) ? $raw : []
+            );
         }
 
         $this->needUpdateOnOptions = $data !== false;
@@ -267,6 +272,7 @@ class SimpleJWTLoginSettings
             $this->settings = array_replace($this->settings, $oneParser->getSettings());
             self::$settingsInstances = [];
         }
+        $this->settings['_schema_version'] = self::SCHEMA_VERSION;
         self::$settingsInstances = [];
         $this->saveSettingsInDatabase();
 

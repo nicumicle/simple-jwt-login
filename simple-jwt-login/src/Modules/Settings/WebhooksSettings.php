@@ -38,20 +38,29 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
 
     const DEFAULT_METHOD = self::METHOD_POST;
 
-    const SETTING_RETENTION_DAYS  = 'webhook_logs_retention_days';
-    const DEFAULT_RETENTION_DAYS  = 90;
+    const SETTING_RETENTION_DAYS = 'webhook_logs_retention_days';
+
+    const DEFAULT_RETENTION_DAYS = 90;
+
+    protected function getSectionKey()
+    {
+        return 'webhooks';
+    }
 
     public function initSettingsFromPost()
     {
-        $this->settings['webhook_logs_enabled'] = !empty($this->post['webhook_logs_enabled']);
+        $this->settings['enabled'] = !empty($this->post['webhooks_enabled']);
 
-        $this->settings[self::SETTING_RETENTION_DAYS] = isset($this->post[self::SETTING_RETENTION_DAYS])
-            ? max(1, (int) $this->post[self::SETTING_RETENTION_DAYS])
-            : self::DEFAULT_RETENTION_DAYS;
+        $this->settings['logs'] = [
+            'enabled'   => !empty($this->post['webhook_logs_enabled']),
+            'retention' => isset($this->post['webhook_logs_retention_days'])
+                ? max(1, (int) $this->post['webhook_logs_retention_days'])
+                : self::DEFAULT_RETENTION_DAYS,
+        ];
 
         if (!isset($this->post['webhooks_json'])) {
-            if (!isset($this->settings['webhooks'])) {
-                $this->settings['webhooks'] = [];
+            if (!isset($this->settings['items'])) {
+                $this->settings['items'] = [];
             }
             return;
         }
@@ -63,7 +72,7 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
         }
 
         if (!is_array($raw)) {
-            $this->settings['webhooks'] = [];
+            $this->settings['items'] = [];
             return;
         }
 
@@ -129,7 +138,7 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
             ];
         }
 
-        $this->settings['webhooks'] = $webhooks;
+        $this->settings['items'] = $webhooks;
     }
 
     /**
@@ -137,8 +146,8 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
      */
     public function validateSettings()
     {
-        if (isset($this->post[self::SETTING_RETENTION_DAYS])) {
-            $retention = (int) $this->post[self::SETTING_RETENTION_DAYS];
+        if (isset($this->post['webhook_logs_retention_days'])) {
+            $retention = (int) $this->post['webhook_logs_retention_days'];
             if ($retention < 1) {
                 throw new Exception(
                     __('Webhook log retention days must be at least 1.', 'simple-jwt-login'),
@@ -175,9 +184,17 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
      */
     public function getWebhooks()
     {
-        return isset($this->settings['webhooks']) && is_array($this->settings['webhooks'])
-            ? $this->settings['webhooks']
+        return isset($this->settings['items']) && is_array($this->settings['items'])
+            ? $this->settings['items']
             : [];
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return !isset($this->settings['enabled']) || !empty($this->settings['enabled']);
     }
 
     /**
@@ -185,7 +202,7 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
      */
     public function isWebhookLogsEnabled()
     {
-        return !isset($this->settings['webhook_logs_enabled']) || !empty($this->settings['webhook_logs_enabled']);
+        return !isset($this->settings['logs']['enabled']) || !empty($this->settings['logs']['enabled']);
     }
 
     /**
@@ -193,8 +210,8 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
      */
     public function getRetentionDays()
     {
-        return isset($this->settings[self::SETTING_RETENTION_DAYS])
-            ? (int) $this->settings[self::SETTING_RETENTION_DAYS]
+        return isset($this->settings['logs']['retention'])
+            ? (int) $this->settings['logs']['retention']
             : self::DEFAULT_RETENTION_DAYS;
     }
 

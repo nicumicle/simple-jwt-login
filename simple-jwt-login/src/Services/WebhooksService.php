@@ -55,6 +55,10 @@ class WebhooksService
      */
     public function dispatch($event, array $payload = [])
     {
+        if (!$this->jwtSettings->getWebhooksSettings()->isEnabled()) {
+            return;
+        }
+
         $webhooks = $this->jwtSettings->getWebhooksSettings()->getEnabledWebhooksForEvent($event);
 
         foreach ($webhooks as $webhook) {

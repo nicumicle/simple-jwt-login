@@ -31,7 +31,7 @@ class AuthenticationSettingsTest extends TestCase
     {
         return (new AuthenticationSettings())
             ->withWordPressData($this->wordPressData)
-            ->withSettings($settings)
+            ->withSettings(['authorization' => $settings])
             ->withPost([]);
     }
 
@@ -57,10 +57,10 @@ class AuthenticationSettingsTest extends TestCase
     {
         return [
             'not set defaults to disabled' => [[], false],
-            'empty string is disabled'     => [['allow_authentication' => ''], false],
-            'string 0 is disabled'         => [['allow_authentication' => '0'], false],
-            'string 1 is enabled'          => [['allow_authentication' => '1'], true],
-            'int 1 is enabled'             => [['allow_authentication' => 1], true],
+            'empty string is disabled'     => [['enabled' => ''], false],
+            'string 0 is disabled'         => [['enabled' => '0'], false],
+            'string 1 is enabled'          => [['enabled' => '1'], true],
+            'int 1 is enabled'             => [['enabled' => 1], true],
         ];
     }
 
@@ -125,8 +125,8 @@ class AuthenticationSettingsTest extends TestCase
     {
         return [
             'defaults to 60 when not set' => [[], 60],
-            'returns string value as int'  => [['jwt_auth_ttl' => '120'], 120],
-            'returns int value'            => [['jwt_auth_ttl' => 45], 45],
+            'returns string value as int'  => [['ttl' => '120'], 120],
+            'returns int value'            => [['ttl' => 45], 45],
         ];
     }
 
@@ -142,8 +142,8 @@ class AuthenticationSettingsTest extends TestCase
     {
         return [
             'defaults to 20160 when not set' => [[], 20160],
-            'returns string value as int'     => [['jwt_auth_refresh_ttl' => '100'], 100],
-            'returns int value'               => [['jwt_auth_refresh_ttl' => 9999], 9999],
+            'returns string value as int'     => [['refresh_ttl' => '100'], 100],
+            'returns int value'               => [['refresh_ttl' => 9999], 9999],
         ];
     }
 
@@ -151,7 +151,7 @@ class AuthenticationSettingsTest extends TestCase
 
     public function testGetAuthIssReturnsConfiguredValue(): void
     {
-        $authSettings = $this->buildWithSettings(['jwt_auth_iss' => 'https://example.com']);
+        $authSettings = $this->buildWithSettings(['iss' => 'https://example.com']);
         $this->assertSame('https://example.com', $authSettings->getAuthIss());
     }
 
@@ -173,8 +173,8 @@ class AuthenticationSettingsTest extends TestCase
     {
         return [
             'defaults to empty string'   => [[], ''],
-            'returns single IP'          => [['auth_ip' => '192.168.1.1'], '192.168.1.1'],
-            'returns comma-separated IPs' => [['auth_ip' => '10.0.0.1,10.0.0.2'], '10.0.0.1,10.0.0.2'],
+            'returns single IP'          => [['ip_whitelist' => '192.168.1.1'], '192.168.1.1'],
+            'returns comma-separated IPs' => [['ip_whitelist' => '10.0.0.1,10.0.0.2'], '10.0.0.1,10.0.0.2'],
         ];
     }
 
@@ -191,28 +191,28 @@ class AuthenticationSettingsTest extends TestCase
         return [
             // isAuthKeyRequired
             'isAuthKeyRequired: default false' => ['isAuthKeyRequired', [], false],
-            'isAuthKeyRequired: true'          => ['isAuthKeyRequired', ['auth_requires_auth_code' => true], true],
-            'isAuthKeyRequired: false'         => ['isAuthKeyRequired', ['auth_requires_auth_code' => false], false],
+            'isAuthKeyRequired: true'          => ['isAuthKeyRequired', ['auth_code' => true], true],
+            'isAuthKeyRequired: false'         => ['isAuthKeyRequired', ['auth_code' => false], false],
 
             // isAuthPasswordBase64Encoded
             'isAuthPasswordBase64Encoded: default false' => ['isAuthPasswordBase64Encoded', [], false],
-            'isAuthPasswordBase64Encoded: true'          => ['isAuthPasswordBase64Encoded', ['auth_password_base64' => true], true],
-            'isAuthPasswordBase64Encoded: false'         => ['isAuthPasswordBase64Encoded', ['auth_password_base64' => false], false],
+            'isAuthPasswordBase64Encoded: true'          => ['isAuthPasswordBase64Encoded', ['password_base64' => true], true],
+            'isAuthPasswordBase64Encoded: false'         => ['isAuthPasswordBase64Encoded', ['password_base64' => false], false],
 
             // isRefreshAuthKeyRequired
             'isRefreshAuthKeyRequired: default false' => ['isRefreshAuthKeyRequired', [], false],
-            'isRefreshAuthKeyRequired: true'          => ['isRefreshAuthKeyRequired', ['refresh_requires_auth_code' => true], true],
-            'isRefreshAuthKeyRequired: false'         => ['isRefreshAuthKeyRequired', ['refresh_requires_auth_code' => false], false],
+            'isRefreshAuthKeyRequired: true'          => ['isRefreshAuthKeyRequired', ['refresh_auth_code' => true], true],
+            'isRefreshAuthKeyRequired: false'         => ['isRefreshAuthKeyRequired', ['refresh_auth_code' => false], false],
 
             // isValidateAuthKeyRequired
             'isValidateAuthKeyRequired: default false' => ['isValidateAuthKeyRequired', [], false],
-            'isValidateAuthKeyRequired: true'          => ['isValidateAuthKeyRequired', ['validate_requires_auth_code' => true], true],
-            'isValidateAuthKeyRequired: false'         => ['isValidateAuthKeyRequired', ['validate_requires_auth_code' => false], false],
+            'isValidateAuthKeyRequired: true'          => ['isValidateAuthKeyRequired', ['validate_auth_code' => true], true],
+            'isValidateAuthKeyRequired: false'         => ['isValidateAuthKeyRequired', ['validate_auth_code' => false], false],
 
             // isRevokeAuthKeyRequired
             'isRevokeAuthKeyRequired: default false' => ['isRevokeAuthKeyRequired', [], false],
-            'isRevokeAuthKeyRequired: true'          => ['isRevokeAuthKeyRequired', ['revoke_requires_auth_code' => true], true],
-            'isRevokeAuthKeyRequired: false'         => ['isRevokeAuthKeyRequired', ['revoke_requires_auth_code' => false], false],
+            'isRevokeAuthKeyRequired: true'          => ['isRevokeAuthKeyRequired', ['revoke_auth_code' => true], true],
+            'isRevokeAuthKeyRequired: false'         => ['isRevokeAuthKeyRequired', ['revoke_auth_code' => false], false],
         ];
     }
 
@@ -228,9 +228,9 @@ class AuthenticationSettingsTest extends TestCase
     {
         return [
             'not set defaults to disabled' => [[], false],
-            'empty string is disabled'     => [['allow_refresh_token' => ''], false],
-            'string 1 is enabled'          => [['allow_refresh_token' => '1'], true],
-            'int 1 is enabled'             => [['allow_refresh_token' => 1], true],
+            'empty string is disabled'     => [['refresh_token_enabled' => ''], false],
+            'string 1 is enabled'          => [['refresh_token_enabled' => '1'], true],
+            'int 1 is enabled'             => [['refresh_token_enabled' => 1], true],
         ];
     }
 
@@ -262,9 +262,9 @@ class AuthenticationSettingsTest extends TestCase
     {
         return [
             'not set defaults to true' => [[], true],
-            'string 1 is enabled'      => [['allow_validate_token' => '1'], true],
-            'int 0 is disabled'        => [['allow_validate_token' => 0], false],
-            'empty string is disabled' => [['allow_validate_token' => ''], false],
+            'string 1 is enabled'      => [['validate_token_enabled' => '1'], true],
+            'int 0 is disabled'        => [['validate_token_enabled' => 0], false],
+            'empty string is disabled' => [['validate_token_enabled' => ''], false],
         ];
     }
 
@@ -280,9 +280,9 @@ class AuthenticationSettingsTest extends TestCase
     {
         return [
             'not set defaults to true' => [[], true],
-            'string 1 is enabled'      => [['allow_revoke_token' => '1'], true],
-            'int 0 is disabled'        => [['allow_revoke_token' => 0], false],
-            'empty string is disabled' => [['allow_revoke_token' => ''], false],
+            'string 1 is enabled'      => [['revoke_token_enabled' => '1'], true],
+            'int 0 is disabled'        => [['revoke_token_enabled' => 0], false],
+            'empty string is disabled' => [['revoke_token_enabled' => ''], false],
         ];
     }
 

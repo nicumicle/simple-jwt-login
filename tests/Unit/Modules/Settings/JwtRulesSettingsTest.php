@@ -34,14 +34,14 @@ class JwtRulesSettingsTest extends TestCase
                 'expected' => [],
             ],
             'empty_rules' => [
-                'settings' => ['jwt_rules' => []],
+                'settings' => ['jwt_rules' => ['rules' => []]],
                 'expected' => [],
             ],
             'single_hs_rule' => [
                 'settings' => [
-                    'jwt_rules' => [
+                    'jwt_rules' => ['rules' => [
                         ['iss' => 'my-app', 'algorithm' => 'HS256', 'decryption_key' => 'secret'],
-                    ],
+                    ]],
                 ],
                 'expected' => [
                     ['iss' => 'my-app', 'algorithm' => 'HS256', 'decryption_key' => 'secret'],
@@ -68,23 +68,23 @@ class JwtRulesSettingsTest extends TestCase
         return [
             'found_hs256' => [
                 'settings' => [
-                    'jwt_rules' => [
+                    'jwt_rules' => ['rules' => [
                         ['iss' => 'my-app', 'algorithm' => 'HS256', 'decryption_key' => 'secret'],
-                    ],
+                    ]],
                 ],
                 'iss'      => 'my-app',
                 'expected' => ['iss' => 'my-app', 'algorithm' => 'HS256', 'decryption_key' => 'secret'],
             ],
             'found_rs256' => [
                 'settings' => [
-                    'jwt_rules' => [
+                    'jwt_rules' => ['rules' => [
                         [
                             'iss'                    => 'partner',
                             'algorithm'              => 'RS256',
                             'decryption_key_public'  => $pubKeyEncoded,
                             'decryption_key_private' => $privKeyEncoded,
                         ],
-                    ],
+                    ]],
                 ],
                 'iss'      => 'partner',
                 'expected' => [
@@ -96,9 +96,9 @@ class JwtRulesSettingsTest extends TestCase
             ],
             'not_found' => [
                 'settings' => [
-                    'jwt_rules' => [
+                    'jwt_rules' => ['rules' => [
                         ['iss' => 'my-app', 'algorithm' => 'HS256', 'decryption_key' => 'secret'],
-                    ],
+                    ]],
                 ],
                 'iss'      => 'unknown',
                 'expected' => null,
@@ -194,7 +194,7 @@ class JwtRulesSettingsTest extends TestCase
     public function testFindMatchingRuleConfig(array $settings, array $jwtParts, $expected): void
     {
         $sut = (new JwtRulesSettings())
-            ->withSettings(['jwt_rules' => $settings])
+            ->withSettings(['jwt_rules' => ['rules' => $settings]])
             ->withWordPressData($this->wordPressData);
 
         $this->assertSame($expected, $sut->findMatchingRuleConfig($jwtParts));
@@ -376,7 +376,7 @@ class JwtRulesSettingsTest extends TestCase
         $this->expectExceptionMessageMatches('/' . preg_quote($expectedMessage, '/') . '/i');
 
         $sut = (new JwtRulesSettings())
-            ->withSettings(['jwt_rules' => $rules])
+            ->withSettings(['jwt_rules' => ['rules' => $rules]])
             ->withWordPressData($this->wordPressData)
             ->withPost([]);
 
@@ -398,9 +398,9 @@ class JwtRulesSettingsTest extends TestCase
     {
         $sut = (new JwtRulesSettings())
             ->withSettings([
-                'jwt_rules' => [
+                'jwt_rules' => ['rules' => [
                     ['iss' => 'my-app', 'algorithm' => 'HS256', 'decryption_key' => 'secret'],
-                ],
+                ]],
             ])
             ->withWordPressData($this->wordPressData)
             ->withPost([]);
@@ -413,14 +413,14 @@ class JwtRulesSettingsTest extends TestCase
     {
         $sut = (new JwtRulesSettings())
             ->withSettings([
-                'jwt_rules' => [
+                'jwt_rules' => ['rules' => [
                     [
                         'iss'                    => 'partner',
                         'algorithm'              => 'RS256',
                         'decryption_key_public'  => base64_encode('-----BEGIN PUBLIC KEY-----'),
                         'decryption_key_private' => base64_encode('-----BEGIN RSA PRIVATE KEY-----'),
                     ],
-                ],
+                ]],
             ])
             ->withWordPressData($this->wordPressData)
             ->withPost([]);

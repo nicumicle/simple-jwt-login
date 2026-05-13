@@ -29,7 +29,9 @@ class WebhooksSettingsTest extends TestCase
     {
         $existing = [
             'webhooks' => [
-                ['url' => 'https://example.com', 'enabled' => true, 'events' => ['login']],
+                'items' => [
+                    ['url' => 'https://example.com', 'enabled' => true, 'events' => ['login']],
+                ],
             ],
         ];
         $settings = (new WebhooksSettings())
@@ -182,10 +184,10 @@ class WebhooksSettingsTest extends TestCase
             ['url' => 'https://c.com', 'enabled' => false, 'events' => ['login']],
         ];
         return [
-            'login: only enabled'    => [$webhooks, 'login',    1],
-            'register: only enabled' => [$webhooks, 'register', 1],
-            'auth: only enabled'     => [$webhooks, 'auth',     1],
-            'no match for unknown'   => [$webhooks, 'unknown',  0],
+            'login: only enabled'    => [['items' => $webhooks], 'login',    1],
+            'register: only enabled' => [['items' => $webhooks], 'register', 1],
+            'auth: only enabled'     => [['items' => $webhooks], 'auth',     1],
+            'no match for unknown'   => [['items' => $webhooks], 'unknown',  0],
         ];
     }
 
@@ -195,9 +197,9 @@ class WebhooksSettingsTest extends TestCase
         $this->expectExceptionMessage('Webhook #1: invalid URL.');
 
         $settings = (new WebhooksSettings())
-            ->withSettings(['webhooks' => [
+            ->withSettings(['webhooks' => ['items' => [
                 ['url' => 'not-a-url', 'enabled' => true, 'events' => ['login']],
-            ]])
+            ]]])
             ->withWordPressData($this->wordPressData)
             ->withPost([]);
         $settings->validateSettings();
@@ -206,9 +208,9 @@ class WebhooksSettingsTest extends TestCase
     public function testValidateSkipsDisabledWebhooks()
     {
         $settings = (new WebhooksSettings())
-            ->withSettings(['webhooks' => [
+            ->withSettings(['webhooks' => ['items' => [
                 ['url' => 'not-a-url', 'enabled' => false, 'events' => ['login']],
-            ]])
+            ]]])
             ->withWordPressData($this->wordPressData)
             ->withPost([]);
         $this->expectNotToPerformAssertions();
@@ -219,9 +221,9 @@ class WebhooksSettingsTest extends TestCase
     {
         $this->expectNotToPerformAssertions();
         $settings = (new WebhooksSettings())
-            ->withSettings(['webhooks' => [
+            ->withSettings(['webhooks' => ['items' => [
                 ['url' => 'https://example.com/hook', 'enabled' => true, 'events' => ['login']],
-            ]])
+            ]]])
             ->withWordPressData($this->wordPressData)
             ->withPost([]);
         $settings->validateSettings();
@@ -284,7 +286,7 @@ class WebhooksSettingsTest extends TestCase
     public function testRetentionDaysFromSettings()
     {
         $settings = (new WebhooksSettings())
-            ->withSettings([WebhooksSettings::SETTING_RETENTION_DAYS => 14])
+            ->withSettings(['webhooks' => ['logs' => ['retention' => 14]]])
             ->withWordPressData($this->wordPressData)
             ->withPost([]);
         $settings->initSettingsFromPost();
@@ -295,7 +297,7 @@ class WebhooksSettingsTest extends TestCase
     public function testGetRetentionDaysFromStoredSettings()
     {
         $settings = (new WebhooksSettings())
-            ->withSettings([WebhooksSettings::SETTING_RETENTION_DAYS => 45])
+            ->withSettings(['webhooks' => ['logs' => ['retention' => 45]]])
             ->withWordPressData($this->wordPressData)
             ->withPost(null);
 
@@ -322,5 +324,57 @@ class WebhooksSettingsTest extends TestCase
 
         $this->expectException(\Exception::class);
         $settings->validateSettings();
+    }
+
+    public function testIsEnabledDefaultsToTrueWhenNotSet()
+    {
+        $settings = (new WebhooksSettings())
+            ->withSettings([])
+            ->withWordPressData($this->wordPressData)
+            ->withPost(null);
+
+        $this->assertTrue($settings->isEnabled());
+    }
+
+    public function testIsEnabledTrueFromPost()
+    {
+        $settings = (new WebhooksSettings())
+            ->withSettings([])
+            ->withWordPressData($this->wordPressData)
+            ->withPost(['webhooks_enabled' => '1']);
+        $settings->initSettingsFromPost();
+
+        $this->assertTrue($settings->isEnabled());
+    }
+
+    public function testIsEnabledFalseFromPost()
+    {
+        $settings = (new WebhooksSettings())
+            ->withSettings([])
+            ->withWordPressData($this->wordPressData)
+            ->withPost(['webhooks_enabled' => '0']);
+        $settings->initSettingsFromPost();
+
+        $this->assertFalse($settings->isEnabled());
+    }
+
+    public function testIsWebhookLogsEnabledFromStoredSettings()
+    {
+        $settings = (new WebhooksSettings())
+            ->withSettings(['webhooks' => ['logs' => ['enabled' => true]]])
+            ->withWordPressData($this->wordPressData)
+            ->withPost(null);
+
+        $this->assertTrue($settings->isWebhookLogsEnabled());
+    }
+
+    public function testIsWebhookLogsDisabledFromStoredSettings()
+    {
+        $settings = (new WebhooksSettings())
+            ->withSettings(['webhooks' => ['logs' => ['enabled' => false]]])
+            ->withWordPressData($this->wordPressData)
+            ->withPost(null);
+
+        $this->assertFalse($settings->isWebhookLogsEnabled());
     }
 }

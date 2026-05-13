@@ -6,35 +6,39 @@ use Exception;
 
 class AuditLogSettings extends BaseSettings implements SettingsInterface
 {
-    const SETTINGS_GROUP          = 'audit_log';
     const SETTING_ENABLED         = 'enabled';
     const SETTING_ENABLED_EVENTS  = 'enabled_events';
     const SETTING_RETENTION_DAYS  = 'retention_days';
 
     const DEFAULT_RETENTION_DAYS = 90;
 
+    protected function getSectionKey()
+    {
+        return 'audit_log';
+    }
+
     public function initSettingsFromPost()
     {
         $this->assignSettingsPropertyFromPost(
-            self::SETTINGS_GROUP,
+            null,
             self::SETTING_ENABLED,
-            self::SETTINGS_GROUP,
+            'audit_log',
             self::SETTING_ENABLED,
             BaseSettings::SETTINGS_TYPE_BOL
         );
 
         $this->assignSettingsPropertyFromPost(
-            self::SETTINGS_GROUP,
+            null,
             self::SETTING_ENABLED_EVENTS,
-            self::SETTINGS_GROUP,
+            'audit_log',
             self::SETTING_ENABLED_EVENTS,
             BaseSettings::SETTINGS_TYPE_ARRAY
         );
 
         $this->assignSettingsPropertyFromPost(
-            self::SETTINGS_GROUP,
+            null,
             self::SETTING_RETENTION_DAYS,
-            self::SETTINGS_GROUP,
+            'audit_log',
             self::SETTING_RETENTION_DAYS,
             BaseSettings::SETTINGS_TYPE_INT,
             self::DEFAULT_RETENTION_DAYS
@@ -46,12 +50,12 @@ class AuditLogSettings extends BaseSettings implements SettingsInterface
      */
     public function validateSettings()
     {
-        if (!isset($this->post[self::SETTINGS_GROUP])) {
+        if (!isset($this->post['audit_log'])) {
             return;
         }
 
-        $retention = isset($this->post[self::SETTINGS_GROUP][self::SETTING_RETENTION_DAYS])
-            ? (int) $this->post[self::SETTINGS_GROUP][self::SETTING_RETENTION_DAYS]
+        $retention = isset($this->post['audit_log'][self::SETTING_RETENTION_DAYS])
+            ? (int) $this->post['audit_log'][self::SETTING_RETENTION_DAYS]
             : self::DEFAULT_RETENTION_DAYS;
 
         if ($retention < 1) {
@@ -70,7 +74,7 @@ class AuditLogSettings extends BaseSettings implements SettingsInterface
      */
     public function isEnabled()
     {
-        return !empty($this->settings[self::SETTINGS_GROUP][self::SETTING_ENABLED]);
+        return !empty($this->settings[self::SETTING_ENABLED]);
     }
 
     /**
@@ -88,10 +92,10 @@ class AuditLogSettings extends BaseSettings implements SettingsInterface
      */
     public function getEnabledEvents()
     {
-        if (isset($this->settings[self::SETTINGS_GROUP][self::SETTING_ENABLED_EVENTS])
-            && is_array($this->settings[self::SETTINGS_GROUP][self::SETTING_ENABLED_EVENTS])
+        if (isset($this->settings[self::SETTING_ENABLED_EVENTS])
+            && is_array($this->settings[self::SETTING_ENABLED_EVENTS])
         ) {
-            return $this->settings[self::SETTINGS_GROUP][self::SETTING_ENABLED_EVENTS];
+            return $this->settings[self::SETTING_ENABLED_EVENTS];
         }
 
         return [];
@@ -102,8 +106,8 @@ class AuditLogSettings extends BaseSettings implements SettingsInterface
      */
     public function getRetentionDays()
     {
-        return isset($this->settings[self::SETTINGS_GROUP][self::SETTING_RETENTION_DAYS])
-            ? (int) $this->settings[self::SETTINGS_GROUP][self::SETTING_RETENTION_DAYS]
+        return isset($this->settings[self::SETTING_RETENTION_DAYS])
+            ? (int) $this->settings[self::SETTING_RETENTION_DAYS]
             : self::DEFAULT_RETENTION_DAYS;
     }
 }

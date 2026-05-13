@@ -16,25 +16,30 @@ class LoginSettings extends BaseSettings implements SettingsInterface
     const REDIRECT_CUSTOM = 9;
     const NO_REDIRECT = 10;
 
+    protected function getSectionKey()
+    {
+        return 'login';
+    }
+
     public function initSettingsFromPost()
     {
         $this->assignSettingsPropertyFromPost(
             null,
-            'jwt_login_by',
+            'login_by',
             null,
             'jwt_login_by',
             BaseSettings::SETTINGS_TYPE_INT
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'jwt_login_by_parameter',
+            'login_by_parameter',
             null,
             'jwt_login_by_parameter',
             BaseSettings::SETTINGS_TYPE_STRING
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'allow_autologin',
+            'enabled',
             null,
             'allow_autologin',
             BaseSettings::SETTINGS_TYPE_BOL
@@ -49,7 +54,7 @@ class LoginSettings extends BaseSettings implements SettingsInterface
 
         $this->assignSettingsPropertyFromPost(
             null,
-            'login_fail_redirect',
+            'fail_redirect',
             null,
             'login_fail_redirect',
             BaseSettings::SETTINGS_TYPE_STRING
@@ -57,14 +62,14 @@ class LoginSettings extends BaseSettings implements SettingsInterface
 
         $this->assignSettingsPropertyFromPost(
             null,
-            'require_login_auth',
+            'auth_code',
             null,
             'require_login_auth',
             BaseSettings::SETTINGS_TYPE_BOL
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'include_login_request_parameters',
+            'include_request_parameters',
             null,
             'include_login_request_parameters',
             BaseSettings::SETTINGS_TYPE_BOL,
@@ -72,7 +77,7 @@ class LoginSettings extends BaseSettings implements SettingsInterface
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'allow_usage_redirect_parameter',
+            'allow_redirect_parameter',
             null,
             'allow_usage_redirect_parameter',
             BaseSettings::SETTINGS_TYPE_BOL,
@@ -80,7 +85,7 @@ class LoginSettings extends BaseSettings implements SettingsInterface
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'login_remove_request_parameters',
+            'remove_request_parameters',
             null,
             'login_remove_request_parameters',
             BaseSettings::SETTINGS_TYPE_STRING,
@@ -89,14 +94,14 @@ class LoginSettings extends BaseSettings implements SettingsInterface
 
         $this->assignSettingsPropertyFromPost(
             null,
-            'login_ip',
+            'ip_whitelist',
             null,
             'login_ip',
             BaseSettings::SETTINGS_TYPE_STRING
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'login_iss',
+            'iss_whitelist',
             null,
             'login_iss',
             BaseSettings::SETTINGS_TYPE_STRING
@@ -139,7 +144,7 @@ class LoginSettings extends BaseSettings implements SettingsInterface
      */
     public function isAutologinEnabled()
     {
-        return !empty($this->settings['allow_autologin']);
+        return !empty($this->settings['enabled']);
     }
 
     /**
@@ -147,8 +152,8 @@ class LoginSettings extends BaseSettings implements SettingsInterface
      */
     public function getJWTLoginBy()
     {
-        return isset($this->settings['jwt_login_by'])
-            ? (int)$this->settings['jwt_login_by']
+        return isset($this->settings['login_by'])
+            ? (int)$this->settings['login_by']
             : self::JWT_LOGIN_BY_EMAIL;
     }
 
@@ -158,13 +163,9 @@ class LoginSettings extends BaseSettings implements SettingsInterface
      */
     public function getJwtLoginByParameter()
     {
-        if (isset($this->settings['jwt_login_by_parameter'])) {
-            return $this->settings['jwt_login_by_parameter'];
-        }
-        if (isset($this->settings['jwt_email_parameter'])) {
-            return $this->settings['jwt_email_parameter'];
-        }
-        return '';
+        return isset($this->settings['login_by_parameter'])
+            ? $this->settings['login_by_parameter']
+            : '';
     }
 
     /**
@@ -182,8 +183,8 @@ class LoginSettings extends BaseSettings implements SettingsInterface
      */
     public function isRequestParametersIncluded()
     {
-        return isset($this->settings['include_login_request_parameters'])
-            ? (bool)$this->settings['include_login_request_parameters']
+        return isset($this->settings['include_request_parameters'])
+            ? (bool)$this->settings['include_request_parameters']
             : false;
     }
 
@@ -202,8 +203,8 @@ class LoginSettings extends BaseSettings implements SettingsInterface
      */
     public function getAllowedLoginIps()
     {
-        return isset($this->settings['login_ip'])
-            ? $this->settings['login_ip']
+        return isset($this->settings['ip_whitelist'])
+            ? $this->settings['ip_whitelist']
             : '';
     }
 
@@ -212,8 +213,8 @@ class LoginSettings extends BaseSettings implements SettingsInterface
      */
     public function getAllowedLoginIss()
     {
-        return isset($this->settings['login_iss'])
-            ? $this->settings['login_iss']
+        return isset($this->settings['iss_whitelist'])
+            ? $this->settings['iss_whitelist']
             : '';
     }
 
@@ -222,7 +223,7 @@ class LoginSettings extends BaseSettings implements SettingsInterface
      */
     public function isAuthKeyRequiredOnLogin()
     {
-        return !empty($this->settings['require_login_auth']);
+        return !empty($this->settings['auth_code']);
     }
 
     /**
@@ -230,7 +231,7 @@ class LoginSettings extends BaseSettings implements SettingsInterface
      */
     public function isRedirectParameterAllowed()
     {
-        return !empty($this->settings['allow_usage_redirect_parameter']);
+        return !empty($this->settings['allow_redirect_parameter']);
     }
 
     /**
@@ -238,8 +239,8 @@ class LoginSettings extends BaseSettings implements SettingsInterface
      */
     public function getAutologinRedirectOnFail()
     {
-        return isset($this->settings['login_fail_redirect'])
-            ? (string) $this->settings['login_fail_redirect']
+        return isset($this->settings['fail_redirect'])
+            ? (string) $this->settings['fail_redirect']
             : '';
     }
 
@@ -257,12 +258,12 @@ class LoginSettings extends BaseSettings implements SettingsInterface
             'redirectUrl',
         ];
 
-        if (isset($this->settings['auth_code_key'])) {
-            $default[] = $this->settings['auth_code_key'];
+        if (isset($this->fullSettings['auth_codes']['key'])) {
+            $default[] = $this->fullSettings['auth_codes']['key'];
         }
 
-        return isset($this->settings['login_remove_request_parameters'])
-            ? (string) $this->settings['login_remove_request_parameters']
+        return isset($this->settings['remove_request_parameters'])
+            ? (string) $this->settings['remove_request_parameters']
             : implode(', ', $default);
     }
 }

@@ -13,39 +13,44 @@ class ResetPasswordSettings extends BaseSettings implements SettingsInterface
     const EMAIL_TYPE_PLAIN_TEXT = 0;
     const EMAIL_TYPE_HTML = 1;
 
+    protected function getSectionKey()
+    {
+        return 'reset_password';
+    }
+
     public function initSettingsFromPost()
     {
         $this->assignSettingsPropertyFromPost(
             null,
-            'allow_reset_password',
+            'enabled',
             null,
             'allow_reset_password',
             BaseSettings::SETTINGS_TYPE_BOL
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'reset_password_requires_auth_code',
+            'auth_code',
             null,
             'reset_password_requires_auth_code',
             BaseSettings::SETTINGS_TYPE_BOL
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'jwt_reset_password_flow',
+            'flow',
             null,
             'jwt_reset_password_flow',
             BaseSettings::SETTINGS_TYPE_INT
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'jwt_email_subject',
+            'email_subject',
             null,
             'jwt_email_subject',
             BaseSettings::SETTINGS_TYPE_STRING
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'jwt_reset_password_email_body',
+            'email_body',
             null,
             'jwt_reset_password_email_body',
             BaseSettings::SETTINGS_TYPE_STRING,
@@ -54,7 +59,7 @@ class ResetPasswordSettings extends BaseSettings implements SettingsInterface
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'jwt_email_type',
+            'email_type',
             null,
             'jwt_email_type',
             BaseSettings::SETTINGS_TYPE_INT
@@ -62,7 +67,7 @@ class ResetPasswordSettings extends BaseSettings implements SettingsInterface
 
         $this->assignSettingsPropertyFromPost(
             null,
-            'reset_password_jwt',
+            'return_jwt',
             null,
             'reset_password_jwt',
             BaseSettings::SETTINGS_TYPE_BOL
@@ -106,7 +111,7 @@ class ResetPasswordSettings extends BaseSettings implements SettingsInterface
      */
     public function isResetPasswordEnabled()
     {
-        return !empty($this->settings['allow_reset_password']);
+        return !empty($this->settings['enabled']);
     }
 
     /**
@@ -114,7 +119,7 @@ class ResetPasswordSettings extends BaseSettings implements SettingsInterface
      */
     public function isAuthKeyRequired()
     {
-        return !empty($this->settings['reset_password_requires_auth_code']);
+        return !empty($this->settings['auth_code']);
     }
 
     /**
@@ -122,7 +127,7 @@ class ResetPasswordSettings extends BaseSettings implements SettingsInterface
      */
     public function isJwtAllowed()
     {
-        return !empty($this->settings['reset_password_jwt']);
+        return !empty($this->settings['return_jwt']);
     }
 
     /**
@@ -130,8 +135,8 @@ class ResetPasswordSettings extends BaseSettings implements SettingsInterface
      */
     public function getFlowType()
     {
-        return isset($this->settings['jwt_reset_password_flow'])
-            ? $this->settings['jwt_reset_password_flow']
+        return isset($this->settings['flow'])
+            ? $this->settings['flow']
             : self::FLOW_JUST_SAVE_IN_DB;
     }
 
@@ -140,8 +145,8 @@ class ResetPasswordSettings extends BaseSettings implements SettingsInterface
      */
     public function getResetPasswordEmailSubject()
     {
-        return isset($this->settings['jwt_email_subject'])
-            ? $this->settings['jwt_email_subject']
+        return isset($this->settings['email_subject'])
+            ? $this->settings['email_subject']
             : '';
     }
 
@@ -150,8 +155,8 @@ class ResetPasswordSettings extends BaseSettings implements SettingsInterface
      */
     public function getResetPasswordEmailBody()
     {
-        return isset($this->settings['jwt_reset_password_email_body'])
-            ? base64_decode($this->settings['jwt_reset_password_email_body'])
+        return isset($this->settings['email_body'])
+            ? base64_decode($this->settings['email_body'])
             : '';
     }
 
@@ -160,8 +165,8 @@ class ResetPasswordSettings extends BaseSettings implements SettingsInterface
      */
     public function getResetPasswordEmailType()
     {
-        return isset($this->settings['jwt_email_type'])
-            ? $this->settings['jwt_email_type']
+        return isset($this->settings['email_type'])
+            ? $this->settings['email_type']
             : self::EMAIL_TYPE_PLAIN_TEXT;
     }
 

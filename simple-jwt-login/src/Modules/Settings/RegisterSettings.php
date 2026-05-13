@@ -8,11 +8,16 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
 {
     const DEFAULT_USER_PROFILE = 'subscriber';
 
+    protected function getSectionKey()
+    {
+        return 'register';
+    }
+
     public function initSettingsFromPost()
     {
         $this->assignSettingsPropertyFromPost(
             null,
-            'allow_register',
+            'enabled',
             null,
             'allow_register',
             BaseSettings::SETTINGS_TYPE_BOL
@@ -27,21 +32,21 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
 
         $this->assignSettingsPropertyFromPost(
             null,
-            'register_ip',
+            'ip_whitelist',
             null,
             'register_ip',
             BaseSettings::SETTINGS_TYPE_STRING
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'register_domain',
+            'domain_whitelist',
             null,
             'register_domain',
             BaseSettings::SETTINGS_TYPE_STRING
         );
         $this->assignSettingsPropertyFromPost(
             null,
-            'require_register_auth',
+            'auth_code',
             null,
             'require_register_auth',
             BaseSettings::SETTINGS_TYPE_BOL
@@ -66,7 +71,7 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
 
         $this->assignSettingsPropertyFromPost(
             null,
-            'register_force_login',
+            'force_login',
             null,
             'register_force_login',
             BaseSettings::SETTINGS_TYPE_BOL,
@@ -75,7 +80,7 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
 
         $this->assignSettingsPropertyFromPost(
             null,
-            'register_jwt',
+            'return_jwt',
             null,
             'register_jwt',
             BaseSettings::SETTINGS_TYPE_BOL,
@@ -148,7 +153,7 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
      */
     public function isRegisterAllowed()
     {
-        return !empty($this->settings['allow_register']);
+        return !empty($this->settings['enabled']);
     }
 
     /**
@@ -166,8 +171,8 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
      */
     public function getAllowedRegisterIps()
     {
-        return isset($this->settings['register_ip'])
-            ? $this->settings['register_ip']
+        return isset($this->settings['ip_whitelist'])
+            ? $this->settings['ip_whitelist']
             : '';
     }
 
@@ -176,8 +181,8 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
      */
     public function getAllowedRegisterDomain()
     {
-        return isset($this->settings['register_domain'])
-            ? $this->settings['register_domain']
+        return isset($this->settings['domain_whitelist'])
+            ? $this->settings['domain_whitelist']
             : '';
     }
 
@@ -186,8 +191,8 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
      */
     public function isAuthKeyRequiredOnRegister()
     {
-        return isset($this->settings['require_register_auth'])
-            ? (bool)$this->settings['require_register_auth']
+        return isset($this->settings['auth_code'])
+            ? (bool)$this->settings['auth_code']
             : true;
     }
 
@@ -214,7 +219,7 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
      */
     public function isForceLoginAfterCreateUserEnabled()
     {
-        return !empty($this->settings['register_force_login']);
+        return !empty($this->settings['force_login']);
     }
 
     /**
@@ -232,6 +237,6 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
      */
     public function isJwtEnabled()
     {
-        return !empty($this->settings['register_jwt']);
+        return !empty($this->settings['return_jwt']);
     }
 }

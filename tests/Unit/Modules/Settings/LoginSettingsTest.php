@@ -88,21 +88,6 @@ class LoginSettingsTest extends TestCase
         );
     }
 
-    public function testJwtLoginByForOlderVersions()
-    {
-        $settings = [
-            'jwt_email_parameter' => 'email'
-        ];
-        $loginSettings = (new LoginSettings())
-            ->withWordPressData($this->wordPressData)
-            ->withSettings($settings)
-            ->withPost([]);
-        $this->assertSame(
-            'email',
-            $loginSettings->getJwtLoginByParameter()
-        );
-    }
-
     public function testValidationEmptyLoginBy()
     {
         $this->expectException(Exception::class);
@@ -177,7 +162,7 @@ class LoginSettingsTest extends TestCase
             ],
             'not_set_with_auth_code_key' => [
                 'settings' => [
-                    'auth_code_key' => 'auth_code',
+                    'auth_codes' => ['key' => 'auth_code'],
                 ],
                 'expectedResult' => implode(
                     ', ',
@@ -194,8 +179,8 @@ class LoginSettingsTest extends TestCase
             ],
             'null_as_value' => [
                 'settings' => [
-                    'login_remove_request_parameters' => null,
-                    'auth_code_key' => 'auth_code',
+                    'login'      => ['remove_request_parameters' => null],
+                    'auth_codes' => ['key' => 'auth_code'],
                 ],
                 'expectedResult' => implode(
                     ', ',
@@ -212,15 +197,15 @@ class LoginSettingsTest extends TestCase
             ],
             'set_specific_value' => [
                 'settings' => [
-                    'login_remove_request_parameters' => implode(', ', ['test']),
-                    'auth_code_key' => 'auth_code',
+                    'login'      => ['remove_request_parameters' => implode(', ', ['test'])],
+                    'auth_codes' => ['key' => 'auth_code'],
                 ],
                 'expectedResult' => implode(', ', ['test']),
             ],
             'set_specific_values' => [
                 'settings' => [
-                    'login_remove_request_parameters' => implode(', ', ['test1', 'test2']),
-                    'auth_code_key' => 'auth_code',
+                    'login'      => ['remove_request_parameters' => implode(', ', ['test1', 'test2'])],
+                    'auth_codes' => ['key' => 'auth_code'],
                 ],
                 'expectedResult' => implode(', ', ['test1', 'test2']),
             ],

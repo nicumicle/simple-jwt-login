@@ -9,13 +9,14 @@
 - Add Audit logs
 - Add support for multiple JWT Decryption keys based on JWT header or payload
 - Move User identification from Login to General
-- [TODO][BREAKING CHANGE] Remove User Identification from Delete, and use the one from General 
+- **BREAKING CHANGE** Remove User Identification from Delete, and use the one from General 
 - Add Webhooks
 - Enable/disable Revoke and Validate token 
 - Add suport for API Keys (X-API-Key) to access wordpress endpoints as an authenticated user 
 - Allow JWT authentication on the API Keys endpoint (in addition to cookie-based login)
 - Improve HTTP Status Codes for errors
-- [BREAKING CHANGE] Reorganize settings structure in DB
+- **BREAKING CHANGE** Reorganize settings structure in DB
+- **BREALING CHANGE** Change register user response ({"success":true, "ID": 1,...}) to {"success":true, "data":{"id":..}}
 
 ## 3.6.5 (14 Mar 2026)
 - Fix  CVE-2025-58648 - Stored Cross-Site Scripting vulnerability[PR](https://github.com/nicumicle/simple-jwt-login/pull/162)

@@ -161,28 +161,34 @@ class RegisterUserService extends BaseService implements ServiceInterface
                 ->makeAction();
         }
 
-        $userArray = $this->wordPressData->wordpressUserToArray($user);
-        if (isset($userArray['user_pass'])) {
-            unset($userArray['user_pass']);
+        $raw = $this->wordPressData->wordpressUserToArray($user);
+        unset($raw['user_pass'], $raw['ID']);
+
+        $userArray = isset($raw['id']) ? ['id' => $raw['id']] : [];
+        foreach ($raw as $key => $value) {
+            if ($key === 'id') {
+                continue;
+            }
+            $newKey = (strpos($key, 'user_') === 0) ? substr($key, 5) : $key;
+            $userArray[$newKey] = $value;
         }
 
-        $response = [
-            'success' => true,
-            'id' => $userId,
-            'message' => __('User was successfully created.', 'simple-jwt-login'),
-            'user' => $userArray,
-            'roles' => $this->wordPressData->getUserRoles($user),
-        ];
+        $userArray['roles'] = $this->wordPressData->getUserRoles($user);
 
         if ($this->jwtSettings->getRegisterSettings()->isJwtEnabled()) {
             $payload = $this->initPayload($user);
 
-            $response['jwt'] = JWT::encode(
+            $userArray['jwt'] = JWT::encode(
                 $payload,
                 JwtKeyFactory::getFactory($this->jwtSettings)->getPrivateKey(),
                 $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm()
             );
         }
+
+        $response = [
+            'success' => true,
+            'data'    => $userArray,
+        ];
 
         if ($this->jwtSettings->getHooksSettings()
             ->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_REGISTER_USER)

@@ -127,11 +127,11 @@ class SuccessTest extends TestBase
         $json = json_decode($contents, true);
         $this->assertArrayHasKey('success', $json);
         $this->assertTrue($json['success']);
-        $this->assertArrayHasKey('user', $json);
-        $this->assertArrayHasKey('ID', $json['user']);
+        $this->assertArrayHasKey('data', $json);
+        $this->assertArrayHasKey('id', $json['data']);
 
         // Test user meta registered
-         $userMeta = $this->getUserMeta($json['user']['ID']);
+         $userMeta = $this->getUserMeta($json['data']['id']);
          $this->assertNotEmpty($userMeta);
          $this->assertSame($firstName, $userMeta['first_name']);
          $this->assertSame($lastName, $userMeta['last_name']);

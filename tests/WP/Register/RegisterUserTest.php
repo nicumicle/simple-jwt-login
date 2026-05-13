@@ -63,12 +63,12 @@ class RegisterUserTest extends WPTestCase
         $this->assertSame(200, $response->get_status());
         $data = $response->get_data();
         $this->assertTrue($data['success']);
-        $this->assertArrayHasKey('id', $data);
-        $this->assertArrayHasKey('user', $data);
-        $this->assertArrayHasKey('roles', $data);
-        $this->assertNotEmpty($data['id']);
-        $this->assertSame($email, $data['user']['user_email']);
-        $this->assertContains('subscriber', $data['roles']);
+        $this->assertArrayHasKey('data', $data);
+        $this->assertArrayHasKey('id', $data['data']);
+        $this->assertArrayHasKey('roles', $data['data']);
+        $this->assertNotEmpty($data['data']['id']);
+        $this->assertSame($email, $data['data']['email']);
+        $this->assertContains('subscriber', $data['data']['roles']);
     }
 
     #[TestDox('Response never exposes the user password')]
@@ -83,7 +83,7 @@ class RegisterUserTest extends WPTestCase
         ]);
 
         $this->assertSame(200, $response->get_status());
-        $this->assertArrayNotHasKey('user_pass', $response->get_data()['user']);
+        $this->assertArrayNotHasKey('pass', $response->get_data()['data']);
     }
 
     #[TestDox('New user receives the role configured in new_user_profile')]
@@ -98,7 +98,7 @@ class RegisterUserTest extends WPTestCase
         ]);
 
         $this->assertSame(200, $response->get_status());
-        $this->assertContains('editor', $response->get_data()['roles']);
+        $this->assertContains('editor', $response->get_data()['data']['roles']);
     }
 
     #[TestDox('Registration succeeds without a password when random_password is enabled')]
@@ -132,8 +132,9 @@ class RegisterUserTest extends WPTestCase
         $this->assertSame(200, $response->get_status());
         $data = $response->get_data();
         $this->assertTrue($data['success']);
-        $this->assertArrayHasKey('jwt', $data);
-        $this->assertNotEmpty($data['jwt']);
+        $this->assertArrayHasKey('jwt', $data['data']);
+        $this->assertNotEmpty($data['data']['jwt']);
+
     }
 
     #[TestDox('Allowed user_meta keys are persisted on the new user')]
@@ -154,7 +155,7 @@ class RegisterUserTest extends WPTestCase
         ]);
 
         $this->assertSame(200, $response->get_status());
-        $userId = $response->get_data()['id'];
+        $userId = $response->get_data()['data']['id'];
 
         clean_user_cache($userId);
 
@@ -178,7 +179,7 @@ class RegisterUserTest extends WPTestCase
         ]);
 
         $this->assertSame(200, $response->get_status());
-        $userId = $response->get_data()['id'];
+        $userId = $response->get_data()['data']['id'];
 
         clean_user_cache($userId);
 
@@ -205,7 +206,7 @@ class RegisterUserTest extends WPTestCase
         ]);
 
         $this->assertSame(200, $response->get_status());
-        $this->assertContains('editor', $response->get_data()['roles']);
+        $this->assertContains('editor', $response->get_data()['data']['roles']);
     }
 
     #[TestDox('Email from an allowed domain is accepted')]

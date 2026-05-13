@@ -353,10 +353,8 @@ class RegisterUserServiceTest extends TestCase
 
         $this->assertArrayHasKey('success', $result);
         $this->assertTrue($result['success']);
-        $this->assertArrayHasKey('id', $result);
-        $this->assertArrayHasKey('message', $result);
-        $this->assertArrayHasKey('user', $result);
-        $this->assertArrayHasKey('jwt', $result);
+        $this->assertArrayHasKey('data', $result);
+        $this->assertArrayHasKey('jwt', $result['data']);
     }
 
     public function testRegisterWithoutAuthPayload()
@@ -411,9 +409,7 @@ class RegisterUserServiceTest extends TestCase
 
         $this->assertArrayHasKey('success', $result);
         $this->assertTrue($result['success']);
-        $this->assertArrayHasKey('id', $result);
-        $this->assertArrayHasKey('message', $result);
-        $this->assertArrayHasKey('user', $result);
-        $this->assertArrayHasKey('jwt', $result);
+        $this->assertArrayHasKey('data', $result);
+        $this->assertArrayHasKey('jwt', $result['data']);
     }
 }

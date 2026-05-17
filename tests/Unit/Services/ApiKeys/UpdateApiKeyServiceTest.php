@@ -78,7 +78,10 @@ class UpdateApiKeyServiceTest extends TestCase
         $mock = $this->createStub(WordPressDataInterface::class);
         $mock->method('getOptionFromDatabase')->willReturn(json_encode([]));
         $mock->method('isUserLoggedIn')->willReturn(true);
-        $mock->method('currentUserCan')->willReturn(false);
+        $mock->method('currentUserCan')->willReturnCallback(static function ($cap) {
+            // Non-admin user: has 'read' but not 'manage_options'
+            return $cap === 'read';
+        });
         $mock->method('getCurrentUserId')->willReturn(42);
         $mock->method('createResponse')->willReturn(new WP_REST_Response(['success' => true]));
 
@@ -146,6 +149,32 @@ class UpdateApiKeyServiceTest extends TestCase
         $service = (new UpdateApiKeyService())
             ->withRequest(['id' => 1, 'name' => 'My Key', 'permissions' => ['bad_permission']])
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withApiKeyRepository($this->apiKeyRepositoryMock);
+
+        $service->makeAction();
+    }
+
+    public function testThrowsWhenUserLacksCapabilityForRequestedPermission()
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionCode(ErrorCodes::ERR_API_KEY_UNAUTHORIZED);
+
+        $mock = $this->createStub(WordPressDataInterface::class);
+        $mock->method('getOptionFromDatabase')->willReturn(json_encode([]));
+        $mock->method('isUserLoggedIn')->willReturn(true);
+        $mock->method('currentUserCan')->willReturnCallback(static function ($cap) {
+            // Subscriber: only 'read'; no 'edit_posts', 'manage_options'
+            return $cap === 'read';
+        });
+        $mock->method('getCurrentUserId')->willReturn(5);
+
+        $key          = new \stdClass();
+        $key->user_id = 5;
+        $this->apiKeyRepositoryMock->method('findById')->willReturn($key);
+
+        $service = (new UpdateApiKeyService())
+            ->withRequest(['id' => 1, 'name' => 'My Key', 'permissions' => ['create']])
+            ->withSettings(new SimpleJWTLoginSettings($mock))
             ->withApiKeyRepository($this->apiKeyRepositoryMock);
 
         $service->makeAction();

@@ -15,6 +15,25 @@ class ApiKeyPermissions
     public static $all = ['read', 'create', 'update', 'delete'];
 
     /**
+     * Maps a permission to the minimum WordPress capability required to mint a
+     * key with that permission. Admins (manage_options) always bypass this.
+     *
+     * @param string $permission
+     * @return string|null  null when the permission is unknown
+     */
+    public static function permissionToCapability($permission)
+    {
+        $map = [
+            self::READ   => 'read',
+            self::CREATE => 'edit_posts',
+            self::UPDATE => 'edit_posts',
+            self::DELETE => 'delete_posts',
+        ];
+
+        return isset($map[$permission]) ? $map[$permission] : null;
+    }
+
+    /**
      * Maps an HTTP method to the required WordPress endpoint permission.
      *
      * @param string $method

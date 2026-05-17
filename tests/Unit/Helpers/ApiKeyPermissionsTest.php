@@ -35,6 +35,17 @@ class ApiKeyPermissionsTest extends TestCase
         $this->assertSame($expected, ApiKeyPermissions::httpMethodToPermission($method));
     }
 
+    #[DataProvider('permissionToCapabilityProvider')]
+    public function testPermissionToCapabilityReturnsCorrectCapability(string $permission, ?string $expectedCap)
+    {
+        $this->assertSame($expectedCap, ApiKeyPermissions::permissionToCapability($permission));
+    }
+
+    public function testPermissionToCapabilityReturnsNullForUnknownPermission()
+    {
+        $this->assertNull(ApiKeyPermissions::permissionToCapability('unknown'));
+    }
+
     public static function validPermissionsProvider(): array
     {
         return array_map(
@@ -54,6 +65,17 @@ class ApiKeyPermissionsTest extends TestCase
             'lowercase'  => ['get',    'read'],
             'HEAD'       => ['HEAD',   null],
             'unknown'    => ['FOOBAR', null],
+        ];
+    }
+
+    public static function permissionToCapabilityProvider(): array
+    {
+        return [
+            'read maps to read'         => ['read',   'read'],
+            'create maps to edit_posts' => ['create', 'edit_posts'],
+            'update maps to edit_posts' => ['update', 'edit_posts'],
+            'delete maps to delete_posts' => ['delete', 'delete_posts'],
+            'unknown returns null'      => ['foobar', null],
         ];
     }
 }

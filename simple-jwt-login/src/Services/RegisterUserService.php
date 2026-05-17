@@ -164,11 +164,8 @@ class RegisterUserService extends BaseService implements ServiceInterface
         $raw = $this->wordPressData->wordpressUserToArray($user);
         unset($raw['user_pass'], $raw['ID']);
 
-        $userArray = isset($raw['id']) ? ['id' => $raw['id']] : [];
+        $userArray = ['id' => $this->wordPressData->getUserIdFromUser($user)];
         foreach ($raw as $key => $value) {
-            if ($key === 'id') {
-                continue;
-            }
             $newKey = (strpos($key, 'user_') === 0) ? substr($key, 5) : $key;
             $userArray[$newKey] = $value;
         }

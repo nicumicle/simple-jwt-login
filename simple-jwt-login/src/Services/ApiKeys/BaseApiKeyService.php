@@ -59,6 +59,34 @@ abstract class BaseApiKeyService extends BaseService implements ApiKeyServiceInt
     }
 
     /**
+     * Verify the current user holds the WordPress capability required by each
+     * permission they are trying to assign. Admins (manage_options) bypass all
+     * checks. Throws ERR_API_KEY_UNAUTHORIZED (→ HTTP 403) on failure.
+     *
+     * @param array $permissions Already-normalised permission strings
+     * @throws Exception
+     */
+    protected function requireCapabilityForPermissions(array $permissions)
+    {
+        if ($this->wordPressData->currentUserCan('manage_options')) {
+            return;
+        }
+
+        foreach ($permissions as $permission) {
+            $cap = ApiKeyPermissions::permissionToCapability((string) $permission);
+            if ($cap !== null && !$this->wordPressData->currentUserCan($cap)) {
+                throw new Exception(
+                    sprintf(
+                        __('You do not have permission to assign the "%s" permission to an API key.', 'simple-jwt-login'),
+                        $permission
+                    ),
+                    ErrorCodes::ERR_API_KEY_UNAUTHORIZED
+                );
+            }
+        }
+    }
+
+    /**
      * @param mixed $permissions
      * @return array
      * @throws Exception

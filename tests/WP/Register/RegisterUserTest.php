@@ -134,7 +134,6 @@ class RegisterUserTest extends WPTestCase
         $this->assertTrue($data['success']);
         $this->assertArrayHasKey('jwt', $data['data']);
         $this->assertNotEmpty($data['data']['jwt']);
-
     }
 
     #[TestDox('Allowed user_meta keys are persisted on the new user')]

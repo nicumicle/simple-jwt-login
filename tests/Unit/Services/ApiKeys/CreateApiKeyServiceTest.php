@@ -90,6 +90,73 @@ class CreateApiKeyServiceTest extends TestCase
         $service->makeAction();
     }
 
+    public function testThrowsWhenUserLacksCapabilityForRequestedPermission()
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionCode(ErrorCodes::ERR_API_KEY_UNAUTHORIZED);
+
+        $mock = $this->createStub(WordPressDataInterface::class);
+        $mock->method('getOptionFromDatabase')->willReturn(json_encode([]));
+        $mock->method('isUserLoggedIn')->willReturn(true);
+        $mock->method('currentUserCan')->willReturnCallback(static function ($cap) {
+            // Subscriber: has 'read' but not 'edit_posts', 'delete_posts', 'manage_options'
+            return $cap === 'read';
+        });
+
+        $service = (new CreateApiKeyService())
+            ->withRequest(['name' => 'My Key', 'permissions' => ['create']])
+            ->withSettings(new SimpleJWTLoginSettings($mock))
+            ->withApiKeyRepository($this->apiKeyRepositoryMock);
+
+        $service->makeAction();
+    }
+
+    public function testSubscriberCanCreateReadOnlyKey()
+    {
+        $mock = $this->createStub(WordPressDataInterface::class);
+        $mock->method('getOptionFromDatabase')->willReturn(json_encode([]));
+        $mock->method('isUserLoggedIn')->willReturn(true);
+        $mock->method('currentUserCan')->willReturnCallback(static function ($cap) {
+            return $cap === 'read';
+        });
+        $mock->method('getCurrentUserId')->willReturn(5);
+        $mock->method('createResponse')->willReturn(new WP_REST_Response(['success' => true]));
+
+        $repoMock = $this->createStub(ApiKeyRepositoryInterface::class);
+        $repoMock->method('insert')->willReturn(1);
+
+        $service = (new CreateApiKeyService())
+            ->withRequest(['name' => 'Read-only key', 'permissions' => ['read']])
+            ->withSettings(new SimpleJWTLoginSettings($mock))
+            ->withApiKeyRepository($repoMock);
+
+        $result = $service->makeAction();
+
+        $this->assertInstanceOf(WP_REST_Response::class, $result);
+    }
+
+    public function testAdminCanCreateKeyWithAnyPermission()
+    {
+        $mock = $this->createStub(WordPressDataInterface::class);
+        $mock->method('getOptionFromDatabase')->willReturn(json_encode([]));
+        $mock->method('isUserLoggedIn')->willReturn(true);
+        $mock->method('currentUserCan')->willReturn(true); // manage_options = true
+        $mock->method('getCurrentUserId')->willReturn(1);
+        $mock->method('createResponse')->willReturn(new WP_REST_Response(['success' => true]));
+
+        $repoMock = $this->createStub(ApiKeyRepositoryInterface::class);
+        $repoMock->method('insert')->willReturn(2);
+
+        $service = (new CreateApiKeyService())
+            ->withRequest(['name' => 'Admin key', 'permissions' => ['create', 'update', 'delete']])
+            ->withSettings(new SimpleJWTLoginSettings($mock))
+            ->withApiKeyRepository($repoMock);
+
+        $result = $service->makeAction();
+
+        $this->assertInstanceOf(WP_REST_Response::class, $result);
+    }
+
     public function testThrowsWhenInsertFails()
     {
         $this->expectException(Exception::class);

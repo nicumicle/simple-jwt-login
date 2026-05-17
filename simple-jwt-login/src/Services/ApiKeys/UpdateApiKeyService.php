@@ -36,6 +36,7 @@ class UpdateApiKeyService extends BaseApiKeyService
         $permissions = $this->normalizeAndValidatePermissions(
             isset($this->request['permissions']) ? $this->request['permissions'] : []
         );
+        $this->requireCapabilityForPermissions($permissions);
 
         $expiresAt = !empty($this->request['expires_at'])
             ? (string) $this->request['expires_at']

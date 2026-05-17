@@ -77,8 +77,8 @@ abstract class WPTestCase extends WP_UnitTestCase
      */
     private function dispatch(string $method, string $route, array $params, array $headers, bool $asJson = false): WP_REST_Response
     {
-        $originalRequest       = $_REQUEST;
-        $prevMethod = $_SERVER['REQUEST_METHOD'] ?? null;
+        $originalRequest = $_REQUEST;
+        $prevMethod      = $_SERVER['REQUEST_METHOD'] ?? null;
 
         // Populate $_REQUEST so the plugin's rest_api_init closure captures the params.
         $_REQUEST = array_merge($_REQUEST, $params);
@@ -87,6 +87,16 @@ abstract class WPTestCase extends WP_UnitTestCase
         // closure) returns the correct method. Services like ResetPasswordService
         // switch on this value to choose between their sub-operations (e.g. PUT vs POST).
         $_SERVER['REQUEST_METHOD'] = strtoupper($method);
+
+        // Inject all custom headers into $_SERVER before rest_api_init fires.
+        // ServerHelper reads from $_SERVER['HTTP_*'], so headers must be present
+        // before the closure captures them (e.g. x-api-key for API key middleware).
+        $injectedServerKeys = [];
+        foreach ($headers as $key => $value) {
+            $serverKey = 'HTTP_' . strtoupper(str_replace('-', '_', $key));
+            $_SERVER[$serverKey] = $value;
+            $injectedServerKeys[] = $serverKey;
+        }
 
         // Capture the HTTP status code that wp_send_json_error() passes via
         // status_header() before it calls wp_die(). This is the only way to
@@ -125,9 +135,6 @@ abstract class WPTestCase extends WP_UnitTestCase
 
         foreach ($headers as $key => $value) {
             $req->set_header($key, $value);
-            if (strtolower($key) === 'authorization') {
-                $_SERVER['HTTP_AUTHORIZATION'] = $value;
-            }
         }
 
         ob_start();
@@ -148,7 +155,9 @@ abstract class WPTestCase extends WP_UnitTestCase
             } else {
                 $_SERVER['REQUEST_METHOD'] = $prevMethod;
             }
-            unset($_SERVER['HTTP_AUTHORIZATION']);
+            foreach ($injectedServerKeys as $k) {
+                unset($_SERVER[$k]);
+            }
         }
 
         return $response;

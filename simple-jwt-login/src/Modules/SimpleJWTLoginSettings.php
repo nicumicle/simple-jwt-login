@@ -404,10 +404,22 @@ class SimpleJWTLoginSettings
      */
     public function generateExampleLink($route, $params)
     {
-        $url = $this->wordPressData->getSiteUrl()
-            . '/?rest_route=/'
-            . $this->getGeneralSettings()->getRouteNamespace()
-            . $route;
+        $namespace = $this->getGeneralSettings()->getRouteNamespace();
+        $permalinkStructure = $this->wordPressData->getOptionFromDatabase('permalink_structure');
+
+        if (!empty($permalinkStructure)) {
+            $url = $this->wordPressData->getSiteUrl()
+                . '/wp-json/'
+                . $namespace
+                . $route;
+            $separator = '?';
+        } else {
+            $url = $this->wordPressData->getSiteUrl()
+                . '/?rest_route=/'
+                . $namespace
+                . $route;
+            $separator = '&';
+        }
 
         if (empty($params) || !is_array($params)) {
             return $url;
@@ -415,10 +427,12 @@ class SimpleJWTLoginSettings
 
         foreach ($params as $key => $value) {
             $url .= sprintf(
-                '&%s=%s',
+                '%s%s=%s',
+                $separator,
                 $key,
                 $value
             );
+            $separator = '&';
         }
 
         return $url;

@@ -78,11 +78,17 @@ class SimpleJWTLoginSettingsTest extends TestCase
 
     public function testGenerateExampleLink()
     {
-        $wordPressDataMock = $this->createStub(WordPressDataInterface::class);
+        $settingsJson = json_encode(['route_namespace' => 'v1']);
+        $wordPressDataMock = $this->createMock(WordPressDataInterface::class);
         $wordPressDataMock->method('getSiteUrl')
             ->willReturn('https://localhost');
         $wordPressDataMock->method('getOptionFromDatabase')
-            ->willReturn(json_encode(['route_namespace' => 'v1']));
+            ->willReturnCallback(function ($option) use ($settingsJson) {
+                if ($option === 'permalink_structure') {
+                    return '';
+                }
+                return $settingsJson;
+            });
         $simpleJwtSetttings = new SimpleJWTLoginSettings($wordPressDataMock);
         $this->assertSame(
             'https://localhost/?rest_route=/v1/auth&param=1',
@@ -92,14 +98,60 @@ class SimpleJWTLoginSettingsTest extends TestCase
 
     public function testGenerateExampleLinkWithNoParams()
     {
-        $wordPressDataMock = $this->createStub(WordPressDataInterface::class);
+        $settingsJson = json_encode(['route_namespace' => 'v1']);
+        $wordPressDataMock = $this->createMock(WordPressDataInterface::class);
         $wordPressDataMock->method('getSiteUrl')
             ->willReturn('https://localhost');
         $wordPressDataMock->method('getOptionFromDatabase')
-            ->willReturn(json_encode(['route_namespace' => 'v1']));
+            ->willReturnCallback(function ($option) use ($settingsJson) {
+                if ($option === 'permalink_structure') {
+                    return '';
+                }
+                return $settingsJson;
+            });
         $simpleJwtSettings = new SimpleJWTLoginSettings($wordPressDataMock);
         $this->assertSame(
             'https://localhost/?rest_route=/v1/test',
+            $simpleJwtSettings->generateExampleLink('test', [])
+        );
+    }
+
+    public function testGenerateExampleLinkWithPermalinks()
+    {
+        $settingsJson = json_encode(['route_namespace' => 'simple-jwt-login/v1']);
+        $wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $wordPressDataMock->method('getSiteUrl')
+            ->willReturn('https://localhost');
+        $wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturnCallback(function ($option) use ($settingsJson) {
+                if ($option === 'permalink_structure') {
+                    return '/%postname%/';
+                }
+                return $settingsJson;
+            });
+        $simpleJwtSettings = new SimpleJWTLoginSettings($wordPressDataMock);
+        $this->assertSame(
+            'https://localhost/wp-json/simple-jwt-login/v1/auth?param=1',
+            $simpleJwtSettings->generateExampleLink('auth', ['param' => 1])
+        );
+    }
+
+    public function testGenerateExampleLinkWithPermalinksAndNoParams()
+    {
+        $settingsJson = json_encode(['route_namespace' => 'simple-jwt-login/v1']);
+        $wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $wordPressDataMock->method('getSiteUrl')
+            ->willReturn('https://localhost');
+        $wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturnCallback(function ($option) use ($settingsJson) {
+                if ($option === 'permalink_structure') {
+                    return '/%postname%/';
+                }
+                return $settingsJson;
+            });
+        $simpleJwtSettings = new SimpleJWTLoginSettings($wordPressDataMock);
+        $this->assertSame(
+            'https://localhost/wp-json/simple-jwt-login/v1/test',
             $simpleJwtSettings->generateExampleLink('test', [])
         );
     }

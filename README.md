@@ -68,9 +68,11 @@ Table of contents
   * [Install from WordPress.org](#install-from-wordpressorg)
   * [Setup the Plugin](#setup-the-plugin)
 * [Features](#tada-features)
+* [Comparison](#bar_chart-how-simple-jwt-login-compares)
 * [Integrate](#electric_plug-integrate)
   * [PHP SDK](#php-sdk)
   * [JavaScript SDK](#javascript-sdk)
+  * [CLI](#cli)
 * [Documentation](#ledger-documentation)
 * [Roadmap](#rocket-roadmap)
 * [Contribute](#scroll-contribute)
@@ -114,19 +116,57 @@ In order to install the latest stable version, from your WordPress admin:
 6. Save Changes.
 
 
-## :tada: Features 
+## :tada: Features
 
 - **100% Free** and **open-source** under [GPL 3.0](https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE) License
-- **Authenticate** : REST endpoint that will generate/validate/revoke a JWT
-- **Autologin**: Autologin to a WordPress website with JWT
-- **Register user**: Register users in WordPress by calling a REST endpoint
-- **Delete user**: You can delete a WordPress user by adding some details in the JWT payload.
-- **Reset password**: REST endpoint that allows you to reset WordPress User password. Also, it can send custom email if you want.
-- **Protect endpoints**: Protect WordPress endpoints with a JWT. This way, you can make some endpoints private, and the content can be viewed only if you provide a valid JWT.
-- **Allow JWT usage on other endpoints**: Add a JWT to requests for other API endpoints, and you will act as an authenticated user.
-- **Integrate with other plugins**: This plugin works well in combination with other plugins that extends the WordPress REST API.
-- **Google OAuth**(beta):  Login to your website with Google
-- **Google JWT**(beta): Use the Google `id_token` in order to access WordPress endpoints as an authenticated user.
+- **JWT Authentication** - REST endpoint that generates, validates, and revokes JWTs
+- **Refresh Tokens** - Issue and rotate JWT refresh tokens without re-authentication
+- **Autologin** - Autologin to a WordPress website using a JWT
+- **Register user** - Register new WordPress users via a REST endpoint, with optional auto-create on first login
+- **Delete user** - Delete a WordPress user by embedding details in the JWT payload
+- **Reset password** - REST endpoint for resetting WordPress user passwords, with customisable email support
+- **Protect endpoints** - Gate any WordPress REST endpoint behind a valid JWT so only authenticated clients can access it
+- **External API authentication** - Attach a JWT to requests for any REST endpoint and act as an authenticated user
+- **Custom JWT claims** - Define and read arbitrary payload claims to pass context between your app and WordPress
+- **API Keys** - Generate per-client API keys as an alternative credential for obtaining JWTs
+- **Audit Logs** - Detailed logs of every login, registration, and authentication event for visibility and compliance
+- **Webhooks** - Fire outbound HTTP callbacks on login, registration, and authentication events to integrate with external services
+- **Google OAuth** (beta) - Allow users to log in with their Google account via OAuth
+- **Google JWT** (beta) - Accept a Google `id_token` to authenticate against WordPress endpoints
+- **Auth0 Login** (beta) - Allow users to log in via Auth0
+- **WPGraphQL support** - Works with WPGraphQL so headless frontends using GraphQL can authenticate through the same plugin
+- **Headless WordPress** - Purpose-built for Next.js, React, React Native, Flutter, and other API-first consumers
+- **Mobile app support** - Designed for mobile clients that need stateless, token-based authentication with refresh token rotation
+- **Plugin integrations** - Works alongside other plugins that extend the WordPress REST API
+
+## :bar_chart: How Simple JWT Login Compares
+
+Most WordPress JWT plugins lock advanced features behind paid plans. Simple JWT Login ships everything below for free.
+
+| Feature | Simple JWT Login | Other Plugins |
+|---|---|---|
+| JWT Authentication | ✅ Free | ✅ Free |
+| Refresh Tokens | ✅ Free | ❌ Paid or unavailable |
+| API Keys | ✅ Free | ✅ Premium only |
+| Audit Logs | ✅ Free | ❌ Premium only |
+| Webhooks | ✅ Free | ❌ Premium only |
+| Google OAuth Login | ✅ Free | ❌ Premium only |
+| Auth0 Login | ✅ Free | ❌ Premium only |
+| Generic OAuth / OIDC | ⚠️ Partial | ⚠️ Limited or Premium |
+| WPGraphQL Support | ✅ Free | ❌ Not available |
+| User Auto-create | ✅ Free | ⚠️ Basic or Premium |
+| JWT Refresh Endpoint | ✅ Free | ❌ Premium only |
+| Custom JWT Claims | ✅ Free | ⚠️ Via hooks or Premium |
+| Token Revocation | ⚠️ Partial | ✅ Premium only |
+| Headless WordPress Focus | ✅ Strong | ⚠️ Basic or SSO-focused |
+| Mobile App Support | ✅ Excellent | ⚠️ Basic or Good |
+| External API Authentication | ✅ Free | ⚠️ Limited or Premium |
+| Open Source Transparency | ✅ Fully open | ⚠️ Varies - some obfuscation reported |
+| Setup Simplicity | ✅ Easy | ⚠️ Easy to Complex |
+| Enterprise SSO | ❌ Not yet | ✅ Premium only |
+| SAML Support | ❌ Not yet | ✅ Premium only |
+| Free Version Useful Without Upsell | ✅ Very strong | ⚠️ Minimal or limited |
+| Minimum PHP Version | ✅ PHP 5.5+ | ⚠️ PHP 7.0+ |
 
 ## :electric_plug: Integrate
 
@@ -155,6 +195,12 @@ yarn add "simple-jwt-login"
 ```
 
 You can check this [GitHub repository](https://github.com/simple-jwt-login/js-sdk) for more details.
+
+### CLI
+
+The Simple JWT Login CLI lets you interact with the plugin from the command line - useful for scripting, testing, and local development workflows.
+
+You can check this [GitHub repository](https://github.com/simple-jwt-login/simple-jwt-login-cli) for installation instructions and usage examples.
 
 
 ## :ledger: Documentation

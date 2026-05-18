@@ -1,8 +1,8 @@
-=== Simple JWT Login – Allows you to use JWT on REST endpoints. ===
+=== Simple JWT Login – Authentication framework for headless WordPress, mobile apps, and external APIs ===
 
 Contributors: nicu_m
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PK9BCD6AYF58Y&source=url
-Tags: jwt, API, auto login, register, tokens
+Tags: jwt, authentication, refresh token, api keys, headless wordpress
 Requires at least: 4.4.0
 Tested up to: 6.9
 Requires PHP: 5.5
@@ -10,42 +10,52 @@ Stable tag: 3.6.5
 License: GPLv3
 License URI: https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE
 
-Enhance the WordPress REST API with JWT authentication for secure access by mobile apps, external sites, and third-party services.
+Modern JWT authentication for WordPress REST APIs, headless frontends, mobile apps, and WPGraphQL — fully free, no upsells.
 
 == Description ==
 
-Simple JWT Login is a **FREE** WordPress plugin that enables secure authentication for your WordPress REST API using **JSON Web Tokens** (JWT).
+Simple JWT Login is a **FREE**, fully open-source WordPress plugin that provides a complete JWT authentication framework for your WordPress REST API.
 
-With this powerful plugin, you can:
-- Log in, register, and authenticate users effortlessly
-- Connect mobile apps, external websites, or third-party services to WordPress with ease
-- Change or delete user passwords securely
+Most competing plugins gate advanced features like refresh tokens, audit logs, API keys, and OAuth providers behind paid plans. Simple JWT Login ships all of them for free.
 
-Whether you're building a headless WordPress setup or integrating with external platforms, Simple JWT Login provides a fast, secure, and reliable authentication solution.
+Whether you are building a headless WordPress site with Next.js or React, a mobile app with React Native or Flutter, or connecting external services to your WordPress backend, Simple JWT Login gives you a fast, secure, and transparent authentication layer.
 
-You can read more on our plugin documentation website [https://simplejwtlogin.com](https://simplejwtlogin.com).
+You can read more on the plugin documentation website [https://simplejwtlogin.com](https://simplejwtlogin.com).
 
-== Some awesome features ==
+== Features ==
 
-* Auto-login using JWT and AUTH_KEY
-* Register new users via API
-* Delete WordPress users based on a JWT
-* Reset user password
-* Allow auto-login / register / delete users only from specific IP addresses
-* Allow register users only from a specific domain name
-* API Route for generating new JWT
-* Get JWT from URL, SESSION, COOKIE or HEADER
-* Pass request parameters to login URL
-* CORS settings for plugin Routes
-* Hooks
-* JWT Authentication
-* Allow access private endpoints with JWT
-* Protect endpoints with JWT
-* **beta** Google OAuth Integration
-* **beta** Google JWT on all endpoints
-* **beta** [WPGraphQL](https://wordpress.org/plugins/wp-graphql/) integration
+**Authentication & Tokens**
 
-Check the plugin [website](https://simplejwtlogin.com) for more features.
+* Generate, validate, and revoke JWTs via REST endpoint
+* Refresh tokens — renew a JWT without asking for credentials again
+* Custom JWT claims — embed arbitrary payload data for your app
+* Auth codes — add an extra layer of protection to any endpoint
+* API Keys — issue per-client keys as an alternative credential
+* Token delivered via URL, Header, Cookie, or Session
+* Supports HS256, HS384, HS512, RS256, RS384, RS512 algorithms
+
+**User Management**
+
+* Auto-login to WordPress with a JWT (redirect to dashboard, homepage, or custom URL)
+* Register new users via REST endpoint with optional auto-create on first login
+* Delete WordPress users based on JWT payload
+* Reset and change user passwords via REST endpoint
+* Limit all operations by IP address or email domain
+
+**Visibility & Integrations**
+
+* Audit logs — detailed records of every login, registration, and authentication event
+* Webhooks — fire HTTP callbacks on login, register, and authentication events
+* Protect endpoints — require a valid JWT to access any REST route
+* External API authentication — act as an authenticated WordPress user on any REST endpoint
+* **beta** Google OAuth — log in with a Google account
+* **beta** Google JWT — use a Google `id_token` on WordPress endpoints
+* **beta** Auth0 Login — authenticate users through Auth0
+* **beta** [WPGraphQL](https://wordpress.org/plugins/wp-graphql/) — authenticate GraphQL queries for headless frontends
+* CORS configuration for all plugin routes
+* Extensible hooks system for custom workflows
+
+Check the plugin [website](https://simplejwtlogin.com) for the full feature list and documentation.
 
 == Login User ==
 
@@ -301,9 +311,9 @@ When an endpoint is protected, and you don't provide a JWT, you will get the fol
 
 == Integration ==
 
-**PHP** 
+**PHP**
 
-In order to easily integrate your app/site with simple-jwt-login, we have developed a composer package.
+In order to easily integrate your app or site with Simple JWT Login, a Composer package is available.
 
 ``
     composer require nicumicle/simple-jwt-login-client-php
@@ -311,18 +321,27 @@ In order to easily integrate your app/site with simple-jwt-login, we have develo
 
 You can check the [package page](https://packagist.org/packages/nicumicle/simple-jwt-login-client-php) for more details and code examples.
 
-**Javascript**
+**JavaScript**
 
-Also, there is a [Javascript SDK](https://github.com/simple-jwt-login/js-sdk) that you can install with `npm` or `yarn`.
+A JavaScript SDK is available for `npm` or `yarn`.
 
 ``
     npm install "simple-jwt-login"
 ``
-or 
+
+or
 
 ``
     yarn add "simple-jwt-login"
 ``
+
+See the [JavaScript SDK repository](https://github.com/simple-jwt-login/js-sdk) for more details.
+
+**CLI**
+
+A command-line tool is available for scripting, testing, and local development workflows.
+
+See the [CLI repository](https://github.com/simple-jwt-login/simple-jwt-login-cli) for installation instructions and usage examples.
 
 == Screenshots ==
 

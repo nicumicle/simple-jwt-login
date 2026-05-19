@@ -101,9 +101,11 @@ class ResetPasswordService extends BaseService implements ServiceInterface
             ]
         );
 
-        $response =  [
+        $response = [
             'success' => true,
-            'message' => __('User Password has been changed.', 'simple-jwt-login'),
+            'data'    => [
+                'message' => __('User Password has been changed.', 'simple-jwt-login'),
+            ],
         ];
 
         if ($this->jwtSettings->getHooksSettings()
@@ -214,7 +216,9 @@ class ResetPasswordService extends BaseService implements ServiceInterface
 
         $response = [
             'success' => true,
-            'message' => $message,
+            'data'    => [
+                'message' => $message,
+            ],
         ];
 
         if ($this->jwtSettings->getHooksSettings()

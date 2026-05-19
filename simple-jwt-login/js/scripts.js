@@ -572,8 +572,186 @@ jQuery(document).ready(
             state[groupId] = collapse;
             sjlSaveCollapsedGroups(state);
         });
+
+        // -----------------------------------------------------------------------
+        // Try Now: inject Try buttons into every generated-code block
+        // -----------------------------------------------------------------------
+
+        $('#simple-jwt-login .generated-code').each(function () {
+            jQuery(this).find('.copy-button').after(
+                '<span class="sjl-try-btn-wrap">'
+                + '<button class="btn sjl-btn-plugin sjl-try-btn" type="button">Try</button>'
+                + '</span>'
+            );
+        });
+
+        $(document).on('click', '#simple-jwt-login .sjl-try-btn', function (e) {
+            e.preventDefault();
+            var $block    = jQuery(this).closest('.generated-code');
+            var $existing = $block.next('.sjl-try-panel');
+
+            if ($existing.length) {
+                $existing.remove();
+                return;
+            }
+
+            var url    = sjlTryCleanUrl($block);
+            var method = sjlTryGetMethod($block);
+            var params = sjlTryParseParams(url);
+            var base   = sjlTryBaseUrl(url);
+            var keys   = Object.keys(params);
+            var isBody = (method === 'POST' || method === 'PUT');
+
+            var paramsHtml = '';
+            if (keys.length) {
+                paramsHtml += '<div class="sjl-try-params"><p class="sjl-try-section-label">Parameters</p>';
+                keys.forEach(function (key) {
+                    var safeKey  = jQuery('<span>').text(key).html();
+                    var safeHint = jQuery('<span>').text(params[key]).html();
+                    paramsHtml  += '<div class="sjl-try-param-row">'
+                        + '<label class="sjl-try-param-label">' + safeKey + '</label>'
+                        + '<input type="text" class="form-control sjl-try-param-input"'
+                        + ' data-param="' + safeKey + '" placeholder="' + safeHint + '" />'
+                        + '</div>';
+                });
+                paramsHtml += '</div>';
+            }
+
+            var $panel = jQuery(
+                '<div class="sjl-try-panel">'
+                + '<div class="sjl-try-panel-header">'
+                + '<span class="sjl-try-panel-title">Try it out</span>'
+                + '<button class="sjl-try-close" type="button" title="Close">&times;</button>'
+                + '</div>'
+                + paramsHtml
+                + '<div class="sjl-try-url-preview">'
+                + '<p class="sjl-try-section-label">Request URL</p>'
+                + '<code class="sjl-try-url-code"></code>'
+                + '</div>'
+                + '<div class="sjl-try-actions">'
+                + '<button class="btn sjl-btn-plugin sjl-try-send-btn" type="button">Send Request</button>'
+                + '</div>'
+                + '<div class="sjl-try-response" style="display:none">'
+                + '<p class="sjl-try-section-label">Response</p>'
+                + '<div class="sjl-try-response-status"></div>'
+                + '<pre class="sjl-try-response-body"></pre>'
+                + '</div>'
+                + '</div>'
+            );
+
+            $panel.data({ base: base, method: method, isBody: isBody, defaultParams: params });
+            $panel.find('.sjl-try-url-code').text(isBody ? base : sjlTryBuildUrl(base, params));
+
+            $panel.on('input', '.sjl-try-param-input', function () {
+                if (!isBody) {
+                    var cur = sjlTryCollectParams($panel);
+                    $panel.find('.sjl-try-url-code').text(sjlTryBuildUrl(base, cur));
+                }
+            });
+
+            $panel.on('click', '.sjl-try-close', function () { $panel.remove(); });
+
+            $panel.on('click', '.sjl-try-send-btn', function () {
+                var cur      = sjlTryCollectParams($panel);
+                var fetchUrl = isBody ? base : sjlTryBuildUrl(base, cur);
+                var fetchOpts = isBody
+                    ? { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cur) }
+                    : { method: method };
+
+                var $btn     = jQuery(this);
+                var $resp    = $panel.find('.sjl-try-response');
+                var $status  = $panel.find('.sjl-try-response-status');
+                var $body    = $panel.find('.sjl-try-response-body');
+
+                $btn.prop('disabled', true).text('Sending...');
+                $resp.show();
+                $status.text('').removeClass('sjl-try-status--ok sjl-try-status--err');
+                $body.text('Loading...');
+
+                fetch(fetchUrl, fetchOpts)
+                    .then(function (res) {
+                        var st = res.status, stText = res.statusText;
+                        return res.text().then(function (t) { return { status: st, statusText: stText, body: t }; });
+                    })
+                    .then(function (data) {
+                        var ok = data.status >= 200 && data.status < 300;
+                        $status.text('Status: ' + data.status + ' ' + data.statusText)
+                            .addClass(ok ? 'sjl-try-status--ok' : 'sjl-try-status--err');
+                        var formatted;
+                        try { formatted = JSON.stringify(JSON.parse(data.body), null, 2); } catch (ex) { formatted = data.body; }
+                        $body.text(formatted);
+                        $btn.prop('disabled', false).text('Send Request');
+                    })
+                    .catch(function (err) {
+                        $status.text('Network error: ' + err.message).addClass('sjl-try-status--err');
+                        $body.text('');
+                        $btn.prop('disabled', false).text('Send Request');
+                    });
+            });
+
+            $block.after($panel);
+        });
     }(jQuery)
 );
+
+/* ── Try Now helpers ─────────────────────────────────────────────────────── */
+
+function sjlTryParseParams(url)
+{
+    var params  = {};
+    var qIndex  = url.indexOf('?');
+    if (qIndex === -1) { return params; }
+    var qs = url.slice(qIndex + 1);
+    qs.split('&').forEach(function (pair) {
+        var eq  = pair.indexOf('=');
+        if (eq === -1) { return; }
+        var key = decodeURIComponent(pair.slice(0, eq));
+        var val = decodeURIComponent(pair.slice(eq + 1));
+        params[key] = val;
+    });
+    return params;
+}
+
+function sjlTryBaseUrl(url)
+{
+    var q = url.indexOf('?');
+    return q === -1 ? url : url.slice(0, q);
+}
+
+function sjlTryBuildUrl(base, params)
+{
+    var keys = Object.keys(params);
+    if (!keys.length) { return base; }
+    var qs = keys.map(function (k) {
+        return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
+    }).join('&');
+    return base + '?' + qs;
+}
+
+function sjlTryCleanUrl($block)
+{
+    var raw = $block.find('.code').html() || '';
+    return raw.trim()
+        .replace(/&amp;/g, '&')
+        .replace(/<b>|<\/b>/g, '')
+        .replace(/\s+/g, '');
+}
+
+function sjlTryGetMethod($block)
+{
+    return $block.find('.method').first().text().trim().toUpperCase();
+}
+
+function sjlTryCollectParams($panel)
+{
+    var out = {};
+    $panel.find('.sjl-try-param-input').each(function () {
+        var k   = jQuery(this).data('param');
+        var val = jQuery(this).val();
+        out[k]  = val !== '' ? val : jQuery(this).attr('placeholder');
+    });
+    return out;
+}
 
 function jwt_login_remove_auth_line(a_element)
 {

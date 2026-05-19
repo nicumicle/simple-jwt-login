@@ -2645,3 +2645,135 @@
     justify-content: flex-end;
     margin-top: 14px;
 }
+
+/* ============================================
+   Plugin action button (matches Save / sjl-ak-copy-btn style)
+   ============================================ */
+
+#simple-jwt-login .sjl-btn-plugin {
+    background: var(--sjl-primary);
+    color: #fff;
+    border-color: var(--sjl-primary);
+}
+
+#simple-jwt-login .sjl-btn-plugin:hover,
+#simple-jwt-login .sjl-btn-plugin:focus { background: #1a2630; border-color: #1a2630; color: #fff; }
+
+#simple-jwt-login .sjl-btn-plugin:disabled { opacity: 0.6; }
+
+/* ============================================
+   Try Now Panel
+   ============================================ */
+
+#simple-jwt-login .sjl-try-btn-wrap {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 6px;
+}
+
+#simple-jwt-login .sjl-try-panel {
+    margin-top: 8px;
+    background: #fff;
+    border: 1px solid var(--sjl-border-mid);
+    border-radius: var(--sjl-radius-md);
+    padding: 14px 16px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .07);
+}
+
+#simple-jwt-login .sjl-try-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+#simple-jwt-login .sjl-try-panel-title {
+    font-weight: 600;
+    color: var(--sjl-text);
+    font-size: 12px;
+}
+
+#simple-jwt-login .sjl-try-close {
+    background: none;
+    border: none;
+    font-size: 16px;
+    line-height: 1;
+    color: var(--sjl-text-muted);
+    cursor: pointer;
+    padding: 0 2px;
+}
+
+#simple-jwt-login .sjl-try-close:hover { color: var(--sjl-text); }
+
+#simple-jwt-login .sjl-try-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--sjl-text-meta);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin: 0 0 6px;
+}
+
+#simple-jwt-login .sjl-try-params { margin-bottom: 12px; }
+
+#simple-jwt-login .sjl-try-param-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+#simple-jwt-login .sjl-try-param-label {
+    width: 120px;
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--sjl-text);
+    font-family: monospace;
+}
+
+#simple-jwt-login .sjl-try-param-input {
+    flex: 1;
+    font-size: 12px !important;
+    padding: 4px 8px !important;
+    height: 30px !important;
+}
+
+#simple-jwt-login .sjl-try-url-preview { margin-bottom: 12px; }
+
+#simple-jwt-login .sjl-try-url-code {
+    display: block;
+    font-size: 11px;
+    background: var(--sjl-bg-muted);
+    border: 1px solid var(--sjl-border);
+    border-radius: var(--sjl-radius-sm);
+    padding: 6px 10px;
+    word-break: break-all;
+    color: var(--sjl-text);
+    font-family: monospace;
+}
+
+#simple-jwt-login .sjl-try-actions { margin-bottom: 12px; }
+
+#simple-jwt-login .sjl-try-response-status {
+    font-weight: 600;
+    font-size: 12px;
+    margin-bottom: 6px;
+}
+
+#simple-jwt-login .sjl-try-status--ok  { color: #00a32a; }
+#simple-jwt-login .sjl-try-status--err { color: #d63638; }
+
+#simple-jwt-login .sjl-try-response-body {
+    background: var(--sjl-bg-muted);
+    border: 1px solid var(--sjl-border);
+    border-radius: var(--sjl-radius-sm);
+    padding: 10px 12px;
+    font-size: 11px;
+    font-family: monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 300px;
+    overflow-y: auto;
+    color: var(--sjl-text);
+    margin: 0;
+}

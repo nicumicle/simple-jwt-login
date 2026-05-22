@@ -84,7 +84,7 @@ class RegisterUserServiceTest extends TestCase
                 'settings' => [
                     'allow_register' => true,
                 ],
-                'exceptionMessage' => 'Invalid Auth Code ( AUTH_KEY ) provided.',
+                'exceptionMessage' => 'Auth Code is required.',
             ],
             'test_with_invalid_auth_code' => [
                 'request' => [
@@ -116,7 +116,7 @@ class RegisterUserServiceTest extends TestCase
                         ]
                     ]
                 ],
-                'exceptionMessage' => 'Missing email or password.',
+                'exceptionMessage' => 'Missing email.',
             ],
             'test_only_with_email' => [
                 'request' => [
@@ -133,7 +133,7 @@ class RegisterUserServiceTest extends TestCase
                         ]
                     ]
                 ],
-                'exceptionMessage' => 'Missing email or password.',
+                'exceptionMessage' => 'Missing password.',
             ],
             'test_only_with_password' => [
                 'request' => [
@@ -150,7 +150,30 @@ class RegisterUserServiceTest extends TestCase
                         ]
                     ]
                 ],
-                'exceptionMessage' => 'Missing email or password.',
+                'exceptionMessage' => 'Missing email.',
+            ],
+            'test_username_too_long' => [
+                'request' => [
+                    'email'      => 'test@test.com',
+                    'password'   => 'test',
+                    'user_login' => str_repeat('a', 61),
+                ],
+                'settings' => [
+                    'allow_register'        => true,
+                    'require_register_auth' => false,
+                ],
+                'exceptionMessage' => 'Username must be less than 60 characters.',
+            ],
+            'test_email_too_long' => [
+                'request' => [
+                    'email'    => str_repeat('a', 55) . '@t.com',
+                    'password' => 'test',
+                ],
+                'settings' => [
+                    'allow_register'        => true,
+                    'require_register_auth' => false,
+                ],
+                'exceptionMessage' => 'Email must be less than 60 characters.',
             ],
             'test_with_invalid_email' => [
                 'request' => [

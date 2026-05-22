@@ -258,7 +258,7 @@ class DeleteUserServiceTest extends TestCase
                 'settings' => [
                     'allow_delete' => true,
                 ],
-                'exceptionMessage' => 'Missing AUTH KEY ( AUTH_KEY ).',
+                'exceptionMessage' => 'Auth Code is required.',
             ],
             'test_empty_auth_code' => [
                 'request' => [
@@ -268,7 +268,7 @@ class DeleteUserServiceTest extends TestCase
                 'settings' => [
                     'allow_delete' => true,
                 ],
-                'exceptionMessage' => 'Missing AUTH KEY ( AUTH_KEY ).',
+                'exceptionMessage' => 'Invalid Auth Code ( AUTH_KEY ) provided.',
             ],
             'test_ip_not_allowed' => [
                 'request' => [

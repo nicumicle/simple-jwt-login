@@ -449,6 +449,7 @@ class JWT
     }
 
     /**
+     * Extract the header and payload from a JWT string, without verifying the signature.
      * @param string $jwt
      * @throws Exception
      * @return array
@@ -492,27 +493,5 @@ class JWT
     public function applyLeeway($leeway)
     {
         static::$leeway = $leeway;
-    }
-
-    /**
-     * @param string $jwt
-     * @param string $key
-     * @param array  $allowedAlgs
-     * @return object
-     * @throws Exception
-     */
-    public function decodeToken($jwt, $key, array $allowedAlgs = [])
-    {
-        return static::decode($jwt, $key, $allowedAlgs);
-    }
-
-    /**
-     * @param string $jwt
-     * @return array
-     * @throws Exception
-     */
-    public function extractData($jwt)
-    {
-        return static::extractDataFromJwt($jwt);
     }
 }

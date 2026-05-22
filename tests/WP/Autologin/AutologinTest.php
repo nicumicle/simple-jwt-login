@@ -53,11 +53,11 @@ class AutologinTest extends AutologinTestCase
 
     #[DataProvider('jwtErrorProvider')]
     #[TestDox('Autologin rejects an invalid JWT with the expected error code')]
-    public function testJwtErrors(array $params, array $headers, int $expectedCode): void
+    public function testJwtErrors(array $params, array $headers, int $expectedCode, int $expectedStatus): void
     {
         $response = $this->request('GET', self::ROUTE, $params, $headers);
 
-        $this->assertSame(400, $response->get_status());
+        $this->assertSame($expectedStatus, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);
         $this->assertSame($expectedCode, $data['data']['errorCode']);
@@ -70,29 +70,34 @@ class AutologinTest extends AutologinTestCase
 
         return [
             'no JWT in request or header' => [
-                'params'           => [],
-                'headers'          => [],
-                'expectedCode'     => ErrorCodes::ERR_VALIDATE_LOGIN_WRONG_REQUEST,
+                'params'         => [],
+                'headers'        => [],
+                'expectedCode'   => ErrorCodes::ERR_JWT_IS_MISSING,
+                'expectedStatus' => 422,
             ],
             'JWT is a single segment' => [
-                'params'           => ['JWT' => 'notatoken'],
-                'headers'          => [],
-                'expectedCode'     => ErrorCodes::ERR_WRONG_NUMBER_OF_SEGMENTS,
+                'params'         => ['JWT' => 'notatoken'],
+                'headers'        => [],
+                'expectedCode'   => ErrorCodes::ERR_WRONG_NUMBER_OF_SEGMENTS,
+                'expectedStatus' => 401,
             ],
             'JWT has four segments' => [
-                'params'           => ['JWT' => 'a.b.c.d'],
-                'headers'          => [],
-                'expectedCode'     => ErrorCodes::ERR_WRONG_NUMBER_OF_SEGMENTS,
+                'params'         => ['JWT' => 'a.b.c.d'],
+                'headers'        => [],
+                'expectedCode'   => ErrorCodes::ERR_WRONG_NUMBER_OF_SEGMENTS,
+                'expectedStatus' => 401,
             ],
             'JWT signed with wrong secret' => [
-                'params'           => ['JWT' => $wrongSigJwt],
-                'headers'          => [],
-                'expectedCode'     => ErrorCodes::ERR_SIGNATURE_VERIFICATION_FAILED,
+                'params'         => ['JWT' => $wrongSigJwt],
+                'headers'        => [],
+                'expectedCode'   => ErrorCodes::ERR_SIGNATURE_VERIFICATION_FAILED,
+                'expectedStatus' => 401,
             ],
             'JWT is expired' => [
-                'params'           => ['JWT' => $expiredJwt],
-                'headers'          => [],
-                'expectedCode'     => ErrorCodes::ERR_TOKEN_EXPIRED,
+                'params'         => ['JWT' => $expiredJwt],
+                'headers'        => [],
+                'expectedCode'   => ErrorCodes::ERR_TOKEN_EXPIRED,
+                'expectedStatus' => 401,
             ],
         ];
     }

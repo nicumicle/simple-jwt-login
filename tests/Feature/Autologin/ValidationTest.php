@@ -49,8 +49,8 @@ class ValidationTest extends TestBase
         return [
             'empty_jwt' => [
                 'jwt' => null,
-                'errorMessage' => 'Wrong Request.',
-                'errorCode' => ErrorCodes::ERR_VALIDATE_LOGIN_WRONG_REQUEST,
+                'errorMessage' => 'JWT is missing.',
+                'errorCode' => ErrorCodes::ERR_JWT_IS_MISSING,
             ],
             'invalid_jwt' => [
                 'jwt' => "123",

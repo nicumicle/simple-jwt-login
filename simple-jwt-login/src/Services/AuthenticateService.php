@@ -3,6 +3,7 @@
 namespace SimpleJWTLogin\Services;
 
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
@@ -78,7 +79,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
     {
         $this->checkAuthenticationEnabled();
         $this->checkAllowedIPAddress();
-        $this->validateAuthenticationAuthKey(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED);
+        $this->validateAuthenticationAuthKey();
 
         return $this->authenticateUser();
     }
@@ -89,14 +90,14 @@ class AuthenticateService extends BaseService implements ServiceInterface
      */
     public function authenticateUser()
     {
-        if (!isset($this->request['email']) && !isset($this->request['username']) && !isset($this->request['login'])) {
-            throw new Exception(
+        if (empty($this->request['email']) && empty($this->request['username']) && empty($this->request['login'])) {
+            throw new ValidationException(
                 __('The email, username, or login parameter is missing from the request.', 'simple-jwt-login'),
                 ErrorCodes::AUTHENTICATION_MISSING_EMAIL
             );
         }
-        if (!isset($this->request['password']) && !isset($this->request['password_hash'])) {
-            throw new Exception(
+        if (empty($this->request['password']) && empty($this->request['password_hash'])) {
+            throw new ValidationException(
                 __('The password or password_hash parameter is missing from request.', 'simple-jwt-login'),
                 ErrorCodes::AUTHENTICATION_MISSING_PASSWORD
             );
@@ -309,19 +310,13 @@ class AuthenticateService extends BaseService implements ServiceInterface
      *
      * @throws Exception
      */
-    protected function validateAuthenticationAuthKey($errCode, $isRequired = null)
+    protected function validateAuthenticationAuthKey($isRequired = null)
     {
         $required = $isRequired !== null
             ? $isRequired
             : $this->jwtSettings->getAuthenticationSettings()->isAuthKeyRequired();
-        if ($required && !$this->validateAuthKey()) {
-            throw new Exception(
-                sprintf(
-                    __('Invalid Auth Code ( %s ) provided.', 'simple-jwt-login'),
-                    $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()
-                ),
-                $errCode
-            );
+        if ($required) {
+            $this->validateAuthKey();
         }
     }
 }

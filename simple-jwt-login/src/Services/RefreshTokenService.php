@@ -4,6 +4,7 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
@@ -19,7 +20,6 @@ class RefreshTokenService extends AuthenticateService
             $this->checkRefreshTokenEnabled();
             $this->checkAllowedIPAddress();
             $this->validateAuthenticationAuthKey(
-                ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED,
                 $this->jwtSettings->getAuthenticationSettings()->isRefreshAuthKeyRequired()
             );
 
@@ -89,7 +89,7 @@ class RefreshTokenService extends AuthenticateService
     {
         $refreshToken = isset($this->request['refresh_token']) ? $this->request['refresh_token'] : null;
         if (empty($refreshToken)) {
-            throw new Exception(
+            throw new ValidationException(
                 __('Refresh token is missing.', 'simple-jwt-login'),
                 ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH
             );

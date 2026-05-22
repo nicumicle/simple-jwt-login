@@ -6,6 +6,7 @@ use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\Helpers\StatusCodeHelper;
 
 class StatusCodeHelperTest extends TestCase
@@ -107,7 +108,8 @@ class StatusCodeHelperTest extends TestCase
 
             // 400 — Bad request (explicit default fallthrough codes)
             'ERR_JSON_DECODE_NON_NULL_INPUT'         => [ErrorCodes::ERR_JSON_DECODE_NON_NULL_INPUT, 400],
-            'ERR_VALIDATE_LOGIN_WRONG_REQUEST'       => [ErrorCodes::ERR_VALIDATE_LOGIN_WRONG_REQUEST, 400],
+            'ERR_JWT_IS_MISSING'              => [ErrorCodes::ERR_JWT_IS_MISSING, 422],
+            'ERR_AUTH_CODE_REQUIRED'          => [ErrorCodes::ERR_AUTH_CODE_REQUIRED, 422],
             'ERR_UNABLE_TO_FIND_PROPERTY_FOR_USER_IN_JWT' => [ErrorCodes::ERR_UNABLE_TO_FIND_PROPERTY_FOR_USER_IN_JWT, 400],
             'ERR_JWT_PARAMETER_FOR_USER_NOT_FOUND'   => [ErrorCodes::ERR_JWT_PARAMETER_FOR_USER_NOT_FOUND, 400],
             'ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD' => [ErrorCodes::ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD, 400],
@@ -165,5 +167,37 @@ class StatusCodeHelperTest extends TestCase
         $exception = new Exception('message with no code');
 
         $this->assertSame(400, StatusCodeHelper::getStatusCodeFromException($exception, 400));
+    }
+
+    public static function throwableErrorProvider(): array
+    {
+        return [
+            'error_default_400' => [new \Error('Call to undefined method'), 400],
+            'error_default_200' => [new \Error('Type error'), 200],
+            'error_default_503' => [new \Error('Type error'), 503],
+        ];
+    }
+
+    #[DataProvider('throwableErrorProvider')]
+    public function testNonExceptionThrowableAlwaysReturns500(\Throwable $error, int $default): void
+    {
+        $this->assertSame(500, StatusCodeHelper::getStatusCodeFromException($error, $default));
+    }
+
+    public static function validationExceptionProvider(): array
+    {
+        return [
+            'known_code'          => [ErrorCodes::ERR_JWT_IS_MISSING],
+            'auth_code_required'  => [ErrorCodes::ERR_AUTH_CODE_REQUIRED],
+            'unknown_code'        => [9999],
+            'zero_code'           => [0],
+        ];
+    }
+
+    #[DataProvider('validationExceptionProvider')]
+    public function testValidationExceptionAlwaysReturns422(int $errorCode): void
+    {
+        $exception = new ValidationException('', $errorCode);
+        $this->assertSame(422, StatusCodeHelper::getStatusCodeFromException($exception, 400));
     }
 }

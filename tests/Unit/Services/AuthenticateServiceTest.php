@@ -86,7 +86,7 @@ class AuthenticateServiceTest extends TestCase
                     'allow_authentication' => '1',
                 ],
                 'request' => [
-                    'email' => '',
+                    'email' => 'test@test.com',
                 ],
                 'exceptionMessage' => 'The password or password_hash parameter is missing from request.'
             ],
@@ -95,9 +95,35 @@ class AuthenticateServiceTest extends TestCase
                     'allow_authentication' => '1',
                 ],
                 'request' => [
-                    'username' => '',
+                    'username' => 'testuser',
                 ],
                 'exceptionMessage' => 'The password or password_hash parameter is missing from request.'
+            ],
+            'missing_auth_code' => [
+                'settings' => [
+                    'allow_authentication' => 1,
+                    'auth_requires_auth_code' => true,
+                ],
+                'request' => [
+                    'username' => 'test@test.com',
+                    'password' => '123',
+                ],
+                'exceptionMessage' => 'Auth Code is required.',
+            ],
+            'invalid_auth_code' => [
+                'settings' => [
+                    'allow_authentication' => 1,
+                    'auth_requires_auth_code' => true,
+                    'auth_codes' => [
+                        ['code' => 'valid-code', 'role' => '', 'expiration_date' => ''],
+                    ],
+                ],
+                'request' => [
+                    'username' => 'test@test.com',
+                    'password' => '123',
+                    'AUTH_KEY' => 'wrong-code',
+                ],
+                'exceptionMessage' => 'Invalid Auth Code ( AUTH_KEY ) provided.',
             ],
         ];
     }
@@ -223,30 +249,6 @@ class AuthenticateServiceTest extends TestCase
             ->withRequest([
                 'username' => 'test@test.com',
                 'password_hash' => '123'
-            ])
-            ->withCookies([])
-            ->withServerHelper(new ServerHelper([]))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
-            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
-        $authService->makeAction();
-    }
-
-    public function testMissingAuthCodes()
-    {
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Invalid Auth Code ( AUTH_KEY ) provided.');
-
-        $this->wordPressDataMock
-            ->method('getOptionFromDatabase')
-            ->willReturn(json_encode([
-                'allow_authentication' => 1,
-                'auth_requires_auth_code' => true,
-            ]));
-
-        $authService = (new AuthenticateService())
-            ->withRequest([
-                'username' => 'test@test.com',
-                'password' => '123'
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))

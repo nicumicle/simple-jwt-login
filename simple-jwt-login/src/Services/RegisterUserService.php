@@ -4,6 +4,7 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\AuthCodeBuilder;
@@ -217,15 +218,8 @@ class RegisterUserService extends BaseService implements ServiceInterface
         if ((
             $this->jwtSettings->getRegisterSettings()->isAuthKeyRequiredOnRegister()
                 || isset($this->request[$this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()])
-        ) && !$this->validateAuthKey()
-        ) {
-            throw new Exception(
-                sprintf(
-                    __('Invalid Auth Code ( %s ) provided.', 'simple-jwt-login'),
-                    $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()
-                ),
-                ErrorCodes::ERR_REGISTER_INVALID_AUTH_KEY
-            );
+        )) {
+            $this->validateAuthKey();
         }
 
         $allowedIPs = $this->jwtSettings->getRegisterSettings()->getAllowedRegisterIps();
@@ -240,21 +234,35 @@ class RegisterUserService extends BaseService implements ServiceInterface
         }
 
 
-        if (!isset($this->request['email'])
-            || (
-                !isset($this->request['password'])
-                && !$this->jwtSettings->getRegisterSettings()->isRandomPasswordForCreateUserEnabled()
-            )
-        ) {
-            throw new Exception(
-                __('Missing email or password.', 'simple-jwt-login'),
+        if (empty($this->request['email']) ) {
+            throw new ValidationException(
+                __('Missing email.', 'simple-jwt-login'),
+                ErrorCodes::ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD
+            );
+        }
+        if  (empty($this->request['password']) && !$this->jwtSettings->getRegisterSettings()->isRandomPasswordForCreateUserEnabled()){
+            throw new ValidationException(
+                __('Missing password.', 'simple-jwt-login'),
                 ErrorCodes::ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD
             );
         }
 
         if (!$this->wordPressData->isEmail($this->request['email'])) {
-            throw new Exception(
+            throw new ValidationException(
                 __('Invalid email address.', 'simple-jwt-login'),
+                ErrorCodes::ERR_REGISTER_INVALID_EMAIL_ADDRESS
+            );
+        }
+    
+        if (!empty($this->request['user_login']) && strlen($this->request['user_login']) > 60) {
+            throw new ValidationException(
+                __('Username must be less than 60 characters.', 'simple-jwt-login'),
+                ErrorCodes::ERR_REGISTER_INVALID_EMAIL_ADDRESS
+            );
+        }
+        if (empty($this->request['user_login']) && strlen($this->request['email']) > 60) {
+            throw new ValidationException(
+                __('Email must be less than 60 characters.', 'simple-jwt-login'),
                 ErrorCodes::ERR_REGISTER_INVALID_EMAIL_ADDRESS
             );
         }

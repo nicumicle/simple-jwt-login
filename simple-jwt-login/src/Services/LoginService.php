@@ -4,6 +4,7 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use WP_REST_Response;
@@ -31,7 +32,8 @@ class LoginService extends BaseService implements ServiceInterface
 
                 return $this->wordPressData->redirect($redirectOnFail);
             }
-            throw new Exception($exception->getMessage(), $exception->getCode(), $exception);
+
+            throw $exception;
         }
     }
 
@@ -113,29 +115,23 @@ class LoginService extends BaseService implements ServiceInterface
      */
     private function validateDoLogin()
     {
-        $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
         if (!$this->jwtSettings->getLoginSettings()->isAutologinEnabled()) {
             throw new Exception(
                 __('Auto-login is not enabled on this website.', 'simple-jwt-login'),
                 ErrorCodes::ERR_AUTO_LOGIN_NOT_ENABLED
             );
         }
-
+                
+        $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
         if (empty($this->jwt)) {
-            throw new Exception(
-                __('Wrong Request.', 'simple-jwt-login'),
-                ErrorCodes::ERR_VALIDATE_LOGIN_WRONG_REQUEST
+            throw new ValidationException(
+                __('JWT is missing.', 'simple-jwt-login'),
+                ErrorCodes::ERR_JWT_IS_MISSING
             );
         }
 
-        if ($this->jwtSettings->getLoginSettings()->isAuthKeyRequiredOnLogin() && !$this->validateAuthKey()) {
-            throw new Exception(
-                sprintf(
-                    __('Invalid Auth Code ( %s ) provided.', 'simple-jwt-login'),
-                    $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()
-                ),
-                ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED
-            );
+        if ($this->jwtSettings->getLoginSettings()->isAuthKeyRequiredOnLogin()) {
+            $this->validateAuthKey();
         }
 
         // Validate IP

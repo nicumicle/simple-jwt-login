@@ -84,7 +84,7 @@ class LoginServiceTest extends TestCase
                     'allow_autologin' => 'true',
                 ],
                 'request' => [],
-                'exceptionMessage' => 'Wrong Request.',
+                'exceptionMessage' => 'JWT is missing.',
             ],
             'missing_auth_code' => [
                 'settings' => [
@@ -94,7 +94,7 @@ class LoginServiceTest extends TestCase
                 'request' => [
                     'JWT'  => 'test',
                 ],
-                'exceptionMessage' => 'Invalid Auth Code ( AUTH_KEY ) provided.',
+                'exceptionMessage' => 'Auth Code is required.',
             ],
             'invalid_auth_code' => [
                 'settings' => [

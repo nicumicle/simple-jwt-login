@@ -6,7 +6,7 @@
          xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
 
     <description>
-        Design ruleset with CouplingBetweenObjects threshold raised to 14
+        Design ruleset with CouplingBetweenObjects threshold raised to 20
         to accommodate BaseService and RegisterUserService fluent-builder patterns.
     </description>
 
@@ -23,7 +23,7 @@
 
     <rule ref="rulesets/design.xml/CouplingBetweenObjects">
         <properties>
-            <property name="maximum" value="14"/>
+            <property name="maximum" value="20"/>
         </properties>
     </rule>
 

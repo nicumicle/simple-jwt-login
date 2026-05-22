@@ -55,14 +55,14 @@ class AutologinAuthCodeTest extends AutologinTestCase
 
     #[DataProvider('invalidAuthCodeProvider')]
     #[TestDox('Autologin rejects requests with a missing or wrong auth code')]
-    public function testInvalidAuthCode(array $params): void
+    public function testInvalidAuthCode(array $params, int $expectedCode, int $expectedStatus): void
     {
         $response = $this->request('GET', self::ROUTE, $params);
 
-        $this->assertSame(400, $response->get_status());
+        $this->assertSame($expectedStatus, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED, $data['data']['errorCode']);
+        $this->assertSame($expectedCode, $data['data']['errorCode']);
     }
 
     public static function invalidAuthCodeProvider(): array
@@ -71,13 +71,19 @@ class AutologinAuthCodeTest extends AutologinTestCase
 
         return [
             'auth code absent' => [
-                'params' => ['JWT' => $jwt],
+                'params'         => ['JWT' => $jwt],
+                'expectedCode'   => ErrorCodes::ERR_AUTH_CODE_REQUIRED,
+                'expectedStatus' => 422,
             ],
             'auth code is wrong' => [
-                'params' => ['JWT' => $jwt, 'AUTH_KEY' => 'wrong-code'],
+                'params'         => ['JWT' => $jwt, 'AUTH_KEY' => 'wrong-code'],
+                'expectedCode'   => ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED,
+                'expectedStatus' => 401,
             ],
             'auth code is empty string' => [
-                'params' => ['JWT' => $jwt, 'AUTH_KEY' => ''],
+                'params'         => ['JWT' => $jwt, 'AUTH_KEY' => ''],
+                'expectedCode'   => ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED,
+                'expectedStatus' => 401,
             ],
         ];
     }

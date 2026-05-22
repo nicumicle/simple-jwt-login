@@ -4,6 +4,7 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\Modules\Settings\ResetPasswordSettings;
 use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
@@ -40,16 +41,8 @@ class ResetPasswordService extends BaseService implements ServiceInterface
             );
         }
 
-        if ($this->jwtSettings->getResetPasswordSettings()->isAuthKeyRequired()
-            && !$this->validateAuthKey()
-        ) {
-            throw new Exception(
-                sprintf(
-                    __('Invalid Auth Code ( %s ) provided.', 'simple-jwt-login'),
-                    $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()
-                ),
-                ErrorCodes::ERR_RESET_PASSWORD_INVALID_AUTH_KEY
-            );
+        if ($this->jwtSettings->getResetPasswordSettings()->isAuthKeyRequired()) {
+            $this->validateAuthKey();
         }
 
         switch ($this->serverHelper->getRequestMethod()) {
@@ -125,18 +118,37 @@ class ResetPasswordService extends BaseService implements ServiceInterface
     private function validateChangePassword()
     {
         if (empty($this->request['email'])) {
-            throw new Exception(
+            throw new ValidationException(
                 __('Missing email parameter.', 'simple-jwt-login'),
                 ErrorCodes::ERR_MISSING_EMAIL_FOR_CHANGE_PASSWORD
             );
         }
-
         if (empty($this->request['new_password'])) {
-            throw new Exception(
+            throw new ValidationException(
                 __('Missing new_password parameter.', 'simple-jwt-login'),
                 ErrorCodes::ERR_MISSING_NEW_PASSWORD_FOR_CHANGE_PASSWORD
             );
         }
+        $isJWTAllowed = $this->jwtSettings->getResetPasswordSettings()->isJwtAllowed();
+        if ($isJWTAllowed && empty($this->request['code']) && !$this->getJwtFromRequestHeaderOrCookie()) {
+            throw new ValidationException(
+                __('Missing code or jwt parameter.', 'simple-jwt-login'),
+                ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE
+            );
+        } 
+        if (!$isJWTAllowed && empty($this->request['code'])) {
+            throw new ValidationException(
+                __('Missing code parameter.', 'simple-jwt-login'),
+                ErrorCodes::ERR_MISSING_CODE_FOR_CHANGE_PASSWORD
+            );
+        }
+        if (!$this->wordPressData->isEmail($this->request['email'])) {
+            throw new ValidationException(
+                __('Invalid email parameter.', 'simple-jwt-login'),
+                ErrorCodes::ERR_INVALID_EMAIL_FOR_CHANGE_PASSWORD
+            );
+        }
+
     }
 
     /**
@@ -236,13 +248,20 @@ class ResetPasswordService extends BaseService implements ServiceInterface
 
     /**
      * @throws Exception
+     * @throws ValidationException
      */
     private function validateSendResetPassword()
     {
         if (empty($this->request['email'])) {
-            throw new Exception(
+            throw new ValidationException(
                 __('Missing email parameter.', 'simple-jwt-login'),
                 ErrorCodes::ERR_MISSING_NEW_PASSWORD_FOR_RESET_PASSWORD
+            );
+        }
+        if (!$this->wordPressData->isEmail($this->request['email'])) {
+            throw new ValidationException(
+                __('Invalid email parameter.', 'simple-jwt-login'),
+                ErrorCodes::ERR_INVALID_EMAIL_FOR_RESET_PASSWORD
             );
         }
     }
@@ -315,7 +334,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
         if ($jwtAllowed && empty($this->request['code'])) {
             $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
             if (empty($this->jwt)) {
-                throw new Exception(
+                throw new ValidationException(
                     __('The `jwt` parameter is missing.', 'simple-jwt-login'),
                     ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE
                 );

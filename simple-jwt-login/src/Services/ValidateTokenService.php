@@ -4,6 +4,7 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use WP_REST_Response;
 
@@ -19,7 +20,6 @@ class ValidateTokenService extends AuthenticateService
         $this->checkValidateTokenEnabled();
         $this->checkAllowedIPAddress();
         $this->validateAuthenticationAuthKey(
-            ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED,
             $this->jwtSettings->getAuthenticationSettings()->isValidateAuthKeyRequired()
         );
 
@@ -47,7 +47,7 @@ class ValidateTokenService extends AuthenticateService
     {
         $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
         if (empty($this->jwt)) {
-            throw new Exception(
+            throw new ValidationException(
                 __('The `jwt` parameter is missing.', 'simple-jwt-login'),
                 ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE
             );

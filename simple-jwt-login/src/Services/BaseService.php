@@ -4,6 +4,7 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Exceptions\ValidationException as ExceptionsValidationException;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Libraries\JWT\JWT;
@@ -308,7 +309,7 @@ abstract class BaseService
 
         $jwtLib = new JWT();
         $jwtLib->applyLeeway(self::JWT_LEEWAY);
-        $decoded = (array)$jwtLib->decodeToken(
+        $decoded = (array)$jwtLib->decode(
             $this->jwt,
             $jwtKey->getPublicKey(),
             [$algorithm]
@@ -346,14 +347,35 @@ abstract class BaseService
 
 
     /**
-     * @return bool
+     * @throws Exception
      */
     protected function validateAuthKey()
     {
         $authCodeKey = $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey();
         if (!isset($this->request[$authCodeKey])) {
-            return false;
+            throw new ExceptionsValidationException(
+                __('Auth Code is required.', 'simple-jwt-login'),
+                ErrorCodes::ERR_AUTH_CODE_REQUIRED
+            );
         }
+
+        if (!$this->hasCorrectAuthCode($authCodeKey)) {
+            throw new Exception(
+                sprintf(
+                    __('Invalid Auth Code ( %s ) provided.', 'simple-jwt-login'),
+                    $authCodeKey
+                ),
+                ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED
+            );
+        }
+    }
+
+    /**
+     * @param string $authCodeKey
+     * @return bool
+    */
+    private function hasCorrectAuthCode($authCodeKey)
+    {
         foreach ($this->jwtSettings->getAuthCodesSettings()->getAuthCodes() as $code) {
             $authCodeBuilder = new AuthCodeBuilder($code);
             if (!empty($authCodeBuilder->getExpirationDate())
@@ -375,7 +397,7 @@ abstract class BaseService
      */
     protected function extractJwtData($jwt)
     {
-        return (new JWT())->extractData($jwt);
+        return (new JWT())->extractDataFromJwt($jwt);
     }
 
     /**

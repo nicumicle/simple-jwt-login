@@ -748,7 +748,7 @@ function sjlTryCollectParams($panel)
     $panel.find('.sjl-try-param-input').each(function () {
         var k   = jQuery(this).data('param');
         var val = jQuery(this).val();
-        out[k]  = val !== '' ? val : jQuery(this).attr('placeholder');
+        out[k]  = val;
     });
     return out;
 }

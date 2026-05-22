@@ -326,14 +326,15 @@ add_action('rest_api_init', function () {
                         }
 
                         return $service->makeAction();
-                    } catch (Exception $exception) {
+                    } catch (\Throwable $exception) {
                         @header('Content-Type: application/json; charset=UTF-8');
+                        $defaultCode = ($exception instanceof \Exception) ? 400 : 500;
                         wp_send_json_error(
                             [
                             'message'   => $exception->getMessage(),
                             'errorCode' => $exception->getCode()
                             ],
-                            StatusCodeHelper::getStatusCodeFromException($exception, 400)
+                            StatusCodeHelper::getStatusCodeFromException($exception, $defaultCode)
                         );
 
                         return false;

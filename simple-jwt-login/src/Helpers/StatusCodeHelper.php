@@ -3,6 +3,7 @@
 namespace SimpleJWTLogin\Helpers;
 
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Exceptions\ValidationException;
 
 class StatusCodeHelper
 {
@@ -100,6 +101,8 @@ class StatusCodeHelper
         ErrorCodes::ERR_INVALID_RESET_PASSWORD_CODE,
         ErrorCodes::ERR_RESET_PASSWORD_INVALID_FLOW,
         ErrorCodes::ERR_EMPTY_CUSTOM_EMAIL_SUBJECT,
+        ErrorCodes::ERR_JWT_IS_MISSING,
+        ErrorCodes::ERR_AUTH_CODE_REQUIRED,
     ];
 
     /** @var list<int> */
@@ -121,12 +124,20 @@ class StatusCodeHelper
     ];
 
     /**
-     * @param \Exception $exception
+     * @param \Throwable $exception
      * @param int $defaultStatusCode
      * @return int
      */
     public static function getStatusCodeFromException($exception, $defaultStatusCode)
     {
+        if (!($exception instanceof \Exception)) {
+            return 500;
+        }
+
+        if ($exception instanceof ValidationException) {
+            return 422;
+        }
+
         $map = [
             401 => self::$codes401,
             403 => self::$codes403,

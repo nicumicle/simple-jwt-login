@@ -42,6 +42,8 @@ class ResetPasswordServiceTest extends TestCase
         $this->wordPressDataMock
             ->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
+        $isEmail = isset($request['email']) && $request['email'] !== '---';
+        $this->wordPressDataMock->method('isEmail')->willReturn($isEmail);
         $resetService = (new ResetPasswordService())
             ->withRequest($request)
             ->withCookies([])
@@ -64,7 +66,7 @@ class ResetPasswordServiceTest extends TestCase
                     'reset_password_requires_auth_code' => 1,
                 ],
                 'request'   => [],
-                'exceptionMessage' => 'Invalid Auth Code ( AUTH_KEY ) provided.'
+                'exceptionMessage' => 'Auth Code is required.'
             ],
             [
                 'settings'  => [
@@ -101,6 +103,16 @@ class ResetPasswordServiceTest extends TestCase
                 ],
                 'exceptionMessage' => 'Wrong user.'
             ],
+            'invalid_email_for_reset_password' => [
+                'settings'  => [
+                    'allow_reset_password'              => 1,
+                    'reset_password_requires_auth_code' => 0,
+                ],
+                'request'   => [
+                    'email' => '---',
+                ],
+                'exceptionMessage' => 'Invalid email parameter.'
+            ],
         ];
     }
 
@@ -135,6 +147,7 @@ class ResetPasswordServiceTest extends TestCase
         $this->wordPressDataMock
             ->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
+        $this->wordPressDataMock->method('isEmail')->willReturn(true);
         $this->wordPressDataMock
             ->method('getUserDetailsByEmail')
             ->willReturn(['User']);
@@ -183,6 +196,8 @@ class ResetPasswordServiceTest extends TestCase
         $this->wordPressDataMock
             ->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
+        $isEmail = isset($request['email']) && $request['email'] !== '---';
+        $this->wordPressDataMock->method('isEmail')->willReturn($isEmail);
         $resetService = (new ResetPasswordService())
             ->withRequest($request)
             ->withCookies([])
@@ -205,7 +220,7 @@ class ResetPasswordServiceTest extends TestCase
                     'reset_password_requires_auth_code' => 1,
                 ],
                 'request'   => [],
-                'exceptionMessage' => 'Invalid Auth Code ( AUTH_KEY ) provided.'
+                'exceptionMessage' => 'Auth Code is required.'
             ],
             'missing_email' => [
                 'settings'  => [
@@ -305,6 +320,30 @@ class ResetPasswordServiceTest extends TestCase
                 ],
                 'exceptionMessage' => 'This JWT can not change your password.'
             ],
+            'missing_code_or_jwt' => [
+                'settings'  => [
+                    'allow_reset_password'              => 1,
+                    'reset_password_requires_auth_code' => 0,
+                    'reset_password_jwt'                => 1,
+                ],
+                'request'   => [
+                    'email'        => 'email@email.com',
+                    'new_password' => 'abc',
+                ],
+                'exceptionMessage' => 'Missing code or jwt parameter.'
+            ],
+            'invalid_email_format_change_password' => [
+                'settings'  => [
+                    'allow_reset_password'              => 1,
+                    'reset_password_requires_auth_code' => 0,
+                ],
+                'request'   => [
+                    'email'        => '---',
+                    'code'         => '123',
+                    'new_password' => 'abc',
+                ],
+                'exceptionMessage' => 'Invalid email parameter.'
+            ],
         ];
     }
 
@@ -330,6 +369,7 @@ class ResetPasswordServiceTest extends TestCase
         $this->wordPressDataMock
             ->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
+        $this->wordPressDataMock->method('isEmail')->willReturn(true);
         $this->wordPressDataMock
             ->method('checkPasswordResetKeyByEmail')
             ->willReturn(['User']);
@@ -359,6 +399,7 @@ class ResetPasswordServiceTest extends TestCase
             'new_password' => $specialPassword,
         ];
         $mock->method('getOptionFromDatabase')->willReturn(json_encode($settings));
+        $mock->method('isEmail')->willReturn(true);
         $mock->method('checkPasswordResetKeyByEmail')->willReturn(['User']);
         $mock->method('createResponse')->willReturn(true);
         $mock->expects($this->once())
@@ -388,6 +429,7 @@ class ResetPasswordServiceTest extends TestCase
             'new_password' => $encodedPassword,
         ];
         $mock->method('getOptionFromDatabase')->willReturn(json_encode($settings));
+        $mock->method('isEmail')->willReturn(true);
         $mock->method('checkPasswordResetKeyByEmail')->willReturn(['User']);
         $mock->method('createResponse')->willReturn(true);
         $mock->expects($this->once())

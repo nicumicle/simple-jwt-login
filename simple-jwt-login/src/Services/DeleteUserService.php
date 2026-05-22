@@ -3,6 +3,7 @@
 namespace SimpleJWTLogin\Services;
 
 use Exception;
+use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
@@ -13,12 +14,13 @@ class DeleteUserService extends BaseService implements ServiceInterface
     /**
      * @return mixed|\WP_REST_Response
      * @throws Exception
+     * @throws \Throwable
      */
     public function makeAction()
     {
         try {
             return $this->deleteUser();
-        } catch (Exception $exception) {
+        } catch (\Throwable $exception) {
             $this->wordPressData->triggerAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_DELETE_USER_FAILED,
                 null,
@@ -44,22 +46,14 @@ class DeleteUserService extends BaseService implements ServiceInterface
 
         $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
         if (empty($this->jwt)) {
-            throw new Exception(
+            throw new ValidationException(
                 __('The `jwt` parameter is missing.', 'simple-jwt-login'),
                 ErrorCodes::ERR_DELETE_MISSING_JWT
             );
         }
 
-        if ($this->jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete()
-            && !$this->validateAuthKey()
-        ) {
-            throw new Exception(
-                sprintf(
-                    __('Missing AUTH KEY ( %s ).', 'simple-jwt-login'),
-                    $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()
-                ),
-                ErrorCodes::ERR_DELETE_MISSING_AUTH_KEY
-            );
+        if ($this->jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete()) {
+            $this->validateAuthKey();
         }
 
         $allowedIpsString = trim($this->jwtSettings->getDeleteUserSettings()->getAllowedDeleteIps());

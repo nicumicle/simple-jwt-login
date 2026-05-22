@@ -4,6 +4,7 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
@@ -16,7 +17,6 @@ class RevokeTokenService extends AuthenticateService
             $this->checkRevokeTokenEnabled();
             $this->checkAllowedIPAddress();
             $this->validateAuthenticationAuthKey(
-                ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED,
                 $this->jwtSettings->getAuthenticationSettings()->isRevokeAuthKeyRequired()
             );
 
@@ -52,7 +52,7 @@ class RevokeTokenService extends AuthenticateService
     {
         $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
         if (empty($this->jwt)) {
-            throw new Exception(
+            throw new ValidationException(
                 __('The `jwt` parameter is missing.', 'simple-jwt-login'),
                 ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE
             );

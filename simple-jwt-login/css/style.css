@@ -95,14 +95,6 @@
     box-shadow: 0 0 0 2px rgba(38, 53, 68, 0.2);
 }
 
-/* Checkbox checked: filled + white tick */
-#simple-jwt-login input[type="checkbox"]:checked {
-    background-color: var(--sjl-primary);
-    border-color: var(--sjl-primary);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' d='M3 8l3.5 3.5L13 5'/%3E%3C/svg%3E");
-    background-size: 11px 11px;
-}
-
 /* Radio checked: white fill + accent dot */
 #simple-jwt-login input[type="radio"]:checked {
     background-color: #fff;

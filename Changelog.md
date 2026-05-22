@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 3.6.6 (22 May 2026)
+- Update WordPress 7.0 Compatibility
+
 ## 3.6.5 (14 Mar 2026)
 - Fix  CVE-2025-58648 - Stored Cross-Site Scripting vulnerability[PR](https://github.com/nicumicle/simple-jwt-login/pull/162)
 - Fix for bug: Reset password function doesn't use base64 encoding logic and doesn't allow user to use any special character [#161](https://github.com/nicumicle/simple-jwt-login/issues/161) [#163](https://github.com/nicumicle/simple-jwt-login/pull/163)

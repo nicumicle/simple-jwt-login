@@ -123,27 +123,14 @@ $akPages  = $akTotal > 0 ? (int) ceil($akTotal / $akPerPage) : 1;
         <div class="form-group row mb-3">
             <label class="col-sm-2 col-form-label"><?php echo esc_html__('Permissions', 'simple-jwt-login'); ?></label>
             <div class="col-sm-10">
-                <div class="sjl-ak-permissions-grid">
-                    <?php foreach (ApiKeyPermissions::$all as $perm) :
-                        $label = $permissionLabels[$perm];
-                        ?>
-                    <label class="sjl-ak-perm-card sjl-ak-perm-card--<?php echo esc_attr($perm); ?>">
-                        <input type="checkbox" class="sjl-ak-perm-check" value="<?php echo esc_attr($perm); ?>" />
-                        <span class="sjl-ak-perm-card-icon">
-                            <span class="dashicons <?php echo esc_attr($label[3]); ?>"></span>
-                        </span>
-                        <span class="sjl-ak-perm-card-body">
-                            <span class="sjl-ak-perm-card-name"><?php echo esc_html(ucfirst($perm)); ?></span>
-                            <span class="sjl-ak-perm-card-desc"><?php echo esc_html($label[2]); ?></span>
-                            <span class="sjl-ak-perm-card-route">
-                                <span class="sjl-ak-method sjl-method-<?php echo esc_attr(strtolower($label[0])); ?>"><?php echo esc_html($label[0]); ?></span>
-                                <code class="sjl-ak-route"><?php echo esc_html($label[1]); ?></code>
-                            </span>
-                        </span>
-                        <span class="sjl-ak-perm-card-check">
-                            <span class="dashicons dashicons-yes-alt"></span>
-                        </span>
-                    </label>
+                <div>
+                    <?php foreach (ApiKeyPermissions::$all as $perm) : ?>
+                    <div>
+                        <label>
+                            <input type="checkbox" class="sjl-ak-perm-check" value="<?php echo esc_attr($perm); ?>" />
+                            <?php echo esc_html(ucfirst($perm)); ?>
+                        </label>
+                    </div>
                     <?php endforeach; ?>
                 </div>
             </div>

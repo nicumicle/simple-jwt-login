@@ -35,6 +35,8 @@
    ============================================ */
 #simple-jwt-login {
     margin: 10px 0;
+
+    /* Plugin design tokens */
     --sjl-primary:      #263544;
     --sjl-text:         #1d2327;
     --sjl-text-meta:    #50575e;
@@ -46,6 +48,14 @@
     --sjl-bg-card:      #f8f9fa;
     --sjl-radius-sm:    4px;
     --sjl-radius-md:    6px;
+
+    /* Override WordPress admin theme-color variables so that all WP core UI
+       elements inside the plugin (inputs, focus rings, checkboxes, buttons)
+       inherit the plugin color instead of the admin scheme blue. */
+    --wp-admin-theme-color:           #263544;
+    --wp-admin-theme-color--rgb:      38, 53, 68;
+    --wp-admin-theme-color-darker-10: #1d2a36;
+    --wp-admin-theme-color-darker-20: #1a2630;
 }
 
 #simple-jwt-login * {
@@ -56,59 +66,18 @@
 /* ============================================
    Checkbox & Radio Controls
    ============================================ */
-
-/* Strip WP-admin overrides and establish a neutral base */
 #simple-jwt-login input[type="checkbox"],
 #simple-jwt-login input[type="radio"] {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    min-width: 16px;
-    padding: 0;
-    margin: 0;
-    border: 1.5px solid #b4b9be;
-    background: #fff;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 0;
-    vertical-align: middle;
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s;
+    accent-color: var(--sjl-primary);
 }
 
-#simple-jwt-login input[type="checkbox"] { border-radius: 3px; }
-#simple-jwt-login input[type="radio"]    { border-radius: 50%; }
-
-/* Hover */
-#simple-jwt-login input[type="checkbox"]:hover,
-#simple-jwt-login input[type="radio"]:hover {
-    border-color: var(--sjl-primary);
+/* WordPress colors.min.css hardcodes a { color: #3858e9 } — override it. */
+#simple-jwt-login a:not([class*="btn"]):not(.nav-link):not(.page-link) {
+    color: var(--sjl-primary);
 }
-
-/* Focus */
-#simple-jwt-login input[type="checkbox"]:focus,
-#simple-jwt-login input[type="radio"]:focus {
-    outline: none;
-    border-color: var(--sjl-primary);
-    box-shadow: 0 0 0 2px rgba(38, 53, 68, 0.2);
-}
-
-/* Radio checked: white fill + accent dot */
-#simple-jwt-login input[type="radio"]:checked {
-    background-color: #fff;
-    border-color: var(--sjl-primary);
-    border-width: 1.5px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='4' fill='%23263544'/%3E%3C/svg%3E");
-    background-size: 16px 16px;
-}
-
-/* Disabled */
-#simple-jwt-login input[type="checkbox"]:disabled,
-#simple-jwt-login input[type="radio"]:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+#simple-jwt-login a:not([class*="btn"]):not(.nav-link):not(.page-link):hover,
+#simple-jwt-login a:not([class*="btn"]):not(.nav-link):not(.page-link):focus {
+    color: #1a2630;
 }
 
 #simple-jwt-login span.beta {
@@ -1085,11 +1054,6 @@
 #simple-jwt-login .sjl-gen-feature-toggle              { display: flex; gap: 12px; align-items: flex-start; }
 #simple-jwt-login .sjl-gen-feature-toggle:first-child  { padding-top: 0; }
 #simple-jwt-login .sjl-gen-feature-toggle-check        { padding-top: 2px; flex-shrink: 0; }
-#simple-jwt-login .sjl-gen-feature-toggle-check input[type="checkbox"] {
-    width: 17px;
-    height: 17px;
-    margin: 0;
-}
 
 /* ============================================
    Shared: Radio selectors (card + block)
@@ -1128,7 +1092,6 @@
     font-weight: 500;
     color: var(--sjl-text);
 }
-#simple-jwt-login .sjl-gen-radio-card input[type="radio"] { margin: 0; }
 #simple-jwt-login .sjl-gen-radio-card .dashicons {
     font-size: 14px;
     width: 14px;
@@ -1142,11 +1105,6 @@
     align-items: flex-start;
     gap: 10px;
     padding: 10px 12px;
-}
-#simple-jwt-login .sjl-gen-radio-block input[type="radio"] {
-    margin: 3px 0 0 0;
-    flex-shrink: 0;
-    cursor: pointer;
 }
 #simple-jwt-login .sjl-gen-radio-block-label {
     font-size: 12px;
@@ -1171,7 +1129,6 @@
     font-size: 13px;
     color: var(--sjl-text);
 }
-#simple-jwt-login .sjl-gen-radio-option input[type="radio"] { margin: 0; cursor: pointer; }
 #simple-jwt-login .sjl-gen-radio-option:has(input:checked) .sjl-gen-radio-label {
     color: var(--sjl-primary);
     font-weight: 600;
@@ -1215,7 +1172,6 @@
     color: var(--sjl-text);
     margin-top: 8px;
 }
-#simple-jwt-login .sjl-gen-checkbox-row input[type="checkbox"] { margin: 0; }
 
 /* Generate key button + feedback */
 #simple-jwt-login .sjl-gen-key-actions {
@@ -2271,193 +2227,6 @@
 
 /* ── API Keys ────────────────────────────────────────────────────────────── */
 
-#simple-jwt-login .sjl-ak-permissions-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-    gap: 10px;
-}
-
-#simple-jwt-login .sjl-ak-perm-card {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 12px 12px 12px 10px;
-    background: #fff;
-    border: 1.5px solid var(--sjl-border);
-    border-left-width: 3px;
-    border-radius: var(--sjl-radius-md);
-    cursor: pointer;
-    position: relative;
-    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-    user-select: none;
-}
-
-#simple-jwt-login .sjl-ak-perm-card--read   { border-left-color: #2271b1; }
-#simple-jwt-login .sjl-ak-perm-card--create { border-left-color: #00a32a; }
-#simple-jwt-login .sjl-ak-perm-card--update { border-left-color: #b26200; }
-#simple-jwt-login .sjl-ak-perm-card--delete { border-left-color: #d63638; }
-
-#simple-jwt-login .sjl-ak-perm-card:hover {
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    border-top-color: #bbb;
-    border-right-color: #bbb;
-    border-bottom-color: #bbb;
-}
-
-#simple-jwt-login .sjl-ak-perm-card > input[type="checkbox"] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-#simple-jwt-login .sjl-ak-perm-card-icon {
-    flex-shrink: 0;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--sjl-radius-sm);
-    background: var(--sjl-bg-muted);
-    transition: background 0.15s;
-}
-
-#simple-jwt-login .sjl-ak-perm-card-icon .dashicons {
-    font-size: 15px;
-    width: 15px;
-    height: 15px;
-    color: var(--sjl-text-meta);
-    transition: color 0.15s;
-}
-
-#simple-jwt-login .sjl-ak-perm-card-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 0;
-}
-
-#simple-jwt-login .sjl-ak-perm-card-name {
-    display: block;
-    font-weight: 600;
-    font-size: 12px;
-    color: var(--sjl-text);
-}
-
-#simple-jwt-login .sjl-ak-perm-card-desc {
-    display: block;
-    font-size: 11px;
-    color: var(--sjl-text-muted);
-    line-height: 1.4;
-}
-
-#simple-jwt-login .sjl-ak-perm-card-route {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin-top: 6px;
-}
-
-#simple-jwt-login .sjl-ak-perm-card-check {
-    flex-shrink: 0;
-    width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    border: 1.5px solid var(--sjl-border-mid);
-    background: #fff;
-    transition: background 0.15s, border-color 0.15s;
-}
-
-#simple-jwt-login .sjl-ak-perm-card-check .dashicons {
-    font-size: 14px;
-    width: 14px;
-    height: 14px;
-    color: #fff;
-    opacity: 0;
-    transition: opacity 0.15s;
-}
-
-/* Checked state — per-permission accent */
-#simple-jwt-login .sjl-ak-perm-card--read:has(input:checked) {
-    background: #f0f6fc;
-    border-top-color: #2271b1;
-    border-right-color: #2271b1;
-    border-bottom-color: #2271b1;
-    box-shadow: 0 2px 8px rgba(34, 113, 177, 0.12);
-}
-#simple-jwt-login .sjl-ak-perm-card--read:has(input:checked) .sjl-ak-perm-card-check {
-    background: #2271b1;
-    border-color: #2271b1;
-}
-#simple-jwt-login .sjl-ak-perm-card--read:has(input:checked) .sjl-ak-perm-card-icon {
-    background: rgba(34, 113, 177, 0.12);
-}
-#simple-jwt-login .sjl-ak-perm-card--read:has(input:checked) .sjl-ak-perm-card-icon .dashicons {
-    color: #2271b1;
-}
-
-#simple-jwt-login .sjl-ak-perm-card--create:has(input:checked) {
-    background: #f0faf2;
-    border-top-color: #00a32a;
-    border-right-color: #00a32a;
-    border-bottom-color: #00a32a;
-    box-shadow: 0 2px 8px rgba(0, 163, 42, 0.12);
-}
-#simple-jwt-login .sjl-ak-perm-card--create:has(input:checked) .sjl-ak-perm-card-check {
-    background: #00a32a;
-    border-color: #00a32a;
-}
-#simple-jwt-login .sjl-ak-perm-card--create:has(input:checked) .sjl-ak-perm-card-icon {
-    background: rgba(0, 163, 42, 0.12);
-}
-#simple-jwt-login .sjl-ak-perm-card--create:has(input:checked) .sjl-ak-perm-card-icon .dashicons {
-    color: #00a32a;
-}
-
-#simple-jwt-login .sjl-ak-perm-card--update:has(input:checked) {
-    background: #fdf6e3;
-    border-top-color: #b26200;
-    border-right-color: #b26200;
-    border-bottom-color: #b26200;
-    box-shadow: 0 2px 8px rgba(178, 98, 0, 0.12);
-}
-#simple-jwt-login .sjl-ak-perm-card--update:has(input:checked) .sjl-ak-perm-card-check {
-    background: #b26200;
-    border-color: #b26200;
-}
-#simple-jwt-login .sjl-ak-perm-card--update:has(input:checked) .sjl-ak-perm-card-icon {
-    background: rgba(178, 98, 0, 0.12);
-}
-#simple-jwt-login .sjl-ak-perm-card--update:has(input:checked) .sjl-ak-perm-card-icon .dashicons {
-    color: #b26200;
-}
-
-#simple-jwt-login .sjl-ak-perm-card--delete:has(input:checked) {
-    background: #fdf0f0;
-    border-top-color: #d63638;
-    border-right-color: #d63638;
-    border-bottom-color: #d63638;
-    box-shadow: 0 2px 8px rgba(214, 54, 56, 0.12);
-}
-#simple-jwt-login .sjl-ak-perm-card--delete:has(input:checked) .sjl-ak-perm-card-check {
-    background: #d63638;
-    border-color: #d63638;
-}
-#simple-jwt-login .sjl-ak-perm-card--delete:has(input:checked) .sjl-ak-perm-card-icon {
-    background: rgba(214, 54, 56, 0.12);
-}
-#simple-jwt-login .sjl-ak-perm-card--delete:has(input:checked) .sjl-ak-perm-card-icon .dashicons {
-    color: #d63638;
-}
-
-#simple-jwt-login .sjl-ak-perm-card:has(input:checked) .sjl-ak-perm-card-check .dashicons {
-    opacity: 1;
-}
 
 #simple-jwt-login .sjl-ak-perm-badges {
     display: flex;

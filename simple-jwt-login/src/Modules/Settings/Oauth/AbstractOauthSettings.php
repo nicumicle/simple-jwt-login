@@ -21,7 +21,7 @@ use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
  * Registering a new provider only requires:
  *  1. Create a subclass that fills in the five hooks above.
  *  2. Add provider-specific getters as needed.
- *  3. Register the class in ApplicationsSettings::buildProviders().
+ *  3. Register the class in IntegrationsSettings::buildProviders().
  */
 abstract class AbstractOauthSettings
 {
@@ -103,7 +103,7 @@ abstract class AbstractOauthSettings
     abstract protected function getRedirectUriRequiredErrorCode();
 
     // =========================================================================
-    // Lifecycle - called by ApplicationsSettings
+    // Lifecycle - called by IntegrationsSettings
     // =========================================================================
 
     /**

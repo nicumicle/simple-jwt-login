@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
  * @var SimpleJWTLoginSettings $jwtSettings
  */
 
-$google = $jwtSettings->getApplicationsSettings()->google();
+$google = $jwtSettings->getIntegrationsSettings()->google();
 ?>
 
 <div class="sjl-gen-card">

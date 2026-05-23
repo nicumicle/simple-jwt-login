@@ -191,14 +191,14 @@ function simple_jwt_login_login_message()
     $jwtSettings   = new SimpleJWTLoginSettings($wordpressData);
     $hasError = false;
     // GOOGLE
-    if ($jwtSettings->getApplicationsSettings()->google()->isEnabled() && $jwtSettings->getApplicationsSettings()->google()->isOauthEnabled()) {
+    if ($jwtSettings->getIntegrationsSettings()->google()->isEnabled() && $jwtSettings->getIntegrationsSettings()->google()->isOauthEnabled()) {
         if (isset($_REQUEST['error'])) {
             $hasError = true;
         }
     }
     // AUTH0
-    if ($jwtSettings->getApplicationsSettings()->auth0()->isEnabled()
-        && $jwtSettings->getApplicationsSettings()->auth0()->isOauthEnabled()) {
+    if ($jwtSettings->getIntegrationsSettings()->auth0()->isEnabled()
+        && $jwtSettings->getIntegrationsSettings()->auth0()->isOauthEnabled()) {
         if (isset($_REQUEST['error'])) {
             $hasError = true;
         }
@@ -224,24 +224,24 @@ function simple_jwt_login_login_footer()
     $jwtSettings = new SimpleJWTLoginSettings($wordpressData);
     $pluginDirUrl = plugin_dir_url(__FILE__);
 
-    $googleEnabled = $jwtSettings->getApplicationsSettings()->google()->isEnabled()
-        && $jwtSettings->getApplicationsSettings()->google()->isOauthEnabled();
-    $auth0Enabled  = $jwtSettings->getApplicationsSettings()->auth0()->isEnabled()
-        && $jwtSettings->getApplicationsSettings()->auth0()->isOauthEnabled();
+    $googleEnabled = $jwtSettings->getIntegrationsSettings()->google()->isEnabled()
+        && $jwtSettings->getIntegrationsSettings()->google()->isOauthEnabled();
+    $auth0Enabled  = $jwtSettings->getIntegrationsSettings()->auth0()->isEnabled()
+        && $jwtSettings->getIntegrationsSettings()->auth0()->isOauthEnabled();
 
     if (!$googleEnabled && !$auth0Enabled) {
         return;
     }
 
-    $layout = $jwtSettings->getApplicationsSettings()->getLoginButtonLayout();
+    $layout = $jwtSettings->getIntegrationsSettings()->getLoginButtonLayout();
     echo '<div class="sjl-oauth-buttons-wrapper layout-' . esc_attr($layout) . '">';
 
     if ($googleEnabled) {
-        include_once "views/applications/oauth/google-form.php";
+        include_once "views/integrations/oauth/google-form.php";
     }
 
     if ($auth0Enabled) {
-        include_once "views/applications/oauth/auth0-form.php";
+        include_once "views/integrations/oauth/auth0-form.php";
     }
 
     echo '</div>';
@@ -325,20 +325,20 @@ function simple_jwt_login_oauth_shortcode($parameter = null)
     $haveProvider = false;
     switch ($parameter['provider']) {
         case 'google':
-            if ($jwtSettings->getApplicationsSettings()->google()->isEnabled()
-                && $jwtSettings->getApplicationsSettings()->google()->isOauthEnabled()) {
+            if ($jwtSettings->getIntegrationsSettings()->google()->isEnabled()
+                && $jwtSettings->getIntegrationsSettings()->google()->isOauthEnabled()) {
                 $haveProvider = true;
                 ob_start();
-                include_once "views/applications/oauth/google-form.php";
+                include_once "views/integrations/oauth/google-form.php";
                 $html .= ob_get_clean();
             }
             break;
         case 'auth0':
-            if ($jwtSettings->getApplicationsSettings()->auth0()->isEnabled()
-                && $jwtSettings->getApplicationsSettings()->auth0()->isOauthEnabled()) {
+            if ($jwtSettings->getIntegrationsSettings()->auth0()->isEnabled()
+                && $jwtSettings->getIntegrationsSettings()->auth0()->isOauthEnabled()) {
                 $haveProvider = true;
                 ob_start();
-                include_once "views/applications/oauth/auth0-form.php";
+                include_once "views/integrations/oauth/auth0-form.php";
                 $html .= ob_get_clean();
             }
             break;

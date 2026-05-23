@@ -5,38 +5,7 @@ namespace SimpleJwtLoginTests\Unit\Modules\Settings\Oauth;
 use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use SimpleJWTLogin\Modules\Settings\Oauth\AbstractOauthSettings;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
-
-class ConcreteTestOauthSettings extends AbstractOauthSettings
-{
-    public function getGroup()
-    {
-        return 'test';
-    }
-
-    public function getName()
-    {
-        return 'TestProvider';
-    }
-
-    protected function getRequiredFieldValidations()
-    {
-        return [
-            ['client_id', 100, 'Test Client ID'],
-        ];
-    }
-
-    protected function getAtLeastOneEnabledErrorCode()
-    {
-        return 99;
-    }
-
-    protected function getRedirectUriRequiredErrorCode()
-    {
-        return 101;
-    }
-}
 
 class AbstractOauthSettingsTest extends TestCase
 {

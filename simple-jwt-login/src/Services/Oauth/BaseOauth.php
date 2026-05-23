@@ -7,7 +7,7 @@ use SimpleJWTLogin\Modules\Jwt\JwtWrapper;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 
-class BaseOauthApplication
+class BaseOauth
 {
     /**
      * @var string

@@ -32,7 +32,7 @@ class V1ToV2MigrationTest extends TestCase
         $this->assertArrayHasKey('reset_password', $result);
         $this->assertArrayHasKey('protect_endpoint', $result);
         $this->assertArrayHasKey('auth_codes', $result);
-        $this->assertArrayHasKey('applications', $result);
+        $this->assertArrayHasKey('integrations', $result);
         $this->assertArrayHasKey('audit_log', $result);
         $this->assertArrayHasKey('jwt_rules', $result);
         $this->assertArrayHasKey('webhooks', $result);
@@ -222,14 +222,14 @@ class V1ToV2MigrationTest extends TestCase
 
         $result = $this->make()->migrate($v1Settings);
 
-        $this->assertArrayHasKey('oauth', $result['applications']);
+        $this->assertArrayHasKey('oauth', $result['integrations']);
         $this->assertSame(
             ['enabled' => 1, 'client_id' => 'gid', 'client_secret' => 'gsecret'],
-            $result['applications']['oauth']['google']
+            $result['integrations']['oauth']['google']
         );
         $this->assertSame(
             ['enabled' => 0, 'domain' => 'example.auth0.com'],
-            $result['applications']['oauth']['auth0']
+            $result['integrations']['oauth']['auth0']
         );
     }
 
@@ -238,8 +238,8 @@ class V1ToV2MigrationTest extends TestCase
         $v1Settings = ['google' => ['enabled' => 1]];
         $result = $this->make()->migrate($v1Settings);
 
-        $this->assertArrayNotHasKey('google', $result['applications']);
-        $this->assertArrayNotHasKey('auth0', $result['applications']);
+        $this->assertArrayNotHasKey('google', $result['integrations']);
+        $this->assertArrayNotHasKey('auth0', $result['integrations']);
     }
 
     public function testWpGraphqlMovedToApplicationsThirdParty(): void
@@ -247,22 +247,22 @@ class V1ToV2MigrationTest extends TestCase
         $v1Settings = ['wp_graphql' => ['enabled' => true]];
         $result = $this->make()->migrate($v1Settings);
 
-        $this->assertSame(['enabled' => true], $result['applications']['3rdparty']['wpgraphql']);
+        $this->assertSame(['enabled' => true], $result['integrations']['3rdparty']['wpgraphql']);
         $this->assertArrayNotHasKey('wp_graphql', $result['general']);
     }
 
     public function testMissingWpGraphqlProducesEmptyThirdParty(): void
     {
         $result = $this->make()->migrate([]);
-        $this->assertSame([], $result['applications']['3rdparty']);
+        $this->assertSame([], $result['integrations']['3rdparty']);
     }
 
     public function testEmptyApplicationsHaveOauthAndThirdPartyKeys(): void
     {
         $result = $this->make()->migrate([]);
-        $this->assertArrayHasKey('oauth', $result['applications']);
-        $this->assertArrayHasKey('3rdparty', $result['applications']);
-        $this->assertSame([], $result['applications']['oauth']);
-        $this->assertSame([], $result['applications']['3rdparty']);
+        $this->assertArrayHasKey('oauth', $result['integrations']);
+        $this->assertArrayHasKey('3rdparty', $result['integrations']);
+        $this->assertSame([], $result['integrations']['oauth']);
+        $this->assertSame([], $result['integrations']['3rdparty']);
     }
 }

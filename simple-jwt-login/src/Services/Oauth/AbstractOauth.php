@@ -15,7 +15,7 @@ use SimpleJWTLogin\Services\RouteService;
  * Concrete providers (Google, Auth0, …) override the abstract hook methods to supply
  * provider-specific URLs, credentials, and token parsing logic.
  */
-abstract class AbstractOauthApplication extends BaseOauthApplication
+abstract class AbstractOauth extends BaseOauth
 {
     // -------------------------------------------------------------------------
     // Template-method hooks - implement in each concrete provider

@@ -1503,23 +1503,23 @@
     background-position: center;
 }
 #simple-jwt-login .logo.google {
-    background-image: url("../images/applications/google-icon.svg");
+    background-image: url("../images/integrations/google-icon.svg");
 }
 
 #simple-jwt-login .logo.auth0 {
-    background-image: url("../images/applications/auth0-icon.svg");
+    background-image: url("../images/integrations/auth0-icon.svg");
 }
 
 #simple-jwt-login .logo.facebook {
-    background-image: url("../images/applications/facebook-icon.svg");
+    background-image: url("../images/integrations/facebook-icon.svg");
 }
 
 #simple-jwt-login .logo.github {
-    background-image: url("../images/applications/github-icon.svg");
+    background-image: url("../images/integrations/github-icon.svg");
 }
 
 #simple-jwt-login .logo.wpgraphql {
-    background-image: url("../images/applications/wpgraphql.svg");
+    background-image: url("../images/integrations/wpgraphql.svg");
 }
 
 

@@ -5,7 +5,7 @@ namespace SimpleJWTLogin\Services\Oauth;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 
-interface OauthApplicationInterface
+interface OauthInterface
 {
     /**
      * @param array $request

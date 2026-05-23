@@ -18,7 +18,7 @@ use SimpleJWTLogin\Libraries\ServerCall;
  * so exchangeCode is overridden to include that header.
  * Email is retrieved from GET /user/emails (requires the "user:email" scope).
  */
-class GithubOauthApplication extends AbstractOauthApplication implements OauthApplicationInterface
+class GithubOauth extends AbstractOauth implements OauthInterface
 {
     const PROVIDER_SLUG      = 'github';
     const AUTH_URL           = 'https://github.com/login/oauth/authorize';
@@ -27,7 +27,7 @@ class GithubOauthApplication extends AbstractOauthApplication implements OauthAp
     const USER_AGENT         = 'simple-jwt-login';
 
     // -------------------------------------------------------------------------
-    // OauthApplicationInterface
+    // OauthInterface
     // -------------------------------------------------------------------------
 
     public function validate()
@@ -76,7 +76,7 @@ class GithubOauthApplication extends AbstractOauthApplication implements OauthAp
     }
 
     // -------------------------------------------------------------------------
-    // AbstractOauthApplication hooks
+    // AbstractOauth hooks
     // -------------------------------------------------------------------------
 
     protected function getTokenEndpoint()
@@ -91,17 +91,17 @@ class GithubOauthApplication extends AbstractOauthApplication implements OauthAp
 
     protected function getClientId()
     {
-        return $this->settings->getApplicationsSettings()->github()->getClientId();
+        return $this->settings->getIntegrationsSettings()->github()->getClientId();
     }
 
     protected function getClientSecret()
     {
-        return $this->settings->getApplicationsSettings()->github()->getClientSecret();
+        return $this->settings->getIntegrationsSettings()->github()->getClientSecret();
     }
 
     protected function getSavedRedirectUri()
     {
-        return $this->settings->getApplicationsSettings()->github()->getExchangeCodeRedirectUri();
+        return $this->settings->getIntegrationsSettings()->github()->getExchangeCodeRedirectUri();
     }
 
     protected function getProviderSlug()
@@ -111,7 +111,7 @@ class GithubOauthApplication extends AbstractOauthApplication implements OauthAp
 
     protected function isCreateUserEnabled()
     {
-        return $this->settings->getApplicationsSettings()->github()->isCreateUserIfNotExistsEnabled();
+        return $this->settings->getIntegrationsSettings()->github()->isCreateUserIfNotExistsEnabled();
     }
 
     /**

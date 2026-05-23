@@ -16,7 +16,7 @@ use SimpleJWTLogin\Libraries\ServerCall;
  *
  * Auth0 is domain-based, so all endpoint URLs are derived from the configured domain.
  */
-class Auth0OauthApplication extends AbstractOauthApplication implements OauthApplicationInterface
+class Auth0Oauth extends AbstractOauth implements OauthInterface
 {
     const PROVIDER_SLUG         = 'auth0';
     const IIS                   = 'accounts.auth0.com';
@@ -25,7 +25,7 @@ class Auth0OauthApplication extends AbstractOauthApplication implements OauthApp
     const USERINFO_ENDPOINT_TPL = 'https://%s/userinfo';
 
     // -------------------------------------------------------------------------
-    // OauthApplicationInterface
+    // OauthInterface
     // -------------------------------------------------------------------------
 
     public function validate()
@@ -77,7 +77,7 @@ class Auth0OauthApplication extends AbstractOauthApplication implements OauthApp
     }
 
     // -------------------------------------------------------------------------
-    // AbstractOauthApplication hooks
+    // AbstractOauth hooks
     // -------------------------------------------------------------------------
 
     protected function getTokenEndpoint()
@@ -92,17 +92,17 @@ class Auth0OauthApplication extends AbstractOauthApplication implements OauthApp
 
     protected function getClientId()
     {
-        return $this->settings->getApplicationsSettings()->auth0()->getClientId();
+        return $this->settings->getIntegrationsSettings()->auth0()->getClientId();
     }
 
     protected function getClientSecret()
     {
-        return $this->settings->getApplicationsSettings()->auth0()->getClientSecret();
+        return $this->settings->getIntegrationsSettings()->auth0()->getClientSecret();
     }
 
     protected function getSavedRedirectUri()
     {
-        return $this->settings->getApplicationsSettings()->auth0()->getExchangeCodeRedirectUri();
+        return $this->settings->getIntegrationsSettings()->auth0()->getExchangeCodeRedirectUri();
     }
 
     protected function getProviderSlug()
@@ -112,7 +112,7 @@ class Auth0OauthApplication extends AbstractOauthApplication implements OauthApp
 
     protected function isCreateUserEnabled()
     {
-        return $this->settings->getApplicationsSettings()->auth0()->isCreateUserIfNotExistsEnabled();
+        return $this->settings->getIntegrationsSettings()->auth0()->isCreateUserIfNotExistsEnabled();
     }
 
     /**
@@ -178,7 +178,7 @@ class Auth0OauthApplication extends AbstractOauthApplication implements OauthApp
 
     /**
      * Validate an Auth0 JWT/access_token by calling the userinfo endpoint.
-     * Mirrors GoogleOauthApplication::validateIdToken so that BaseService can call it via an instance.
+     * Mirrors GoogleOauth::validateIdToken so that BaseService can call it via an instance.
      *
      * @param string $jwt
      * @param \SimpleJWTLogin\Modules\SimpleJWTLoginSettings $settings
@@ -187,7 +187,7 @@ class Auth0OauthApplication extends AbstractOauthApplication implements OauthApp
      */
     public static function validateIdToken($jwt, $settings)
     {
-        $domain   = $settings->getApplicationsSettings()->auth0()->getDomain();
+        $domain   = $settings->getIntegrationsSettings()->auth0()->getDomain();
         $endpoint = sprintf(self::USERINFO_ENDPOINT_TPL, $domain);
 
         $statusCode  = 400;
@@ -252,6 +252,6 @@ class Auth0OauthApplication extends AbstractOauthApplication implements OauthApp
      */
     private function getAuth0Domain()
     {
-        return $this->settings->getApplicationsSettings()->auth0()->getDomain();
+        return $this->settings->getIntegrationsSettings()->auth0()->getDomain();
     }
 }

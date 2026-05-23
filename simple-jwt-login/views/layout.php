@@ -134,8 +134,8 @@ $settingsPages = [
         'index' => SettingsErrors::PREFIX_PROTECT_ENDPOINTS,
     ],
     [
-        'id'   => 'simple-jwt-login-tab-applications',
-        'name' => __('Applications', 'simple-jwt-login'),
+        'id'   => 'simple-jwt-login-tab-integrations',
+        'name' => __('Integrations', 'simple-jwt-login'),
         'has_error' =>  (
             $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_APPLICATIONS
         ),
@@ -219,7 +219,7 @@ $sidebarGroups = [
     ],
     [
         'type'  => 'group',
-        'label' => __('Applications', 'simple-jwt-login'),
+        'label' => __('Integrations', 'simple-jwt-login'),
         'icon'  => 'dashicons-admin-plugins',
         'items' => [
             ['index' => SettingsErrors::PREFIX_APPLICATIONS, 'name' => __('OAuth', 'simple-jwt-login'), 'icon' => 'dashicons-admin-network'],
@@ -442,7 +442,7 @@ $sidebarGroups = [
                                         include_once plugin_dir_path(__FILE__) . "protect-endpoints-view.php";
                                         break;
                                     case SettingsErrors::PREFIX_APPLICATIONS:
-                                        include_once plugin_dir_path(__FILE__) . "applications/oauth/oauth-apps.php";
+                                        include_once plugin_dir_path(__FILE__) . "integrations/oauth/oauth-apps.php";
                                         break;
                                     case SettingsErrors::PREFIX_AUDIT_LOGS:
                                         include_once plugin_dir_path(__FILE__) . "audit-logs-view.php";
@@ -460,7 +460,7 @@ $sidebarGroups = [
                                         include_once plugin_dir_path(__FILE__) . "api-keys-view.php";
                                         break;
                                     case SettingsErrors::PREFIX_3RD_PARTY_APPS:
-                                        include_once plugin_dir_path(__FILE__) . "applications/3rd-party/3rd-party-apps.php";
+                                        include_once plugin_dir_path(__FILE__) . "integrations/3rd-party/3rd-party-apps.php";
                                         break;
                                     default:
                                         echo esc_html__("View file does not exists.", 'simple-jwt-login');

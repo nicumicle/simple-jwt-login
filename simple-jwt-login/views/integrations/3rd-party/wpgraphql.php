@@ -43,7 +43,7 @@ if (!defined('ABSPATH')) {
                    title="<?php echo esc_attr(__('Enable / Disable WPGraphQL authentication', 'simple-jwt-login')); ?>"
                    style="margin: 0;">
                 <input type="checkbox" id="wpgraphql_enabled" name="wpgraphql[enabled]" value="1"
-                    <?php echo $jwtSettings->getApplicationsSettings()->wpgraphql()->isEnabled() ? 'checked' : ''; ?>>
+                    <?php echo $jwtSettings->getIntegrationsSettings()->wpgraphql()->isEnabled() ? 'checked' : ''; ?>>
                 <span class="sjl-toggle-slider"></span>
             </label>
             <span style="font-size: 12px; color: #555; white-space: nowrap;">

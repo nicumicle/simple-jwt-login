@@ -4,11 +4,11 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
-use SimpleJWTLogin\Services\Oauth\OauthApplicationInterface;
-use SimpleJWTLogin\Services\Oauth\Auth0OauthApplication;
-use SimpleJWTLogin\Services\Oauth\FacebookOauthApplication;
-use SimpleJWTLogin\Services\Oauth\GithubOauthApplication;
-use SimpleJWTLogin\Services\Oauth\GoogleOauthApplication;
+use SimpleJWTLogin\Services\Oauth\OauthInterface;
+use SimpleJWTLogin\Services\Oauth\Auth0Oauth;
+use SimpleJWTLogin\Services\Oauth\FacebookOauth;
+use SimpleJWTLogin\Services\Oauth\GithubOauth;
+use SimpleJWTLogin\Services\Oauth\GoogleOauth;
 
 class OAuthService extends BaseService implements ServiceInterface
 {
@@ -29,16 +29,16 @@ class OAuthService extends BaseService implements ServiceInterface
     {
         $this->providerFactories = [
             self::GOOGLE_PROVIDER => function ($request, $method, $settings, $wpData) {
-                return new GoogleOauthApplication($request, $method, $settings, $wpData);
+                return new GoogleOauth($request, $method, $settings, $wpData);
             },
             self::AUTH0_PROVIDER => function ($request, $method, $settings, $wpData) {
-                return new Auth0OauthApplication($request, $method, $settings, $wpData);
+                return new Auth0Oauth($request, $method, $settings, $wpData);
             },
             self::FACEBOOK_PROVIDER => function ($request, $method, $settings, $wpData) {
-                return new FacebookOauthApplication($request, $method, $settings, $wpData);
+                return new FacebookOauth($request, $method, $settings, $wpData);
             },
             self::GITHUB_PROVIDER => function ($request, $method, $settings, $wpData) {
-                return new GithubOauthApplication($request, $method, $settings, $wpData);
+                return new GithubOauth($request, $method, $settings, $wpData);
             },
         ];
     }
@@ -49,7 +49,7 @@ class OAuthService extends BaseService implements ServiceInterface
 
         $this->assertProviderEnabled($provider);
 
-        /** @var OauthApplicationInterface $app */
+        /** @var OauthInterface $app */
         $app = ($this->providerFactories[$provider])(
             $this->request,
             $this->requestMethod,
@@ -89,7 +89,7 @@ class OAuthService extends BaseService implements ServiceInterface
      */
     private function assertProviderEnabled($provider)
     {
-        $isEnabled = $this->jwtSettings->getApplicationsSettings()->getProvider($provider)->isEnabled();
+        $isEnabled = $this->jwtSettings->getIntegrationsSettings()->getProvider($provider)->isEnabled();
 
         if (!$isEnabled) {
             throw new Exception(

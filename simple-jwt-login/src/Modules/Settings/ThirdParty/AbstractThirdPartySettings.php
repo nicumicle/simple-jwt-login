@@ -14,7 +14,7 @@ use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
  * Registering a new 3rd-party integration requires only:
  *  1. Create a subclass that fills in getExtraFields() as needed.
  *  2. Add provider-specific getters as needed.
- *  3. Register the class in ApplicationsSettings::buildThirdPartyApps().
+ *  3. Register the class in IntegrationsSettings::buildThirdPartyApps().
  */
 abstract class AbstractThirdPartySettings
 {
@@ -48,7 +48,7 @@ abstract class AbstractThirdPartySettings
     }
 
     // =========================================================================
-    // Lifecycle - called by ApplicationsSettings
+    // Lifecycle - called by IntegrationsSettings
     // =========================================================================
 
     /**

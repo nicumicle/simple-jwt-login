@@ -14,7 +14,7 @@ use SimpleJWTLogin\Libraries\ServerCall;
  *  2. Code exchange (API)   - POST ?provider=facebook&code={code} -> returns raw token response.
  *  3. Token exchange (API)  - POST ?provider=facebook&access_token={token} -> returns a WP JWT.
  */
-class FacebookOauthApplication extends AbstractOauthApplication implements OauthApplicationInterface
+class FacebookOauth extends AbstractOauth implements OauthInterface
 {
     const PROVIDER_SLUG          = 'facebook';
     const AUTH_URL               = 'https://www.facebook.com/v19.0/dialog/oauth';
@@ -23,7 +23,7 @@ class FacebookOauthApplication extends AbstractOauthApplication implements Oauth
     const GRAPH_API_VERSION      = 'v19.0';
 
     // -------------------------------------------------------------------------
-    // OauthApplicationInterface
+    // OauthInterface
     // -------------------------------------------------------------------------
 
     public function validate()
@@ -72,7 +72,7 @@ class FacebookOauthApplication extends AbstractOauthApplication implements Oauth
     }
 
     // -------------------------------------------------------------------------
-    // AbstractOauthApplication hooks
+    // AbstractOauth hooks
     // -------------------------------------------------------------------------
 
     protected function getTokenEndpoint()
@@ -87,17 +87,17 @@ class FacebookOauthApplication extends AbstractOauthApplication implements Oauth
 
     protected function getClientId()
     {
-        return $this->settings->getApplicationsSettings()->facebook()->getClientId();
+        return $this->settings->getIntegrationsSettings()->facebook()->getClientId();
     }
 
     protected function getClientSecret()
     {
-        return $this->settings->getApplicationsSettings()->facebook()->getClientSecret();
+        return $this->settings->getIntegrationsSettings()->facebook()->getClientSecret();
     }
 
     protected function getSavedRedirectUri()
     {
-        return $this->settings->getApplicationsSettings()->facebook()->getExchangeCodeRedirectUri();
+        return $this->settings->getIntegrationsSettings()->facebook()->getExchangeCodeRedirectUri();
     }
 
     protected function getProviderSlug()
@@ -107,7 +107,7 @@ class FacebookOauthApplication extends AbstractOauthApplication implements Oauth
 
     protected function isCreateUserEnabled()
     {
-        return $this->settings->getApplicationsSettings()->facebook()->isCreateUserIfNotExistsEnabled();
+        return $this->settings->getIntegrationsSettings()->facebook()->isCreateUserIfNotExistsEnabled();
     }
 
     /**

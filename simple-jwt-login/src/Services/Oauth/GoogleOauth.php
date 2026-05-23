@@ -6,7 +6,7 @@ use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Libraries\ServerCall;
 
-class GoogleOauthApplication extends AbstractOauthApplication implements OauthApplicationInterface
+class GoogleOauth extends AbstractOauth implements OauthInterface
 {
     const PROVIDER_SLUG   = 'google';
     const IIS             = 'accounts.google.com';
@@ -15,7 +15,7 @@ class GoogleOauthApplication extends AbstractOauthApplication implements OauthAp
     const CHECK_TOKEN_URL = 'https://oauth2.googleapis.com/tokeninfo?id_token=%s';
 
     // -------------------------------------------------------------------------
-    // OauthApplicationInterface
+    // OauthInterface
     // -------------------------------------------------------------------------
 
     public function validate()
@@ -65,7 +65,7 @@ class GoogleOauthApplication extends AbstractOauthApplication implements OauthAp
     }
 
     // -------------------------------------------------------------------------
-    // AbstractOauthApplication hooks
+    // AbstractOauth hooks
     // -------------------------------------------------------------------------
 
     protected function getTokenEndpoint()
@@ -80,17 +80,17 @@ class GoogleOauthApplication extends AbstractOauthApplication implements OauthAp
 
     protected function getClientId()
     {
-        return $this->settings->getApplicationsSettings()->google()->getClientId();
+        return $this->settings->getIntegrationsSettings()->google()->getClientId();
     }
 
     protected function getClientSecret()
     {
-        return $this->settings->getApplicationsSettings()->google()->getClientSecret();
+        return $this->settings->getIntegrationsSettings()->google()->getClientSecret();
     }
 
     protected function getSavedRedirectUri()
     {
-        return $this->settings->getApplicationsSettings()->google()->getExchangeCodeRedirectUri();
+        return $this->settings->getIntegrationsSettings()->google()->getExchangeCodeRedirectUri();
     }
 
     protected function getProviderSlug()
@@ -100,7 +100,7 @@ class GoogleOauthApplication extends AbstractOauthApplication implements OauthAp
 
     protected function isCreateUserEnabled()
     {
-        return $this->settings->getApplicationsSettings()->google()->isCreateUserIfNotExistsEnabled();
+        return $this->settings->getIntegrationsSettings()->google()->isCreateUserIfNotExistsEnabled();
     }
 
     /**

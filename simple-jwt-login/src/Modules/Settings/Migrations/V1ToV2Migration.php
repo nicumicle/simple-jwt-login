@@ -39,7 +39,7 @@ class V1ToV2Migration implements MigrationInterface
         $result['reset_password'] = $this->migrateResetPassword($settings);
         $result['protect_endpoint'] = $this->migrateProtectEndpoint($settings);
         $result['auth_codes']    = $this->migrateAuthCodes($settings);
-        $result['applications']  = $this->migrateApplications($settings);
+        $result['integrations']  = $this->migrateIntegrations($settings);
         $result['audit_log']     = $this->migrateAuditLog($settings);
         $result['jwt_rules']     = $this->migrateJwtRules($settings);
         $result['webhooks']      = $this->migrateWebhooks($settings);
@@ -271,7 +271,7 @@ class V1ToV2Migration implements MigrationInterface
      * @param array $settings
      * @return array
      */
-    private function migrateApplications($settings)
+    private function migrateIntegrations($settings)
     {
         $oauth = [];
         foreach (['google', 'auth0'] as $slug) {

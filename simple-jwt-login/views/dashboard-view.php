@@ -111,8 +111,8 @@ $configCards = [
         'link'    => __('Configure', 'simple-jwt-login'),
     ],
     [
-        'title'   => __('Applications', 'simple-jwt-login'),
-        'tooltip' => __('Configure third-party application integrations such as Google.', 'simple-jwt-login'),
+        'title'   => __('Integrations', 'simple-jwt-login'),
+        'tooltip' => __('Configure third-party integrations such as Google.', 'simple-jwt-login'),
         'icon'    => 'dashicons-share',
         'tab'     => SettingsErrors::PREFIX_APPLICATIONS,
         'link'    => __('Configure', 'simple-jwt-login'),

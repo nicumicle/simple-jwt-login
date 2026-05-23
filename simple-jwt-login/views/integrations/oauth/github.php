@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
  * @var SimpleJWTLoginSettings $jwtSettings
  */
 
-$github = $jwtSettings->getApplicationsSettings()->github();
+$github = $jwtSettings->getIntegrationsSettings()->github();
 ?>
 
 <div class="sjl-gen-card">

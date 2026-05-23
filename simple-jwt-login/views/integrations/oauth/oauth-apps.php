@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
  * @var int|null $errorCode
  */
 
-use SimpleJWTLogin\Modules\Settings\ApplicationsSettings;
+use SimpleJWTLogin\Modules\Settings\IntegrationsSettings;
 
 $sjlApps = [
     [
@@ -21,7 +21,7 @@ $sjlApps = [
         'name'       => __('Google', 'simple-jwt-login'),
         'desc'       => __('OAuth 2.0', 'simple-jwt-login'),
         'logo_class' => 'google',
-        'enabled'    => $jwtSettings->getApplicationsSettings()->google()->isEnabled(),
+        'enabled'    => $jwtSettings->getIntegrationsSettings()->google()->isEnabled(),
         'view'       => plugin_dir_path(__FILE__) . 'google.php',
         'beta'       => true,
     ],
@@ -30,7 +30,7 @@ $sjlApps = [
         'name'       => __('Auth0', 'simple-jwt-login'),
         'desc'       => __('OAuth 2.0 / OIDC', 'simple-jwt-login'),
         'logo_class' => 'auth0',
-        'enabled'    => $jwtSettings->getApplicationsSettings()->auth0()->isEnabled(),
+        'enabled'    => $jwtSettings->getIntegrationsSettings()->auth0()->isEnabled(),
         'view'       => plugin_dir_path(__FILE__) . 'auth0.php',
         'beta'       => true,
     ],
@@ -39,7 +39,7 @@ $sjlApps = [
         'name'       => __('Facebook', 'simple-jwt-login'),
         'desc'       => __('OAuth 2.0', 'simple-jwt-login'),
         'logo_class' => 'facebook',
-        'enabled'    => $jwtSettings->getApplicationsSettings()->facebook()->isEnabled(),
+        'enabled'    => $jwtSettings->getIntegrationsSettings()->facebook()->isEnabled(),
         'view'       => plugin_dir_path(__FILE__) . 'facebook.php',
         'beta'       => true,
     ],
@@ -48,7 +48,7 @@ $sjlApps = [
         'name'       => __('GitHub', 'simple-jwt-login'),
         'desc'       => __('OAuth 2.0', 'simple-jwt-login'),
         'logo_class' => 'github',
-        'enabled'    => $jwtSettings->getApplicationsSettings()->github()->isEnabled(),
+        'enabled'    => $jwtSettings->getIntegrationsSettings()->github()->isEnabled(),
         'view'       => plugin_dir_path(__FILE__) . 'github.php',
         'beta'       => true,
     ],
@@ -63,26 +63,26 @@ if (!empty($_REQUEST['active_app_panel'])) {
     }
 }
 
-$sjlCurrentLayout = $jwtSettings->getApplicationsSettings()->getLoginButtonLayout();
+$sjlCurrentLayout = $jwtSettings->getIntegrationsSettings()->getLoginButtonLayout();
 
 $sjlLayouts = [
     [
-        'value' => ApplicationsSettings::LAYOUT_STACKED,
+        'value' => IntegrationsSettings::LAYOUT_STACKED,
         'label' => __('Stacked', 'simple-jwt-login'),
         'desc'  => __('One button per line', 'simple-jwt-login'),
     ],
     [
-        'value' => ApplicationsSettings::LAYOUT_INLINE,
+        'value' => IntegrationsSettings::LAYOUT_INLINE,
         'label' => __('Side by side', 'simple-jwt-login'),
         'desc'  => __('Buttons in a row', 'simple-jwt-login'),
     ],
     [
-        'value' => ApplicationsSettings::LAYOUT_ICON_STACKED,
+        'value' => IntegrationsSettings::LAYOUT_ICON_STACKED,
         'label' => __('Icons stacked', 'simple-jwt-login'),
         'desc'  => __('Icon only, one per line', 'simple-jwt-login'),
     ],
     [
-        'value' => ApplicationsSettings::LAYOUT_ICON_INLINE,
+        'value' => IntegrationsSettings::LAYOUT_ICON_INLINE,
         'label' => __('Icons side by side', 'simple-jwt-login'),
         'desc'  => __('Icon only, in a row', 'simple-jwt-login'),
     ],
@@ -108,15 +108,15 @@ $sjlLayouts = [
                            value="<?php echo esc_attr($sjlLayout['value']); ?>"
                            <?php echo $isSelected ? 'checked' : ''; ?> />
                     <div class="sjl-layout-preview sjl-layout-preview--<?php echo esc_attr($sjlLayout['value']); ?>">
-                        <?php if ($sjlLayout['value'] === ApplicationsSettings::LAYOUT_STACKED) : ?>
+                        <?php if ($sjlLayout['value'] === IntegrationsSettings::LAYOUT_STACKED) : ?>
                             <span class="sjl-lp-btn"><span class="sjl-lp-icon"></span><span class="sjl-lp-text"></span></span>
                             <span class="sjl-lp-btn"><span class="sjl-lp-icon"></span><span class="sjl-lp-text"></span></span>
-                        <?php elseif ($sjlLayout['value'] === ApplicationsSettings::LAYOUT_INLINE) : ?>
+                        <?php elseif ($sjlLayout['value'] === IntegrationsSettings::LAYOUT_INLINE) : ?>
                             <div class="sjl-lp-row">
                                 <span class="sjl-lp-btn"><span class="sjl-lp-icon"></span><span class="sjl-lp-text"></span></span>
                                 <span class="sjl-lp-btn"><span class="sjl-lp-icon"></span><span class="sjl-lp-text"></span></span>
                             </div>
-                        <?php elseif ($sjlLayout['value'] === ApplicationsSettings::LAYOUT_ICON_STACKED) : ?>
+                        <?php elseif ($sjlLayout['value'] === IntegrationsSettings::LAYOUT_ICON_STACKED) : ?>
                             <span class="sjl-lp-btn sjl-lp-btn--icon"><span class="sjl-lp-icon"></span></span>
                             <span class="sjl-lp-btn sjl-lp-btn--icon"><span class="sjl-lp-icon"></span></span>
                         <?php else : ?>

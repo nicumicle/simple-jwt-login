@@ -14,7 +14,7 @@ use SimpleJWTLogin\Modules\Settings\ThirdParty\WpGraphQLSettings;
 /**
  * Registry for OAuth / OIDC providers and 3rd-party integrations.
  *
- * Storage layout (under $settings['applications']):
+ * Storage layout (under $settings['integrations']):
  *   ['oauth']['google']     => Google OAuth settings
  *   ['oauth']['auth0']      => Auth0 OAuth settings
  *   ['3rdparty']['wpgraphql'] => WPGraphQL integration settings
@@ -29,7 +29,7 @@ use SimpleJWTLogin\Modules\Settings\ThirdParty\WpGraphQLSettings;
  *  2. Add it to buildThirdPartyApps() below.
  *  3. Optionally expose a typed convenience accessor (like wpgraphql()).
  */
-class ApplicationsSettings extends BaseSettings implements SettingsInterface
+class IntegrationsSettings extends BaseSettings implements SettingsInterface
 {
     const OAUTH_KEY = 'oauth';
     const THIRD_PARTY_KEY = '3rdparty';
@@ -58,7 +58,7 @@ class ApplicationsSettings extends BaseSettings implements SettingsInterface
 
     protected function getSectionKey()
     {
-        return 'applications';
+        return 'integrations';
     }
 
     // =========================================================================

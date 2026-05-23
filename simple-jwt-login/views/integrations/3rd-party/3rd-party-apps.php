@@ -19,7 +19,7 @@ $sjl3rdPartyApps = [
         'name'       => __('WPGraphQL', 'simple-jwt-login'),
         'desc'       => __('GraphQL authentication', 'simple-jwt-login'),
         'logo_class' => 'wpgraphql',
-        'enabled'    => $jwtSettings->getApplicationsSettings()->wpgraphql()->isEnabled(),
+        'enabled'    => $jwtSettings->getIntegrationsSettings()->wpgraphql()->isEnabled(),
         'view'       => plugin_dir_path(__FILE__) . 'wpgraphql.php',
         'beta'       => true,
     ],

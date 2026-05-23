@@ -2,13 +2,14 @@
 
 namespace SimpleJwtLoginTests\Unit\Repositories\WebhookLog;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Repositories\WebhookLog\WebhookLogRepository;
 
 class WebhookLogRepositoryTest extends TestCase
 {
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\wpdb
+     * @var \PHPUnit\Framework\MockObject\Stub|\wpdb
      */
     private $wpdbMock;
 
@@ -20,89 +21,145 @@ class WebhookLogRepositoryTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->wpdbMock = $this->createStub(\wpdb::class);
+        $this->wpdbMock         = $this->createStub(\wpdb::class);
         $this->wpdbMock->prefix = 'wp_';
         $this->repository       = new WebhookLogRepository($this->wpdbMock);
     }
 
-    public function testInsertReturnsTrue()
+    public static function insertProvider(): array
     {
-        $wpdbMock = $this->createMock(\wpdb::class);
-        $wpdbMock->prefix = 'wp_';
-        $repository = new WebhookLogRepository($wpdbMock);
-
-        $wpdbMock->expects($this->once())
-            ->method('insert')
-            ->willReturn(1);
-
-        $result = $repository->insert('https://example.com/hook', 'login', 'POST', 200, null);
-
-        $this->assertTrue($result);
+        return [
+            'one row inserted'      => [1, true],
+            'zero rows (not false)' => [0, true],
+            'db error'              => [false, false],
+        ];
     }
 
-    public function testInsertReturnsFalseOnWpdbError()
+    #[DataProvider('insertProvider')]
+    public function testInsert($dbResult, bool $expected): void
     {
-        $this->wpdbMock->method('insert')->willReturn(false);
+        $this->wpdbMock->method('insert')->willReturn($dbResult);
 
-        $result = $this->repository->insert('https://example.com/hook', 'login', 'POST', null, 'Connection refused');
+        $result = $this->repository->insert('https://example.com/hook', 'login', 'POST', 200, null);
 
-        $this->assertFalse($result);
+        $this->assertSame($expected, $result);
     }
 
-    public function testDeleteOlderThanReturnsTrue()
+    public function testFindPaginatedReturnsItemsAndTotal(): void
     {
-        $this->wpdbMock->method('prepare')
-            ->willReturn('DELETE FROM wp_simple_jwt_login_webhook_logs WHERE created_at < ?');
-        $this->wpdbMock->method('query')->willReturn(5);
+        $items = [(object) ['id' => 1, 'event' => 'login', 'status_code' => 200]];
+        $this->wpdbMock->method('prepare')->willReturn('SELECT ...');
+        $this->wpdbMock->method('get_var')->willReturn('3');
+        $this->wpdbMock->method('get_results')->willReturn($items);
 
-        $result = $this->repository->deleteOlderThan('2026-01-01 00:00:00');
+        $result = $this->repository->findPaginated([], 1, 10);
 
-        $this->assertTrue($result);
+        $this->assertSame($items, $result['items']);
+        $this->assertSame(3, $result['total']);
     }
 
-    public function testDeleteOlderThanReturnsFalseOnError()
+    public function testFindPaginatedReturnsEmptyArrayWhenGetResultsReturnsNull(): void
+    {
+        $this->wpdbMock->method('prepare')->willReturn('SELECT ...');
+        $this->wpdbMock->method('get_var')->willReturn('0');
+        $this->wpdbMock->method('get_results')->willReturn(null);
+
+        $result = $this->repository->findPaginated([], 1, 10);
+
+        $this->assertSame([], $result['items']);
+        $this->assertSame(0, $result['total']);
+    }
+
+    public function testFindPaginatedCastsTotalToInt(): void
+    {
+        $this->wpdbMock->method('prepare')->willReturn('SELECT ...');
+        $this->wpdbMock->method('get_var')->willReturn('42');
+        $this->wpdbMock->method('get_results')->willReturn([]);
+
+        $result = $this->repository->findPaginated([], 1, 10);
+
+        $this->assertSame(42, $result['total']);
+        $this->assertIsInt($result['total']);
+    }
+
+    public static function filterProvider(): array
+    {
+        return [
+            'no filters'         => [[]],
+            'event filter'       => [['event' => 'login']],
+            'status success'     => [['status' => 'success']],
+            'status failure'     => [['status' => 'failure']],
+            'valid date_from'    => [['date_from' => '2026-01-01']],
+            'invalid date_from'  => [['date_from' => 'not-a-date']],
+            'valid date_to'      => [['date_to' => '2026-12-31']],
+            'invalid date_to'    => [['date_to' => '31/12/2026']],
+            'all valid filters'  => [[
+                'event'     => 'register',
+                'status'    => 'success',
+                'date_from' => '2026-01-01',
+                'date_to'   => '2026-12-31',
+            ]],
+        ];
+    }
+
+    #[DataProvider('filterProvider')]
+    public function testFindPaginatedWithFiltersReturnsExpectedStructure(array $filters): void
+    {
+        $this->wpdbMock->method('prepare')->willReturn('SELECT ...');
+        $this->wpdbMock->method('get_var')->willReturn('0');
+        $this->wpdbMock->method('get_results')->willReturn([]);
+
+        $result = $this->repository->findPaginated($filters, 1, 10);
+
+        $this->assertArrayHasKey('items', $result);
+        $this->assertArrayHasKey('total', $result);
+    }
+
+    public function testFindPaginatedPageOffsetIsApplied(): void
+    {
+        $this->wpdbMock->method('prepare')->willReturn('SELECT ...');
+        $this->wpdbMock->method('get_var')->willReturn('20');
+        $this->wpdbMock->method('get_results')->willReturn([]);
+
+        $result = $this->repository->findPaginated([], 3, 5);
+
+        $this->assertSame(20, $result['total']);
+        $this->assertSame([], $result['items']);
+    }
+
+    public static function queryProvider(): array
+    {
+        return [
+            'rows affected'        => [5, true],
+            'zero rows (no error)' => [0, true],
+            'db error'             => [false, false],
+        ];
+    }
+
+    #[DataProvider('queryProvider')]
+    public function testDeleteOlderThan($dbResult, bool $expected): void
     {
         $this->wpdbMock->method('prepare')->willReturn('DELETE ...');
-        $this->wpdbMock->method('query')->willReturn(false);
+        $this->wpdbMock->method('query')->willReturn($dbResult);
 
         $result = $this->repository->deleteOlderThan('2026-01-01 00:00:00');
 
-        $this->assertFalse($result);
+        $this->assertSame($expected, $result);
     }
 
-    public function testDeleteAllReturnsTrue()
+    #[DataProvider('queryProvider')]
+    public function testDeleteAll($dbResult, bool $expected): void
     {
-        $this->wpdbMock->method('query')->willReturn(10);
+        $this->wpdbMock->method('query')->willReturn($dbResult);
 
-        $result = $this->repository->deleteAll();
-
-        $this->assertTrue($result);
+        $this->assertSame($expected, $this->repository->deleteAll());
     }
 
-    public function testDeleteAllReturnsFalseOnError()
+    #[DataProvider('queryProvider')]
+    public function testDropTable($dbResult, bool $expected): void
     {
-        $this->wpdbMock->method('query')->willReturn(false);
+        $this->wpdbMock->method('query')->willReturn($dbResult);
 
-        $result = $this->repository->deleteAll();
-
-        $this->assertFalse($result);
-    }
-
-    public function testDropTableReturnsTrue()
-    {
-        $this->wpdbMock->method('query')->willReturn(1);
-
-        $result = $this->repository->dropTable();
-
-        $this->assertTrue($result);
-    }
-
-    public function testDropTableReturnsFalseOnError()
-    {
-        $this->wpdbMock->method('query')->willReturn(false);
-
-        $result = $this->repository->dropTable();
-
-        $this->assertFalse($result);
+        $this->assertSame($expected, $this->repository->dropTable());
     }
 }

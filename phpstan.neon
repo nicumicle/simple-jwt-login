@@ -20,9 +20,6 @@ parameters:
          - simple-jwt-login/src/Repositories/Wordpress/WordPressRepository.php
          - simple-jwt-login/views/
     -
-       message : '#If condition is always true\.#'
-       path: simple-jwt-login/views/applications.php
-    -
        message : '#Using (\$_POST|\$_GET|\$_REQUEST|\$_SERVER) is forbidden.*#'
        paths:
          - simple-jwt-login/views/

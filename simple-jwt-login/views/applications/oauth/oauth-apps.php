@@ -34,6 +34,24 @@ $sjlApps = [
         'view'       => plugin_dir_path(__FILE__) . 'auth0.php',
         'beta'       => true,
     ],
+    [
+        'id'         => 'facebook',
+        'name'       => __('Facebook', 'simple-jwt-login'),
+        'desc'       => __('OAuth 2.0', 'simple-jwt-login'),
+        'logo_class' => 'facebook',
+        'enabled'    => $jwtSettings->getApplicationsSettings()->facebook()->isEnabled(),
+        'view'       => plugin_dir_path(__FILE__) . 'facebook.php',
+        'beta'       => true,
+    ],
+    [
+        'id'         => 'github',
+        'name'       => __('GitHub', 'simple-jwt-login'),
+        'desc'       => __('OAuth 2.0', 'simple-jwt-login'),
+        'logo_class' => 'github',
+        'enabled'    => $jwtSettings->getApplicationsSettings()->github()->isEnabled(),
+        'view'       => plugin_dir_path(__FILE__) . 'github.php',
+        'beta'       => true,
+    ],
 ];
 
 $activeApp = $sjlApps[0]['id'];

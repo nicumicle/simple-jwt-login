@@ -82,6 +82,18 @@ class SettingsErrors extends \Exception
     const ERR_AUTH0_CLIENT_SECRET_REQUIRED      = 9;
     const ERR_AUTH0_REDIRECT_URI_REQUIRED       = 10;
 
+    # Applications - Facebook
+    const ERR_FACEBOOK_AT_LEAST_ONE_OPTION_ENABLED = 11;
+    const ERR_FACEBOOK_CLIENT_ID_REQUIRED          = 12;
+    const ERR_FACEBOOK_CLIENT_SECRET_REQUIRED      = 13;
+    const ERR_FACEBOOK_REDIRECT_URI_REQUIRED       = 14;
+
+    # Applications - GitHub
+    const ERR_GITHUB_AT_LEAST_ONE_OPTION_ENABLED = 15;
+    const ERR_GITHUB_CLIENT_ID_REQUIRED          = 16;
+    const ERR_GITHUB_CLIENT_SECRET_REQUIRED      = 17;
+    const ERR_GITHUB_REDIRECT_URI_REQUIRED       = 18;
+
     # Webhooks
     const ERR_WEBHOOKS_INVALID_URL = 1;
 

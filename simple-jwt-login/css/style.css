@@ -1510,6 +1510,14 @@
     background-image: url("../images/applications/auth0-icon.svg");
 }
 
+#simple-jwt-login .logo.facebook {
+    background-image: url("../images/applications/facebook-icon.svg");
+}
+
+#simple-jwt-login .logo.github {
+    background-image: url("../images/applications/github-icon.svg");
+}
+
 #simple-jwt-login .logo.wpgraphql {
     background-image: url("../images/applications/wpgraphql.svg");
 }

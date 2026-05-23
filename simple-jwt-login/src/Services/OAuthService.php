@@ -6,12 +6,16 @@ use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Services\Oauth\OauthApplicationInterface;
 use SimpleJWTLogin\Services\Oauth\Auth0OauthApplication;
+use SimpleJWTLogin\Services\Oauth\FacebookOauthApplication;
+use SimpleJWTLogin\Services\Oauth\GithubOauthApplication;
 use SimpleJWTLogin\Services\Oauth\GoogleOauthApplication;
 
 class OAuthService extends BaseService implements ServiceInterface
 {
-    const GOOGLE_PROVIDER = 'google';
-    const AUTH0_PROVIDER  = 'auth0';
+    const GOOGLE_PROVIDER    = 'google';
+    const AUTH0_PROVIDER     = 'auth0';
+    const FACEBOOK_PROVIDER  = 'facebook';
+    const GITHUB_PROVIDER    = 'github';
 
     /**
      * Maps provider slugs to their factory callbacks.
@@ -29,6 +33,12 @@ class OAuthService extends BaseService implements ServiceInterface
             },
             self::AUTH0_PROVIDER => function ($request, $method, $settings, $wpData) {
                 return new Auth0OauthApplication($request, $method, $settings, $wpData);
+            },
+            self::FACEBOOK_PROVIDER => function ($request, $method, $settings, $wpData) {
+                return new FacebookOauthApplication($request, $method, $settings, $wpData);
+            },
+            self::GITHUB_PROVIDER => function ($request, $method, $settings, $wpData) {
+                return new GithubOauthApplication($request, $method, $settings, $wpData);
             },
         ];
     }

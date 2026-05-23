@@ -5,6 +5,8 @@ namespace SimpleJWTLogin\Modules\Settings;
 use InvalidArgumentException;
 use SimpleJWTLogin\Modules\Settings\Oauth\AbstractOauthSettings;
 use SimpleJWTLogin\Modules\Settings\Oauth\Auth0OauthSettings;
+use SimpleJWTLogin\Modules\Settings\Oauth\FacebookOauthSettings;
+use SimpleJWTLogin\Modules\Settings\Oauth\GithubOauthSettings;
 use SimpleJWTLogin\Modules\Settings\Oauth\GoogleOauthSettings;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\AbstractThirdPartySettings;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\WpGraphQLSettings;
@@ -69,8 +71,10 @@ class ApplicationsSettings extends BaseSettings implements SettingsInterface
     private function buildProviders()
     {
         return [
-            'google' => new GoogleOauthSettings(),
-            'auth0'  => new Auth0OauthSettings(),
+            'google'   => new GoogleOauthSettings(),
+            'auth0'    => new Auth0OauthSettings(),
+            'facebook' => new FacebookOauthSettings(),
+            'github'   => new GithubOauthSettings(),
         ];
     }
 
@@ -182,6 +186,24 @@ class ApplicationsSettings extends BaseSettings implements SettingsInterface
     {
         /** @var Auth0OauthSettings */
         return $this->getProvider('auth0');
+    }
+
+    /**
+     * @return FacebookOauthSettings
+     */
+    public function facebook()
+    {
+        /** @var FacebookOauthSettings */
+        return $this->getProvider('facebook');
+    }
+
+    /**
+     * @return GithubOauthSettings
+     */
+    public function github()
+    {
+        /** @var GithubOauthSettings */
+        return $this->getProvider('github');
     }
 
     // =========================================================================

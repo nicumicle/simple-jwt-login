@@ -15,8 +15,8 @@ use SimpleJWTLogin\Repositories\WebhookLog\Repository as WebhookLogRepositoryInt
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
-use SimpleJWTLogin\Services\Applications\Google;
-use SimpleJWTLogin\Services\Applications\Auth0;
+use SimpleJWTLogin\Services\Oauth\GoogleOauthApplication;
+use SimpleJWTLogin\Services\Oauth\Auth0OauthApplication;
 
 abstract class BaseService
 {
@@ -311,18 +311,18 @@ abstract class BaseService
         $jwtParts = $this->extractJwtData($this->jwt);
         $iss = isset($jwtParts['payload']['iss']) ? (string)$jwtParts['payload']['iss'] : null;
 
-        if ($iss === Google::IIS) {
+        if ($iss === GoogleOauthApplication::IIS) {
             $googleSettings = $this->jwtSettings->getApplicationsSettings()->google();
             if ($googleSettings->isEnabled() && $googleSettings->isAllowedOnAllEndpoints()) {
-                Google::validateIdToken($this->jwt);
+                GoogleOauthApplication::validateIdToken($this->jwt);
 
                 return $jwtParts['payload']['email'];
             }
         }
-        if ($iss === Auth0::IIS) {
+        if ($iss === Auth0OauthApplication::IIS) {
             $auth0Settings = $this->jwtSettings->getApplicationsSettings()->auth0();
             if ($auth0Settings->isEnabled() && $auth0Settings->isAllowedOnAllEndpoints()) {
-                Auth0::validateIdToken($this->jwt, $this->jwtSettings);
+                Auth0OauthApplication::validateIdToken($this->jwt, $this->jwtSettings);
 
                 return $jwtParts['payload']['sub'];
             }

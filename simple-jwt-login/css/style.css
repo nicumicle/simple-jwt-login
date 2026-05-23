@@ -1408,72 +1408,61 @@
 #simple-jwt-login #reset_password_email_body { min-height: 160px; }
 
 /* ============================================
-   Applications — Card catalog + settings panel
+   Applications — Icon tile catalog + settings panel
    ============================================ */
 
-/* Catalog row */
 #simple-jwt-login .sjl-apps-catalog {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
-    padding-bottom: 20px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid var(--sjl-border);
+    gap: 8px;
+    margin-bottom: 0;
 }
 
-/* Individual app card */
-#simple-jwt-login .sjl-app-card {
+#simple-jwt-login .sjl-app-tile {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    width: 120px;
-    padding: 16px 12px 12px;
+    gap: 6px;
+    width: 80px;
+    padding: 12px 8px 10px;
     background: var(--sjl-bg-card);
     border: 2px solid var(--sjl-border);
     border-radius: var(--sjl-radius-md);
     cursor: pointer;
     user-select: none;
-    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
     text-align: center;
+    transition: border-color 0.12s, background 0.12s, box-shadow 0.12s;
 }
 
-#simple-jwt-login .sjl-app-card:hover {
+#simple-jwt-login .sjl-app-tile:hover {
     border-color: var(--sjl-primary);
     background: #fff;
 }
 
-#simple-jwt-login .sjl-app-card.active {
+#simple-jwt-login .sjl-app-tile.active {
     border-color: var(--sjl-primary);
     background: #fff;
-    box-shadow: 0 0 0 3px rgba(38, 53, 68, 0.08);
+    box-shadow: 0 0 0 2px rgba(38, 53, 68, 0.1);
 }
 
-#simple-jwt-login .sjl-app-card-logo {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-#simple-jwt-login .sjl-app-card-name {
-    font-size: 12px;
+#simple-jwt-login .sjl-app-tile-name {
+    font-size: 11px;
     font-weight: 600;
     color: var(--sjl-text);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    flex-wrap: wrap;
+    line-height: 1.2;
 }
 
-#simple-jwt-login .sjl-app-card-name .beta {
-    font-size: 9px;
-    padding: 1px 5px;
+#simple-jwt-login .sjl-app-tile-dot {
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
 }
 
-/* Status badges (shared between catalog and future uses) */
+#simple-jwt-login .sjl-dot-on  { background: #22c55e; }
+#simple-jwt-login .sjl-dot-off { background: #cbd5e1; }
+
+/* Status badges (used in provider settings cards) */
 #simple-jwt-login .sjl-app-card-badge {
     display: inline-block;
     font-size: 10px;
@@ -1495,9 +1484,13 @@
     border: 1px solid #e2e8f0;
 }
 
-/* Settings panel below the catalog */
+/* Settings panel that opens below the catalog */
 #simple-jwt-login .sjl-apps-panels {
-    /* no extra wrapper styles needed — panels render inline */
+    margin: 20px -16px -16px;
+    padding: 20px 16px 16px;
+    border-top: 2px solid var(--sjl-border-mid);
+    background: var(--sjl-bg-muted);
+    border-radius: 0 0 var(--sjl-radius-md) var(--sjl-radius-md);
 }
 
 /* App logo variants */
@@ -1510,11 +1503,15 @@
     background-position: center;
 }
 #simple-jwt-login .logo.google {
-    background-image: url("../images/applications/google-60x60.png");
+    background-image: url("../images/applications/google-icon.svg");
 }
 
 #simple-jwt-login .logo.auth0 {
-    background-image: url("../images/applications/auth0-60x60.png");
+    background-image: url("../images/applications/auth0-icon.svg");
+}
+
+#simple-jwt-login .logo.wpgraphql {
+    background-image: url("../images/applications/wpgraphql.svg");
 }
 
 
@@ -2537,4 +2534,139 @@
     overflow-y: auto;
     color: var(--sjl-text);
     margin: 0;
+}
+
+/* ============================================
+   OAuth Login Page - Button Layout Picker
+   ============================================ */
+#simple-jwt-login .sjl-layout-picker {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+#simple-jwt-login .sjl-layout-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 120px;
+    padding: 14px 12px 12px;
+    background: var(--sjl-bg-card);
+    border: 2px solid var(--sjl-border);
+    border-radius: var(--sjl-radius-md);
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+#simple-jwt-login .sjl-layout-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+#simple-jwt-login .sjl-layout-option:hover {
+    border-color: var(--sjl-primary);
+    background: #fff;
+}
+
+#simple-jwt-login .sjl-layout-option.selected {
+    border-color: var(--sjl-primary);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(38, 53, 68, 0.08);
+}
+
+#simple-jwt-login .sjl-layout-preview {
+    width: 96px;
+    height: 64px;
+    background: #f0f2f4;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+/* Row wrapper used by inline and icon-only previews */
+#simple-jwt-login .sjl-lp-row {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Mini button representation */
+#simple-jwt-login .sjl-lp-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: #fff;
+    border: 1px solid #c8ccd0;
+    border-radius: 3px;
+    padding: 3px 6px;
+    height: 18px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* In a row, shrink the text bar so two buttons fit */
+#simple-jwt-login .sjl-lp-row .sjl-lp-btn {
+    padding: 3px 4px;
+    flex: 1;
+    min-width: 0;
+}
+
+#simple-jwt-login .sjl-lp-row .sjl-lp-text {
+    flex: 1;
+    min-width: 0;
+    max-width: 22px;
+}
+
+#simple-jwt-login .sjl-lp-btn--icon,
+#simple-jwt-login .sjl-lp-row .sjl-lp-btn--icon {
+    padding: 3px 5px;
+    width: 22px;
+    flex: none;
+    justify-content: center;
+}
+
+/* Mini icon circle */
+#simple-jwt-login .sjl-lp-icon {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #9ca3af;
+    flex-shrink: 0;
+}
+
+/* Mini text bar */
+#simple-jwt-login .sjl-lp-text {
+    display: inline-block;
+    width: 32px;
+    height: 4px;
+    border-radius: 2px;
+    background: #d1d5db;
+}
+
+#simple-jwt-login .sjl-layout-option-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sjl-text);
+    text-align: center;
+}
+
+#simple-jwt-login .sjl-layout-option-desc {
+    font-size: 10px;
+    color: var(--sjl-text-muted);
+    text-align: center;
+    line-height: 1.3;
 }

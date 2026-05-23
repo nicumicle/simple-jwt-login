@@ -1,6 +1,6 @@
 <?php
 
-namespace SimpleJWTLogin\Modules\Settings\Providers;
+namespace SimpleJWTLogin\Modules\Settings\Oauth;
 
 use Exception;
 use SimpleJWTLogin\Modules\Settings\BaseSettings;
@@ -23,7 +23,7 @@ use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
  *  2. Add provider-specific getters as needed.
  *  3. Register the class in ApplicationsSettings::buildProviders().
  */
-abstract class AbstractProviderSettings
+abstract class AbstractOauthSettings
 {
     /** @var array<string, mixed> */
     private $data = [];

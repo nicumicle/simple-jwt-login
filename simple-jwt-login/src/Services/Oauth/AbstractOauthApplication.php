@@ -1,6 +1,6 @@
 <?php
 
-namespace SimpleJWTLogin\Services\Applications;
+namespace SimpleJWTLogin\Services\Oauth;
 
 use Exception;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
@@ -15,7 +15,7 @@ use SimpleJWTLogin\Services\RouteService;
  * Concrete providers (Google, Auth0, …) override the abstract hook methods to supply
  * provider-specific URLs, credentials, and token parsing logic.
  */
-abstract class AbstractOAuthApplication extends BaseApplication
+abstract class AbstractOauthApplication extends BaseOauthApplication
 {
     // -------------------------------------------------------------------------
     // Template-method hooks - implement in each concrete provider

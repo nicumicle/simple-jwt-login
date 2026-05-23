@@ -212,4 +212,57 @@ class V1ToV2MigrationTest extends TestCase
         $this->assertSame(2, $result['_schema_version']);
         $this->assertSame([], $result['login']);
     }
+
+    public function testApplicationsOauthProvidersNestedUnderOauthKey(): void
+    {
+        $v1Settings = [
+            'google' => ['enabled' => 1, 'client_id' => 'gid', 'client_secret' => 'gsecret'],
+            'auth0'  => ['enabled' => 0, 'domain' => 'example.auth0.com'],
+        ];
+
+        $result = $this->make()->migrate($v1Settings);
+
+        $this->assertArrayHasKey('oauth', $result['applications']);
+        $this->assertSame(
+            ['enabled' => 1, 'client_id' => 'gid', 'client_secret' => 'gsecret'],
+            $result['applications']['oauth']['google']
+        );
+        $this->assertSame(
+            ['enabled' => 0, 'domain' => 'example.auth0.com'],
+            $result['applications']['oauth']['auth0']
+        );
+    }
+
+    public function testApplicationsProvidersNotStoredFlat(): void
+    {
+        $v1Settings = ['google' => ['enabled' => 1]];
+        $result = $this->make()->migrate($v1Settings);
+
+        $this->assertArrayNotHasKey('google', $result['applications']);
+        $this->assertArrayNotHasKey('auth0', $result['applications']);
+    }
+
+    public function testWpGraphqlMovedToApplicationsThirdParty(): void
+    {
+        $v1Settings = ['wp_graphql' => ['enabled' => true]];
+        $result = $this->make()->migrate($v1Settings);
+
+        $this->assertSame(['enabled' => true], $result['applications']['3rdparty']['wpgraphql']);
+        $this->assertArrayNotHasKey('wp_graphql', $result['general']);
+    }
+
+    public function testMissingWpGraphqlProducesEmptyThirdParty(): void
+    {
+        $result = $this->make()->migrate([]);
+        $this->assertSame([], $result['applications']['3rdparty']);
+    }
+
+    public function testEmptyApplicationsHaveOauthAndThirdPartyKeys(): void
+    {
+        $result = $this->make()->migrate([]);
+        $this->assertArrayHasKey('oauth', $result['applications']);
+        $this->assertArrayHasKey('3rdparty', $result['applications']);
+        $this->assertSame([], $result['applications']['oauth']);
+        $this->assertSame([], $result['applications']['3rdparty']);
+    }
 }

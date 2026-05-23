@@ -1,12 +1,12 @@
 <?php
 
-namespace SimpleJWTLogin\Services\Applications;
+namespace SimpleJWTLogin\Services\Oauth;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Libraries\ServerCall;
 
-class Google extends AbstractOAuthApplication implements ApplicationInterface
+class GoogleOauthApplication extends AbstractOauthApplication implements OauthApplicationInterface
 {
     const PROVIDER_SLUG   = 'google';
     const IIS             = 'accounts.google.com';
@@ -15,7 +15,7 @@ class Google extends AbstractOAuthApplication implements ApplicationInterface
     const CHECK_TOKEN_URL = 'https://oauth2.googleapis.com/tokeninfo?id_token=%s';
 
     // -------------------------------------------------------------------------
-    // ApplicationInterface
+    // OauthApplicationInterface
     // -------------------------------------------------------------------------
 
     public function validate()
@@ -65,7 +65,7 @@ class Google extends AbstractOAuthApplication implements ApplicationInterface
     }
 
     // -------------------------------------------------------------------------
-    // AbstractOAuthApplication hooks
+    // AbstractOauthApplication hooks
     // -------------------------------------------------------------------------
 
     protected function getTokenEndpoint()

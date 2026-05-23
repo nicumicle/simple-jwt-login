@@ -6,26 +6,36 @@ jQuery(document).ready(
 
         $('#auth_codes').append($('#code_line').html());
 
-        // Applications: card catalog panel switching
-        $('#simple-jwt-login .sjl-app-card[data-app]').on('click keypress', function (e) {
+        // Login button layout picker
+        $('#simple-jwt-login .sjl-layout-option').on('click', function () {
+            var $option = $(this);
+            $option.closest('.sjl-layout-picker').find('.sjl-layout-option').removeClass('selected');
+            $option.addClass('selected');
+            $option.find('input[type="radio"]').prop('checked', true);
+        });
+
+        // Applications: icon tile catalog switching (scoped per catalog group)
+        $('#simple-jwt-login .sjl-app-tile[data-app]').on('click keypress', function (e) {
             if (e.type === 'keypress' && e.which !== 13) {
                 return;
             }
-            var $card  = $(this);
-            var appId  = $card.data('app');
-            var isOpen = $card.hasClass('active');
+            var $tile    = $(this);
+            var appId    = $tile.data('app');
+            var isOpen   = $tile.hasClass('active');
+            var $catalog = $tile.closest('.sjl-apps-catalog');
+            var $body    = $catalog.closest('.sjl-apps-body');
+            var $panels  = $body.find('.sjl-apps-panels');
 
-            // Always show at least one panel - prevent deselection
             if (isOpen) {
                 return;
             }
 
-            $('#simple-jwt-login .sjl-app-card').removeClass('active').attr('aria-expanded', 'false');
-            $('#simple-jwt-login .sjl-app-panel').hide();
+            $catalog.find('.sjl-app-tile').removeClass('active').attr('aria-expanded', 'false');
+            $panels.find('.sjl-app-panel').hide();
 
-            $card.addClass('active').attr('aria-expanded', 'true');
-            $('#simple-jwt-login #sjl-app-panel-' + appId).show();
-            $('#active_app_panel').val(appId);
+            $tile.addClass('active').attr('aria-expanded', 'true');
+            $panels.find('#sjl-app-panel-' + appId).show();
+            $body.find('input[type="hidden"][name$="_panel"]').val(appId);
         });
 
         $('#simple-jwt-login #add_code').click(

@@ -1,6 +1,6 @@
 <?php
 
-namespace SimpleJWTLogin\Services\Applications;
+namespace SimpleJWTLogin\Services\Oauth;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
@@ -16,7 +16,7 @@ use SimpleJWTLogin\Libraries\ServerCall;
  *
  * Auth0 is domain-based, so all endpoint URLs are derived from the configured domain.
  */
-class Auth0 extends AbstractOAuthApplication implements ApplicationInterface
+class Auth0OauthApplication extends AbstractOauthApplication implements OauthApplicationInterface
 {
     const PROVIDER_SLUG         = 'auth0';
     const IIS                   = 'accounts.auth0.com';
@@ -25,7 +25,7 @@ class Auth0 extends AbstractOAuthApplication implements ApplicationInterface
     const USERINFO_ENDPOINT_TPL = 'https://%s/userinfo';
 
     // -------------------------------------------------------------------------
-    // ApplicationInterface
+    // OauthApplicationInterface
     // -------------------------------------------------------------------------
 
     public function validate()
@@ -77,7 +77,7 @@ class Auth0 extends AbstractOAuthApplication implements ApplicationInterface
     }
 
     // -------------------------------------------------------------------------
-    // AbstractOAuthApplication hooks
+    // AbstractOauthApplication hooks
     // -------------------------------------------------------------------------
 
     protected function getTokenEndpoint()
@@ -178,7 +178,7 @@ class Auth0 extends AbstractOAuthApplication implements ApplicationInterface
 
     /**
      * Validate an Auth0 JWT/access_token by calling the userinfo endpoint.
-     * Mirrors Google::validateIdToken so that BaseService can call it via an instance.
+     * Mirrors GoogleOauthApplication::validateIdToken so that BaseService can call it via an instance.
      *
      * @param string $jwt
      * @param \SimpleJWTLogin\Modules\SimpleJWTLoginSettings $settings

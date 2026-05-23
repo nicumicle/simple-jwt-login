@@ -73,7 +73,7 @@ class V1ToV2Migration implements MigrationInterface
                 $general[$key] = $settings[$key];
             }
         }
-        $subObjects = ['api_middleware', 'wp_graphql', 'request_keys', 'security'];
+        $subObjects = ['api_middleware', 'request_keys', 'security'];
         foreach ($subObjects as $key) {
             if (isset($settings[$key])) {
                 $general[$key] = $settings[$key];
@@ -273,13 +273,22 @@ class V1ToV2Migration implements MigrationInterface
      */
     private function migrateApplications($settings)
     {
-        $apps = [];
+        $oauth = [];
         foreach (['google', 'auth0'] as $slug) {
             if (isset($settings[$slug]) && is_array($settings[$slug])) {
-                $apps[$slug] = $settings[$slug];
+                $oauth[$slug] = $settings[$slug];
             }
         }
-        return $apps;
+
+        $thirdParty = [];
+        if (isset($settings['wp_graphql']) && is_array($settings['wp_graphql'])) {
+            $thirdParty['wpgraphql'] = $settings['wp_graphql'];
+        }
+
+        return [
+            'oauth'    => $oauth,
+            '3rdparty' => $thirdParty,
+        ];
     }
 
     /**

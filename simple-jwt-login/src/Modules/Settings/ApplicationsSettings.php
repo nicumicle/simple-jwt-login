@@ -3,32 +3,55 @@
 namespace SimpleJWTLogin\Modules\Settings;
 
 use InvalidArgumentException;
-use SimpleJWTLogin\Modules\Settings\Providers\AbstractProviderSettings;
-use SimpleJWTLogin\Modules\Settings\Providers\Auth0ProviderSettings;
-use SimpleJWTLogin\Modules\Settings\Providers\GoogleProviderSettings;
+use SimpleJWTLogin\Modules\Settings\Oauth\AbstractOauthSettings;
+use SimpleJWTLogin\Modules\Settings\Oauth\Auth0OauthSettings;
+use SimpleJWTLogin\Modules\Settings\Oauth\GoogleOauthSettings;
+use SimpleJWTLogin\Modules\Settings\ThirdParty\AbstractThirdPartySettings;
+use SimpleJWTLogin\Modules\Settings\ThirdParty\WpGraphQLSettings;
 
 /**
- * Registry for all OAuth / OIDC provider settings.
+ * Registry for OAuth / OIDC providers and 3rd-party integrations.
  *
- * Adding a new provider requires only:
+ * Storage layout (under $settings['applications']):
+ *   ['oauth']['google']     => Google OAuth settings
+ *   ['oauth']['auth0']      => Auth0 OAuth settings
+ *   ['3rdparty']['wpgraphql'] => WPGraphQL integration settings
+ *
+ * Adding a new OAuth provider requires only:
  *  1. Create a subclass of AbstractProviderSettings.
  *  2. Add it to buildProviders() below.
  *  3. Optionally expose a typed convenience accessor (like google() / auth0()).
  *
- * Everything else - field registration, sanitisation, validation - is handled
- * by the abstract base class automatically.
+ * Adding a new 3rd-party integration requires only:
+ *  1. Create a subclass of AbstractThirdPartySettings.
+ *  2. Add it to buildThirdPartyApps() below.
+ *  3. Optionally expose a typed convenience accessor (like wpgraphql()).
  */
 class ApplicationsSettings extends BaseSettings implements SettingsInterface
 {
+    const OAUTH_KEY = 'oauth';
+    const THIRD_PARTY_KEY = '3rdparty';
+
+    const LAYOUT_STACKED      = 'stacked';
+    const LAYOUT_INLINE       = 'inline';
+    const LAYOUT_ICON_STACKED = 'icon-stacked';
+    const LAYOUT_ICON_INLINE  = 'icon-inline';
+
     /**
-     * @var AbstractProviderSettings[] keyed by provider group slug
+     * @var AbstractOauthSettings[] keyed by provider slug
      */
     private $providers;
+
+    /**
+     * @var AbstractThirdPartySettings[] keyed by integration slug
+     */
+    private $thirdPartyApps;
 
     public function __construct()
     {
         parent::__construct();
-        $this->providers = $this->buildProviders();
+        $this->providers      = $this->buildProviders();
+        $this->thirdPartyApps = $this->buildThirdPartyApps();
     }
 
     protected function getSectionKey()
@@ -37,17 +60,27 @@ class ApplicationsSettings extends BaseSettings implements SettingsInterface
     }
 
     // =========================================================================
-    // Provider registry - add new providers here
+    // Provider / integration registries - add new entries here
     // =========================================================================
 
     /**
-     * @return AbstractProviderSettings[]
+     * @return AbstractOauthSettings[]
      */
     private function buildProviders()
     {
         return [
-            'google' => new GoogleProviderSettings(),
-            'auth0'  => new Auth0ProviderSettings(),
+            'google' => new GoogleOauthSettings(),
+            'auth0'  => new Auth0OauthSettings(),
+        ];
+    }
+
+    /**
+     * @return AbstractThirdPartySettings[]
+     */
+    private function buildThirdPartyApps()
+    {
+        return [
+            'wpgraphql' => new WpGraphQLSettings(),
         ];
     }
 
@@ -58,8 +91,32 @@ class ApplicationsSettings extends BaseSettings implements SettingsInterface
     public function initSettingsFromPost()
     {
         foreach ($this->providers as $slug => $provider) {
-            $this->settings[$slug] = $provider->processPost($this->post, $this->wordPressData);
+            $this->settings[self::OAUTH_KEY][$slug] = $provider->processPost(
+                $this->post,
+                $this->wordPressData
+            );
         }
+
+        foreach ($this->thirdPartyApps as $slug => $app) {
+            $this->settings[self::THIRD_PARTY_KEY][$slug] = $app->processPost(
+                $this->post,
+                $this->wordPressData
+            );
+        }
+
+        $allowedLayouts = [
+            self::LAYOUT_STACKED,
+            self::LAYOUT_INLINE,
+            self::LAYOUT_ICON_STACKED,
+            self::LAYOUT_ICON_INLINE,
+        ];
+        $layout = isset($this->post['login_button_layout'])
+            ? sanitize_text_field($this->post['login_button_layout'])
+            : self::LAYOUT_STACKED;
+        if (!in_array($layout, $allowedLayouts, true)) {
+            $layout = self::LAYOUT_STACKED;
+        }
+        $this->settings['login_button_layout'] = $layout;
     }
 
     public function validateSettings()
@@ -69,16 +126,31 @@ class ApplicationsSettings extends BaseSettings implements SettingsInterface
         }
     }
 
+    /**
+     * @return string One of the LAYOUT_* constants.
+     */
+    public function getLoginButtonLayout()
+    {
+        $stored = isset($this->settings['login_button_layout'])
+            ? $this->settings['login_button_layout']
+            : self::LAYOUT_STACKED;
+        // Migrate legacy value stored before the stacked/inline split was added.
+        if ($stored === 'icon-only') {
+            return self::LAYOUT_ICON_STACKED;
+        }
+        return $stored;
+    }
+
     // =========================================================================
-    // Provider access
+    // OAuth provider access
     // =========================================================================
 
     /**
-     * Return a hydrated settings object for the given provider slug.
+     * Return a hydrated settings object for the given OAuth provider slug.
      * The returned object is a clone so callers cannot accidentally share state.
      *
      * @param string $slug
-     * @return AbstractProviderSettings
+     * @return AbstractOauthSettings
      * @throws \InvalidArgumentException
      */
     public function getProvider($slug)
@@ -87,26 +159,62 @@ class ApplicationsSettings extends BaseSettings implements SettingsInterface
             throw new InvalidArgumentException("Unknown OAuth provider: {$slug}");
         }
 
-        return (clone $this->providers[$slug])->withSettings(
-            isset($this->settings[$slug]) ? $this->settings[$slug] : []
-        );
+        $stored = isset($this->settings[self::OAUTH_KEY][$slug])
+            ? $this->settings[self::OAUTH_KEY][$slug]
+            : [];
+
+        return (clone $this->providers[$slug])->withSettings($stored);
     }
 
     /**
-     * @return GoogleProviderSettings
+     * @return GoogleOauthSettings
      */
     public function google()
     {
-        /** @var GoogleProviderSettings */
+        /** @var GoogleOauthSettings */
         return $this->getProvider('google');
     }
 
     /**
-     * @return Auth0ProviderSettings
+     * @return Auth0OauthSettings
      */
     public function auth0()
     {
-        /** @var Auth0ProviderSettings */
+        /** @var Auth0OauthSettings */
         return $this->getProvider('auth0');
+    }
+
+    // =========================================================================
+    // 3rd-party integration access
+    // =========================================================================
+
+    /**
+     * Return a hydrated settings object for the given 3rd-party integration slug.
+     * The returned object is a clone so callers cannot accidentally share state.
+     *
+     * @param string $slug
+     * @return AbstractThirdPartySettings
+     * @throws \InvalidArgumentException
+     */
+    public function getThirdParty($slug)
+    {
+        if (!isset($this->thirdPartyApps[$slug])) {
+            throw new InvalidArgumentException("Unknown 3rd-party integration: {$slug}");
+        }
+
+        $stored = isset($this->settings[self::THIRD_PARTY_KEY][$slug])
+            ? $this->settings[self::THIRD_PARTY_KEY][$slug]
+            : [];
+
+        return (clone $this->thirdPartyApps[$slug])->withSettings($stored);
+    }
+
+    /**
+     * @return WpGraphQLSettings
+     */
+    public function wpgraphql()
+    {
+        /** @var WpGraphQLSettings */
+        return $this->getThirdParty('wpgraphql');
     }
 }

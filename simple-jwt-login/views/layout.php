@@ -175,6 +175,12 @@ $settingsPages = [
         'has_error' => false,
         'index' => SettingsErrors::PREFIX_API_KEYS,
     ],
+    [
+        'id'   => 'simple-jwt-login-tab-3rd-party-apps',
+        'name' => __('3rd Party Apps', 'simple-jwt-login'),
+        'has_error' => false,
+        'index' => SettingsErrors::PREFIX_3RD_PARTY_APPS,
+    ],
 ];
 
 $pagesByIndex = [];
@@ -217,6 +223,7 @@ $sidebarGroups = [
         'icon'  => 'dashicons-admin-plugins',
         'items' => [
             ['index' => SettingsErrors::PREFIX_APPLICATIONS, 'name' => __('OAuth', 'simple-jwt-login'), 'icon' => 'dashicons-admin-network'],
+            ['index' => SettingsErrors::PREFIX_3RD_PARTY_APPS, 'name' => __('3rd Party Apps', 'simple-jwt-login'), 'icon' => 'dashicons-admin-plugins'],
         ],
     ],
     [
@@ -435,7 +442,7 @@ $sidebarGroups = [
                                         include_once plugin_dir_path(__FILE__) . "protect-endpoints-view.php";
                                         break;
                                     case SettingsErrors::PREFIX_APPLICATIONS:
-                                        include_once plugin_dir_path(__FILE__) . "applications.php";
+                                        include_once plugin_dir_path(__FILE__) . "applications/oauth/oauth-apps.php";
                                         break;
                                     case SettingsErrors::PREFIX_AUDIT_LOGS:
                                         include_once plugin_dir_path(__FILE__) . "audit-logs-view.php";
@@ -451,6 +458,9 @@ $sidebarGroups = [
                                         break;
                                     case SettingsErrors::PREFIX_API_KEYS:
                                         include_once plugin_dir_path(__FILE__) . "api-keys-view.php";
+                                        break;
+                                    case SettingsErrors::PREFIX_3RD_PARTY_APPS:
+                                        include_once plugin_dir_path(__FILE__) . "applications/3rd-party/3rd-party-apps.php";
                                         break;
                                     default:
                                         echo esc_html__("View file does not exists.", 'simple-jwt-login');

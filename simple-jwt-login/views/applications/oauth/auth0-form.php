@@ -2,7 +2,6 @@
 
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Services\Applications\Auth0;
 use SimpleJWTLogin\Services\RouteService;
 
 if (! defined('ABSPATH')) {
@@ -29,7 +28,7 @@ echo esc_url($auth0Domain ? sprintf('https://%s/authorize', $auth0Domain) : '#')
     <input type="hidden" name="scope" value="openid email profile" />
     <input type="hidden" name="redirect_uri" value="<?php echo esc_url($jwtSettings->generateExampleLink(RouteService::OAUTH_TOKEN, ['provider' => 'auth0']));?>" />
     <button name="auth0-auth" class="simple-jwt-login-auth-btn">
-        <img src="<?php echo esc_url($pluginDirUrl . 'images/applications/auth0-60x60.png');?>" alt="Auth0 logo"/>
+        <img src="<?php echo esc_url($pluginDirUrl . 'images/applications/auth0-icon.svg');?>" alt="Auth0 logo"/>
         <span class="simple-jwt-login-auth-txt">
             <?php echo esc_html__('Continue with Auth0', 'simple-jwt-login');?>
         </span>

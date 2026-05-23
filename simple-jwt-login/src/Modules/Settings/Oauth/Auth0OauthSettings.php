@@ -1,11 +1,11 @@
 <?php
 
-namespace SimpleJWTLogin\Modules\Settings\Providers;
+namespace SimpleJWTLogin\Modules\Settings\Oauth;
 
 use SimpleJWTLogin\Modules\Settings\BaseSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 
-class Auth0ProviderSettings extends AbstractProviderSettings
+class Auth0OauthSettings extends AbstractOauthSettings
 {
     public function getGroup()
     {

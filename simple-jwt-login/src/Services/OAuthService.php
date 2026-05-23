@@ -4,9 +4,9 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
-use SimpleJWTLogin\Services\Applications\ApplicationInterface;
-use SimpleJWTLogin\Services\Applications\Auth0;
-use SimpleJWTLogin\Services\Applications\Google;
+use SimpleJWTLogin\Services\Oauth\OauthApplicationInterface;
+use SimpleJWTLogin\Services\Oauth\Auth0OauthApplication;
+use SimpleJWTLogin\Services\Oauth\GoogleOauthApplication;
 
 class OAuthService extends BaseService implements ServiceInterface
 {
@@ -25,10 +25,10 @@ class OAuthService extends BaseService implements ServiceInterface
     {
         $this->providerFactories = [
             self::GOOGLE_PROVIDER => function ($request, $method, $settings, $wpData) {
-                return new Google($request, $method, $settings, $wpData);
+                return new GoogleOauthApplication($request, $method, $settings, $wpData);
             },
             self::AUTH0_PROVIDER => function ($request, $method, $settings, $wpData) {
-                return new Auth0($request, $method, $settings, $wpData);
+                return new Auth0OauthApplication($request, $method, $settings, $wpData);
             },
         ];
     }
@@ -39,7 +39,7 @@ class OAuthService extends BaseService implements ServiceInterface
 
         $this->assertProviderEnabled($provider);
 
-        /** @var ApplicationInterface $app */
+        /** @var OauthApplicationInterface $app */
         $app = ($this->providerFactories[$provider])(
             $this->request,
             $this->requestMethod,

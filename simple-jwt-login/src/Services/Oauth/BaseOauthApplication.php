@@ -1,13 +1,13 @@
 <?php
 
-namespace SimpleJWTLogin\Services\Applications;
+namespace SimpleJWTLogin\Services\Oauth;
 
 use SimpleJWTLogin\Modules\Jwt\JwtInterface;
 use SimpleJWTLogin\Modules\Jwt\JwtWrapper;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 
-class BaseApplication
+class BaseOauthApplication
 {
     /**
      * @var string

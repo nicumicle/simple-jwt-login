@@ -135,7 +135,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
                 __('Missing code or jwt parameter.', 'simple-jwt-login'),
                 ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE
             );
-        } 
+        }
         if (!$isJWTAllowed && empty($this->request['code'])) {
             throw new ValidationException(
                 __('Missing code parameter.', 'simple-jwt-login'),
@@ -148,7 +148,6 @@ class ResetPasswordService extends BaseService implements ServiceInterface
                 ErrorCodes::ERR_INVALID_EMAIL_FOR_CHANGE_PASSWORD
             );
         }
-
     }
 
     /**

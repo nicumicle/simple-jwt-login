@@ -6,7 +6,6 @@ use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
-use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use WP_REST_Response;
 
@@ -157,7 +156,7 @@ class RefreshTokenService extends AuthenticateService
         $response = [
             'success' => true,
             'data'    => [
-                'jwt' => JWT::encode(
+                'jwt' => $this->getJwtWrapper()->encode(
                     $newPayload,
                     JwtKeyFactory::getFactory($this->jwtSettings)->getPrivateKey(),
                     $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm()

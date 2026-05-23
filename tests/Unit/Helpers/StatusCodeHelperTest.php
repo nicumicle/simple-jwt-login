@@ -6,6 +6,7 @@ use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Exceptions\JWTException;
 use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\Helpers\StatusCodeHelper;
 
@@ -199,5 +200,24 @@ class StatusCodeHelperTest extends TestCase
     {
         $exception = new ValidationException('', $errorCode);
         $this->assertSame(422, StatusCodeHelper::getStatusCodeFromException($exception, 400));
+    }
+
+    public static function jwtExceptionProvider(): array
+    {
+        return [
+            'empty_key'              => [ErrorCodes::ERR_EMPTY_KEY],
+            'wrong_segments'         => [ErrorCodes::ERR_WRONG_NUMBER_OF_SEGMENTS],
+            'expired_token'          => [ErrorCodes::ERR_TOKEN_EXPIRED],
+            'signature_failed'       => [ErrorCodes::ERR_SIGNATURE_VERIFICATION_FAILED],
+            'unknown_code'           => [9999],
+            'zero_code'              => [0],
+        ];
+    }
+
+    #[DataProvider('jwtExceptionProvider')]
+    public function testJWTExceptionAlwaysReturns400(int $errorCode): void
+    {
+        $exception = new JWTException('', $errorCode);
+        $this->assertSame(400, StatusCodeHelper::getStatusCodeFromException($exception, 500));
     }
 }

@@ -4,7 +4,6 @@ namespace SimpleJWTLogin\Services\Applications;
 
 use Exception;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
-use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Services\AuthenticateService;
 use SimpleJWTLogin\Services\RouteService;
@@ -255,7 +254,7 @@ abstract class AbstractOAuthApplication extends BaseApplication
         return [
             'success' => true,
             'data'    => [
-                'jwt' => JWT::encode(
+                'jwt' => $this->getJwtWrapper()->encode(
                     $payload,
                     JwtKeyFactory::getFactory($this->settings)->getPrivateKey(),
                     $this->settings->getGeneralSettings()->getJWTDecryptAlgorithm()

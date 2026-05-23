@@ -7,7 +7,8 @@ use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Exceptions\ValidationException as ExceptionsValidationException;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
 use SimpleJWTLogin\Helpers\ServerHelper;
-use SimpleJWTLogin\Libraries\JWT\JWT;
+use SimpleJWTLogin\Modules\Jwt\JwtInterface;
+use SimpleJWTLogin\Modules\Jwt\JwtWrapper;
 use SimpleJWTLogin\Modules\AuthCodeBuilder;
 use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepositoryInterface;
 use SimpleJWTLogin\Repositories\WebhookLog\Repository as WebhookLogRepositoryInterface;
@@ -70,6 +71,11 @@ abstract class BaseService
      * @var WebhookLogRepositoryInterface|null
      */
     protected $webhookLogRepository;
+
+    /**
+     * @var JwtInterface|null
+     */
+    protected $jwtWrapper;
 
     /**
      * @param string $requestMethod
@@ -161,6 +167,29 @@ abstract class BaseService
         $this->webhookLogRepository = $repository;
 
         return $this;
+    }
+
+    /**
+     * @param JwtInterface $jwtWrapper
+     * @return $this
+     */
+    public function withJwtWrapper(JwtInterface $jwtWrapper)
+    {
+        $this->jwtWrapper = $jwtWrapper;
+
+        return $this;
+    }
+
+    /**
+     * @return JwtInterface
+     */
+    protected function getJwtWrapper()
+    {
+        if ($this->jwtWrapper === null) {
+            $this->jwtWrapper = new JwtWrapper();
+        }
+
+        return $this->jwtWrapper;
     }
 
     /**
@@ -307,9 +336,9 @@ abstract class BaseService
             ? $ruleConfig['algorithm']
             : $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm();
 
-        $jwtLib = new JWT();
-        $jwtLib->applyLeeway(self::JWT_LEEWAY);
-        $decoded = (array)$jwtLib->decode(
+        $jwtWrapper = $this->getJwtWrapper();
+        $jwtWrapper->applyLeeway(self::JWT_LEEWAY);
+        $decoded = (array)$jwtWrapper->decode(
             $this->jwt,
             $jwtKey->getPublicKey(),
             [$algorithm]
@@ -397,7 +426,7 @@ abstract class BaseService
      */
     protected function extractJwtData($jwt)
     {
-        return (new JWT())->extractDataFromJwt($jwt);
+        return $this->getJwtWrapper()->extractDataFromJwt($jwt);
     }
 
     /**

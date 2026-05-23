@@ -3,6 +3,7 @@
 namespace SimpleJWTLogin\Helpers;
 
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Exceptions\JWTException;
 use SimpleJWTLogin\Exceptions\ValidationException;
 
 class StatusCodeHelper
@@ -132,6 +133,10 @@ class StatusCodeHelper
     {
         if (!($exception instanceof \Exception)) {
             return 500;
+        }
+
+        if ($exception instanceof JWTException) {
+            return 400;
         }
 
         if ($exception instanceof ValidationException) {

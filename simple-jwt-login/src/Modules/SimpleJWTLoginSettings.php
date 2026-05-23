@@ -74,7 +74,7 @@ class SimpleJWTLoginSettings
      *
      * @param WordPressDataInterface $wordPressData
      */
-    public function __construct(WordPressDataInterface $wordPressData)
+    public function __construct($wordPressData)
     {
         $this->wordPressData = $wordPressData;
         $data = $this->wordPressData->getOptionFromDatabase(self::OPTIONS_KEY);
@@ -407,18 +407,18 @@ class SimpleJWTLoginSettings
         $namespace = $this->getGeneralSettings()->getRouteNamespace();
         $permalinkStructure = $this->wordPressData->getOptionFromDatabase('permalink_structure');
 
+        $url = $this->wordPressData->getSiteUrl()
+            . '/?rest_route=/'
+            . $namespace
+            . $route;
+        $separator = '&';
+
         if (!empty($permalinkStructure)) {
             $url = $this->wordPressData->getSiteUrl()
                 . '/wp-json/'
                 . $namespace
                 . $route;
             $separator = '?';
-        } else {
-            $url = $this->wordPressData->getSiteUrl()
-                . '/?rest_route=/'
-                . $namespace
-                . $route;
-            $separator = '&';
         }
 
         if (empty($params) || !is_array($params)) {

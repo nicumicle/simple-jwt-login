@@ -6,7 +6,6 @@ use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
-use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\AuthCodeBuilder;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
@@ -176,7 +175,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
         if ($this->jwtSettings->getRegisterSettings()->isJwtEnabled()) {
             $payload = $this->initPayload($user);
 
-            $userArray['jwt'] = JWT::encode(
+            $userArray['jwt'] = $this->getJwtWrapper()->encode(
                 $payload,
                 JwtKeyFactory::getFactory($this->jwtSettings)->getPrivateKey(),
                 $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm()
@@ -234,13 +233,14 @@ class RegisterUserService extends BaseService implements ServiceInterface
         }
 
 
-        if (empty($this->request['email']) ) {
+        if (empty($this->request['email'])) {
             throw new ValidationException(
                 __('Missing email.', 'simple-jwt-login'),
                 ErrorCodes::ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD
             );
         }
-        if  (empty($this->request['password']) && !$this->jwtSettings->getRegisterSettings()->isRandomPasswordForCreateUserEnabled()){
+
+        if (empty($this->request['password']) && !$this->jwtSettings->getRegisterSettings()->isRandomPasswordForCreateUserEnabled()) {
             throw new ValidationException(
                 __('Missing password.', 'simple-jwt-login'),
                 ErrorCodes::ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD

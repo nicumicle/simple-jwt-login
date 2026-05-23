@@ -4,7 +4,6 @@ namespace SimpleJWTLogin\Services\Applications;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
-use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Libraries\ServerCall;
 
 class Google extends AbstractOAuthApplication implements ApplicationInterface
@@ -56,7 +55,7 @@ class Google extends AbstractOAuthApplication implements ApplicationInterface
             case !empty($this->request['id_token']):
                 $idToken = $this->request['id_token'];
                 $this->validateProviderToken($idToken);
-                $decoded = JWT::extractDataFromJwt($idToken);
+                $decoded = $this->getJwtWrapper()->extractDataFromJwt($idToken);
                 $email   = isset($decoded['payload']['email']) ? $decoded['payload']['email'] : '';
 
                 return $this->createWpJwtForEmail($email);
@@ -110,7 +109,7 @@ class Google extends AbstractOAuthApplication implements ApplicationInterface
      */
     protected function getEmailFromTokenResponse($tokenResponse)
     {
-        $jwt = JWT::extractDataFromJwt($tokenResponse['id_token']);
+        $jwt = $this->getJwtWrapper()->extractDataFromJwt($tokenResponse['id_token']);
 
         return isset($jwt['payload']['email']) ? $jwt['payload']['email'] : '';
     }

@@ -2,6 +2,8 @@
 
 namespace SimpleJWTLogin\Services\Applications;
 
+use SimpleJWTLogin\Modules\Jwt\JwtInterface;
+use SimpleJWTLogin\Modules\Jwt\JwtWrapper;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 
@@ -25,6 +27,23 @@ class BaseApplication
      * @var SimpleJWTLoginSettings
      */
     protected $settings;
+
+    /**
+     * @var JwtInterface|null
+     */
+    protected $jwtWrapper;
+
+    /**
+     * @return JwtInterface
+     */
+    protected function getJwtWrapper()
+    {
+        if ($this->jwtWrapper === null) {
+            $this->jwtWrapper = new JwtWrapper();
+        }
+
+        return $this->jwtWrapper;
+    }
 
     /**
      * @param array $request

@@ -5,7 +5,6 @@ namespace SimpleJWTLogin\Services;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
-use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
@@ -199,7 +198,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
         }
 
-        $jwt = JWT::encode(
+        $jwt = $this->getJwtWrapper()->encode(
             $payload,
             JwtKeyFactory::getFactory($this->jwtSettings)->getPrivateKey(),
             $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm()
@@ -305,7 +304,6 @@ class AuthenticateService extends BaseService implements ServiceInterface
     }
 
     /**
-     * @param int $errCode
      * @param bool|null $isRequired
      *
      * @throws Exception

@@ -139,7 +139,7 @@ class AuthEndpointTest extends WPTestCase
     {
         static::configurePlugin(static::baseConfig());
 
-        [$email, $password, $userId] = $this->createUser();
+        [, $password, $userId] = $this->createUser();
         $user = get_user_by('id', $userId);
         $this->assertNotFalse($user, 'Pre-condition: user must exist');
 
@@ -178,7 +178,7 @@ class AuthEndpointTest extends WPTestCase
     {
         static::configurePlugin(static::baseConfig());
 
-        [$email, $password, $userId] = $this->createUser();
+        [, $password, $userId] = $this->createUser();
         $user = get_user_by('id', $userId);
         $this->assertNotFalse($user, 'Pre-condition: user must exist');
 

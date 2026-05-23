@@ -256,11 +256,11 @@ if (!defined('ABSPATH')) {
                 <label for="wp_graphql_enabled" class="sjl-gen-feature-label">
                     <span class="beta">beta</span>
                     <?php echo sprintf(
-                            __('WPGraphQL authentication (%sWPGraphQL plugin required%s)', 'simple-jwt-login'), 
-                            '<a href="https://www.wpgraphql.com/" target="_blank">',
-                            '</a>'
-                        );
-                    ?>
+                        __('WPGraphQL authentication (%sWPGraphQL plugin required%s)', 'simple-jwt-login'),
+                        '<a href="https://www.wpgraphql.com/" target="_blank">',
+                        '</a>'
+                    );
+?>
                 </label>
                 <p class="sjl-gen-feature-desc">
                     <?php echo esc_html__(

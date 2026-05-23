@@ -33,9 +33,9 @@ class ValidationsTest extends TestBase
                 'email'  => null,
                 'username' => null,
                 'password' => null,
-                'expectedStatusCode' => 400,
+                'expectedStatusCode' => 422,
                 'expectedError' => self::generateErrorJson(
-                    'Missing email or password.',
+                    'Missing email.',
                     ErrorCodes::ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD
                 )
             ],
@@ -43,9 +43,9 @@ class ValidationsTest extends TestBase
                 'email'  => "",
                 'username' => "",
                 'password' => "",
-                'expectedStatusCode' => 400,
+                'expectedStatusCode' => 422,
                 'expectedError' => self::generateErrorJson(
-                    'Missing email or password.',
+                    'Missing email.',
                     ErrorCodes::ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD
                 )
             ],
@@ -63,9 +63,9 @@ class ValidationsTest extends TestBase
                 'email'  => "test@simplejwtlogin",
                 'username' => null,
                 'password' => null,
-                'expectedStatusCode' => 400,
+                'expectedStatusCode' => 422,
                 'expectedError' => self::generateErrorJson(
-                    'Missing email or password.',
+                    'Missing password.',
                     ErrorCodes::ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD
                 )
             ],
@@ -73,9 +73,9 @@ class ValidationsTest extends TestBase
                 'email'  => null,
                 'username' => "admin",
                 'password' => null,
-                'expectedStatusCode' => 400,
+                'expectedStatusCode' => 422,
                 'expectedError' => self::generateErrorJson(
-                    'Missing email or password.',
+                    'Missing email.',
                     ErrorCodes::ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD
                 )
             ],

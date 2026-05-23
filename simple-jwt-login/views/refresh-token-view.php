@@ -54,7 +54,7 @@ if (! defined('ABSPATH')) {
                     <?php
                     echo esc_html($jwtSettings->generateExampleLink(
                         RouteService::AUTHENTICATION_REFRESH_ROUTE,
-                        [$jwtSettings->getGeneralSettings()->getRequestKeyUrl() => 'YOUR_JWT']
+                        ['refresh_token' => 'YOUR_REFRESH_TOKEN']
                     ));
                     ?>
                 </span>

@@ -2,6 +2,7 @@
 
 namespace SimpleJWTLogin\Services;
 
+use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
@@ -10,8 +11,8 @@ use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
+use SimpleJWTLogin\Services\Integrations\TwoFactor\TwoFactorBridge;
 use WP_REST_Response;
-use Exception;
 use WP_User;
 
 class AuthenticateService extends BaseService implements ServiceInterface

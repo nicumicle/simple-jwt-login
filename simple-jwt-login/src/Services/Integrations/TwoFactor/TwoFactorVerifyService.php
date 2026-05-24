@@ -1,12 +1,14 @@
 <?php
 
-namespace SimpleJWTLogin\Services;
+namespace SimpleJWTLogin\Services\Integrations\TwoFactor;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
+use SimpleJWTLogin\Services\AuthenticateService;
+use SimpleJWTLogin\Services\ServiceInterface;
 use WP_REST_Response;
 
 class TwoFactorVerifyService extends AuthenticateService implements ServiceInterface

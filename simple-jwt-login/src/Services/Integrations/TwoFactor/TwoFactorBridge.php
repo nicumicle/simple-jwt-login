@@ -1,6 +1,6 @@
 <?php
 
-namespace SimpleJWTLogin\Services;
+namespace SimpleJWTLogin\Services\Integrations\TwoFactor;
 
 class TwoFactorBridge
 {
@@ -32,7 +32,7 @@ class TwoFactorBridge
 
     /**
      * @param int $userId
-     * @return string|false
+     * @return array|false
      */
     public function createNonce($userId)
     {

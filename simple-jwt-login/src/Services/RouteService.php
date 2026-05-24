@@ -4,6 +4,7 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Services\Integrations\TwoFactor\TwoFactorVerifyService;
 
 class RouteService extends BaseService
 {

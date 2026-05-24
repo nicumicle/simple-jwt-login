@@ -1,6 +1,6 @@
 <?php
 
-namespace SimpleJwtLoginTests\Unit\Services;
+namespace SimpleJwtLoginTests\Unit\Services\Integrations\TwoFactor;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
@@ -11,8 +11,8 @@ use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepositoryInterface;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\AuthenticateService;
-use SimpleJWTLogin\Services\TwoFactorBridge;
-use SimpleJWTLogin\Services\TwoFactorVerifyService;
+use SimpleJWTLogin\Services\Integrations\TwoFactor\TwoFactorBridge;
+use SimpleJWTLogin\Services\Integrations\TwoFactor\TwoFactorVerifyService;
 
 class TwoFactorVerifyServiceTest extends TestCase
 {

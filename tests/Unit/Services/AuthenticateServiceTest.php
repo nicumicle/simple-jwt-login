@@ -449,7 +449,7 @@ class AuthenticateServiceTest extends TestCase
         $this->wordPressDataMock->method('checkPassword')->willReturn(true);
         $this->wordPressDataMock->method('createResponse')->willReturn(true);
 
-        $bridge = $this->createStub(\SimpleJWTLogin\Services\TwoFactorBridge::class);
+        $bridge = $this->createStub(\SimpleJWTLogin\Services\Integrations\TwoFactor\TwoFactorBridge::class);
         $bridge->method('isAvailable')->willReturn(true);
         $bridge->method('isUserUsing2FA')->willReturn(true);
 
@@ -486,7 +486,7 @@ class AuthenticateServiceTest extends TestCase
         $this->wordPressDataMock->method('triggerFilter')->willReturnArgument(1);
         $this->wordPressDataMock->method('createResponse')->willReturn(true);
 
-        $bridge = $this->createStub(\SimpleJWTLogin\Services\TwoFactorBridge::class);
+        $bridge = $this->createStub(\SimpleJWTLogin\Services\Integrations\TwoFactor\TwoFactorBridge::class);
         $bridge->method('isAvailable')->willReturn(true);
         $bridge->method('isUserUsing2FA')->willReturn(true);
         $bridge->method('getPrimaryProvider')->willReturn(null);

@@ -130,6 +130,14 @@ class LoginService extends BaseService implements ServiceInterface
             );
         }
 
+        $interimPayload = $this->getPayloadFromJWT($this->jwt);
+        if (!empty($interimPayload[AuthenticateService::TFA_PENDING_CLAIM])) {
+            throw new Exception(
+                __('This JWT requires two-factor verification before it can be used for login.', 'simple-jwt-login'),
+                ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REJECTED
+            );
+        }
+
         if ($this->jwtSettings->getLoginSettings()->isAuthKeyRequiredOnLogin()) {
             $this->validateAuthKey();
         }

@@ -14,6 +14,7 @@ class RouteService extends BaseService
     const AUTHENTICATION_REFRESH_ROUTE = 'auth/refresh';
     const AUTHENTICATION_VALIDATE_ROUTE = 'auth/validate';
     const AUTHENTICATION_REVOKE = 'auth/revoke';
+    const AUTHENTICATION_2FA_ROUTE = 'auth/2fa';
     const RESET_PASSWORD_LINK = 'user/reset_password';
     const OAUTH_TOKEN = 'oauth/token';
 
@@ -96,7 +97,12 @@ class RouteService extends BaseService
                 'name' => self::OAUTH_TOKEN,
                 'method' => self::METHOD_POST,
                 'service' => OAuthService::class
-            ]
+            ],
+            [
+                'name'    => self::AUTHENTICATION_2FA_ROUTE,
+                'method'  => self::METHOD_POST,
+                'service' => TwoFactorVerifyService::class,
+            ],
         ];
     }
 

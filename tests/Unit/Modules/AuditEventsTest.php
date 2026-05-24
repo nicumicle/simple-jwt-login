@@ -8,11 +8,11 @@ use SimpleJWTLogin\Modules\AuditEvents;
 
 class AuditEventsTest extends TestCase
 {
-    public function testAllReturnsTwentySevenEvents()
+    public function testAllReturnsExpectedEvents()
     {
         $events = AuditEvents::all();
 
-        $this->assertCount(27, $events);
+        $this->assertCount(30, $events);
     }
 
     #[DataProvider('allEventsProvider')]
@@ -44,6 +44,9 @@ class AuditEventsTest extends TestCase
             'auth_refresh_token_failed'   => [AuditEvents::AUTH_REFRESH_TOKEN_FAILED],
             'auth_oauth_success'          => [AuditEvents::AUTH_OAUTH_SUCCESS],
             'auth_oauth_failed'           => [AuditEvents::AUTH_OAUTH_FAILED],
+            'auth_2fa_challenge_issued'   => [AuditEvents::AUTH_2FA_CHALLENGE_ISSUED],
+            'auth_2fa_verify_success'     => [AuditEvents::AUTH_2FA_VERIFY_SUCCESS],
+            'auth_2fa_verify_failed'      => [AuditEvents::AUTH_2FA_VERIFY_FAILED],
             'settings_save_success'       => [AuditEvents::SETTINGS_SAVE_SUCCESS],
             'api_key_create_success'      => [AuditEvents::API_KEY_CREATE_SUCCESS],
             'api_key_create_failed'       => [AuditEvents::API_KEY_CREATE_FAILED],
@@ -84,9 +87,12 @@ class AuditEventsTest extends TestCase
             'AUTH_LOGIN_SESSION_FAILED'   => ['auth.login_session.failed',   AuditEvents::AUTH_LOGIN_SESSION_FAILED],
             'AUTH_REFRESH_TOKEN_SUCCESS'  => ['auth.refresh_token.success',  AuditEvents::AUTH_REFRESH_TOKEN_SUCCESS],
             'AUTH_REFRESH_TOKEN_FAILED'   => ['auth.refresh_token.failed',   AuditEvents::AUTH_REFRESH_TOKEN_FAILED],
-            'AUTH_OAUTH_SUCCESS'          => ['auth.oauth.success',          AuditEvents::AUTH_OAUTH_SUCCESS],
-            'AUTH_OAUTH_FAILED'           => ['auth.oauth.failed',           AuditEvents::AUTH_OAUTH_FAILED],
-            'SETTINGS_SAVE_SUCCESS'       => ['settings.save.success',       AuditEvents::SETTINGS_SAVE_SUCCESS],
+            'AUTH_OAUTH_SUCCESS'          => ['auth.oauth.success',           AuditEvents::AUTH_OAUTH_SUCCESS],
+            'AUTH_OAUTH_FAILED'           => ['auth.oauth.failed',            AuditEvents::AUTH_OAUTH_FAILED],
+            'AUTH_2FA_CHALLENGE_ISSUED'   => ['auth.2fa.challenge_issued',    AuditEvents::AUTH_2FA_CHALLENGE_ISSUED],
+            'AUTH_2FA_VERIFY_SUCCESS'     => ['auth.2fa.verify_success',      AuditEvents::AUTH_2FA_VERIFY_SUCCESS],
+            'AUTH_2FA_VERIFY_FAILED'      => ['auth.2fa.verify_failed',       AuditEvents::AUTH_2FA_VERIFY_FAILED],
+            'SETTINGS_SAVE_SUCCESS'       => ['settings.save.success',        AuditEvents::SETTINGS_SAVE_SUCCESS],
             'API_KEY_CREATE_SUCCESS'      => ['api_key.create.success',      AuditEvents::API_KEY_CREATE_SUCCESS],
             'API_KEY_CREATE_FAILED'       => ['api_key.create.failed',       AuditEvents::API_KEY_CREATE_FAILED],
             'API_KEY_UPDATE_SUCCESS'      => ['api_key.update.success',      AuditEvents::API_KEY_UPDATE_SUCCESS],
@@ -99,11 +105,11 @@ class AuditEventsTest extends TestCase
         ];
     }
 
-    public function testLabelsReturnsTwentySevenEntries()
+    public function testLabelsReturnsExpectedEntries()
     {
         $labels = AuditEvents::labels();
 
-        $this->assertCount(27, $labels);
+        $this->assertCount(30, $labels);
         $this->assertArrayHasKey(AuditEvents::AUTH_LOGIN_SUCCESS, $labels);
         $this->assertArrayHasKey(AuditEvents::AUTH_LOGIN_FAILED, $labels);
         $this->assertArrayHasKey(AuditEvents::AUTH_LOGOUT_FAILED, $labels);
@@ -117,6 +123,9 @@ class AuditEventsTest extends TestCase
         $this->assertArrayHasKey(AuditEvents::AUTH_REFRESH_TOKEN_FAILED, $labels);
         $this->assertArrayHasKey(AuditEvents::AUTH_OAUTH_SUCCESS, $labels);
         $this->assertArrayHasKey(AuditEvents::AUTH_OAUTH_FAILED, $labels);
+        $this->assertArrayHasKey(AuditEvents::AUTH_2FA_CHALLENGE_ISSUED, $labels);
+        $this->assertArrayHasKey(AuditEvents::AUTH_2FA_VERIFY_SUCCESS, $labels);
+        $this->assertArrayHasKey(AuditEvents::AUTH_2FA_VERIFY_FAILED, $labels);
         $this->assertArrayHasKey(AuditEvents::SETTINGS_SAVE_SUCCESS, $labels);
         $this->assertArrayHasKey(AuditEvents::API_KEY_CREATE_SUCCESS, $labels);
         $this->assertArrayHasKey(AuditEvents::API_KEY_CREATE_FAILED, $labels);

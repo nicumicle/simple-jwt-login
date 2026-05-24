@@ -44,6 +44,12 @@ class SimpleJWTLoginHooks
     const AUDIT_AUTH_OAUTH_SUCCESS          = 'simple_jwt_login_audit_oauth_success';
     const AUDIT_AUTH_OAUTH_FAILED           = 'simple_jwt_login_audit_oauth_failed';
 
+    const AUDIT_2FA_CHALLENGE_ISSUED  = 'simple_jwt_login_audit_2fa_challenge_issued';
+    const AUDIT_2FA_VERIFY_SUCCESS    = 'simple_jwt_login_audit_2fa_verify_success';
+    const AUDIT_2FA_VERIFY_FAILED     = 'simple_jwt_login_audit_2fa_verify_failed';
+    const HOOK_RESPONSE_2FA_CHALLENGE = 'simple_jwt_login_response_2fa_challenge';
+    const HOOK_RESPONSE_2FA_VERIFY    = 'simple_jwt_login_response_2fa_verify';
+
     /**
      * @return array[]
      */
@@ -265,6 +271,69 @@ class SimpleJWTLoginHooks
                 ],
                 'description' => __(
                     'Runs before any Simple JWT Login REST endpoint is processed.',
+                    'simple-jwt-login'
+                ),
+            ],
+            [
+                'name' => self::AUDIT_2FA_CHALLENGE_ISSUED,
+                'type' => self::HOOK_TYPE_ACTION,
+                'parameters' => [
+                    'int $userId',
+                    'string $userEmail'
+                ],
+                'description' => __(
+                    'Triggered when a two-factor authentication challenge has been issued.',
+                    'simple-jwt-login'
+                ),
+            ],
+            [
+                'name' => self::AUDIT_2FA_VERIFY_SUCCESS,
+                'type' => self::HOOK_TYPE_ACTION,
+                'parameters' => [
+                    'int $userId',
+                    'string $userEmail'
+                ],
+                'description' => __(
+                    'Triggered after a successful two-factor authentication verification.',
+                    'simple-jwt-login'
+                ),
+            ],
+            [
+                'name' => self::AUDIT_2FA_VERIFY_FAILED,
+                'type' => self::HOOK_TYPE_ACTION,
+                'parameters' => [
+                    'int $userId',
+                    'string $userEmail',
+                    'string $message'
+                ],
+                'description' => __(
+                    'Triggered when a two-factor authentication verification attempt fails.',
+                    'simple-jwt-login'
+                ),
+            ],
+            [
+                'name' => self::HOOK_RESPONSE_2FA_CHALLENGE,
+                'type' => self::HOOK_TYPE_FILTER,
+                'parameters' => [
+                    'array $response',
+                    'WP_User $user'
+                ],
+                'return' => 'array $response',
+                'description' => __(
+                    'Allows customization of the two-factor challenge response.',
+                    'simple-jwt-login'
+                ),
+            ],
+            [
+                'name' => self::HOOK_RESPONSE_2FA_VERIFY,
+                'type' => self::HOOK_TYPE_FILTER,
+                'parameters' => [
+                    'array $response',
+                    'WP_User $user'
+                ],
+                'return' => 'array $response',
+                'description' => __(
+                    'Allows customization of the two-factor verify endpoint response.',
                     'simple-jwt-login'
                 ),
             ],

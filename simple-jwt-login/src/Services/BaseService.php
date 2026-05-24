@@ -221,6 +221,13 @@ abstract class BaseService
             return (string)$payload;
         }
 
+        if (!empty($payload['tfa_pending'])) {
+            throw new Exception(
+                __('This JWT requires two-factor verification before it can be used.', 'simple-jwt-login'),
+                ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REJECTED
+            );
+        }
+
         if (!isset($payload[$parameter])) {
             throw new Exception(
                 sprintf(

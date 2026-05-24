@@ -569,4 +569,37 @@ class LoginServiceTest extends TestCase
             ],
         ];
     }
+
+    public function testInterimJwtIsRejectedOnAutologin(): void
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionCode(ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REJECTED);
+        $this->expectExceptionMessage('This JWT requires two-factor verification before it can be used for login.');
+
+        $interimJwt = JWT::encode(
+            [
+                'iat'                                      => time(),
+                'exp'                                      => time() + 300,
+                \SimpleJWTLogin\Services\AuthenticateService::TFA_PENDING_CLAIM => 1,
+                'tfa_user_id'                              => 42,
+            ],
+            'test',
+            'HS256'
+        );
+
+        $this->wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_autologin'  => true,
+                'decryption_key'   => 'test',
+            ]));
+
+        $service = (new LoginService())
+            ->withRequest(['JWT' => $interimJwt])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSession([])
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+
+        $service->makeAction();
+    }
 }

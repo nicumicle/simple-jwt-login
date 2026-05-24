@@ -16,6 +16,34 @@ use WP_User;
 
 class AuthenticateService extends BaseService implements ServiceInterface
 {
+    const TFA_PENDING_CLAIM = 'tfa_pending';
+
+    /**
+     * @var TwoFactorBridge|null
+     */
+    protected $twoFactorBridge;
+
+    /**
+     * @param TwoFactorBridge $bridge
+     * @return $this
+     */
+    public function withTwoFactorBridge(TwoFactorBridge $bridge)
+    {
+        $this->twoFactorBridge = $bridge;
+        return $this;
+    }
+
+    /**
+     * @return TwoFactorBridge
+     */
+    protected function getTwoFactorBridge()
+    {
+        if ($this->twoFactorBridge === null) {
+            $this->twoFactorBridge = new TwoFactorBridge();
+        }
+        return $this->twoFactorBridge;
+    }
+
     /**
      * @param array $payload
      * @param WordPressDataInterface $wordPressData
@@ -174,6 +202,11 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
         }
 
+        $challengeResponse = $this->handleTwoFactorChallenge($user);
+        if ($challengeResponse !== null) {
+            return $challengeResponse;
+        }
+
         $payload = isset($this->request['payload'])
             ? json_decode(
                 stripslashes(
@@ -243,6 +276,104 @@ class AuthenticateService extends BaseService implements ServiceInterface
                 'user_id'    => $this->wordPressData->getUserProperty($user, 'ID'),
                 'user_email' => $this->wordPressData->getUserProperty($user, 'user_email'),
             ]
+        );
+
+        return $this->wordPressData->createResponse($response);
+    }
+
+    /**
+     * Check if the user has 2FA enabled and issue a challenge if so.
+     * Returns null when 2FA is not active or the user does not have 2FA configured,
+     * letting the normal JWT issuance flow continue.
+     *
+     * @param \WP_User $user
+     * @return \WP_REST_Response|null
+     * @throws Exception
+     */
+    protected function handleTwoFactorChallenge($user)
+    {
+        $tfaSettings = $this->jwtSettings->getIntegrationsSettings()->twoFactor();
+        if (!$tfaSettings->isEnabled()) {
+            return null;
+        }
+
+        $bridge = $this->getTwoFactorBridge();
+        if (!$bridge->isAvailable()) {
+            return null;
+        }
+
+        if (!$bridge->isUserUsing2FA($user)) {
+            return null;
+        }
+
+        // Respect the two_factor_user_api_login_enable filter: when it returns true
+        // the admin has explicitly opted the user out of the 2FA challenge for API logins.
+        $apiLoginEnabled = $this->wordPressData->triggerFilter(
+            'two_factor_user_api_login_enable',
+            false,
+            $user
+        );
+        if ($apiLoginEnabled === true) {
+            return null;
+        }
+
+        $userId = (int) $this->wordPressData->getUserProperty($user, 'ID');
+
+        $nonce = $bridge->createNonce($userId);
+        if ($nonce === false) {
+            throw new Exception(
+                __('Unable to create two-factor nonce.', 'simple-jwt-login'),
+                ErrorCodes::ERR_TWO_FACTOR_INVALID_NONCE
+            );
+        }
+
+        $provider      = $bridge->getPrimaryProvider($user);
+        $providerClass = $provider !== null ? get_class($provider) : '';
+
+        $ttlSeconds = $tfaSettings->getInterimTtl() * 60;
+        $interimPayload = [
+            'iat'                    => time(),
+            'exp'                    => time() + $ttlSeconds,
+            self::TFA_PENDING_CLAIM  => 1,
+            'tfa_user_id'            => $userId,
+            'tfa_nonce'              => $nonce['key'],
+            'tfa_provider'           => $providerClass,
+        ];
+
+        $interimJwt = $this->getJwtWrapper()->encode(
+            $interimPayload,
+            JwtKeyFactory::getFactory($this->jwtSettings)->getPrivateKey(),
+            $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm()
+        );
+
+        if ($provider !== null
+            && strpos($providerClass, 'Two_Factor_Email') !== false
+            && method_exists($provider, 'generate_and_email_token')
+        ) {
+            $provider->generate_and_email_token($user);
+        }
+
+        $response = [
+            'success' => true,
+            'data'    => [
+                'jwt'                 => $interimJwt,
+                'two_factor_required' => true,
+                'provider'            => $providerClass,
+            ],
+        ];
+
+        if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_2FA_CHALLENGE)) {
+            $response = $this->wordPressData->triggerFilter(
+                SimpleJWTLoginHooks::HOOK_RESPONSE_2FA_CHALLENGE,
+                $response,
+                $user
+            );
+        }
+
+        $this->wordPressData->triggerAction(
+            SimpleJWTLoginHooks::AUDIT_2FA_CHALLENGE_ISSUED,
+            $userId,
+            $this->wordPressData->getUserProperty($user, 'user_email')
         );
 
         return $this->wordPressData->createResponse($response);

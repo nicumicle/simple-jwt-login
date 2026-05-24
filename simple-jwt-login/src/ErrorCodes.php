@@ -120,4 +120,11 @@ class ErrorCodes
     const ERR_GITHUB_INVALID_CODE     = 102;
     const ERR_GITHUB_INVALID_TOKEN    = 103;
     const ERR_GITHUB_USER_NOT_FOUND   = 104;
+
+    const ERR_TWO_FACTOR_NOT_ACTIVE           = 105;
+    const ERR_TWO_FACTOR_INTERIM_JWT_REQUIRED = 106;
+    const ERR_TWO_FACTOR_INVALID_NONCE        = 107;
+    const ERR_TWO_FACTOR_RATE_LIMITED         = 108;
+    const ERR_TWO_FACTOR_INVALID_CODE         = 109;
+    const ERR_TWO_FACTOR_INTERIM_JWT_REJECTED = 110;
 }

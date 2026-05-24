@@ -21,6 +21,9 @@ class AuditEvents
     const AUTH_REFRESH_TOKEN_FAILED   = 'auth.refresh_token.failed';
     const AUTH_OAUTH_SUCCESS          = 'auth.oauth.success';
     const AUTH_OAUTH_FAILED           = 'auth.oauth.failed';
+    const AUTH_2FA_CHALLENGE_ISSUED   = 'auth.2fa.challenge_issued';
+    const AUTH_2FA_VERIFY_SUCCESS     = 'auth.2fa.verify_success';
+    const AUTH_2FA_VERIFY_FAILED      = 'auth.2fa.verify_failed';
     const SETTINGS_SAVE_SUCCESS       = 'settings.save.success';
 
     const API_KEY_CREATE_SUCCESS = 'api_key.create.success';
@@ -56,6 +59,9 @@ class AuditEvents
             self::AUTH_REFRESH_TOKEN_FAILED,
             self::AUTH_OAUTH_SUCCESS,
             self::AUTH_OAUTH_FAILED,
+            self::AUTH_2FA_CHALLENGE_ISSUED,
+            self::AUTH_2FA_VERIFY_SUCCESS,
+            self::AUTH_2FA_VERIFY_FAILED,
             self::SETTINGS_SAVE_SUCCESS,
             self::API_KEY_CREATE_SUCCESS,
             self::API_KEY_CREATE_FAILED,
@@ -92,6 +98,9 @@ class AuditEvents
             self::AUTH_REFRESH_TOKEN_FAILED   => __('Refresh Token Failed', 'simple-jwt-login'),
             self::AUTH_OAUTH_SUCCESS          => __('OAuth Login Success', 'simple-jwt-login'),
             self::AUTH_OAUTH_FAILED           => __('OAuth Login Failed', 'simple-jwt-login'),
+            self::AUTH_2FA_CHALLENGE_ISSUED   => __('2FA Challenge Issued', 'simple-jwt-login'),
+            self::AUTH_2FA_VERIFY_SUCCESS     => __('2FA Verification Success', 'simple-jwt-login'),
+            self::AUTH_2FA_VERIFY_FAILED      => __('2FA Verification Failed', 'simple-jwt-login'),
             self::SETTINGS_SAVE_SUCCESS       => __('Settings Saved', 'simple-jwt-login'),
             self::API_KEY_CREATE_SUCCESS      => __('API Key Created', 'simple-jwt-login'),
             self::API_KEY_CREATE_FAILED       => __('API Key Create Failed', 'simple-jwt-login'),

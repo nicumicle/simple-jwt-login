@@ -21,7 +21,16 @@ $sjl3rdPartyApps = [
         'logo_class' => 'wpgraphql',
         'enabled'    => $jwtSettings->getIntegrationsSettings()->wpgraphql()->isEnabled(),
         'view'       => plugin_dir_path(__FILE__) . 'wpgraphql.php',
-        'beta'       => true,
+        'beta'       => false,
+    ],
+    [
+        'id'         => 'two_factor',
+        'name'       => __('Two-Factor', 'simple-jwt-login'),
+        'desc'       => __('2FA challenge before JWT issuance', 'simple-jwt-login'),
+        'logo_class' => 'two-factor',
+        'enabled'    => $jwtSettings->getIntegrationsSettings()->twoFactor()->isEnabled(),
+        'view'       => plugin_dir_path(__FILE__) . 'two-factor.php',
+        'beta'       => false,
     ],
 ];
 
@@ -48,12 +57,14 @@ if (!empty($_REQUEST['active_3rdparty_panel'])) {
     <div class="sjl-gen-card-body sjl-apps-body">
 
         <div class="sjl-apps-catalog">
-            <?php foreach ($sjl3rdPartyApps as $sjl3rdPartyApp) : ?>
-                <div class="sjl-app-tile active"
+            <?php foreach ($sjl3rdPartyApps as $sjl3rdPartyApp) :
+                    $isActive = $sjl3rdPartyApp['id'] === $active3rdPartyApp;
+				?>
+                <div class="sjl-app-tile<?php echo $isActive ? ' active' : ''; ?>"
                     data-app="<?php echo esc_attr($sjl3rdPartyApp['id']); ?>"
                     role="button"
                     tabindex="0"
-                    aria-expanded="true">
+                    aria-expanded="<?php echo $isActive ? 'true' : 'false'; ?>">
                     <div class="logo <?php echo esc_attr($sjl3rdPartyApp['logo_class']); ?>"></div>
                     <span class="sjl-app-tile-name"><?php echo esc_html($sjl3rdPartyApp['name']); ?></span>
                     <span class="sjl-app-tile-dot <?php echo $sjl3rdPartyApp['enabled'] ? 'sjl-dot-on' : 'sjl-dot-off'; ?>"></span>
@@ -66,9 +77,11 @@ if (!empty($_REQUEST['active_3rdparty_panel'])) {
         <div class="sjl-apps-panels">
             <?php
             foreach ($sjl3rdPartyApps as $sjl3rdPartyApp) {
+                $isActive = $sjl3rdPartyApp['id'] === $active3rdPartyApp;
                 ?>
                 <div class="sjl-app-panel"
-                    id="sjl-app-panel-<?php echo esc_attr($sjl3rdPartyApp['id']); ?>">
+                    id="sjl-app-panel-<?php echo esc_attr($sjl3rdPartyApp['id']); ?>"
+                    <?php echo $isActive ? '' : 'style="display:none;"'; ?>>
                     <?php include $sjl3rdPartyApp['view']; ?>
                 </div>
                 <?php

@@ -438,4 +438,69 @@ class AuthenticateServiceTest extends TestCase
             ->withRefreshTokenRepository($this->refreshTokenRepoMock);
         $authService->makeAction();
     }
+
+    public function testTwoFactorChallengeSkippedWhenIntegrationDisabled(): void
+    {
+        $this->wordPressDataMock
+            ->method('getOptionFromDatabase')
+            ->willReturn(json_encode(['allow_authentication' => 1]));
+        $this->wordPressDataMock->method('getUserByUserLogin')->willReturn('user');
+        $this->wordPressDataMock->method('getUserPassword')->willReturn('pass');
+        $this->wordPressDataMock->method('checkPassword')->willReturn(true);
+        $this->wordPressDataMock->method('createResponse')->willReturn(true);
+
+        $bridge = $this->createStub(\SimpleJWTLogin\Services\TwoFactorBridge::class);
+        $bridge->method('isAvailable')->willReturn(true);
+        $bridge->method('isUserUsing2FA')->willReturn(true);
+
+        $authService = (new AuthenticateService())
+            ->withRequest(['username' => 'test', 'password' => 'pass'])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+            ->withTwoFactorBridge($bridge);
+
+        // Integration not enabled in settings, so normal JWT should be returned
+        $result = $authService->makeAction();
+        $this->assertTrue($result);
+    }
+
+    public function testTwoFactorChallengeIssuedWhenEnabled(): void
+    {
+        $this->wordPressDataMock
+            ->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication' => 1,
+                'decryption_key'       => 'test-secret',
+                'integrations'         => [
+                    '3rdparty' => [
+                        'two_factor' => ['enabled' => true, 'interim_ttl' => 5],
+                    ],
+                ],
+            ]));
+        $this->wordPressDataMock->method('getUserByUserLogin')->willReturn('user');
+        $this->wordPressDataMock->method('getUserPassword')->willReturn('pass');
+        $this->wordPressDataMock->method('checkPassword')->willReturn(true);
+        $this->wordPressDataMock->method('getUserProperty')->willReturn(1);
+        $this->wordPressDataMock->method('triggerFilter')->willReturnArgument(1);
+        $this->wordPressDataMock->method('createResponse')->willReturn(true);
+
+        $bridge = $this->createStub(\SimpleJWTLogin\Services\TwoFactorBridge::class);
+        $bridge->method('isAvailable')->willReturn(true);
+        $bridge->method('isUserUsing2FA')->willReturn(true);
+        $bridge->method('getPrimaryProvider')->willReturn(null);
+        $bridge->method('createNonce')->willReturn(['key' => 'test-nonce', 'expiration' => time() + 600]);
+
+        $authService = (new AuthenticateService())
+            ->withRequest(['username' => 'test', 'password' => 'pass'])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+            ->withTwoFactorBridge($bridge);
+
+        $result = $authService->makeAction();
+        $this->assertTrue($result);
+    }
 }

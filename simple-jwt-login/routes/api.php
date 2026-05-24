@@ -125,6 +125,18 @@ add_action('rest_api_init', function () {
         $auditLogger->log(AuditEvents::AUTH_OAUTH_FAILED, $userId, $userEmail, 'failure', $message);
     }, 10, 3);
 
+    add_action(SimpleJWTLoginHooks::AUDIT_2FA_CHALLENGE_ISSUED, function ($userId, $userEmail) use ($auditLogger) {
+        $auditLogger->log(AuditEvents::AUTH_2FA_CHALLENGE_ISSUED, $userId, $userEmail, 'success');
+    }, 10, 2);
+
+    add_action(SimpleJWTLoginHooks::AUDIT_2FA_VERIFY_SUCCESS, function ($userId, $userEmail) use ($auditLogger) {
+        $auditLogger->log(AuditEvents::AUTH_2FA_VERIFY_SUCCESS, $userId, $userEmail, 'success');
+    }, 10, 2);
+
+    add_action(SimpleJWTLoginHooks::AUDIT_2FA_VERIFY_FAILED, function ($userId, $userEmail, $message) use ($auditLogger) {
+        $auditLogger->log(AuditEvents::AUTH_2FA_VERIFY_FAILED, $userId, $userEmail, 'failure', $message);
+    }, 10, 3);
+
     $routeService = new RouteService();
     $routeService->withSettings($jwtSettings);
     $routeService->withRequest($request);

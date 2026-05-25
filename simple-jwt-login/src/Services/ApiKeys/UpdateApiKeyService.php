@@ -14,24 +14,8 @@ class UpdateApiKeyService extends BaseApiKeyService
     public function makeAction()
     {
         $this->requireLoggedIn();
-
-        $keyId = (int) (isset($this->request['id']) ? $this->request['id'] : 0);
-        if ($keyId <= 0) {
-            throw new Exception(
-                __('Invalid API key ID.', 'simple-jwt-login'),
-                ErrorCodes::ERR_API_KEY_NOT_FOUND
-            );
-        }
-
-        $this->requireKeyOwnership($keyId);
-
-        $name = trim((string) (isset($this->request['name']) ? $this->request['name'] : ''));
-        if ($name === '') {
-            throw new Exception(
-                __('API key name is required.', 'simple-jwt-login'),
-                ErrorCodes::ERR_API_KEY_MISSING_NAME
-            );
-        }
+        $keyId = $this->requireValidKeyId();
+        $name = $this->requireName();
 
         $permissions = $this->normalizeAndValidatePermissions(
             isset($this->request['permissions']) ? $this->request['permissions'] : []

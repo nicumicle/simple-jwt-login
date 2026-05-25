@@ -5,6 +5,7 @@ namespace SimpleJWTLogin\Modules\Settings\Oauth;
 use Exception;
 use SimpleJWTLogin\Modules\Settings\BaseSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
+use SimpleJWTLogin\Modules\Settings\SettingsValueCasterTrait;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 
 /**
@@ -25,6 +26,8 @@ use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
  */
 abstract class AbstractOauthSettings
 {
+    use SettingsValueCasterTrait;
+
     /** @var array<string, mixed> */
     private $data = [];
 
@@ -335,37 +338,6 @@ abstract class AbstractOauthSettings
                     $this->getRedirectUriRequiredErrorCode()
                 )
             );
-        }
-    }
-
-    /**
-     * @param mixed $value
-     * @param int $type
-     * @param WordPressDataInterface $wpData
-     * @return bool|int|string
-     */
-    private function castValue($value, $type, WordPressDataInterface $wpData)
-    {
-        if ($value === null) {
-            switch ($type) {
-                case BaseSettings::SETTINGS_TYPE_BOL:
-                    return false;
-                case BaseSettings::SETTINGS_TYPE_INT:
-                    return 0;
-                default:
-                    return '';
-            }
-        }
-
-        switch ($type) {
-            case BaseSettings::SETTINGS_TYPE_INT:
-                return (int) $value;
-            case BaseSettings::SETTINGS_TYPE_BOL:
-                return (bool)$value;
-            case BaseSettings::SETTINGS_TYPE_STRING:
-                return $wpData->sanitizeTextField($value);
-            default:
-                return $wpData->sanitizeTextField($value);
         }
     }
 }

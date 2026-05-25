@@ -3,7 +3,9 @@
 namespace SimpleJWTLogin\Services\Oauth;
 
 use Exception;
+use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
+use SimpleJWTLogin\Libraries\ServerCall;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Services\AuthenticateService;
 use SimpleJWTLogin\Services\RouteService;
@@ -15,7 +17,7 @@ use SimpleJWTLogin\Services\RouteService;
  * Concrete providers (Google, Auth0, …) override the abstract hook methods to supply
  * provider-specific URLs, credentials, and token parsing logic.
  */
-abstract class AbstractOauth extends BaseOauth
+abstract class AbstractOauth extends BaseOauth implements OauthInterface
 {
     // -------------------------------------------------------------------------
     // Template-method hooks - implement in each concrete provider
@@ -102,6 +104,95 @@ abstract class AbstractOauth extends BaseOauth
      * @return int
      */
     abstract protected function getUserNotFoundErrorCode();
+
+    /**
+     * Request parameter name for the direct token flow (e.g. 'id_token' or 'access_token').
+     *
+     * @return string
+     */
+    abstract protected function getTokenParamName();
+
+    /**
+     * Error code when both 'code' and the token parameter are missing from the request.
+     *
+     * @return int
+     */
+    abstract protected function getMissingParamErrorCode();
+
+    /**
+     * Error code when code exchange returns a non-200 response.
+     *
+     * @return int
+     */
+    abstract protected function getInvalidCodeErrorCode();
+
+    /**
+     * Extract the user's email from a provider token passed directly by the client.
+     *
+     * @param string $token
+     * @return string
+     * @throws Exception
+     */
+    abstract protected function getEmailFromDirectToken($token);
+
+    // -------------------------------------------------------------------------
+    // OauthInterface - validate() and call()
+    // -------------------------------------------------------------------------
+
+    /**
+     * @throws Exception
+     */
+    public function validate()
+    {
+        $tokenParam = $this->getTokenParamName();
+        if (!isset($this->request['code']) && !isset($this->request[$tokenParam])) {
+            throw new Exception(
+                sprintf(
+                    __('The code or %s parameter is missing from request.', 'simple-jwt-login'),
+                    $tokenParam
+                ),
+                $this->getMissingParamErrorCode()
+            );
+        }
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function call()
+    {
+        $tokenParam = $this->getTokenParamName();
+
+        switch (true) {
+            case $this->requestMethod === ServerCall::REQUEST_METHOD_GET:
+                $this->handleOauth($this->request['code']);
+                break;
+            case !empty($this->request['code']):
+                $result = $this->exchangeCode(
+                    $this->request['code'],
+                    $this->getSavedRedirectUri()
+                );
+                if ($result['status_code'] === 200) {
+                    return array('success' => true, 'data' => $result['response']);
+                }
+                throw new Exception(
+                    __(
+                        'The code you provided is invalid.' . $this->handleErrorMessage($result['response']),
+                        'simple-jwt-login'
+                    ),
+                    $this->getInvalidCodeErrorCode()
+                );
+            case !empty($this->request[$tokenParam]):
+                $token = $this->request[$tokenParam];
+                $this->validateProviderToken($token);
+                $email = $this->getEmailFromDirectToken($token);
+
+                return $this->createWpJwtForEmail($email);
+        }
+
+        return array();
+    }
 
     // -------------------------------------------------------------------------
     // Shared OAuth2 implementation

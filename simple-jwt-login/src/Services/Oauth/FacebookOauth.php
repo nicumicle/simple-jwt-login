@@ -14,62 +14,13 @@ use SimpleJWTLogin\Libraries\ServerCall;
  *  2. Code exchange (API)   - POST ?provider=facebook&code={code} -> returns raw token response.
  *  3. Token exchange (API)  - POST ?provider=facebook&access_token={token} -> returns a WP JWT.
  */
-class FacebookOauth extends AbstractOauth implements OauthInterface
+class FacebookOauth extends AbstractOauth
 {
     const PROVIDER_SLUG          = 'facebook';
     const AUTH_URL               = 'https://www.facebook.com/v19.0/dialog/oauth';
     const TOKEN_ENDPOINT         = 'https://graph.facebook.com/v19.0/oauth/access_token';
     const USERINFO_ENDPOINT      = 'https://graph.facebook.com/me';
     const GRAPH_API_VERSION      = 'v19.0';
-
-    // -------------------------------------------------------------------------
-    // OauthInterface
-    // -------------------------------------------------------------------------
-
-    public function validate()
-    {
-        if (!isset($this->request['code']) && !isset($this->request['access_token'])) {
-            throw new Exception(
-                __('The code or access_token parameter is missing from request.', 'simple-jwt-login'),
-                ErrorCodes::ERR_MISSING_FACEBOOK_PARAM
-            );
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function call()
-    {
-        switch (true) {
-            case $this->requestMethod === ServerCall::REQUEST_METHOD_GET:
-                $this->handleOauth($this->request['code']);
-                break;
-            case !empty($this->request['code']):
-                $result = $this->exchangeCode(
-                    $this->request['code'],
-                    $this->getSavedRedirectUri()
-                );
-                if ($result['status_code'] === 200) {
-                    return ['success' => true, 'data' => $result['response']];
-                }
-                throw new Exception(
-                    __(
-                        'The code you provided is invalid.' . $this->handleErrorMessage($result['response']),
-                        'simple-jwt-login'
-                    ),
-                    ErrorCodes::ERR_FACEBOOK_INVALID_CODE
-                );
-            case !empty($this->request['access_token']):
-                $accessToken = $this->request['access_token'];
-                $this->validateProviderToken($accessToken);
-                $email = $this->getUserEmailFromGraph($accessToken);
-
-                return $this->createWpJwtForEmail($email);
-        }
-
-        return [];
-    }
 
     // -------------------------------------------------------------------------
     // AbstractOauth hooks
@@ -161,6 +112,31 @@ class FacebookOauth extends AbstractOauth implements OauthInterface
     protected function getUserNotFoundErrorCode()
     {
         return ErrorCodes::ERR_FACEBOOK_USER_NOT_FOUND;
+    }
+
+    protected function getTokenParamName()
+    {
+        return 'access_token';
+    }
+
+    protected function getMissingParamErrorCode()
+    {
+        return ErrorCodes::ERR_MISSING_FACEBOOK_PARAM;
+    }
+
+    protected function getInvalidCodeErrorCode()
+    {
+        return ErrorCodes::ERR_FACEBOOK_INVALID_CODE;
+    }
+
+    /**
+     * @param string $token
+     * @return string
+     * @throws Exception
+     */
+    protected function getEmailFromDirectToken($token)
+    {
+        return $this->getUserEmailFromGraph($token);
     }
 
     // -------------------------------------------------------------------------

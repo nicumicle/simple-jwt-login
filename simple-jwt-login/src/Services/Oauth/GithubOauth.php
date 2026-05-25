@@ -18,62 +18,13 @@ use SimpleJWTLogin\Libraries\ServerCall;
  * so exchangeCode is overridden to include that header.
  * Email is retrieved from GET /user/emails (requires the "user:email" scope).
  */
-class GithubOauth extends AbstractOauth implements OauthInterface
+class GithubOauth extends AbstractOauth
 {
     const PROVIDER_SLUG      = 'github';
     const AUTH_URL           = 'https://github.com/login/oauth/authorize';
     const TOKEN_ENDPOINT     = 'https://github.com/login/oauth/access_token';
     const USERINFO_ENDPOINT  = 'https://api.github.com/user/emails';
     const USER_AGENT         = 'simple-jwt-login';
-
-    // -------------------------------------------------------------------------
-    // OauthInterface
-    // -------------------------------------------------------------------------
-
-    public function validate()
-    {
-        if (!isset($this->request['code']) && !isset($this->request['access_token'])) {
-            throw new Exception(
-                __('The code or access_token parameter is missing from request.', 'simple-jwt-login'),
-                ErrorCodes::ERR_MISSING_GITHUB_PARAM
-            );
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function call()
-    {
-        switch (true) {
-            case $this->requestMethod === ServerCall::REQUEST_METHOD_GET:
-                $this->handleOauth($this->request['code']);
-                break;
-            case !empty($this->request['code']):
-                $result = $this->exchangeCode(
-                    $this->request['code'],
-                    $this->getSavedRedirectUri()
-                );
-                if ($result['status_code'] === 200) {
-                    return ['success' => true, 'data' => $result['response']];
-                }
-                throw new Exception(
-                    __(
-                        'The code you provided is invalid.' . $this->handleErrorMessage($result['response']),
-                        'simple-jwt-login'
-                    ),
-                    ErrorCodes::ERR_GITHUB_INVALID_CODE
-                );
-            case !empty($this->request['access_token']):
-                $accessToken = $this->request['access_token'];
-                $this->validateProviderToken($accessToken);
-                $email = $this->getPrimaryEmailFromGithub($accessToken);
-
-                return $this->createWpJwtForEmail($email);
-        }
-
-        return [];
-    }
 
     // -------------------------------------------------------------------------
     // AbstractOauth hooks
@@ -203,6 +154,31 @@ class GithubOauth extends AbstractOauth implements OauthInterface
     protected function getUserNotFoundErrorCode()
     {
         return ErrorCodes::ERR_GITHUB_USER_NOT_FOUND;
+    }
+
+    protected function getTokenParamName()
+    {
+        return 'access_token';
+    }
+
+    protected function getMissingParamErrorCode()
+    {
+        return ErrorCodes::ERR_MISSING_GITHUB_PARAM;
+    }
+
+    protected function getInvalidCodeErrorCode()
+    {
+        return ErrorCodes::ERR_GITHUB_INVALID_CODE;
+    }
+
+    /**
+     * @param string $token
+     * @return string
+     * @throws Exception
+     */
+    protected function getEmailFromDirectToken($token)
+    {
+        return $this->getPrimaryEmailFromGithub($token);
     }
 
     // -------------------------------------------------------------------------

@@ -970,26 +970,3 @@ if (!function_exists('trailingslashit')) {
     }
 }
 
-if (!function_exists('simple_jwt_login_sanitize_css_value')) {
-    /**
-     * Sanitize CSS property values to prevent XSS attacks.
-     * Removes characters that could break out of CSS context or inject malicious code.
-     *
-     * @param string $value The CSS value to sanitize
-     * @return string The sanitized CSS value
-     */
-    function simple_jwt_login_sanitize_css_value($value)
-    {
-        // Remove any HTML tags
-        $value = wp_strip_all_tags($value);
-
-        // Remove characters that could break out of CSS/HTML context or inject code
-        // This includes: < > " ' ; { } ( ) \ / and backticks
-        $value = preg_replace('/[<>"\';{}()\\\\\/`]/', '', $value);
-
-        // Limit length to prevent abuse
-        $value = substr($value, 0, 100);
-
-        return $value;
-    }
-}

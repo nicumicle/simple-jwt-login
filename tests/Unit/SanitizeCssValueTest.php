@@ -4,18 +4,18 @@ namespace SimpleJwtLoginTests\Unit;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use SimpleJWTLogin\Plugin\Shortcodes;
 
 class SanitizeCssValueTest extends TestCase
 {
     #[DataProvider('validCssValuesProvider')]
     /**
-     * Test that valid CSS values pass through correctly
      * @param string $input
      * @param string $expected
      */
     public function testValidCssValues($input, $expected)
     {
-        $this->assertSame($expected, simple_jwt_login_sanitize_css_value($input));
+        $this->assertSame($expected, Shortcodes::sanitizeCssValue($input));
     }
 
     /**
@@ -38,13 +38,12 @@ class SanitizeCssValueTest extends TestCase
 
     #[DataProvider('xssAttackVectorsProvider')]
     /**
-     * Test that XSS attack vectors are sanitized
      * @param string $input
      * @param string $expected
      */
     public function testXssAttackVectorsAreSanitized($input, $expected)
     {
-        $result = simple_jwt_login_sanitize_css_value($input);
+        $result = Shortcodes::sanitizeCssValue($input);
         $this->assertSame($expected, $result);
         // Ensure no dangerous characters remain
         $this->assertStringNotContainsString('<', $result);
@@ -101,13 +100,12 @@ class SanitizeCssValueTest extends TestCase
 
     #[DataProvider('htmlTagRemovalProvider')]
     /**
-     * Test that HTML tags are stripped
      * @param string $input
      * @param string $expected
      */
     public function testHtmlTagsAreStripped($input, $expected)
     {
-        $this->assertSame($expected, simple_jwt_login_sanitize_css_value($input));
+        $this->assertSame($expected, Shortcodes::sanitizeCssValue($input));
     }
 
     /**
@@ -130,7 +128,7 @@ class SanitizeCssValueTest extends TestCase
     public function testLengthIsTruncated()
     {
         $longValue = str_repeat('a', 150);
-        $result = simple_jwt_login_sanitize_css_value($longValue);
+        $result = Shortcodes::sanitizeCssValue($longValue);
         $this->assertSame(100, strlen($result));
         $this->assertSame(str_repeat('a', 100), $result);
     }
@@ -140,7 +138,7 @@ class SanitizeCssValueTest extends TestCase
      */
     public function testHandlesEmptyInput()
     {
-        $this->assertSame('', simple_jwt_login_sanitize_css_value(''));
-        $this->assertSame('0', simple_jwt_login_sanitize_css_value('0'));
+        $this->assertSame('', Shortcodes::sanitizeCssValue(''));
+        $this->assertSame('0', Shortcodes::sanitizeCssValue('0'));
     }
 }

@@ -14,16 +14,7 @@ class DeleteApiKeyService extends BaseApiKeyService
     public function makeAction()
     {
         $this->requireLoggedIn();
-
-        $keyId = (int) (isset($this->request['id']) ? $this->request['id'] : 0);
-        if ($keyId <= 0) {
-            throw new Exception(
-                __('Invalid API key ID.', 'simple-jwt-login'),
-                ErrorCodes::ERR_API_KEY_NOT_FOUND
-            );
-        }
-
-        $this->requireKeyOwnership($keyId);
+        $keyId = $this->requireValidKeyId();
 
         $deleted = $this->apiKeyRepository->deleteById($keyId);
 

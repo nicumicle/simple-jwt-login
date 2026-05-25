@@ -6,63 +6,13 @@ use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Libraries\ServerCall;
 
-class GoogleOauth extends AbstractOauth implements OauthInterface
+class GoogleOauth extends AbstractOauth
 {
     const PROVIDER_SLUG   = 'google';
     const IIS             = 'accounts.google.com';
     const AUTH_URL        = 'https://accounts.google.com/o/oauth2/auth';
     const TOKEN_ENDPOINT  = 'https://accounts.google.com/o/oauth2/token';
     const CHECK_TOKEN_URL = 'https://oauth2.googleapis.com/tokeninfo?id_token=%s';
-
-    // -------------------------------------------------------------------------
-    // OauthInterface
-    // -------------------------------------------------------------------------
-
-    public function validate()
-    {
-        if (!isset($this->request['code']) && !isset($this->request['id_token'])) {
-            throw new Exception(
-                __('The code or id_token parameter is missing from request.', 'simple-jwt-login'),
-                ErrorCodes::ERR_MISSING_GOOGLE_PARAM
-            );
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function call()
-    {
-        switch (true) {
-            case $this->requestMethod === ServerCall::REQUEST_METHOD_GET:
-                $this->handleOauth($this->request['code']);
-                break;
-            case !empty($this->request['code']):
-                $result = $this->exchangeCode(
-                    $this->request['code'],
-                    $this->getSavedRedirectUri()
-                );
-                if ($result['status_code'] === 200) {
-                    return ['success' => true, 'data' => $result['response']];
-                }
-                throw new Exception(
-                    __(
-                        'The code you provided is invalid.' . $this->handleErrorMessage($result['response']),
-                        'simple-jwt-login'
-                    ),
-                    ErrorCodes::ERR_GOOGLE_INVALID_CODE
-                );
-            case !empty($this->request['id_token']):
-                $idToken = $this->request['id_token'];
-                $this->validateProviderToken($idToken);
-                $decoded = $this->getJwtWrapper()->extractDataFromJwt($idToken);
-                $email   = isset($decoded['payload']['email']) ? $decoded['payload']['email'] : '';
-
-                return $this->createWpJwtForEmail($email);
-        }
-
-        return [];
-    }
 
     // -------------------------------------------------------------------------
     // AbstractOauth hooks
@@ -132,6 +82,32 @@ class GoogleOauth extends AbstractOauth implements OauthInterface
     protected function getUserNotFoundErrorCode()
     {
         return ErrorCodes::ERR_GOOGLE_USER_NOT_FOUND;
+    }
+
+    protected function getTokenParamName()
+    {
+        return 'id_token';
+    }
+
+    protected function getMissingParamErrorCode()
+    {
+        return ErrorCodes::ERR_MISSING_GOOGLE_PARAM;
+    }
+
+    protected function getInvalidCodeErrorCode()
+    {
+        return ErrorCodes::ERR_GOOGLE_INVALID_CODE;
+    }
+
+    /**
+     * @param string $token
+     * @return string
+     */
+    protected function getEmailFromDirectToken($token)
+    {
+        $decoded = $this->getJwtWrapper()->extractDataFromJwt($token);
+
+        return isset($decoded['payload']['email']) ? $decoded['payload']['email'] : '';
     }
 
     // -------------------------------------------------------------------------

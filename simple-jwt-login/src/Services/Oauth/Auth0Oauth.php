@@ -16,65 +16,13 @@ use SimpleJWTLogin\Libraries\ServerCall;
  *
  * Auth0 is domain-based, so all endpoint URLs are derived from the configured domain.
  */
-class Auth0Oauth extends AbstractOauth implements OauthInterface
+class Auth0Oauth extends AbstractOauth
 {
     const PROVIDER_SLUG         = 'auth0';
     const IIS                   = 'accounts.auth0.com';
     const TOKEN_ENDPOINT_TPL    = 'https://%s/oauth/token';
     const AUTH_URL_TPL          = 'https://%s/authorize';
     const USERINFO_ENDPOINT_TPL = 'https://%s/userinfo';
-
-    // -------------------------------------------------------------------------
-    // OauthInterface
-    // -------------------------------------------------------------------------
-
-    public function validate()
-    {
-        if (!isset($this->request['code']) && !isset($this->request['access_token'])) {
-            throw new Exception(
-                __('The code or access_token parameter is missing from request.', 'simple-jwt-login'),
-                ErrorCodes::ERR_MISSING_AUTH0_PARAM
-            );
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function call()
-    {
-        switch (true) {
-            case $this->requestMethod === ServerCall::REQUEST_METHOD_GET:
-                // Browser OAuth redirect: code is in query string
-                $this->handleOauth($this->request['code']);
-                break;
-            case !empty($this->request['code']):
-                // API: exchange authorization code for Auth0 tokens
-                $result = $this->exchangeCode(
-                    $this->request['code'],
-                    $this->getSavedRedirectUri()
-                );
-                if ($result['status_code'] === 200) {
-                    return ['success' => true, 'data' => $result['response']];
-                }
-                throw new Exception(
-                    __(
-                        'The code you provided is invalid.' . $this->handleErrorMessage($result['response']),
-                        'simple-jwt-login'
-                    ),
-                    ErrorCodes::ERR_AUTH0_INVALID_CODE
-                );
-            case !empty($this->request['access_token']):
-                // API: exchange Auth0 access_token for a WordPress JWT
-                $accessToken = $this->request['access_token'];
-                $this->validateProviderToken($accessToken);
-                $email = $this->getUserEmailFromUserinfo($accessToken);
-
-                return $this->createWpJwtForEmail($email);
-        }
-
-        return [];
-    }
 
     // -------------------------------------------------------------------------
     // AbstractOauth hooks
@@ -170,6 +118,31 @@ class Auth0Oauth extends AbstractOauth implements OauthInterface
     protected function getUserNotFoundErrorCode()
     {
         return ErrorCodes::ERR_AUTH0_USER_NOT_FOUND;
+    }
+
+    protected function getTokenParamName()
+    {
+        return 'access_token';
+    }
+
+    protected function getMissingParamErrorCode()
+    {
+        return ErrorCodes::ERR_MISSING_AUTH0_PARAM;
+    }
+
+    protected function getInvalidCodeErrorCode()
+    {
+        return ErrorCodes::ERR_AUTH0_INVALID_CODE;
+    }
+
+    /**
+     * @param string $token
+     * @return string
+     * @throws Exception
+     */
+    protected function getEmailFromDirectToken($token)
+    {
+        return $this->getUserEmailFromUserinfo($token);
     }
 
     // -------------------------------------------------------------------------

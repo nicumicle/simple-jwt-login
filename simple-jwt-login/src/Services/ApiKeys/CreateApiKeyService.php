@@ -14,14 +14,7 @@ class CreateApiKeyService extends BaseApiKeyService
     public function makeAction()
     {
         $this->requireLoggedIn();
-
-        $name = trim((string) (isset($this->request['name']) ? $this->request['name'] : ''));
-        if ($name === '') {
-            throw new Exception(
-                __('API key name is required.', 'simple-jwt-login'),
-                ErrorCodes::ERR_API_KEY_MISSING_NAME
-            );
-        }
+        $name = $this->requireName();
 
         $permissions = $this->normalizeAndValidatePermissions(
             isset($this->request['permissions']) ? $this->request['permissions'] : []

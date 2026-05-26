@@ -2,6 +2,7 @@
 
 namespace SimpleJwtLoginTests\Unit\Services;
 
+use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Helpers\ServerHelper;
@@ -51,7 +52,7 @@ class ProtectEndpointServiceTest extends TestCase
 
         $routeServiceMock = $this->createStub(RouteService::class);
         $routeServiceMock->method('getUserFromJwt')
-            ->willThrowException(new \Exception());
+            ->willThrowException(new Exception());
 
         $routeService = (new RouteService())
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressData));

@@ -131,9 +131,9 @@ tags:
       url: https://www.simplejwtlogin.com/docs/authentication
   - name: oauth
     description: |
-      OAuth 2.0 authorization-code flow for third-party providers (Google, Auth0). Exchange
-      a provider-issued authorization code or ID token for a WordPress JWT. The provider
-      must be enabled and configured in the plugin settings.
+      OAuth 2.0 authorization-code flow for third-party providers (Google, Auth0, Facebook,
+      GitHub). Exchange a provider-issued authorization code, ID token, or access token for
+      a WordPress JWT. The provider must be enabled and configured in the plugin settings.
     externalDocs:
       description: Find out more
       url: https://www.simplejwtlogin.com/docs/oauth
@@ -173,7 +173,7 @@ x-tags:
       description: Find out more
       url: https://www.simplejwtlogin.com/docs/authentication
   - name: oauth
-    description: OAuth 2.0 token exchange
+    description: OAuth 2.0 token exchange (Google, Auth0, Facebook, GitHub)
     externalDocs:
       description: Find out more
       url: https://www.simplejwtlogin.com/docs/oauth
@@ -341,57 +341,49 @@ paths:
                     type: boolean
                     example: true
                     description: Action status.
-                  id:
-                    type: number
-                    description: New user ID.
-                    example: 1
-                  message:
-                    type: string
-                    description: Confirmation message.
-                    example: User was successfully created.
-                  user:
+                  data:
                     type: object
                     properties:
-                      ID:
-                        type: number
+                      id:
+                        type: integer
+                        description: New user ID.
                         example: 1
-                        description: User ID.
-                      user_login:
+                      login:
                         type: string
                         example: "myuser"
-                      user_nicename:
+                      nicename:
                         type: string
                         example: "myuser"
-                      user_email:
+                      email:
                         type: string
                         example: "myuser@simplejwtlogin.com"
-                      user_url:
+                      url:
                         type: string
-                        example: "https://simplejwtlogin.com/myuser"
-                      user_registered:
+                        description: User URL. Empty string when not set.
+                        example: ""
+                      registered:
                         type: string
                         example: "2021-01-01 23:31:50"
-                      user_activation_key:
+                      activation_key:
                         type: string
+                        description: Password reset key. Empty string when not set.
                         example: ""
-                      user_status:
+                      status:
                         type: string
                         example: "0"
                       display_name:
                         type: string
                         example: "myuser"
-                      user_level:
-                        type: number
-                        example: 0
-                  roles:
-                    type: array
-                    items:
-                      type: string
-                      example: "subscriber"
-                  jwt:
-                    type: string
-                    description: JWT for the new user. Only present when "Generate JWT on register" is enabled.
-                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                      roles:
+                        type: array
+                        items:
+                          type: string
+                          example: "subscriber"
+                      jwt:
+                        type: string
+                        nullable: true
+                        description: Only present when "Generate JWT on register" is enabled.
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
         '400':
           description: |
             Bad request. Missing required fields (`email` or `password`), or an unclassified
@@ -504,15 +496,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
-                    example: true
                   message:
                     type: string
                     description: Confirmation message.
                     example: User was successfully deleted.
                   id:
-                    type: number
+                    type: integer
                     description: ID of the deleted user.
                     example: 1
         '400':
@@ -618,9 +607,12 @@ paths:
                   success:
                     type: boolean
                     example: true
-                  message:
-                    type: string
-                    example: Reset password email has been sent.
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Reset password email has been sent.
         '400':
           description: |
             Bad request. The `email` field is missing.
@@ -724,9 +716,12 @@ paths:
                   success:
                     type: boolean
                     example: true
-                  message:
-                    type: string
-                    example: User password has been changed.
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: User password has been changed.
         '400':
           description: |
             Bad request. One or more required fields are missing (`email`, `code`,
@@ -821,6 +816,13 @@ paths:
         **Requirements**
         - Authentication must be enabled in the plugin settings.
         - If "Authentication Requires Auth Code" is enabled, `AUTH_CODE` must be provided.
+
+        **Two-Factor Authentication**
+        When the authenticated user has Two-Factor Authentication enabled and the 2FA
+        integration is active, the endpoint returns HTTP 200 with a challenge response
+        instead of a regular JWT. The `two_factor_required` field is `true` and `jwt`
+        contains a short-lived interim token. Submit that interim token together with the
+        2FA code to `POST /auth/2fa` to obtain the final JWT.
       operationId: getJWT
       requestBody:
         description: User credentials.
@@ -837,7 +839,13 @@ paths:
         required: true
       responses:
         '200':
-          description: Authentication successful. Returns a JWT and optional refresh token.
+          description: |
+            Authentication successful. Returns a signed JWT and an optional refresh token.
+
+            **Two-Factor challenge**: when the user has 2FA enabled, this response is
+            returned instead of a regular JWT. `two_factor_required` will be `true` and
+            `jwt` will contain a short-lived interim token. Submit it with the 2FA code
+            to `POST /auth/2fa` to obtain the final JWT.
           content:
             application/json:
               schema:
@@ -852,14 +860,33 @@ paths:
                     properties:
                       jwt:
                         type: string
-                        description: Signed JWT for use in subsequent requests.
+                        description: |
+                          Signed JWT for use in subsequent requests, or a short-lived
+                          interim JWT when `two_factor_required` is `true`.
                         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
                       refresh_token:
                         type: string
+                        nullable: true
                         description: |
                           Opaque refresh token for obtaining new JWTs without re-authenticating.
-                          Only present when the refresh-token feature is enabled.
+                          Only present when the refresh-token feature is enabled and 2FA is
+                          not required.
                         example: "a1b2c3d4e5f678901234567890123456789012345678901234567890123456789012"
+                      two_factor_required:
+                        type: boolean
+                        nullable: true
+                        description: |
+                          Present and `true` only when Two-Factor Authentication is required.
+                          When set, `jwt` is an interim token; complete authentication via
+                          `POST /auth/2fa`.
+                        example: true
+                      provider:
+                        type: string
+                        nullable: true
+                        description: |
+                          Fully-qualified class name of the user's primary 2FA provider.
+                          Only present when `two_factor_required` is `true`.
+                        example: "Two_Factor_Totp"
         '400':
           description: |
             Bad request. `email` (or `username`) or `password` (or `password_hash`) is
@@ -1112,19 +1139,45 @@ paths:
                               properties:
                                 iat:
                                   type: number
+                                  description: Issued-at timestamp. Always present.
                                   example: 1516239022
+                                exp:
+                                  type: number
+                                  nullable: true
+                                  description: Expiry timestamp. Present only when the `exp` payload parameter is enabled in plugin settings.
+                                  example: 1516242622
                                 email:
                                   type: string
+                                  nullable: true
+                                  description: User email. Present only when enabled in plugin settings.
                                   example: "myuser@simplejwtlogin.com"
                                 id:
                                   type: number
+                                  nullable: true
+                                  description: WordPress user ID. Present only when enabled in plugin settings.
                                   example: 1
                                 site:
                                   type: string
+                                  nullable: true
+                                  description: Site URL. Present only when enabled in plugin settings.
                                   example: "https://simplejwtlogin.com"
                                 username:
                                   type: string
+                                  nullable: true
+                                  description: WordPress login username. Present only when enabled in plugin settings.
                                   example: "myuser"
+                                iss:
+                                  type: string
+                                  nullable: true
+                                  description: Issuer claim. Present only when enabled in plugin settings.
+                                  example: "https://simplejwtlogin.com"
+                            expire_in:
+                              type: integer
+                              nullable: true
+                              description: |
+                                Seconds until the JWT expires (`exp - now`). Only present
+                                when the JWT payload contains an `exp` claim.
+                              example: 3600
         '400':
           description: |
             Bad request. The `JWT` parameter is missing.
@@ -1277,13 +1330,19 @@ paths:
                     type: boolean
                     description: Action status.
                     example: true
+                  message:
+                    type: string
+                    description: Confirmation message.
+                    example: "Token was revoked."
                   data:
                     type: object
                     properties:
                       jwt:
-                        type: string
-                        description: The JWT that was revoked.
-                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                        type: array
+                        description: Array containing the revoked JWT string.
+                        items:
+                          type: string
+                          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
         '400':
           description: |
             Bad request. The `JWT` field is missing from the request body.
@@ -1332,48 +1391,170 @@ paths:
                 data:
                   message: "An unexpected error occurred."
                   errorCode: 22
+  /auth/2fa:
+    post:
+      tags:
+        - authenticate_user
+      summary: Verify Two-Factor Authentication code
+      description: |
+        Completes the Two-Factor Authentication challenge issued by `POST /auth`. When
+        credentials are valid but the user has 2FA enabled, `POST /auth` returns an interim
+        JWT (`two_factor_required: true`). This endpoint accepts that interim token together
+        with the user's 2FA code and, on success, returns the final signed JWT.
+
+        **Requirements**
+        - Authentication must be enabled in the plugin settings.
+        - The Two-Factor Authentication plugin must be installed and active.
+        - The interim JWT must be provided via the `Authorization: Bearer` header or the
+          `JWT` body field.
+        - The `code` field must contain the TOTP code, email token, or backup code,
+          depending on the user's configured 2FA provider.
+      operationId: verifyTwoFactor
+      requestBody:
+        description: Interim JWT and 2FA verification code.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/twoFactorVerifyBody'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/twoFactorVerifyBody'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/twoFactorVerifyBody'
+      responses:
+        '200':
+          description: 2FA verification successful. Returns a signed JWT and optional refresh token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      jwt:
+                        type: string
+                        description: Signed JWT for use in subsequent requests.
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                      refresh_token:
+                        type: string
+                        nullable: true
+                        description: |
+                          Opaque refresh token. Only present when the refresh-token feature
+                          is enabled in the plugin settings.
+                        example: "a1b2c3d4e5f678901234567890123456789012345678901234567890123456789012"
+        '400':
+          description: |
+            Bad request. One of:
+            - The Two-Factor Authentication plugin is not active (`errorCode` 105).
+            - The interim JWT payload is missing required 2FA claims (`errorCode` 106).
+            - The 2FA session nonce is invalid or expired (`errorCode` 107).
+            - Too many failed attempts - rate limited (`errorCode` 108).
+            - The 2FA code is incorrect (`errorCode` 109).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "Invalid two-factor code."
+                  errorCode: 109
+        '403':
+          description: |
+            Forbidden. Authentication is disabled in the plugin settings.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "Authentication is not enabled."
+                  errorCode: 45
+        '404':
+          description: The WordPress user referenced by the interim JWT could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "User not found."
+                  errorCode: 24
+        '422':
+          description: |
+            Unprocessable entity. The interim JWT is missing from the request (not supplied
+            via `Authorization: Bearer` header or `JWT` body field).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "Interim JWT is missing."
+                  errorCode: 42
+        '500':
+          description: |
+            Internal server error. Typically an OpenSSL signing failure when generating
+            the final JWT.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "An unexpected error occurred."
+                  errorCode: 22
   /oauth/token:
     get:
       tags:
         - oauth
       summary: Exchange OAuth authorization code for a WordPress JWT (GET)
       description: |
-        Exchanges a provider-issued authorization code or ID token for a WordPress JWT.
-        The provider must be enabled in the plugin settings. On success the response
-        contains the WordPress user profile and a signed JWT.
+        Browser-redirect flow: exchanges a provider authorization code for a WordPress
+        session and redirects the browser to the WordPress admin (or login page on failure).
+        The provider must be enabled in the plugin settings.
 
-        Supported providers: `google`, `auth0`.
+        Supported providers: `google`, `auth0`, `facebook`, `github`.
 
-        **Google flow**
-        Pass `provider=google` together with either:
-        - `code` — the authorization code returned by Google's OAuth consent screen, or
-        - `id_token` — a Google ID token obtained via Sign In With Google.
+        **Google flow** — pass `provider=google` with `code`.
 
-        **Auth0 flow**
-        Pass `provider=auth0` together with `code` — the authorization code returned by
-        Auth0.
+        **Auth0 flow** — pass `provider=auth0` with `code`.
 
-        If the OAuth identity matches an existing WordPress user (by email), that user is
-        returned. If no match is found and "Register on OAuth login" is enabled, a new user
-        is created automatically.
+        **Facebook flow** — pass `provider=facebook` with `code`.
+
+        **GitHub flow** — pass `provider=github` with `code`.
+
+        If the OAuth identity matches an existing WordPress user (by email), the user is
+        logged in. If no match is found and "Register on OAuth login" is enabled, a new
+        user is created automatically. On failure the browser is redirected to the
+        WordPress login page.
+
+        > **Note**: this endpoint is designed for browser redirect callbacks (OAuth consent
+        > screen redirect_uri). To obtain a JWT programmatically, use `POST /oauth/token`
+        > instead.
       operationId: oauthTokenGet
       parameters:
         - name: provider
           in: query
           required: true
-          description: OAuth provider slug. Supported values — `google`, `auth0`.
+          description: OAuth provider slug.
           schema:
             type: string
-            enum: [google, auth0]
+            enum: [google, auth0, facebook, github]
           example: google
         - name: code
           in: query
-          description: Authorization code returned by the OAuth provider.
-          schema:
-            type: string
-        - name: id_token
-          in: query
-          description: ID token from Google Sign-In (Google provider only).
+          description: Authorization code returned by the OAuth provider's consent screen.
           schema:
             type: string
         - name: AUTH_CODE
@@ -1383,14 +1564,16 @@ paths:
             type: string
       responses:
         '200':
-          description: OAuth login successful. Returns the WordPress user and a JWT.
+          description: |
+            Browser redirected to the WordPress admin URL after a successful login,
+            or to the WordPress login page on failure. The response body is empty HTML.
           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OAuthResponse'
+            application/html:
+              example: ""
         '400':
           description: |
-            Bad request. Required OAuth parameters (`provider`, `code`) are missing.
+            Bad request. The `code` parameter is missing, or the provider slug is
+            unrecognised. (`errorCode` 69 for invalid provider slug.)
           content:
             application/json:
               schema:
@@ -1398,25 +1581,11 @@ paths:
               example:
                 success: false
                 data:
-                  message: "Missing Google parameters."
-                  errorCode: 71
-        '401':
-          description: |
-            Unauthorized. The authorization code or ID token was rejected by the OAuth
-            provider, or the provider token is invalid.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
-              example:
-                success: false
-                data:
-                  message: "Invalid Google code."
-                  errorCode: 72
+                  message: "The Oauth provider is invalid."
+                  errorCode: 69
         '403':
           description: |
-            Forbidden. The requested OAuth provider is not enabled in the plugin settings,
-            or the provider slug is not recognised.
+            Forbidden. The requested OAuth provider is not enabled in the plugin settings.
           content:
             application/json:
               schema:
@@ -1424,21 +1593,8 @@ paths:
               example:
                 success: false
                 data:
-                  message: "This OAuth provider is not available."
+                  message: "This Oauth provider is not available."
                   errorCode: 70
-        '404':
-          description: |
-            The OAuth identity email address does not match any WordPress user and
-            automatic registration is disabled.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
-              example:
-                success: false
-                data:
-                  message: "User not found."
-                  errorCode: 74
         '500':
           description: Internal server error.
           content:
@@ -1453,14 +1609,32 @@ paths:
     post:
       tags:
         - oauth
-      summary: Exchange OAuth authorization code for a WordPress JWT (POST)
+      summary: Exchange OAuth token for a WordPress JWT (POST)
       description: |
-        Identical to `GET /oauth/token` but accepts parameters in the request body.
-        Prefer this variant when sending a code or token that should not appear in server
-        logs or browser history.
+        API flow: exchanges a provider-issued token for a WordPress JWT and returns the
+        WordPress user profile. Use this variant for programmatic API clients. The provider
+        must be enabled in the plugin settings.
+
+        Supported providers: `google`, `auth0`, `facebook`, `github`.
+
+        **Google** — supply `code` (authorization code) or `id_token` (Google Sign-In ID
+        token). The `id_token` path returns a WordPress JWT directly; the `code` path
+        returns the raw Google token response for the client to handle.
+
+        **Auth0** — supply `code` (authorization code).
+
+        **Facebook** — supply `access_token` (Facebook user access token). Returns a
+        WordPress JWT.
+
+        **GitHub** — supply `access_token` (GitHub user access token). Returns a
+        WordPress JWT.
+
+        If the OAuth identity matches an existing WordPress user (by email), a WordPress
+        JWT is returned. If no match is found and "Register on OAuth login" is enabled, a
+        new user is created automatically.
       operationId: oauthTokenPost
       requestBody:
-        description: OAuth provider and authorization code or ID token.
+        description: OAuth provider and authorization code, ID token, or access token.
         content:
           application/json:
             schema:
@@ -1481,41 +1655,75 @@ paths:
                 $ref: '#/components/schemas/OAuthResponse'
         '400':
           description: |
-            Bad request. Required OAuth parameters (`provider`, `code`) are missing.
+            Bad request. One of:
+            - The `provider` slug is unrecognised (`errorCode` 69).
+            - Required parameters are missing — `code` for Google/Auth0/Facebook/GitHub,
+              or `id_token` for Google, or `access_token` for Facebook/GitHub
+              (`errorCode` 71 Google, 75 Auth0, 97 Facebook, 101 GitHub).
+            - The authorization code or access token was rejected by the provider
+              (`errorCode` 72 Google code, 79 Auth0 code, 98 Facebook code, 102 GitHub
+              code; or 73 Google id_token, 80 Auth0 token, 99 Facebook token, 103 GitHub
+              token).
+            - The OAuth identity email did not match any WordPress user and auto-register
+              is disabled — Facebook (`errorCode` 100) or GitHub (`errorCode` 104).
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "The code or access_token parameter is missing from request."
+                  errorCode: 97
         '401':
           description: |
-            Unauthorized. The authorization code or ID token was rejected by the OAuth
-            provider, or the provider token is invalid.
+            Unauthorized. The Google `id_token` or Auth0 token is invalid or rejected by
+            the provider (`errorCode` 73, 80).
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "The provided id_token is invalid."
+                  errorCode: 73
         '403':
           description: |
-            Forbidden. The requested OAuth provider is not enabled or the provider slug
-            is not recognised.
+            Forbidden. The requested OAuth provider is not enabled in the plugin settings.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "This Oauth provider is not available."
+                  errorCode: 70
         '404':
           description: |
-            The OAuth identity email does not match any WordPress user and automatic
-            registration is disabled.
+            The Google or Auth0 identity email does not match any WordPress user and
+            automatic registration is disabled (`errorCode` 74 Google, 78 Auth0).
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "User not found."
+                  errorCode: 74
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "An unexpected error occurred."
+                  errorCode: 22
   /api-keys:
     get:
       tags:
@@ -2005,77 +2213,108 @@ components:
           description: Plaintext password for the new account.
         user_login:
           type: string
+          nullable: true
           description: The user's login username. Defaults to the email address if omitted.
           example: myuser
         user_nicename:
           type: string
+          nullable: true
           description: URL-friendly version of the username (used in author URLs).
           example: myuser
         user_url:
           type: string
+          nullable: true
           description: URL associated with the user's profile.
           example: https://simplejwtlogin.com
         display_name:
           type: string
+          nullable: true
           description: The user's display name. Defaults to `user_login` if omitted.
           example: My User
         nickname:
           type: string
+          nullable: true
           description: The user's nickname. Defaults to `user_login` if omitted.
           example: myuser
         first_name:
           type: string
+          nullable: true
           description: The user's first name.
           example: John
         last_name:
           type: string
+          nullable: true
           description: The user's last name.
           example: Doe
         description:
           type: string
+          nullable: true
           description: The user's biographical description.
           example: This is a sample description
         rich_editing:
           type: string
+          nullable: true
           description: Whether to enable the rich-editor. Accepts `'true'` or `'false'` as a string literal. Defaults to `'true'`.
           example: "true"
         syntax_highlighting:
           type: string
+          nullable: true
           description: Whether to enable the rich code editor. Accepts `'true'` or `'false'` as a string literal. Defaults to `'true'`.
           example: "true"
         comment_shortcuts:
           type: string
+          nullable: true
           description: Whether to enable comment moderation keyboard shortcuts. Accepts `'true'` or `'false'` as a string literal. Defaults to `'false'`.
           example: "false"
         admin_color:
           type: string
+          nullable: true
           description: Admin colour scheme for the user. Defaults to `'fresh'`.
           example: fresh
         use_ssl:
           type: boolean
+          nullable: true
           description: Whether the user should always access the admin over HTTPS. Defaults to `false`.
           example: false
         user_registered:
           type: string
+          nullable: true
           description: Registration date in `Y-m-d H:i:s` format. Defaults to the current date/time.
           example: "2022-01-31 23:15:30"
         user_activation_key:
           type: string
+          nullable: true
           description: Password reset key. Defaults to empty.
         spam:
           type: boolean
+          nullable: true
           description: Multisite only. Whether the user is marked as spam. Defaults to `false`.
           example: false
         show_admin_bar_front:
           type: string
+          nullable: true
           description: Whether to display the Admin Bar on the front end. Accepts `'true'` or `'false'` as a string literal. Defaults to `'true'`.
           example: "true"
         locale:
           type: string
+          nullable: true
           description: User's locale. Defaults to empty (inherits site locale).
           example: "en_US"
+        user_meta:
+          nullable: true
+          description: |
+            Optional user meta to set on the new account. Accepted as a JSON-encoded
+            object string or as a plain object. Only keys listed in "Allowed user meta"
+            in the plugin settings are stored; all others are silently discarded.
+          example: '{"billing_city":"New York"}'
+          oneOf:
+            - type: string
+            - type: object
+              additionalProperties:
+                type: string
         AUTH_CODE:
           type: string
+          nullable: true
           example: "MY_SUPER_SECRET_AUTH_CODE"
           description: Required when "Register Requires Auth Code" is enabled in the plugin settings.
     authBody:
@@ -2083,23 +2322,42 @@ components:
       properties:
         email:
           type: string
+          nullable: true
           example: john@doe.com
-          description: User email address. Required when `username` is not provided.
+          description: User email address. Required when neither `username` nor `login` is provided.
         username:
           type: string
+          nullable: true
           example: myuser
-          description: WordPress login username. Required when `email` is not provided.
+          description: WordPress login username. Required when neither `email` nor `login` is provided.
+        login:
+          type: string
+          nullable: true
+          example: myuser
+          description: |
+            Combined identifier accepted as either an email address or a WordPress login
+            username. Required when neither `email` nor `username` is provided.
         password:
           type: string
+          nullable: true
           description: User plaintext password. Required when `password_hash` is not provided.
         password_hash:
           type: string
+          nullable: true
           description: |
             Hashed password as stored in the WordPress database. Requires "Allow login with
             password hash" to be enabled in the plugin settings. Required when `password`
             is not provided.
+        payload:
+          type: string
+          nullable: true
+          description: |
+            Optional JSON-encoded object of additional claims to merge into the issued JWT
+            payload. Same semantics as the `payload` field in `authRefreshBody`.
+          example: '{"custom_claim":"value"}'
         AUTH_CODE:
           type: string
+          nullable: true
           example: "MY_SUPER_SECRET_AUTH_CODE"
           description: Required when "Authentication Requires Auth Code" is enabled.
     authRefreshBody:
@@ -2111,8 +2369,17 @@ components:
           type: string
           example: "a1b2c3d4e5f678901234567890123456789012345678901234567890123456789012"
           description: Refresh token obtained from a prior `/auth` response.
+        payload:
+          type: string
+          nullable: true
+          description: |
+            Optional JSON-encoded object of additional claims to merge into the new JWT
+            payload. When omitted the new JWT receives the same standard claims as a
+            fresh `/auth` response.
+          example: '{"custom_claim":"value"}'
         AUTH_CODE:
           type: string
+          nullable: true
           example: "MY_SUPER_SECRET_AUTH_CODE"
           description: Required when "Authentication Requires Auth Code" is enabled.
     validateBody:
@@ -2126,6 +2393,7 @@ components:
           description: The JWT to validate.
         AUTH_CODE:
           type: string
+          nullable: true
           example: "MY_SUPER_SECRET_AUTH_CODE"
           description: Required when "Authentication Requires Auth Code" is enabled.
     authRevokeBody:
@@ -2139,6 +2407,7 @@ components:
           description: The JWT to revoke. May be expired — the signature is still verified.
         AUTH_CODE:
           type: string
+          nullable: true
           example: "MY_SUPER_SECRET_AUTH_CODE"
           description: Required when "Authentication Requires Auth Code" is enabled.
     resetPasswordBody:
@@ -2152,6 +2421,7 @@ components:
           description: Email address of the account to reset.
         AUTH_CODE:
           type: string
+          nullable: true
           example: "MY_SUPER_SECRET_AUTH_CODE"
           description: Required when "Reset Password Requires Auth Code" is enabled.
     changePasswordBody:
@@ -2166,6 +2436,7 @@ components:
           description: Email address of the account whose password to change.
         code:
           type: string
+          nullable: true
           example: "MY_SECRET_CODE_RECEIVED_BY_EMAIL"
           description: |
             One-time reset code received by email (from `POST /user/reset_password`).
@@ -2177,6 +2448,7 @@ components:
           description: The new password to set for the account.
         JWT:
           type: string
+          nullable: true
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
           description: |
             Valid JWT for the user. When "Allow Reset Password with JWT" is enabled,
@@ -2184,6 +2456,7 @@ components:
             password-reset flow cannot be reused here.
         AUTH_CODE:
           type: string
+          nullable: true
           example: "MY_SUPER_SECRET_AUTH_CODE"
           description: Required when "Reset Password Requires Auth Code" is enabled.
     oauthBody:
@@ -2193,19 +2466,33 @@ components:
       properties:
         provider:
           type: string
-          enum: [google, auth0]
+          enum: [google, auth0, facebook, github]
           description: OAuth provider slug.
           example: google
         code:
           type: string
-          description: Authorization code returned by the OAuth provider.
+          nullable: true
+          description: |
+            Authorization code returned by the OAuth provider's consent screen.
+            Used by Google, Auth0, Facebook, and GitHub.
           example: "4/0AfJohXmX..."
         id_token:
           type: string
-          description: Google ID token from Sign In With Google (Google provider only).
+          nullable: true
+          description: |
+            Google ID token from Sign In With Google (Google provider only). Can be
+            supplied instead of `code` to obtain a WordPress JWT directly.
           example: "eyJhbGci..."
+        access_token:
+          type: string
+          nullable: true
+          description: |
+            Provider access token passed directly by the client. Used by Facebook
+            (`provider=facebook`) and GitHub (`provider=github`) instead of `code`.
+          example: "EAABs..."
         AUTH_CODE:
           type: string
+          nullable: true
           example: "MY_SUPER_SECRET_AUTH_CODE"
           description: Required when "Authentication Requires Auth Code" is enabled.
     OAuthResponse:
@@ -2219,10 +2506,18 @@ components:
           properties:
             jwt:
               type: string
-              description: Signed WordPress JWT for the authenticated user.
+              nullable: true
+              description: |
+                Signed WordPress JWT for the authenticated user. Present when an
+                `id_token` or `access_token` is supplied. Absent when `code` is
+                supplied (the raw provider token response is returned instead).
               example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
             user:
               type: object
+              nullable: true
+              description: |
+                WordPress user profile. Only present in flows that return user
+                details alongside the JWT.
               properties:
                 ID:
                   type: integer
@@ -2292,6 +2587,32 @@ components:
             Updated expiry date/time in `Y-m-d H:i:s` format, or `null` to remove the
             expiry.
           example: "2028-06-01 00:00:00"
+    twoFactorVerifyBody:
+      type: object
+      required:
+        - code
+      properties:
+        JWT:
+          type: string
+          nullable: true
+          description: |
+            The interim JWT received in the `POST /auth` Two-Factor challenge response.
+            Can be supplied here in the request body or via the `Authorization: Bearer`
+            header.
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        code:
+          type: string
+          description: |
+            The 2FA verification code. Accepted formats depend on the user's configured
+            provider: TOTP code (6-digit), email token, or backup code.
+          example: "123456"
+        payload:
+          type: string
+          nullable: true
+          description: |
+            Optional JSON-encoded object of additional claims to merge into the issued JWT
+            payload. Must be a valid JSON string (with escaped slashes if sent as form data).
+          example: '{"custom_claim":"value"}'
     ApiKeyItem:
       type: object
       properties:
@@ -2334,5 +2655,6 @@ components:
           example: null
         user_id:
           type: integer
+          nullable: true
           description: WordPress user ID who owns this key. Only present in admin responses.
           example: 3

@@ -959,6 +959,16 @@ if (!function_exists('wp_create_nonce')) {
     }
 }
 
+if (!function_exists('simple_jwt_login_init_session')) {
+    /**
+     * @return array
+     */
+    function simple_jwt_login_init_session()
+    {
+        return [];
+    }
+}
+
 if (!function_exists('trailingslashit')) {
     /**
      * @param string $string

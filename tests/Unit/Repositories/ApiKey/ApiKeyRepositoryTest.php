@@ -4,6 +4,7 @@ namespace SimpleJwtLoginTests\Unit\Repositories\ApiKey;
 
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepository;
+use stdClass;
 
 class ApiKeyRepositoryTest extends TestCase
 {
@@ -62,7 +63,7 @@ class ApiKeyRepositoryTest extends TestCase
 
     public function testGetByKeyHashReturnsObjectWhenFound()
     {
-        $row           = new \stdClass();
+        $row           = new stdClass();
         $row->id       = 1;
         $row->key_hash = 'abc123';
 
@@ -76,7 +77,7 @@ class ApiKeyRepositoryTest extends TestCase
 
     public function testFindAllReturnsItemsAndTotal()
     {
-        $row       = new \stdClass();
+        $row       = new stdClass();
         $row->id   = 1;
         $row->name = 'Test Key';
 

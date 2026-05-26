@@ -2,6 +2,7 @@
 
 namespace SimpleJwtLoginTests\Feature\RegisterUsers;
 
+use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestDox;
 use SimpleJWTLogin\ErrorCodes;
@@ -199,6 +200,6 @@ class ValidationsTest extends TestBase
                 return $body;
         }
 
-        throw new \Exception("invalid type " . $requestType);
+        throw new Exception("invalid type " . $requestType);
     }
 }

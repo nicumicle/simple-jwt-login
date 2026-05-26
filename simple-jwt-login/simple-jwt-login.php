@@ -36,6 +36,7 @@ function simple_jwt_login_sanitize_css_value($value)
 {
     return Shortcodes::sanitizeCssValue($value);
 }
+global $wpdb;
 
 // Admin UI
 $simpleJwtLoginAdminUI = new AdminUI();
@@ -46,18 +47,18 @@ add_filter(
 );
 
 // Login page integration
-$simpleJwtLoginLoginPage = new LoginPageIntegration();
+$simpleJwtLoginLoginPage = new LoginPageIntegration($_REQUEST);
 add_action('login_head', array($simpleJwtLoginLoginPage, 'enqueueLoginAssets'));
 add_action('login_message', array($simpleJwtLoginLoginPage, 'showLoginMessage'));
 add_action('login_footer', array($simpleJwtLoginLoginPage, 'renderLoginFooter'));
 
 // Shortcodes
-$simpleJwtLoginShortcodes = new Shortcodes();
+$simpleJwtLoginShortcodes = new Shortcodes($_REQUEST);
 add_shortcode('simple-jwt-login:request', array($simpleJwtLoginShortcodes, 'handleRequestShortcode'));
 add_shortcode('simple-jwt-login-oauth', array($simpleJwtLoginShortcodes, 'handleOauthShortcode'));
 
 // Lifecycle (activation, deactivation, uninstall, migration, i18n)
-$simpleJwtLoginLifecycle = new Lifecycle();
+$simpleJwtLoginLifecycle = new Lifecycle($wpdb);
 register_activation_hook(__FILE__, array($simpleJwtLoginLifecycle, 'activate'));
 register_deactivation_hook(__FILE__, array($simpleJwtLoginLifecycle, 'deactivate'));
 register_uninstall_hook(__FILE__, 'SimpleJWTLogin\\Plugin\\Lifecycle::uninstall');
@@ -65,7 +66,7 @@ add_action('plugins_loaded', array($simpleJwtLoginLifecycle, 'loadTranslations')
 add_action('plugins_loaded', array($simpleJwtLoginLifecycle, 'checkDbVersion'));
 
 // Cron cleanup
-$simpleJwtLoginCron = new CronCleanup();
+$simpleJwtLoginCron = new CronCleanup($wpdb);
 add_action('simple_jwt_login_cleanup_refresh_tokens', array($simpleJwtLoginCron, 'cleanupRefreshTokens'));
 add_action('simple_jwt_login_cleanup_audit_logs', array($simpleJwtLoginCron, 'cleanupAuditLogs'));
 add_action('simple_jwt_login_cleanup_webhook_logs', array($simpleJwtLoginCron, 'cleanupWebhookLogs'));

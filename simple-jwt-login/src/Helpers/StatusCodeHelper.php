@@ -129,7 +129,7 @@ class StatusCodeHelper
      * @param int $defaultStatusCode
      * @return int
      */
-    public static function getStatusCodeFromException($exception, $defaultStatusCode)
+    public static function getStatusCodeFromException($exception, $defaultStatusCode = 500)
     {
         if (!($exception instanceof \Exception)) {
             return 500;

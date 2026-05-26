@@ -278,10 +278,9 @@ class JwtRulesSettingsTest extends TestCase
             return;
         }
 
+        $found = $sut->findByIss($expectedIss);
         if ($expectedJwtParts !== null) {
             $found = $sut->findMatchingRuleConfig($expectedJwtParts);
-        } else {
-            $found = $sut->findByIss($expectedIss);
         }
 
         $this->assertNotNull($found);
@@ -289,11 +288,11 @@ class JwtRulesSettingsTest extends TestCase
 
         if ($expectedKey !== null) {
             $this->assertSame($expectedKey, $found['decryption_key']);
-        } else {
-            // RS*: verify keys are stored base64-encoded
-            $this->assertNotEmpty($found['decryption_key_public']);
-            $this->assertNotEmpty($found['decryption_key_private']);
+            return;
         }
+        // RS*: verify keys are stored base64-encoded
+        $this->assertNotEmpty($found['decryption_key_public']);
+        $this->assertNotEmpty($found['decryption_key_private']);
     }
 
     public static function providerValidationFailures(): array

@@ -10,6 +10,7 @@ use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepositor
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\RefreshTokenService;
+use stdClass;
 
 class RefreshTokenServiceTest extends TestCase
 {
@@ -93,7 +94,7 @@ class RefreshTokenServiceTest extends TestCase
         $this->expectExceptionMessage('User not found.');
         $this->expectExceptionCode(ErrorCodes::ERR_REVOKED_TOKEN);
 
-        $tokenData          = new \stdClass();
+        $tokenData          = new stdClass();
         $tokenData->user_id = 1;
 
         $this->wordPressDataMock->method('getOptionFromDatabase')
@@ -121,7 +122,7 @@ class RefreshTokenServiceTest extends TestCase
 
     public function testSuccess()
     {
-        $tokenData          = new \stdClass();
+        $tokenData          = new stdClass();
         $tokenData->user_id = 1;
 
         $this->wordPressDataMock->method('getOptionFromDatabase')
@@ -156,7 +157,7 @@ class RefreshTokenServiceTest extends TestCase
     public function testOldRefreshTokenIsRotatedOnSuccess()
     {
         $this->refreshTokenRepoMock = $this->createMock(RefreshTokenRepositoryInterface::class);
-        $tokenData          = new \stdClass();
+        $tokenData          = new stdClass();
         $tokenData->user_id = 42;
 
         $this->wordPressDataMock->method('getOptionFromDatabase')
@@ -197,7 +198,7 @@ class RefreshTokenServiceTest extends TestCase
 
     public function testResponseContainsNewJwtAndRefreshToken()
     {
-        $tokenData          = new \stdClass();
+        $tokenData          = new stdClass();
         $tokenData->user_id = 1;
         $capturedResponse   = null;
 

@@ -11,6 +11,17 @@ use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepository;
 
 class Lifecycle
 {
+    /** @var \wpdb */
+    private $wpdb;
+    
+    /**
+     * @param  \wpdb $wpdb
+    */
+    public function __construct($wpdb)
+    {
+        $this->wpdb = $wpdb;
+    }
+
     public function activate()
     {
         $this->createAllTables();
@@ -36,9 +47,9 @@ class Lifecycle
 
     public static function uninstall()
     {
+        global $wpdb;
         delete_option(SimpleJWTLoginSettings::OPTIONS_KEY);
         delete_option('simple_jwt_login_db_version');
-        global $wpdb;
         (new RefreshTokenRepository($wpdb))->dropTable();
         (new AuditLogRepository($wpdb))->dropTable();
         (new WebhookLogRepository($wpdb))->dropTable();
@@ -65,11 +76,10 @@ class Lifecycle
 
     protected function createAllTables()
     {
-        global $wpdb;
-        (new RefreshTokenRepository($wpdb))->createTable();
-        (new AuditLogRepository($wpdb))->createTable();
-        (new WebhookLogRepository($wpdb))->createTable();
-        (new ApiKeyRepository($wpdb))->createTable();
+        (new RefreshTokenRepository($this->wpdb))->createTable();
+        (new AuditLogRepository($this->wpdb))->createTable();
+        (new WebhookLogRepository($this->wpdb))->createTable();
+        (new ApiKeyRepository($this->wpdb))->createTable();
     }
 
     protected function ensureRefreshTokenKey()

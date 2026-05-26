@@ -5,6 +5,7 @@ use SimpleJWTLogin\Helpers\StatusCodeHelper;
 use SimpleJWTLogin\Libraries\ParseRequest;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
+use SimpleJWTLogin\Routes\SessionService;
 use SimpleJWTLogin\Services\RouteService;
 
 // This will allow to log in  a user to WPGraphQL is not authenticated
@@ -26,10 +27,7 @@ add_action('init_graphql_request', function () {
         ->withServerHelper(new ServerHelper($_SERVER));
 
     if ($jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
-        if (empty(session_id()) && !headers_sent()) {
-            @session_start();
-        }
-        $routeService->withSession($_SESSION);
+        $routeService->withSession(SessionService::init());
     }
     // Check if user is already authenticated
     if (is_user_logged_in()) {
@@ -54,7 +52,7 @@ add_action('init_graphql_request', function () {
                 'errorCode' => $exception->getCode(),
                 'type'      => 'simple-jwt-login-middleware'
             ],
-            StatusCodeHelper::getStatusCodeFromException($exception, 400)
+            StatusCodeHelper::getStatusCodeFromException($exception)
         );
 
         return;

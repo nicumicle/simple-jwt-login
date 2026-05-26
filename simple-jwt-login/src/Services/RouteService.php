@@ -4,6 +4,12 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Modules\AuditEvents;
+use SimpleJWTLogin\Services\ApiKeys\CreateApiKeyService;
+use SimpleJWTLogin\Services\ApiKeys\DeleteApiKeyService;
+use SimpleJWTLogin\Services\ApiKeys\ListApiKeysService;
+use SimpleJWTLogin\Services\ApiKeys\RevokeApiKeyService;
+use SimpleJWTLogin\Services\ApiKeys\UpdateApiKeyService;
 use SimpleJWTLogin\Services\Integrations\TwoFactor\TwoFactorVerifyService;
 
 class RouteService extends BaseService
@@ -103,6 +109,48 @@ class RouteService extends BaseService
                 'name'    => self::AUTHENTICATION_2FA_ROUTE,
                 'method'  => self::METHOD_POST,
                 'service' => TwoFactorVerifyService::class,
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getApiKeyRoutes()
+    {
+        return [
+            [
+                'name'    => self::API_KEYS_ROUTE,
+                'method'  => self::METHOD_GET,
+                'service' => ListApiKeysService::class,
+            ],
+            [
+                'name'          => self::API_KEYS_ROUTE,
+                'method'        => self::METHOD_POST,
+                'service'       => CreateApiKeyService::class,
+                'audit_success' => AuditEvents::API_KEY_CREATE_SUCCESS,
+                'audit_failure' => AuditEvents::API_KEY_CREATE_FAILED,
+            ],
+            [
+                'name'          => self::API_KEYS_SINGLE_ROUTE,
+                'method'        => self::METHOD_PUT,
+                'service'       => UpdateApiKeyService::class,
+                'audit_success' => AuditEvents::API_KEY_UPDATE_SUCCESS,
+                'audit_failure' => AuditEvents::API_KEY_UPDATE_FAILED,
+            ],
+            [
+                'name'          => self::API_KEYS_SINGLE_ROUTE,
+                'method'        => self::METHOD_DELETE,
+                'service'       => RevokeApiKeyService::class,
+                'audit_success' => AuditEvents::API_KEY_REVOKE_SUCCESS,
+                'audit_failure' => AuditEvents::API_KEY_REVOKE_FAILED,
+            ],
+            [
+                'name'          => self::API_KEYS_HARD_DELETE_ROUTE,
+                'method'        => self::METHOD_DELETE,
+                'service'       => DeleteApiKeyService::class,
+                'audit_success' => AuditEvents::API_KEY_DELETE_SUCCESS,
+                'audit_failure' => AuditEvents::API_KEY_DELETE_FAILED,
             ],
         ];
     }

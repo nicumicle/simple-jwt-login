@@ -23,7 +23,6 @@ if (!defined('ABSPATH')) {
             <div>
                 <h3 class="sjl-gen-card-title">
                     <?php echo esc_html__('WPGraphQL', 'simple-jwt-login'); ?>
-                    <span class="beta">beta</span>
                 </h3>
                 <p class="sjl-gen-card-desc">
                     <?php echo wp_kses(

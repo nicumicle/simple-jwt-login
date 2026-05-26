@@ -7,6 +7,19 @@ use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 
 class LoginPageIntegration
 {
+    /**
+     * @var array
+     */
+    protected $request;
+
+    /**
+     * @param array $request
+     */
+    public function __construct($request)
+    {
+        $this->request = $request;
+    }
+
     public function enqueueLoginAssets()
     {
         $pluginDirUrl = plugin_dir_url(SIMPLE_JWT_LOGIN_PLUGIN_FILE);
@@ -16,9 +29,6 @@ class LoginPageIntegration
         );
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
     public function showLoginMessage()
     {
         $wordpressData = new WordPressRepository();
@@ -28,7 +38,7 @@ class LoginPageIntegration
         if ($jwtSettings->getIntegrationsSettings()->google()->isEnabled()
             && $jwtSettings->getIntegrationsSettings()->google()->isOauthEnabled()
         ) {
-            if (isset($_REQUEST['error'])) {
+            if (isset($this->request['error'])) {
                 $hasError = true;
             }
         }
@@ -36,7 +46,7 @@ class LoginPageIntegration
         if ($jwtSettings->getIntegrationsSettings()->auth0()->isEnabled()
             && $jwtSettings->getIntegrationsSettings()->auth0()->isOauthEnabled()
         ) {
-            if (isset($_REQUEST['error'])) {
+            if (isset($this->request['error'])) {
                 $hasError = true;
             }
         }
@@ -44,7 +54,7 @@ class LoginPageIntegration
         if ($hasError) {
             ?>
             <div class="notice notice-error">
-                <?php echo esc_html(__("OAuth Error:", 'simple-jwt-login') . ' ' . $_REQUEST['error']);?>
+                <?php echo esc_html(__("OAuth Error:", 'simple-jwt-login') . ' ' . $this->request['error']);?>
             </div>
             <?php
         }

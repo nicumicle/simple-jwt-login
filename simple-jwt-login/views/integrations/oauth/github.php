@@ -27,7 +27,6 @@ $github = $jwtSettings->getIntegrationsSettings()->github();
             <div>
                 <h3 class="sjl-gen-card-title">
                     <?php echo esc_html__('GitHub', 'simple-jwt-login'); ?>
-                    <span class="beta">beta</span>
                     <?php
                     echo isset($errorCode)
                     && (

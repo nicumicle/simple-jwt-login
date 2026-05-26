@@ -114,27 +114,25 @@ class DeleteUserTest extends WPTestCase
             'auth required but no AUTH_KEY param provided' => [
                 'params'       => [],
                 'expectedCode' => ErrorCodes::ERR_DELETE_MISSING_AUTH_KEY,
+                'authCodes'    => [['code' => self::AUTH_CODE, 'role' => '', 'expiration_date' => '']],
             ],
             'auth required but wrong AUTH_KEY value' => [
                 'params'       => [self::AUTH_KEY => 'WRONG_CODE'],
                 'expectedCode' => ErrorCodes::ERR_DELETE_MISSING_AUTH_KEY,
+                'authCodes'    => [['code' => self::AUTH_CODE, 'role' => '', 'expiration_date' => '']],
             ],
             'auth required and expired code' => [
                 'params'       => [self::AUTH_KEY => 'EXPIRED_CODE'],
                 'expectedCode' => ErrorCodes::ERR_DELETE_MISSING_AUTH_KEY,
-                'useExpiredCode' => true,
+                'authCodes'    => [['code' => 'EXPIRED_CODE', 'role' => '', 'expiration_date' => '2000-01-01']],
             ],
         ];
     }
 
     #[DataProvider('authKeyProvider')]
     #[TestDox('Returns ERR_DELETE_MISSING_AUTH_KEY for invalid auth key scenarios')]
-    public function testAuthKeyValidation(array $params, int $expectedCode, bool $useExpiredCode = false): void
+    public function testAuthKeyValidation(array $params, int $expectedCode, array $authCodes): void
     {
-        $authCodes = $useExpiredCode
-            ? [['code' => 'EXPIRED_CODE', 'role' => '', 'expiration_date' => '2000-01-01']]
-            : [['code' => self::AUTH_CODE, 'role' => '', 'expiration_date' => '']];
-
         static::configurePlugin(static::baseConfig([
             'require_delete_auth' => true,
             'auth_codes'          => $authCodes,

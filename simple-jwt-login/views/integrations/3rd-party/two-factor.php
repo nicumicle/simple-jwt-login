@@ -25,12 +25,11 @@ $tfaSettings = $jwtSettings->getIntegrationsSettings()->twoFactor();
             <div>
                 <h3 class="sjl-gen-card-title">
                     <?php echo esc_html__('Two-Factor Authentication', 'simple-jwt-login'); ?>
-                    <span class="beta">beta</span>
                 </h3>
                 <p class="sjl-gen-card-desc">
                     <?php echo wp_kses(
                         sprintf(
-                            __('Require a second factor before issuing a JWT, using the %sTwo Factor plugin%s.', 'simple-jwt-login'),
+                            __('Require a 2FA Code before issuing a JWT, using the %sTwo Factor plugin%s.', 'simple-jwt-login'),
                             '<a href="https://wordpress.org/plugins/two-factor/" target="_blank">',
                             '</a>'
                         ),

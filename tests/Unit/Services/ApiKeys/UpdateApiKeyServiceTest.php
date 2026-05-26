@@ -9,6 +9,7 @@ use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepositoryInterface;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\ApiKeys\UpdateApiKeyService;
+use stdClass;
 use WP_REST_Response;
 
 class UpdateApiKeyServiceTest extends TestCase
@@ -61,7 +62,7 @@ class UpdateApiKeyServiceTest extends TestCase
         $mock->method('currentUserCan')->willReturn(false);
         $mock->method('getCurrentUserId')->willReturn(42);
 
-        $key          = new \stdClass();
+        $key          = new stdClass();
         $key->user_id = 99;
         $this->apiKeyRepositoryMock->method('findById')->willReturn($key);
 
@@ -85,7 +86,7 @@ class UpdateApiKeyServiceTest extends TestCase
         $mock->method('getCurrentUserId')->willReturn(42);
         $mock->method('createResponse')->willReturn(new WP_REST_Response(['success' => true]));
 
-        $key          = new \stdClass();
+        $key          = new stdClass();
         $key->user_id = 42;
 
         $repoMock = $this->createStub(ApiKeyRepositoryInterface::class);
@@ -168,7 +169,7 @@ class UpdateApiKeyServiceTest extends TestCase
         });
         $mock->method('getCurrentUserId')->willReturn(5);
 
-        $key          = new \stdClass();
+        $key          = new stdClass();
         $key->user_id = 5;
         $this->apiKeyRepositoryMock->method('findById')->willReturn($key);
 

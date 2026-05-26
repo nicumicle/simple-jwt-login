@@ -4,6 +4,7 @@ namespace SimpleJwtLoginTests\Unit\Middleware;
 
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Helpers\ServerHelper;
+use stdClass;
 use SimpleJWTLogin\Middleware\ApiKeyAuthMiddleware;
 use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepositoryInterface;
 
@@ -49,7 +50,7 @@ class ApiKeyAuthMiddlewareTest extends TestCase
     {
         $serverHelper = new ServerHelper(['HTTP_X_API_KEY' => 'raw-key-value']);
 
-        $key              = new \stdClass();
+        $key              = new stdClass();
         $key->id          = 1;
         $key->permissions = json_encode(['create']);
 
@@ -74,7 +75,7 @@ class ApiKeyAuthMiddlewareTest extends TestCase
         $rawKey       = 'raw-key-value';
         $serverHelper = new ServerHelper(['HTTP_X_API_KEY' => $rawKey]);
 
-        $key              = new \stdClass();
+        $key              = new stdClass();
         $key->id          = 7;
         $key->permissions = json_encode(['read']);
 

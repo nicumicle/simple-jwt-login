@@ -23,7 +23,7 @@ $sjlApps = [
         'logo_class' => 'google',
         'enabled'    => $jwtSettings->getIntegrationsSettings()->google()->isEnabled(),
         'view'       => plugin_dir_path(__FILE__) . 'google.php',
-        'beta'       => true,
+        'beta'       => false,
     ],
     [
         'id'         => 'auth0',
@@ -32,7 +32,7 @@ $sjlApps = [
         'logo_class' => 'auth0',
         'enabled'    => $jwtSettings->getIntegrationsSettings()->auth0()->isEnabled(),
         'view'       => plugin_dir_path(__FILE__) . 'auth0.php',
-        'beta'       => true,
+        'beta'       => false,
     ],
     [
         'id'         => 'facebook',
@@ -41,7 +41,7 @@ $sjlApps = [
         'logo_class' => 'facebook',
         'enabled'    => $jwtSettings->getIntegrationsSettings()->facebook()->isEnabled(),
         'view'       => plugin_dir_path(__FILE__) . 'facebook.php',
-        'beta'       => true,
+        'beta'       => false,
     ],
     [
         'id'         => 'github',
@@ -50,7 +50,7 @@ $sjlApps = [
         'logo_class' => 'github',
         'enabled'    => $jwtSettings->getIntegrationsSettings()->github()->isEnabled(),
         'view'       => plugin_dir_path(__FILE__) . 'github.php',
-        'beta'       => true,
+        'beta'       => false,
     ],
 ];
 

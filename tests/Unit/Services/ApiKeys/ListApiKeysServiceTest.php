@@ -7,6 +7,7 @@ use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepositoryInterface;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\ApiKeys\ListApiKeysService;
+use stdClass;
 use WP_REST_Response;
 
 class ListApiKeysServiceTest extends TestCase
@@ -56,7 +57,7 @@ class ListApiKeysServiceTest extends TestCase
         $mock->method('currentUserCan')->willReturn(false);
         $mock->method('getCurrentUserId')->willReturn(7);
 
-        $item              = new \stdClass();
+        $item              = new stdClass();
         $item->id          = 1;
         $item->user_id     = 7;
         $item->name        = 'My Key';
@@ -94,7 +95,7 @@ class ListApiKeysServiceTest extends TestCase
 
     public function testAdminResponseIncludesUserId()
     {
-        $item              = new \stdClass();
+        $item              = new stdClass();
         $item->id          = 1;
         $item->user_id     = 5;
         $item->name        = 'Admin Key';
@@ -131,7 +132,7 @@ class ListApiKeysServiceTest extends TestCase
 
     public function testSuccessResponseContainsPaginationFields()
     {
-        $item              = new \stdClass();
+        $item              = new stdClass();
         $item->id          = 1;
         $item->user_id     = 1;
         $item->name        = 'Test Key';
@@ -172,7 +173,7 @@ class ListApiKeysServiceTest extends TestCase
 
     public function testItemsDoNotContainKeyHash()
     {
-        $item              = new \stdClass();
+        $item              = new stdClass();
         $item->id          = 2;
         $item->user_id     = 2;
         $item->name        = 'Another Key';

@@ -2,6 +2,7 @@
 
 namespace SimpleJwtLoginTests\Unit\Helpers;
 
+use Error;
 use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -173,9 +174,9 @@ class StatusCodeHelperTest extends TestCase
     public static function throwableErrorProvider(): array
     {
         return [
-            'error_default_400' => [new \Error('Call to undefined method'), 400],
-            'error_default_200' => [new \Error('Type error'), 200],
-            'error_default_503' => [new \Error('Type error'), 503],
+            'error_default_400' => [new Error('Call to undefined method'), 400],
+            'error_default_200' => [new Error('Type error'), 200],
+            'error_default_503' => [new Error('Type error'), 503],
         ];
     }
 

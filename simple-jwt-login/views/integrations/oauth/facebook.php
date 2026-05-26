@@ -27,7 +27,6 @@ $facebook = $jwtSettings->getIntegrationsSettings()->facebook();
             <div>
                 <h3 class="sjl-gen-card-title">
                     <?php echo esc_html__('Facebook', 'simple-jwt-login'); ?>
-                    <span class="beta">beta</span>
                     <?php
                     echo isset($errorCode)
                     && (

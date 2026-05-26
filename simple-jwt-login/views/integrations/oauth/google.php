@@ -27,7 +27,6 @@ $google = $jwtSettings->getIntegrationsSettings()->google();
             <div>
                 <h3 class="sjl-gen-card-title">
                     <?php echo esc_html__('Google', 'simple-jwt-login'); ?>
-                    <span class="beta">beta</span>
                     <?php
                     echo isset($errorCode)
                     && (

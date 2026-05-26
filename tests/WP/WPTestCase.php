@@ -2,11 +2,14 @@
 
 namespace SimpleJwtLoginTests\WP;
 
+use Closure;
 use Faker\Factory;
+use ReflectionClass;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_UnitTestCase;
+use WPDieException;
 
 /**
  * Base class for WP integration tests.
@@ -65,7 +68,7 @@ abstract class WPTestCase extends WP_UnitTestCase
      */
     protected function jsonRequest(string $method, string $route, array $body = [], array $headers = []): WP_REST_Response
     {
-        return $this->dispatch($method, $route, $body, $headers, true);
+        return $this->dispatchJson($method, $route, $body, $headers);
     }
 
     /**
@@ -73,9 +76,49 @@ abstract class WPTestCase extends WP_UnitTestCase
      * @param string               $route
      * @param array<string,mixed>  $params
      * @param array<string,string> $headers
-     * @param bool                 $asJson
      */
-    private function dispatch(string $method, string $route, array $params, array $headers, bool $asJson = false): WP_REST_Response
+    private function dispatch(string $method, string $route, array $params, array $headers): WP_REST_Response
+    {
+        return $this->runDispatch(
+            $method,
+            $route,
+            $params,
+            $headers,
+            static function (WP_REST_Request $req) use ($params): void {
+                foreach ($params as $key => $value) {
+                    $req->set_param($key, $value);
+                }
+            }
+        );
+    }
+
+    /**
+     * @param string               $method
+     * @param string               $route
+     * @param array<string,mixed>  $params
+     * @param array<string,string> $headers
+     */
+    private function dispatchJson(string $method, string $route, array $params, array $headers): WP_REST_Response
+    {
+        return $this->runDispatch(
+            $method,
+            $route,
+            $params,
+            $headers,
+            static function (WP_REST_Request $req) use ($params): void {
+                $req->set_body((string) json_encode($params));
+                $req->set_header('Content-Type', 'application/json');
+            }
+        );
+    }
+
+    /**
+     * @param string               $method
+     * @param string               $route
+     * @param array<string,mixed>  $params
+     * @param array<string,string> $headers
+     */
+    private function runDispatch(string $method, string $route, array $params, array $headers, Closure $configureReqBody): WP_REST_Response
     {
         $originalRequest = $_REQUEST;
         $prevMethod      = $_SERVER['REQUEST_METHOD'] ?? null;
@@ -113,7 +156,7 @@ abstract class WPTestCase extends WP_UnitTestCase
         // (DOING_AJAX=true in bootstrap-wp.php routes wp_die() to this filter.)
         $ajaxDieInterceptor = static function () {
             return static function () {
-                throw new \WPDieException('wp_die called from REST error path');
+                throw new WPDieException('wp_die called from REST error path');
             };
         };
         add_filter('wp_die_ajax_handler', $ajaxDieInterceptor, PHP_INT_MAX);
@@ -123,15 +166,7 @@ abstract class WPTestCase extends WP_UnitTestCase
         do_action('rest_api_init');
 
         $req = new WP_REST_Request($method, $route);
-
-        if ($asJson) {
-            $req->set_body((string) json_encode($params));
-            $req->set_header('Content-Type', 'application/json');
-        } else {
-            foreach ($params as $key => $value) {
-                $req->set_param($key, $value);
-            }
-        }
+        $configureReqBody($req);
 
         foreach ($headers as $key => $value) {
             $req->set_header($key, $value);
@@ -142,7 +177,7 @@ abstract class WPTestCase extends WP_UnitTestCase
         try {
             $response = rest_do_request($req);
             ob_end_clean();
-        } catch (\WPDieException $e) {
+        } catch (WPDieException $exception) {
             $output   = ob_get_clean();
             $decoded  = json_decode((string) $output, true) ?? [];
             $response = new WP_REST_Response($decoded, $capturedStatus);
@@ -150,9 +185,8 @@ abstract class WPTestCase extends WP_UnitTestCase
             remove_filter('status_header', $statusCapture, PHP_INT_MAX);
             remove_filter('wp_die_ajax_handler', $ajaxDieInterceptor, PHP_INT_MAX);
             $_REQUEST = $originalRequest;
-            if ($prevMethod === null) {
-                unset($_SERVER['REQUEST_METHOD']);
-            } else {
+            unset($_SERVER['REQUEST_METHOD']);
+            if ($prevMethod !== null) {
                 $_SERVER['REQUEST_METHOD'] = $prevMethod;
             }
             foreach ($injectedServerKeys as $k) {
@@ -207,7 +241,7 @@ abstract class WPTestCase extends WP_UnitTestCase
      */
     protected static function configurePlugin(array $settings): void
     {
-        $prop = (new \ReflectionClass(SimpleJWTLoginSettings::class))
+        $prop = (new ReflectionClass(SimpleJWTLoginSettings::class))
             ->getProperty('settingsInstances');
         $prop->setAccessible(true);
         $prop->setValue(null, []);

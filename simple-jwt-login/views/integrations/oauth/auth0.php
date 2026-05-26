@@ -27,7 +27,6 @@ $auth0 = $jwtSettings->getIntegrationsSettings()->auth0();
             <div>
                 <h3 class="sjl-gen-card-title">
                     <?php echo esc_html__('Auth0', 'simple-jwt-login'); ?>
-                    <span class="beta">beta</span>
                     <?php
                     echo isset($errorCode)
                     && (

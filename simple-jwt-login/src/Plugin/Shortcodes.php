@@ -8,7 +8,19 @@ use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 class Shortcodes
 {
     /**
-     * @SuppressWarnings(PHPMD.Superglobals)
+     * @var array
+     */
+    protected $request;
+
+    /**
+     * @param array $request
+     */
+    public function __construct($request)
+    {
+        $this->request = $request;
+    }
+
+    /**
      * @param array|null $parameter
      * @return string
      */
@@ -22,11 +34,11 @@ class Shortcodes
             return '';
         }
 
-        if (!isset($_REQUEST[$parameter])) {
+        if (!isset($this->request[$parameter])) {
             return '';
         }
 
-        return esc_html($_REQUEST[$parameter]);
+        return esc_html($this->request[$parameter]);
     }
 
     /**

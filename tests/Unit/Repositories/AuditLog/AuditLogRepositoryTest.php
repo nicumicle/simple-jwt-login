@@ -4,6 +4,7 @@ namespace SimpleJwtLoginTests\Unit\Repositories\AuditLog;
 
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Repositories\AuditLog\AuditLogRepository;
+use stdClass;
 
 class AuditLogRepositoryTest extends TestCase
 {
@@ -152,7 +153,7 @@ class AuditLogRepositoryTest extends TestCase
 
     public function testFindPaginatedReturnsStructuredResult()
     {
-        $fakeRow        = new \stdClass();
+        $fakeRow        = new stdClass();
         $fakeRow->id    = 1;
         $fakeRow->event_type = 'auth.login.success';
 
@@ -188,7 +189,7 @@ class AuditLogRepositoryTest extends TestCase
 
     public function testFindPaginatedWithUserEmailFilter()
     {
-        $fakeRow             = new \stdClass();
+        $fakeRow             = new stdClass();
         $fakeRow->id         = 2;
         $fakeRow->user_email = 'alice@example.com';
 

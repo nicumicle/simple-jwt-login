@@ -295,9 +295,9 @@ class ProtectEndpointTest extends WPTestCase
 
         if ($expectAccessGranted) {
             $this->assertAccessGranted($response);
-        } else {
-            $this->assertPluginDenied($response);
+            return;
         }
+        $this->assertPluginDenied($response);
     }
 
     // ─── SPECIFIC_ENDPOINTS mode ──────────────────────────────────────────────
@@ -472,9 +472,9 @@ class ProtectEndpointTest extends WPTestCase
 
         if ($expectAccessGranted) {
             $this->assertAccessGranted($response);
-        } else {
-            $this->assertPluginDenied($response);
+            return;
         }
+        $this->assertPluginDenied($response);
     }
 
     // ─── Plugin's own endpoints always pass through ───────────────────────────

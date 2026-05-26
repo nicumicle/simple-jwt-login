@@ -2,6 +2,7 @@
 
 namespace SimpleJwtLoginTests\Unit\Services;
 
+use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
@@ -111,7 +112,7 @@ class RedirectServiceTest extends TestCase
         $this->wordPressDataMock->expects($this->once())
             ->method('redirect')
             ->with($expectedUrl)
-            ->willThrowException(new \Exception('Correct URL'));
+            ->willThrowException(new Exception('Correct URL'));
 
         $response = (new RedirectService())
             ->withRequest($request)

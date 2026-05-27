@@ -81,6 +81,10 @@ class ResetPasswordService extends BaseService implements ServiceInterface
         $user = $this->getUser($jwtAllowed);
         $this->wordPressData->resetPassword($user, $newPassword);
 
+        if ($this->jwtSettings->getResetPasswordSettings()->shouldSendPasswordChangedEmail()) {
+            $this->wordPressData->sendPasswordChangedNotification($user);
+        }
+
         $this->wordPressData->triggerAction(
             SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_SUCCESS,
             $this->wordPressData->getUserProperty($user, 'ID'),

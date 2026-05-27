@@ -94,6 +94,15 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
             'allowed_user_meta',
             BaseSettings::SETTINGS_TYPE_STRING
         );
+
+        $this->assignSettingsPropertyFromPost(
+            null,
+            'send_welcome_email',
+            null,
+            'register_send_welcome_email',
+            BaseSettings::SETTINGS_TYPE_BOL,
+            false
+        );
     }
 
     public function validateSettings()
@@ -238,5 +247,13 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
     public function isJwtEnabled()
     {
         return !empty($this->settings['return_jwt']);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSendWelcomeEmailEnabled()
+    {
+        return !empty($this->settings['send_welcome_email']);
     }
 }

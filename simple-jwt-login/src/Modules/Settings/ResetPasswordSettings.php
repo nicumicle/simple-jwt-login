@@ -72,6 +72,13 @@ class ResetPasswordSettings extends BaseSettings implements SettingsInterface
             'reset_password_jwt',
             BaseSettings::SETTINGS_TYPE_BOL
         );
+        $this->assignSettingsPropertyFromPost(
+            null,
+            'send_password_changed_email',
+            null,
+            'reset_password_send_changed_email',
+            BaseSettings::SETTINGS_TYPE_BOL
+        );
     }
 
     /**
@@ -128,6 +135,14 @@ class ResetPasswordSettings extends BaseSettings implements SettingsInterface
     public function isJwtAllowed()
     {
         return !empty($this->settings['return_jwt']);
+    }
+
+    /**
+     * @return bool
+     */
+    public function shouldSendPasswordChangedEmail()
+    {
+        return !empty($this->settings['send_password_changed_email']);
     }
 
     /**

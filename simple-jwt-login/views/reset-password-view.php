@@ -327,5 +327,22 @@ if (!defined('ABSPATH')) {
             </div>
         </div>
 
+        <div class="sjl-gen-feature-toggle" style="margin-top:16px;padding-top:16px;border-top:1px solid #f0f1f2;">
+            <div class="sjl-gen-feature-toggle-check">
+                <input type="hidden" name="reset_password_send_changed_email" value="0" />
+                <input type="checkbox" name="reset_password_send_changed_email" id="reset_password_send_changed_email" value="1"
+                    <?php echo $jwtSettings->getResetPasswordSettings()->shouldSendPasswordChangedEmail() ? 'checked' : ''; ?>
+                />
+            </div>
+            <div class="sjl-gen-feature-toggle-text">
+                <label for="reset_password_send_changed_email" class="sjl-gen-feature-label">
+                    <?php echo esc_html__('Send WordPress default password changed notification', 'simple-jwt-login'); ?>
+                </label>
+                <p class="sjl-gen-feature-desc">
+                    <?php echo esc_html__('When enabled, WordPress sends its default password changed notification email to the site admin after the password is successfully updated.', 'simple-jwt-login'); ?>
+                </p>
+            </div>
+        </div>
+
     </div>
 </div>

@@ -241,6 +241,23 @@ if (!defined('ABSPATH')) {
             </div>
         </div>
 
+        <div class="sjl-gen-feature-toggle">
+            <div class="sjl-gen-feature-toggle-check">
+                <input type="hidden" name="register_send_welcome_email" value="0" />
+                <input type="checkbox" name="register_send_welcome_email" id="register_send_welcome_email" value="1"
+                    <?php echo $jwtSettings->getRegisterSettings()->isSendWelcomeEmailEnabled() ? 'checked' : ''; ?>
+                />
+            </div>
+            <div class="sjl-gen-feature-toggle-text">
+                <label for="register_send_welcome_email" class="sjl-gen-feature-label">
+                    <?php echo esc_html__('Send WordPress welcome email', 'simple-jwt-login'); ?>
+                </label>
+                <p class="sjl-gen-feature-desc">
+                    <?php echo esc_html__('When enabled, WordPress sends its default new-user notification emails (to the new user and the site admin) after successful registration via this endpoint.', 'simple-jwt-login'); ?>
+                </p>
+            </div>
+        </div>
+
     </div>
 </div>
 

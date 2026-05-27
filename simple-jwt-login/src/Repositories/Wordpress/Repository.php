@@ -259,6 +259,17 @@ interface Repository
     public function sendDefaultWordPressResetPassword($email);
 
     /**
+     * @param int $userId
+     * @param string $password
+     */
+    public function sendNewUserNotification($userId, $password);
+
+    /**
+     * @param \WP_User $user
+     */
+    public function sendPasswordChangedNotification($user);
+
+    /**
      * @param string $sendTo
      * @param string $emailSubject
      * @param string $emailBody

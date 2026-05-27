@@ -489,6 +489,43 @@ class ResetPasswordServiceTest extends TestCase
         ];
     }
 
+    #[DataProvider('passwordChangedNotificationProvider')]
+    public function testChangePasswordSendsNotificationWhenEnabled(bool $notificationEnabled, int $expectedCalls): void
+    {
+        $mock = $this->createMock(WordPressDataInterface::class);
+        $mock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_reset_password'              => 1,
+                'reset_password_requires_auth_code' => 0,
+                'reset_password_send_changed_email' => $notificationEnabled ? 1 : 0,
+            ]));
+        $mock->method('isEmail')->willReturn(true);
+        $mock->method('checkPasswordResetKeyByEmail')->willReturn(['User']);
+        $mock->method('createResponse')->willReturn(true);
+        $mock->expects($this->exactly($expectedCalls))
+            ->method('sendPasswordChangedNotification');
+
+        $resetService = (new ResetPasswordService())
+            ->withRequest([
+                'email'        => 'test@test.com',
+                'code'         => '123',
+                'new_password' => 'newpass',
+            ])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'PUT']))
+            ->withSettings(new SimpleJWTLoginSettings($mock));
+
+        $resetService->makeAction();
+    }
+
+    public static function passwordChangedNotificationProvider(): array
+    {
+        return [
+            'notification_enabled'  => [true, 1],
+            'notification_disabled' => [false, 0],
+        ];
+    }
+
     public function testInvalidRouteMethod()
     {
         $settings = [

@@ -461,6 +461,23 @@ class WordPressRepository implements Repository
     }
 
     /**
+     * @param int $userId
+     * @param string $password
+     */
+    public function sendNewUserNotification($userId, $password)
+    {
+        wp_new_user_notification($userId, null, 'both', $password);
+    }
+
+    /**
+     * @param \WP_User $user
+     */
+    public function sendPasswordChangedNotification($user)
+    {
+        wp_password_change_notification($user);
+    }
+
+    /**
      * @param string $sendTo
      * @param string $emailSubject
      * @param string $emailBody

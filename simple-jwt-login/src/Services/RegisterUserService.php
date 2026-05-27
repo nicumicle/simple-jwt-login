@@ -126,6 +126,10 @@ class RegisterUserService extends BaseService implements ServiceInterface
             }
         }
 
+        if ($this->jwtSettings->getRegisterSettings()->isSendWelcomeEmailEnabled()) {
+            $this->wordPressData->sendNewUserNotification($userId, $password);
+        }
+
         if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::REGISTER_ACTION_NAME)) {
             $this->wordPressData->triggerAction(SimpleJWTLoginHooks::REGISTER_ACTION_NAME, $user, $password);
         }

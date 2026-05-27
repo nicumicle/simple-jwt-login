@@ -131,8 +131,9 @@ class V1ToV2Migration implements MigrationInterface
             'random_password'        => 'random_password',
             'random_password_length' => 'random_password_length',
             'register_force_login'   => 'force_login',
-            'register_jwt'           => 'return_jwt',
-            'allowed_user_meta'      => 'allowed_user_meta',
+            'register_jwt'                => 'return_jwt',
+            'allowed_user_meta'           => 'allowed_user_meta',
+            'register_send_welcome_email' => 'send_welcome_email',
         ];
         foreach ($map as $old => $new) {
             if (array_key_exists($old, $settings)) {
@@ -231,6 +232,7 @@ class V1ToV2Migration implements MigrationInterface
             'jwt_reset_password_email_body'     => 'email_body',
             'jwt_email_type'                    => 'email_type',
             'reset_password_jwt'                => 'return_jwt',
+            'reset_password_send_changed_email' => 'send_password_changed_email',
         ];
         foreach ($map as $old => $new) {
             if (array_key_exists($old, $settings)) {

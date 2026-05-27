@@ -263,8 +263,20 @@ if (!function_exists('wp_email')) {
     }
 }
 
+if (!function_exists('wp_new_user_notification')) {
+    function wp_new_user_notification($userId, $deprecated = null, $notify = '', $password = '')
+    {
+    }
+}
+
 if (!function_exists('reset_password')) {
     function reset_password($user, $newPassword)
+    {
+    }
+}
+
+if (!function_exists('wp_password_change_notification')) {
+    function wp_password_change_notification($user)
     {
     }
 }

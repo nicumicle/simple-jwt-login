@@ -439,6 +439,78 @@ class AuthenticateServiceTest extends TestCase
         $authService->makeAction();
     }
 
+    #[DataProvider('specialCharsPasswordProvider')]
+    public function testSpecialCharsPasswordIsSlashedBeforeCheckPassword(string $rawPassword): void
+    {
+        $expectedPassword = addslashes($rawPassword);
+
+        $wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $wordPressDataMock->method('wpSlash')->willReturnCallback('addslashes');
+        $wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode(['allow_authentication' => 1]));
+        $wordPressDataMock->method('getUserByUserLogin')->willReturn('user');
+        $wordPressDataMock->method('getUserPassword')->willReturn('stored_hash');
+        $wordPressDataMock->method('createResponse')->willReturn(true);
+        $wordPressDataMock->expects($this->once())
+            ->method('checkPassword')
+            ->with(
+                $this->identicalTo($expectedPassword),
+                $this->isNull(),
+                $this->anything()
+            )
+            ->willReturn(true);
+
+        $authService = (new AuthenticateService())
+            ->withRequest(['username' => 'testuser', 'password' => $rawPassword])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSettings(new SimpleJWTLoginSettings($wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+
+        $authService->makeAction();
+    }
+
+    public function testPasswordHashIsNotSlashedBeforeCheckPassword(): void
+    {
+        $rawHash = 'abc123def456';
+
+        $wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $wordPressDataMock->method('wpSlash')->willReturnCallback('addslashes');
+        $wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode(['allow_authentication' => 1]));
+        $wordPressDataMock->method('getUserByUserLogin')->willReturn('user');
+        $wordPressDataMock->method('getUserPassword')->willReturn('stored_hash');
+        $wordPressDataMock->method('createResponse')->willReturn(true);
+        $wordPressDataMock->expects($this->once())
+            ->method('checkPassword')
+            ->with(
+                $this->isNull(),
+                $this->identicalTo($rawHash),
+                $this->anything()
+            )
+            ->willReturn(true);
+
+        $authService = (new AuthenticateService())
+            ->withRequest(['username' => 'testuser', 'password_hash' => $rawHash])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSettings(new SimpleJWTLoginSettings($wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+
+        $authService->makeAction();
+    }
+
+    public static function specialCharsPasswordProvider(): array
+    {
+        return [
+            'double_quote'   => ['"hello"'],
+            'single_quote'   => ["'hello'"],
+            'backslash'      => ['back\\slash'],
+            'null_byte'      => ["nul\x00byte"],
+            'mixed_special'  => ["!@#\$%^&*\"'\\"],
+        ];
+    }
+
     public function testTwoFactorChallengeSkippedWhenIntegrationDisabled(): void
     {
         $this->wordPressDataMock

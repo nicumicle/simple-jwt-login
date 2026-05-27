@@ -172,10 +172,10 @@ class AuthenticateService extends BaseService implements ServiceInterface
         }
 
         $password = isset($this->request['password'])
-            ? $this->wordPressData->sanitizeTextField($this->request['password'])
+            ? $this->wordPressData->wpSlash($this->request['password'])
             : null;
         $passwordHash = isset($this->request['password_hash'])
-            ? $this->wordPressData->sanitizeTextField($this->request['password_hash'])
+            ? $this->request['password_hash']
             : null;
 
         if ($this->jwtSettings->getAuthenticationSettings()->isAuthPasswordBase64Encoded()) {

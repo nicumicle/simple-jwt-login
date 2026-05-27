@@ -309,6 +309,12 @@ interface Repository
     public function wpUnslash($value);
 
     /**
+     * @param string|array $value
+     * @return string|array
+     */
+    public function wpSlash($value);
+
+    /**
      * @param string $capability
      * @return bool
      */

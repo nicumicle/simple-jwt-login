@@ -53,7 +53,7 @@ class RouteRegistrar
             $parsedVars = (array) $parseRequest['variables'];
         }
 
-        $request = array_merge($this->requestVars, $parsedVars);
+        $request = array_merge(wp_unslash($this->requestVars), $parsedVars);
         $wordPressData = new WordPressRepository();
         $serverHelper = new ServerHelper($this->server);
         $jwtSettings = new SimpleJWTLoginSettings($wordPressData);

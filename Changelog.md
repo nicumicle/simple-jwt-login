@@ -1,22 +1,25 @@
 # Changelog - Releases
 
 ## Unreleased
-- Added Setup Wizard for easier onboarding
 - Redesigned Plugin Settings interface 
 - Fix double encoding for Reset Password email body[#165](https://github.com/nicumicle/simple-jwt-login/issues/165)
-- Added support for Auth0
-- Improved refresh token handling
+- New refresh token handling
 - Add Audit logs
 - Add support for multiple JWT Decryption keys based on JWT header or payload
 - Move User identification from Login to General
-- **BREAKING CHANGE** Remove User Identification from Delete, and use the one from General 
 - Add Webhooks
 - Enable/disable Revoke and Validate token 
 - Add suport for API Keys (X-API-Key) to access wordpress endpoints as an authenticated user 
 - Allow JWT authentication on the API Keys endpoint (in addition to cookie-based login)
 - Improve HTTP Status Codes for errors
+- Add Auth0, Facebook and Github Oauth
+- **BREAKING CHANGE** Add 2FA support
+- **BREAKING CHANGE** Add refresh token to Authentication
+- **BREAKING CHANGE** Remove User Identification from Delete, and use the one from General 
 - **BREAKING CHANGE** Reorganize settings structure in DB
 - **BREALING CHANGE** Change register user response ({"success":true, "ID": 1,...}) to {"success":true, "data":{"id":..}}
+- Fix register, authenticate, and reset password special characters for passwords
+- Replace variables in reset password email subject
 
 ## 3.6.5 (14 Mar 2026)
 - Fix  CVE-2025-58648 - Stored Cross-Site Scripting vulnerability[PR](https://github.com/nicumicle/simple-jwt-login/pull/162)

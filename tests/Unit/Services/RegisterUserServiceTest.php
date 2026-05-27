@@ -380,6 +380,59 @@ class RegisterUserServiceTest extends TestCase
         $this->assertArrayHasKey('jwt', $result['data']);
     }
 
+    #[DataProvider('specialCharsPasswordProvider')]
+    public function testSpecialCharsPasswordIsSlashedBeforeCreateUser(string $rawPassword): void
+    {
+        $expectedPassword = addslashes($rawPassword);
+
+        $wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $wordPressDataMock->method('sanitizeTextField')->willReturnArgument(0);
+        $wordPressDataMock->method('wpSlash')->willReturnCallback('addslashes');
+        $wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_register'        => true,
+                'require_register_auth' => false,
+                'random_password'       => false,
+            ]));
+        $wordPressDataMock->method('isEmail')->willReturn(true);
+        $wordPressDataMock->method('checkUserExistsByUsernameAndEmail')->willReturn(false);
+        $wordPressDataMock->method('getUserIdFromUser')->willReturn(1);
+        $wordPressDataMock->method('wordpressUserToArray')->willReturn(['email' => 'test@test.com']);
+        $wordPressDataMock->method('getUserRoles')->willReturn(['subscriber']);
+        $wordPressDataMock->method('getUserProperty')->willReturn('test@test.com');
+        $wordPressDataMock->method('createResponse')->willReturnArgument(0);
+        $wordPressDataMock->expects($this->once())
+            ->method('createUser')
+            ->with(
+                $this->anything(),
+                $this->anything(),
+                $this->identicalTo($expectedPassword),
+                $this->anything(),
+                $this->anything()
+            )
+            ->willReturn([]);
+
+        $service = (new RegisterUserService())
+            ->withRequest(['email' => 'test@test.com', 'password' => $rawPassword])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper(['HTTP_CLIENT_IP' => '127.0.0.1']))
+            ->withSession([])
+            ->withSettings(new SimpleJWTLoginSettings($wordPressDataMock));
+
+        $service->makeAction();
+    }
+
+    public static function specialCharsPasswordProvider(): array
+    {
+        return [
+            'double_quote'   => ['"hello"'],
+            'single_quote'   => ["'hello'"],
+            'backslash'      => ['back\\slash'],
+            'null_byte'      => ["nul\x00byte"],
+            'mixed_special'  => ["!@#\$%^&*\"'\\"],
+        ];
+    }
+
     public function testRegisterWithoutAuthPayload()
     {
         $this->wordPressDataMock->method('getOptionFromDatabase')

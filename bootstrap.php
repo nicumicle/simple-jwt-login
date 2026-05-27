@@ -843,6 +843,16 @@ if (!function_exists('wp_unslash')) {
     }
 }
 
+if (!function_exists('wp_slash')) {
+    /**
+     * @param string|array $value
+     * @return string|array
+     */
+    function wp_slash($value) {
+        return $value;
+    }
+}
+
 if (!function_exists('wp_strip_all_tags')) {
     /**
      * @param string $text

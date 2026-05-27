@@ -69,6 +69,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
         if ($this->jwtSettings->getAuthenticationSettings()->isAuthPasswordBase64Encoded()) {
             $newPassword = base64_decode($newPassword);
         }
+        $newPassword = $this->wordPressData->wpSlash($newPassword);
         $jwtAllowed = $this->jwtSettings->getResetPasswordSettings()->isJwtAllowed();
         if (!$jwtAllowed && empty($this->request['code'])) {
             throw new Exception(
@@ -180,8 +181,8 @@ class ResetPasswordService extends BaseService implements ServiceInterface
             case ResetPasswordSettings::FLOW_SEND_CUSTOM_EMAIL:
                 $code = $this->wordPressData->generateAndGetPasswordResetKey($user);
                 $sendTo = $this->wordPressData->getUserProperty($user, 'user_email');
-                $emailSubject = $this->jwtSettings->getResetPasswordSettings()->getResetPasswordEmailSubject();
-                $emailBody = $this->jwtSettings->getResetPasswordSettings()->getResetPasswordEmailBody();
+                $emailSubject = $this->replaceVariables($this->jwtSettings->getResetPasswordSettings()->getResetPasswordEmailSubject(), $user, $code);
+                $emailBody = $this->replaceVariables($this->jwtSettings->getResetPasswordSettings()->getResetPasswordEmailBody(), $user, $code);
                 if ($this->jwtSettings
                     ->getHooksSettings()
                     ->isHookEnabled(SimpleJWTLoginHooks::RESET_PASSWORD_CUSTOM_EMAIL_TEMPLATE)
@@ -192,7 +193,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
                         $this->request
                     );
                 }
-                $emailBody = $this->replaceVariablesInEmailBody(
+                $emailBody = $this->replaceVariables(
                     $emailBody,
                     $user,
                     $code
@@ -266,13 +267,13 @@ class ResetPasswordService extends BaseService implements ServiceInterface
     }
 
     /**
-     * @param string $emailBody
+     * @param string $input
      * @param \WP_User $user
      * @param string $code
      *
      * @return mixed
      */
-    private function replaceVariablesInEmailBody($emailBody, $user, $code)
+    private function replaceVariables($input, $user, $code)
     {
         $variables = array_keys($this->jwtSettings->getResetPasswordSettings()->getEmailContentVariables());
         foreach ($variables as $variableKey) {
@@ -317,10 +318,10 @@ class ResetPasswordService extends BaseService implements ServiceInterface
                 $replace = $variableKey;
             }
 
-            $emailBody = str_replace($variableKey, $replace, $emailBody);
+            $input = str_replace($variableKey, $replace, $input);
         }
 
-        return $emailBody;
+        return $input;
     }
 
     /**

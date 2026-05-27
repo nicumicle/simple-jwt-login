@@ -62,7 +62,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
             ? $this->wordPressData->generatePassword(
                 $this->jwtSettings->getRegisterSettings()->getRandomPasswordLength()
             )
-            : $this->wordPressData->sanitizeTextField($this->request['password']);
+            : $this->wordPressData->wpSlash($this->request['password']);
 
         $newUserRole = $this->jwtSettings->getRegisterSettings()->getNewUserProfile();
         if (isset($this->request[$this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()])) {

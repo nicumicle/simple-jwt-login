@@ -402,9 +402,10 @@ class ResetPasswordServiceTest extends TestCase
         $mock->method('isEmail')->willReturn(true);
         $mock->method('checkPasswordResetKeyByEmail')->willReturn(['User']);
         $mock->method('createResponse')->willReturn(true);
+        $mock->method('wpSlash')->willReturnCallback('addslashes');
         $mock->expects($this->once())
             ->method('resetPassword')
-            ->with($this->anything(), $specialPassword);
+            ->with($this->anything(), addslashes($specialPassword));
         $resetService = (new ResetPasswordService())
             ->withRequest($request)
             ->withCookies([])
@@ -432,15 +433,60 @@ class ResetPasswordServiceTest extends TestCase
         $mock->method('isEmail')->willReturn(true);
         $mock->method('checkPasswordResetKeyByEmail')->willReturn(['User']);
         $mock->method('createResponse')->willReturn(true);
+        $mock->method('wpSlash')->willReturnCallback('addslashes');
         $mock->expects($this->once())
             ->method('resetPassword')
-            ->with($this->anything(), $plainPassword);
+            ->with($this->anything(), addslashes($plainPassword));
         $resetService = (new ResetPasswordService())
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'PUT']))
             ->withSettings(new SimpleJWTLoginSettings($mock));
         $resetService->makeAction();
+    }
+
+    #[DataProvider('specialCharsPasswordProvider')]
+    public function testSpecialCharsPasswordIsSlashedBeforeResetPassword(string $rawPassword): void
+    {
+        $mock = $this->createMock(WordPressDataInterface::class);
+        $mock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_reset_password'              => 1,
+                'reset_password_requires_auth_code' => 0,
+            ]));
+        $mock->method('isEmail')->willReturn(true);
+        $mock->method('checkPasswordResetKeyByEmail')->willReturn(['User']);
+        $mock->method('createResponse')->willReturn(true);
+        $mock->method('wpSlash')->willReturnCallback('addslashes');
+        $mock->expects($this->once())
+            ->method('resetPassword')
+            ->with(
+                $this->anything(),
+                $this->identicalTo(addslashes($rawPassword))
+            );
+
+        $resetService = (new ResetPasswordService())
+            ->withRequest([
+                'email'        => 'test@test.com',
+                'code'         => '123',
+                'new_password' => $rawPassword,
+            ])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'PUT']))
+            ->withSettings(new SimpleJWTLoginSettings($mock));
+
+        $resetService->makeAction();
+    }
+
+    public static function specialCharsPasswordProvider(): array
+    {
+        return [
+            'double_quote'  => ['"hello"'],
+            'single_quote'  => ["'hello'"],
+            'backslash'     => ['back\\slash'],
+            'null_byte'     => ["nul\x00byte"],
+            'mixed_special' => ["!@#\$%^&*\"'\\"],
+        ];
     }
 
     public function testInvalidRouteMethod()

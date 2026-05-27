@@ -538,6 +538,11 @@ class WordPressRepository implements Repository
         return wp_unslash($value);
     }
 
+    public function wpSlash($value)
+    {
+        return wp_slash($value);
+    }
+
     /**
      * @param string $capability
      * @return bool

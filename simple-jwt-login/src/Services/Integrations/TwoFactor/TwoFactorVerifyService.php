@@ -68,6 +68,8 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
             );
         }
 
+        $userEmail = (string) $this->wordPressData->getUserProperty($user, 'user_email');
+
         if ($bridge->isRateLimited($user)) {
             $delay = $bridge->getTimeDelay($user);
             throw new Exception(
@@ -83,7 +85,7 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
             $this->wordPressData->triggerAction(
                 SimpleJWTLoginHooks::AUDIT_2FA_VERIFY_FAILED,
                 $userId,
-                $this->wordPressData->getUserProperty($user, 'user_email'),
+                $userEmail,
                 __('Invalid or expired two-factor nonce.', 'simple-jwt-login')
             );
             throw new Exception(
@@ -107,7 +109,7 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
             $this->wordPressData->triggerAction(
                 SimpleJWTLoginHooks::AUDIT_2FA_VERIFY_FAILED,
                 $userId,
-                $this->wordPressData->getUserProperty($user, 'user_email'),
+                $userEmail,
                 __('Invalid two-factor code.', 'simple-jwt-login')
             );
             throw new Exception(
@@ -144,12 +146,12 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
 
         $responseData = ['jwt' => $jwt];
 
-        if ($this->jwtSettings->getAuthenticationSettings()->isRefreshTokenEnabled()) {
+        $authSettings = $this->jwtSettings->getAuthenticationSettings();
+        if ($authSettings->isRefreshTokenEnabled()) {
             $refreshToken   = $this->generateRefreshToken();
-            $tokenExpiresAt = time()
-                + ($this->jwtSettings->getAuthenticationSettings()->getAuthJwtRefreshTtl() * 60);
+            $tokenExpiresAt = time() + ($authSettings->getAuthJwtRefreshTtl() * 60);
             $this->tokenRepository->insert(
-                (int) $this->wordPressData->getUserProperty($user, 'ID'),
+                $userId,
                 $this->encryptRefreshToken($refreshToken),
                 $tokenExpiresAt
             );
@@ -168,8 +170,8 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
 
         $this->wordPressData->triggerAction(
             SimpleJWTLoginHooks::AUDIT_2FA_VERIFY_SUCCESS,
-            (int) $this->wordPressData->getUserProperty($user, 'ID'),
-            $this->wordPressData->getUserProperty($user, 'user_email')
+            $userId,
+            $userEmail
         );
 
         return $this->wordPressData->createResponse($response);

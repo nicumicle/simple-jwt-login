@@ -78,7 +78,10 @@ class ResetPasswordService extends BaseService implements ServiceInterface
             );
         }
 
-        $user = $this->getUser($jwtAllowed);
+        $user      = $this->getUser($jwtAllowed);
+        $userId    = (int) $this->wordPressData->getUserProperty($user, 'ID');
+        $userEmail = (string) $this->wordPressData->getUserProperty($user, 'user_email');
+
         $this->wordPressData->resetPassword($user, $newPassword);
 
         if ($this->jwtSettings->getResetPasswordSettings()->shouldSendPasswordChangedEmail()) {
@@ -87,15 +90,15 @@ class ResetPasswordService extends BaseService implements ServiceInterface
 
         $this->wordPressData->triggerAction(
             SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_SUCCESS,
-            $this->wordPressData->getUserProperty($user, 'ID'),
-            $this->wordPressData->getUserProperty($user, 'user_email')
+            $userId,
+            $userEmail
         );
 
         (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
             WebhooksSettings::EVENT_RESET_PASSWORD,
             [
-                'user_id'    => $this->wordPressData->getUserProperty($user, 'ID'),
-                'user_email' => $this->wordPressData->getUserProperty($user, 'user_email'),
+                'user_id'    => $userId,
+                'user_email' => $userEmail,
             ]
         );
 
@@ -216,17 +219,20 @@ class ResetPasswordService extends BaseService implements ServiceInterface
                 );
         }
 
+        $userId    = (int) $this->wordPressData->getUserProperty($user, 'ID');
+        $userEmail = (string) $this->wordPressData->getUserProperty($user, 'user_email');
+
         $this->wordPressData->triggerAction(
             SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_REQUEST,
-            $this->wordPressData->getUserProperty($user, 'ID'),
-            $this->wordPressData->getUserProperty($user, 'user_email')
+            $userId,
+            $userEmail
         );
 
         (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
             WebhooksSettings::EVENT_RESET_PASSWORD_REQUEST,
             [
-                'user_id'    => $this->wordPressData->getUserProperty($user, 'ID'),
-                'user_email' => $this->wordPressData->getUserProperty($user, 'user_email'),
+                'user_id'    => $userId,
+                'user_email' => $userEmail,
             ]
         );
 

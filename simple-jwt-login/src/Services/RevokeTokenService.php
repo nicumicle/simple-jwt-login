@@ -69,16 +69,12 @@ class RevokeTokenService extends AuthenticateService
             );
         }
 
-        $userRevokedTokens = $this->getUserRevokedTokensFromDatabase(
-            $this->wordPressData->getUserProperty($user, 'ID')
-        );
-        $this->cleanUpUserExpiredTokens(
-            $userRevokedTokens,
-            $this->wordPressData->getUserProperty($user, 'ID')
-        );
-        $this->checkIfTokenIsAlreadyRevoked($userRevokedTokens);
+        $userId    = (int) $this->wordPressData->getUserProperty($user, 'ID');
+        $userEmail = (string) $this->wordPressData->getUserProperty($user, 'user_email');
 
-        $userId = $this->wordPressData->getUserProperty($user, 'ID');
+        $userRevokedTokens = $this->getUserRevokedTokensFromDatabase($userId);
+        $this->cleanUpUserExpiredTokens($userRevokedTokens, $userId);
+        $this->checkIfTokenIsAlreadyRevoked($userRevokedTokens);
 
         $this->wordPressData->addUserMeta(
             $userId,
@@ -91,7 +87,7 @@ class RevokeTokenService extends AuthenticateService
         $this->wordPressData->triggerAction(
             SimpleJWTLoginHooks::AUDIT_AUTH_LOGOUT_SUCCESS,
             $userId,
-            $this->wordPressData->getUserProperty($user, 'user_email')
+            $userEmail
         );
 
         $response = [

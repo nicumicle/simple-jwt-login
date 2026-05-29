@@ -76,23 +76,23 @@ class LoginService extends BaseService implements ServiceInterface
             );
         }
 
-        $this->validateJwtRevoked(
-            $this->wordPressData->getUserProperty($user, 'ID'),
-            $this->jwt
-        );
+        $userId    = (int) $this->wordPressData->getUserProperty($user, 'ID');
+        $userEmail = (string) $this->wordPressData->getUserProperty($user, 'user_email');
+
+        $this->validateJwtRevoked($userId, $this->jwt);
         $this->wordPressData->loginUser($user);
 
         $this->wordPressData->triggerAction(
             SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_SESSION_SUCCESS,
-            $this->wordPressData->getUserProperty($user, 'ID'),
-            $this->wordPressData->getUserProperty($user, 'user_email')
+            $userId,
+            $userEmail
         );
 
         (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
             WebhooksSettings::EVENT_LOGIN,
             [
-                'user_id'    => $this->wordPressData->getUserProperty($user, 'ID'),
-                'user_email' => $this->wordPressData->getUserProperty($user, 'user_email'),
+                'user_id'    => $userId,
+                'user_email' => $userEmail,
             ]
         );
 

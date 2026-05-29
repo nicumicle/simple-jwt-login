@@ -100,7 +100,8 @@ class DeleteUserService extends BaseService implements ServiceInterface
             );
         }
 
-        $userId = $this->wordPressData->getUserProperty($user, 'ID');
+        $userId    = $this->wordPressData->getUserProperty($user, 'ID');
+        $userEmail = (string) $this->wordPressData->getUserProperty($user, 'user_email');
 
         $this->validateJwtRevoked($userId, $this->jwt);
 
@@ -117,15 +118,15 @@ class DeleteUserService extends BaseService implements ServiceInterface
 
         $this->wordPressData->triggerAction(
             SimpleJWTLoginHooks::AUDIT_AUTH_DELETE_USER_SUCCESS,
-            $this->wordPressData->getUserProperty($user, 'ID'),
-            $this->wordPressData->getUserProperty($user, 'user_email')
+            $userId,
+            $userEmail
         );
 
         (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
             WebhooksSettings::EVENT_DELETE_USER,
             [
-                'user_id'    => $this->wordPressData->getUserProperty($user, 'ID'),
-                'user_email' => $this->wordPressData->getUserProperty($user, 'user_email'),
+                'user_id'    => $userId,
+                'user_email' => $userEmail,
             ]
         );
 

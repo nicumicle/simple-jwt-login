@@ -45,6 +45,9 @@ class RegisterUserService extends BaseService implements ServiceInterface
      */
     public function createUser()
     {
+        $registerSettings = $this->jwtSettings->getRegisterSettings();
+        $hooksSettings = $this->jwtSettings->getHooksSettings();
+
         $email = $this->wordPressData->sanitizeTextField($this->request['email']);
         $extraParameters = UserProperties::getExtraParametersFromRequest($this->request);
         $username = !empty($extraParameters['user_login'])
@@ -58,22 +61,23 @@ class RegisterUserService extends BaseService implements ServiceInterface
             );
         }
 
-        $password = $this->jwtSettings->getRegisterSettings()->isRandomPasswordForCreateUserEnabled()
+        $password = $registerSettings->isRandomPasswordForCreateUserEnabled()
             ? $this->wordPressData->generatePassword(
-                $this->jwtSettings->getRegisterSettings()->getRandomPasswordLength()
+                $registerSettings->getRandomPasswordLength()
             )
             : $this->wordPressData->wpSlash($this->request['password']);
 
-        $newUserRole = $this->jwtSettings->getRegisterSettings()->getNewUserProfile();
-        if (isset($this->request[$this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()])) {
-            $authCodes = $this->jwtSettings->getAuthCodesSettings()->getAuthCodes();
-            foreach ($authCodes as $code) {
+        $newUserRole = $registerSettings->getNewUserProfile();
+        $authCodesSettings = $this->jwtSettings->getAuthCodesSettings();
+        $authCodeKey = $authCodesSettings->getAuthCodeKey();
+        if (isset($this->request[$authCodeKey])) {
+            foreach ($authCodesSettings->getAuthCodes() as $code) {
                 $authCodeBuilder = new AuthCodeBuilder($code);
-                $authCodeKey = $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey();
                 if ($authCodeBuilder->getCode() === $this->request[$authCodeKey]
                     && !empty($authCodeBuilder->getRole())
                 ) {
                     $newUserRole = $authCodeBuilder->getRole();
+                    break;
                 }
             }
         }
@@ -85,34 +89,17 @@ class RegisterUserService extends BaseService implements ServiceInterface
             $newUserRole,
             $extraParameters
         );
-        $userId = $this->wordPressData->getUserIdFromUser($user);
+        $userId    = $this->wordPressData->getUserIdFromUser($user);
+        $userEmail = (string) $this->wordPressData->getUserProperty($user, 'user_email');
 
         if (!empty($this->request['user_meta'])) {
-            $userMeta = $this->wordPressData->sanitizeTextField($this->request['user_meta']);
-            if (is_array($this->request['user_meta'])) {
-                $userMeta = $this->wordPressData->sanitizeArray($this->request['user_meta']);
-            }
-            if (is_string($this->request['user_meta'])) {
-                $userMeta = json_decode($userMeta, true);
-                if ($userMeta === null
-                    && strpos($this->request['user_meta'], '\\"') !== false
-                ) {
-                    $userMeta = json_decode(
-                        stripslashes(
-                            $this->wordPressData->sanitizeTextField(
-                                $this->request['user_meta']
-                            )
-                        ),
-                        true
-                    );
-                }
-            }
-
-            $allowedUserMetaKeys = array_map(function ($value) {
-                return trim($value);
-            }, explode(',', $this->jwtSettings->getRegisterSettings()->getAllowedUserMeta()));
+            $userMeta = $this->resolveUserMeta($this->request['user_meta']);
 
             if (is_array($userMeta) && !empty($userMeta)) {
+                $allowedUserMetaKeys = array_map(function ($value) {
+                    return trim($value);
+                }, explode(',', $registerSettings->getAllowedUserMeta()));
+
                 foreach ($userMeta as $metaKey => $metaValue) {
                     if (!in_array($metaKey, $allowedUserMetaKeys, true)) {
                         continue;
@@ -126,33 +113,33 @@ class RegisterUserService extends BaseService implements ServiceInterface
             }
         }
 
-        if ($this->jwtSettings->getRegisterSettings()->isSendWelcomeEmailEnabled()) {
+        if ($registerSettings->isSendWelcomeEmailEnabled()) {
             $this->wordPressData->sendNewUserNotification($userId, $password);
         }
 
-        if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::REGISTER_ACTION_NAME)) {
+        if ($hooksSettings->isHookEnabled(SimpleJWTLoginHooks::REGISTER_ACTION_NAME)) {
             $this->wordPressData->triggerAction(SimpleJWTLoginHooks::REGISTER_ACTION_NAME, $user, $password);
         }
 
         $this->wordPressData->triggerAction(
             SimpleJWTLoginHooks::AUDIT_AUTH_REGISTER_SUCCESS,
-            $this->wordPressData->getUserIdFromUser($user),
-            $this->wordPressData->getUserProperty($user, 'user_email')
+            $userId,
+            $userEmail
         );
 
         (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
             WebhooksSettings::EVENT_REGISTER,
             [
-                'user_id'    => $this->wordPressData->getUserIdFromUser($user),
-                'user_email' => $this->wordPressData->getUserProperty($user, 'user_email'),
+                'user_id'    => $userId,
+                'user_email' => $userEmail,
             ]
         );
 
         if ($this->jwtSettings->getLoginSettings()->isAutologinEnabled()
-            && $this->jwtSettings->getRegisterSettings()->isForceLoginAfterCreateUserEnabled()
+            && $registerSettings->isForceLoginAfterCreateUserEnabled()
         ) {
             $this->wordPressData->loginUser($user);
-            if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::LOGIN_ACTION_NAME)) {
+            if ($hooksSettings->isHookEnabled(SimpleJWTLoginHooks::LOGIN_ACTION_NAME)) {
                 $this->wordPressData->triggerAction(SimpleJWTLoginHooks::LOGIN_ACTION_NAME, $user);
             }
 
@@ -168,7 +155,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
         $raw = $this->wordPressData->wordpressUserToArray($user);
         unset($raw['user_pass'], $raw['ID']);
 
-        $userArray = ['id' => $this->wordPressData->getUserIdFromUser($user)];
+        $userArray = ['id' => $userId];
         foreach ($raw as $key => $value) {
             $newKey = (strpos($key, 'user_') === 0) ? substr($key, 5) : $key;
             $userArray[$newKey] = $value;
@@ -176,7 +163,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
 
         $userArray['roles'] = $this->wordPressData->getUserRoles($user);
 
-        if ($this->jwtSettings->getRegisterSettings()->isJwtEnabled()) {
+        if ($registerSettings->isJwtEnabled()) {
             $payload = $this->initPayload($user);
 
             $userArray['jwt'] = $this->getJwtWrapper()->encode(
@@ -191,9 +178,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
             'data'    => $userArray,
         ];
 
-        if ($this->jwtSettings->getHooksSettings()
-            ->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_REGISTER_USER)
-        ) {
+        if ($hooksSettings->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_REGISTER_USER)) {
             $response = $this->wordPressData
                 ->triggerFilter(
                     SimpleJWTLoginHooks::HOOK_RESPONSE_REGISTER_USER,
@@ -207,25 +192,45 @@ class RegisterUserService extends BaseService implements ServiceInterface
 
 
     /**
+     * @param mixed $rawUserMeta
+     * @return mixed
+     */
+    private function resolveUserMeta($rawUserMeta)
+    {
+        if (is_array($rawUserMeta)) {
+            return $this->wordPressData->sanitizeArray($rawUserMeta);
+        }
+
+        $sanitized = $this->wordPressData->sanitizeTextField($rawUserMeta);
+        $decoded = json_decode($sanitized, true);
+        if ($decoded === null && strpos($rawUserMeta, '\\"') !== false) {
+            $decoded = json_decode(stripslashes($sanitized), true);
+        }
+
+        return $decoded;
+    }
+
+    /**
      * @throws Exception
      */
     private function validateRegisterUser()
     {
-        if (!$this->jwtSettings->getRegisterSettings()->isRegisterAllowed()) {
+        $registerSettings = $this->jwtSettings->getRegisterSettings();
+
+        if (!$registerSettings->isRegisterAllowed()) {
             throw new Exception(
                 __('Register is not allowed.', 'simple-jwt-login'),
                 ErrorCodes::ERR_REGISTER_IS_NOT_ALLOWED
             );
         }
 
-        if ((
-            $this->jwtSettings->getRegisterSettings()->isAuthKeyRequiredOnRegister()
-                || isset($this->request[$this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()])
-        )) {
+        if ($registerSettings->isAuthKeyRequiredOnRegister()
+            || isset($this->request[$this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()])
+        ) {
             $this->validateAuthKey();
         }
 
-        $allowedIPs = $this->jwtSettings->getRegisterSettings()->getAllowedRegisterIps();
+        $allowedIPs = $registerSettings->getAllowedRegisterIps();
         if (!empty($allowedIPs) && !$this->serverHelper->isClientIpInList($allowedIPs)) {
             throw new Exception(
                 sprintf(
@@ -236,7 +241,6 @@ class RegisterUserService extends BaseService implements ServiceInterface
             );
         }
 
-
         if (empty($this->request['email'])) {
             throw new ValidationException(
                 __('Missing email.', 'simple-jwt-login'),
@@ -244,7 +248,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
             );
         }
 
-        if (empty($this->request['password']) && !$this->jwtSettings->getRegisterSettings()->isRandomPasswordForCreateUserEnabled()) {
+        if (empty($this->request['password']) && !$registerSettings->isRandomPasswordForCreateUserEnabled()) {
             throw new ValidationException(
                 __('Missing password.', 'simple-jwt-login'),
                 ErrorCodes::ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD
@@ -257,7 +261,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
                 ErrorCodes::ERR_REGISTER_INVALID_EMAIL_ADDRESS
             );
         }
-    
+
         if (!empty($this->request['user_login']) && strlen($this->request['user_login']) > 60) {
             throw new ValidationException(
                 __('Username must be less than 60 characters.', 'simple-jwt-login'),
@@ -271,7 +275,8 @@ class RegisterUserService extends BaseService implements ServiceInterface
             );
         }
 
-        if (!empty($this->jwtSettings->getRegisterSettings()->getAllowedRegisterDomain())) {
+        $allowedDomain = $registerSettings->getAllowedRegisterDomain();
+        if (!empty($allowedDomain)) {
             $parts = explode(
                 '@',
                 $this->wordPressData->sanitizeTextField($this->request['email'])
@@ -279,10 +284,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
             if (!isset($parts[1])
                 || !in_array(
                     $parts[1],
-                    array_map(
-                        'trim',
-                        explode(',', $this->jwtSettings->getRegisterSettings()->getAllowedRegisterDomain())
-                    ),
+                    array_map('trim', explode(',', $allowedDomain)),
                     true
                 )
             ) {
@@ -324,7 +326,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
             AuthenticationSettings::JWT_PAYLOAD_PARAM_ID       => $userId,
             AuthenticationSettings::JWT_PAYLOAD_PARAM_USERNAME => $username,
             AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT      => time(),
-            AuthenticationSettings::JWT_PAYLOAD_PARAM_ISS                    => $iss,
+            AuthenticationSettings::JWT_PAYLOAD_PARAM_ISS      => $iss,
         ];
     }
 }

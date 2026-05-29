@@ -61,16 +61,17 @@ class AuthenticateService extends BaseService implements ServiceInterface
     ) {
         $payload[AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT] = time();
 
-        foreach ($jwtSettings->getAuthenticationSettings()->getJwtPayloadParameters() as $parameter) {
+        $authSettings = $jwtSettings->getAuthenticationSettings();
+        foreach ($authSettings->getJwtPayloadParameters() as $parameter) {
             if ($parameter === AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT
-                || !$jwtSettings->getAuthenticationSettings()->isPayloadDataEnabled($parameter)
+                || !$authSettings->isPayloadDataEnabled($parameter)
             ) {
                 continue;
             }
 
             switch ($parameter) {
                 case AuthenticationSettings::JWT_PAYLOAD_PARAM_EXP:
-                    $ttl = (int)$jwtSettings->getAuthenticationSettings()->getAuthJwtTtl() * 60;
+                    $ttl = (int)$authSettings->getAuthJwtTtl() * 60;
                     $payload[$parameter] = time() + $ttl;
                     break;
                 case AuthenticationSettings::JWT_PAYLOAD_PARAM_ID:
@@ -86,7 +87,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
                     $payload[$parameter] = $wordPressData->getUserProperty($user, 'user_login');
                     break;
                 case AuthenticationSettings::JWT_PAYLOAD_PARAM_ISS:
-                    $payload[$parameter] = $jwtSettings->getAuthenticationSettings()->getAuthIss();
+                    $payload[$parameter] = $authSettings->getAuthIss();
                     break;
             }
         }
@@ -171,6 +172,9 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
         }
 
+        $userId    = (int) $this->wordPressData->getUserProperty($user, 'ID');
+        $userEmail = (string) $this->wordPressData->getUserProperty($user, 'user_email');
+
         $password = isset($this->request['password'])
             ? $this->wordPressData->wpSlash($this->request['password'])
             : null;
@@ -193,8 +197,8 @@ class AuthenticateService extends BaseService implements ServiceInterface
         if (!$passwordMatch) {
             $this->wordPressData->triggerAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_FAILED,
-                $this->wordPressData->getUserProperty($user, 'ID'),
-                $this->wordPressData->getUserProperty($user, 'user_email'),
+                $userId,
+                $userEmail,
                 __('Wrong user credentials.', 'simple-jwt-login')
             );
             throw new Exception(
@@ -245,7 +249,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
             $tokenExpiresAt = time() + ($this->jwtSettings->getAuthenticationSettings()->getAuthJwtRefreshTtl() * 60);
 
             $this->tokenRepository->insert(
-                $this->wordPressData->getUserProperty($user, 'ID'),
+                $userId,
                 $this->encryptRefreshToken($refreshToken),
                 $tokenExpiresAt
             );
@@ -267,15 +271,15 @@ class AuthenticateService extends BaseService implements ServiceInterface
 
         $this->wordPressData->triggerAction(
             SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_SUCCESS,
-            $this->wordPressData->getUserProperty($user, 'ID'),
-            $this->wordPressData->getUserProperty($user, 'user_email')
+            $userId,
+            $userEmail
         );
 
         (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
             WebhooksSettings::EVENT_AUTH,
             [
-                'user_id'    => $this->wordPressData->getUserProperty($user, 'ID'),
-                'user_email' => $this->wordPressData->getUserProperty($user, 'user_email'),
+                'user_id'    => $userId,
+                'user_email' => $userEmail,
             ]
         );
 

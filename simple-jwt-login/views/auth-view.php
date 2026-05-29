@@ -390,3 +390,141 @@ if (! defined('ABSPATH')) {
         </p>
     </div>
 </div>
+
+<div class="sjl-gen-card">
+    <div class="sjl-gen-card-header">
+        <span class="dashicons dashicons-editor-code"></span>
+        <div>
+            <h3 class="sjl-gen-card-title">
+                <?php
+                if (isset($errorCode) && in_array(
+                    $errorCode,
+                    array(
+                        $settingsErrors->generateCode(
+                            SettingsErrors::PREFIX_AUTHENTICATION,
+                            SettingsErrors::ERR_AUTHENTICATION_CUSTOM_CLAIM_PROTECTED_PAYLOAD
+                        ),
+                        $settingsErrors->generateCode(
+                            SettingsErrors::PREFIX_AUTHENTICATION,
+                            SettingsErrors::ERR_AUTHENTICATION_CUSTOM_CLAIM_EMPTY_KEY
+                        ),
+                    ),
+                    true
+                )) {
+                    echo '<span class="simple-jwt-error">!</span> ';
+                }
+                ?>
+                <?php echo esc_html__('Custom JWT Payload Claims', 'simple-jwt-login'); ?>
+            </h3>
+            <p class="sjl-gen-card-desc">
+                <?php echo esc_html__('Add custom key-value pairs to the JWT payload. Reserved claims cannot be overwritten:', 'simple-jwt-login'); ?>
+                <?php foreach (AuthenticationSettings::$protectedPayloadKeys as $protectedKey) { ?>
+                    <span class="sjl-claim-badge"><?php echo esc_html($protectedKey); ?></span>
+                <?php } ?>
+            </p>
+        </div>
+    </div>
+    <div class="sjl-gen-card-body">
+        <div id="sjl-payload-claims-table">
+            <div class="sjl-claims-header">
+                <span><?php echo esc_html__('Claim Key', 'simple-jwt-login'); ?></span>
+                <span><?php echo esc_html__('Claim Value', 'simple-jwt-login'); ?></span>
+                <span></span>
+            </div>
+            <?php
+            $payloadClaims = $jwtSettings->getAuthenticationSettings()->getCustomPayloadClaims();
+            foreach ($payloadClaims as $claimKey => $claimValue) {
+                ?>
+                <div class="sjl-claims-row">
+                    <input type="text"
+                           name="custom_claims_payload[key][]"
+                           class="form-control sjl-auth-input"
+                           value="<?php echo esc_attr($claimKey); ?>"
+                           placeholder="<?php echo esc_attr__('e.g. department', 'simple-jwt-login'); ?>"
+                    />
+                    <input type="text"
+                           name="custom_claims_payload[value][]"
+                           class="form-control sjl-auth-input"
+                           value="<?php echo esc_attr($claimValue); ?>"
+                           placeholder="<?php echo esc_attr__('e.g. engineering', 'simple-jwt-login'); ?>"
+                    />
+                    <button type="button"
+                            class="sjl-endpoint-remove"
+                            onclick="sjlRemoveClaimRow(this)"
+                            title="<?php echo esc_attr__('Remove', 'simple-jwt-login'); ?>">
+                        <span class="dashicons dashicons-trash"></span>
+                    </button>
+                </div>
+                <?php
+            }
+            ?>
+        </div>
+        <button type="button" id="sjl-add-payload-claim" class="btn btn-outline-secondary sjl-add-claim-btn" style="margin-top: 10px;">
+            <?php echo esc_html__('+ Add Payload Claim', 'simple-jwt-login'); ?>
+        </button>
+    </div>
+</div>
+
+<div class="sjl-gen-card">
+    <div class="sjl-gen-card-header">
+        <span class="dashicons dashicons-tag"></span>
+        <div>
+            <h3 class="sjl-gen-card-title">
+                <?php
+                if (isset($errorCode) && $errorCode === $settingsErrors->generateCode(
+                    SettingsErrors::PREFIX_AUTHENTICATION,
+                    SettingsErrors::ERR_AUTHENTICATION_CUSTOM_CLAIM_PROTECTED_HEADER
+                )) {
+                    echo '<span class="simple-jwt-error">!</span> ';
+                }
+                ?>
+                <?php echo esc_html__('Custom JWT Header Claims', 'simple-jwt-login'); ?>
+            </h3>
+            <p class="sjl-gen-card-desc">
+                <?php echo esc_html__('Add custom key-value pairs to the JWT header. Reserved header fields cannot be overwritten:', 'simple-jwt-login'); ?>
+                <?php foreach (AuthenticationSettings::$protectedHeaderKeys as $protectedKey) { ?>
+                    <span class="sjl-claim-badge"><?php echo esc_html($protectedKey); ?></span>
+                <?php } ?>
+            </p>
+        </div>
+    </div>
+    <div class="sjl-gen-card-body">
+        <div id="sjl-header-claims-table">
+            <div class="sjl-claims-header">
+                <span><?php echo esc_html__('Claim Key', 'simple-jwt-login'); ?></span>
+                <span><?php echo esc_html__('Claim Value', 'simple-jwt-login'); ?></span>
+                <span></span>
+            </div>
+            <?php
+            $headerClaims = $jwtSettings->getAuthenticationSettings()->getCustomHeaderClaims();
+            foreach ($headerClaims as $claimKey => $claimValue) {
+                ?>
+                <div class="sjl-claims-row">
+                    <input type="text"
+                           name="custom_claims_header[key][]"
+                           class="form-control sjl-auth-input"
+                           value="<?php echo esc_attr($claimKey); ?>"
+                           placeholder="<?php echo esc_attr__('e.g. x-app-id', 'simple-jwt-login'); ?>"
+                    />
+                    <input type="text"
+                           name="custom_claims_header[value][]"
+                           class="form-control sjl-auth-input"
+                           value="<?php echo esc_attr($claimValue); ?>"
+                           placeholder="<?php echo esc_attr__('e.g. my-app', 'simple-jwt-login'); ?>"
+                    />
+                    <button type="button"
+                            class="sjl-endpoint-remove"
+                            onclick="sjlRemoveClaimRow(this)"
+                            title="<?php echo esc_attr__('Remove', 'simple-jwt-login'); ?>">
+                        <span class="dashicons dashicons-trash"></span>
+                    </button>
+                </div>
+                <?php
+            }
+            ?>
+        </div>
+        <button type="button" id="sjl-add-header-claim" class="btn btn-outline-secondary sjl-add-claim-btn" style="margin-top: 10px;">
+            <?php echo esc_html__('+ Add Header Claim', 'simple-jwt-login'); ?>
+        </button>
+    </div>
+</div>

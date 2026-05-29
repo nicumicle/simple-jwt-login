@@ -479,6 +479,48 @@ $sidebarGroups = [
     </div>
 </form>
 
+<div id="sjl-payload-claim-line" style="display:none">
+    <div class="sjl-claims-row">
+        <input type="text"
+               name="custom_claims_payload[key][]"
+               class="form-control sjl-auth-input"
+               placeholder="<?php echo esc_attr__('e.g. department', 'simple-jwt-login'); ?>"
+        />
+        <input type="text"
+               name="custom_claims_payload[value][]"
+               class="form-control sjl-auth-input"
+               placeholder="<?php echo esc_attr__('e.g. engineering', 'simple-jwt-login'); ?>"
+        />
+        <button type="button"
+                class="sjl-endpoint-remove"
+                onclick="sjlRemoveClaimRow(this)"
+                title="<?php echo esc_attr__('Remove', 'simple-jwt-login'); ?>">
+            <span class="dashicons dashicons-trash"></span>
+        </button>
+    </div>
+</div>
+
+<div id="sjl-header-claim-line" style="display:none">
+    <div class="sjl-claims-row">
+        <input type="text"
+               name="custom_claims_header[key][]"
+               class="form-control sjl-auth-input"
+               placeholder="<?php echo esc_attr__('e.g. x-app-id', 'simple-jwt-login'); ?>"
+        />
+        <input type="text"
+               name="custom_claims_header[value][]"
+               class="form-control sjl-auth-input"
+               placeholder="<?php echo esc_attr__('e.g. my-app', 'simple-jwt-login'); ?>"
+        />
+        <button type="button"
+                class="sjl-endpoint-remove"
+                onclick="sjlRemoveClaimRow(this)"
+                title="<?php echo esc_attr__('Remove', 'simple-jwt-login'); ?>">
+            <span class="dashicons dashicons-trash"></span>
+        </button>
+    </div>
+</div>
+
 <div id="code_line" style="display:none">
     <div class="auth_row sjl-auth-row">
         <input type="text"

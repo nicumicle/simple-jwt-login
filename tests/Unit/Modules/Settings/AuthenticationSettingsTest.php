@@ -427,4 +427,162 @@ class AuthenticationSettingsTest extends TestCase
             ],
         ];
     }
+
+    // ─── getCustomPayloadClaims ──────────────────────────────────────────────
+
+    public function testGetCustomPayloadClaimsReturnsEmptyWhenNotSet(): void
+    {
+        $this->assertSame([], $this->buildWithSettings([])->getCustomPayloadClaims());
+    }
+
+    #[DataProvider('customPayloadClaimsProvider')]
+    public function testGetCustomPayloadClaims(array $settings, array $expected): void
+    {
+        $this->assertSame($expected, $this->buildWithSettings($settings)->getCustomPayloadClaims());
+    }
+
+    public static function customPayloadClaimsProvider(): array
+    {
+        return [
+            'single claim' => [
+                ['custom_claims' => ['payload' => ['key' => ['department'], 'value' => ['engineering']]]],
+                ['department' => 'engineering'],
+            ],
+            'multiple claims' => [
+                ['custom_claims' => ['payload' => ['key' => ['dept', 'region'], 'value' => ['eng', 'eu']]]],
+                ['dept' => 'eng', 'region' => 'eu'],
+            ],
+            'empty key is skipped' => [
+                ['custom_claims' => ['payload' => ['key' => ['', 'valid'], 'value' => ['skip', 'kept']]]],
+                ['valid' => 'kept'],
+            ],
+            'missing value defaults to empty string' => [
+                ['custom_claims' => ['payload' => ['key' => ['k1'], 'value' => []]]],
+                ['k1' => ''],
+            ],
+        ];
+    }
+
+    // ─── getCustomHeaderClaims ───────────────────────────────────────────────
+
+    public function testGetCustomHeaderClaimsReturnsEmptyWhenNotSet(): void
+    {
+        $this->assertSame([], $this->buildWithSettings([])->getCustomHeaderClaims());
+    }
+
+    #[DataProvider('customHeaderClaimsProvider')]
+    public function testGetCustomHeaderClaims(array $settings, array $expected): void
+    {
+        $this->assertSame($expected, $this->buildWithSettings($settings)->getCustomHeaderClaims());
+    }
+
+    public static function customHeaderClaimsProvider(): array
+    {
+        return [
+            'single header claim' => [
+                ['custom_claims' => ['header' => ['key' => ['x-app-id'], 'value' => ['my-app']]]],
+                ['x-app-id' => 'my-app'],
+            ],
+            'multiple header claims' => [
+                ['custom_claims' => ['header' => ['key' => ['x-app-id', 'x-version'], 'value' => ['app', 'v2']]]],
+                ['x-app-id' => 'app', 'x-version' => 'v2'],
+            ],
+            'empty key is skipped in header' => [
+                ['custom_claims' => ['header' => ['key' => ['', 'x-app'], 'value' => ['skip', 'val']]]],
+                ['x-app' => 'val'],
+            ],
+        ];
+    }
+
+    // ─── validateSettings – custom claims ────────────────────────────────────
+
+    #[DataProvider('invalidCustomClaimsProvider')]
+    public function testValidateSettingsRejectsInvalidCustomClaims(array $post, string $message): void
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage($message);
+
+        (new AuthenticationSettings())
+            ->withWordPressData($this->wordPressData)
+            ->withSettings([])
+            ->withPost($post)
+            ->validateSettings();
+    }
+
+    public static function invalidCustomClaimsProvider(): array
+    {
+        return [
+            'protected payload key iat' => [
+                ['custom_claims_payload' => ['key' => ['iat'], 'value' => ['1234']]],
+                'reserved JWT claim',
+            ],
+            'protected payload key exp' => [
+                ['custom_claims_payload' => ['key' => ['exp'], 'value' => ['9999']]],
+                'reserved JWT claim',
+            ],
+            'protected payload key email' => [
+                ['custom_claims_payload' => ['key' => ['email'], 'value' => ['x']]],
+                'reserved JWT claim',
+            ],
+            'protected header key typ' => [
+                ['custom_claims_header' => ['key' => ['typ'], 'value' => ['JWT']]],
+                'reserved JWT claim',
+            ],
+            'protected header key alg' => [
+                ['custom_claims_header' => ['key' => ['alg'], 'value' => ['HS256']]],
+                'reserved JWT claim',
+            ],
+            'protected header key kid' => [
+                ['custom_claims_header' => ['key' => ['kid'], 'value' => ['key1']]],
+                'reserved JWT claim',
+            ],
+            'empty payload claim key' => [
+                ['custom_claims_payload' => ['key' => [''], 'value' => ['val']]],
+                'Custom claim key cannot be empty.',
+            ],
+            'empty header claim key' => [
+                ['custom_claims_header' => ['key' => [''], 'value' => ['val']]],
+                'Custom claim key cannot be empty.',
+            ],
+        ];
+    }
+
+    public function testValidateSettingsPassesWithValidCustomClaims(): void
+    {
+        $this->expectNotToPerformAssertions();
+
+        (new AuthenticationSettings())
+            ->withWordPressData($this->wordPressData)
+            ->withSettings([])
+            ->withPost([
+                'custom_claims_payload' => ['key' => ['department', 'region'], 'value' => ['eng', 'eu']],
+                'custom_claims_header'  => ['key' => ['x-app-id'], 'value' => ['my-app']],
+            ])
+            ->validateSettings();
+    }
+
+    // ─── initSettingsFromPost – custom claims ────────────────────────────────
+
+    public function testInitSettingsFromPostPersistsCustomPayloadClaims(): void
+    {
+        $authSettings = $this->buildFromPost([
+            'custom_claims_payload' => ['key' => ['dept'], 'value' => ['eng']],
+        ]);
+        $this->assertSame(['dept' => 'eng'], $authSettings->getCustomPayloadClaims());
+    }
+
+    public function testInitSettingsFromPostPersistsCustomHeaderClaims(): void
+    {
+        $authSettings = $this->buildFromPost([
+            'custom_claims_header' => ['key' => ['x-app'], 'value' => ['v1']],
+        ]);
+        $this->assertSame(['x-app' => 'v1'], $authSettings->getCustomHeaderClaims());
+    }
+
+    public function testInitSettingsFromPostEmptyWhenCustomClaimsNotInPost(): void
+    {
+        $authSettings = $this->buildFromPost([]);
+        $this->assertSame([], $authSettings->getCustomPayloadClaims());
+        $this->assertSame([], $authSettings->getCustomHeaderClaims());
+    }
 }

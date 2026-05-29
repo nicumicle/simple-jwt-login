@@ -242,7 +242,7 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
             );
             $result = $this->exchangeCode($code, str_replace('&amp;', '&', $redirectUri));
 
-            if ($result['status_code'] !== 200) {
+            if ($result['status_code'] !== 200 || !empty($result['response']['error'])) {
                 $errorMessage = $this->handleErrorMessage($result['response']);
                 $this->wordPressData->triggerAction(
                     SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,

@@ -94,10 +94,11 @@ class Shortcodes
         </style>';
         $haveProvider = false;
         $pluginDir = dirname(SIMPLE_JWT_LOGIN_PLUGIN_FILE);
+        $integrationsSettings = $jwtSettings->getIntegrationsSettings();
         switch ($parameter['provider']) {
             case 'google':
-                if ($jwtSettings->getIntegrationsSettings()->google()->isEnabled()
-                    && $jwtSettings->getIntegrationsSettings()->google()->isOauthEnabled()) {
+                if ($integrationsSettings->google()->isEnabled()
+                    && $integrationsSettings->google()->isOauthEnabled()) {
                     $haveProvider = true;
                     ob_start();
                     include_once $pluginDir . '/views/integrations/oauth/google-form.php';
@@ -105,11 +106,29 @@ class Shortcodes
                 }
                 break;
             case 'auth0':
-                if ($jwtSettings->getIntegrationsSettings()->auth0()->isEnabled()
-                    && $jwtSettings->getIntegrationsSettings()->auth0()->isOauthEnabled()) {
+                if ($integrationsSettings->auth0()->isEnabled()
+                    && $integrationsSettings->auth0()->isOauthEnabled()) {
                     $haveProvider = true;
                     ob_start();
                     include_once $pluginDir . '/views/integrations/oauth/auth0-form.php';
+                    $html .= ob_get_clean();
+                }
+                break;
+            case 'facebook':
+                if ($integrationsSettings->facebook()->isEnabled()
+                    && $integrationsSettings->facebook()->isOauthEnabled()) {
+                    $haveProvider = true;
+                    ob_start();
+                    include_once $pluginDir . '/views/integrations/oauth/facebook-form.php';
+                    $html .= ob_get_clean();
+                }
+                break;
+            case 'github':
+                if ($integrationsSettings->github()->isEnabled()
+                    && $integrationsSettings->github()->isOauthEnabled()) {
+                    $haveProvider = true;
+                    ob_start();
+                    include_once $pluginDir . '/views/integrations/oauth/github-form.php';
                     $html .= ob_get_clean();
                 }
                 break;

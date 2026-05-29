@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepositoryInterface;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
+use SimpleJWTLogin\Modules\Settings\HooksSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
@@ -574,5 +575,75 @@ class AuthenticateServiceTest extends TestCase
 
         $result = $authService->makeAction();
         $this->assertTrue($result);
+    }
+
+    // ─── generatePayload – custom claims ────────────────────────────────────
+
+    private function buildJwtSettingsMockWithCustomPayloadClaims(array $customClaims): SimpleJWTLoginSettings
+    {
+        $wordPressDataStub = $this->createStub(WordPressDataInterface::class);
+
+        $authSettings = (new AuthenticationSettings())
+            ->withWordPressData($wordPressDataStub)
+            ->withSettings(['authorization' => ['custom_claims' => ['payload' => $customClaims]]]);
+
+        $hooksSettings = (new HooksSettings())
+            ->withWordPressData($wordPressDataStub)
+            ->withSettings([]);
+
+        $jwtSettingsMock = $this->createMock(SimpleJWTLoginSettings::class);
+        $jwtSettingsMock->method('getAuthenticationSettings')->willReturn($authSettings);
+        $jwtSettingsMock->method('getHooksSettings')->willReturn($hooksSettings);
+
+        return $jwtSettingsMock;
+    }
+
+    public function testGeneratePayloadIncludesCustomPayloadClaims(): void
+    {
+        $wordPressDataStub = $this->createStub(WordPressDataInterface::class);
+        $jwtSettings = $this->buildJwtSettingsMockWithCustomPayloadClaims([
+            'key'   => ['department', 'region'],
+            'value' => ['engineering', 'eu'],
+        ]);
+
+        $payload = AuthenticateService::generatePayload([], $wordPressDataStub, $jwtSettings, null);
+
+        $this->assertArrayHasKey('department', $payload);
+        $this->assertSame('engineering', $payload['department']);
+        $this->assertArrayHasKey('region', $payload);
+        $this->assertSame('eu', $payload['region']);
+    }
+
+    public function testGeneratePayloadDoesNotOverwriteProtectedKeys(): void
+    {
+        $wordPressDataStub = $this->createStub(WordPressDataInterface::class);
+        $jwtSettings = $this->buildJwtSettingsMockWithCustomPayloadClaims([
+            'key'   => ['iat', 'exp'],
+            'value' => ['fake-iat', 'fake-exp'],
+        ]);
+
+        $timeBefore = time();
+        $payload    = AuthenticateService::generatePayload([], $wordPressDataStub, $jwtSettings, null);
+        $timeAfter  = time();
+
+        $this->assertArrayHasKey('iat', $payload);
+        $this->assertGreaterThanOrEqual($timeBefore, $payload['iat']);
+        $this->assertLessThanOrEqual($timeAfter, $payload['iat']);
+        $this->assertNotSame('fake-iat', $payload['iat']);
+        $this->assertArrayNotHasKey('exp', $payload);
+    }
+
+    public function testGeneratePayloadCustomClaimDoesNotAppearWhenKeyIsEmpty(): void
+    {
+        $wordPressDataStub = $this->createStub(WordPressDataInterface::class);
+        $jwtSettings = $this->buildJwtSettingsMockWithCustomPayloadClaims([
+            'key'   => [''],
+            'value' => ['should-be-skipped'],
+        ]);
+
+        $payload = AuthenticateService::generatePayload([], $wordPressDataStub, $jwtSettings, null);
+
+        $this->assertArrayNotHasKey('', $payload);
+        $this->assertArrayNotHasKey('should-be-skipped', $payload);
     }
 }

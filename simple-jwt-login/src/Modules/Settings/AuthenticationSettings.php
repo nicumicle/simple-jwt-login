@@ -14,6 +14,16 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
     const JWT_PAYLOAD_PARAM_USERNAME = 'username';
     const JWT_PAYLOAD_PARAM_ISS = 'iss';
 
+    /**
+     * @var string[]
+     */
+    public static $protectedPayloadKeys = array('iat', 'exp', 'email', 'id', 'site', 'username', 'iss');
+
+    /**
+     * @var string[]
+     */
+    public static $protectedHeaderKeys  = array('typ', 'alg', 'kid');
+
     protected function getSectionKey()
     {
         return 'authorization';
@@ -127,6 +137,20 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             'revoke_requires_auth_code',
             BaseSettings::SETTINGS_TYPE_BOL
         );
+        $this->assignSettingsPropertyFromPost(
+            'custom_claims',
+            'payload',
+            null,
+            'custom_claims_payload',
+            BaseSettings::SETTINGS_TYPE_ARRAY
+        );
+        $this->assignSettingsPropertyFromPost(
+            'custom_claims',
+            'header',
+            null,
+            'custom_claims_header',
+            BaseSettings::SETTINGS_TYPE_ARRAY
+        );
     }
 
     /**
@@ -134,6 +158,17 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
      */
     public function validateSettings()
     {
+        $this->validateCustomClaimKeys(
+            'custom_claims_payload',
+            self::$protectedPayloadKeys,
+            SettingsErrors::ERR_AUTHENTICATION_CUSTOM_CLAIM_PROTECTED_PAYLOAD
+        );
+        $this->validateCustomClaimKeys(
+            'custom_claims_header',
+            self::$protectedHeaderKeys,
+            SettingsErrors::ERR_AUTHENTICATION_CUSTOM_CLAIM_PROTECTED_HEADER
+        );
+
         if (!isset($this->post['allow_authentication'])) {
             return;
         }
@@ -196,6 +231,45 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
                     $this->settingsErrors->generateCode(
                         SettingsErrors::PREFIX_REFRESH_TOKEN,
                         SettingsErrors::ERR_AUTHENTICATION_REFRESH_TOKEN_KEY_REQUIRED
+                    )
+                );
+            }
+        }
+    }
+
+    /**
+     * @param string $postKey
+     * @param array  $protectedKeys
+     * @param int    $errorCode
+     * @throws Exception
+     */
+    private function validateCustomClaimKeys($postKey, $protectedKeys, $errorCode)
+    {
+        if (!isset($this->post[$postKey]['key'])) {
+            return;
+        }
+        foreach ($this->post[$postKey]['key'] as $claimKey) {
+            if (empty(trim($claimKey))) {
+                throw new Exception(
+                    __('Custom claim key cannot be empty.', 'simple-jwt-login'),
+                    $this->settingsErrors->generateCode(
+                        SettingsErrors::PREFIX_AUTHENTICATION,
+                        SettingsErrors::ERR_AUTHENTICATION_CUSTOM_CLAIM_EMPTY_KEY
+                    )
+                );
+            }
+            if (in_array($claimKey, $protectedKeys, true)) {
+                throw new Exception(
+                    sprintf(
+                        __(
+                            'Custom claim key "%s" is a reserved JWT claim and cannot be overwritten.',
+                            'simple-jwt-login'
+                        ),
+                        $claimKey
+                    ),
+                    $this->settingsErrors->generateCode(
+                        SettingsErrors::PREFIX_AUTHENTICATION,
+                        $errorCode
                     )
                 );
             }
@@ -364,5 +438,43 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             return true;
         }
         return !empty($this->settings['revoke_token_enabled']);
+    }
+
+    /**
+     * @return array
+     */
+    public function getCustomPayloadClaims()
+    {
+        return $this->extractCustomClaims('payload');
+    }
+
+    /**
+     * @return array
+     */
+    public function getCustomHeaderClaims()
+    {
+        return $this->extractCustomClaims('header');
+    }
+
+    /**
+     * @param string $type
+     * @return array
+     */
+    private function extractCustomClaims($type)
+    {
+        $keys   = isset($this->settings['custom_claims'][$type]['key'])
+            ? $this->settings['custom_claims'][$type]['key']
+            : array();
+        $values = isset($this->settings['custom_claims'][$type]['value'])
+            ? $this->settings['custom_claims'][$type]['value']
+            : array();
+
+        $result = array();
+        foreach ($keys as $i => $claimKey) {
+            if (!empty(trim($claimKey))) {
+                $result[$claimKey] = isset($values[$i]) ? $values[$i] : '';
+            }
+        }
+        return $result;
     }
 }

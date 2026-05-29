@@ -44,6 +44,14 @@ jQuery(document).ready(
             }
         );
 
+        $('#simple-jwt-login #sjl-add-payload-claim').click(function () {
+            $('#sjl-payload-claims-table').append($('#sjl-payload-claim-line').html());
+        });
+
+        $('#simple-jwt-login #sjl-add-header-claim').click(function () {
+            $('#sjl-header-claims-table').append($('#sjl-header-claim-line').html());
+        });
+
         $('#simple-jwt-login #add_whitelist_endpoint').click(
             function () {
                 $('#whitelisted-domains').append($('#endpoint_whitelist_line').html());
@@ -914,4 +922,9 @@ function sjlCloseApiKeyModal()
     jQuery('#sjl-ak-modal').hide();
     jQuery('#sjl-ak-copy-msg').text('');
     window.location.reload();
+}
+
+function sjlRemoveClaimRow(btn)
+{
+    jQuery(btn).closest('.sjl-claims-row').remove();
 }

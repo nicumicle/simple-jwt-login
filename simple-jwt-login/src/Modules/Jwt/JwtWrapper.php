@@ -12,13 +12,14 @@ class JwtWrapper implements JwtInterface
      * @param object|array $payload
      * @param string $key
      * @param string $alg
+     * @param array|null $head
      * @return string
      * @throws JWTException
      */
-    public function encode($payload, $key, $alg)
+    public function encode($payload, $key, $alg, $head = null)
     {
         try {
-            return JWT::encode($payload, $key, $alg);
+            return JWT::encode($payload, $key, $alg, null, $head);
         } catch (Exception $exception) {
             throw new JWTException($exception->getMessage(), $exception->getCode());
         }

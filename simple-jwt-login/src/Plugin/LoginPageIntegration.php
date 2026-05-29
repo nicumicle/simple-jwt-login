@@ -35,20 +35,14 @@ class LoginPageIntegration
         $jwtSettings   = new SimpleJWTLoginSettings($wordpressData);
         $hasError = false;
 
-        if ($jwtSettings->getIntegrationsSettings()->google()->isEnabled()
-            && $jwtSettings->getIntegrationsSettings()->google()->isOauthEnabled()
-        ) {
-            if (isset($this->request['error'])) {
-                $hasError = true;
-            }
-        }
+        $integrationsSettings = $jwtSettings->getIntegrationsSettings();
+        $anyEnabled = ($integrationsSettings->google()->isEnabled() && $integrationsSettings->google()->isOauthEnabled())
+            || ($integrationsSettings->auth0()->isEnabled() && $integrationsSettings->auth0()->isOauthEnabled())
+            || ($integrationsSettings->facebook()->isEnabled() && $integrationsSettings->facebook()->isOauthEnabled())
+            || ($integrationsSettings->github()->isEnabled() && $integrationsSettings->github()->isOauthEnabled());
 
-        if ($jwtSettings->getIntegrationsSettings()->auth0()->isEnabled()
-            && $jwtSettings->getIntegrationsSettings()->auth0()->isOauthEnabled()
-        ) {
-            if (isset($this->request['error'])) {
-                $hasError = true;
-            }
+        if ($anyEnabled && isset($this->request['error'])) {
+            $hasError = true;
         }
 
         if ($hasError) {
@@ -69,16 +63,21 @@ class LoginPageIntegration
         $jwtSettings = new SimpleJWTLoginSettings($wordpressData);
         $pluginDirUrl = plugin_dir_url(SIMPLE_JWT_LOGIN_PLUGIN_FILE);
 
-        $googleEnabled = $jwtSettings->getIntegrationsSettings()->google()->isEnabled()
-            && $jwtSettings->getIntegrationsSettings()->google()->isOauthEnabled();
-        $auth0Enabled  = $jwtSettings->getIntegrationsSettings()->auth0()->isEnabled()
-            && $jwtSettings->getIntegrationsSettings()->auth0()->isOauthEnabled();
+        $integrationsSettings = $jwtSettings->getIntegrationsSettings();
+        $googleEnabled   = $integrationsSettings->google()->isEnabled()
+            && $integrationsSettings->google()->isOauthEnabled();
+        $auth0Enabled    = $integrationsSettings->auth0()->isEnabled()
+            && $integrationsSettings->auth0()->isOauthEnabled();
+        $facebookEnabled = $integrationsSettings->facebook()->isEnabled()
+            && $integrationsSettings->facebook()->isOauthEnabled();
+        $githubEnabled   = $integrationsSettings->github()->isEnabled()
+            && $integrationsSettings->github()->isOauthEnabled();
 
-        if (!$googleEnabled && !$auth0Enabled) {
+        if (!$googleEnabled && !$auth0Enabled && !$facebookEnabled && !$githubEnabled) {
             return;
         }
 
-        $layout = $jwtSettings->getIntegrationsSettings()->getLoginButtonLayout();
+        $layout = $integrationsSettings->getLoginButtonLayout();
         echo '<div class="sjl-oauth-buttons-wrapper layout-' . esc_attr($layout) . '">';
 
         $pluginDir = dirname(SIMPLE_JWT_LOGIN_PLUGIN_FILE);
@@ -89,6 +88,14 @@ class LoginPageIntegration
 
         if ($auth0Enabled) {
             include_once $pluginDir . '/views/integrations/oauth/auth0-form.php';
+        }
+
+        if ($facebookEnabled) {
+            include_once $pluginDir . '/views/integrations/oauth/facebook-form.php';
+        }
+
+        if ($githubEnabled) {
+            include_once $pluginDir . '/views/integrations/oauth/github-form.php';
         }
 
         echo '</div>';

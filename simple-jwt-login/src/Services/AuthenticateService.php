@@ -92,6 +92,13 @@ class AuthenticateService extends BaseService implements ServiceInterface
             }
         }
         
+        $customClaims = $jwtSettings->getAuthenticationSettings()->getCustomPayloadClaims();
+        foreach ($customClaims as $claimKey => $claimValue) {
+            if (!in_array($claimKey, AuthenticationSettings::$protectedPayloadKeys, true)) {
+                $payload[$claimKey] = $claimValue;
+            }
+        }
+
         // Allow developers to create their own payload values inside of the returned JWT
         if ($jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::HOOK_GENERATE_PAYLOAD)) {
             $payload = $wordPressData->triggerFilter(SimpleJWTLoginHooks::HOOK_GENERATE_PAYLOAD, $payload, $user);
@@ -236,10 +243,12 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
         }
 
+        $customHeaderClaims = $this->jwtSettings->getAuthenticationSettings()->getCustomHeaderClaims();
         $jwt = $this->getJwtWrapper()->encode(
             $payload,
             JwtKeyFactory::getFactory($this->jwtSettings)->getPrivateKey(),
-            $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm()
+            $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm(),
+            empty($customHeaderClaims) ? null : $customHeaderClaims
         );
 
         $responseData = ['jwt' => $jwt];

@@ -2680,3 +2680,48 @@
     text-align: center;
     line-height: 1.3;
 }
+
+/* ============================================
+   Custom JWT Claims
+   ============================================ */
+#simple-jwt-login .sjl-claims-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 30px;
+    gap: 8px;
+    align-items: center;
+    padding: 0 10px 6px;
+    border-bottom: 2px solid var(--sjl-border);
+    margin-bottom: 4px;
+}
+
+#simple-jwt-login .sjl-claims-header span {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--sjl-text-meta);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+#simple-jwt-login .sjl-claims-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 30px;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 10px;
+    background: var(--sjl-bg-muted);
+    border: 1px solid var(--sjl-border);
+    border-radius: var(--sjl-radius-sm);
+    margin-top: 6px;
+}
+
+#simple-jwt-login .sjl-claim-badge {
+    display: inline-block;
+    background: #f0f0f1;
+    border: 1px solid #c3c4c7;
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-size: 11px;
+    font-family: monospace;
+    margin: 0 2px;
+    color: #3c434a;
+}

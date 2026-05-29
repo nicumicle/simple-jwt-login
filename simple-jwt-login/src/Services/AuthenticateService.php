@@ -122,13 +122,13 @@ class AuthenticateService extends BaseService implements ServiceInterface
         if (empty($this->request['email']) && empty($this->request['username']) && empty($this->request['login'])) {
             throw new ValidationException(
                 __('The email, username, or login parameter is missing from the request.', 'simple-jwt-login'),
-                ErrorCodes::AUTHENTICATION_MISSING_EMAIL
+                ErrorCodes::ERR_AUTHENTICATION_MISSING_EMAIL
             );
         }
         if (empty($this->request['password']) && empty($this->request['password_hash'])) {
             throw new ValidationException(
                 __('The password or password_hash parameter is missing from request.', 'simple-jwt-login'),
-                ErrorCodes::AUTHENTICATION_MISSING_PASSWORD
+                ErrorCodes::ERR_AUTHENTICATION_MISSING_PASSWORD
             );
         }
 
@@ -168,7 +168,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
             throw new Exception(
                 __('Wrong user credentials.', 'simple-jwt-login'),
-                ErrorCodes::AUTHENTICATION_WRONG_CREDENTIALS
+                ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS
             );
         }
 
@@ -203,7 +203,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
             throw new Exception(
                 __('Wrong user credentials.', 'simple-jwt-login'),
-                ErrorCodes::AUTHENTICATION_WRONG_CREDENTIALS
+                ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS
             );
         }
 
@@ -434,7 +434,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
         if (!$this->jwtSettings->getAuthenticationSettings()->isAuthenticationEnabled()) {
             throw new Exception(
                 __('Authentication is not enabled.', 'simple-jwt-login'),
-                ErrorCodes::AUTHENTICATION_IS_NOT_ENABLED
+                ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED
             );
         }
     }

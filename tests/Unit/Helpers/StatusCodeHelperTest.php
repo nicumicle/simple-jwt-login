@@ -43,7 +43,7 @@ class StatusCodeHelperTest extends TestCase
             'ERR_MISSING_JWT_AUTH_VALIDATE'          => [ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE, 401],
             'ERR_PROTECT_ENDPOINTS_MISSING_JWT'      => [ErrorCodes::ERR_PROTECT_ENDPOINTS_MISSING_JWT, 401],
             // 401 — Wrong credentials
-            'AUTHENTICATION_WRONG_CREDENTIALS'       => [ErrorCodes::AUTHENTICATION_WRONG_CREDENTIALS, 401],
+            'ERR_AUTHENTICATION_WRONG_CREDENTIALS'       => [ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS, 401],
             // 401 — Invalid auth codes / keys
             'ERR_INVALID_AUTH_CODE_PROVIDED'         => [ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED, 401],
             'ERR_REGISTER_INVALID_AUTH_KEY'          => [ErrorCodes::ERR_REGISTER_INVALID_AUTH_KEY, 401],
@@ -62,7 +62,7 @@ class StatusCodeHelperTest extends TestCase
             'ERR_AUTO_LOGIN_NOT_ENABLED'             => [ErrorCodes::ERR_AUTO_LOGIN_NOT_ENABLED, 403],
             'ERR_REGISTER_IS_NOT_ALLOWED'            => [ErrorCodes::ERR_REGISTER_IS_NOT_ALLOWED, 403],
             'ERR_DELETE_IS_NOT_ENABLED'              => [ErrorCodes::ERR_DELETE_IS_NOT_ENABLED, 403],
-            'AUTHENTICATION_IS_NOT_ENABLED'          => [ErrorCodes::AUTHENTICATION_IS_NOT_ENABLED, 403],
+            'AUTHENTICATION_IS_NOT_ENABLED'          => [ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED, 403],
             'ERR_RESET_PASSWORD_IS_NOT_ALLOWED'      => [ErrorCodes::ERR_RESET_PASSWORD_IS_NOT_ALLOWED, 403],
             'ERR_REFRESH_TOKEN_NOT_ENABLED'          => [ErrorCodes::ERR_REFRESH_TOKEN_NOT_ENABLED, 403],
             'ERR_VALIDATE_TOKEN_NOT_ENABLED'         => [ErrorCodes::ERR_VALIDATE_TOKEN_NOT_ENABLED, 403],
@@ -118,8 +118,8 @@ class StatusCodeHelperTest extends TestCase
             'ERR_DELETE_MISSING_AUTH_KEY'            => [ErrorCodes::ERR_DELETE_MISSING_AUTH_KEY, 400],
             'ERR_INVALID_ROUTE_METHOD'               => [ErrorCodes::ERR_INVALID_ROUTE_METHOD, 400],
             'ERR_INVALID_ROUTE_NAME'                 => [ErrorCodes::ERR_INVALID_ROUTE_NAME, 400],
-            'AUTHENTICATION_MISSING_EMAIL'           => [ErrorCodes::AUTHENTICATION_MISSING_EMAIL, 400],
-            'AUTHENTICATION_MISSING_PASSWORD'        => [ErrorCodes::AUTHENTICATION_MISSING_PASSWORD, 400],
+            'AUTHENTICATION_MISSING_EMAIL'           => [ErrorCodes::ERR_AUTHENTICATION_MISSING_EMAIL, 400],
+            'AUTHENTICATION_MISSING_PASSWORD'        => [ErrorCodes::ERR_AUTHENTICATION_MISSING_PASSWORD, 400],
             'ERR_JWT_REFRESH_NULL_PAYLOAD'           => [ErrorCodes::ERR_JWT_REFRESH_NULL_PAYLOAD, 400],
             'ERR_GET_USER_ID_FROM_JWT'               => [ErrorCodes::ERR_GET_USER_ID_FROM_JWT, 400],
             'ERR_MISSING_EMAIL_FOR_CHANGE_PASSWORD'  => [ErrorCodes::ERR_MISSING_EMAIL_FOR_CHANGE_PASSWORD, 400],

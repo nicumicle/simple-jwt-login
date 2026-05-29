@@ -83,7 +83,7 @@ class ApiKeyAuthMiddlewareTest extends TestCase
         $repositoryMock->method('getByKeyHash')->willReturn($key);
         $repositoryMock->expects($this->once())
             ->method('touchLastUsed')
-            ->with(7, $this->isType('string'));
+            ->with(7, $this->isString());
 
         $middleware = new ApiKeyAuthMiddleware($repositoryMock);
         $result     = $middleware->validate($serverHelper, 'read');

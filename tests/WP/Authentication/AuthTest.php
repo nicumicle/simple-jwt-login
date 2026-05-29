@@ -61,7 +61,7 @@ class AuthTest extends WPTestCase
             'password' => 'wrong-password',
         ]);
 
-        // StatusCodeHelper maps AUTHENTICATION_WRONG_CREDENTIALS (code 48) to 400.
+        // StatusCodeHelper maps ERR_AUTHENTICATION_WRONG_CREDENTIALS (code 48) to 400.
         $this->assertSame(400, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);

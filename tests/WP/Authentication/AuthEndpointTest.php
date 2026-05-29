@@ -84,7 +84,7 @@ class AuthEndpointTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::AUTHENTICATION_IS_NOT_ENABLED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED, $data['data']['errorCode']);
     }
 
     // ─── Missing credentials ──────────────────────────────────────────────────
@@ -97,23 +97,23 @@ class AuthEndpointTest extends WPTestCase
         return [
             'no params at all' => [
                 'params'       => [],
-                'expectedCode' => ErrorCodes::AUTHENTICATION_MISSING_EMAIL,
+                'expectedCode' => ErrorCodes::ERR_AUTHENTICATION_MISSING_EMAIL,
             ],
             'only password, no email/username/login' => [
                 'params'       => ['password' => 'secret123'],
-                'expectedCode' => ErrorCodes::AUTHENTICATION_MISSING_EMAIL,
+                'expectedCode' => ErrorCodes::ERR_AUTHENTICATION_MISSING_EMAIL,
             ],
             'only email, no password' => [
                 'params'       => ['email' => 'user@example.com'],
-                'expectedCode' => ErrorCodes::AUTHENTICATION_MISSING_PASSWORD,
+                'expectedCode' => ErrorCodes::ERR_AUTHENTICATION_MISSING_PASSWORD,
             ],
             'only username, no password' => [
                 'params'       => ['username' => 'someuser'],
-                'expectedCode' => ErrorCodes::AUTHENTICATION_MISSING_PASSWORD,
+                'expectedCode' => ErrorCodes::ERR_AUTHENTICATION_MISSING_PASSWORD,
             ],
             'only login, no password' => [
                 'params'       => ['login' => 'user@example.com'],
-                'expectedCode' => ErrorCodes::AUTHENTICATION_MISSING_PASSWORD,
+                'expectedCode' => ErrorCodes::ERR_AUTHENTICATION_MISSING_PASSWORD,
             ],
         ];
     }
@@ -195,7 +195,7 @@ class AuthEndpointTest extends WPTestCase
 
     // ─── Non-existent user ────────────────────────────────────────────────────
 
-    #[TestDox('Returns AUTHENTICATION_WRONG_CREDENTIALS when the email does not match any user')]
+    #[TestDox('Returns ERR_AUTHENTICATION_WRONG_CREDENTIALS when the email does not match any user')]
     public function testNonExistentUserReturnsError(): void
     {
         static::configurePlugin(static::baseConfig());
@@ -207,7 +207,7 @@ class AuthEndpointTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::AUTHENTICATION_WRONG_CREDENTIALS, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS, $data['data']['errorCode']);
     }
 
     // ─── IP restriction ───────────────────────────────────────────────────────
@@ -339,7 +339,7 @@ class AuthEndpointTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::AUTHENTICATION_WRONG_CREDENTIALS, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS, $data['data']['errorCode']);
     }
 
     // ─── Refresh token in response ────────────────────────────────────────────

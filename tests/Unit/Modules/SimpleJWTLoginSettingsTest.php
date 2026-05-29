@@ -79,7 +79,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
     public function testGenerateExampleLink()
     {
         $settingsJson = json_encode(['route_namespace' => 'v1']);
-        $wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $wordPressDataMock = $this->createStub(WordPressDataInterface::class);
         $wordPressDataMock->method('getSiteUrl')
             ->willReturn('https://localhost');
         $wordPressDataMock->method('getOptionFromDatabase')
@@ -99,7 +99,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
     public function testGenerateExampleLinkWithNoParams()
     {
         $settingsJson = json_encode(['route_namespace' => 'v1']);
-        $wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $wordPressDataMock = $this->createStub(WordPressDataInterface::class);
         $wordPressDataMock->method('getSiteUrl')
             ->willReturn('https://localhost');
         $wordPressDataMock->method('getOptionFromDatabase')
@@ -119,7 +119,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
     public function testGenerateExampleLinkWithPermalinks()
     {
         $settingsJson = json_encode(['route_namespace' => 'simple-jwt-login/v1']);
-        $wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $wordPressDataMock = $this->createStub(WordPressDataInterface::class);
         $wordPressDataMock->method('getSiteUrl')
             ->willReturn('https://localhost');
         $wordPressDataMock->method('getOptionFromDatabase')
@@ -139,7 +139,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
     public function testGenerateExampleLinkWithPermalinksAndNoParams()
     {
         $settingsJson = json_encode(['route_namespace' => 'simple-jwt-login/v1']);
-        $wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $wordPressDataMock = $this->createStub(WordPressDataInterface::class);
         $wordPressDataMock->method('getSiteUrl')
             ->willReturn('https://localhost');
         $wordPressDataMock->method('getOptionFromDatabase')

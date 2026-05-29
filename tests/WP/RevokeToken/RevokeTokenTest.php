@@ -91,7 +91,7 @@ class RevokeTokenTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::AUTHENTICATION_IS_NOT_ENABLED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED, $data['data']['errorCode']);
     }
 
     #[TestDox('Returns ERR_REVOKE_TOKEN_NOT_ENABLED when revoke endpoint is disabled')]

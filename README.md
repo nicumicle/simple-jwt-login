@@ -133,6 +133,8 @@ In order to install the latest stable version, from your WordPress admin:
 - **Webhooks** - Fire outbound HTTP callbacks on login, registration, and authentication events to integrate with external services
 - **Google OAuth** (beta) - Allow users to log in with their Google account via OAuth
 - **Google JWT** (beta) - Accept a Google `id_token` to authenticate against WordPress endpoints
+- **Facebook OAuth** (beta) - Allow users to log in with their Facebook account via OAuth
+- **GitHub OAuth** (beta) - Allow users to log in with their GitHub account via OAuth
 - **Auth0 Login** (beta) - Allow users to log in via Auth0
 - **WPGraphQL support** - Works with WPGraphQL so headless frontends using GraphQL can authenticate through the same plugin
 - **Headless WordPress** - Purpose-built for Next.js, React, React Native, Flutter, and other API-first consumers
@@ -151,6 +153,8 @@ Most WordPress JWT plugins lock advanced features behind paid plans. Simple JWT 
 | Audit Logs | ✅ Free | ❌ Premium only |
 | Webhooks | ✅ Free | ❌ Premium only |
 | Google OAuth Login | ✅ Free | ❌ Premium only |
+| Facebook OAuth Login | ✅ Free | ❌ Premium only |
+| GitHub OAuth Login | ✅ Free | ❌ Premium only |
 | Auth0 Login | ✅ Free | ❌ Premium only |
 | Generic OAuth / OIDC | ⚠️ Partial | ⚠️ Limited or Premium |
 | WPGraphQL Support | ✅ Free | ❌ Not available |

@@ -37,7 +37,7 @@ class StatusCodeHelper
         ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE,
         ErrorCodes::ERR_PROTECT_ENDPOINTS_MISSING_JWT,
         // Wrong credentials
-        ErrorCodes::AUTHENTICATION_WRONG_CREDENTIALS,
+        ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS,
         // Invalid auth codes / keys
         ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED,
         ErrorCodes::ERR_REGISTER_INVALID_AUTH_KEY,
@@ -61,7 +61,7 @@ class StatusCodeHelper
         ErrorCodes::ERR_AUTO_LOGIN_NOT_ENABLED,
         ErrorCodes::ERR_REGISTER_IS_NOT_ALLOWED,
         ErrorCodes::ERR_DELETE_IS_NOT_ENABLED,
-        ErrorCodes::AUTHENTICATION_IS_NOT_ENABLED,
+        ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED,
         ErrorCodes::ERR_RESET_PASSWORD_IS_NOT_ALLOWED,
         ErrorCodes::ERR_REFRESH_TOKEN_NOT_ENABLED,
         ErrorCodes::ERR_VALIDATE_TOKEN_NOT_ENABLED,

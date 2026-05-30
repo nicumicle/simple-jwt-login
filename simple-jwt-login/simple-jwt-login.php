@@ -14,9 +14,11 @@
 
 use SimpleJWTLogin\Plugin\AdminUI;
 use SimpleJWTLogin\Plugin\LoginPageIntegration;
+use SimpleJWTLogin\Plugin\OAuthTwoFactorLoginHandler;
 use SimpleJWTLogin\Plugin\Shortcodes;
 use SimpleJWTLogin\Plugin\Lifecycle;
 use SimpleJWTLogin\Plugin\CronCleanup;
+use SimpleJWTLogin\Services\Oauth\AbstractOauth;
 
 if (! defined('ABSPATH')) {
     /** @phpstan-ignore-next-line  */
@@ -51,6 +53,13 @@ $simpleJwtLoginLoginPage = new LoginPageIntegration($_REQUEST);
 add_action('login_head', array($simpleJwtLoginLoginPage, 'enqueueLoginAssets'));
 add_action('login_message', array($simpleJwtLoginLoginPage, 'showLoginMessage'));
 add_action('login_footer', array($simpleJwtLoginLoginPage, 'renderLoginFooter'));
+
+// Browser-based OAuth + 2FA page (wp-login.php?action=sjl-oauth-2fa)
+$simpleJwtLoginOAuthTwoFactor = new OAuthTwoFactorLoginHandler($_SERVER, $_GET, $_POST);
+add_action(
+    'login_form_' . AbstractOauth::BROWSER_2FA_ACTION,
+    array($simpleJwtLoginOAuthTwoFactor, 'handleAction')
+);
 
 // Shortcodes
 $simpleJwtLoginShortcodes = new Shortcodes($_REQUEST);

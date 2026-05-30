@@ -2,106 +2,15 @@
 
 namespace SimpleJwtLoginTests\Unit\Services\Oauth;
 
-use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\GeneralSettings;
+use SimpleJWTLogin\Modules\Settings\IntegrationsSettings;
+use SimpleJWTLogin\Modules\Settings\ThirdParty\TwoFactorSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
-use SimpleJWTLogin\Services\Oauth\AbstractOauth;
-
-/**
- * Concrete subclass used purely for testing handleOauth().
- * exchangeCode() is overridden to return whatever $stubbedExchangeResult holds,
- * avoiding any wp_remote_post global-function calls in unit tests.
- */
-class ConcreteOauth extends AbstractOauth
-{
-    /** @var array{status_code: int, response: array|null} */
-    public $stubbedExchangeResult = ['status_code' => 200, 'response' => []];
-
-    public function exchangeCode($code, $redirectUri)
-    {
-        return $this->stubbedExchangeResult;
-    }
-
-    public function getAuthUrl()
-    {
-        return 'https://provider.example.com/oauth/authorize';
-    }
-
-    protected function getTokenEndpoint()
-    {
-        return 'https://provider.example.com/oauth/token';
-    }
-
-    protected function getClientId()
-    {
-        return 'test-client-id';
-    }
-
-    protected function getClientSecret()
-    {
-        return 'test-client-secret';
-    }
-
-    protected function getSavedRedirectUri()
-    {
-        return 'https://example.com/oauth/callback';
-    }
-
-    protected function getProviderSlug()
-    {
-        return 'testprovider';
-    }
-
-    protected function isCreateUserEnabled()
-    {
-        return false;
-    }
-
-    protected function getEmailFromTokenResponse($tokenResponse)
-    {
-        if (empty($tokenResponse['access_token'])) {
-            throw new Exception('Provider did not return an access_token.');
-        }
-        return 'user@example.com';
-    }
-
-    protected function validateProviderToken($token)
-    {
-    }
-
-    protected function getInvalidTokenErrorCode()
-    {
-        return 9001;
-    }
-
-    protected function getUserNotFoundErrorCode()
-    {
-        return 9002;
-    }
-
-    protected function getTokenParamName()
-    {
-        return 'access_token';
-    }
-
-    protected function getMissingParamErrorCode()
-    {
-        return 9003;
-    }
-
-    protected function getInvalidCodeErrorCode()
-    {
-        return 9004;
-    }
-
-    protected function getEmailFromDirectToken($token)
-    {
-        return 'user@example.com';
-    }
-}
+use SimpleJWTLogin\Services\Integrations\TwoFactor\TwoFactorBridge;
+use stdClass;
 
 class AbstractOauthHandleOauthTest extends TestCase
 {
@@ -120,8 +29,15 @@ class AbstractOauthHandleOauthTest extends TestCase
         $generalSettings = $this->createStub(GeneralSettings::class);
         $generalSettings->method('isSafeRedirectEnabled')->willReturn(false);
 
+        $tfaSettings = $this->createStub(TwoFactorSettings::class);
+        $tfaSettings->method('isEnabled')->willReturn(false);
+
+        $integrationsSettings = $this->createStub(IntegrationsSettings::class);
+        $integrationsSettings->method('twoFactor')->willReturn($tfaSettings);
+
         $this->settings = $this->createStub(SimpleJWTLoginSettings::class);
         $this->settings->method('getGeneralSettings')->willReturn($generalSettings);
+        $this->settings->method('getIntegrationsSettings')->willReturn($integrationsSettings);
         $this->settings->method('generateExampleLink')
             ->willReturn('http://localhost/wp-json/simple-jwt-login/v1/oauth/token?provider=testprovider');
     }
@@ -142,7 +58,7 @@ class AbstractOauthHandleOauthTest extends TestCase
                         'error_description' => 'Token has been expired or revoked.',
                     ],
                 ],
-                'expectedErrorFragment' => 'Token has been expired or revoked.',
+                'errorFragment' => 'Token has been expired or revoked.',
             ],
             '200 with error body - bad code' => [
                 'exchangeResult' => [
@@ -152,7 +68,7 @@ class AbstractOauthHandleOauthTest extends TestCase
                         'error_description' => 'The code passed is incorrect or expired.',
                     ],
                 ],
-                'expectedErrorFragment' => 'The code passed is incorrect or expired.',
+                'errorFragment' => 'The code passed is incorrect or expired.',
             ],
             '200 with error body - redirect uri mismatch' => [
                 'exchangeResult' => [
@@ -162,7 +78,7 @@ class AbstractOauthHandleOauthTest extends TestCase
                         'error_description' => 'The redirect_uri MUST match the registered callback URL.',
                     ],
                 ],
-                'expectedErrorFragment' => 'The redirect_uri MUST match the registered callback URL.',
+                'errorFragment' => 'The redirect_uri MUST match the registered callback URL.',
             ],
             '200 with error body - incorrect credentials' => [
                 'exchangeResult' => [
@@ -172,7 +88,7 @@ class AbstractOauthHandleOauthTest extends TestCase
                         'error_description' => 'The client_id and/or client_secret passed are incorrect.',
                     ],
                 ],
-                'expectedErrorFragment' => 'The client_id and/or client_secret passed are incorrect.',
+                'errorFragment' => 'The client_id and/or client_secret passed are incorrect.',
             ],
         ];
     }
@@ -180,7 +96,7 @@ class AbstractOauthHandleOauthTest extends TestCase
     #[DataProvider('errorResponseProvider')]
     public function testHandleOauthRedirectsToLoginWithErrorOnFailedExchange(
         $exchangeResult,
-        $expectedErrorFragment
+        $errorFragment
     ) {
         $capturedUrl = null;
 
@@ -198,20 +114,20 @@ class AbstractOauthHandleOauthTest extends TestCase
         $this->wpData->method('triggerAction')->willReturn(null);
 
         $oauth = $this->makeOauth(['code' => 'test-code-abc']);
-        $oauth->stubbedExchangeResult = $exchangeResult;
+        $oauth->exchangeStub = $exchangeResult;
 
         $oauth->handleOauth('test-code-abc');
 
         $this->assertNotNull($capturedUrl, 'redirect() should have been called');
         $this->assertStringContainsString(
-            urlencode($expectedErrorFragment),
+            urlencode($errorFragment),
             $capturedUrl
         );
     }
 
     public function testHandleOauthProceedsToEmailFetchOnSuccess()
     {
-        $user = new \stdClass();
+        $user = new stdClass();
         $user->ID = 1;
         $user->user_email = 'user@example.com';
 
@@ -226,11 +142,153 @@ class AbstractOauthHandleOauthTest extends TestCase
             ->with('http://localhost/wp-admin/');
 
         $oauth = $this->makeOauth(['code' => 'valid-code']);
-        $oauth->stubbedExchangeResult = [
+        $oauth->exchangeStub = [
             'status_code' => 200,
             'response'    => ['access_token' => 'ghp_valid_token'],
         ];
 
         $oauth->handleOauth('valid-code');
+    }
+
+    private function makeSettingsWith2FAEnabled()
+    {
+        $generalSettings = $this->createStub(GeneralSettings::class);
+        $generalSettings->method('isSafeRedirectEnabled')->willReturn(false);
+        $generalSettings->method('getJWTDecryptAlgorithm')->willReturn('HS256');
+        $generalSettings->method('getDecryptionKey')->willReturn('test-secret');
+
+        $tfaSettings = $this->createStub(TwoFactorSettings::class);
+        $tfaSettings->method('isEnabled')->willReturn(true);
+        $tfaSettings->method('getInterimTtl')->willReturn(5);
+
+        $integrationsSettings = $this->createStub(IntegrationsSettings::class);
+        $integrationsSettings->method('twoFactor')->willReturn($tfaSettings);
+
+        $settings = $this->createStub(SimpleJWTLoginSettings::class);
+        $settings->method('getGeneralSettings')->willReturn($generalSettings);
+        $settings->method('getIntegrationsSettings')->willReturn($integrationsSettings);
+        $settings->method('generateExampleLink')
+            ->willReturn('http://localhost/wp-json/simple-jwt-login/v1/oauth/token?provider=testprovider');
+
+        return $settings;
+    }
+
+    public function testHandleOauthRedirectsToTwoFactorPageWhenUserHas2FA()
+    {
+        $user = new stdClass();
+        $user->ID = 42;
+        $user->user_email = 'user@example.com';
+
+        $this->wpData->method('getUserDetailsByEmail')->willReturn($user);
+        $this->wpData->method('getUserProperty')
+            ->willReturnCallback(function ($u, $prop) {
+                return $u->$prop;
+            });
+        $this->wpData->method('sanitizeTextField')->willReturnArgument(0);
+        $this->wpData->method('triggerAction')->willReturn(null);
+        $this->wpData->method('getAdminUrl')->willReturn('http://localhost/wp-admin/');
+        $this->wpData->method('getLoginURL')
+            ->willReturnCallback(function ($params) {
+                return 'http://localhost/wp-login.php?' . http_build_query($params);
+            });
+
+        $this->wpData->expects($this->never())->method('redirect');
+        $this->wpData->expects($this->never())->method('loginUser');
+
+        $bridge = $this->createStub(TwoFactorBridge::class);
+        $bridge->method('isAvailable')->willReturn(true);
+        $bridge->method('isUserUsing2FA')->willReturn(true);
+        $bridge->method('createNonce')->willReturn(['key' => 'test-nonce-key', 'expiration' => time() + 300]);
+        $bridge->method('getPrimaryProvider')->willReturn(null);
+
+        $oauth = new ConcreteOauth(
+            ['code' => 'valid-code'],
+            'GET',
+            $this->settings,
+            $this->wpData
+        );
+        $oauth->withTwoFactorBridge($bridge);
+        $oauth->exchangeStub = [
+            'status_code' => 200,
+            'response'    => ['access_token' => 'ghp_valid_token'],
+        ];
+
+        $oauth->handleOauth('valid-code');
+
+        $capturedUrl = $oauth->htmlRedirectUrl;
+        $this->assertNotNull($capturedUrl, 'doHtmlRedirect() should have been called');
+        $this->assertStringContainsString('action=validate_2fa', $capturedUrl);
+        $this->assertStringContainsString('wp-auth-id=42', $capturedUrl);
+        $this->assertStringContainsString('wp-auth-nonce=test-nonce-key', $capturedUrl);
+    }
+
+    public function testHandleOauthLogsInDirectlyWhenUserHasNo2FA()
+    {
+        $user = new stdClass();
+        $user->ID = 7;
+        $user->user_email = 'user@example.com';
+
+        $this->wpData->method('getUserDetailsByEmail')->willReturn($user);
+        $this->wpData->method('getUserProperty')
+            ->willReturnCallback(function ($u, $prop) {
+                return $u->$prop;
+            });
+        $this->wpData->method('triggerAction')->willReturn(null);
+        $this->wpData->method('getAdminUrl')->willReturn('http://localhost/wp-admin/');
+        $this->wpData->expects($this->once())->method('loginUser');
+        $this->wpData->expects($this->once())->method('redirect')->with('http://localhost/wp-admin/');
+
+        $bridge = $this->createStub(TwoFactorBridge::class);
+        $bridge->method('isAvailable')->willReturn(true);
+        $bridge->method('isUserUsing2FA')->willReturn(false);
+
+        $oauth = new ConcreteOauth(
+            ['code' => 'valid-code'],
+            'GET',
+            $this->makeSettingsWith2FAEnabled(),
+            $this->wpData
+        );
+        $oauth->withTwoFactorBridge($bridge);
+        $oauth->exchangeStub = [
+            'status_code' => 200,
+            'response'    => ['access_token' => 'ghp_valid_token'],
+        ];
+
+        $oauth->handleOauth('valid-code');
+    }
+
+    public function testCreateWpJwtForEmailReturnsTwoFactorChallengeWhenUserHas2FA()
+    {
+        $user = new stdClass();
+        $user->ID = 55;
+        $user->user_email = 'user@example.com';
+
+        $this->wpData->method('getUserDetailsByEmail')->willReturn($user);
+        $this->wpData->method('getUserProperty')
+            ->willReturnCallback(function ($u, $prop) {
+                return $u->$prop;
+            });
+        $this->wpData->method('sanitizeTextField')->willReturnArgument(0);
+        $this->wpData->expects($this->never())->method('loginUser');
+
+        $bridge = $this->createStub(TwoFactorBridge::class);
+        $bridge->method('isAvailable')->willReturn(true);
+        $bridge->method('isUserUsing2FA')->willReturn(true);
+        $bridge->method('createNonce')->willReturn(['key' => 'nonce-abc', 'expiration' => time() + 300]);
+        $bridge->method('getPrimaryProvider')->willReturn(null);
+
+        $oauth = new ConcreteOauth(
+            ['access_token' => 'some-token'],
+            'POST',
+            $this->makeSettingsWith2FAEnabled(),
+            $this->wpData
+        );
+        $oauth->withTwoFactorBridge($bridge);
+
+        $result = $oauth->call();
+
+        $this->assertTrue($result['success']);
+        $this->assertTrue($result['data']['two_factor_required']);
+        $this->assertArrayHasKey('jwt', $result['data']);
     }
 }

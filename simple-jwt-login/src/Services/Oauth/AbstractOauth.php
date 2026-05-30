@@ -8,6 +8,7 @@ use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
 use SimpleJWTLogin\Libraries\ServerCall;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Services\AuthenticateService;
+use SimpleJWTLogin\Services\Integrations\TwoFactor\TwoFactorBridge;
 use SimpleJWTLogin\Services\RouteService;
 
 /**
@@ -19,6 +20,11 @@ use SimpleJWTLogin\Services\RouteService;
  */
 abstract class AbstractOauth extends BaseOauth implements OauthInterface
 {
+    /**
+     * WordPress login-form action used for browser-based OAuth + 2FA.
+     * Handled by OAuthTwoFactorLoginHandler hooked into login_form_{action}.
+     */
+    const BROWSER_2FA_ACTION = 'sjl-oauth-2fa';
     // -------------------------------------------------------------------------
     // Template-method hooks - implement in each concrete provider
     // -------------------------------------------------------------------------
@@ -263,6 +269,9 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
             if (empty($user)) {
                 if ($this->isCreateUserEnabled()) {
                     $user = $this->createUser($email);
+                    if ($this->loginWithTwoFactorCheck($user)) {
+                        return;
+                    }
                     $this->wordPressData->loginUser($user);
                     $this->wordPressData->triggerAction(
                         SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_SUCCESS,
@@ -285,12 +294,17 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
                 return;
             }
 
+            if ($this->loginWithTwoFactorCheck($user)) {
+                return;
+            }
+
             $this->wordPressData->loginUser($user);
             $this->wordPressData->triggerAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_SUCCESS,
                 $this->wordPressData->getUserProperty($user, 'ID'),
                 $this->wordPressData->getUserProperty($user, 'user_email')
             );
+
             $this->doRedirect($this->wordPressData->getAdminUrl());
         } catch (Exception $exception) {
             $this->wordPressData->triggerAction(
@@ -305,6 +319,7 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
 
     /**
      * Validate a provider token, look up the matching WP user, and return a WP JWT.
+     * Returns a 2FA challenge response instead if the user has 2FA configured.
      *
      * @param string $email  Email extracted from the token (or empty to derive it internally).
      * @return array
@@ -327,6 +342,11 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
                 __('Wrong user credentials.', 'simple-jwt-login'),
                 $this->getUserNotFoundErrorCode()
             );
+        }
+
+        $challenge = $this->handleTwoFactorChallengeForOauth($user);
+        if ($challenge !== null) {
+            return $challenge;
         }
 
         $this->wordPressData->triggerAction(
@@ -352,6 +372,156 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
                 ),
             ],
         ];
+    }
+
+    /**
+     * Check if 2FA is required for the user and build a challenge response array.
+     * Returns null when 2FA is not active or the user does not have it configured.
+     *
+     * @param mixed $user WP_User
+     * @return array|null
+     * @throws Exception
+     */
+    protected function handleTwoFactorChallengeForOauth($user)
+    {
+        $tfaSettings = $this->settings->getIntegrationsSettings()->twoFactor();
+        if (!$tfaSettings->isEnabled()) {
+            return null;
+        }
+
+        $bridge = $this->getTwoFactorBridge();
+        if (!$bridge->isAvailable() || !$bridge->isUserUsing2FA($user)) {
+            return null;
+        }
+
+        $result = $this->buildInterimJwt($user, $tfaSettings, $bridge);
+
+        return [
+            'success' => true,
+            'data'    => [
+                'jwt'                 => $result['jwt'],
+                'two_factor_required' => true,
+                'provider'            => $result['provider'],
+            ],
+        ];
+    }
+
+    /**
+     * If the user has 2FA configured, generate an interim JWT, redirect to the
+     * plugin-owned 2FA login page, and return true. The 2FA login page shows an
+     * HTML form — only after the user enters a valid code is the session started.
+     * Returns false when 2FA is not required (caller proceeds with normal login).
+     *
+     * @param mixed $user WP_User
+     * @return bool
+     * @throws Exception
+     */
+    protected function loginWithTwoFactorCheck($user)
+    {
+        $bridge = $this->getTwoFactorBridge();
+        if (!$bridge->isAvailable() || !$bridge->isUserUsing2FA($user)) {
+            return false;
+        }
+
+        $userId = (int) $this->wordPressData->getUserProperty($user, 'ID');
+        $nonce  = $bridge->createNonce($userId);
+        if ($nonce === false) {
+            throw new Exception(
+                __('Unable to create two-factor nonce.', 'simple-jwt-login'),
+                ErrorCodes::ERR_TWO_FACTOR_INVALID_NONCE
+            );
+        }
+
+        $provider      = $bridge->getPrimaryProvider($user);
+        $providerClass = $provider !== null ? get_class($provider) : '';
+
+        $twoFactorUrl = $this->wordPressData->getLoginURL([
+            'action'        => 'validate_2fa',
+            'provider'      => $providerClass,
+            'wp-auth-id'    => (string) $userId,
+            'wp-auth-nonce' => $nonce['key'],
+            'redirect_to'   => (string) $this->wordPressData->getAdminUrl(),
+            'rememberme'    => '0',
+        ]);
+
+        $this->doHtmlRedirect((string) $twoFactorUrl);
+
+        return true;
+    }
+
+    /**
+     * Output a minimal HTML page that redirects the browser via meta-refresh and
+     * JavaScript. Used for the browser-based OAuth flow where the REST API framework
+     * has already set Content-Type: application/json, making a plain HTTP 302
+     * unreliable for rendering the destination as HTML.
+     *
+     * @param string $url
+     * @return void
+     * @SuppressWarnings(ExitExpression)
+     */
+    protected function doHtmlRedirect($url)
+    {
+        $safeUrl = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+        $jsonUrl = json_encode($url);
+        if (!headers_sent()) {
+            header('Content-Type: text/html; charset=UTF-8');
+        }
+        echo '<!DOCTYPE html><html><head>'
+            . '<meta http-equiv="refresh" content="0;url=' . $safeUrl . '">'
+            . '<script>window.location.replace(' . $jsonUrl . ');</script>'
+            . '</head><body></body></html>';
+        exit;
+    }
+
+    /**
+     * Create a login nonce, encode an interim JWT with the 2FA state, and
+     * optionally trigger email token delivery for Two_Factor_Email users.
+     * Returns ['jwt' => string, 'provider' => string].
+     *
+     * @param mixed $user
+     * @param mixed $tfaSettings  TwoFactorSettings instance
+     * @param TwoFactorBridge $bridge
+     * @return array{jwt: string, provider: string}
+     * @throws Exception
+     */
+    protected function buildInterimJwt($user, $tfaSettings, $bridge)
+    {
+        $userId = (int) $this->wordPressData->getUserProperty($user, 'ID');
+        $nonce  = $bridge->createNonce($userId);
+        if ($nonce === false) {
+            throw new Exception(
+                __('Unable to create two-factor nonce.', 'simple-jwt-login'),
+                ErrorCodes::ERR_TWO_FACTOR_INVALID_NONCE
+            );
+        }
+
+        $provider      = $bridge->getPrimaryProvider($user);
+        $providerClass = $provider !== null ? get_class($provider) : '';
+
+        $ttlSeconds    = $tfaSettings->getInterimTtl() * 60;
+        $interimPayload = [
+            'iat'                                  => time(),
+            'exp'                                  => time() + $ttlSeconds,
+            AuthenticateService::TFA_PENDING_CLAIM => 1,
+            'tfa_user_id'                          => $userId,
+            'tfa_nonce'                            => $nonce['key'],
+            'tfa_provider'                         => $providerClass,
+        ];
+
+        $jwt = $this->getJwtWrapper()->encode(
+            $interimPayload,
+            JwtKeyFactory::getFactory($this->settings)->getPrivateKey(),
+            $this->settings->getGeneralSettings()->getJWTDecryptAlgorithm()
+        );
+
+        if ($provider !== null
+            && strpos($providerClass, 'Two_Factor_Email') !== false
+            && method_exists($provider, 'generate_and_email_token')
+        ) {
+            $provider->generate_and_email_token($user);
+        }
+
+        return ['jwt' => $jwt, 'provider' => $providerClass];
     }
 
     /**

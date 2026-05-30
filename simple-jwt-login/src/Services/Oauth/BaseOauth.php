@@ -6,6 +6,7 @@ use SimpleJWTLogin\Modules\Jwt\JwtInterface;
 use SimpleJWTLogin\Modules\Jwt\JwtWrapper;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
+use SimpleJWTLogin\Services\Integrations\TwoFactor\TwoFactorBridge;
 
 class BaseOauth
 {
@@ -34,6 +35,11 @@ class BaseOauth
     protected $jwtWrapper;
 
     /**
+     * @var TwoFactorBridge|null
+     */
+    protected $twoFactorBridge;
+
+    /**
      * @return JwtInterface
      */
     protected function getJwtWrapper()
@@ -43,6 +49,27 @@ class BaseOauth
         }
 
         return $this->jwtWrapper;
+    }
+
+    /**
+     * @param TwoFactorBridge $bridge
+     * @return $this
+     */
+    public function withTwoFactorBridge(TwoFactorBridge $bridge)
+    {
+        $this->twoFactorBridge = $bridge;
+        return $this;
+    }
+
+    /**
+     * @return TwoFactorBridge
+     */
+    protected function getTwoFactorBridge()
+    {
+        if ($this->twoFactorBridge === null) {
+            $this->twoFactorBridge = new TwoFactorBridge();
+        }
+        return $this->twoFactorBridge;
     }
 
     /**

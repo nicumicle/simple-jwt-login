@@ -118,8 +118,14 @@ if (!function_exists('wp_set_current_user')) {
     }
 }
 if (!function_exists('wp_set_auth_cookie')) {
-    function wp_set_auth_cookie($userId)
+    function wp_set_auth_cookie($userId, $remember = false, $secure = '', $token = '')
     {
+    }
+}
+if (!function_exists('is_ssl')) {
+    function is_ssl()
+    {
+        return false;
     }
 }
 if (!function_exists('wp_redirect')) {
@@ -711,6 +717,16 @@ if (!function_exists('home_url')) {
 
 if (!function_exists('wp_login_url')) {
     function wp_login_url()
+    {
+    }
+}
+if (!function_exists('login_header')) {
+    function login_header($title = 'Log In', $message = '', $wp_error = null)
+    {
+    }
+}
+if (!function_exists('login_footer')) {
+    function login_footer($input_id = '', $extra_html = '')
     {
     }
 }

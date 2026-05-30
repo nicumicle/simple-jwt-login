@@ -21,6 +21,8 @@ parameters:
        message : '#Calling exit\(\) is forbidden.*#'
        paths:
          - simple-jwt-login/src/Repositories/Wordpress/WordPressRepository.php
+         - simple-jwt-login/src/Plugin/OAuthTwoFactorLoginHandler.php
+         - simple-jwt-login/src/Services/Oauth/AbstractOauth.php
          - simple-jwt-login/views/
     -
        message : '#Using (\$_POST|\$_GET|\$_REQUEST|\$_SERVER) is forbidden.*#'

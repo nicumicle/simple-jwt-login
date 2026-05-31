@@ -67,29 +67,41 @@ class Shortcodes
         $border = '1px solid #ccc';
 
         if (isset($parameter['background'])) {
-            $background = self::sanitizeCssValue($parameter['background']);
+            $sanitized = self::sanitizeColor($parameter['background']);
+            if ($sanitized !== '') {
+                $background = $sanitized;
+            }
         }
         if (isset($parameter['color'])) {
-            $color = self::sanitizeCssValue($parameter['color']);
+            $sanitized = self::sanitizeColor($parameter['color']);
+            if ($sanitized !== '') {
+                $color = $sanitized;
+            }
         }
         if (isset($parameter['width'])) {
-            $imgwidth = self::sanitizeCssValue($parameter['width']);
+            $sanitized = self::sanitizeDimension($parameter['width']);
+            if ($sanitized !== '') {
+                $imgwidth = $sanitized;
+            }
         }
         if (isset($parameter['height'])) {
-            $imgheight = self::sanitizeCssValue($parameter['height']);
+            $sanitized = self::sanitizeDimension($parameter['height']);
+            if ($sanitized !== '') {
+                $imgheight = $sanitized;
+            }
         }
         if (isset($parameter['border'])) {
-            $border = self::sanitizeCssValue($parameter['border']);
+            $border = self::sanitizeBorder($parameter['border']);
         }
         $html = '<style>.simple-jwt-login-oauth-code .simple-jwt-login-auth-btn{
-        color: ' . esc_attr($color) . ';
-        background-color: ' . esc_attr($background) . ';
-        border: ' . esc_attr($border) . ';
+        color: ' . $color . ';
+        background-color: ' . $background . ';
+        border: ' . $border . ';
         cursor: pointer;
         }
         .simple-jwt-login-oauth-code .simple-jwt-login-auth-btn img {
-        width: ' . esc_attr($imgwidth) . ';
-        height: ' . esc_attr($imgheight) . ';
+        width: ' . $imgwidth . ';
+        height: ' . $imgheight . ';
         }
         </style>';
         $haveProvider = false;
@@ -152,5 +164,64 @@ class Shortcodes
         $value = substr($value, 0, 100);
 
         return $value;
+    }
+
+    /**
+     * Accepts only hex colors (#rgb / #rrggbb) or whitelisted CSS named colors.
+     *
+     * @param string $value
+     * @return string Sanitized color, or empty string when input is not a valid color.
+     */
+    public static function sanitizeColor($value)
+    {
+        $trimmed = trim($value);
+        if (preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $trimmed)) {
+            return $trimmed;
+        }
+        $allowed = array(
+            'transparent', 'inherit', 'initial', 'unset', 'currentcolor',
+            'black', 'white', 'red', 'green', 'blue', 'yellow', 'orange',
+            'purple', 'pink', 'gray', 'grey', 'navy', 'teal', 'silver',
+            'gold', 'lime', 'aqua', 'cyan', 'magenta', 'fuchsia', 'maroon',
+            'olive', 'coral', 'salmon', 'indigo', 'violet', 'brown',
+        );
+        $normalized = strtolower($trimmed);
+        if (in_array($normalized, $allowed, true)) {
+            return $normalized;
+        }
+        return '';
+    }
+
+    /**
+     * Accepts only numeric values followed by a safe CSS unit.
+     *
+     * @param string $value
+     * @return string Sanitized dimension, or empty string when input is invalid.
+     */
+    public static function sanitizeDimension($value)
+    {
+        if (preg_match('/^(\d+(?:\.\d+)?)(px|em|rem|%|vh|vw)$/', trim($value), $matches)) {
+            return $matches[1] . $matches[2];
+        }
+        return '';
+    }
+
+    /**
+     * Accepts only the CSS border shorthand: <width> <style> <color>.
+     * Falls back to the default border when the value does not match.
+     *
+     * @param string $value
+     * @return string
+     */
+    public static function sanitizeBorder($value)
+    {
+        $widthPart = '(?:\d+(?:\.\d+)?(?:px|em|rem)|thin|medium|thick)';
+        $stylePart = '(?:none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset)';
+        $colorPart = '(?:#[0-9a-fA-F]{3,6}|[a-zA-Z]+)';
+        $pattern = '/^' . $widthPart . '\s+' . $stylePart . '\s+' . $colorPart . '$/i';
+        if (preg_match($pattern, trim($value))) {
+            return trim($value);
+        }
+        return '1px solid #ccc';
     }
 }

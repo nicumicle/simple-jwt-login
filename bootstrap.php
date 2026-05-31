@@ -1018,3 +1018,17 @@ if (!function_exists('trailingslashit')) {
     }
 }
 
+if (!function_exists('sanitize_hex_color')) {
+    /**
+     * @param string $color
+     * @return string|null
+     */
+    function sanitize_hex_color($color)
+    {
+        if (preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $color)) {
+            return $color;
+        }
+        return null;
+    }
+}
+

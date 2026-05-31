@@ -1,6 +1,6 @@
 <?php
 /*
-    Plugin Name: Simple-JWT-Login
+    Plugin Name: Simple JWT Login
     Plugin URI: https://simplejwtlogin.com
     Description: Simple-JWT-Login REST API Plugin. Allows you to login / register to WordPress using JWT.
     Author: Nicu Micle
@@ -9,7 +9,7 @@
     Domain Path: /i18n
     License: GPLv3
     License URI: https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE
-    Version: 3.6.5
+    Version: 4.0.0
 */
 
 use SimpleJWTLogin\Plugin\AdminUI;
@@ -25,6 +25,7 @@ if (! defined('ABSPATH')) {
     exit;
 } // Exit if accessed directly
 
+define('SIMPLE_JWT_LOGIN_VERSION', '4.0.0');
 define('SIMPLE_JWT_LOGIN_DB_VERSION', '1.6');
 define('SIMPLE_JWT_LOGIN_PLUGIN_FILE', __FILE__);
 

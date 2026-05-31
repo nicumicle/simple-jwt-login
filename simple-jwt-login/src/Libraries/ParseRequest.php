@@ -66,9 +66,17 @@ class ParseRequest
     {
         $result = ['variables' => [], 'files' => []];
 
-        $stream = fopen('php://input', 'rb');
+        $raw = file_get_contents('php://input');
+        if ($raw === false) {
+            return $result;
+        }
 
-        $sanity = fgets($stream, strlen($boundary) + 5);
+        $lines     = preg_split('/\r\n|\n|\r/', $raw);
+        $index     = 0;
+        $lineCount = count($lines);
+
+        $sanity = isset($lines[$index]) ? $lines[$index] : '';
+        $index++;
 
         // malformed file, boundary should be first item
         if (rtrim($sanity) !== $boundary) {
@@ -77,34 +85,37 @@ class ParseRequest
 
         $rawHeaders = '';
 
-        while (($chunk = fgets($stream)) !== false) {
+        while ($index < $lineCount) {
+            $chunk = $lines[$index];
+            $index++;
+
             if ($chunk === $boundary) {
                 continue;
             }
 
             if (!empty(trim($chunk))) {
-                $rawHeaders .= $chunk;
+                $rawHeaders .= $chunk . "\r\n";
                 continue;
             }
 
-            $result      = self::parseRawHeader($stream, $rawHeaders, $boundary, $result);
+            $result     = self::parseRawHeader($lines, $lineCount, $index, $rawHeaders, $boundary, $result);
             $rawHeaders = '';
         }
-
-        fclose($stream);
 
         return $result;
     }
 
     /**
-     * @param resource $stream
+     * @param array  $lines
+     * @param int    $lineCount
+     * @param int    $index
      * @param string $rawHeaders
      * @param string $boundary
-     * @param array $result
+     * @param array  $result
      *
      * @return array
      */
-    private static function parseRawHeader($stream, $rawHeaders, $boundary, $result)
+    private static function parseRawHeader($lines, $lineCount, &$index, $rawHeaders, $boundary, $result)
     {
         $variables = $result['variables'];
         $headers = [];
@@ -136,26 +147,35 @@ class ParseRequest
             return ['variables' => $variables];
         }
 
-        $variables = self::fetchVariables($stream, $boundary, $name, $variables, $headers);
+        $variables = self::fetchVariables($lines, $lineCount, $index, $boundary, $name, $variables, $headers);
 
         return ['variables' => $variables];
     }
 
     /**
-     * @param resource $stream
+     * @param array  $lines
+     * @param int    $lineCount
+     * @param int    $index
      * @param string $boundary
      * @param string $name
-     * @param array $variables
-     * @param array $headers
+     * @param array  $variables
+     * @param array  $headers
      *
      * @return array
      */
-    private static function fetchVariables($stream, $boundary, $name, $variables, $headers)
+    private static function fetchVariables($lines, $lineCount, &$index, $boundary, $name, $variables, $headers)
     {
         $fullValue = '';
         $lastLine  = null;
 
-        while (($chunk = fgets($stream)) !== false && strpos($chunk, $boundary) !== 0) {
+        while ($index < $lineCount) {
+            $chunk = $lines[$index];
+            $index++;
+
+            if (strpos($chunk, $boundary) === 0) {
+                break;
+            }
+
             if ($lastLine !== null) {
                 $fullValue .= $lastLine;
             }

@@ -93,13 +93,11 @@ class WebhookLogRepository implements Repository
 
         $whereClause = empty($where) ? '' : 'WHERE ' . implode(' AND ', $where);
 
-        $offset    = ($page - 1) * $perPage;
-        $tableName = $this->tableName();
+        $offset       = ($page - 1) * $perPage;
+        $escapedTable = esc_sql($this->tableName());
 
-        //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-        $countSql   = "SELECT COUNT(*) FROM {$tableName} {$whereClause}";
-        //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-        $dataSql    = "SELECT * FROM {$tableName} {$whereClause} ORDER BY created_at DESC LIMIT %d OFFSET %d";
+        $countSql   = 'SELECT COUNT(*) FROM `' . $escapedTable . '` ' . $whereClause;
+        $dataSql    = 'SELECT * FROM `' . $escapedTable . '` ' . $whereClause . ' ORDER BY created_at DESC LIMIT %d OFFSET %d';
         $dataParams = array_merge($params, [$perPage, $offset]);
 
         //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -121,14 +119,13 @@ class WebhookLogRepository implements Repository
      */
     public function deleteOlderThan($beforeDatetime)
     {
-        $tableName = $this->tableName();
-        //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-        $result = $this->wpdb->query(
-            $this->wpdb->prepare(
-                "DELETE FROM `{$tableName}` WHERE created_at < %s",
-                $beforeDatetime
-            )
+        $escapedTable = esc_sql($this->tableName());
+        $sql = $this->wpdb->prepare(
+            'DELETE FROM `' . $escapedTable . '` WHERE created_at < %s',
+            $beforeDatetime
         );
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $result = $this->wpdb->query($sql);
 
         return $result !== false;
     }
@@ -138,9 +135,9 @@ class WebhookLogRepository implements Repository
      */
     public function deleteAll()
     {
-        $tableName = $this->tableName();
-        //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-        $result = $this->wpdb->query("DELETE FROM `{$tableName}`");
+        $escapedTable = esc_sql($this->tableName());
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+        $result = $this->wpdb->query('DELETE FROM `' . $escapedTable . '`');
 
         return $result !== false;
     }
@@ -150,9 +147,9 @@ class WebhookLogRepository implements Repository
      */
     public function dropTable()
     {
-        $tableName = $this->tableName();
-        //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.NoCaching
-        $result = $this->wpdb->query("DROP TABLE IF EXISTS `{$tableName}`");
+        $escapedTable = esc_sql($this->tableName());
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.NoCaching
+        $result = $this->wpdb->query('DROP TABLE IF EXISTS `' . $escapedTable . '`');
 
         return $result !== false;
     }

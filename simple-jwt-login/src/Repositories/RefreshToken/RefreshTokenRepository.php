@@ -54,14 +54,13 @@ class RefreshTokenRepository implements Repository
      */
     public function getByToken($refreshToken)
     {
-        $tableName = $this->tableName();
-        //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-        return $this->wpdb->get_row(
-            $this->wpdb->prepare(
-                "SELECT * FROM `{$tableName}` WHERE refresh_token = %s AND expires_at > NOW()",
-                $refreshToken
-            )
+        $escapedTable = esc_sql($this->tableName());
+        $sql = $this->wpdb->prepare(
+            'SELECT * FROM `' . $escapedTable . '` WHERE refresh_token = %s AND expires_at > NOW()',
+            $refreshToken
         );
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        return $this->wpdb->get_row($sql);
     }
 
     /**
@@ -99,9 +98,9 @@ class RefreshTokenRepository implements Repository
      */
     public function cleanupExpired()
     {
-        $tableName = $this->tableName();
-        //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-        $result = $this->wpdb->query("DELETE FROM `{$tableName}` WHERE expires_at <= NOW()");
+        $escapedTable = esc_sql($this->tableName());
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+        $result = $this->wpdb->query('DELETE FROM `' . $escapedTable . '` WHERE expires_at <= NOW()');
 
         return $result !== false;
     }
@@ -111,9 +110,9 @@ class RefreshTokenRepository implements Repository
      */
     public function dropTable()
     {
-        $tableName = $this->tableName();
-        //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.NoCaching
-        $result = $this->wpdb->query("DROP TABLE IF EXISTS `{$tableName}`");
+        $escapedTable = esc_sql($this->tableName());
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.NoCaching
+        $result = $this->wpdb->query('DROP TABLE IF EXISTS `' . $escapedTable . '`');
 
         return $result !== false;
     }

@@ -1,5 +1,10 @@
 <?php
 
+if (! defined('ABSPATH')) {
+    /** @phpstan-ignore-next-line  */
+    exit;
+} // Exit if accessed directly
+
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Helpers\StatusCodeHelper;
 use SimpleJWTLogin\Libraries\ParseRequest;

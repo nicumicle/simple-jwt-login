@@ -1,12 +1,12 @@
-=== Simple JWT Login – Authentication framework for headless WordPress, mobile apps, and external APIs ===
+=== Simple JWT Login ===
 
 Contributors: nicu_m
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PK9BCD6AYF58Y&source=url
 Tags: jwt, authentication, refresh token, api keys, headless wordpress
 Requires at least: 4.4.0
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 5.5
-Stable tag: 3.6.5
+Stable tag: 4.0.0
 License: GPLv3
 License URI: https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE
 

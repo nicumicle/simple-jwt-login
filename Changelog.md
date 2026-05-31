@@ -1,6 +1,8 @@
 # Changelog - Releases
 
 ## Unreleased
+
+## 4.0.0 - Unreleased
 - Redesigned Plugin Settings interface 
 - Fix double encoding for Reset Password email body[#165](https://github.com/nicumicle/simple-jwt-login/issues/165)
 - New refresh token handling
@@ -22,6 +24,10 @@
 - Replace variables in reset password email subject
 - Add option for sending default WordPress email on user registration
 - Add option for sending default password change WordPRess email when change password endpoint is called
+- Improve plugin security and performance
+
+## 3.6.6 (22 May 2026)
+- Update WordPress 7.0 Compatibility
 
 ## 3.6.5 (14 Mar 2026)
 - Fix  CVE-2025-58648 - Stored Cross-Site Scripting vulnerability[PR](https://github.com/nicumicle/simple-jwt-login/pull/162)

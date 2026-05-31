@@ -44,7 +44,7 @@ class ProtectEndpointService extends BaseService
             return true;
         }
 
-        $parsed = parse_url($currentUrl);
+        $parsed = wp_parse_url($currentUrl);
 
         // Initialize $path safely: parse_url() may not include 'path' for some URL forms.
         $basePath  = rtrim(str_replace($documentRoot, '', ABSPATH), '/');

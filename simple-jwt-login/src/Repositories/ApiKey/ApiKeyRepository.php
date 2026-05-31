@@ -66,17 +66,16 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
      */
     public function getByKeyHash($keyHash)
     {
-        $tableName = $this->tableName();
-        //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-        return $this->wpdb->get_row(
-            $this->wpdb->prepare(
-                "SELECT * FROM `{$tableName}`
-                 WHERE key_hash = %s
-                   AND revoked_at IS NULL
-                   AND (expires_at IS NULL OR expires_at > NOW())",
-                $keyHash
-            )
+        $escapedTable = esc_sql($this->tableName());
+        $sql = $this->wpdb->prepare(
+            'SELECT * FROM `' . $escapedTable . '`
+             WHERE key_hash = %s
+               AND revoked_at IS NULL
+               AND (expires_at IS NULL OR expires_at > NOW())',
+            $keyHash
         );
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+        return $this->wpdb->get_row($sql);
     }
 
     /**
@@ -86,23 +85,22 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
      */
     public function findAll($page, $perPage)
     {
-        $offset    = ($page - 1) * $perPage;
-        $tableName = $this->tableName();
+        $offset       = ($page - 1) * $perPage;
+        $escapedTable = esc_sql($this->tableName());
 
-        //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-        $total = (int) $this->wpdb->get_var("SELECT COUNT(*) FROM `{$tableName}`");
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+        $total = (int) $this->wpdb->get_var('SELECT COUNT(*) FROM `' . $escapedTable . '`');
 
-        //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-        $items = $this->wpdb->get_results(
-            $this->wpdb->prepare(
-                "SELECT id, user_id, name, key_prefix, permissions, expires_at, last_used_at, created_at, revoked_at
-                 FROM `{$tableName}`
-                 ORDER BY created_at DESC
-                 LIMIT %d OFFSET %d",
-                $perPage,
-                $offset
-            )
+        $sql = $this->wpdb->prepare(
+            'SELECT id, user_id, name, key_prefix, permissions, expires_at, last_used_at, created_at, revoked_at
+             FROM `' . $escapedTable . '`
+             ORDER BY created_at DESC
+             LIMIT %d OFFSET %d',
+            $perPage,
+            $offset
         );
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+        $items = $this->wpdb->get_results($sql);
 
         return [
             'items' => $items !== null ? $items : [],
@@ -118,30 +116,28 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
      */
     public function findByUserId($userId, $page, $perPage)
     {
-        $offset    = ($page - 1) * $perPage;
-        $tableName = $this->tableName();
+        $offset       = ($page - 1) * $perPage;
+        $escapedTable = esc_sql($this->tableName());
 
-        //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-        $total = (int) $this->wpdb->get_var(
-            $this->wpdb->prepare(
-                "SELECT COUNT(*) FROM `{$tableName}` WHERE user_id = %d",
-                $userId
-            )
+        $countSql = $this->wpdb->prepare(
+            'SELECT COUNT(*) FROM `' . $escapedTable . '` WHERE user_id = %d',
+            $userId
         );
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+        $total = (int) $this->wpdb->get_var($countSql);
 
-        //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-        $items = $this->wpdb->get_results(
-            $this->wpdb->prepare(
-                "SELECT id, user_id, name, key_prefix, permissions, expires_at, last_used_at, created_at, revoked_at
-                 FROM `{$tableName}`
-                 WHERE user_id = %d
-                 ORDER BY created_at DESC
-                 LIMIT %d OFFSET %d",
-                $userId,
-                $perPage,
-                $offset
-            )
+        $sql = $this->wpdb->prepare(
+            'SELECT id, user_id, name, key_prefix, permissions, expires_at, last_used_at, created_at, revoked_at
+             FROM `' . $escapedTable . '`
+             WHERE user_id = %d
+             ORDER BY created_at DESC
+             LIMIT %d OFFSET %d',
+            $userId,
+            $perPage,
+            $offset
         );
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+        $items = $this->wpdb->get_results($sql);
 
         return [
             'items' => $items !== null ? $items : [],
@@ -155,17 +151,15 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
      */
     public function findById($keyId)
     {
-        $tableName = $this->tableName();
-
-        //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-        return $this->wpdb->get_row(
-            $this->wpdb->prepare(
-                "SELECT id, user_id, name, key_prefix, permissions, expires_at, last_used_at, created_at, revoked_at
-                 FROM `{$tableName}`
-                 WHERE id = %d",
-                $keyId
-            )
+        $escapedTable = esc_sql($this->tableName());
+        $sql = $this->wpdb->prepare(
+            'SELECT id, user_id, name, key_prefix, permissions, expires_at, last_used_at, created_at, revoked_at
+             FROM `' . $escapedTable . '`
+             WHERE id = %d',
+            $keyId
         );
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+        return $this->wpdb->get_row($sql);
     }
 
     /**
@@ -276,9 +270,9 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
      */
     public function dropTable()
     {
-        $tableName = $this->tableName();
-        //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.NoCaching
-        $result = $this->wpdb->query("DROP TABLE IF EXISTS `{$tableName}`");
+        $escapedTable = esc_sql($this->tableName());
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.NoCaching
+        $result = $this->wpdb->query('DROP TABLE IF EXISTS `' . $escapedTable . '`');
 
         return $result !== false;
     }

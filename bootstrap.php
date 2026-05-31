@@ -185,6 +185,13 @@ if (!function_exists('esc_url_raw')) {
     }
 }
 
+if (!function_exists('wp_parse_url')) {
+    function wp_parse_url($url, $component = -1)
+    {
+        return parse_url($url, $component);
+    }
+}
+
 if (!function_exists('esc_textarea')) {
     function esc_textarea($text)
     {
@@ -1015,6 +1022,17 @@ if (!function_exists('trailingslashit')) {
     function trailingslashit($string)
     {
         return rtrim($string, '/\\') . '/';
+    }
+}
+
+if (!function_exists('esc_sql')) {
+    /**
+     * @param string $sql
+     * @return string
+     */
+    function esc_sql($sql)
+    {
+        return addslashes($sql);
     }
 }
 

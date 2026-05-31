@@ -252,7 +252,7 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
         $charsetCollate = $this->wpdb->get_charset_collate();
         $tableName      = $this->tableName();
 
-        $sql = "CREATE TABLE $tableName (
+        $sql = "CREATE TABLE IF NOT EXISTS $tableName (
             id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             user_id bigint(20) UNSIGNED NOT NULL,
             name varchar(255) NOT NULL DEFAULT '',
@@ -268,8 +268,7 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
             KEY user_id (user_id)
         ) $charsetCollate;";
 
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
+        $this->wpdb->query($sql);
     }
 
     /**

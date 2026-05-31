@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 use mysqli;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepository;
 
 class TestBase extends TestCase
 {
@@ -320,5 +321,16 @@ class TestBase extends TestCase
         }
 
         return null;
+    }
+
+    /**
+     * Create the API keys table using the plugin's own repository schema.
+     *
+     * @return void
+     */
+    protected static function ensureApiKeyTable()
+    {
+        $wpdb = new MysqliWpdb(self::$dbCon, self::getTablePrefix());
+        (new ApiKeyRepository($wpdb))->createTable();
     }
 }

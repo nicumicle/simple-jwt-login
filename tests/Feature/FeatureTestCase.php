@@ -86,4 +86,57 @@ class FeatureTestCase extends TestBase
     {
         return ['Authorization' => 'Bearer ' . $token];
     }
+
+    /**
+     * @param string $email
+     * @return int
+     */
+    protected function lookupUserId(string $email): int
+    {
+        $table   = self::getTablePrefix() . 'users';
+        $escaped = self::$dbCon->real_escape_string($email);
+        $res     = self::$dbCon->query(
+            "SELECT ID FROM `{$table}` WHERE user_email = '{$escaped}' LIMIT 1"
+        );
+        $userId = 0;
+        while ($row = $res->fetch_assoc()) {
+            $userId = (int) $row['ID'];
+        }
+        $this->assertGreaterThan(0, $userId, "User '{$email}' not found in DB");
+
+        return $userId;
+    }
+
+    /**
+     * @param int $userId
+     * @return void
+     */
+    protected function promoteToAdmin(int $userId): void
+    {
+        $prefix   = self::getTablePrefix();
+        $usermeta = $prefix . 'usermeta';
+        $metaKey  = $prefix . 'capabilities';
+        $caps     = 'a:1:{s:13:"administrator";b:1;}';
+
+        self::$dbCon->query(
+            "UPDATE `{$usermeta}` SET meta_value = '{$caps}'
+             WHERE user_id = {$userId} AND meta_key = '{$metaKey}'"
+        );
+    }
+
+    /**
+     * Register a new user, promote them to admin, and return their credentials.
+     *
+     * @return array{string, string, int}  [email, password, userId]
+     */
+    protected function createAdminUser(): array
+    {
+        [$email, $password, $status] = $this->createUser();
+        $this->assertSame(200, $status, 'register failed');
+
+        $userId = $this->lookupUserId($email);
+        $this->promoteToAdmin($userId);
+
+        return [$email, $password, $userId];
+    }
 }

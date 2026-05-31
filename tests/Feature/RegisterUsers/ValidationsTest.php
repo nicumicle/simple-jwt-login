@@ -160,6 +160,54 @@ class ValidationsTest extends TestBase
         );
     }
 
+    #[TestDox("Registering a duplicate email returns 409")]
+    public function testRegisterDuplicateEmailReturns409(): void
+    {
+        $email = 'dup_' . uniqid() . '@example.com';
+        $uri   = self::API_URL . '?rest_route=/simple-jwt-login/v1/users';
+
+        $first = $this->client->post($uri, [
+            'body' => json_encode(['email' => $email, 'password' => '1234']),
+        ]);
+        $this->assertSame(200, $first->getStatusCode(), 'first registration failed');
+
+        $second = $this->client->post($uri, [
+            'body' => json_encode(['email' => $email, 'password' => '1234']),
+        ]);
+        $this->assertSame(409, $second->getStatusCode());
+        $body = json_decode($second->getBody()->getContents(), true);
+        $this->assertFalse($body['success']);
+        $this->assertSame(ErrorCodes::ERR_REGISTER_USER_ALREADY_EXISTS, $body['data']['errorCode']);
+    }
+
+    #[TestDox("Registering a duplicate username returns 409")]
+    public function testRegisterDuplicateUsernameReturns409(): void
+    {
+        $login = 'dupuser_' . uniqid();
+        $uri   = self::API_URL . '?rest_route=/simple-jwt-login/v1/users';
+
+        $first = $this->client->post($uri, [
+            'body' => json_encode([
+                'email'      => $login . '@example.com',
+                'user_login' => $login,
+                'password'   => '1234',
+            ]),
+        ]);
+        $this->assertSame(200, $first->getStatusCode(), 'first registration failed');
+
+        $second = $this->client->post($uri, [
+            'body' => json_encode([
+                'email'      => 'other_' . $login . '@example.com',
+                'user_login' => $login,
+                'password'   => '1234',
+            ]),
+        ]);
+        $this->assertSame(409, $second->getStatusCode());
+        $body = json_decode($second->getBody()->getContents(), true);
+        $this->assertFalse($body['success']);
+        $this->assertSame(ErrorCodes::ERR_REGISTER_USER_ALREADY_EXISTS, $body['data']['errorCode']);
+    }
+
     /**
      * @param string $requestType
      * @param ?string $email

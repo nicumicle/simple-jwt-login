@@ -244,7 +244,7 @@ $baseUrl = add_query_arg([
                             $logsStart  = max(1, min($logsPage - (int) ($logsWindow / 2), $totalPages - $logsWindow + 1));
                             $logsEnd    = min($totalPages, $logsStart + $logsWindow - 1);
                             for ($p = $logsStart; $p <= $logsEnd; $p++) :
-                            ?>
+                                ?>
                                 <li class="page-item <?php echo $p === $logsPage ? 'active' : ''; ?>">
                                     <?php if ($p === $logsPage) : ?>
                                         <span class="page-link"><?php echo (int) $p; ?></span>

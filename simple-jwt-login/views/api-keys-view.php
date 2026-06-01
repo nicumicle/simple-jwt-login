@@ -233,7 +233,7 @@ $akPages  = $akTotal > 0 ? (int) ceil($akTotal / $akPerPage) : 1;
                                 $akStart  = max(1, min($akPage - (int) ($akWindow / 2), $akPages - $akWindow + 1));
                                 $akEnd    = min($akPages, $akStart + $akWindow - 1);
                                 for ($akP = $akStart; $akP <= $akEnd; $akP++) :
-                                ?>
+                                    ?>
                                     <li class="page-item <?php echo $akP === $akPage ? 'active' : ''; ?>">
                                         <?php if ($akP === $akPage) : ?>
                                             <span class="page-link"><?php echo (int) $akP; ?></span>

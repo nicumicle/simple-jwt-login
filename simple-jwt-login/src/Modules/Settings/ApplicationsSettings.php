@@ -8,6 +8,11 @@ class ApplicationsSettings extends BaseSettings implements SettingsInterface
 {
     const GOOGLE_GROUP = 'google';
 
+    protected function getSectionKey()
+    {
+        return 'applications';
+    }
+
     public function initSettingsFromPost()
     {
         $this->assignSettingsPropertyFromPost(

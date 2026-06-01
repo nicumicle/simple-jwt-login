@@ -230,20 +230,39 @@ $baseUrl = add_query_arg([
                     <nav>
                         <ul class="pagination pagination-sm justify-content-center">
                             <li class="page-item <?php echo $logsPage <= 1 ? 'disabled' : ''; ?>">
-                                <a class="page-link" href="<?php echo esc_url(add_query_arg('logs_page', (string) max(1, $logsPage - 1), $baseUrl)); ?>">
-                                    &laquo; <?php echo esc_html(__('Prev', 'simple-jwt-login')); ?>
+                                <a class="page-link" href="<?php echo esc_url(add_query_arg('logs_page', '1', $baseUrl)); ?>">
+                                    &laquo; <?php echo esc_html(__('First', 'simple-jwt-login')); ?>
                                 </a>
                             </li>
-                            <?php for ($p = 1; $p <= $totalPages; $p++) : ?>
+                            <li class="page-item <?php echo $logsPage <= 1 ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="<?php echo esc_url(add_query_arg('logs_page', (string) max(1, $logsPage - 1), $baseUrl)); ?>">
+                                    &lsaquo; <?php echo esc_html(__('Prev', 'simple-jwt-login')); ?>
+                                </a>
+                            </li>
+                            <?php
+                            $logsWindow = 4;
+                            $logsStart  = max(1, min($logsPage - (int) ($logsWindow / 2), $totalPages - $logsWindow + 1));
+                            $logsEnd    = min($totalPages, $logsStart + $logsWindow - 1);
+                            for ($p = $logsStart; $p <= $logsEnd; $p++) :
+                            ?>
                                 <li class="page-item <?php echo $p === $logsPage ? 'active' : ''; ?>">
-                                    <a class="page-link" href="<?php echo esc_url(add_query_arg('logs_page', (string) $p, $baseUrl)); ?>">
-                                        <?php echo esc_html($p); ?>
-                                    </a>
+                                    <?php if ($p === $logsPage) : ?>
+                                        <span class="page-link"><?php echo (int) $p; ?></span>
+                                    <?php else : ?>
+                                        <a class="page-link" href="<?php echo esc_url(add_query_arg('logs_page', (string) $p, $baseUrl)); ?>">
+                                            <?php echo (int) $p; ?>
+                                        </a>
+                                    <?php endif; ?>
                                 </li>
                             <?php endfor; ?>
                             <li class="page-item <?php echo $logsPage >= $totalPages ? 'disabled' : ''; ?>">
                                 <a class="page-link" href="<?php echo esc_url(add_query_arg('logs_page', (string) min($totalPages, $logsPage + 1), $baseUrl)); ?>">
-                                    <?php echo esc_html(__('Next', 'simple-jwt-login')); ?> &raquo;
+                                    <?php echo esc_html(__('Next', 'simple-jwt-login')); ?> &rsaquo;
+                                </a>
+                            </li>
+                            <li class="page-item <?php echo $logsPage >= $totalPages ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="<?php echo esc_url(add_query_arg('logs_page', (string) $totalPages, $baseUrl)); ?>">
+                                    <?php echo esc_html(__('Last', 'simple-jwt-login')); ?> &raquo;
                                 </a>
                             </li>
                         </ul>

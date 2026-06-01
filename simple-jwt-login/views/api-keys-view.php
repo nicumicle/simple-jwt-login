@@ -211,16 +211,63 @@ $akPages  = $akTotal > 0 ? (int) ceil($akTotal / $akPerPage) : 1;
                 </tbody>
             </table>
             <?php if ($akPages > 1) : ?>
-                <div class="sjl-ak-pagination">
-                    <?php for ($i = 1; $i <= $akPages; $i++) :
-                        $pageUrl = add_query_arg('ak_page', (string) $i);
-                        ?>
-                        <?php if ($i === $akPage) : ?>
-                            <span class="sjl-ak-page-current"><?php echo (int) $i; ?></span>
-                        <?php else : ?>
-                            <a href="<?php echo esc_url($pageUrl); ?>"><?php echo (int) $i; ?></a>
-                        <?php endif; ?>
-                    <?php endfor; ?>
+                <?php
+                $akBaseUrl = add_query_arg(array('active_tab' => SettingsErrors::PREFIX_API_KEYS));
+                ?>
+                <div class="row mt-3">
+                    <div class="col-md-12 text-center">
+                        <nav>
+                            <ul class="pagination pagination-sm justify-content-center">
+                                <li class="page-item <?php echo $akPage <= 1 ? 'disabled' : ''; ?>">
+                                    <a class="page-link" href="<?php echo esc_url(add_query_arg('ak_page', '1', $akBaseUrl)); ?>">
+                                        &laquo; <?php echo esc_html__('First', 'simple-jwt-login'); ?>
+                                    </a>
+                                </li>
+                                <li class="page-item <?php echo $akPage <= 1 ? 'disabled' : ''; ?>">
+                                    <a class="page-link" href="<?php echo esc_url(add_query_arg('ak_page', (string) max(1, $akPage - 1), $akBaseUrl)); ?>">
+                                        &lsaquo; <?php echo esc_html__('Prev', 'simple-jwt-login'); ?>
+                                    </a>
+                                </li>
+                                <?php
+                                $akWindow = 4;
+                                $akStart  = max(1, min($akPage - (int) ($akWindow / 2), $akPages - $akWindow + 1));
+                                $akEnd    = min($akPages, $akStart + $akWindow - 1);
+                                for ($akP = $akStart; $akP <= $akEnd; $akP++) :
+                                ?>
+                                    <li class="page-item <?php echo $akP === $akPage ? 'active' : ''; ?>">
+                                        <?php if ($akP === $akPage) : ?>
+                                            <span class="page-link"><?php echo (int) $akP; ?></span>
+                                        <?php else : ?>
+                                            <a class="page-link" href="<?php echo esc_url(add_query_arg('ak_page', (string) $akP, $akBaseUrl)); ?>">
+                                                <?php echo (int) $akP; ?>
+                                            </a>
+                                        <?php endif; ?>
+                                    </li>
+                                <?php endfor; ?>
+                                <li class="page-item <?php echo $akPage >= $akPages ? 'disabled' : ''; ?>">
+                                    <a class="page-link" href="<?php echo esc_url(add_query_arg('ak_page', (string) min($akPages, $akPage + 1), $akBaseUrl)); ?>">
+                                        <?php echo esc_html__('Next', 'simple-jwt-login'); ?> &rsaquo;
+                                    </a>
+                                </li>
+                                <li class="page-item <?php echo $akPage >= $akPages ? 'disabled' : ''; ?>">
+                                    <a class="page-link" href="<?php echo esc_url(add_query_arg('ak_page', (string) $akPages, $akBaseUrl)); ?>">
+                                        <?php echo esc_html__('Last', 'simple-jwt-login'); ?> &raquo;
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <p class="text-muted">
+                            <small>
+                                <?php echo esc_html(sprintf(
+                                    /* translators: %1$d current page, %2$d total pages, %3$d total entries */
+                                    __('Page %1$d of %2$d (%3$d entries total)', 'simple-jwt-login'),
+                                    $akPage,
+                                    $akPages,
+                                    $akTotal
+                                )); ?>
+                            </small>
+                        </p>
+                    </div>
                 </div>
             <?php endif; ?>
         <?php endif; ?>

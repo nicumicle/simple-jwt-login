@@ -446,8 +446,17 @@ jQuery(document).ready(
         $('#simple-jwt-login-tabs a').click(function (e) {
             e.preventDefault();
             var $link = $(this);
-            $('#active_tab').val($link.attr('data-index'));
+            var tabIndex = $link.attr('data-index');
+            $('#active_tab').val(tabIndex);
             $link.tab('show');
+            var url = new URL(window.location.href);
+            var page = url.searchParams.get('page');
+            url.search = '';
+            if (page) {
+                url.searchParams.set('page', page);
+            }
+            url.searchParams.set('active_tab', tabIndex);
+            history.replaceState(null, '', url.toString());
             var section = $link.attr('data-section');
             if (section) {
                 $link.one('shown.bs.tab', function () {

@@ -12,13 +12,17 @@ use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 add_filter(
     'rest_authentication_errors',
     function ($bypass) {
+        $jwtSettings = new SimpleJWTLoginSettings(new WordPressRepository());
+        if (!$jwtSettings->getIntegrationsSettings()->forceLogin()->isEnabled()) {
+            return $bypass;
+        }
+
         $host       = isset($_SERVER['HTTP_HOST']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_HOST'])) : '';
         $requestUri = isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '';
         if (empty($host) || empty($requestUri)) {
             return $bypass;
         }
 
-        $jwtSettings = new SimpleJWTLoginSettings(new WordPressRepository());
         $currentURL =
             "http"
             . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "s" : "")

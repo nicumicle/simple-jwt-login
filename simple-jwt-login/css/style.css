@@ -1524,6 +1524,9 @@
 #simple-jwt-login .logo.two-factor{
     background-image: url("../images/integrations/wp2fa.svg");
 }
+#simple-jwt-login .logo.force-login {
+    background-image: url("../images/integrations/force-login.svg");
+}
 
 /* ============================================
    JWT Rules

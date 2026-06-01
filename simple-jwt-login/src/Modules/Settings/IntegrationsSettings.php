@@ -9,6 +9,7 @@ use SimpleJWTLogin\Modules\Settings\Oauth\FacebookOauthSettings;
 use SimpleJWTLogin\Modules\Settings\Oauth\GithubOauthSettings;
 use SimpleJWTLogin\Modules\Settings\Oauth\GoogleOauthSettings;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\AbstractThirdPartySettings;
+use SimpleJWTLogin\Modules\Settings\ThirdParty\ForceLoginSettings;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\TwoFactorSettings;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\WpGraphQLSettings;
 
@@ -85,8 +86,9 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
     private function buildThirdPartyApps()
     {
         return [
-            'wpgraphql'  => new WpGraphQLSettings(),
-            'two_factor' => new TwoFactorSettings(),
+            'wpgraphql'   => new WpGraphQLSettings(),
+            'two_factor'  => new TwoFactorSettings(),
+            'force_login' => new ForceLoginSettings(),
         ];
     }
 
@@ -249,5 +251,14 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
     {
         /** @var TwoFactorSettings */
         return $this->getThirdParty('two_factor');
+    }
+
+    /**
+     * @return ForceLoginSettings
+     */
+    public function forceLogin()
+    {
+        /** @var ForceLoginSettings */
+        return $this->getThirdParty('force_login');
     }
 }

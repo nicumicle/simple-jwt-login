@@ -1,0 +1,79 @@
+<?php
+
+use SimpleJWTLogin\Modules\Settings\SettingsErrors;
+use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+
+if (!defined('ABSPATH')) {
+    /**
+     * @phpstan-ignore-next-line
+     */
+    exit;
+}
+
+/**
+ * @var SettingsErrors $settingsErrors
+ * @var SimpleJWTLoginSettings $jwtSettings
+ */
+$forceLoginSettings = $jwtSettings->getIntegrationsSettings()->forceLogin();
+?>
+
+<div class="sjl-gen-card">
+    <div class="sjl-gen-card-header" style="justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="force-login logo"></div>
+            <div>
+                <h3 class="sjl-gen-card-title">
+                    <?php echo esc_html__('Force Login', 'simple-jwt-login'); ?>
+                </h3>
+                <p class="sjl-gen-card-desc">
+                    <?php echo esc_html__(
+                        'Allow Simple JWT Login REST endpoints to bypass the Force Login restriction.',
+                        'simple-jwt-login'
+                    ); ?>
+                    <a href="https://wordpress.org/plugins/wp-force-login/"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       style="font-size: 11px; margin-left: 4px;">
+                        <?php echo esc_html__('(plugin)', 'simple-jwt-login'); ?>
+                    </a>
+                </p>
+            </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <input type="hidden" name="force_login[enabled]" value="0">
+            <label class="sjl-toggle-switch"
+                   title="<?php echo esc_attr(__('Enable / Disable Force Login integration', 'simple-jwt-login')); ?>"
+                   style="margin: 0;">
+                <input type="checkbox" id="force_login_enabled" name="force_login[enabled]" value="1"
+                    <?php echo $forceLoginSettings->isEnabled() ? 'checked' : ''; ?>>
+                <span class="sjl-toggle-slider"></span>
+            </label>
+            <span style="font-size: 12px; color: #555; white-space: nowrap;">
+                <?php echo esc_html(__('Enable', 'simple-jwt-login')); ?>
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="sjl-gen-card">
+    <div class="sjl-gen-card-header">
+        <span class="dashicons dashicons-info-outline"></span>
+        <div>
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('How it works', 'simple-jwt-login'); ?></h3>
+        </div>
+    </div>
+    <div class="sjl-gen-card-body">
+        <p class="sjl-gen-card-desc">
+            <?php echo esc_html__(
+                'When a site uses the Force Login plugin (or similar) to restrict REST API access to authenticated users, enabling this integration exempts all Simple JWT Login endpoints from that restriction.',
+                'simple-jwt-login'
+            ); ?>
+        </p>
+        <p class="sjl-gen-card-desc" style="margin-top: 8px;">
+            <?php echo esc_html__(
+                'This allows unauthenticated clients to reach the login, register, and token-refresh endpoints even when the rest of the REST API is locked down.',
+                'simple-jwt-login'
+            ); ?>
+        </p>
+    </div>
+</div>

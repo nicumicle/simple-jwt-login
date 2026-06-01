@@ -32,6 +32,15 @@ $sjl3rdPartyApps = [
         'view'       => plugin_dir_path(__FILE__) . 'two-factor.php',
         'beta'       => false,
     ],
+    [
+        'id'         => 'force_login',
+        'name'       => __('Force Login', 'simple-jwt-login'),
+        'desc'       => __('Bypass Force Login for JWT endpoints', 'simple-jwt-login'),
+        'logo_class' => 'force-login',
+        'enabled'    => $jwtSettings->getIntegrationsSettings()->forceLogin()->isEnabled(),
+        'view'       => plugin_dir_path(__FILE__) . 'force-login.php',
+        'beta'       => false,
+    ],
 ];
 
 $active3rdPartyApp = $sjl3rdPartyApps[0]['id'];

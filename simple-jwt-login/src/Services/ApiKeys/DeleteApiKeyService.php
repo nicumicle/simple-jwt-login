@@ -20,8 +20,8 @@ class DeleteApiKeyService extends BaseApiKeyService
 
         if (!$deleted) {
             throw new Exception(
-                __('Failed to delete API key.', 'simple-jwt-login'),
-                ErrorCodes::ERR_API_KEY_DELETE_FAILED
+                esc_html(__('Failed to delete API key.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_API_KEY_DELETE_FAILED)
             );
         }
 

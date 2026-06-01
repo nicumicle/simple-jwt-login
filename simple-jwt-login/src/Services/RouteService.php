@@ -183,8 +183,8 @@ class RouteService extends BaseService
         $user = $this->getUserDetails($userValue);
         if ($user === null) {
             throw new Exception(
-                __('WordPress User not found.', 'simple-jwt-login'),
-                ErrorCodes::ERR_GET_USER_ID_FROM_JWT
+                esc_html(__('WordPress User not found.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_GET_USER_ID_FROM_JWT)
             );
         }
 

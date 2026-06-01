@@ -36,8 +36,10 @@ $sjl3rdPartyApps = [
 
 $active3rdPartyApp = $sjl3rdPartyApps[0]['id'];
 
+//phpcs:ignore WordPress.Security.NonceVerification.Recommended
 if (!empty($_REQUEST['active_3rdparty_panel'])) {
-    $submitted3rdPartyApp = sanitize_text_field($_REQUEST['active_3rdparty_panel']);
+    //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $submitted3rdPartyApp = sanitize_text_field(wp_unslash($_REQUEST['active_3rdparty_panel']));
     if (in_array($submitted3rdPartyApp, array_column($sjl3rdPartyApps, 'id'), true)) {
         $active3rdPartyApp = $submitted3rdPartyApp;
     }

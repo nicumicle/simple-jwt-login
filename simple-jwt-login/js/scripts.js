@@ -2,7 +2,8 @@ jQuery(document).ready(
     function ($) {
         $('#simple-jwt-login').css('visibility', 'visible');
         $('#sjl-page-loader').addClass('sjl-loader-hidden');
-        setTimeout(function () { $('#sjl-page-loader').remove(); }, 250);
+        setTimeout(function () {
+			$('#sjl-page-loader').remove(); }, 250);
 
         $('#auth_codes').append($('#code_line').html());
 
@@ -127,7 +128,8 @@ jQuery(document).ready(
             }
         );
 
-        function sjlUpdateHooksCount() {
+        function sjlUpdateHooksCount()
+		{
             var checked = $('#simple-jwt-login-tab-hooks .sjl-hooks-list input[type="checkbox"]:checked').length;
             $('#sjl-hooks-enabled-count').text(checked);
         }
@@ -220,7 +222,7 @@ jQuery(document).ready(
             var simplejwt_is_decryption_base64 = jQuery('#decryption_key_base64').is(':checked');
 
             if (simplejwt_is_decryption_base64) {
-                var simpleJWTLoginBase64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+                var simpleJWTLoginBase64regex = new RegExp('^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$');
                 if (simpleJWTLoginBase64regex.test((simplejwt_decryptionKey))) {
                     simplejwt_decryptionKey = atob(simplejwt_decryptionKey);
                 }
@@ -545,7 +547,8 @@ jQuery(document).ready(
         // Sidebar group collapse / expand
         // -----------------------------------------------------------------------
 
-        function sjlGetCollapsedGroups() {
+        function sjlGetCollapsedGroups()
+		{
             try {
                 var raw = localStorage.getItem('sjl_nav_collapsed');
                 return raw ? JSON.parse(raw) : {};
@@ -554,13 +557,16 @@ jQuery(document).ready(
             }
         }
 
-        function sjlSaveCollapsedGroups(state) {
+        function sjlSaveCollapsedGroups(state)
+		{
             try {
                 localStorage.setItem('sjl_nav_collapsed', JSON.stringify(state));
-            } catch (e) {}
+            } catch (e) {
+			}
         }
 
-        function sjlApplyGroupCollapse(groupId, collapse) {
+        function sjlApplyGroupCollapse(groupId, collapse)
+		{
             var $label = $('.sjl-nav-group-label[data-sjl-group="' + groupId + '"]');
             var $items = $('.sjl-nav-sub-item[data-sjl-group-item="' + groupId + '"]');
 
@@ -667,13 +673,14 @@ jQuery(document).ready(
                 }
             });
 
-            $panel.on('click', '.sjl-try-close', function () { $panel.remove(); });
+            $panel.on('click', '.sjl-try-close', function () {
+				$panel.remove(); });
 
             $panel.on('click', '.sjl-try-send-btn', function () {
                 var cur      = sjlTryCollectParams($panel);
                 var fetchUrl = isBody ? base : sjlTryBuildUrl(base, cur);
                 var fetchOpts = isBody
-                    ? { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cur) }
+                    ? { method : method, headers : { 'Content-Type' : 'application/json' }, body : JSON.stringify(cur) }
                     : { method: method };
 
                 var $btn     = jQuery(this);
@@ -689,16 +696,19 @@ jQuery(document).ready(
                 fetch(fetchUrl, fetchOpts)
                     .then(function (res) {
                         var st = res.status, stText = res.statusText;
-                        return res.text().then(function (t) { return { status: st, statusText: stText, body: t }; });
+                        return res.text().then(function (t) {
+							return { status: st, statusText: stText, body: t }; });
                     })
                     .then(function (data) {
                         var ok = data.status >= 200 && data.status < 300;
                         $status.text('Status: ' + data.status + ' ' + data.statusText)
                             .addClass(ok ? 'sjl-try-status--ok' : 'sjl-try-status--err');
                         var formatted;
-                        try { formatted = JSON.stringify(JSON.parse(data.body), null, 2); } catch (ex) { formatted = data.body; }
-                        $body.text(formatted);
-                        $btn.prop('disabled', false).text('Send Request');
+                        try {
+							formatted = JSON.stringify(JSON.parse(data.body), null, 2); } catch (ex) {
+							formatted = data.body; }
+							$body.text(formatted);
+							$btn.prop('disabled', false).text('Send Request');
                     })
                     .catch(function (err) {
                         $status.text('Network error: ' + err.message).addClass('sjl-try-status--err');
@@ -718,11 +728,13 @@ function sjlTryParseParams(url)
 {
     var params  = {};
     var qIndex  = url.indexOf('?');
-    if (qIndex === -1) { return params; }
+    if (qIndex === -1) {
+		return params; }
     var qs = url.slice(qIndex + 1);
     qs.split('&').forEach(function (pair) {
         var eq  = pair.indexOf('=');
-        if (eq === -1) { return; }
+        if (eq === -1) {
+			return; }
         var key = decodeURIComponent(pair.slice(0, eq));
         var val = decodeURIComponent(pair.slice(eq + 1));
         params[key] = val;
@@ -739,7 +751,8 @@ function sjlTryBaseUrl(url)
 function sjlTryBuildUrl(base, params)
 {
     var keys = Object.keys(params);
-    if (!keys.length) { return base; }
+    if (!keys.length) {
+		return base; }
     var qs = keys.map(function (k) {
         return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
     }).join('&');
@@ -845,18 +858,22 @@ function sjlCreateApiKey()
     var name = jQuery('#sjl-ak-name').val().trim();
     var expires = jQuery('#sjl-ak-expires').val();
     var perms = [];
-    jQuery('.sjl-ak-perm-check:checked').each(function () { perms.push(jQuery(this).val()); });
+    jQuery('.sjl-ak-perm-check:checked').each(function () {
+		perms.push(jQuery(this).val()); });
     var msg = jQuery('#sjl-ak-create-msg');
     msg.text('').removeClass('sjl-ak-msg--error sjl-ak-msg--ok');
 
-    if (!name) { msg.text('Name is required.').addClass('sjl-ak-msg--error'); return; }
-    if (!perms.length) { msg.text('Select at least one permission.').addClass('sjl-ak-msg--error'); return; }
+    if (!name) {
+		msg.text('Name is required.').addClass('sjl-ak-msg--error'); return; }
+    if (!perms.length) {
+		msg.text('Select at least one permission.').addClass('sjl-ak-msg--error'); return; }
 
     jQuery.ajax({
         url: cfg.restBase,
         method: 'POST',
         contentType: 'application/json',
-        beforeSend: function (xhr) { xhr.setRequestHeader('X-WP-Nonce', cfg.nonce); },
+        beforeSend: function (xhr) {
+			xhr.setRequestHeader('X-WP-Nonce', cfg.nonce); },
         data: JSON.stringify({ name: name, permissions: perms, expires_at: expires || null }),
         success: function (res) {
             if (res.data && res.data.key) {
@@ -866,42 +883,53 @@ function sjlCreateApiKey()
         },
         error: function (xhr) {
             var errMsg = 'Failed to create API key.';
-            try { errMsg = JSON.parse(xhr.responseText).message || errMsg; } catch (e) {}
-            msg.text(errMsg).addClass('sjl-ak-msg--error');
+            try {
+				errMsg = JSON.parse(xhr.responseText).message || errMsg; } catch (e) {
+				}
+				msg.text(errMsg).addClass('sjl-ak-msg--error');
         }
     });
 }
 
 function sjlRevokeApiKey(id)
 {
-    if (!window.confirm('Revoke this API key? This cannot be undone.')) { return; }
+    if (!window.confirm('Revoke this API key? This cannot be undone.')) {
+		return; }
     var cfg = window._sjlAkConfig;
     jQuery.ajax({
         url: cfg.restBase + '/' + id,
         method: 'DELETE',
-        beforeSend: function (xhr) { xhr.setRequestHeader('X-WP-Nonce', cfg.nonce); },
-        success: function () { window.location.reload(); },
-        error: function () { alert('Failed to revoke API key.'); }
+        beforeSend: function (xhr) {
+			xhr.setRequestHeader('X-WP-Nonce', cfg.nonce); },
+        success: function () {
+			window.location.reload(); },
+        error: function () {
+			alert('Failed to revoke API key.'); }
     });
 }
 
 function sjlDeleteApiKey(id)
 {
-    if (!window.confirm('Permanently delete this API key? This cannot be undone.')) { return; }
+    if (!window.confirm('Permanently delete this API key? This cannot be undone.')) {
+		return; }
     var cfg = window._sjlAkConfig;
     jQuery.ajax({
         url: cfg.restBaseSingle + '/' + id + '/delete',
         method: 'DELETE',
-        beforeSend: function (xhr) { xhr.setRequestHeader('X-WP-Nonce', cfg.nonce); },
-        success: function () { window.location.reload(); },
-        error: function () { alert('Failed to delete API key.'); }
+        beforeSend: function (xhr) {
+			xhr.setRequestHeader('X-WP-Nonce', cfg.nonce); },
+        success: function () {
+			window.location.reload(); },
+        error: function () {
+			alert('Failed to delete API key.'); }
     });
 }
 
 function sjlCopyApiKey()
 {
     var key = jQuery('#sjl-ak-raw-key').text();
-    if (!key) { return; }
+    if (!key) {
+		return; }
     if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(key).then(function () {
             jQuery('#sjl-ak-copy-msg').text('Copied!');

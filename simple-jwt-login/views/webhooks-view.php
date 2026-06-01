@@ -25,8 +25,7 @@ $allowedEvents   = WebhooksSettings::ALLOWED_EVENTS;
             <h3 class="sjl-gen-card-title"><?php echo esc_html__('Webhooks', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
                 <?php echo esc_html__(
-                    'Fire HTTP requests on login, register, or auth events. '
-                    . 'Customize the method, headers, and payload with dynamic variables.',
+                    'Fire HTTP requests on login, register, or auth events. Customize the method, headers, and payload with dynamic variables.',
                     'simple-jwt-login'
                 ); ?>
             </p>

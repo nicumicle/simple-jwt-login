@@ -162,7 +162,7 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
     public function getProvider($slug)
     {
         if (!isset($this->providers[$slug])) {
-            throw new InvalidArgumentException("Unknown OAuth provider: {$slug}");
+            throw new InvalidArgumentException(esc_html("Unknown OAuth provider: {$slug}"));
         }
 
         $stored = isset($this->settings[self::OAUTH_KEY][$slug])
@@ -223,7 +223,7 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
     public function getThirdParty($slug)
     {
         if (!isset($this->thirdPartyApps[$slug])) {
-            throw new InvalidArgumentException("Unknown 3rd-party integration: {$slug}");
+            throw new InvalidArgumentException(esc_html("Unknown 3rd-party integration: {$slug}"));
         }
 
         $stored = isset($this->settings[self::THIRD_PARTY_KEY][$slug])

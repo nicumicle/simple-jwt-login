@@ -74,8 +74,8 @@ class OAuthService extends BaseService implements ServiceInterface
 
         if (empty($raw) || !isset($this->providerFactories[$raw])) {
             throw new Exception(
-                __('The Oauth provider is invalid.', 'simple-jwt-login'),
-                ErrorCodes::ERR_OAUTH_INVALID_PROVIDER
+                esc_html(__('The Oauth provider is invalid.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_OAUTH_INVALID_PROVIDER)
             );
         }
 
@@ -93,8 +93,8 @@ class OAuthService extends BaseService implements ServiceInterface
 
         if (!$isEnabled) {
             throw new Exception(
-                __('This Oauth provider is not available.', 'simple-jwt-login'),
-                ErrorCodes::ERR_OAUTH_PROVIDER_NOT_ACTIVE
+                esc_html(__('This Oauth provider is not available.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_OAUTH_PROVIDER_NOT_ACTIVE)
             );
         }
     }

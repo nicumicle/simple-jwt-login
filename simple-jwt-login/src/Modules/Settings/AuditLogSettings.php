@@ -60,11 +60,11 @@ class AuditLogSettings extends BaseSettings implements SettingsInterface
 
         if ($retention < 1) {
             throw new Exception(
-                __('Audit log retention days must be at least 1.', 'simple-jwt-login'),
-                $this->settingsErrors->generateCode(
+                esc_html__('Audit log retention days must be at least 1.', 'simple-jwt-login'),
+                absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_AUDIT_LOGS,
                     1
-                )
+                ))
             );
         }
     }

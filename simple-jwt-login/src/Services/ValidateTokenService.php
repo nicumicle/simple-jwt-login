@@ -33,8 +33,8 @@ class ValidateTokenService extends AuthenticateService
     {
         if (!$this->jwtSettings->getAuthenticationSettings()->isValidateTokenEnabled()) {
             throw new Exception(
-                __('Validate Token endpoint is not enabled.', 'simple-jwt-login'),
-                ErrorCodes::ERR_VALIDATE_TOKEN_NOT_ENABLED
+                esc_html(__('Validate Token endpoint is not enabled.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_VALIDATE_TOKEN_NOT_ENABLED)
             );
         }
     }
@@ -48,8 +48,8 @@ class ValidateTokenService extends AuthenticateService
         $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
         if (empty($this->jwt)) {
             throw new ValidationException(
-                __('The `jwt` parameter is missing.', 'simple-jwt-login'),
-                ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE
+                esc_html(__('The `jwt` parameter is missing.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE)
             );
         }
 
@@ -60,8 +60,8 @@ class ValidateTokenService extends AuthenticateService
         $user = $this->getUserDetails($loginParameter);
         if ($user === null) {
             throw new Exception(
-                __('User not found.', 'simple-jwt-login'),
-                ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND
+                esc_html(__('User not found.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND)
             );
         }
 

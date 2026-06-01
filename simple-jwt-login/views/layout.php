@@ -21,6 +21,9 @@ $errorCode = null;
 
 
 try {
+    if (!empty($_POST)) {
+        check_admin_referer(WordPressRepository::NONCE_NAME);
+    }
     $saved         = $jwtSettings->watchForUpdates($_POST);
     $showStatusBar = $saved;
     if ($saved) {
@@ -254,12 +257,17 @@ $sidebarGroups = [
 <form method="post">
     <?php
     $activeTab = $settingsPages[0]['index'];
-    //phpcs:ignore WordPress.Security.NonceVerification.Recommended
-    $activeTabRaw = isset($_POST['active_tab']) ? $_POST['active_tab'] : (isset($_GET['active_tab']) ? $_GET['active_tab'] : null);
+    $activeTabRaw = null;
+    if (isset($_POST['active_tab'])) {
+        check_admin_referer(WordPressRepository::NONCE_NAME);
+        $activeTabRaw = absint(wp_unslash($_POST['active_tab']));
+    } elseif (isset($_GET['active_tab'])) {
+        $activeTabRaw = absint(wp_unslash($_GET['active_tab']));
+    }
     if ($activeTabRaw !== null) {
         foreach ($settingsPages as $item) {
-            if ($item['index'] === (int) esc_attr($activeTabRaw)) {
-                $activeTab = (int) esc_attr($activeTabRaw);
+            if ($item['index'] === $activeTabRaw) {
+                $activeTab = $activeTabRaw;
             }
         }
     }

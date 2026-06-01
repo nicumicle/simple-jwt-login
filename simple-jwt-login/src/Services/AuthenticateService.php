@@ -128,14 +128,14 @@ class AuthenticateService extends BaseService implements ServiceInterface
     {
         if (empty($this->request['email']) && empty($this->request['username']) && empty($this->request['login'])) {
             throw new ValidationException(
-                __('The email, username, or login parameter is missing from the request.', 'simple-jwt-login'),
-                ErrorCodes::ERR_AUTHENTICATION_MISSING_EMAIL
+                esc_html(__('The email, username, or login parameter is missing from the request.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_AUTHENTICATION_MISSING_EMAIL)
             );
         }
         if (empty($this->request['password']) && empty($this->request['password_hash'])) {
             throw new ValidationException(
-                __('The password or password_hash parameter is missing from request.', 'simple-jwt-login'),
-                ErrorCodes::ERR_AUTHENTICATION_MISSING_PASSWORD
+                esc_html(__('The password or password_hash parameter is missing from request.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_AUTHENTICATION_MISSING_PASSWORD)
             );
         }
 
@@ -174,8 +174,8 @@ class AuthenticateService extends BaseService implements ServiceInterface
                 __('Wrong user credentials.', 'simple-jwt-login')
             );
             throw new Exception(
-                __('Wrong user credentials.', 'simple-jwt-login'),
-                ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS
+                esc_html(__('Wrong user credentials.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS)
             );
         }
 
@@ -209,8 +209,8 @@ class AuthenticateService extends BaseService implements ServiceInterface
                 __('Wrong user credentials.', 'simple-jwt-login')
             );
             throw new Exception(
-                __('Wrong user credentials.', 'simple-jwt-login'),
-                ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS
+                esc_html(__('Wrong user credentials.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS)
             );
         }
 
@@ -336,8 +336,8 @@ class AuthenticateService extends BaseService implements ServiceInterface
         $nonce = $bridge->createNonce($userId);
         if ($nonce === false) {
             throw new Exception(
-                __('Unable to create two-factor nonce.', 'simple-jwt-login'),
-                ErrorCodes::ERR_TWO_FACTOR_INVALID_NONCE
+                esc_html(__('Unable to create two-factor nonce.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_TWO_FACTOR_INVALID_NONCE)
             );
         }
 
@@ -426,11 +426,14 @@ class AuthenticateService extends BaseService implements ServiceInterface
         $allowedIpsString = trim($this->jwtSettings->getAuthenticationSettings()->getAllowedIps());
         if (!empty($allowedIpsString) && !$this->serverHelper->isClientIpInList($allowedIpsString)) {
             throw new Exception(
-                sprintf(
-                    __('You are not allowed to Authenticate from this IP: %s', 'simple-jwt-login'),
-                    $this->serverHelper->getClientIP()
+                esc_html(
+                    sprintf(
+                        /* translators: %s: client IP address */
+                        __('You are not allowed to Authenticate from this IP: %s', 'simple-jwt-login'),
+                        $this->serverHelper->getClientIP()
+                    )
                 ),
-                ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP
+                absint(ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP)
             );
         }
     }
@@ -442,8 +445,8 @@ class AuthenticateService extends BaseService implements ServiceInterface
     {
         if (!$this->jwtSettings->getAuthenticationSettings()->isAuthenticationEnabled()) {
             throw new Exception(
-                __('Authentication is not enabled.', 'simple-jwt-login'),
-                ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED
+                esc_html(__('Authentication is not enabled.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED)
             );
         }
     }

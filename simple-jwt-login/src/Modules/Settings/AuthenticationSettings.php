@@ -176,15 +176,14 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             && empty($this->post['jwt_payload'])
         ) {
             throw new Exception(
-                __(
-                    'Authentication payload data can not be empty.'
-                    . ' Please choose the ones you want to be added in the JWT.',
+                esc_html__(
+                    'Authentication payload data can not be empty. Please choose the ones you want to be added in the JWT.',
                     'simple-jwt-login'
                 ),
-                $this->settingsErrors->generateCode(
+                absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_AUTHENTICATION,
                     SettingsErrors::ERR_AUTHENTICATION_EMPTY_PAYLOAD
-                )
+                ))
             );
         }
 
@@ -193,14 +192,14 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             || (int)$this->post['jwt_auth_ttl'] < 0
         ) {
             throw new Exception(
-                __(
+                esc_html__(
                     'Authentication JWT time to live should be greater than zero.',
                     'simple-jwt-login'
                 ),
-                $this->settingsErrors->generateCode(
+                absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_AUTHENTICATION,
                     SettingsErrors::ERR_AUTHENTICATION_TTL
-                )
+                ))
             );
         }
 
@@ -212,14 +211,14 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
                 || (int)$this->post['jwt_auth_refresh_ttl'] < 0
             ) {
                 throw new Exception(
-                    __(
+                    esc_html__(
                         'Authentication JWT Refresh time to live should be greater than zero.',
                         'simple-jwt-login'
                     ),
-                    $this->settingsErrors->generateCode(
+                    absint($this->settingsErrors->generateCode(
                         SettingsErrors::PREFIX_REFRESH_TOKEN,
                         SettingsErrors::ERR_AUTHENTICATION_REFRESH_TTL_ZERO
-                    )
+                    ))
                 );
             }
 
@@ -227,11 +226,11 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
                 || empty(trim($this->post['refresh_token_key']))
             ) {
                 throw new Exception(
-                    __('Refresh Token Secret Key is required.', 'simple-jwt-login'),
-                    $this->settingsErrors->generateCode(
+                    esc_html__('Refresh Token Secret Key is required.', 'simple-jwt-login'),
+                    absint($this->settingsErrors->generateCode(
                         SettingsErrors::PREFIX_REFRESH_TOKEN,
                         SettingsErrors::ERR_AUTHENTICATION_REFRESH_TOKEN_KEY_REQUIRED
-                    )
+                    ))
                 );
             }
         }
@@ -251,26 +250,29 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
         foreach ($this->post[$postKey]['key'] as $claimKey) {
             if (empty(trim($claimKey))) {
                 throw new Exception(
-                    __('Custom claim key cannot be empty.', 'simple-jwt-login'),
-                    $this->settingsErrors->generateCode(
+                    esc_html__('Custom claim key cannot be empty.', 'simple-jwt-login'),
+                    absint($this->settingsErrors->generateCode(
                         SettingsErrors::PREFIX_AUTHENTICATION,
                         SettingsErrors::ERR_AUTHENTICATION_CUSTOM_CLAIM_EMPTY_KEY
-                    )
+                    ))
                 );
             }
             if (in_array($claimKey, $protectedKeys, true)) {
                 throw new Exception(
-                    sprintf(
-                        __(
-                            'Custom claim key "%s" is a reserved JWT claim and cannot be overwritten.',
-                            'simple-jwt-login'
-                        ),
-                        $claimKey
+                    esc_html(
+                        sprintf(
+                            /* translators: %s: JWT claim key name */
+                            __(
+                                'Custom claim key "%s" is a reserved JWT claim and cannot be overwritten.',
+                                'simple-jwt-login'
+                            ),
+                            $claimKey
+                        )
                     ),
-                    $this->settingsErrors->generateCode(
+                    absint($this->settingsErrors->generateCode(
                         SettingsErrors::PREFIX_AUTHENTICATION,
                         $errorCode
-                    )
+                    ))
                 );
             }
         }

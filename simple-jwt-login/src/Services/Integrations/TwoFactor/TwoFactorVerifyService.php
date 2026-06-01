@@ -33,16 +33,16 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
 
         if (!$bridge->isAvailable()) {
             throw new Exception(
-                __('Two-factor authentication plugin is not active.', 'simple-jwt-login'),
-                ErrorCodes::ERR_TWO_FACTOR_NOT_ACTIVE
+                esc_html(__('Two-factor authentication plugin is not active.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_TWO_FACTOR_NOT_ACTIVE)
             );
         }
 
         $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
         if (empty($this->jwt)) {
             throw new ValidationException(
-                __('Interim JWT is missing.', 'simple-jwt-login'),
-                ErrorCodes::ERR_JWT_IS_MISSING
+                esc_html(__('Interim JWT is missing.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_JWT_IS_MISSING)
             );
         }
 
@@ -55,16 +55,16 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
 
         if ($userId === 0 || empty($nonce)) {
             throw new Exception(
-                __('Invalid interim JWT claims.', 'simple-jwt-login'),
-                ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REQUIRED
+                esc_html(__('Invalid interim JWT claims.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REQUIRED)
             );
         }
 
         $user = $this->wordPressData->getUserDetailsById($userId);
         if (!$this->wordPressData->isInstanceOfuser($user)) {
             throw new Exception(
-                __('User not found.', 'simple-jwt-login'),
-                ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND
+                esc_html(__('User not found.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND)
             );
         }
 
@@ -73,11 +73,12 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
         if ($bridge->isRateLimited($user)) {
             $delay = $bridge->getTimeDelay($user);
             throw new Exception(
-                sprintf(
+                esc_html(sprintf(
+                    /* translators: %d: number of seconds to wait */
                     __('Too many failed attempts. Please wait %d seconds.', 'simple-jwt-login'),
                     (int) $delay
-                ),
-                ErrorCodes::ERR_TWO_FACTOR_RATE_LIMITED
+                )),
+                absint(ErrorCodes::ERR_TWO_FACTOR_RATE_LIMITED)
             );
         }
 
@@ -89,8 +90,8 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
                 __('Invalid or expired two-factor nonce.', 'simple-jwt-login')
             );
             throw new Exception(
-                __('Invalid or expired two-factor session. Please authenticate again.', 'simple-jwt-login'),
-                ErrorCodes::ERR_TWO_FACTOR_INVALID_NONCE
+                esc_html(__('Invalid or expired two-factor session. Please authenticate again.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_TWO_FACTOR_INVALID_NONCE)
             );
         }
 
@@ -100,8 +101,8 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
 
         if (empty($code)) {
             throw new ValidationException(
-                __('The two-factor code is missing.', 'simple-jwt-login'),
-                ErrorCodes::ERR_TWO_FACTOR_INVALID_CODE
+                esc_html(__('The two-factor code is missing.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_TWO_FACTOR_INVALID_CODE)
             );
         }
 
@@ -113,8 +114,8 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
                 __('Invalid two-factor code.', 'simple-jwt-login')
             );
             throw new Exception(
-                __('Invalid two-factor code.', 'simple-jwt-login'),
-                ErrorCodes::ERR_TWO_FACTOR_INVALID_CODE
+                esc_html(__('Invalid two-factor code.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_TWO_FACTOR_INVALID_CODE)
             );
         }
 
@@ -202,8 +203,8 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
     {
         if (empty($payload[self::TFA_PENDING_CLAIM])) {
             throw new Exception(
-                __('A valid interim two-factor JWT is required.', 'simple-jwt-login'),
-                ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REQUIRED
+                esc_html(__('A valid interim two-factor JWT is required.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REQUIRED)
             );
         }
     }

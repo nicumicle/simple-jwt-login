@@ -127,6 +127,7 @@ $github = $jwtSettings->getIntegrationsSettings()->github();
                 <p class="sjl-gen-feature-desc">
                     <?php echo wp_kses(
                         sprintf(
+                            /* translators: %s: URL to GitHub OAuth App settings */
                             __(
                                 'Set the following Redirect URI in your <a href="%s" target="_blank">GitHub OAuth App settings</a> for the OAuth flow to work correctly.',
                                 'simple-jwt-login'

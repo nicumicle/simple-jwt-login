@@ -249,6 +249,7 @@ if (! defined('ABSPATH')) {
                 <label for="allow_usage_redirect_parameter" class="sjl-gen-feature-label">
                     <?php echo wp_kses(
                         sprintf(
+                            /* translators: %s: URL query parameter name */
                             __('Honor the <code>%s</code> query parameter as a redirect override', 'simple-jwt-login'),
                             esc_html(LoginSettings::REDIRECT_URL_PARAMETER)
                         ),
@@ -258,6 +259,7 @@ if (! defined('ABSPATH')) {
                 <p class="sjl-gen-feature-desc">
                     <?php echo wp_kses(
                         sprintf(
+                            /* translators: %s: URL query parameter name */
                             __('When present in the request, the <code>%s</code> parameter overrides any configured redirect destination.', 'simple-jwt-login'),
                             esc_html(LoginSettings::REDIRECT_URL_PARAMETER)
                         ),

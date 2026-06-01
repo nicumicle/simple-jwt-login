@@ -52,8 +52,7 @@ $akPages  = $akTotal > 0 ? (int) ceil($akTotal / $akPerPage) : 1;
             <h3 class="sjl-gen-card-title"><?php echo esc_html__('API Keys', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
                 <?php echo esc_html__(
-                    'Allow external clients to authenticate using scoped API keys instead of JWTs.'
-                    . ' Send the key via the configured header below.',
+                    'Allow external clients to authenticate using scoped API keys instead of JWTs. Send the key via the configured header below.',
                     'simple-jwt-login'
                 ); ?>
             </p>

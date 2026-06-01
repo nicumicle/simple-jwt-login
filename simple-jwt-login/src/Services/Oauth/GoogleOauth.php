@@ -134,8 +134,8 @@ class GoogleOauth extends AbstractOauth
 
         if ($statusCode !== 200) {
             throw new Exception(
-                __('The provided id_token is invalid', 'simple-jwt-login'),
-                ErrorCodes::ERR_GOOGLE_INVALID_ID_TOKEN
+                esc_html(__('The provided id_token is invalid', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_GOOGLE_INVALID_ID_TOKEN)
             );
         }
     }

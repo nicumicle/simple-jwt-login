@@ -104,6 +104,118 @@ class MysqliWpdb
     }
 
     /**
+     * Minimal implementation of wpdb::prepare().
+     * Supports %i (identifier), %s (string), %d (integer), %f (float).
+     *
+     * @param string $query
+     * @param mixed  ...$args
+     * @return string
+     */
+    public function prepare(string $query, ...$args): string
+    {
+        if (count($args) === 1 && is_array($args[0])) {
+            $args = $args[0];
+        }
+        $argIndex = 0;
+        $conn = $this->conn;
+        return preg_replace_callback(
+            '/%([isdf])/U',
+            function ($matches) use (&$args, &$argIndex, $conn) {
+                $val = $args[$argIndex++];
+                switch ($matches[1]) {
+                    case 'i':
+                        return '`' . str_replace('`', '``', (string) $val) . '`';
+                    case 's':
+                        return "'" . $conn->real_escape_string((string) $val) . "'";
+                    case 'd':
+                        return (string) (int) $val;
+                    case 'f':
+                        return (string) (float) $val;
+                }
+                return $matches[0];
+            },
+            $query
+        );
+    }
+
+    /**
+     * Returns the first column of the first row from the query result.
+     * Mirrors wpdb::get_var().
+     *
+     * @param string $sql
+     * @return string|null
+     */
+    public function get_var(string $sql)
+    {
+        $result = $this->conn->query($sql);
+        if ($result === false) {
+            return null;
+        }
+        $row = $result->fetch_row();
+        $result->free();
+        return $row !== null ? $row[0] : null;
+    }
+
+    /**
+     * Returns all rows from the query result as an array of objects.
+     * Mirrors wpdb::get_results().
+     *
+     * @param string $sql
+     * @return array
+     */
+    public function get_results(string $sql): array
+    {
+        $result = $this->conn->query($sql);
+        if ($result === false) {
+            return [];
+        }
+        $items = [];
+        while ($row = $result->fetch_object()) {
+            $items[] = $row;
+        }
+        $result->free();
+        return $items;
+    }
+
+    /**
+     * Returns the first row from the query result as an object.
+     * Mirrors wpdb::get_row().
+     *
+     * @param string $sql
+     * @return object|null
+     */
+    public function get_row(string $sql)
+    {
+        $result = $this->conn->query($sql);
+        if ($result === false) {
+            return null;
+        }
+        $row = $result->fetch_object();
+        $result->free();
+        return $row ?: null;
+    }
+
+    /**
+     * Deletes rows from a table matching the given WHERE conditions.
+     * Mirrors wpdb::delete().
+     *
+     * @param string $table
+     * @param array  $where
+     * @return int|false  Rows affected, or false on error.
+     */
+    public function delete(string $table, array $where)
+    {
+        $whereClauses = array_map(function ($key, $value) {
+            $val = $value === null ? 'NULL' : "'" . $this->conn->real_escape_string((string) $value) . "'";
+            return "`{$key}` = {$val}";
+        }, array_keys($where), array_values($where));
+
+        $this->conn->query('DELETE FROM `' . $table . '` WHERE ' . implode(' AND ', $whereClauses));
+
+        return $this->conn->errno === 0 ? $this->conn->affected_rows : false;
+    }
+
+    /**
      * @param string $table
      * @param array  $data
      * @param array  $where

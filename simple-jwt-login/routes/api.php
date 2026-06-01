@@ -10,6 +10,7 @@ if (! defined('ABSPATH')) {
 require_once(ABSPATH . 'wp-admin/includes/user.php');
 
 add_action('rest_api_init', function () {
+    //phpcs:ignore WordPress.Security.NonceVerification.Recommended
     $registrar = new RouteRegistrar($_SERVER, $_REQUEST, $_COOKIE);
     $registrar->register();
 });

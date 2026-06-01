@@ -51,9 +51,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
             </h3>
             <p class="sjl-gen-card-desc">
                 <?php echo esc_html__(
-                    'Define how incoming JWTs are verified. '
-                    . 'Each rule matches a specific claim in the token and applies its own algorithm and key. '
-                    . 'The ELSE row is the required fallback used when no rule matches.',
+                    'Define how incoming JWTs are verified. Each rule matches a specific claim in the token and applies its own algorithm and key. The ELSE row is the required fallback used when no rule matches.',
                     'simple-jwt-login'
                 ); ?>
             </p>
@@ -156,7 +154,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                                     <?php
                                     foreach (JWT::$supportedAlgs as $alg => $arr) {
                                         $sel = $ruleAlgorithm === $alg ? 'selected' : '';
-                                        echo "<option value=\"" . esc_attr($alg) . "\" " . $sel . ">"
+                                        echo "<option value=\"" . esc_attr($alg) . "\" " . esc_attr($sel) . ">"
                                             . esc_html($alg) . "</option>\n";
                                     }
                                     ?>
@@ -286,11 +284,11 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                     </label>
                     <select id="decryption_source" name="decryption_source" class="form-control sjl-gen-select">
                         <option
-                            value="<?php echo GeneralSettings::DECRYPTION_SOURCE_SETTINGS; ?>"
+                            value="<?php echo esc_attr(GeneralSettings::DECRYPTION_SOURCE_SETTINGS); ?>"
                             <?php echo ($elseSource === GeneralSettings::DECRYPTION_SOURCE_SETTINGS ? 'selected' : ''); ?>
                         ><?php echo esc_html__('Plugin Settings (recommended)', 'simple-jwt-login'); ?></option>
                         <option
-                            value="<?php echo GeneralSettings::DECRYPTION_SOURCE_CODE; ?>"
+                            value="<?php echo esc_attr(GeneralSettings::DECRYPTION_SOURCE_CODE); ?>"
                             <?php echo ($elseSource === GeneralSettings::DECRYPTION_SOURCE_CODE ? 'selected' : ''); ?>
                         ><?php echo esc_html__('Code (wp-config.php or custom plugin)', 'simple-jwt-login'); ?></option>
                     </select>
@@ -309,7 +307,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                         <?php
                         foreach (JWT::$supportedAlgs as $alg => $arr) {
                             $selected = $elseAlgorithm === $alg ? 'selected' : '';
-                            echo "<option value=\"" . esc_attr($alg) . "\" " . $selected . ">"
+                            echo "<option value=\"" . esc_attr($alg) . "\" " . esc_attr($selected) . ">"
                                 . esc_html($alg) . "</option>\n";
                         }
                         ?>
@@ -395,11 +393,11 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                             <code>wp-config.php</code>):
                         </p>
                         <code class="define_private_key sjl-gen-code-line">
-                            define('<strong><?php echo JwtKeyWpConfig::SIMPLE_JWT_PRIVATE_KEY; ?></strong>',
+                            define('<strong><?php echo esc_html(JwtKeyWpConfig::SIMPLE_JWT_PRIVATE_KEY); ?></strong>',
                             'MY_SECRET_KEY');
                         </code>
                         <code class="define_public_key sjl-gen-code-line">
-                            define('<strong><?php echo JwtKeyWpConfig::SIMPLE_JWT_PUBLIC_KEY; ?></strong>',
+                            define('<strong><?php echo esc_html(JwtKeyWpConfig::SIMPLE_JWT_PUBLIC_KEY); ?></strong>',
                             'MY_PUBLIC_KEY');
                         </code>
                     </div>

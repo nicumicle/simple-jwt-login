@@ -106,7 +106,7 @@ class OAuthTwoFactorLoginHandler
 
         $user = get_user_by('id', $userId);
         if (!$user) {
-            throw new Exception(__('User not found.', 'simple-jwt-login'));
+            throw new Exception(esc_html(__('User not found.', 'simple-jwt-login')));
         }
 
         if ($bridge->isRateLimited($user)) {
@@ -115,7 +115,7 @@ class OAuthTwoFactorLoginHandler
         }
 
         if (!$bridge->verifyNonce($userId, $nonce)) {
-            throw new Exception(__('Session expired. Please log in again.', 'simple-jwt-login'));
+            throw new Exception(esc_html(__('Session expired. Please log in again.', 'simple-jwt-login')));
         }
 
         if (empty($code)) {
@@ -148,7 +148,7 @@ class OAuthTwoFactorLoginHandler
     protected function decodeAndValidate($jwt)
     {
         if (empty($jwt)) {
-            throw new Exception(__('Missing authentication token.', 'simple-jwt-login'));
+            throw new Exception(esc_html(__('Missing authentication token.', 'simple-jwt-login')));
         }
 
         $settings   = $this->getSettings();
@@ -162,11 +162,11 @@ class OAuthTwoFactorLoginHandler
         $payload = (array) $decoded;
 
         if (empty($payload[AuthenticateService::TFA_PENDING_CLAIM])) {
-            throw new Exception(__('Invalid authentication token.', 'simple-jwt-login'));
+            throw new Exception(esc_html(__('Invalid authentication token.', 'simple-jwt-login')));
         }
 
         if (empty($payload['tfa_user_id']) || empty($payload['tfa_nonce'])) {
-            throw new Exception(__('Invalid authentication token.', 'simple-jwt-login'));
+            throw new Exception(esc_html(__('Invalid authentication token.', 'simple-jwt-login')));
         }
 
         return $payload;
@@ -184,7 +184,25 @@ class OAuthTwoFactorLoginHandler
     protected function renderForm($jwt, $redirectTo, $error)
     {
         login_header(__('Two-Factor Authentication', 'simple-jwt-login'));
-        echo $this->buildFormHtml($jwt, $redirectTo, $error);
+        $allowedHtml = array(
+            'div'   => array('id' => true),
+            'form'  => array('name' => true, 'id' => true, 'action' => true, 'method' => true),
+            'input' => array(
+                'type'         => true,
+                'name'         => true,
+                'id'           => true,
+                'value'        => true,
+                'class'        => true,
+                'size'         => true,
+                'autocomplete' => true,
+                'inputmode'    => true,
+                'autofocus'    => true,
+                'required'     => true,
+            ),
+            'p'     => array('class' => true),
+            'label' => array('for' => true),
+        );
+        echo wp_kses($this->buildFormHtml($jwt, $redirectTo, $error), $allowedHtml);
         login_footer();
         exit;
     }

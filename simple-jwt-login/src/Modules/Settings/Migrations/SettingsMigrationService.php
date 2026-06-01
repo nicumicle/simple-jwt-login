@@ -47,7 +47,7 @@ class SettingsMigrationService
         }
 
         throw new Exception(
-            sprintf('No settings migration found from version %d.', $fromVersion)
+            esc_html(sprintf('No settings migration found from version %d.', $fromVersion))
         );
     }
 }

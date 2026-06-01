@@ -29,7 +29,8 @@ $tfaSettings = $jwtSettings->getIntegrationsSettings()->twoFactor();
                 <p class="sjl-gen-card-desc">
                     <?php echo wp_kses(
                         sprintf(
-                            __('Require a 2FA Code before issuing a JWT, using the %sTwo Factor plugin%s.', 'simple-jwt-login'),
+                            /* translators: 1: opening anchor tag, 2: closing anchor tag */
+                            __('Require a 2FA Code before issuing a JWT, using the %1$sTwo Factor plugin%2$s.', 'simple-jwt-login'),
                             '<a href="https://wordpress.org/plugins/two-factor/" target="_blank">',
                             '</a>'
                         ),
@@ -151,7 +152,8 @@ $tfaSettings = $jwtSettings->getIntegrationsSettings()->twoFactor();
         <p class="sjl-gen-card-desc" style="margin-top: 12px;">
             <?php echo wp_kses(
                 sprintf(
-                    __('Requires the %sTwo Factor plugin%s to be installed and activated.', 'simple-jwt-login'),
+                    /* translators: 1: opening anchor tag, 2: closing anchor tag */
+                    __('Requires the %1$sTwo Factor plugin%2$s to be installed and activated.', 'simple-jwt-login'),
                     '<a href="https://wordpress.org/plugins/two-factor/" target="_blank">',
                     '</a>'
                 ),

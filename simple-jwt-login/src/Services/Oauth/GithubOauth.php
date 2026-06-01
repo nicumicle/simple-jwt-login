@@ -106,8 +106,8 @@ class GithubOauth extends AbstractOauth
     {
         if (empty($tokenResponse['access_token'])) {
             throw new Exception(
-                __('GitHub did not return an access_token.', 'simple-jwt-login'),
-                ErrorCodes::ERR_GITHUB_INVALID_TOKEN
+                esc_html(__('GitHub did not return an access_token.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_GITHUB_INVALID_TOKEN)
             );
         }
 
@@ -140,8 +140,8 @@ class GithubOauth extends AbstractOauth
 
         if ($statusCode !== 200) {
             throw new Exception(
-                __('The provided GitHub access_token is invalid.', 'simple-jwt-login'),
-                ErrorCodes::ERR_GITHUB_INVALID_TOKEN
+                esc_html(__('The provided GitHub access_token is invalid.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_GITHUB_INVALID_TOKEN)
             );
         }
     }
@@ -211,8 +211,8 @@ class GithubOauth extends AbstractOauth
 
         if ($statusCode !== 200 || !is_array($emails)) {
             throw new Exception(
-                __('Unable to retrieve user email from GitHub.', 'simple-jwt-login'),
-                ErrorCodes::ERR_GITHUB_INVALID_TOKEN
+                esc_html(__('Unable to retrieve user email from GitHub.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_GITHUB_INVALID_TOKEN)
             );
         }
 
@@ -223,8 +223,8 @@ class GithubOauth extends AbstractOauth
         }
 
         throw new Exception(
-            __('No verified primary email found in the GitHub account.', 'simple-jwt-login'),
-            ErrorCodes::ERR_GITHUB_INVALID_TOKEN
+            esc_html(__('No verified primary email found in the GitHub account.', 'simple-jwt-login')),
+            absint(ErrorCodes::ERR_GITHUB_INVALID_TOKEN)
         );
     }
 }

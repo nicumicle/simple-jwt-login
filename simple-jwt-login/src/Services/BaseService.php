@@ -207,12 +207,15 @@ abstract class BaseService
                 $payload = (array)$payload;
                 if (!isset($payload[$value])) {
                     throw new Exception(
-                        sprintf(
-                            __('Unable to find user %s property in JWT.( Settings: %s )', 'simple-jwt-login'),
-                            $value,
-                            $parameter
+                        esc_html(
+                            sprintf(
+                                /* translators: 1: JWT property name, 2: settings parameter */
+                                __('Unable to find user %1$s property in JWT.( Settings: %2$s )', 'simple-jwt-login'),
+                                $value,
+                                $parameter
+                            )
                         ),
-                        ErrorCodes::ERR_UNABLE_TO_FIND_PROPERTY_FOR_USER_IN_JWT
+                        absint(ErrorCodes::ERR_UNABLE_TO_FIND_PROPERTY_FOR_USER_IN_JWT)
                     );
                 }
                 $payload = $payload[$value];
@@ -223,18 +226,21 @@ abstract class BaseService
 
         if (!empty($payload['tfa_pending'])) {
             throw new Exception(
-                __('This JWT requires two-factor verification before it can be used.', 'simple-jwt-login'),
-                ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REJECTED
+                esc_html(__('This JWT requires two-factor verification before it can be used.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REJECTED)
             );
         }
 
         if (!isset($payload[$parameter])) {
             throw new Exception(
-                sprintf(
-                    __('Unable to find user %s property in JWT.', 'simple-jwt-login'),
-                    $parameter
+                esc_html(
+                    sprintf(
+                        /* translators: %s: JWT property name */
+                        __('Unable to find user %s property in JWT.', 'simple-jwt-login'),
+                        $parameter
+                    )
                 ),
-                ErrorCodes::ERR_JWT_PARAMETER_FOR_USER_NOT_FOUND
+                absint(ErrorCodes::ERR_JWT_PARAMETER_FOR_USER_NOT_FOUND)
             );
         }
 
@@ -300,7 +306,7 @@ abstract class BaseService
         }
         foreach ($revokedTokensArray as $token) {
             if ($token === $jwt) {
-                throw new Exception(__('This JWT is invalid.', 'simple-jwt-login'), ErrorCodes::ERR_REVOKED_TOKEN);
+                throw new Exception(esc_html(__('This JWT is invalid.', 'simple-jwt-login')), absint(ErrorCodes::ERR_REVOKED_TOKEN));
             }
         }
 
@@ -390,18 +396,21 @@ abstract class BaseService
         $authCodeKey = $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey();
         if (!isset($this->request[$authCodeKey])) {
             throw new ExceptionsValidationException(
-                __('Auth Code is required.', 'simple-jwt-login'),
-                ErrorCodes::ERR_AUTH_CODE_REQUIRED
+                esc_html(__('Auth Code is required.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_AUTH_CODE_REQUIRED)
             );
         }
 
         if (!$this->hasCorrectAuthCode($authCodeKey)) {
             throw new Exception(
-                sprintf(
-                    __('Invalid Auth Code ( %s ) provided.', 'simple-jwt-login'),
-                    $authCodeKey
+                esc_html(
+                    sprintf(
+                        /* translators: %s: auth code key name */
+                        __('Invalid Auth Code ( %s ) provided.', 'simple-jwt-login'),
+                        $authCodeKey
+                    )
                 ),
-                ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED
+                absint(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED)
             );
         }
     }

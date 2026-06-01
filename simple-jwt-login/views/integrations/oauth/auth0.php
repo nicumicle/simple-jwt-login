@@ -146,6 +146,7 @@ $auth0 = $jwtSettings->getIntegrationsSettings()->auth0();
                 <p class="sjl-gen-feature-desc">
                     <?php echo wp_kses(
                         sprintf(
+                            /* translators: %s: URL to the Auth0 Dashboard */
                             __(
                                 'Set the following Redirect URI in your <a href="%s" target="_blank">Auth0 Dashboard</a> for the OAuth flow to work correctly.',
                                 'simple-jwt-login'

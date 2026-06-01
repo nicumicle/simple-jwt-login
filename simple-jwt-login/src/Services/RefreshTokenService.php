@@ -74,8 +74,8 @@ class RefreshTokenService extends AuthenticateService
     {
         if (!$this->jwtSettings->getAuthenticationSettings()->isRefreshTokenEnabled()) {
             throw new Exception(
-                __('Refresh Token endpoint is not enabled.', 'simple-jwt-login'),
-                ErrorCodes::ERR_REFRESH_TOKEN_NOT_ENABLED
+                esc_html(__('Refresh Token endpoint is not enabled.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_REFRESH_TOKEN_NOT_ENABLED)
             );
         }
     }
@@ -89,8 +89,8 @@ class RefreshTokenService extends AuthenticateService
         $refreshToken = isset($this->request['refresh_token']) ? $this->request['refresh_token'] : null;
         if (empty($refreshToken)) {
             throw new ValidationException(
-                __('Refresh token is missing.', 'simple-jwt-login'),
-                ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH
+                esc_html(__('Refresh token is missing.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH)
             );
         }
 
@@ -100,14 +100,14 @@ class RefreshTokenService extends AuthenticateService
         
         if ($tokenData === null) {
             throw new Exception(
-                __('Invalid refresh token.', 'simple-jwt-login'),
-                ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH
+                esc_html(__('Invalid refresh token.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH)
             );
         }
 
         $user = $this->wordPressData->getUserDetailsById($tokenData->user_id);
         if (!$this->wordPressData->isInstanceOfuser($user)) {
-            throw new Exception(__('User not found.', 'simple-jwt-login'), ErrorCodes::ERR_REVOKED_TOKEN);
+            throw new Exception(esc_html(__('User not found.', 'simple-jwt-login')), absint(ErrorCodes::ERR_REVOKED_TOKEN));
         }
 
         // Generate new JWT payload for the user

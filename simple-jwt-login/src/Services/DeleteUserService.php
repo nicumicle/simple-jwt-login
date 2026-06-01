@@ -39,16 +39,16 @@ class DeleteUserService extends BaseService implements ServiceInterface
     {
         if (!$this->jwtSettings->getDeleteUserSettings()->isDeleteAllowed()) {
             throw new Exception(
-                __('Delete is not enabled.', 'simple-jwt-login'),
-                ErrorCodes::ERR_DELETE_IS_NOT_ENABLED
+                esc_html(__('Delete is not enabled.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_DELETE_IS_NOT_ENABLED)
             );
         }
 
         $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
         if (empty($this->jwt)) {
             throw new ValidationException(
-                __('The `jwt` parameter is missing.', 'simple-jwt-login'),
-                ErrorCodes::ERR_DELETE_MISSING_JWT
+                esc_html(__('The `jwt` parameter is missing.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_DELETE_MISSING_JWT)
             );
         }
 
@@ -59,11 +59,14 @@ class DeleteUserService extends BaseService implements ServiceInterface
         $allowedIpsString = trim($this->jwtSettings->getDeleteUserSettings()->getAllowedDeleteIps());
         if (!empty($allowedIpsString) && !$this->serverHelper->isClientIpInList($allowedIpsString)) {
             throw new Exception(
-                sprintf(
-                    __('You are not allowed to delete users from this IP: %s', 'simple-jwt-login'),
-                    $this->serverHelper->getClientIP()
+                esc_html(
+                    sprintf(
+                        /* translators: %s: client IP address */
+                        __('You are not allowed to delete users from this IP: %s', 'simple-jwt-login'),
+                        $this->serverHelper->getClientIP()
+                    )
                 ),
-                ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP
+                absint(ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP)
             );
         }
 
@@ -95,8 +98,8 @@ class DeleteUserService extends BaseService implements ServiceInterface
 
         if ($user === false) {
             throw new Exception(
-                __('User not found.', 'simple-jwt-login'),
-                ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND
+                esc_html(__('User not found.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND)
             );
         }
 
@@ -111,8 +114,8 @@ class DeleteUserService extends BaseService implements ServiceInterface
 
         if ($result === false) {
             throw new Exception(
-                __('User not found.', 'simple-jwt-login'),
-                ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND
+                esc_html(__('User not found.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND)
             );
         }
 

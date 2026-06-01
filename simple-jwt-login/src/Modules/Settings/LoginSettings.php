@@ -114,11 +114,11 @@ class LoginSettings extends BaseSettings implements SettingsInterface
             && (!isset($this->post['jwt_login_by_parameter']) || empty(trim($this->post['jwt_login_by_parameter'])))
         ) {
             throw new Exception(
-                __('JWT Parameter key from LoginSettings Config is missing.', 'simple-jwt-login'),
-                $this->settingsErrors->generateCode(
+                esc_html__('JWT Parameter key from LoginSettings Config is missing.', 'simple-jwt-login'),
+                absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_GENERAL,
                     SettingsErrors::ERR_LOGIN_MISSING_JWT_PARAMETER_KEY
-                )
+                ))
             );
         }
 
@@ -130,11 +130,11 @@ class LoginSettings extends BaseSettings implements SettingsInterface
             )
         ) {
             throw new Exception(
-                __('Invalid custom URL provided.', 'simple-jwt-login'),
-                $this->settingsErrors->generateCode(
+                esc_html__('Invalid custom URL provided.', 'simple-jwt-login'),
+                absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_LOGIN,
                     SettingsErrors::ERR_LOGIN_INVALID_CUSTOM_URL
-                )
+                ))
             );
         }
     }

@@ -54,12 +54,12 @@ class RefreshTokenRepository implements Repository
      */
     public function getByToken($refreshToken)
     {
-        $escapedTable = esc_sql($this->tableName());
         $sql = $this->wpdb->prepare(
-            'SELECT * FROM `' . $escapedTable . '` WHERE refresh_token = %s AND expires_at > NOW()',
+            'SELECT * FROM %i WHERE refresh_token = %s AND expires_at > NOW()',
+            $this->tableName(),
             $refreshToken
         );
-        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
         return $this->wpdb->get_row($sql);
     }
 

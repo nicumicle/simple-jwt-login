@@ -158,11 +158,11 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
                 ' /'
             ))) {
             throw new Exception(
-                __('Route namespace could not be empty.', 'simple-jwt-login'),
-                $this->settingsErrors->generateCode(
+                esc_html__('Route namespace could not be empty.', 'simple-jwt-login'),
+                absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_GENERAL,
                     SettingsErrors::ERR_GENERAL_EMPTY_NAMESPACE
-                )
+                ))
             );
         }
         if (isset($this->post['request_keys'])) {
@@ -172,11 +172,11 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
                 || empty($this->post['request_keys']['header'])
             ) {
                 throw new Exception(
-                    __('Request Keys are required.', 'simple-jwt-login'),
-                    $this->settingsErrors->generateCode(
+                    esc_html__('Request Keys are required.', 'simple-jwt-login'),
+                    absint($this->settingsErrors->generateCode(
                         SettingsErrors::PREFIX_GENERAL,
                         SettingsErrors::ERR_GENERAL_REQUEST_KEYS
-                    )
+                    ))
                 );
             }
         }
@@ -189,20 +189,20 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
                         || !defined(JwtKeyWpConfig::SIMPLE_JWT_PRIVATE_KEY))
                 ) {
                     throw new Exception(
-                        __('Public or private key is not defined in code.', 'simple-jwt-login'),
-                        $this->settingsErrors->generateCode(
+                        esc_html__('Public or private key is not defined in code.', 'simple-jwt-login'),
+                        absint($this->settingsErrors->generateCode(
                             SettingsErrors::PREFIX_GENERAL,
                             SettingsErrors::ERR_GENERAL_PRIVATE_KEY_MISSING_FROM_CODE_RS
-                        )
+                        ))
                     );
                 }
                 if (!defined(JwtKeyWpConfig::SIMPLE_JWT_PRIVATE_KEY)) {
                     throw new Exception(
-                        __('Private key is not defined in code.', 'simple-jwt-login'),
-                        $this->settingsErrors->generateCode(
+                        esc_html__('Private key is not defined in code.', 'simple-jwt-login'),
+                        absint($this->settingsErrors->generateCode(
                             SettingsErrors::PREFIX_GENERAL,
                             SettingsErrors::ERR_GENERAL_PRIVATE_KEY_NOT_PRESENT_IN_CODE_HS
-                        )
+                        ))
                     );
                 }
             }
@@ -213,11 +213,11 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
                     || empty(trim($this->post['decryption_key_private'])))
             ) {
                 throw new Exception(
-                    __('JWT Decryption public and private key are required.', 'simple-jwt-login'),
-                    $this->settingsErrors->generateCode(
+                    esc_html__('JWT Decryption public and private key are required.', 'simple-jwt-login'),
+                    absint($this->settingsErrors->generateCode(
                         SettingsErrors::PREFIX_GENERAL,
                         SettingsErrors::ERR_GENERAL_MISSING_PRIVATE_AND_PUBLIC_KEY
-                    )
+                    ))
                 );
             }
             if (strpos($this->post['jwt_algorithm'], 'RS') === false
@@ -225,11 +225,11 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
                     || empty(trim($this->post['decryption_key'])))
             ) {
                 throw new Exception(
-                    __('JWT Decryption key is required.', 'simple-jwt-login'),
-                    $this->settingsErrors->generateCode(
+                    esc_html__('JWT Decryption key is required.', 'simple-jwt-login'),
+                    absint($this->settingsErrors->generateCode(
                         SettingsErrors::PREFIX_GENERAL,
                         SettingsErrors::ERR_GENERAL_DECRYPTION_KEY_REQUIRED
-                    )
+                    ))
                 );
             }
         }
@@ -240,11 +240,11 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
             && empty($this->post['request_jwt_session'])
         ) {
             throw new Exception(
-                __('You have to have at least one option enabled in \'Get JWT token From\'', 'simple-jwt-login'),
-                $this->settingsErrors->generateCode(
+                esc_html__('You have to have at least one option enabled in \'Get JWT token From\'', 'simple-jwt-login'),
+                absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_GENERAL,
                     SettingsErrors::ERR_GENERAL_GET_JWT_FROM
-                )
+                ))
             );
         }
     }

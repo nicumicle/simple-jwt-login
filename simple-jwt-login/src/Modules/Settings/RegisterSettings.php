@@ -109,50 +109,50 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
     {
         if (empty($this->post['new_user_profile'])) {
             throw new Exception(
-                __('New User profile slug can not be empty.', 'simple-jwt-login'),
-                $this->settingsErrors->generateCode(
+                esc_html__('New User profile slug can not be empty.', 'simple-jwt-login'),
+                absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_REGISTER,
                     SettingsErrors::ERR_REGISTER_MISSING_NEW_USER_PROFILE
-                )
+                ))
             );
         }
 
         if (!$this->wordPressData->roleExists($this->post['new_user_profile'])) {
             throw new Exception(
-                __('Invalid user role provided.', 'simple-jwt-login'),
-                $this->settingsErrors->generateCode(
+                esc_html__('Invalid user role provided.', 'simple-jwt-login'),
+                absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_REGISTER,
                     SettingsErrors::ERR_REGISTER_INVALID_ROLE
-                )
+                ))
             );
         }
 
         if (isset($this->post['random_password_length']) && !is_numeric($this->post['random_password_length'])) {
             throw new Exception(
-                __('Random password length should be an integer.', 'simple-jwt-login'),
-                $this->settingsErrors->generateCode(
+                esc_html__('Random password length should be an integer.', 'simple-jwt-login'),
+                absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_REGISTER,
                     SettingsErrors::ERR_REGISTER_RANDOM_PASS_LENGTH_NUMERIC
-                )
+                ))
             );
         }
 
         if (isset($this->post['random_password_length']) && ((int)$this->post['random_password_length'] < 6)) {
             throw new Exception(
-                __('Random password length should be at least 6 characters.', 'simple-jwt-login'),
-                $this->settingsErrors->generateCode(
+                esc_html__('Random password length should be at least 6 characters.', 'simple-jwt-login'),
+                absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_REGISTER,
                     SettingsErrors::ERR_REGISTER_RANDOM_PASS_LENGTH_MIN_LENGTH
-                )
+                ))
             );
         }
         if (isset($this->post['random_password_length']) && ((int)$this->post['random_password_length'] > 255)) {
             throw new Exception(
-                __('Random password length can be max 255.', 'simple-jwt-login'),
-                $this->settingsErrors->generateCode(
+                esc_html__('Random password length can be max 255.', 'simple-jwt-login'),
+                absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_REGISTER,
                     SettingsErrors::ERR_REGISTER_RANDOM_PASS_LENGTH_MAX_LENGTH
-                )
+                ))
             );
         }
     }

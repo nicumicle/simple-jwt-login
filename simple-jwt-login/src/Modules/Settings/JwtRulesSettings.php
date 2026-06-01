@@ -143,39 +143,43 @@ class JwtRulesSettings extends BaseSettings implements SettingsInterface
 
             if ($conditionType === 'iss' && $conditionValue === '') {
                 throw new Exception(
-                    sprintf(
-                        __('JWT Rule #%d: the "iss" value cannot be empty.', 'simple-jwt-login'),
+                    esc_html(sprintf(
+                        // translators: %d = rule number
+                        __('JWT Rule #%1$d: the "iss" value cannot be empty.', 'simple-jwt-login'),
                         $i + 1
-                    )
+                    ))
                 );
             }
 
             if ($conditionType !== 'iss' && $conditionKey === '') {
                 throw new Exception(
-                    sprintf(
-                        __('JWT Rule #%d: the condition key cannot be empty.', 'simple-jwt-login'),
+                    esc_html(sprintf(
+                        // translators: %d = rule number
+                        __('JWT Rule #%1$d: the condition key cannot be empty.', 'simple-jwt-login'),
                         $i + 1
-                    )
+                    ))
                 );
             }
 
             if ($conditionValue === '') {
                 throw new Exception(
-                    sprintf(
-                        __('JWT Rule #%d: the condition value cannot be empty.', 'simple-jwt-login'),
+                    esc_html(sprintf(
+                        // translators: %d = rule number
+                        __('JWT Rule #%1$d: the condition value cannot be empty.', 'simple-jwt-login'),
                         $i + 1
-                    )
+                    ))
                 );
             }
 
             $signature = sprintf('%s|%s|%s|%s', $conditionType, $conditionKey, $conditionOperator, $conditionValue);
             if (in_array($signature, $seen, true)) {
                 throw new Exception(
-                    sprintf(
-                        __('JWT Rule #%d: duplicate condition "%s".', 'simple-jwt-login'),
+                    esc_html(sprintf(
+                        // translators: 1: rule number, 2: condition signature
+                        __('JWT Rule #%1$d: duplicate condition "%2$s".', 'simple-jwt-login'),
                         $i + 1,
                         $signature
-                    )
+                    ))
                 );
             }
             $seen[] = $signature;
@@ -190,14 +194,15 @@ class JwtRulesSettings extends BaseSettings implements SettingsInterface
                     : '';
                 if ($pub === '' || $priv === '') {
                     throw new Exception(
-                        sprintf(
+                        esc_html(sprintf(
+                            // translators: 1: rule number, 2: condition value
                             __(
-                                'JWT Rule #%d ("%s"): public and private keys are required for RS* algorithms.',
+                                'JWT Rule #%1$d ("%2$s"): public and private keys are required for RS* algorithms.',
                                 'simple-jwt-login'
                             ),
                             $i + 1,
                             $conditionValue
-                        )
+                        ))
                     );
                 }
                 continue;
@@ -206,11 +211,12 @@ class JwtRulesSettings extends BaseSettings implements SettingsInterface
             $key = isset($rule['decryption_key']) ? trim($rule['decryption_key']) : '';
             if ($key === '') {
                 throw new Exception(
-                    sprintf(
-                        __('JWT Rule #%d ("%s"): decryption key is required.', 'simple-jwt-login'),
+                    esc_html(sprintf(
+                        // translators: 1: rule number, 2: condition value
+                        __('JWT Rule #%1$d ("%2$s"): decryption key is required.', 'simple-jwt-login'),
                         $i + 1,
                         $conditionValue
-                    )
+                    ))
                 );
             }
         }

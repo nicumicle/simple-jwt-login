@@ -83,14 +83,14 @@ class CorsSettings extends BaseSettings implements SettingsInterface
             )
         ) {
             throw new Exception(
-                __(
+                esc_html__(
                     'Cors is enabled but no option is checked. Please check at least one option.',
                     'simple-jwt-login'
                 ),
-                $this->settingsErrors->generateCode(
+                absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_CORS,
                     SettingsErrors::ERR_CORS_NO_OPTION
-                )
+                ))
             );
         }
     }

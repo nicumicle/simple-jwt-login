@@ -33,8 +33,8 @@ abstract class BaseApiKeyService extends BaseService implements ApiKeyServiceInt
     {
         if (!$this->wordPressData->isUserLoggedIn()) {
             throw new Exception(
-                __('You must be logged in to manage API keys.', 'simple-jwt-login'),
-                ErrorCodes::ERR_API_KEY_UNAUTHORIZED
+                esc_html(__('You must be logged in to manage API keys.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_API_KEY_UNAUTHORIZED)
             );
         }
     }
@@ -52,8 +52,8 @@ abstract class BaseApiKeyService extends BaseService implements ApiKeyServiceInt
         $key = $this->apiKeyRepository->findById($keyId);
         if ($key === null || (int) $key->user_id !== $this->wordPressData->getCurrentUserId()) {
             throw new Exception(
-                __('You are not allowed to manage this API key.', 'simple-jwt-login'),
-                ErrorCodes::ERR_API_KEY_UNAUTHORIZED
+                esc_html(__('You are not allowed to manage this API key.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_API_KEY_UNAUTHORIZED)
             );
         }
     }
@@ -76,11 +76,12 @@ abstract class BaseApiKeyService extends BaseService implements ApiKeyServiceInt
             $cap = ApiKeyPermissions::permissionToCapability((string) $permission);
             if ($cap !== null && !$this->wordPressData->currentUserCan($cap)) {
                 throw new Exception(
-                    sprintf(
-                        __('You do not have permission to assign the "%s" permission to an API key.', 'simple-jwt-login'),
+                    esc_html(sprintf(
+                        // translators: %s = permission name
+                        __('You do not have permission to assign the "%1$s" permission to an API key.', 'simple-jwt-login'),
                         $permission
-                    ),
-                    ErrorCodes::ERR_API_KEY_UNAUTHORIZED
+                    )),
+                    absint(ErrorCodes::ERR_API_KEY_UNAUTHORIZED)
                 );
             }
         }
@@ -100,8 +101,8 @@ abstract class BaseApiKeyService extends BaseService implements ApiKeyServiceInt
         $keyId = (int) (isset($this->request['id']) ? $this->request['id'] : 0);
         if ($keyId <= 0) {
             throw new Exception(
-                __('Invalid API key ID.', 'simple-jwt-login'),
-                ErrorCodes::ERR_API_KEY_NOT_FOUND
+                esc_html(__('Invalid API key ID.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_API_KEY_NOT_FOUND)
             );
         }
 
@@ -119,8 +120,8 @@ abstract class BaseApiKeyService extends BaseService implements ApiKeyServiceInt
         $name = trim((string) (isset($this->request['name']) ? $this->request['name'] : ''));
         if ($name === '') {
             throw new Exception(
-                __('API key name is required.', 'simple-jwt-login'),
-                ErrorCodes::ERR_API_KEY_MISSING_NAME
+                esc_html(__('API key name is required.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_API_KEY_MISSING_NAME)
             );
         }
 
@@ -131,8 +132,8 @@ abstract class BaseApiKeyService extends BaseService implements ApiKeyServiceInt
     {
         if (empty($permissions)) {
             throw new Exception(
-                __('At least one permission is required.', 'simple-jwt-login'),
-                ErrorCodes::ERR_API_KEY_MISSING_PERMISSIONS
+                esc_html(__('At least one permission is required.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_API_KEY_MISSING_PERMISSIONS)
             );
         }
 
@@ -143,8 +144,9 @@ abstract class BaseApiKeyService extends BaseService implements ApiKeyServiceInt
         foreach ((array) $permissions as $permission) {
             if (!ApiKeyPermissions::isValid((string) $permission)) {
                 throw new Exception(
-                    sprintf(__('Invalid permission: %s', 'simple-jwt-login'), $permission),
-                    ErrorCodes::ERR_API_KEY_INVALID_PERMISSION
+                    // translators: %s = permission name
+                    esc_html(sprintf(__('Invalid permission: %1$s', 'simple-jwt-login'), $permission)),
+                    absint(ErrorCodes::ERR_API_KEY_INVALID_PERMISSION)
                 );
             }
         }

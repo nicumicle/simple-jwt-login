@@ -21,7 +21,7 @@ class JwtWrapper implements JwtInterface
         try {
             return JWT::encode($payload, $key, $alg, null, $head);
         } catch (Exception $exception) {
-            throw new JWTException($exception->getMessage(), $exception->getCode());
+            throw new JWTException(esc_html($exception->getMessage()), absint($exception->getCode()));
         }
     }
 
@@ -37,7 +37,7 @@ class JwtWrapper implements JwtInterface
         try {
             return JWT::decode($jwt, $key, $allowedAlgs);
         } catch (Exception $exception) {
-            throw new JWTException($exception->getMessage(), $exception->getCode());
+            throw new JWTException(esc_html($exception->getMessage()), absint($exception->getCode()));
         }
     }
 
@@ -51,7 +51,7 @@ class JwtWrapper implements JwtInterface
         try {
             return JWT::extractDataFromJwt($jwt);
         } catch (Exception $exception) {
-            throw new JWTException($exception->getMessage(), $exception->getCode());
+            throw new JWTException(esc_html($exception->getMessage()), absint($exception->getCode()));
         }
     }
 

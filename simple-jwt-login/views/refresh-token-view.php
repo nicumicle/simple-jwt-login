@@ -23,8 +23,7 @@ if (! defined('ABSPATH')) {
             <h3 class="sjl-gen-card-title"><?php echo esc_html__('Allow Refresh Token Endpoint', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
                 <?php echo esc_html__(
-                    'When enabled, the refresh token endpoint is active and a refresh token will be'
-                    . ' returned alongside the JWT on authentication.',
+                    'When enabled, the refresh token endpoint is active and a refresh token will be returned alongside the JWT on authentication.',
                     'simple-jwt-login'
                 ); ?>
             </p>
@@ -119,8 +118,7 @@ if (! defined('ABSPATH')) {
             </h3>
             <p class="sjl-gen-card-desc">
                 <?php echo esc_html__(
-                    'Configure the refresh token lifetime and the secret key used to encrypt'
-                    . ' refresh tokens stored in the database.',
+                    'Configure the refresh token lifetime and the secret key used to encrypt refresh tokens stored in the database.',
                     'simple-jwt-login'
                 ); ?>
             </p>
@@ -135,8 +133,7 @@ if (! defined('ABSPATH')) {
             </label>
             <p class="sjl-gen-card-desc">
                 <?php echo esc_html__(
-                    'Specify the length of time (in minutes) that the refresh token is valid for.'
-                    . ' Defaults to 2 weeks.',
+                    'Specify the length of time (in minutes) that the refresh token is valid for. Defaults to 2 weeks.',
                     'simple-jwt-login'
                 ); ?>
             </p>

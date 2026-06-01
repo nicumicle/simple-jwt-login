@@ -150,11 +150,11 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
             $retention = (int) $this->post['webhook_logs_retention_days'];
             if ($retention < 1) {
                 throw new Exception(
-                    __('Webhook log retention days must be at least 1.', 'simple-jwt-login'),
-                    $this->settingsErrors->generateCode(
+                    esc_html__('Webhook log retention days must be at least 1.', 'simple-jwt-login'),
+                    absint($this->settingsErrors->generateCode(
                         SettingsErrors::PREFIX_WEBHOOKS,
                         SettingsErrors::ERR_WEBHOOKS_INVALID_URL + 1
-                    )
+                    ))
                 );
             }
         }
@@ -166,14 +166,17 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
             $url = isset($webhook['url']) ? $webhook['url'] : '';
             if (filter_var($url, FILTER_VALIDATE_URL) === false) {
                 throw new Exception(
-                    sprintf(
-                        __('Webhook #%d: invalid URL.', 'simple-jwt-login'),
-                        $i + 1
+                    esc_html(
+                        sprintf(
+                            /* translators: %d: webhook index number */
+                            __('Webhook #%d: invalid URL.', 'simple-jwt-login'),
+                            $i + 1
+                        )
                     ),
-                    $this->settingsErrors->generateCode(
+                    absint($this->settingsErrors->generateCode(
                         SettingsErrors::PREFIX_WEBHOOKS,
                         SettingsErrors::ERR_WEBHOOKS_INVALID_URL
-                    )
+                    ))
                 );
             }
         }

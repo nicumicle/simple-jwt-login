@@ -153,11 +153,12 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
         $tokenParam = $this->getTokenParamName();
         if (!isset($this->request['code']) && !isset($this->request[$tokenParam])) {
             throw new Exception(
-                sprintf(
-                    __('The code or %s parameter is missing from request.', 'simple-jwt-login'),
+                esc_html(sprintf(
+                    // translators: %s = token parameter name
+                    __('The code or %1$s parameter is missing from request.', 'simple-jwt-login'),
                     $tokenParam
-                ),
-                $this->getMissingParamErrorCode()
+                )),
+                absint($this->getMissingParamErrorCode())
             );
         }
     }
@@ -183,11 +184,9 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
                     return array('success' => true, 'data' => $result['response']);
                 }
                 throw new Exception(
-                    __(
-                        'The code you provided is invalid.' . $this->handleErrorMessage($result['response']),
-                        'simple-jwt-login'
-                    ),
-                    $this->getInvalidCodeErrorCode()
+                    esc_html(__('The code you provided is invalid.', 'simple-jwt-login'))
+                        . esc_html($this->handleErrorMessage($result['response'])),
+                    absint($this->getInvalidCodeErrorCode())
                 );
             case !empty($this->request[$tokenParam]):
                 $token = $this->request[$tokenParam];
@@ -339,8 +338,8 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
                 __('Wrong user credentials.', 'simple-jwt-login')
             );
             throw new Exception(
-                __('Wrong user credentials.', 'simple-jwt-login'),
-                $this->getUserNotFoundErrorCode()
+                esc_html(__('Wrong user credentials.', 'simple-jwt-login')),
+                absint($this->getUserNotFoundErrorCode())
             );
         }
 
@@ -427,8 +426,8 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
         $nonce  = $bridge->createNonce($userId);
         if ($nonce === false) {
             throw new Exception(
-                __('Unable to create two-factor nonce.', 'simple-jwt-login'),
-                ErrorCodes::ERR_TWO_FACTOR_INVALID_NONCE
+                esc_html(__('Unable to create two-factor nonce.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_TWO_FACTOR_INVALID_NONCE)
             );
         }
 
@@ -461,14 +460,12 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
      */
     protected function doHtmlRedirect($url)
     {
-        $safeUrl = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
-        $jsonUrl = json_encode($url);
         if (!headers_sent()) {
             header('Content-Type: text/html; charset=UTF-8');
         }
         echo '<!DOCTYPE html><html><head>'
-            . '<meta http-equiv="refresh" content="0;url=' . $safeUrl . '">'
-            . '<script>window.location.replace(' . $jsonUrl . ');</script>'
+            . '<meta http-equiv="refresh" content="0;url=' . esc_url($url) . '">'
+            . '<script>window.location.replace(' . wp_json_encode($url) . ');</script>'
             . '</head><body></body></html>';
         exit;
     }
@@ -490,8 +487,8 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
         $nonce  = $bridge->createNonce($userId);
         if ($nonce === false) {
             throw new Exception(
-                __('Unable to create two-factor nonce.', 'simple-jwt-login'),
-                ErrorCodes::ERR_TWO_FACTOR_INVALID_NONCE
+                esc_html(__('Unable to create two-factor nonce.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_TWO_FACTOR_INVALID_NONCE)
             );
         }
 

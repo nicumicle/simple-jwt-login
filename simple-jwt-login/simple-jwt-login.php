@@ -31,14 +31,6 @@ define('SIMPLE_JWT_LOGIN_PLUGIN_FILE', __FILE__);
 
 include_once 'autoload.php';
 
-/**
- * @param string $value
- * @return string
- */
-function simple_jwt_login_sanitize_css_value($value)
-{
-    return Shortcodes::sanitizeCssValue($value);
-}
 global $wpdb;
 
 // Admin UI
@@ -50,12 +42,14 @@ add_filter(
 );
 
 // Login page integration
+//phpcs:ignore WordPress.Security.NonceVerification.Recommended
 $simpleJwtLoginLoginPage = new LoginPageIntegration($_REQUEST);
 add_action('login_head', array($simpleJwtLoginLoginPage, 'enqueueLoginAssets'));
 add_action('login_message', array($simpleJwtLoginLoginPage, 'showLoginMessage'));
 add_action('login_footer', array($simpleJwtLoginLoginPage, 'renderLoginFooter'));
 
 // Browser-based OAuth + 2FA page (wp-login.php?action=sjl-oauth-2fa)
+//phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.NonceVerification.Missing
 $simpleJwtLoginOAuthTwoFactor = new OAuthTwoFactorLoginHandler($_SERVER, $_GET, $_POST);
 add_action(
     'login_form_' . AbstractOauth::BROWSER_2FA_ACTION,
@@ -63,6 +57,7 @@ add_action(
 );
 
 // Shortcodes
+//phpcs:ignore WordPress.Security.NonceVerification.Recommended
 $simpleJwtLoginShortcodes = new Shortcodes($_REQUEST);
 add_shortcode('simple-jwt-login:request', array($simpleJwtLoginShortcodes, 'handleRequestShortcode'));
 add_shortcode('simple-jwt-login-oauth', array($simpleJwtLoginShortcodes, 'handleOauthShortcode'));
@@ -72,7 +67,7 @@ $simpleJwtLoginLifecycle = new Lifecycle($wpdb);
 register_activation_hook(__FILE__, array($simpleJwtLoginLifecycle, 'activate'));
 register_deactivation_hook(__FILE__, array($simpleJwtLoginLifecycle, 'deactivate'));
 register_uninstall_hook(__FILE__, 'SimpleJWTLogin\\Plugin\\Lifecycle::uninstall');
-add_action('plugins_loaded', array($simpleJwtLoginLifecycle, 'loadTranslations'));
+add_action('init', array($simpleJwtLoginLifecycle, 'loadTranslations'));
 add_action('plugins_loaded', array($simpleJwtLoginLifecycle, 'checkDbVersion'));
 
 // Cron cleanup

@@ -286,19 +286,19 @@ abstract class AbstractOauthSettings
         }
 
         throw new Exception(
-            sprintf(
-                // translators: %s = provider name
+            esc_html(sprintf(
+                // translators: 1: provider name, 2: provider name
                 __(
-                    'You need to enable at least one %s option in order to enable the %s App.',
+                    'You need to enable at least one %1$s option in order to enable the %2$s App.',
                     'simple-jwt-login'
                 ),
                 $this->getName(),
                 $this->getName()
-            ),
-            $this->settingsErrors->generateCode(
+            )),
+            absint($this->settingsErrors->generateCode(
                 SettingsErrors::PREFIX_APPLICATIONS,
                 $this->getAtLeastOneEnabledErrorCode()
-            )
+            ))
         );
     }
 
@@ -312,9 +312,12 @@ abstract class AbstractOauthSettings
             list($field, $errorCode, $label) = $validation;
             if (empty($groupPost[$field])) {
                 throw new Exception(
-                    // translators: %s = field label (e.g. "Google Client ID")
-                    sprintf(__('%s is required.', 'simple-jwt-login'), $label),
-                    $this->settingsErrors->generateCode(SettingsErrors::PREFIX_APPLICATIONS, $errorCode)
+                    esc_html(sprintf(
+                        // translators: %s = field label (e.g. "Google Client ID")
+                        __('%1$s is required.', 'simple-jwt-login'),
+                        $label
+                    )),
+                    absint($this->settingsErrors->generateCode(SettingsErrors::PREFIX_APPLICATIONS, $errorCode))
                 );
             }
         }
@@ -328,15 +331,15 @@ abstract class AbstractOauthSettings
     {
         if (!empty($groupPost['enable_exchange_code']) && empty($groupPost['redirect_uri_exchange_code'])) {
             throw new Exception(
-                sprintf(
+                esc_html(sprintf(
                     // translators: %s = provider name
-                    __('%s Redirect URI is required when exchange code is enabled.', 'simple-jwt-login'),
+                    __('%1$s Redirect URI is required when exchange code is enabled.', 'simple-jwt-login'),
                     $this->getName()
-                ),
-                $this->settingsErrors->generateCode(
+                )),
+                absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_APPLICATIONS,
                     $this->getRedirectUriRequiredErrorCode()
-                )
+                ))
             );
         }
     }

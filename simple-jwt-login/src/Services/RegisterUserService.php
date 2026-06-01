@@ -56,8 +56,8 @@ class RegisterUserService extends BaseService implements ServiceInterface
 
         if ($this->wordPressData->checkUserExistsByUsernameAndEmail($username, $email)) {
             throw new Exception(
-                __('User already exists.', 'simple-jwt-login'),
-                ErrorCodes::ERR_REGISTER_USER_ALREADY_EXISTS
+                esc_html(__('User already exists.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_REGISTER_USER_ALREADY_EXISTS)
             );
         }
 
@@ -219,8 +219,8 @@ class RegisterUserService extends BaseService implements ServiceInterface
 
         if (!$registerSettings->isRegisterAllowed()) {
             throw new Exception(
-                __('Register is not allowed.', 'simple-jwt-login'),
-                ErrorCodes::ERR_REGISTER_IS_NOT_ALLOWED
+                esc_html(__('Register is not allowed.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_REGISTER_IS_NOT_ALLOWED)
             );
         }
 
@@ -233,45 +233,48 @@ class RegisterUserService extends BaseService implements ServiceInterface
         $allowedIPs = $registerSettings->getAllowedRegisterIps();
         if (!empty($allowedIPs) && !$this->serverHelper->isClientIpInList($allowedIPs)) {
             throw new Exception(
-                sprintf(
-                    __('This IP[%s] is not allowed to register users.', 'simple-jwt-login'),
-                    $this->serverHelper->getClientIP()
+                esc_html(
+                    sprintf(
+                        /* translators: %s: client IP address */
+                        __('This IP[%s] is not allowed to register users.', 'simple-jwt-login'),
+                        $this->serverHelper->getClientIP()
+                    )
                 ),
-                ErrorCodes::ERR_REGISTER_IP_IS_NOT_ALLOWED
+                absint(ErrorCodes::ERR_REGISTER_IP_IS_NOT_ALLOWED)
             );
         }
 
         if (empty($this->request['email'])) {
             throw new ValidationException(
-                __('Missing email.', 'simple-jwt-login'),
-                ErrorCodes::ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD
+                esc_html(__('Missing email.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD)
             );
         }
 
         if (empty($this->request['password']) && !$registerSettings->isRandomPasswordForCreateUserEnabled()) {
             throw new ValidationException(
-                __('Missing password.', 'simple-jwt-login'),
-                ErrorCodes::ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD
+                esc_html(__('Missing password.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD)
             );
         }
 
         if (!$this->wordPressData->isEmail($this->request['email'])) {
             throw new ValidationException(
-                __('Invalid email address.', 'simple-jwt-login'),
-                ErrorCodes::ERR_REGISTER_INVALID_EMAIL_ADDRESS
+                esc_html(__('Invalid email address.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_REGISTER_INVALID_EMAIL_ADDRESS)
             );
         }
 
         if (!empty($this->request['user_login']) && strlen($this->request['user_login']) > 60) {
             throw new ValidationException(
-                __('Username must be less than 60 characters.', 'simple-jwt-login'),
-                ErrorCodes::ERR_REGISTER_INVALID_EMAIL_ADDRESS
+                esc_html(__('Username must be less than 60 characters.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_REGISTER_INVALID_EMAIL_ADDRESS)
             );
         }
         if (empty($this->request['user_login']) && strlen($this->request['email']) > 60) {
             throw new ValidationException(
-                __('Email must be less than 60 characters.', 'simple-jwt-login'),
-                ErrorCodes::ERR_REGISTER_INVALID_EMAIL_ADDRESS
+                esc_html(__('Email must be less than 60 characters.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_REGISTER_INVALID_EMAIL_ADDRESS)
             );
         }
 
@@ -289,8 +292,8 @@ class RegisterUserService extends BaseService implements ServiceInterface
                 )
             ) {
                 throw new Exception(
-                    __('This website does not allows users from this domain.', 'simple-jwt-login'),
-                    ErrorCodes::ERR_REGISTER_DOMAIN_FOR_USER
+                    esc_html(__('This website does not allows users from this domain.', 'simple-jwt-login')),
+                    absint(ErrorCodes::ERR_REGISTER_DOMAIN_FOR_USER)
                 );
             }
         }

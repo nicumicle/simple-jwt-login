@@ -22,8 +22,7 @@ if (! defined('ABSPATH')) {
             <h3 class="sjl-gen-card-title"><?php echo esc_html__('Allow Validate Token Endpoint', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
                 <?php echo esc_html__(
-                    'When enabled, the validate token endpoint is active and clients can verify'
-                    . ' a JWT and retrieve the associated WordPress user details.',
+                    'When enabled, the validate token endpoint is active and clients can verify a JWT and retrieve the associated WordPress user details.',
                     'simple-jwt-login'
                 ); ?>
             </p>

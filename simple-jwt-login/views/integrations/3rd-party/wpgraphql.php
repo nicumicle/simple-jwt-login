@@ -27,7 +27,8 @@ if (!defined('ABSPATH')) {
                 <p class="sjl-gen-card-desc">
                     <?php echo wp_kses(
                         sprintf(
-                            __('JWT authentication for %sWPGraphQL%s queries.', 'simple-jwt-login'),
+                            /* translators: 1: opening anchor tag, 2: closing anchor tag */
+                            __('JWT authentication for %1$sWPGraphQL%2$s queries.', 'simple-jwt-login'),
                             '<a href="https://www.wpgraphql.com/" target="_blank">',
                             '</a>'
                         ),
@@ -69,7 +70,8 @@ if (!defined('ABSPATH')) {
         <p class="sjl-gen-card-desc" style="margin-top: 8px;">
             <?php echo wp_kses(
                 sprintf(
-                    __('Requires the %sWPGraphQL plugin%s to be installed and activated.', 'simple-jwt-login'),
+                    /* translators: 1: opening anchor tag, 2: closing anchor tag */
+                    __('Requires the %1$sWPGraphQL plugin%2$s to be installed and activated.', 'simple-jwt-login'),
                     '<a href="https://www.wpgraphql.com/" target="_blank">',
                     '</a>'
                 ),

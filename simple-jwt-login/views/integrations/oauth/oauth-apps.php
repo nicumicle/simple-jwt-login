@@ -56,8 +56,10 @@ $sjlApps = [
 
 $activeApp = $sjlApps[0]['id'];
 
+//phpcs:ignore WordPress.Security.NonceVerification.Recommended
 if (!empty($_REQUEST['active_app_panel'])) {
-    $submittedApp = sanitize_text_field($_REQUEST['active_app_panel']);
+    //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $submittedApp = sanitize_text_field(wp_unslash($_REQUEST['active_app_panel']));
     if (in_array($submittedApp, array_column($sjlApps, 'id'), true)) {
         $activeApp = $submittedApp;
     }

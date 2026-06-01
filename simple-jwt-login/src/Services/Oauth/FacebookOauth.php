@@ -70,8 +70,8 @@ class FacebookOauth extends AbstractOauth
     {
         if (empty($tokenResponse['access_token'])) {
             throw new Exception(
-                __('Facebook did not return an access_token.', 'simple-jwt-login'),
-                ErrorCodes::ERR_FACEBOOK_INVALID_TOKEN
+                esc_html(__('Facebook did not return an access_token.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_FACEBOOK_INVALID_TOKEN)
             );
         }
 
@@ -98,8 +98,8 @@ class FacebookOauth extends AbstractOauth
 
         if ($statusCode !== 200) {
             throw new Exception(
-                __('The provided Facebook access_token is invalid.', 'simple-jwt-login'),
-                ErrorCodes::ERR_FACEBOOK_INVALID_TOKEN
+                esc_html(__('The provided Facebook access_token is invalid.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_FACEBOOK_INVALID_TOKEN)
             );
         }
     }
@@ -163,8 +163,8 @@ class FacebookOauth extends AbstractOauth
 
         if ($statusCode !== 200 || empty($userinfo['email'])) {
             throw new Exception(
-                __('Unable to retrieve user email from Facebook. Ensure the email permission is granted.', 'simple-jwt-login'),
-                ErrorCodes::ERR_FACEBOOK_INVALID_TOKEN
+                esc_html(__('Unable to retrieve user email from Facebook. Ensure the email permission is granted.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_FACEBOOK_INVALID_TOKEN)
             );
         }
 

@@ -22,8 +22,7 @@ if (! defined('ABSPATH')) {
             <h3 class="sjl-gen-card-title"><?php echo esc_html__('Allow Revoke Token Endpoint', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
                 <?php echo esc_html__(
-                    'When enabled, the revoke token endpoint is active and clients can invalidate'
-                    . ' a JWT for future requests.',
+                    'When enabled, the revoke token endpoint is active and clients can invalidate a JWT for future requests.',
                     'simple-jwt-login'
                 ); ?>
             </p>

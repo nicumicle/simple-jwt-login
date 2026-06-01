@@ -20,8 +20,8 @@ class RevokeApiKeyService extends BaseApiKeyService
 
         if (!$revoked) {
             throw new Exception(
-                __('Failed to revoke API key.', 'simple-jwt-login'),
-                ErrorCodes::ERR_API_KEY_REVOKE_FAILED
+                esc_html(__('Failed to revoke API key.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_API_KEY_REVOKE_FAILED)
             );
         }
 

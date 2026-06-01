@@ -99,11 +99,11 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
 
         if ($this->getAction() === self::SPECIFIC_ENDPOINTS && empty($filteredEndpoints)) {
             throw new Exception(
-                __('You need to add at least one endpoint.', 'simple-jwt-login'),
-                $this->settingsErrors->generateCode(
+                esc_html__('You need to add at least one endpoint.', 'simple-jwt-login'),
+                absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_PROTECT_ENDPOINTS,
                     SettingsErrors::ERR_EMPTY_SPECIFIC_ENDPOINT
-                )
+                ))
             );
         }
     }

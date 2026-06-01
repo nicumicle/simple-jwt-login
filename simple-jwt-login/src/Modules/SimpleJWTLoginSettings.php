@@ -248,8 +248,8 @@ class SimpleJWTLoginSettings
             ->checkNonce($post['_wpnonce'], WordPressRepository::NONCE_NAME);
         if ($result === false) {
             throw new Exception(
-                __('Something is wrong. We can not save the settings.', 'simple-jwt-login'),
-                ErrorCodes::ERR_INVALID_NONCE
+                esc_html__('Something is wrong. We can not save the settings.', 'simple-jwt-login'),
+                absint(ErrorCodes::ERR_INVALID_NONCE)
             );
         }
 

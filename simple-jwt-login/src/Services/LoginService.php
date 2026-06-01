@@ -71,8 +71,8 @@ class LoginService extends BaseService implements ServiceInterface
         $user = $this->getUserDetails($loginParameter);
         if ($user === null) {
             throw new Exception(
-                __('User not found.', 'simple-jwt-login'),
-                ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND
+                esc_html(__('User not found.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND)
             );
         }
 
@@ -117,24 +117,24 @@ class LoginService extends BaseService implements ServiceInterface
     {
         if (!$this->jwtSettings->getLoginSettings()->isAutologinEnabled()) {
             throw new Exception(
-                __('Auto-login is not enabled on this website.', 'simple-jwt-login'),
-                ErrorCodes::ERR_AUTO_LOGIN_NOT_ENABLED
+                esc_html(__('Auto-login is not enabled on this website.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_AUTO_LOGIN_NOT_ENABLED)
             );
         }
                 
         $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
         if (empty($this->jwt)) {
             throw new ValidationException(
-                __('JWT is missing.', 'simple-jwt-login'),
-                ErrorCodes::ERR_JWT_IS_MISSING
+                esc_html(__('JWT is missing.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_JWT_IS_MISSING)
             );
         }
 
         $interimPayload = $this->getPayloadFromJWT($this->jwt);
         if (!empty($interimPayload[AuthenticateService::TFA_PENDING_CLAIM])) {
             throw new Exception(
-                __('This JWT requires two-factor verification before it can be used for login.', 'simple-jwt-login'),
-                ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REJECTED
+                esc_html(__('This JWT requires two-factor verification before it can be used for login.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REJECTED)
             );
         }
 
@@ -146,11 +146,14 @@ class LoginService extends BaseService implements ServiceInterface
         $allowedIPs = $this->jwtSettings->getLoginSettings()->getAllowedLoginIps();
         if (!empty($allowedIPs) && !$this->serverHelper->isClientIpInList($allowedIPs)) {
             throw new Exception(
-                sprintf(
-                    __('This IP[ %s ] is not allowed to auto-login.', 'simple-jwt-login'),
-                    $this->serverHelper->getClientIP()
+                esc_html(
+                    sprintf(
+                        /* translators: %s: client IP address */
+                        __('This IP[ %s ] is not allowed to auto-login.', 'simple-jwt-login'),
+                        $this->serverHelper->getClientIP()
+                    )
                 ),
-                ErrorCodes::ERR_IP_IS_NOT_ALLOWED_TO_LOGIN
+                absint(ErrorCodes::ERR_IP_IS_NOT_ALLOWED_TO_LOGIN)
             );
         }
 
@@ -162,8 +165,8 @@ class LoginService extends BaseService implements ServiceInterface
                 !isset($payload['iss']) ||
                 !in_array($payload['iss'], array_map('trim', explode(',', $allowedIss)), true)) {
                 throw new Exception(
-                    __('The JWT issuer(iss) is not allowed to auto-login.', 'simple-jwt-login'),
-                    ErrorCodes::ERR_INVALID_IIS_LOGIN
+                    esc_html(__('The JWT issuer(iss) is not allowed to auto-login.', 'simple-jwt-login')),
+                    absint(ErrorCodes::ERR_INVALID_IIS_LOGIN)
                 );
             }
         }

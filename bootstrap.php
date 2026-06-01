@@ -307,6 +307,20 @@ if (!function_exists('wp_verify_nonce')) {
     }
 }
 
+if (!function_exists('check_admin_referer')) {
+    function check_admin_referer($action = -1, $queryArg = '_wpnonce')
+    {
+        return 1;
+    }
+}
+
+if (!function_exists('absint')) {
+    function absint($maybeint)
+    {
+        return abs((int) $maybeint);
+    }
+}
+
 if (!function_exists('wp_generate_password')) {
     /**
      * @param int $length

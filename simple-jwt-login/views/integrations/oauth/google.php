@@ -128,6 +128,7 @@ $google = $jwtSettings->getIntegrationsSettings()->google();
                 <p class="sjl-gen-feature-desc">
                     <?php echo wp_kses(
                         sprintf(
+                            /* translators: %s: URL to Google Cloud Console */
                             __('Set the following Redirect URI in your <a href="%s" target="_blank">Google Cloud Console</a> for the OAuth flow to work correctly.', 'simple-jwt-login'),
                             esc_url('https://console.cloud.google.com/')
                         ),

@@ -35,8 +35,8 @@ class UpdateApiKeyService extends BaseApiKeyService
 
         if (!$updated) {
             throw new Exception(
-                __('Failed to update API key.', 'simple-jwt-login'),
-                ErrorCodes::ERR_API_KEY_UPDATE_FAILED
+                esc_html(__('Failed to update API key.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_API_KEY_UPDATE_FAILED)
             );
         }
 

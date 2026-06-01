@@ -240,6 +240,7 @@ if (!defined('ABSPATH')) {
                     <span class="sjl-gen-feature-desc" style="display:inline;">
                         <?php echo wp_kses(
                             sprintf(
+                                /* translators: %s: placeholder variable name */
                                 __('Include %s in your body to embed the reset link.', 'simple-jwt-login'),
                                 '<code class="sjl-gen-var-chip">{{CODE}}</code>'
                             ),

@@ -59,7 +59,7 @@ class SettingsFactory
     {
         $classMap = static::getClassMap();
         if (!isset($classMap[$type])) {
-            throw new Exception(__('Settings implementation not found.', 'simple-jwt-login'));
+            throw new Exception(esc_html__('Settings implementation not found.', 'simple-jwt-login'));
         }
         $className = $classMap[$type];
 

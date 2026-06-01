@@ -59,7 +59,7 @@ class WordPressRepository implements Repository
      */
     public function redirect($url)
     {
-        wp_redirect($url);
+        wp_safe_redirect($url);
         exit;
     }
 
@@ -144,10 +144,10 @@ class WordPressRepository implements Repository
         $result = wp_insert_user($userParameters);
         if ($result instanceof \WP_Error) {
             throw new Exception(
-                $result->get_error_message(
+                esc_html($result->get_error_message(
                     $result->get_error_code()
-                ),
-                ErrorCodes::ERR_CREATE_USER_ERROR
+                )),
+                absint(ErrorCodes::ERR_CREATE_USER_ERROR)
             );
         }
 

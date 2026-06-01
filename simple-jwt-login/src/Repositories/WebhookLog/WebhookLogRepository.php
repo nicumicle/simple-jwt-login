@@ -93,18 +93,18 @@ class WebhookLogRepository implements Repository
 
         $whereClause = empty($where) ? '' : 'WHERE ' . implode(' AND ', $where);
 
-        $offset       = ($page - 1) * $perPage;
-        $escapedTable = esc_sql($this->tableName());
+        $offset = ($page - 1) * $perPage;
 
-        $countSql   = 'SELECT COUNT(*) FROM `' . $escapedTable . '` ' . $whereClause;
-        $dataSql    = 'SELECT * FROM `' . $escapedTable . '` ' . $whereClause . ' ORDER BY created_at DESC LIMIT %d OFFSET %d';
-        $dataParams = array_merge($params, [$perPage, $offset]);
+        $countSql    = 'SELECT COUNT(*) FROM %i ' . $whereClause;
+        $dataSql     = 'SELECT * FROM %i ' . $whereClause . ' ORDER BY created_at DESC LIMIT %d OFFSET %d';
+        $countParams = array_merge([$this->tableName()], $params);
+        $dataParams  = array_merge([$this->tableName()], $params, [$perPage, $offset]);
 
         //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-        $preparedCountSql = empty($params) ? $countSql : $this->wpdb->prepare($countSql, $params);
-        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+        $preparedCountSql = $this->wpdb->prepare($countSql, $countParams);
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
         $total = (int) $this->wpdb->get_var($preparedCountSql);
-        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
         $items = $this->wpdb->get_results($this->wpdb->prepare($dataSql, $dataParams));
 
         return [
@@ -119,12 +119,12 @@ class WebhookLogRepository implements Repository
      */
     public function deleteOlderThan($beforeDatetime)
     {
-        $escapedTable = esc_sql($this->tableName());
         $sql = $this->wpdb->prepare(
-            'DELETE FROM `' . $escapedTable . '` WHERE created_at < %s',
+            'DELETE FROM %i WHERE created_at < %s',
+            $this->tableName(),
             $beforeDatetime
         );
-        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
         $result = $this->wpdb->query($sql);
 
         return $result !== false;

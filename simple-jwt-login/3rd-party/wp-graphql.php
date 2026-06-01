@@ -27,6 +27,7 @@ add_action('init_graphql_request', function () {
 
     $routeService = (new RouteService())
         ->withSettings($jwtSettings)
+        //phpcs:ignore WordPress.Security.NonceVerification.Recommended
         ->withRequest(array_merge($_REQUEST, $parsedRequestVariables))
         ->withCookies($_COOKIE)
         ->withServerHelper(new ServerHelper($_SERVER));

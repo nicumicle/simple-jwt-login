@@ -75,8 +75,8 @@ class Auth0Oauth extends AbstractOauth
     {
         if (empty($tokenResponse['access_token'])) {
             throw new Exception(
-                __('Auth0 did not return an access_token.', 'simple-jwt-login'),
-                ErrorCodes::ERR_AUTH0_INVALID_TOKEN
+                esc_html(__('Auth0 did not return an access_token.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_AUTH0_INVALID_TOKEN)
             );
         }
 
@@ -104,8 +104,8 @@ class Auth0Oauth extends AbstractOauth
 
         if ($statusCode !== 200) {
             throw new Exception(
-                __('The provided Auth0 access_token is invalid.', 'simple-jwt-login'),
-                ErrorCodes::ERR_AUTH0_INVALID_TOKEN
+                esc_html(__('The provided Auth0 access_token is invalid.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_AUTH0_INVALID_TOKEN)
             );
         }
     }
@@ -174,8 +174,8 @@ class Auth0Oauth extends AbstractOauth
 
         if ($statusCode !== 200) {
             throw new Exception(
-                __('The provided Auth0 token is invalid.', 'simple-jwt-login'),
-                ErrorCodes::ERR_AUTH0_INVALID_TOKEN
+                esc_html(__('The provided Auth0 token is invalid.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_AUTH0_INVALID_TOKEN)
             );
         }
     }
@@ -204,8 +204,8 @@ class Auth0Oauth extends AbstractOauth
 
         if ($statusCode !== 200 || empty($userinfo['email'])) {
             throw new Exception(
-                __('Unable to retrieve user email from Auth0.', 'simple-jwt-login'),
-                ErrorCodes::ERR_AUTH0_INVALID_TOKEN
+                esc_html(__('Unable to retrieve user email from Auth0.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_AUTH0_INVALID_TOKEN)
             );
         }
 

@@ -69,8 +69,7 @@ if (!defined('ABSPATH')) {
             </h3>
             <p class="sjl-gen-card-desc">
                 <?php echo esc_html__(
-                    'Enable one or more locations where the JWT may be provided with the request. '
-                    . 'When the JWT appears in multiple locations, higher-priority sources override lower ones.',
+                    'Enable one or more locations where the JWT may be provided with the request. When the JWT appears in multiple locations, higher-priority sources override lower ones.',
                     'simple-jwt-login'
                 ); ?>
             </p>
@@ -113,8 +112,7 @@ if (!defined('ABSPATH')) {
                         </select>
                     </td>
                     <td>
-                        <?php $requestKeyUrl = esc_html($jwtSettings->getGeneralSettings()->getRequestKeyUrl()); ?>
-                        <code class="sjl-gen-example-code">?<?php echo $requestKeyUrl; ?>=<strong>YOUR_JWT</strong></code>
+                        <code class="sjl-gen-example-code">?<?php echo esc_html($jwtSettings->getGeneralSettings()->getRequestKeyUrl()); ?>=<strong>YOUR_JWT</strong></code>
                     </td>
                 </tr>
 
@@ -204,8 +202,7 @@ if (!defined('ABSPATH')) {
                         </select>
                     </td>
                     <td>
-                        <?php $headerKey = esc_html($jwtSettings->getGeneralSettings()->getRequestKeyHeader()); ?>
-                        <code class="sjl-gen-example-code"><?php echo $headerKey; ?>: Bearer <strong>YOUR_JWT</strong></code>
+                        <code class="sjl-gen-example-code"><?php echo esc_html($jwtSettings->getGeneralSettings()->getRequestKeyHeader()); ?>: Bearer <strong>YOUR_JWT</strong></code>
                     </td>
                 </tr>
             </tbody>

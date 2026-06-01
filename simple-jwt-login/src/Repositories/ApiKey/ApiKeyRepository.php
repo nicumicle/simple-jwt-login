@@ -66,15 +66,15 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
      */
     public function getByKeyHash($keyHash)
     {
-        $escapedTable = esc_sql($this->tableName());
         $sql = $this->wpdb->prepare(
-            'SELECT * FROM `' . $escapedTable . '`
+            'SELECT * FROM %i
              WHERE key_hash = %s
                AND revoked_at IS NULL
                AND (expires_at IS NULL OR expires_at > NOW())',
+            $this->tableName(),
             $keyHash
         );
-        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+        //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared
         return $this->wpdb->get_row($sql);
     }
 
@@ -85,21 +85,21 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
      */
     public function findAll($page, $perPage)
     {
-        $offset       = ($page - 1) * $perPage;
-        $escapedTable = esc_sql($this->tableName());
+        $offset = ($page - 1) * $perPage;
 
-        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-        $total = (int) $this->wpdb->get_var('SELECT COUNT(*) FROM `' . $escapedTable . '`');
+        //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared
+        $total = (int) $this->wpdb->get_var($this->wpdb->prepare('SELECT COUNT(*) FROM %i', $this->tableName()));
 
         $sql = $this->wpdb->prepare(
             'SELECT id, user_id, name, key_prefix, permissions, expires_at, last_used_at, created_at, revoked_at
-             FROM `' . $escapedTable . '`
+             FROM %i
              ORDER BY created_at DESC
              LIMIT %d OFFSET %d',
+            $this->tableName(),
             $perPage,
             $offset
         );
-        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+        //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared
         $items = $this->wpdb->get_results($sql);
 
         return [
@@ -116,27 +116,24 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
      */
     public function findByUserId($userId, $page, $perPage)
     {
-        $offset       = ($page - 1) * $perPage;
-        $escapedTable = esc_sql($this->tableName());
+        $offset = ($page - 1) * $perPage;
 
-        $countSql = $this->wpdb->prepare(
-            'SELECT COUNT(*) FROM `' . $escapedTable . '` WHERE user_id = %d',
-            $userId
-        );
-        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+        $countSql = $this->wpdb->prepare('SELECT COUNT(*) FROM %i WHERE user_id = %d', $this->tableName(), $userId);
+        //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared
         $total = (int) $this->wpdb->get_var($countSql);
 
         $sql = $this->wpdb->prepare(
             'SELECT id, user_id, name, key_prefix, permissions, expires_at, last_used_at, created_at, revoked_at
-             FROM `' . $escapedTable . '`
+             FROM %i
              WHERE user_id = %d
              ORDER BY created_at DESC
              LIMIT %d OFFSET %d',
+            $this->tableName(),
             $userId,
             $perPage,
             $offset
         );
-        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+        //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared
         $items = $this->wpdb->get_results($sql);
 
         return [
@@ -151,14 +148,14 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
      */
     public function findById($keyId)
     {
-        $escapedTable = esc_sql($this->tableName());
         $sql = $this->wpdb->prepare(
             'SELECT id, user_id, name, key_prefix, permissions, expires_at, last_used_at, created_at, revoked_at
-             FROM `' . $escapedTable . '`
+             FROM %i
              WHERE id = %d',
+            $this->tableName(),
             $keyId
         );
-        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+        //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared
         return $this->wpdb->get_row($sql);
     }
 
@@ -210,7 +207,7 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
      */
     public function deleteById($keyId)
     {
-        //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+        //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared
         $result = $this->wpdb->delete(
             $this->tableName(),
             ['id' => $keyId],
@@ -244,24 +241,27 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
     public function createTable()
     {
         $charsetCollate = $this->wpdb->get_charset_collate();
-        $tableName      = $this->tableName();
 
-        $sql = "CREATE TABLE IF NOT EXISTS $tableName (
-            id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            user_id bigint(20) UNSIGNED NOT NULL,
-            name varchar(255) NOT NULL DEFAULT '',
-            key_hash varchar(64) NOT NULL,
-            key_prefix varchar(12) NOT NULL,
-            permissions longtext NOT NULL,
-            expires_at datetime DEFAULT NULL,
-            last_used_at datetime DEFAULT NULL,
-            created_at datetime NOT NULL,
-            revoked_at datetime DEFAULT NULL,
-            PRIMARY KEY (id),
-            UNIQUE KEY key_hash (key_hash),
-            KEY user_id (user_id)
-        ) $charsetCollate;";
+        $sql = $this->wpdb->prepare(
+            'CREATE TABLE IF NOT EXISTS %i (
+                id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+                user_id bigint(20) UNSIGNED NOT NULL,
+                name varchar(255) NOT NULL DEFAULT \'\',
+                key_hash varchar(64) NOT NULL,
+                key_prefix varchar(12) NOT NULL,
+                permissions longtext NOT NULL,
+                expires_at datetime DEFAULT NULL,
+                last_used_at datetime DEFAULT NULL,
+                created_at datetime NOT NULL,
+                revoked_at datetime DEFAULT NULL,
+                PRIMARY KEY (id),
+                UNIQUE KEY key_hash (key_hash),
+                KEY user_id (user_id)
+            )',
+            $this->tableName()
+        ) . ' ' . $charsetCollate;
 
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.NoCaching
         $this->wpdb->query($sql);
     }
 

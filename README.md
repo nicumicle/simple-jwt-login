@@ -131,11 +131,11 @@ In order to install the latest stable version, from your WordPress admin:
 - **API Keys** - Generate per-client API keys as an alternative credential for obtaining JWTs
 - **Audit Logs** - Detailed logs of every login, registration, and authentication event for visibility and compliance
 - **Webhooks** - Fire outbound HTTP callbacks on login, registration, and authentication events to integrate with external services
-- **Google OAuth** (beta) - Allow users to log in with their Google account via OAuth
-- **Google JWT** (beta) - Accept a Google `id_token` to authenticate against WordPress endpoints
-- **Facebook OAuth** (beta) - Allow users to log in with their Facebook account via OAuth
-- **GitHub OAuth** (beta) - Allow users to log in with their GitHub account via OAuth
-- **Auth0 Login** (beta) - Allow users to log in via Auth0
+- **Google OAuth** - Allow users to log in with their Google account via OAuth
+- **Google JWT** - Accept a Google `id_token` to authenticate against WordPress endpoints
+- **Facebook OAuth** - Allow users to log in with their Facebook account via OAuth
+- **GitHub OAuth** - Allow users to log in with their GitHub account via OAuth
+- **Auth0 Login** - Allow users to log in via Auth0
 - **WPGraphQL support** - Works with WPGraphQL so headless frontends using GraphQL can authenticate through the same plugin
 - **Headless WordPress** - Purpose-built for Next.js, React, React Native, Flutter, and other API-first consumers
 - **Mobile app support** - Designed for mobile clients that need stateless, token-based authentication with refresh token rotation

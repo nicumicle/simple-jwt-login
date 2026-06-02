@@ -316,8 +316,8 @@ class ApiKeyCrudTest extends FeatureTestCase
         $rawKey  = $keyData['key'];
 
         $revokeResponse = $this->request(
-            'DELETE',
-            self::API_KEYS_BASE . '/' . $keyId,
+            'POST',
+            self::API_KEYS_BASE . '/' . $keyId . '/revoke',
             [],
             $this->authHeader($jwt)
         );
@@ -350,7 +350,7 @@ class ApiKeyCrudTest extends FeatureTestCase
 
         $deleteResponse = $this->request(
             'DELETE',
-            self::API_KEYS_BASE . '/' . $keyId . '/delete',
+            self::API_KEYS_BASE . '/' . $keyId,
             [],
             $this->authHeader($jwt)
         );
@@ -368,7 +368,7 @@ class ApiKeyCrudTest extends FeatureTestCase
 
         $deleteResponse = $this->request(
             'DELETE',
-            self::API_KEYS_BASE . '/0/delete',
+            self::API_KEYS_BASE . '/0',
             [],
             $this->authHeader($jwt)
         );
@@ -396,8 +396,8 @@ class ApiKeyCrudTest extends FeatureTestCase
         $subJwt = $this->getJWTForUser($subEmail, $subPassword);
 
         $revokeResponse = $this->request(
-            'DELETE',
-            self::API_KEYS_BASE . '/' . $keyId,
+            'POST',
+            self::API_KEYS_BASE . '/' . $keyId . '/revoke',
             [],
             $this->authHeader($subJwt)
         );
@@ -445,8 +445,8 @@ class ApiKeyCrudTest extends FeatureTestCase
         $keyId   = $keyData['id'];
 
         $revokeResponse = $this->request(
-            'DELETE',
-            self::API_KEYS_BASE . '/' . $keyId,
+            'POST',
+            self::API_KEYS_BASE . '/' . $keyId . '/revoke',
             [],
             $this->authHeader($subJwt)
         );

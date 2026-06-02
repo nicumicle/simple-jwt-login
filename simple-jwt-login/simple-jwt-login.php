@@ -26,7 +26,7 @@ if (! defined('ABSPATH')) {
 } // Exit if accessed directly
 
 define('SIMPLE_JWT_LOGIN_VERSION', '4.0.0');
-define('SIMPLE_JWT_LOGIN_DB_VERSION', '1.6');
+define('SIMPLE_JWT_LOGIN_DB_VERSION', '1.7');
 define('SIMPLE_JWT_LOGIN_PLUGIN_FILE', __FILE__);
 
 include_once 'autoload.php';

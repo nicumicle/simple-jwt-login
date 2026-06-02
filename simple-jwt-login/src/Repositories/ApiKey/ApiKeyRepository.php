@@ -241,28 +241,29 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
     public function createTable()
     {
         $charsetCollate = $this->wpdb->get_charset_collate();
+        $tableName      = $this->tableName();
 
-        $sql = $this->wpdb->prepare(
-            'CREATE TABLE IF NOT EXISTS %i (
-                id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-                user_id bigint(20) UNSIGNED NOT NULL,
-                name varchar(255) NOT NULL DEFAULT \'\',
-                key_hash varchar(64) NOT NULL,
-                key_prefix varchar(12) NOT NULL,
-                permissions longtext NOT NULL,
-                expires_at datetime DEFAULT NULL,
-                last_used_at datetime DEFAULT NULL,
-                created_at datetime NOT NULL,
-                revoked_at datetime DEFAULT NULL,
-                PRIMARY KEY (id),
-                UNIQUE KEY key_hash (key_hash),
-                KEY user_id (user_id)
-            )',
-            $this->tableName()
-        ) . ' ' . $charsetCollate;
+        $sql = "CREATE TABLE $tableName (
+            id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            user_id bigint(20) UNSIGNED NOT NULL,
+            name varchar(255) NOT NULL DEFAULT '',
+            key_hash varchar(64) NOT NULL,
+            key_prefix varchar(12) NOT NULL,
+            permissions longtext NOT NULL,
+            expires_at datetime DEFAULT NULL,
+            last_used_at datetime DEFAULT NULL,
+            created_at datetime NOT NULL,
+            revoked_at datetime DEFAULT NULL,
+            PRIMARY KEY (id),
+            UNIQUE KEY key_hash (key_hash),
+            KEY idx_user_created (user_id, created_at),
+            KEY created_at (created_at)
+        ) $charsetCollate;";
 
-        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.NoCaching
-        $this->wpdb->query($sql);
+        if (!function_exists('dbDelta')) {
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        }
+        dbDelta($sql);
     }
 
     /**

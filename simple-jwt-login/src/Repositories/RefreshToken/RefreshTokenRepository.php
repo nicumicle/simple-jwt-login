@@ -137,7 +137,9 @@ class RefreshTokenRepository implements Repository
             KEY expires_at (expires_at)
         ) $charsetCollate;";
 
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        if (!function_exists('dbDelta')) {
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        }
         dbDelta($sql);
     }
 }

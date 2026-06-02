@@ -198,15 +198,27 @@ paths:
         - If "Auto-Login Requires Auth Code" is enabled, `AUTH_CODE` must be provided.
         - The calling IP must pass any IP allow-list configured in the plugin settings.
 
+        **JWT delivery**
+        The JWT can be supplied via:
+        - `JWT` query parameter (default)
+        - `JWT` in request body
+        - `Authorization: Bearer <token>` header (when enabled in plugin General Settings)
+        - Cookie or session (when enabled in plugin General Settings)
+
         **Success behaviour**
         The response is an HTTP redirect (302) to the WordPress home URL or the custom
         `redirectUrl`. The browser session is authenticated as the resolved user.
       operationId: autologin
+      security:
+        - BearerAuth: []
+        - QueryJWT: []
       parameters:
         - name: JWT
           in: query
-          description: A valid signed JWT identifying the WordPress user to log in.
-          required: true
+          description: |
+            A valid signed JWT identifying the WordPress user to log in.
+            Alternative to the `Authorization: Bearer` header.
+          required: false
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
           schema:
             type: string
@@ -1047,18 +1059,24 @@ paths:
         Verifies the JWT signature, checks expiry and revocation status, and returns the
         decoded token information together with the matching WordPress user profile and roles.
 
-        The JWT can be passed as the `JWT` query parameter, in the request body, or as a
-        Bearer token in the `Authorization` header.
+        **JWT delivery**
+        The JWT can be passed via:
+        - `JWT` query parameter
+        - `Authorization: Bearer <token>` header (when enabled in plugin General Settings)
+        - Cookie or session (when enabled in plugin General Settings)
 
         **Requirements**
         - Token validation must be enabled in the plugin settings.
         - If "Authentication Requires Auth Code" is enabled, `AUTH_CODE` must be provided.
       operationId: validateJWT
+      security:
+        - BearerAuth: []
+        - QueryJWT: []
       parameters:
         - name: JWT
           in: query
-          description: The JWT to validate.
-          required: true
+          description: "The JWT to validate. Alternative to the `Authorization: Bearer` header."
+          required: false
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
           schema:
             type: string
@@ -1234,7 +1252,14 @@ paths:
         Identical to `GET /auth/validate` but accepts the JWT in the request body instead of
         as a query parameter. Use this variant when the JWT is too long for a URL, or when
         sending it in the body is preferred for security reasons.
+
+        **JWT delivery**
+        The JWT can be passed via:
+        - `JWT` field in the request body
+        - `Authorization: Bearer <token>` header (when enabled in plugin General Settings)
       operationId: validateJWTPost
+      security:
+        - BearerAuth: []
       requestBody:
         description: JWT to validate.
         content:
@@ -1300,11 +1325,18 @@ paths:
         rejected by all plugin endpoints that check for revocation (autologin, validate,
         refresh, etc.).
 
+        **JWT delivery**
+        The JWT to revoke can be passed via:
+        - `JWT` field in the request body
+        - `Authorization: Bearer <token>` header (when enabled in plugin General Settings)
+
         **Requirements**
         - Token revocation must be enabled in the plugin settings.
         - The JWT must be structurally valid (it does not need to be un-expired).
         - If "Authentication Requires Auth Code" is enabled, `AUTH_CODE` must be provided.
       operationId: revokeJWT
+      security:
+        - BearerAuth: []
       requestBody:
         description: The JWT to revoke, plus optional auth code.
         content:
@@ -1409,7 +1441,14 @@ paths:
           `JWT` body field.
         - The `code` field must contain the TOTP code, email token, or backup code,
           depending on the user's configured 2FA provider.
+
+        **JWT delivery**
+        The interim JWT can be passed via:
+        - `JWT` field in the request body
+        - `Authorization: Bearer <token>` header (when enabled in plugin General Settings)
       operationId: verifyTwoFactor
+      security:
+        - BearerAuth: []
       requestBody:
         description: Interim JWT and 2FA verification code.
         required: true
@@ -1740,6 +1779,8 @@ paths:
         **Requirements**
         - An active WordPress session is required (cookie-based auth or equivalent).
       operationId: listApiKeys
+      security:
+        - WordPressSession: []
       parameters:
         - name: page
           in: query
@@ -1817,6 +1858,8 @@ paths:
         - `name` is required and must be non-empty.
         - At least one permission must be specified.
       operationId: createApiKey
+      security:
+        - WordPressSession: []
       requestBody:
         description: API key definition.
         required: true
@@ -1919,6 +1962,8 @@ paths:
         Regular users may only update their own keys. Administrators (`manage_options`)
         may update any key.
       operationId: updateApiKey
+      security:
+        - WordPressSession: []
       parameters:
         - name: id
           in: path
@@ -2018,95 +2063,16 @@ paths:
     delete:
       tags:
         - api_keys
-      summary: Revoke an API key
-      description: |
-        Soft-deletes (revokes) an API key by recording a `revoked_at` timestamp. The key
-        record is retained in the database but is rejected by the authentication middleware.
-        To permanently remove the record, use `DELETE /api-keys/{id}/delete`.
-
-        Regular users may only revoke their own keys. Administrators may revoke any key.
-      operationId: revokeApiKey
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: Numeric ID of the API key to revoke.
-          schema:
-            type: integer
-          example: 7
-      responses:
-        '200':
-          description: API key revoked successfully.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  message:
-                    type: string
-                    example: "API key revoked successfully."
-        '401':
-          description: Unauthorized. No active WordPress session.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
-              example:
-                success: false
-                data:
-                  message: "You must be logged in to manage API keys."
-                  errorCode: 84
-        '403':
-          description: |
-            Forbidden. The authenticated user does not own this API key and does not have
-            administrator privileges.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
-              example:
-                success: false
-                data:
-                  message: "You are not allowed to manage this API key."
-                  errorCode: 84
-        '404':
-          description: No API key with the provided ID was found.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
-              example:
-                success: false
-                data:
-                  message: "Invalid API key ID."
-                  errorCode: 89
-        '500':
-          description: |
-            Internal server error. The database revoke operation failed.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
-              example:
-                success: false
-                data:
-                  message: "Failed to revoke API key."
-                  errorCode: 91
-  /api-keys/{id}/delete:
-    delete:
-      tags:
-        - api_keys
       summary: Permanently delete an API key
       description: |
         Permanently removes the API key record from the database. This action is
         irreversible. To merely disable a key while keeping its record, use
-        `DELETE /api-keys/{id}` (revoke) instead.
+        `POST /api-keys/{id}/revoke` instead.
 
         Regular users may only delete their own keys. Administrators may delete any key.
       operationId: deleteApiKey
+      security:
+        - WordPressSession: []
       parameters:
         - name: id
           in: path
@@ -2176,7 +2142,113 @@ paths:
                 data:
                   message: "Failed to delete API key."
                   errorCode: 92
+  /api-keys/{id}/revoke:
+    post:
+      tags:
+        - api_keys
+      summary: Revoke an API key
+      description: |
+        Soft-deletes (revokes) an API key by recording a `revoked_at` timestamp. The key
+        record is retained in the database but is rejected by the authentication middleware.
+        To permanently remove the record, use `DELETE /api-keys/{id}`.
+
+        Regular users may only revoke their own keys. Administrators may revoke any key.
+      operationId: revokeApiKey
+      security:
+        - WordPressSession: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Numeric ID of the API key to revoke.
+          schema:
+            type: integer
+          example: 7
+      responses:
+        '200':
+          description: API key revoked successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "API key revoked successfully."
+        '401':
+          description: Unauthorized. No active WordPress session.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "You must be logged in to manage API keys."
+                  errorCode: 84
+        '403':
+          description: |
+            Forbidden. The authenticated user does not own this API key and does not have
+            administrator privileges.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "You are not allowed to manage this API key."
+                  errorCode: 84
+        '404':
+          description: No API key with the provided ID was found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "Invalid API key ID."
+                  errorCode: 89
+        '500':
+          description: |
+            Internal server error. The database revoke operation failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "Failed to revoke API key."
+                  errorCode: 91
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT passed in the `Authorization` header as `Bearer <token>`.
+        The header key name is configurable in plugin General Settings (default: `Authorization`).
+        This scheme must be enabled in the plugin General Settings under "JWT from Header".
+    QueryJWT:
+      type: apiKey
+      in: query
+      name: JWT
+      description: |
+        JWT passed as a URL query parameter. The parameter name defaults to `JWT` but is
+        configurable in plugin General Settings under "Request Keys".
+    WordPressSession:
+      type: apiKey
+      in: cookie
+      name: wordpress_logged_in
+      description: |
+        Active WordPress session cookie. Required for all `/api-keys` endpoints. The user
+        must be authenticated in WordPress before calling API key management endpoints.
   schemas:
     ResponseError:
       type: object

@@ -308,9 +308,8 @@ $akPages  = $akTotal > 0 ? (int) ceil($akTotal / $akPerPage) : 1;
 <script>
 (function () {
     window._sjlAkConfig = {
-        restBase:       <?php echo wp_json_encode(trailingslashit($restBase) . RouteService::API_KEYS_ROUTE); ?>,
-        restBaseSingle: <?php echo wp_json_encode(trailingslashit($restBase) . 'api-keys'); ?>,
-        nonce:          <?php echo wp_json_encode($restNonce); ?>
+        restBase: <?php echo wp_json_encode(trailingslashit($restBase) . RouteService::API_KEYS_ROUTE); ?>,
+        nonce:    <?php echo wp_json_encode($restNonce); ?>
     };
 }());
 </script>

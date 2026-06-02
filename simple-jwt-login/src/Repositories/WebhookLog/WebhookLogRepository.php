@@ -171,12 +171,14 @@ class WebhookLogRepository implements Repository
             response_body text DEFAULT NULL,
             created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
-            KEY event (event),
-            KEY status_code (status_code),
+            KEY idx_event_created (event, created_at),
+            KEY idx_code_created (status_code, created_at),
             KEY created_at (created_at)
         ) $charsetCollate;";
 
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        if (!function_exists('dbDelta')) {
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        }
         dbDelta($sql);
     }
 }

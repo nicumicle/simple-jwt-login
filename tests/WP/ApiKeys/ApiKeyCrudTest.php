@@ -16,8 +16,8 @@ use SimpleJwtLoginTests\WP\WPTestCase;
  *   GET    /simple-jwt-login/v1/api-keys
  *   POST   /simple-jwt-login/v1/api-keys
  *   PUT    /simple-jwt-login/v1/api-keys/{id}
- *   DELETE /simple-jwt-login/v1/api-keys/{id}         (soft revoke)
- *   DELETE /simple-jwt-login/v1/api-keys/{id}/delete  (hard delete)
+ *   DELETE /simple-jwt-login/v1/api-keys/{id}          (permanent delete)
+ *   POST   /simple-jwt-login/v1/api-keys/{id}/revoke  (soft revoke)
  *
  * Error response shape (WP_Error returned by routes/api.php):
  *   {code: 'simple_jwt_login_api_key_error', message: '...', data: {status: N, errorCode: N}}
@@ -347,7 +347,7 @@ class ApiKeyCrudTest extends WPTestCase
 
     // ─── Revoke (soft-delete) ─────────────────────────────────────────────────
 
-    #[TestDox('Unauthenticated DELETE to api-keys/{id} returns 401')]
+    #[TestDox('Unauthenticated POST to api-keys/{id}/revoke returns 401')]
     public function testRevokeRequiresAuthentication(): void
     {
         [, , $userId] = $this->createUser(['role' => 'administrator']);
@@ -355,7 +355,7 @@ class ApiKeyCrudTest extends WPTestCase
 
         wp_set_current_user(0);
 
-        $response = $this->request('DELETE', self::ROUTE . '/' . $keyId);
+        $response = $this->request('POST', self::ROUTE . '/' . $keyId . '/revoke');
 
         $this->assertSame(401, $response->get_status());
     }
@@ -367,7 +367,7 @@ class ApiKeyCrudTest extends WPTestCase
         $keyId = $this->createKey($userId);
 
         wp_set_current_user($userId);
-        $response = $this->request('DELETE', self::ROUTE . '/' . $keyId);
+        $response = $this->request('POST', self::ROUTE . '/' . $keyId . '/revoke');
 
         $this->assertSame(200, $response->get_status());
         $data = $response->get_data();
@@ -383,7 +383,7 @@ class ApiKeyCrudTest extends WPTestCase
         $keyId = $this->createKey($ownerA);
 
         wp_set_current_user($userB);
-        $response = $this->request('DELETE', self::ROUTE . '/' . $keyId);
+        $response = $this->request('POST', self::ROUTE . '/' . $keyId . '/revoke');
 
         $this->assertSame(403, $response->get_status());
         $data = $response->get_data();
@@ -400,7 +400,7 @@ class ApiKeyCrudTest extends WPTestCase
         $keyId = $this->createKey($ownerId);
 
         wp_set_current_user($adminId);
-        $response = $this->request('DELETE', self::ROUTE . '/' . $keyId);
+        $response = $this->request('POST', self::ROUTE . '/' . $keyId . '/revoke');
 
         $this->assertSame(200, $response->get_status());
         $data = $response->get_data();
@@ -409,7 +409,7 @@ class ApiKeyCrudTest extends WPTestCase
 
     // ─── Hard delete ──────────────────────────────────────────────────────────
 
-    #[TestDox('Unauthenticated DELETE to api-keys/{id}/delete returns 401')]
+    #[TestDox('Unauthenticated DELETE to api-keys/{id} returns 401')]
     public function testHardDeleteRequiresAuthentication(): void
     {
         [, , $userId] = $this->createUser(['role' => 'administrator']);
@@ -417,7 +417,7 @@ class ApiKeyCrudTest extends WPTestCase
 
         wp_set_current_user(0);
 
-        $response = $this->request('DELETE', self::ROUTE . '/' . $keyId . '/delete');
+        $response = $this->request('DELETE', self::ROUTE . '/' . $keyId);
 
         $this->assertSame(401, $response->get_status());
     }
@@ -429,7 +429,7 @@ class ApiKeyCrudTest extends WPTestCase
         $keyId = $this->createKey($userId);
 
         wp_set_current_user($userId);
-        $response = $this->request('DELETE', self::ROUTE . '/' . $keyId . '/delete');
+        $response = $this->request('DELETE', self::ROUTE . '/' . $keyId);
 
         $this->assertSame(200, $response->get_status());
         $data = $response->get_data();
@@ -445,7 +445,7 @@ class ApiKeyCrudTest extends WPTestCase
         $keyId = $this->createKey($ownerA);
 
         wp_set_current_user($userB);
-        $response = $this->request('DELETE', self::ROUTE . '/' . $keyId . '/delete');
+        $response = $this->request('DELETE', self::ROUTE . '/' . $keyId);
 
         $this->assertSame(403, $response->get_status());
         $data = $response->get_data();
@@ -462,7 +462,7 @@ class ApiKeyCrudTest extends WPTestCase
         $keyId = $this->createKey($ownerId);
 
         wp_set_current_user($adminId);
-        $response = $this->request('DELETE', self::ROUTE . '/' . $keyId . '/delete');
+        $response = $this->request('DELETE', self::ROUTE . '/' . $keyId);
 
         $this->assertSame(200, $response->get_status());
         $data = $response->get_data();

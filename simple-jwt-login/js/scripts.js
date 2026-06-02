@@ -906,8 +906,8 @@ function sjlRevokeApiKey(id)
 		return; }
     var cfg = window._sjlAkConfig;
     jQuery.ajax({
-        url: cfg.restBase + '/' + id,
-        method: 'DELETE',
+        url: cfg.restBase + '/' + id + '/revoke',
+        method: 'POST',
         beforeSend: function (xhr) {
 			xhr.setRequestHeader('X-WP-Nonce', cfg.nonce); },
         success: function () {
@@ -923,7 +923,7 @@ function sjlDeleteApiKey(id)
 		return; }
     var cfg = window._sjlAkConfig;
     jQuery.ajax({
-        url: cfg.restBaseSingle + '/' + id + '/delete',
+        url: cfg.restBase + '/' + id,
         method: 'DELETE',
         beforeSend: function (xhr) {
 			xhr.setRequestHeader('X-WP-Nonce', cfg.nonce); },

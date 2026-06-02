@@ -183,13 +183,16 @@ class AuditLogRepository implements Repository
             api_key_id bigint(20) DEFAULT NULL,
             created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
-            KEY event_type (event_type),
-            KEY user_id (user_id),
-            KEY api_key_id (api_key_id),
+            KEY idx_event_created (event_type, created_at),
+            KEY idx_user_created (user_id, created_at),
+            KEY idx_status_created (status, created_at),
+            KEY idx_apikey_created (api_key_id, created_at),
             KEY created_at (created_at)
         ) $charsetCollate;";
 
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        if (!function_exists('dbDelta')) {
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        }
         dbDelta($sql);
     }
 }

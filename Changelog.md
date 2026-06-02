@@ -19,7 +19,8 @@
 - **BREAKING CHANGE** Add refresh token to Authentication
 - **BREAKING CHANGE** Remove User Identification from Delete, and use the one from General 
 - **BREAKING CHANGE** Reorganize settings structure in DB
-- **BREALING CHANGE** Change register user response ({"success":true, "ID": 1,...}) to {"success":true, "data":{"id":..}}
+- **BREAKING CHANGE** Change register user response ({"success":true, "ID": 1,...}) to {"success":true, "data":{"id":..}}
+- **BREAKING CHANGE** Remove old /register user endpoint (only POST /users route available for register) 
 - Fix register, authenticate, and reset password special characters for passwords
 - Replace variables in reset password email subject
 - Add option for sending default WordPress email on user registration

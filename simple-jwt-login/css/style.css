@@ -2728,3 +2728,29 @@
     margin: 0 2px;
     color: #3c434a;
 }
+
+/* ============================================
+   Pagination
+   ============================================ */
+#simple-jwt-login .page-link {
+    color: var(--sjl-primary);
+    border-color: var(--sjl-border-mid);
+}
+
+#simple-jwt-login .page-link:hover,
+#simple-jwt-login .page-link:focus {
+    color: var(--sjl-primary);
+    background-color: var(--sjl-bg-muted);
+    border-color: var(--sjl-border-mid);
+}
+
+#simple-jwt-login .page-item.active .page-link {
+    background-color: var(--sjl-primary);
+    border-color: var(--sjl-primary);
+    color: #fff;
+}
+
+#simple-jwt-login .page-item.disabled .page-link {
+    color: var(--sjl-text-muted);
+    border-color: var(--sjl-border-light);
+}

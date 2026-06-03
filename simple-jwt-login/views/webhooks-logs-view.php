@@ -267,26 +267,45 @@ $wlBaseUrl = add_query_arg([
         </div>
 
         <!-- Pagination -->
-			<?php if ($wlTotalPages > 1) : ?>
+        <?php if ($wlTotalPages > 1) : ?>
             <div class="row mt-3">
                 <div class="col-md-12 text-center">
                     <nav>
                         <ul class="pagination pagination-sm justify-content-center">
                             <li class="page-item <?php echo $wlPage <= 1 ? 'disabled' : ''; ?>">
-                                <a class="page-link" href="<?php echo esc_url(add_query_arg('wl_page', (string) max(1, $wlPage - 1), $wlBaseUrl)); ?>">
-                                    &laquo; <?php echo esc_html(__('Prev', 'simple-jwt-login')); ?>
+                                <a class="page-link" href="<?php echo esc_url(add_query_arg('wl_page', '1', $wlBaseUrl)); ?>">
+                                    &laquo; <?php echo esc_html(__('First', 'simple-jwt-login')); ?>
                                 </a>
                             </li>
-                            <?php for ($p = 1; $p <= $wlTotalPages; $p++) : ?>
+                            <li class="page-item <?php echo $wlPage <= 1 ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="<?php echo esc_url(add_query_arg('wl_page', (string) max(1, $wlPage - 1), $wlBaseUrl)); ?>">
+                                    &lsaquo; <?php echo esc_html(__('Prev', 'simple-jwt-login')); ?>
+                                </a>
+                            </li>
+                            <?php
+                            $wlWindow = 4;
+                            $wlStart  = max(1, min($wlPage - (int) ($wlWindow / 2), $wlTotalPages - $wlWindow + 1));
+                            $wlEnd    = min($wlTotalPages, $wlStart + $wlWindow - 1);
+                            for ($p = $wlStart; $p <= $wlEnd; $p++) :
+                                ?>
                                 <li class="page-item <?php echo $p === $wlPage ? 'active' : ''; ?>">
-                                    <a class="page-link" href="<?php echo esc_url(add_query_arg('wl_page', (string) $p, $wlBaseUrl)); ?>">
-                                        <?php echo esc_html($p); ?>
-                                    </a>
+                                    <?php if ($p === $wlPage) : ?>
+                                        <span class="page-link"><?php echo (int) $p; ?></span>
+                                    <?php else : ?>
+                                        <a class="page-link" href="<?php echo esc_url(add_query_arg('wl_page', (string) $p, $wlBaseUrl)); ?>">
+                                            <?php echo (int) $p; ?>
+                                        </a>
+                                    <?php endif; ?>
                                 </li>
                             <?php endfor; ?>
                             <li class="page-item <?php echo $wlPage >= $wlTotalPages ? 'disabled' : ''; ?>">
                                 <a class="page-link" href="<?php echo esc_url(add_query_arg('wl_page', (string) min($wlTotalPages, $wlPage + 1), $wlBaseUrl)); ?>">
-                                    <?php echo esc_html(__('Next', 'simple-jwt-login')); ?> &raquo;
+                                    <?php echo esc_html(__('Next', 'simple-jwt-login')); ?> &rsaquo;
+                                </a>
+                            </li>
+                            <li class="page-item <?php echo $wlPage >= $wlTotalPages ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="<?php echo esc_url(add_query_arg('wl_page', (string) $wlTotalPages, $wlBaseUrl)); ?>">
+                                    <?php echo esc_html(__('Last', 'simple-jwt-login')); ?> &raquo;
                                 </a>
                             </li>
                         </ul>

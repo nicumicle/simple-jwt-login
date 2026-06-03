@@ -408,18 +408,10 @@ class SimpleJWTLoginSettings
         $permalinkStructure = $this->wordPressData->getOptionFromDatabase('permalink_structure');
 
         $url = $this->wordPressData->getSiteUrl()
-            . '/?rest_route=/'
+            . ( !empty($permalinkStructure) ? '/wp-json/' : '/?rest_route=/')
             . $namespace
             . $route;
-        $separator = '&';
-
-        if (!empty($permalinkStructure)) {
-            $url = $this->wordPressData->getSiteUrl()
-                . '/wp-json/'
-                . $namespace
-                . $route;
-            $separator = '?';
-        }
+        $separator = !empty($permalinkStructure) ? '?' : '&';
 
         if (empty($params) || !is_array($params)) {
             return $url;

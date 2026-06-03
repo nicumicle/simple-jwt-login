@@ -3,6 +3,7 @@
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Services\RouteService;
 
 if (! defined('ABSPATH')) {
     /** @phpstan-ignore-next-line  */
@@ -55,7 +56,7 @@ if (! defined('ABSPATH')) {
                         $sampleUrlParams[ $jwtSettings->getAuthCodesSettings()->getAuthCodeKey() ] =
                             __('AUTH_KEY_VALUE', 'simple-jwt-login');
                     }
-                    echo esc_html($jwtSettings->generateExampleLink('autologin', $sampleUrlParams));
+                    echo esc_html($jwtSettings->generateExampleLink(RouteService::LOGIN_ROUTE, $sampleUrlParams));
                     ?>
                 </span>
                 <span class="copy-button">

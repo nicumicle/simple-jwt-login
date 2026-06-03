@@ -786,6 +786,7 @@ function sjlTryBaseUrl(url)
     }
 
     const match = url.match(/[?&]rest_route=([^&]+)/);
+    console.log(match)
 
     return match
         ? url.slice(0, q) + '?rest_route=' + match[1]

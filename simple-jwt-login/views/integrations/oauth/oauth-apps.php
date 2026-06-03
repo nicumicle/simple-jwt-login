@@ -148,11 +148,20 @@ $sjlLayouts = [
     </div>
     <div class="sjl-gen-card-body sjl-apps-body">
 
+        <div class="sjl-apps-search-wrap">
+            <span class="dashicons dashicons-search sjl-apps-search-icon"></span>
+            <input type="text"
+                   class="sjl-apps-search"
+                   placeholder="<?php echo esc_attr__('Filter applications...', 'simple-jwt-login'); ?>"
+                   autocomplete="off" />
+        </div>
+
         <div class="sjl-apps-catalog">
             <?php foreach ($sjlApps as $sjlApp) : ?>
                 <?php $isActive = $sjlApp['id'] === $activeApp; ?>
                 <div class="sjl-app-tile<?php echo $isActive ? ' active' : ''; ?>"
                     data-app="<?php echo esc_attr($sjlApp['id']); ?>"
+                    data-name="<?php echo esc_attr(strtolower($sjlApp['name'])); ?>"
                     role="button"
                     tabindex="0"
                     aria-expanded="<?php echo $isActive ? 'true' : 'false'; ?>">
@@ -162,6 +171,10 @@ $sjlLayouts = [
                 </div>
             <?php endforeach; ?>
         </div>
+
+        <p class="sjl-apps-no-results" style="display:none;">
+            <?php echo esc_html__('No applications found.', 'simple-jwt-login'); ?>
+        </p>
 
         <input type="hidden" name="active_app_panel" id="active_app_panel" value="<?php echo esc_attr($activeApp); ?>" />
         <div class="sjl-apps-panels">

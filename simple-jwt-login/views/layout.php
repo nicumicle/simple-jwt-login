@@ -180,7 +180,7 @@ $settingsPages = [
     ],
     [
         'id'   => 'simple-jwt-login-tab-3rd-party-apps',
-        'name' => __('3rd Party Apps', 'simple-jwt-login'),
+        'name' => __('Third Party Integrations', 'simple-jwt-login'),
         'has_error' => false,
         'index' => SettingsErrors::PREFIX_3RD_PARTY_APPS,
     ],
@@ -226,7 +226,7 @@ $sidebarGroups = [
         'icon'  => 'dashicons-admin-plugins',
         'items' => [
             ['index' => SettingsErrors::PREFIX_APPLICATIONS, 'name' => __('OAuth', 'simple-jwt-login'), 'icon' => 'dashicons-admin-network'],
-            ['index' => SettingsErrors::PREFIX_3RD_PARTY_APPS, 'name' => __('3rd Party Apps', 'simple-jwt-login'), 'icon' => 'dashicons-admin-plugins'],
+            ['index' => SettingsErrors::PREFIX_3RD_PARTY_APPS, 'name' => __('Third Party Integrations', 'simple-jwt-login'), 'icon' => 'dashicons-admin-plugins'],
         ],
     ],
     [

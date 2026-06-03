@@ -22,21 +22,40 @@ jQuery(document).ready(
             }
             var $tile    = $(this);
             var appId    = $tile.data('app');
-            var isOpen   = $tile.hasClass('active');
             var $catalog = $tile.closest('.sjl-apps-catalog');
             var $body    = $catalog.closest('.sjl-apps-body');
             var $panels  = $body.find('.sjl-apps-panels');
-
-            if (isOpen) {
-                return;
-            }
 
             $catalog.find('.sjl-app-tile').removeClass('active').attr('aria-expanded', 'false');
             $panels.find('.sjl-app-panel').hide();
 
             $tile.addClass('active').attr('aria-expanded', 'true');
+            $panels.removeClass('sjl-hidden').find('.sjl-app-panel').hide();
             $panels.find('#sjl-app-panel-' + appId).show();
             $body.find('input[type="hidden"][name$="_panel"]').val(appId);
+        });
+
+        // App catalog search filter (shared by OAuth and 3rd-party sections)
+        $('#simple-jwt-login .sjl-apps-search').on('input', function () {
+            var query    = $(this).val().toLowerCase().trim();
+            var $body    = $(this).closest('.sjl-apps-body');
+            var $catalog = $body.find('.sjl-apps-catalog');
+            var $panels  = $body.find('.sjl-apps-panels');
+            var $noRes   = $body.find('.sjl-apps-no-results');
+            var visible  = 0;
+
+            $catalog.find('.sjl-app-tile').each(function () {
+                var name = $(this).data('name') || '';
+                var show = query === '' || name.indexOf(query) !== -1;
+                $(this).toggle(show);
+                if (show) {
+                    visible++;
+                }
+            });
+
+            var noneFound = visible === 0;
+            $noRes.toggle(noneFound);
+            $panels.toggleClass('sjl-hidden', noneFound);
         });
 
         $('#simple-jwt-login #add_code').click(

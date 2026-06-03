@@ -1411,6 +1411,44 @@
    Applications — Icon tile catalog + settings panel
    ============================================ */
 
+#simple-jwt-login .sjl-apps-search-wrap {
+    position: relative;
+    margin-bottom: 12px;
+}
+
+#simple-jwt-login .sjl-apps-no-results {
+    margin: 8px 0 0;
+    font-size: 13px;
+    color: var(--sjl-text-muted);
+}
+
+#simple-jwt-login .sjl-apps-search-icon {
+    position: absolute;
+    left: 9px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--sjl-text-muted);
+    font-size: 16px;
+    pointer-events: none;
+}
+
+#simple-jwt-login .sjl-apps-search {
+    width: 100%;
+    padding: 7px 10px 7px 32px;
+    font-size: 13px;
+    border: 1px solid var(--sjl-border);
+    border-radius: var(--sjl-radius-md);
+    background: var(--sjl-bg-card);
+    color: var(--sjl-text);
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.12s;
+}
+
+#simple-jwt-login .sjl-apps-search:focus {
+    border-color: var(--sjl-primary);
+}
+
 #simple-jwt-login .sjl-apps-catalog {
     display: flex;
     flex-wrap: wrap;
@@ -1491,6 +1529,10 @@
     border-top: 2px solid var(--sjl-border-mid);
     background: var(--sjl-bg-muted);
     border-radius: 0 0 var(--sjl-radius-md) var(--sjl-radius-md);
+}
+
+#simple-jwt-login .sjl-apps-panels.sjl-hidden {
+    display: none;
 }
 
 /* App logo variants */

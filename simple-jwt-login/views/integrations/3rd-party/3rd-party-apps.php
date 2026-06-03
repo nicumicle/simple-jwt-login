@@ -67,12 +67,22 @@ if (!empty($_REQUEST['active_3rdparty_panel'])) {
     </div>
     <div class="sjl-gen-card-body sjl-apps-body">
 
+        <div class="sjl-apps-search-wrap">
+            <span class="dashicons dashicons-search sjl-apps-search-icon"></span>
+            <input type="text"
+                   id="sjl-3rdparty-search"
+                   class="sjl-apps-search"
+                   placeholder="<?php echo esc_attr__('Filter integrations...', 'simple-jwt-login'); ?>"
+                   autocomplete="off" />
+        </div>
+
         <div class="sjl-apps-catalog">
             <?php foreach ($sjl3rdPartyApps as $sjl3rdPartyApp) :
                     $isActive = $sjl3rdPartyApp['id'] === $active3rdPartyApp;
 				?>
                 <div class="sjl-app-tile<?php echo $isActive ? ' active' : ''; ?>"
                     data-app="<?php echo esc_attr($sjl3rdPartyApp['id']); ?>"
+                    data-name="<?php echo esc_attr(strtolower($sjl3rdPartyApp['name'])); ?>"
                     role="button"
                     tabindex="0"
                     aria-expanded="<?php echo $isActive ? 'true' : 'false'; ?>">
@@ -82,6 +92,10 @@ if (!empty($_REQUEST['active_3rdparty_panel'])) {
                 </div>
             <?php endforeach; ?>
         </div>
+
+        <p class="sjl-apps-no-results" style="display:none;">
+            <?php echo esc_html__('No integrations found.', 'simple-jwt-login'); ?>
+        </p>
 
         <input type="hidden" name="active_3rdparty_panel" id="active_3rdparty_panel"
                value="<?php echo esc_attr($active3rdPartyApp); ?>" />

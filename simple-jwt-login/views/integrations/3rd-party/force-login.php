@@ -26,16 +26,15 @@ $forceLoginSettings = $jwtSettings->getIntegrationsSettings()->forceLogin();
                     <?php echo esc_html__('Force Login', 'simple-jwt-login'); ?>
                 </h3>
                 <p class="sjl-gen-card-desc">
-                    <?php echo esc_html__(
-                        'Allow Simple JWT Login REST endpoints to bypass the Force Login restriction.',
-                        'simple-jwt-login'
+                    <?php echo wp_kses(
+                        sprintf(
+                        /* translators: 1: opening anchor tag, 2: closing anchor tag */
+                            __('Allow Simple JWT Login REST endpoints to bypass the %1$sForce Login%2$s restriction.', 'simple-jwt-login'),
+                            '<a href="https://wordpress.org/plugins/two-factor/" target="_blank">',
+                            '</a>'
+                        ),
+                        ['a' => ['href' => [], 'target' => []]]
                     ); ?>
-                    <a href="https://wordpress.org/plugins/wp-force-login/"
-                       target="_blank"
-                       rel="noopener noreferrer"
-                       style="font-size: 11px; margin-left: 4px;">
-                        <?php echo esc_html__('(plugin)', 'simple-jwt-login'); ?>
-                    </a>
                 </p>
             </div>
         </div>

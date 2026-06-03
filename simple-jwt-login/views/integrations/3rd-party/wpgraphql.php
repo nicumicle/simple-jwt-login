@@ -71,7 +71,7 @@ if (!defined('ABSPATH')) {
             <?php echo wp_kses(
                 sprintf(
                     /* translators: 1: opening anchor tag, 2: closing anchor tag */
-                    __('Requires the %1$sWPGraphQL plugin%2$s to be installed and activated.', 'simple-jwt-login'),
+                    __('Requires the %1$sWPGraphQL%2$s plugin to be installed and activated.', 'simple-jwt-login'),
                     '<a href="https://www.wpgraphql.com/" target="_blank">',
                     '</a>'
                 ),

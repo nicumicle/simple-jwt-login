@@ -266,8 +266,8 @@ $wlBaseUrl = add_query_arg([
             </table>
         </div>
 
-        <!-- Pagination -->
-        <?php if ($wlTotalPages > 1) : ?>
+            <!-- Pagination -->
+            <?php if ($wlTotalPages > 1) : ?>
             <div class="row mt-3">
                 <div class="col-md-12 text-center">
                     <nav>

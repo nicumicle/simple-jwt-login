@@ -786,7 +786,6 @@ function sjlTryBaseUrl(url)
     }
 
     const match = url.match(/[?&]rest_route=([^&]+)/);
-    console.log(match)
 
     return match
         ? url.slice(0, q) + '?rest_route=' + match[1]
@@ -795,13 +794,15 @@ function sjlTryBaseUrl(url)
 
 function sjlTryBuildUrl(base, params)
 {
-    var keys = Object.keys(params);
+    var keys = Object.keys(params).filter(function (k) { return k !== 'rest_route'; });
     if (!keys.length) {
-		return base; }
+        return base;
+    }
     var qs = keys.map(function (k) {
         return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
     }).join('&');
-    return base + '?' + qs;
+    var sep = base.indexOf('?') === -1 ? '?' : '&';
+    return base + sep + qs;
 }
 
 function sjlTryCleanUrl($block)

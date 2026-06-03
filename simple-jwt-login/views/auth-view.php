@@ -47,10 +47,15 @@ if (! defined('ABSPATH')) {
                 <span class="method">POST</span>
                 <span class="code">
                     <?php
-                    echo esc_html($jwtSettings->generateExampleLink(RouteService::AUTHENTICATION_ROUTE, [
+                    $sampleUrlParams = [
                         'email'    => __('Email', 'simple-jwt-login'),
                         'password' => __('Password', 'simple-jwt-login'),
-                    ]));
+                    ];
+                    if ($jwtSettings->getAuthenticationSettings()->isAuthKeyRequired()) {
+                        $sampleUrlParams[ $jwtSettings->getAuthCodesSettings()->getAuthCodeKey() ] =
+                            __('AUTH_KEY_VALUE', 'simple-jwt-login');
+                    }
+                    echo esc_html($jwtSettings->generateExampleLink(RouteService::AUTHENTICATION_ROUTE, $sampleUrlParams));
                     ?>
                 </span>
                 <span class="copy-button">
@@ -62,10 +67,15 @@ if (! defined('ABSPATH')) {
                 <span class="method">POST</span>
                 <span class="code">
                     <?php
-                    echo esc_html($jwtSettings->generateExampleLink(RouteService::AUTHENTICATION_ROUTE, [
+                    $sampleUrlParams = [
                         'username' => __('Username', 'simple-jwt-login'),
                         'password' => __('Password', 'simple-jwt-login'),
-                    ]));
+                    ];
+                    if ($jwtSettings->getAuthenticationSettings()->isAuthKeyRequired()) {
+                        $sampleUrlParams[ $jwtSettings->getAuthCodesSettings()->getAuthCodeKey() ] =
+                            __('AUTH_KEY_VALUE', 'simple-jwt-login');
+                    }
+                    echo esc_html($jwtSettings->generateExampleLink(RouteService::AUTHENTICATION_ROUTE, $sampleUrlParams));
                     ?>
                 </span>
                 <span class="copy-button">
@@ -77,10 +87,15 @@ if (! defined('ABSPATH')) {
                 <span class="method">POST</span>
                 <span class="code">
                     <?php
-                    echo esc_html($jwtSettings->generateExampleLink(RouteService::AUTHENTICATION_ROUTE, [
+                    $sampleUrlParams = [
                         'login'    => __('Username_or_email', 'simple-jwt-login'),
                         'password' => __('Password', 'simple-jwt-login'),
-                    ]));
+                    ];
+                    if ($jwtSettings->getAuthenticationSettings()->isAuthKeyRequired()) {
+                        $sampleUrlParams[ $jwtSettings->getAuthCodesSettings()->getAuthCodeKey() ] =
+                            __('AUTH_KEY_VALUE', 'simple-jwt-login');
+                    }
+                    echo esc_html($jwtSettings->generateExampleLink(RouteService::AUTHENTICATION_ROUTE, $sampleUrlParams));
                     ?>
                 </span>
                 <span class="copy-button">

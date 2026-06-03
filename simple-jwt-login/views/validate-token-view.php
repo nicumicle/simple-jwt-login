@@ -51,10 +51,12 @@ if (! defined('ABSPATH')) {
                 <span class="method">POST</span>
                 <span class="code">
                     <?php
-                    echo esc_html($jwtSettings->generateExampleLink(
-                        RouteService::AUTHENTICATION_VALIDATE_ROUTE,
-                        [$jwtSettings->getGeneralSettings()->getRequestKeyUrl() => 'YOUR_JWT']
-                    ));
+                    $sampleUrlParams = [$jwtSettings->getGeneralSettings()->getRequestKeyUrl() => 'YOUR_JWT'];
+                    if ($jwtSettings->getAuthenticationSettings()->isValidateAuthKeyRequired()) {
+                        $sampleUrlParams[ $jwtSettings->getAuthCodesSettings()->getAuthCodeKey() ] =
+                            __('AUTH_KEY_VALUE', 'simple-jwt-login');
+                    }
+                    echo esc_html($jwtSettings->generateExampleLink(RouteService::AUTHENTICATION_VALIDATE_ROUTE, $sampleUrlParams));
                     ?>
                 </span>
                 <span class="copy-button">

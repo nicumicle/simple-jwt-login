@@ -660,10 +660,16 @@ jQuery(document).ready(
                 keys.forEach(function (key) {
                     var safeKey  = jQuery('<span>').text(key).html();
                     var safeHint = jQuery('<span>').text(params[key]).html();
+                    var autoVal  = '';
+                    if (key === 'rest_route') {
+                        autoVal = safeHint
+                    }
+                    var safeAutoVal = jQuery('<span>').text(autoVal).html();
                     paramsHtml  += '<div class="sjl-try-param-row">'
                         + '<label class="sjl-try-param-label">' + safeKey + '</label>'
                         + '<input type="text" class="form-control sjl-try-param-input"'
-                        + ' data-param="' + safeKey + '" placeholder="' + safeHint + '" />'
+                        + ' data-param="' + safeKey + '" placeholder="' + safeHint + '"'
+                        + (autoVal ? ' value="' + safeAutoVal + '"' : '') + ' />'
                         + '</div>';
                 });
                 paramsHtml += '</div>';
@@ -692,7 +698,8 @@ jQuery(document).ready(
             );
 
             $panel.data({ base: base, method: method, isBody: isBody, defaultParams: params });
-            $panel.find('.sjl-try-url-code').text(isBody ? base : sjlTryBuildUrl(base, params));
+            var initialParams = isBody ? params : sjlTryCollectParams($panel);
+            $panel.find('.sjl-try-url-code').text(isBody ? base : sjlTryBuildUrl(base, initialParams));
 
             $panel.on('input', '.sjl-try-param-input', function () {
                 if (!isBody) {
@@ -772,8 +779,17 @@ function sjlTryParseParams(url)
 
 function sjlTryBaseUrl(url)
 {
-    var q = url.indexOf('?');
-    return q === -1 ? url : url.slice(0, q);
+    const q = url.indexOf('?');
+
+    if (q === -1) {
+        return url;
+    }
+
+    const match = url.match(/[?&]rest_route=([^&]+)/);
+
+    return match
+        ? url.slice(0, q) + '?rest_route=' + match[1]
+        : url.slice(0, q);
 }
 
 function sjlTryBuildUrl(base, params)

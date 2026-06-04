@@ -22,6 +22,7 @@ use SimpleJWTLogin\Modules\Settings\ResetPasswordSettings;
 use SimpleJWTLogin\Modules\Settings\Migrations\SettingsMigrationService;
 use SimpleJWTLogin\Modules\Settings\SettingsFactory;
 use SimpleJWTLogin\Modules\Settings\SettingsInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 
@@ -45,7 +46,7 @@ class SimpleJWTLoginSettings
     private $post;
 
     /**
-     * @var WordPressDataInterface
+     * @var Repository
      */
     private $wordPressData;
 
@@ -72,7 +73,7 @@ class SimpleJWTLoginSettings
     /**
      * SimpleJWTLoginSettings constructor.
      *
-     * @param WordPressDataInterface $wordPressData
+     * @param Repository $wordPressData
      */
     public function __construct($wordPressData)
     {
@@ -92,7 +93,7 @@ class SimpleJWTLoginSettings
     }
 
     /**
-     * @return WordPressDataInterface
+     * @return Repository
      */
     public function getWordPressData()
     {

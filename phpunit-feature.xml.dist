@@ -30,7 +30,7 @@
             <directory suffix=".php">./simple-jwt-login/src</directory>
         </include>
         <exclude>
-            <file>./simple-jwt-login/src/Modules/WordPressData.php</file>
+            <file>./simple-jwt-login/src/Repositories/WordPress/WordPressRepository.php</file>
             <directory suffix=".php">./simple-jwt-login/src/Libraries/</directory>
         </exclude>
     </source>

@@ -37,6 +37,15 @@ $enabledHooksCount = count(
     </div>
     <div class="sjl-gen-card-body">
 
+        <div class="sjl-apps-search-wrap">
+            <span class="dashicons dashicons-search sjl-apps-search-icon"></span>
+            <input type="text"
+                   id="sjl-hooks-search"
+                   class="sjl-apps-search"
+                   placeholder="<?php echo esc_attr__('Search hooks...', 'simple-jwt-login'); ?>"
+                   autocomplete="off" />
+        </div>
+
         <div class="sjl-hooks-toolbar">
             <span class="sjl-hooks-count-label">
                 <span id="sjl-hooks-enabled-count"><?php echo (int) $enabledHooksCount; ?></span>
@@ -54,12 +63,20 @@ $enabledHooksCount = count(
             </label>
         </div>
 
+        <div id="sjl-hooks-no-results" class="sjl-apps-no-results" style="display:none;">
+            <?php echo esc_html__('No hooks match your search.', 'simple-jwt-login'); ?>
+        </div>
+
         <div class="sjl-hooks-list">
             <?php if (! empty($hooks)) {
                 foreach ($hooks as $singleHook) {
                     $isEnabled = $jwtSettings->getHooksSettings()->isHookEnabled($singleHook['name']);
                     ?>
-                <div class="sjl-hook-item<?php echo $isEnabled ? ' sjl-hook-item--enabled' : ''; ?>">
+                <div class="sjl-hook-item<?php echo $isEnabled ? ' sjl-hook-item--enabled' : ''; ?>"
+                    data-hook-name="<?php echo esc_attr(strtolower($singleHook['name'])); ?>"
+                    data-hook-desc="<?php echo esc_attr(strtolower($singleHook['description'])); ?>"
+                    data-hook-params="<?php echo esc_attr(strtolower(implode(' ', isset($singleHook['parameters']) ? $singleHook['parameters'] : array()))); ?>"
+                >
 
                     <div class="sjl-hook-item-toggle">
                         <label class="sjl-toggle-switch">

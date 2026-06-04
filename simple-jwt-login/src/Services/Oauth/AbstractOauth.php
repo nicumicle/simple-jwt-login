@@ -249,7 +249,7 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
 
             if ($result['status_code'] !== 200 || !empty($result['response']['error'])) {
                 $errorMessage = $this->handleErrorMessage($result['response']);
-                $this->wordPressData->triggerAction(
+                $this->wordPressData->doAction(
                     SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,
                     null,
                     null,
@@ -272,7 +272,7 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
                         return;
                     }
                     $this->wordPressData->loginUser($user);
-                    $this->wordPressData->triggerAction(
+                    $this->wordPressData->doAction(
                         SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_SUCCESS,
                         $this->wordPressData->getUserProperty($user, 'ID'),
                         $this->wordPressData->getUserProperty($user, 'user_email')
@@ -282,7 +282,7 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
                     return;
                 }
 
-                $this->wordPressData->triggerAction(
+                $this->wordPressData->doAction(
                     SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,
                     null,
                     $email,
@@ -298,7 +298,7 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
             }
 
             $this->wordPressData->loginUser($user);
-            $this->wordPressData->triggerAction(
+            $this->wordPressData->doAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_SUCCESS,
                 $this->wordPressData->getUserProperty($user, 'ID'),
                 $this->wordPressData->getUserProperty($user, 'user_email')
@@ -306,7 +306,7 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
 
             $this->doRedirect($this->wordPressData->getAdminUrl());
         } catch (Exception $exception) {
-            $this->wordPressData->triggerAction(
+            $this->wordPressData->doAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,
                 null,
                 null,
@@ -331,7 +331,7 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
         );
 
         if (empty($user)) {
-            $this->wordPressData->triggerAction(
+            $this->wordPressData->doAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,
                 null,
                 $email,
@@ -348,7 +348,7 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
             return $challenge;
         }
 
-        $this->wordPressData->triggerAction(
+        $this->wordPressData->doAction(
             SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_SUCCESS,
             $this->wordPressData->getUserProperty($user, 'ID'),
             $this->wordPressData->getUserProperty($user, 'user_email')

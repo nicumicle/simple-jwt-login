@@ -21,7 +21,7 @@ class DeleteUserService extends BaseService implements ServiceInterface
         try {
             return $this->deleteUser();
         } catch (\Throwable $exception) {
-            $this->wordPressData->triggerAction(
+            $this->wordPressData->doAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_DELETE_USER_FAILED,
                 null,
                 null,
@@ -119,7 +119,7 @@ class DeleteUserService extends BaseService implements ServiceInterface
             );
         }
 
-        $this->wordPressData->triggerAction(
+        $this->wordPressData->doAction(
             SimpleJWTLoginHooks::AUDIT_AUTH_DELETE_USER_SUCCESS,
             $userId,
             $userEmail
@@ -134,7 +134,7 @@ class DeleteUserService extends BaseService implements ServiceInterface
         );
 
         if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME)) {
-            $this->wordPressData->triggerAction(SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME, $user);
+            $this->wordPressData->doAction(SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME, $user);
         }
 
         $response = [
@@ -145,7 +145,7 @@ class DeleteUserService extends BaseService implements ServiceInterface
             ->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_DELETE_USER)
         ) {
             $response = $this->wordPressData
-                ->triggerFilter(
+                ->applyFilters(
                     SimpleJWTLoginHooks::HOOK_RESPONSE_DELETE_USER,
                     $response,
                     $user

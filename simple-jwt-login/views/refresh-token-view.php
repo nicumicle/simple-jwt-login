@@ -33,13 +33,13 @@ if (! defined('ABSPATH')) {
         <div class="sjl-gen-radio-group">
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="allow_refresh_token" value="0"
-                    <?php echo $jwtSettings->getAuthenticationSettings()->isRefreshTokenEnabled() === false ? 'checked' : ''; ?>
+                    <?php echo !$jwtSettings->getAuthenticationSettings()->isRefreshTokenEnabled() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Disabled', 'simple-jwt-login'); ?></span>
             </label>
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="allow_refresh_token" value="1"
-                    <?php echo $jwtSettings->getAuthenticationSettings()->isRefreshTokenEnabled() === true ? 'checked' : ''; ?>
+                    <?php echo $jwtSettings->getAuthenticationSettings()->isRefreshTokenEnabled() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Enabled', 'simple-jwt-login'); ?></span>
             </label>
@@ -82,13 +82,13 @@ if (! defined('ABSPATH')) {
         <div class="sjl-gen-radio-group">
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="refresh_requires_auth_code" value="0"
-                    <?php echo $jwtSettings->getAuthenticationSettings()->isRefreshAuthKeyRequired() === false ? 'checked' : ''; ?>
+                    <?php echo !$jwtSettings->getAuthenticationSettings()->isRefreshAuthKeyRequired() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Not required', 'simple-jwt-login'); ?></span>
             </label>
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="refresh_requires_auth_code" value="1"
-                    <?php echo $jwtSettings->getAuthenticationSettings()->isRefreshAuthKeyRequired() === true ? 'checked' : ''; ?>
+                    <?php echo $jwtSettings->getAuthenticationSettings()->isRefreshAuthKeyRequired() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Required', 'simple-jwt-login'); ?></span>
             </label>

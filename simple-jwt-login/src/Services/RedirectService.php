@@ -71,7 +71,7 @@ class RedirectService extends BaseService implements ServiceInterface
         $url = $this->includeRequestParameters($url);
 
         if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::LOGIN_REDIRECT_NAME)) {
-            $this->wordPressData->triggerAction(SimpleJWTLoginHooks::LOGIN_REDIRECT_NAME, $url, $this->request);
+            $this->wordPressData->doAction(SimpleJWTLoginHooks::LOGIN_REDIRECT_NAME, $url, $this->request);
         }
 
         $url = $this->replaceVariables($url, $user);
@@ -85,7 +85,7 @@ class RedirectService extends BaseService implements ServiceInterface
                 ->getHooksSettings()
                 ->isHookEnabled(SimpleJWTLoginHooks::NO_REDIRECT_RESPONSE)
             ) {
-                $response = $this->wordPressData->triggerFilter(
+                $response = $this->wordPressData->applyFilters(
                     SimpleJWTLoginHooks::NO_REDIRECT_RESPONSE,
                     $response,
                     $this->request

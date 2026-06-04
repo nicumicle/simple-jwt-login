@@ -96,7 +96,7 @@ class ValidateTokenService extends AuthenticateService
             ->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_VALIDATE_TOKEN)
         ) {
             $response = $this->wordPressData
-                ->triggerFilter(
+                ->applyFilters(
                     SimpleJWTLoginHooks::HOOK_RESPONSE_VALIDATE_TOKEN,
                     $response,
                     $user

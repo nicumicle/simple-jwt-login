@@ -92,7 +92,7 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
                        id="protect_endpoints_enabled_no"
                        name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP); ?>[enabled]"
                        value="0"
-                    <?php echo $jwtSettings->getProtectEndpointsSettings()->isEnabled() === false
+                    <?php echo !$jwtSettings->getProtectEndpointsSettings()->isEnabled()
                         ? esc_html('checked')
                         : esc_html('');
                     ?>

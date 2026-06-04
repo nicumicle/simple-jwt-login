@@ -103,10 +103,10 @@ if (!defined('ABSPATH')) {
                     </td>
                     <td>
                         <select name="request_jwt_url" class="form-control onOff sjl-gen-onoff">
-                            <option value="0" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromURLEnabled() === false ? 'selected' : ''; ?>>
+                            <option value="0" <?php echo !$jwtSettings->getGeneralSettings()->isJwtFromURLEnabled() ? 'selected' : ''; ?>>
                                 <?php echo esc_html__('Off', 'simple-jwt-login'); ?>
                             </option>
-                            <option value="1" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromURLEnabled() === true ? 'selected' : ''; ?>>
+                            <option value="1" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromURLEnabled() ? 'selected' : ''; ?>>
                                 <?php echo esc_html__('On', 'simple-jwt-login'); ?>
                             </option>
                         </select>
@@ -133,10 +133,10 @@ if (!defined('ABSPATH')) {
                     </td>
                     <td>
                         <select name="request_jwt_session" class="form-control onOff sjl-gen-onoff">
-                            <option value="0" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled() === false ? 'selected' : ''; ?>>
+                            <option value="0" <?php echo !$jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled() ? 'selected' : ''; ?>>
                                 <?php echo esc_html__('Off', 'simple-jwt-login'); ?>
                             </option>
-                            <option value="1" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled() === true ? 'selected' : ''; ?>>
+                            <option value="1" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled() ? 'selected' : ''; ?>>
                                 <?php echo esc_html__('On', 'simple-jwt-login'); ?>
                             </option>
                         </select>
@@ -163,10 +163,10 @@ if (!defined('ABSPATH')) {
                     </td>
                     <td>
                         <select name="request_jwt_cookie" class="form-control onOff sjl-gen-onoff">
-                            <option value="0" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromCookieEnabled() === false ? 'selected' : ''; ?>>
+                            <option value="0" <?php echo !$jwtSettings->getGeneralSettings()->isJwtFromCookieEnabled() ? 'selected' : ''; ?>>
                                 <?php echo esc_html__('Off', 'simple-jwt-login'); ?>
                             </option>
-                            <option value="1" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromCookieEnabled() === true ? 'selected' : ''; ?>>
+                            <option value="1" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromCookieEnabled() ? 'selected' : ''; ?>>
                                 <?php echo esc_html__('On', 'simple-jwt-login'); ?>
                             </option>
                         </select>
@@ -193,10 +193,10 @@ if (!defined('ABSPATH')) {
                     </td>
                     <td>
                         <select name="request_jwt_header" class="form-control onOff sjl-gen-onoff">
-                            <option value="0" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromHeaderEnabled() === false ? 'selected' : ''; ?>>
+                            <option value="0" <?php echo !$jwtSettings->getGeneralSettings()->isJwtFromHeaderEnabled() ? 'selected' : ''; ?>>
                                 <?php echo esc_html__('Off', 'simple-jwt-login'); ?>
                             </option>
-                            <option value="1" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromHeaderEnabled() === true ? 'selected' : ''; ?>>
+                            <option value="1" <?php echo $jwtSettings->getGeneralSettings()->isJwtFromHeaderEnabled() ? 'selected' : ''; ?>>
                                 <?php echo esc_html__('On', 'simple-jwt-login'); ?>
                             </option>
                         </select>

@@ -154,7 +154,7 @@ class ValidateTokenServiceTest extends TestCase
             ->method('createResponse')
             ->willReturn(['success' => true]);
         $this->wordPressDataMock
-            ->method('triggerFilter')
+            ->method('applyFilters')
             ->willReturn([]);
         $validateTokenService = (new ValidateTokenService())
             ->withSession([])

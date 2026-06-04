@@ -129,12 +129,12 @@ interface Repository
     /**
      * @return void
      */
-    public function triggerAction();
+    public function doAction();
 
     /**
      * @return mixed
      */
-    public function triggerFilter();
+    public function applyFilters();
 
     /**
      * @param int $userId

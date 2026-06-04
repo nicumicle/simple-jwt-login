@@ -32,13 +32,13 @@ if (! defined('ABSPATH')) {
         <div class="sjl-gen-radio-group">
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="allow_validate_token" value="0"
-                    <?php echo $jwtSettings->getAuthenticationSettings()->isValidateTokenEnabled() === false ? 'checked' : ''; ?>
+                    <?php echo !$jwtSettings->getAuthenticationSettings()->isValidateTokenEnabled() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Disabled', 'simple-jwt-login'); ?></span>
             </label>
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="allow_validate_token" value="1"
-                    <?php echo $jwtSettings->getAuthenticationSettings()->isValidateTokenEnabled() === true ? 'checked' : ''; ?>
+                    <?php echo $jwtSettings->getAuthenticationSettings()->isValidateTokenEnabled() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Enabled', 'simple-jwt-login'); ?></span>
             </label>
@@ -82,13 +82,13 @@ if (! defined('ABSPATH')) {
         <div class="sjl-gen-radio-group">
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="validate_requires_auth_code" value="0"
-                    <?php echo $jwtSettings->getAuthenticationSettings()->isValidateAuthKeyRequired() === false ? 'checked' : ''; ?>
+                    <?php echo !$jwtSettings->getAuthenticationSettings()->isValidateAuthKeyRequired() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Not required', 'simple-jwt-login'); ?></span>
             </label>
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="validate_requires_auth_code" value="1"
-                    <?php echo $jwtSettings->getAuthenticationSettings()->isValidateAuthKeyRequired() === true ? 'checked' : ''; ?>
+                    <?php echo $jwtSettings->getAuthenticationSettings()->isValidateAuthKeyRequired() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Required', 'simple-jwt-login'); ?></span>
             </label>

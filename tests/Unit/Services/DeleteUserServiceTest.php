@@ -148,7 +148,7 @@ class DeleteUserServiceTest extends TestCase
             ->willReturn($useMock);
         $this->wordPressDataMock->method('deleteUser')
             ->willReturn(true);
-        $this->wordPressDataMock->method('triggerAction')
+        $this->wordPressDataMock->method('doAction')
             ->willReturn(true);
         $this->wordPressDataMock->method('createResponse')
             ->willReturn(true);

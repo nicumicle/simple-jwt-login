@@ -31,7 +31,7 @@ if (!defined('ABSPATH')) {
         <div class="sjl-gen-radio-group">
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="allow_reset_password" value="0"
-                    <?php echo $jwtSettings->getResetPasswordSettings()->isResetPasswordEnabled() === false ? 'checked' : ''; ?>
+                    <?php echo !$jwtSettings->getResetPasswordSettings()->isResetPasswordEnabled() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Disabled', 'simple-jwt-login'); ?></span>
             </label>
@@ -61,14 +61,14 @@ if (!defined('ABSPATH')) {
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="reset_password_requires_auth_code" value="0"
                        id="reset_password_auth_code_no"
-                    <?php echo $jwtSettings->getResetPasswordSettings()->isAuthKeyRequired() === false ? 'checked' : ''; ?>
+                    <?php echo !$jwtSettings->getResetPasswordSettings()->isAuthKeyRequired() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Not required', 'simple-jwt-login'); ?></span>
             </label>
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="reset_password_requires_auth_code" value="1"
                        id="reset_password_auth_code_yes"
-                    <?php echo $jwtSettings->getResetPasswordSettings()->isAuthKeyRequired() === true ? 'checked' : ''; ?>
+                    <?php echo $jwtSettings->getResetPasswordSettings()->isAuthKeyRequired() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Required', 'simple-jwt-login'); ?></span>
             </label>

@@ -62,13 +62,13 @@ $akPages  = $akTotal > 0 ? (int) ceil($akTotal / $akPerPage) : 1;
         <div class="sjl-gen-radio-group">
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="api_keys[enabled]" value="0"
-                    <?php echo $jwtSettings->getApiKeysSettings()->isEnabled() === false ? 'checked' : ''; ?>
+                    <?php echo !$jwtSettings->getApiKeysSettings()->isEnabled() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Disabled', 'simple-jwt-login'); ?></span>
             </label>
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="api_keys[enabled]" value="1"
-                    <?php echo $jwtSettings->getApiKeysSettings()->isEnabled() === true ? 'checked' : ''; ?>
+                    <?php echo $jwtSettings->getApiKeysSettings()->isEnabled() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Enabled', 'simple-jwt-login'); ?></span>
             </label>

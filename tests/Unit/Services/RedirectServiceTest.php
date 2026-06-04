@@ -51,7 +51,7 @@ class RedirectServiceTest extends TestCase
             ->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
         $this->wordPressDataMock
-            ->method('triggerFilter')
+            ->method('applyFilters')
             ->willReturn(true);
         $this->wordPressDataMock
             ->method('createResponse')
@@ -103,7 +103,7 @@ class RedirectServiceTest extends TestCase
             ->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
         $this->wordPressDataMock
-            ->method('triggerFilter')
+            ->method('applyFilters')
             ->willReturn(true);
         $this->wordPressDataMock
             ->method('createResponse')
@@ -138,7 +138,7 @@ class RedirectServiceTest extends TestCase
             ->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
         $this->wordPressDataMock
-            ->method('triggerFilter')
+            ->method('applyFilters')
             ->willReturn(true);
         $this->wordPressDataMock
             ->method('createResponse')

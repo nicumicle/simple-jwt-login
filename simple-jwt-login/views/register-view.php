@@ -32,7 +32,7 @@ if (!defined('ABSPATH')) {
         <div class="sjl-gen-radio-group">
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="allow_register" value="0"
-                    <?php echo $jwtSettings->getRegisterSettings()->isRegisterAllowed() === false ? 'checked' : ''; ?>
+                    <?php echo !$jwtSettings->getRegisterSettings()->isRegisterAllowed() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Disabled', 'simple-jwt-login'); ?></span>
             </label>
@@ -84,20 +84,20 @@ if (!defined('ABSPATH')) {
         <div class="sjl-gen-radio-group">
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="require_register_auth" value="0"
-                    <?php echo $jwtSettings->getRegisterSettings()->isAuthKeyRequiredOnRegister() === false ? 'checked' : ''; ?>
+                    <?php echo !$jwtSettings->getRegisterSettings()->isAuthKeyRequiredOnRegister() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Not required', 'simple-jwt-login'); ?></span>
             </label>
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="require_register_auth" value="1"
-                    <?php echo $jwtSettings->getRegisterSettings()->isAuthKeyRequiredOnRegister() === true ? 'checked' : ''; ?>
+                    <?php echo $jwtSettings->getRegisterSettings()->isAuthKeyRequiredOnRegister() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Required', 'simple-jwt-login'); ?></span>
             </label>
         </div>
         <div id="require_register_auth_alert"
              class="sjl-gen-warning-banner"
-             style="<?php echo $jwtSettings->getRegisterSettings()->isAuthKeyRequiredOnRegister() === true ? 'display:none;' : ''; ?>"
+             style="<?php echo $jwtSettings->getRegisterSettings()->isAuthKeyRequiredOnRegister() ? 'display:none;' : ''; ?>"
         >
             <span class="dashicons dashicons-warning"></span>
             <?php echo esc_html__('Allowing registration without an Auth Code is not recommended. Anyone can create accounts on your site.', 'simple-jwt-login'); ?>

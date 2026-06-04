@@ -101,7 +101,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
 
         // Allow developers to create their own payload values inside of the returned JWT
         if ($jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::HOOK_GENERATE_PAYLOAD)) {
-            $payload = $wordPressData->triggerFilter(SimpleJWTLoginHooks::HOOK_GENERATE_PAYLOAD, $payload, $user);
+            $payload = $wordPressData->applyFilters(SimpleJWTLoginHooks::HOOK_GENERATE_PAYLOAD, $payload, $user);
         }
 
         return $payload;
@@ -167,7 +167,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
             $attemptedEmail = isset($this->request['email'])
                 ? $this->request['email']
                 : (isset($this->request['username']) ? $this->request['username'] : null);
-            $this->wordPressData->triggerAction(
+            $this->wordPressData->doAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_FAILED,
                 null,
                 $attemptedEmail,
@@ -202,7 +202,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
         $passwordMatch = $this->wordPressData->checkPassword($password, $passwordHash, $dbPassword);
 
         if (!$passwordMatch) {
-            $this->wordPressData->triggerAction(
+            $this->wordPressData->doAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_FAILED,
                 $userId,
                 $userEmail,
@@ -236,7 +236,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
         );
 
         if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME)) {
-            $payload = $this->wordPressData->triggerFilter(
+            $payload = $this->wordPressData->applyFilters(
                 SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME,
                 $payload,
                 $this->request
@@ -271,14 +271,14 @@ class AuthenticateService extends BaseService implements ServiceInterface
             'data'    => $responseData,
         ];
         if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_AUTH_USER)) {
-            $response = $this->wordPressData->triggerFilter(
+            $response = $this->wordPressData->applyFilters(
                 SimpleJWTLoginHooks::HOOK_RESPONSE_AUTH_USER,
                 $response,
                 $user
             );
         }
 
-        $this->wordPressData->triggerAction(
+        $this->wordPressData->doAction(
             SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_SUCCESS,
             $userId,
             $userEmail
@@ -322,7 +322,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
 
         // Respect the two_factor_user_api_login_enable filter: when it returns true
         // the admin has explicitly opted the user out of the 2FA challenge for API logins.
-        $apiLoginEnabled = $this->wordPressData->triggerFilter(
+        $apiLoginEnabled = $this->wordPressData->applyFilters(
             'two_factor_user_api_login_enable',
             false,
             $user
@@ -377,14 +377,14 @@ class AuthenticateService extends BaseService implements ServiceInterface
         ];
 
         if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_2FA_CHALLENGE)) {
-            $response = $this->wordPressData->triggerFilter(
+            $response = $this->wordPressData->applyFilters(
                 SimpleJWTLoginHooks::HOOK_RESPONSE_2FA_CHALLENGE,
                 $response,
                 $user
             );
         }
 
-        $this->wordPressData->triggerAction(
+        $this->wordPressData->doAction(
             SimpleJWTLoginHooks::AUDIT_2FA_CHALLENGE_ISSUED,
             $userId,
             $this->wordPressData->getUserProperty($user, 'user_email')

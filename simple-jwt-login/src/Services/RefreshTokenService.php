@@ -24,7 +24,7 @@ class RefreshTokenService extends AuthenticateService
 
             return $this->refreshJwt();
         } catch (Exception $exception) {
-            $this->wordPressData->triggerAction(
+            $this->wordPressData->doAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_REFRESH_TOKEN_FAILED,
                 null,
                 null,
@@ -128,7 +128,7 @@ class RefreshTokenService extends AuthenticateService
         );
 
         if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME)) {
-            $newPayload = $this->wordPressData->triggerFilter(
+            $newPayload = $this->wordPressData->applyFilters(
                 SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME,
                 $newPayload,
                 $this->request
@@ -150,7 +150,7 @@ class RefreshTokenService extends AuthenticateService
         $userId    = (int) $this->wordPressData->getUserProperty($user, 'ID');
         $userEmail = (string) $this->wordPressData->getUserProperty($user, 'user_email');
 
-        $this->wordPressData->triggerAction(
+        $this->wordPressData->doAction(
             SimpleJWTLoginHooks::AUDIT_AUTH_REFRESH_TOKEN_SUCCESS,
             $userId,
             $userEmail
@@ -172,7 +172,7 @@ class RefreshTokenService extends AuthenticateService
             ->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_REFRESH_TOKEN)
         ) {
             $response = $this->wordPressData
-                ->triggerFilter(
+                ->applyFilters(
                     SimpleJWTLoginHooks::HOOK_RESPONSE_REFRESH_TOKEN,
                     $response,
                     $user

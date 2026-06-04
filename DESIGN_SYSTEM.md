@@ -422,7 +422,7 @@ Always pair inputs with `.sjl-gen-field-label` labels placed above.
 ---
 
 ## 8. Do / Don't
-
+ 
 | Do | Don't |
 |---|---|
 | Use card-based layouts for grouping related settings | Introduce two-panel sidebar layouts |

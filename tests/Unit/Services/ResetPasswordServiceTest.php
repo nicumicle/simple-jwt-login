@@ -152,7 +152,7 @@ class ResetPasswordServiceTest extends TestCase
             ->method('getUserDetailsByEmail')
             ->willReturn(['User']);
         $this->wordPressDataMock
-            ->method('triggerFilter')
+            ->method('applyFilters')
             ->willReturn(true);
         $this->wordPressDataMock
             ->method('createResponse')

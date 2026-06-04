@@ -111,7 +111,7 @@ class AbstractOauthHandleOauthTest extends TestCase
                 $capturedUrl = $url;
             });
 
-        $this->wpData->method('triggerAction')->willReturn(null);
+        $this->wpData->method('doAction')->willReturn(null);
 
         $oauth = $this->makeOauth(['code' => 'test-code-abc']);
         $oauth->exchangeStub = $exchangeResult;
@@ -136,7 +136,7 @@ class AbstractOauthHandleOauthTest extends TestCase
             ->willReturnCallback(function ($user, $prop) {
                 return $user->$prop;
             });
-        $this->wpData->method('triggerAction')->willReturn(null);
+        $this->wpData->method('doAction')->willReturn(null);
         $this->wpData->method('getAdminUrl')->willReturn('http://localhost/wp-admin/');
         $this->wpData->expects($this->once())->method('redirect')
             ->with('http://localhost/wp-admin/');
@@ -185,7 +185,7 @@ class AbstractOauthHandleOauthTest extends TestCase
                 return $u->$prop;
             });
         $this->wpData->method('sanitizeTextField')->willReturnArgument(0);
-        $this->wpData->method('triggerAction')->willReturn(null);
+        $this->wpData->method('doAction')->willReturn(null);
         $this->wpData->method('getAdminUrl')->willReturn('http://localhost/wp-admin/');
         $this->wpData->method('getLoginURL')
             ->willReturnCallback(function ($params) {
@@ -233,7 +233,7 @@ class AbstractOauthHandleOauthTest extends TestCase
             ->willReturnCallback(function ($u, $prop) {
                 return $u->$prop;
             });
-        $this->wpData->method('triggerAction')->willReturn(null);
+        $this->wpData->method('doAction')->willReturn(null);
         $this->wpData->method('getAdminUrl')->willReturn('http://localhost/wp-admin/');
         $this->wpData->expects($this->once())->method('loginUser');
         $this->wpData->expects($this->once())->method('redirect')->with('http://localhost/wp-admin/');

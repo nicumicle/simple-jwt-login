@@ -119,7 +119,7 @@ class RevokeTokenServiceTest extends TestCase
             ->willReturn(true);
         $this->wordPressDataMock->method('getUserProperty')
             ->willReturn(1);
-        $this->wordPressDataMock->method('triggerFilter')
+        $this->wordPressDataMock->method('applyFilters')
             ->willReturn(true);
 
         $this->wordPressDataMock->method('getUserMeta')
@@ -211,7 +211,7 @@ class RevokeTokenServiceTest extends TestCase
             ->willReturn(true);
         $this->wordPressDataMock->method('getUserProperty')
             ->willReturn(1);
-        $this->wordPressDataMock->method('triggerFilter')
+        $this->wordPressDataMock->method('applyFilters')
             ->willReturn(true);
 
         $revokedJwt = JWT::encode(['id' => 1], 'test', 'HS256');

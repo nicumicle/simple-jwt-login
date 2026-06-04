@@ -29,7 +29,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
             return $this->createUser();
         } catch (Exception $exception) {
             $email = isset($this->request['email']) ? $this->request['email'] : null;
-            $this->wordPressData->triggerAction(
+            $this->wordPressData->doAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_REGISTER_FAILED,
                 null,
                 $email,
@@ -118,10 +118,10 @@ class RegisterUserService extends BaseService implements ServiceInterface
         }
 
         if ($hooksSettings->isHookEnabled(SimpleJWTLoginHooks::REGISTER_ACTION_NAME)) {
-            $this->wordPressData->triggerAction(SimpleJWTLoginHooks::REGISTER_ACTION_NAME, $user, $password);
+            $this->wordPressData->doAction(SimpleJWTLoginHooks::REGISTER_ACTION_NAME, $user, $password);
         }
 
-        $this->wordPressData->triggerAction(
+        $this->wordPressData->doAction(
             SimpleJWTLoginHooks::AUDIT_AUTH_REGISTER_SUCCESS,
             $userId,
             $userEmail
@@ -140,7 +140,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
         ) {
             $this->wordPressData->loginUser($user);
             if ($hooksSettings->isHookEnabled(SimpleJWTLoginHooks::LOGIN_ACTION_NAME)) {
-                $this->wordPressData->triggerAction(SimpleJWTLoginHooks::LOGIN_ACTION_NAME, $user);
+                $this->wordPressData->doAction(SimpleJWTLoginHooks::LOGIN_ACTION_NAME, $user);
             }
 
             return (new RedirectService())
@@ -180,7 +180,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
 
         if ($hooksSettings->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_REGISTER_USER)) {
             $response = $this->wordPressData
-                ->triggerFilter(
+                ->applyFilters(
                     SimpleJWTLoginHooks::HOOK_RESPONSE_REGISTER_USER,
                     $response,
                     $user

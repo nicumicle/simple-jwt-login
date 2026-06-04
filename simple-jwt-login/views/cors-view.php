@@ -26,13 +26,13 @@ if (!defined('ABSPATH')) {
         <div class="sjl-gen-radio-group">
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="cors[enabled]" id="allow_cors_no" value="0"
-                    <?php echo $jwtSettings->getCorsSettings()->isCorsEnabled() === false ? 'checked' : ''; ?>
+                    <?php echo !$jwtSettings->getCorsSettings()->isCorsEnabled() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Disabled', 'simple-jwt-login'); ?></span>
             </label>
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="cors[enabled]" id="allow_cors_yes" value="1"
-                    <?php echo $jwtSettings->getCorsSettings()->isCorsEnabled() === true ? 'checked' : ''; ?>
+                    <?php echo $jwtSettings->getCorsSettings()->isCorsEnabled() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Enabled', 'simple-jwt-login'); ?></span>
             </label>

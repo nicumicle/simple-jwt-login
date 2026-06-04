@@ -32,13 +32,13 @@ if (! defined('ABSPATH')) {
         <div class="sjl-gen-radio-group">
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="allow_revoke_token" value="0"
-                    <?php echo $jwtSettings->getAuthenticationSettings()->isRevokeTokenEnabled() === false ? 'checked' : ''; ?>
+                    <?php echo !$jwtSettings->getAuthenticationSettings()->isRevokeTokenEnabled() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Disabled', 'simple-jwt-login'); ?></span>
             </label>
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="allow_revoke_token" value="1"
-                    <?php echo $jwtSettings->getAuthenticationSettings()->isRevokeTokenEnabled() === true ? 'checked' : ''; ?>
+                    <?php echo $jwtSettings->getAuthenticationSettings()->isRevokeTokenEnabled() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Enabled', 'simple-jwt-login'); ?></span>
             </label>
@@ -81,13 +81,13 @@ if (! defined('ABSPATH')) {
         <div class="sjl-gen-radio-group">
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="revoke_requires_auth_code" value="0"
-                    <?php echo $jwtSettings->getAuthenticationSettings()->isRevokeAuthKeyRequired() === false ? 'checked' : ''; ?>
+                    <?php echo !$jwtSettings->getAuthenticationSettings()->isRevokeAuthKeyRequired() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Not required', 'simple-jwt-login'); ?></span>
             </label>
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="revoke_requires_auth_code" value="1"
-                    <?php echo $jwtSettings->getAuthenticationSettings()->isRevokeAuthKeyRequired() === true ? 'checked' : ''; ?>
+                    <?php echo $jwtSettings->getAuthenticationSettings()->isRevokeAuthKeyRequired() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Required', 'simple-jwt-login'); ?></span>
             </label>

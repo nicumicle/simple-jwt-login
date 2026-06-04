@@ -46,7 +46,7 @@ class LoginService extends BaseService implements ServiceInterface
         try {
             return $this->doLogin();
         } catch (Exception $exception) {
-            $this->wordPressData->triggerAction(
+            $this->wordPressData->doAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_SESSION_FAILED,
                 null,
                 null,
@@ -82,7 +82,7 @@ class LoginService extends BaseService implements ServiceInterface
         $this->validateJwtRevoked($userId, $this->jwt);
         $this->wordPressData->loginUser($user);
 
-        $this->wordPressData->triggerAction(
+        $this->wordPressData->doAction(
             SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_SESSION_SUCCESS,
             $userId,
             $userEmail
@@ -97,7 +97,7 @@ class LoginService extends BaseService implements ServiceInterface
         );
 
         if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::LOGIN_ACTION_NAME)) {
-            $this->wordPressData->triggerAction(SimpleJWTLoginHooks::LOGIN_ACTION_NAME, $user);
+            $this->wordPressData->doAction(SimpleJWTLoginHooks::LOGIN_ACTION_NAME, $user);
         }
 
         return (new RedirectService())

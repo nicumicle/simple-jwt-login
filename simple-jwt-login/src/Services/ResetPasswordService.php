@@ -18,7 +18,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
             return $this->doResetPassword();
         } catch (Exception $exception) {
             $email = isset($this->request['email']) ? $this->request['email'] : null;
-            $this->wordPressData->triggerAction(
+            $this->wordPressData->doAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_FAILED,
                 null,
                 $email,
@@ -88,7 +88,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
             $this->wordPressData->sendPasswordChangedNotification($user);
         }
 
-        $this->wordPressData->triggerAction(
+        $this->wordPressData->doAction(
             SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_SUCCESS,
             $userId,
             $userEmail
@@ -113,7 +113,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
                 ->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_CHANGE_USER_PASSWORD)
         ) {
             $response = $this->wordPressData
-                ->triggerFilter(
+                ->applyFilters(
                     SimpleJWTLoginHooks::HOOK_RESPONSE_CHANGE_USER_PASSWORD,
                     $response,
                     $user
@@ -194,7 +194,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
                     ->getHooksSettings()
                     ->isHookEnabled(SimpleJWTLoginHooks::RESET_PASSWORD_CUSTOM_EMAIL_TEMPLATE)
                 ) {
-                    $emailBody = $this->wordPressData->triggerFilter(
+                    $emailBody = $this->wordPressData->applyFilters(
                         SimpleJWTLoginHooks::RESET_PASSWORD_CUSTOM_EMAIL_TEMPLATE,
                         $emailBody,
                         $this->request
@@ -222,7 +222,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
         $userId    = (int) $this->wordPressData->getUserProperty($user, 'ID');
         $userEmail = (string) $this->wordPressData->getUserProperty($user, 'user_email');
 
-        $this->wordPressData->triggerAction(
+        $this->wordPressData->doAction(
             SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_REQUEST,
             $userId,
             $userEmail
@@ -246,7 +246,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
         if ($this->jwtSettings->getHooksSettings()
             ->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_SEND_RESET_PASSWORD)
         ) {
-            $response = $this->wordPressData->triggerFilter(
+            $response = $this->wordPressData->applyFilters(
                 SimpleJWTLoginHooks::HOOK_RESPONSE_SEND_RESET_PASSWORD,
                 $response,
                 $user

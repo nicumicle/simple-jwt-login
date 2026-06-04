@@ -31,13 +31,13 @@ if (! defined('ABSPATH')) {
         <div class="sjl-gen-radio-group">
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="allow_autologin" value="0"
-                    <?php echo $jwtSettings->getLoginSettings()->isAutologinEnabled() === false ? 'checked' : ''; ?>
+                    <?php echo !$jwtSettings->getLoginSettings()->isAutologinEnabled() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Disabled', 'simple-jwt-login'); ?></span>
             </label>
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="allow_autologin" value="1"
-                    <?php echo $jwtSettings->getLoginSettings()->isAutologinEnabled() === true ? 'checked' : ''; ?>
+                    <?php echo $jwtSettings->getLoginSettings()->isAutologinEnabled() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Enabled', 'simple-jwt-login'); ?></span>
             </label>
@@ -86,13 +86,13 @@ if (! defined('ABSPATH')) {
         <div class="sjl-gen-radio-group">
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="require_login_auth" value="0"
-                    <?php echo $jwtSettings->getLoginSettings()->isAuthKeyRequiredOnLogin() === false ? 'checked' : ''; ?>
+                    <?php echo !$jwtSettings->getLoginSettings()->isAuthKeyRequiredOnLogin() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Not required', 'simple-jwt-login'); ?></span>
             </label>
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="require_login_auth" value="1"
-                    <?php echo $jwtSettings->getLoginSettings()->isAuthKeyRequiredOnLogin() === true ? 'checked' : ''; ?>
+                    <?php echo $jwtSettings->getLoginSettings()->isAuthKeyRequiredOnLogin() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Required', 'simple-jwt-login'); ?></span>
             </label>

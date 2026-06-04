@@ -30,13 +30,13 @@ if (! defined('ABSPATH')) {
         <div class="sjl-gen-radio-group">
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="allow_delete" value="0"
-                    <?php echo $jwtSettings->getDeleteUserSettings()->isDeleteAllowed() === false ? 'checked' : ''; ?>
+                    <?php echo !$jwtSettings->getDeleteUserSettings()->isDeleteAllowed() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Disabled', 'simple-jwt-login'); ?></span>
             </label>
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="allow_delete" value="1"
-                    <?php echo $jwtSettings->getDeleteUserSettings()->isDeleteAllowed() === true ? 'checked' : ''; ?>
+                    <?php echo $jwtSettings->getDeleteUserSettings()->isDeleteAllowed() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Enabled', 'simple-jwt-login'); ?></span>
             </label>
@@ -85,20 +85,20 @@ if (! defined('ABSPATH')) {
         <div class="sjl-gen-radio-group">
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="require_delete_auth" value="0"
-                    <?php echo $jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete() === false ? 'checked' : ''; ?>
+                    <?php echo !$jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Not required', 'simple-jwt-login'); ?></span>
             </label>
             <label class="sjl-gen-radio-option">
                 <input type="radio" name="require_delete_auth" value="1"
-                    <?php echo $jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete() === true ? 'checked' : ''; ?>
+                    <?php echo $jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete() ? 'checked' : ''; ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Required', 'simple-jwt-login'); ?></span>
             </label>
         </div>
         <div id="require_delete_auth_alert"
              class="sjl-gen-warning-banner"
-             style="<?php echo $jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete() === true ? 'display:none;' : ''; ?>"
+             style="<?php echo $jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete() ? 'display:none;' : ''; ?>"
         >
             <span class="dashicons dashicons-warning"></span>
             <?php echo esc_html__('Allowing account deletion without an Auth Code is not recommended. Any valid JWT holder could delete accounts.', 'simple-jwt-login'); ?>

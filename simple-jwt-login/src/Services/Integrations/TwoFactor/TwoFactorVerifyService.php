@@ -83,7 +83,7 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
         }
 
         if (!$bridge->verifyNonce($userId, $nonce)) {
-            $this->wordPressData->triggerAction(
+            $this->wordPressData->doAction(
                 SimpleJWTLoginHooks::AUDIT_2FA_VERIFY_FAILED,
                 $userId,
                 $userEmail,
@@ -107,7 +107,7 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
         }
 
         if (!$this->verifyCodeForProvider($provider, $user, $code, $userId)) {
-            $this->wordPressData->triggerAction(
+            $this->wordPressData->doAction(
                 SimpleJWTLoginHooks::AUDIT_2FA_VERIFY_FAILED,
                 $userId,
                 $userEmail,
@@ -132,7 +132,7 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
         $payload = self::generatePayload($payload, $this->wordPressData, $this->jwtSettings, $user);
 
         if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME)) {
-            $payload = $this->wordPressData->triggerFilter(
+            $payload = $this->wordPressData->applyFilters(
                 SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME,
                 $payload,
                 $this->request
@@ -162,14 +162,14 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
         $response = ['success' => true, 'data' => $responseData];
 
         if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_2FA_VERIFY)) {
-            $response = $this->wordPressData->triggerFilter(
+            $response = $this->wordPressData->applyFilters(
                 SimpleJWTLoginHooks::HOOK_RESPONSE_2FA_VERIFY,
                 $response,
                 $user
             );
         }
 
-        $this->wordPressData->triggerAction(
+        $this->wordPressData->doAction(
             SimpleJWTLoginHooks::AUDIT_2FA_VERIFY_SUCCESS,
             $userId,
             $userEmail

@@ -269,7 +269,7 @@ class WordPressRepository implements Repository
     /**
      * Call do_action function from WordPress with arguments
      */
-    public function triggerAction()
+    public function doAction()
     {
         call_user_func_array('do_action', func_get_args());
     }
@@ -277,7 +277,7 @@ class WordPressRepository implements Repository
     /**
      * Call do_action function from WordPress with arguments
      */
-    public function triggerFilter()
+    public function applyFilters()
     {
         return call_user_func_array('apply_filters', func_get_args());
     }

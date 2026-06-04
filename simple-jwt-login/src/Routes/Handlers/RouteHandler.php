@@ -201,7 +201,7 @@ class RouteHandler
             return;
         }
         /** @phpstan-ignore-next-line */
-        $this->jwtSettings->getWordPressData()->triggerAction(
+        $this->jwtSettings->getWordPressData()->doAction(
             SimpleJWTLoginHooks::HOOK_BEFORE_ENDPOINT,
             $this->route['method'],
             $this->route['name'],

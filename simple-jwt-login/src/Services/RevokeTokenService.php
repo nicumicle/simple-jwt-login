@@ -22,7 +22,7 @@ class RevokeTokenService extends AuthenticateService
 
             return $this->revokeToken();
         } catch (Exception $exception) {
-            $this->wordPressData->triggerAction(
+            $this->wordPressData->doAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_LOGOUT_FAILED,
                 null,
                 null,
@@ -84,7 +84,7 @@ class RevokeTokenService extends AuthenticateService
 
         $this->tokenRepository->deleteByUserId($userId);
 
-        $this->wordPressData->triggerAction(
+        $this->wordPressData->doAction(
             SimpleJWTLoginHooks::AUDIT_AUTH_LOGOUT_SUCCESS,
             $userId,
             $userEmail
@@ -104,7 +104,7 @@ class RevokeTokenService extends AuthenticateService
             ->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_REVOKE_TOKEN)
         ) {
             $response = $this->wordPressData
-                ->triggerFilter(
+                ->applyFilters(
                     SimpleJWTLoginHooks::HOOK_RESPONSE_REVOKE_TOKEN,
                     $response,
                     $user

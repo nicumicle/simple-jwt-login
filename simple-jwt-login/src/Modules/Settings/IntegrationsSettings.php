@@ -12,6 +12,7 @@ use SimpleJWTLogin\Modules\Settings\ThirdParty\AbstractThirdPartySettings;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\ForceLoginSettings;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\TwoFactorSettings;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\WpGraphQLSettings;
+use SimpleJWTLogin\Services\Oauth\GoogleOauth;
 
 /**
  * Registry for OAuth / OIDC providers and 3rd-party integrations.
@@ -180,7 +181,7 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
     public function google()
     {
         /** @var GoogleOauthSettings */
-        return $this->getProvider('google');
+        return $this->getProvider(GoogleOauth::PROVIDER_SLUG);
     }
 
     /**

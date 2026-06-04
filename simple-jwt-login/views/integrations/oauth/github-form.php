@@ -25,7 +25,7 @@ if (! defined('ABSPATH')) {
     <input type="hidden" name="scope" value="user:email" />
     <input type="hidden" name="redirect_uri" value="<?php echo esc_url($jwtSettings->generateExampleLink(RouteService::OAUTH_TOKEN, ['provider' => 'github'])); ?>" />
     <button name="github-auth" class="simple-jwt-login-auth-btn">
-        <img src="<?php echo esc_url($pluginDirUrl . 'images/integrations/github-icon.svg'); ?>" alt="GitHub logo"/>
+        <img src="<?php echo esc_url($pluginDirUrl . 'assets/images/integrations/github-icon.svg'); ?>" alt="GitHub logo"/>
         <span class="simple-jwt-login-auth-txt">
             <?php echo esc_html__('Continue with GitHub', 'simple-jwt-login'); ?>
         </span>

@@ -25,7 +25,7 @@ class LoginPageIntegration
         $pluginDirUrl = plugin_dir_url(SIMPLE_JWT_LOGIN_PLUGIN_FILE);
         wp_enqueue_style(
             'simple-jwt-login-login_header_css',
-            $pluginDirUrl . 'css/login.css',
+            $pluginDirUrl . 'assets/css/login.css',
             array(),
             SIMPLE_JWT_LOGIN_VERSION
         );

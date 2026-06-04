@@ -2,6 +2,7 @@
 
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Services\Oauth\GoogleOauth;
 use SimpleJWTLogin\Services\RouteService;
 
 if (!defined('ABSPATH')) {
@@ -209,7 +210,7 @@ $google = $jwtSettings->getIntegrationsSettings()->google();
                 <span class="code">
                     <?php
                     echo esc_html($jwtSettings->generateExampleLink(RouteService::OAUTH_TOKEN, [
-                        'provider' => 'google',
+                        'provider' => GoogleOauth::PROVIDER_SLUG,
                         'code'     => __('your_code', 'simple-jwt-login'),
                     ]));
                     ?>

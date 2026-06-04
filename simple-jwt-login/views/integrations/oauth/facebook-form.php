@@ -26,7 +26,7 @@ if (! defined('ABSPATH')) {
     <input type="hidden" name="scope" value="email" />
     <input type="hidden" name="redirect_uri" value="<?php echo esc_url($jwtSettings->generateExampleLink(RouteService::OAUTH_TOKEN, ['provider' => 'facebook'])); ?>" />
     <button name="facebook-auth" class="simple-jwt-login-auth-btn">
-        <img src="<?php echo esc_url($pluginDirUrl . 'images/integrations/facebook-icon.svg'); ?>" alt="Facebook logo"/>
+        <img src="<?php echo esc_url($pluginDirUrl . 'assets/images/integrations/facebook-icon.svg'); ?>" alt="Facebook logo"/>
         <span class="simple-jwt-login-auth-txt">
             <?php echo esc_html__('Continue with Facebook', 'simple-jwt-login'); ?>
         </span>

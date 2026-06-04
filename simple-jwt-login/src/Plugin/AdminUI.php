@@ -9,7 +9,7 @@ class AdminUI
      */
     public function registerMenuEntry()
     {
-        $icon = plugins_url('/images/simple-jwt-login-16x16.png', SIMPLE_JWT_LOGIN_PLUGIN_FILE);
+        $icon = plugins_url('/assets/images/simple-jwt-login-16x16.png', SIMPLE_JWT_LOGIN_PLUGIN_FILE);
 
         add_menu_page(
             'Simple-JWT-Login Plugin',
@@ -31,19 +31,19 @@ class AdminUI
         $loadScriptsInFooter = false;
         wp_enqueue_style(
             'simple-jwt-login-bootstrap',
-            $pluginDirUrl . 'vendor/bootstrap/bootstrap.min.css',
+            $pluginDirUrl . 'assets/vendor/bootstrap/bootstrap.min.css',
             array(),
             $pluginVersion
         );
         wp_enqueue_style(
             'simple-jwt-login-style',
-            $pluginDirUrl . 'css/style.css',
+            $pluginDirUrl . 'assets/css/style.css',
             array(),
             $pluginVersion
         );
         wp_enqueue_script(
             'simple-jwt-bootstrap-min',
-            $pluginDirUrl . 'vendor/bootstrap/bootstrap.min.js',
+            $pluginDirUrl . 'assets/vendor/bootstrap/bootstrap.min.js',
             array('jquery'),
             $pluginVersion,
             $loadScriptsInFooter
@@ -51,7 +51,7 @@ class AdminUI
 
         wp_enqueue_script(
             'simple-jwt-login-scripts',
-            $pluginDirUrl . 'js/scripts.js',
+            $pluginDirUrl . 'assets/js/scripts.js',
             array('simple-jwt-bootstrap-min'),
             $pluginVersion,
             $loadScriptsInFooter

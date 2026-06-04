@@ -28,7 +28,7 @@ echo esc_url($auth0Domain ? sprintf('https://%s/authorize', $auth0Domain) : '#')
     <input type="hidden" name="scope" value="openid email profile" />
     <input type="hidden" name="redirect_uri" value="<?php echo esc_url($jwtSettings->generateExampleLink(RouteService::OAUTH_TOKEN, ['provider' => 'auth0']));?>" />
     <button name="auth0-auth" class="simple-jwt-login-auth-btn">
-        <img src="<?php echo esc_url($pluginDirUrl . 'images/integrations/auth0-icon.svg');?>" alt="Auth0 logo"/>
+        <img src="<?php echo esc_url($pluginDirUrl . 'assets/images/integrations/auth0-icon.svg');?>" alt="Auth0 logo"/>
         <span class="simple-jwt-login-auth-txt">
             <?php echo esc_html__('Continue with Auth0', 'simple-jwt-login');?>
         </span>

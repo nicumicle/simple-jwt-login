@@ -93,11 +93,21 @@ $github = $jwtSettings->getIntegrationsSettings()->github();
                     <?php echo esc_html__('Client Secret', 'simple-jwt-login'); ?>
                     <span class="required">*</span>
                 </label>
-                <input type="text" name="github[client_secret]" id="github_client_secret"
-                       class="form-control"
-                       value="<?php echo esc_attr($github->getClientSecret()); ?>"
-                       placeholder="<?php echo esc_attr(__('Client Secret', 'simple-jwt-login')); ?>"
-                />
+                <div class="input-group" id="github_client_secret_container">
+                    <input type="password" name="github[client_secret]" id="github_client_secret"
+                           class="form-control" autocomplete="off"
+                           value="<?php echo esc_attr($github->getClientSecret()); ?>"
+                           placeholder="<?php echo esc_attr(__('Client Secret', 'simple-jwt-login')); ?>"
+                    />
+                    <div class="input-group-addon">
+                        <a href="javascript:void(0)"
+                           onclick="sjlToggleSecret('github_client_secret_container', 'github_client_secret')"
+                           class="toggle_key_button"
+                           title="<?php echo esc_attr(__('Toggle key visibility', 'simple-jwt-login')); ?>">
+                            <i class="toggle-image" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

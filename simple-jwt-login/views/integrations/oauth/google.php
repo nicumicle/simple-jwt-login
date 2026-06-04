@@ -95,11 +95,21 @@ $google = $jwtSettings->getIntegrationsSettings()->google();
                     <?php echo esc_html__('Client Secret', 'simple-jwt-login'); ?>
                     <span class="required">*</span>
                 </label>
-                <input type="text" name="google[client_secret]" id="google_client_secret"
-                       class="form-control"
-                       value="<?php echo esc_attr($google->getClientSecret()); ?>"
-                       placeholder="<?php echo esc_attr(__('Client Secret', 'simple-jwt-login')); ?>"
-                />
+                <div class="input-group" id="google_client_secret_container">
+                    <input type="password" name="google[client_secret]" id="google_client_secret"
+                           class="form-control" autocomplete="off"
+                           value="<?php echo esc_attr($google->getClientSecret()); ?>"
+                           placeholder="<?php echo esc_attr(__('Client Secret', 'simple-jwt-login')); ?>"
+                    />
+                    <div class="input-group-addon">
+                        <a href="javascript:void(0)"
+                           onclick="sjlToggleSecret('google_client_secret_container', 'google_client_secret')"
+                           class="toggle_key_button"
+                           title="<?php echo esc_attr(__('Toggle key visibility', 'simple-jwt-login')); ?>">
+                            <i class="toggle-image" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

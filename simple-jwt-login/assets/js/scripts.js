@@ -855,6 +855,18 @@ function showDecryptionKey()
 
 }
 
+function sjlToggleSecret(containerId, inputId)
+{
+    var elementType = 'text';
+    if (jQuery('#' + inputId).attr('type') === 'text') {
+        jQuery('#' + containerId + ' .toggle-image').removeClass('toggle_visible');
+        elementType = 'password';
+    } else {
+        jQuery('#' + containerId + ' .toggle-image').addClass('toggle_visible');
+    }
+    jQuery('#' + inputId).attr('type', elementType);
+}
+
 function showRefreshTokenKey()
 {
     var elementType = 'text';

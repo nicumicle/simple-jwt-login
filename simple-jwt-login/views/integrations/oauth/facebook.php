@@ -93,11 +93,21 @@ $facebook = $jwtSettings->getIntegrationsSettings()->facebook();
                     <?php echo esc_html__('App Secret', 'simple-jwt-login'); ?>
                     <span class="required">*</span>
                 </label>
-                <input type="text" name="facebook[client_secret]" id="facebook_client_secret"
-                       class="form-control"
-                       value="<?php echo esc_attr($facebook->getClientSecret()); ?>"
-                       placeholder="<?php echo esc_attr(__('App Secret', 'simple-jwt-login')); ?>"
-                />
+                <div class="input-group" id="facebook_client_secret_container">
+                    <input type="password" name="facebook[client_secret]" id="facebook_client_secret"
+                           class="form-control" autocomplete="off"
+                           value="<?php echo esc_attr($facebook->getClientSecret()); ?>"
+                           placeholder="<?php echo esc_attr(__('App Secret', 'simple-jwt-login')); ?>"
+                    />
+                    <div class="input-group-addon">
+                        <a href="javascript:void(0)"
+                           onclick="sjlToggleSecret('facebook_client_secret_container', 'facebook_client_secret')"
+                           class="toggle_key_button"
+                           title="<?php echo esc_attr(__('Toggle key visibility', 'simple-jwt-login')); ?>">
+                            <i class="toggle-image" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

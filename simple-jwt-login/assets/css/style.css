@@ -443,7 +443,7 @@
 #simple-jwt-login .toggle_key_button {
     width: 35px;
     background: var(--sjl-primary);
-    height: 35px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;

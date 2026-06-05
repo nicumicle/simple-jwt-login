@@ -95,7 +95,7 @@ tags:
       (or a custom URL). Useful for passwordless login flows in mobile apps and email links.
     externalDocs:
       description: Find out more
-      url: https://www.simplejwtlogin.com/docs/autologin
+      url: https://simplejwtlogin.com/docs/autologin
   - name: register_user
     description: |
       Register a new WordPress user account. The caller supplies at minimum an email address
@@ -104,7 +104,7 @@ tags:
       response includes the new user's profile and, optionally, a JWT.
     externalDocs:
       description: Find out more
-      url: https://www.simplejwtlogin.com/docs/register-user
+      url: https://simplejwtlogin.com/docs/register-user
   - name: delete_user
     description: |
       Permanently delete a WordPress user identified by the JWT payload. The JWT must be
@@ -112,7 +112,7 @@ tags:
       An optional auth code can be required.
     externalDocs:
       description: Find out more
-      url: https://www.simplejwtlogin.com/docs/delete_user
+      url: https://simplejwtlogin.com/docs/delete_user
   - name: reset_password
     description: |
       Two-step password reset flow. First, `POST /user/reset_password` sends a one-time
@@ -120,7 +120,7 @@ tags:
       (or a valid JWT when JWT-based reset is enabled) to set a new password.
     externalDocs:
       description: Find out more
-      url: https://www.simplejwtlogin.com/docs/change-password
+      url: https://simplejwtlogin.com/docs/change-password
   - name: authenticate_user
     description: |
       Exchange WordPress credentials for a signed JWT (and optional refresh token). Related
@@ -128,7 +128,7 @@ tags:
       and revoke a token so it is rejected by future requests.
     externalDocs:
       description: Find out more
-      url: https://www.simplejwtlogin.com/docs/authentication
+      url: https://simplejwtlogin.com/docs/authentication
   - name: oauth
     description: |
       OAuth 2.0 authorization-code flow for third-party providers (Google, Auth0, Facebook,
@@ -136,7 +136,7 @@ tags:
       a WordPress JWT. The provider must be enabled and configured in the plugin settings.
     externalDocs:
       description: Find out more
-      url: https://www.simplejwtlogin.com/docs/oauth
+      url: https://simplejwtlogin.com/docs/oauth
   - name: api_keys
     description: |
       Manage long-lived API keys that can authenticate REST requests to any WordPress
@@ -145,43 +145,43 @@ tags:
       require an active WordPress session.
     externalDocs:
       description: Find out more
-      url: https://www.simplejwtlogin.com/docs/api-keys
+      url: https://simplejwtlogin.com/docs/api-keys
 x-tags:
   - name: login_user
     description: Login user in WordPress
     externalDocs:
       description: Find out more
-      url: https://www.simplejwtlogin.com/docs/autologin
+      url: https://simplejwtlogin.com/docs/autologin
   - name: register_user
     description: Register WordPress user
     externalDocs:
       description: Find out more
-      url: https://www.simplejwtlogin.com/docs/register-user
+      url: https://simplejwtlogin.com/docs/register-user
   - name: delete_user
     description: Delete WordPress user
     externalDocs:
       description: Find out more
-      url: https://www.simplejwtlogin.com/docs/delete_user
+      url: https://simplejwtlogin.com/docs/delete_user
   - name: reset_password
     description: Reset User Password
     externalDocs:
       description: Find out more
-      url: https://www.simplejwtlogin.com/docs/change-password
+      url: https://simplejwtlogin.com/docs/change-password
   - name: authenticate_user
     description: Authenticate user
     externalDocs:
       description: Find out more
-      url: https://www.simplejwtlogin.com/docs/authentication
+      url: https://simplejwtlogin.com/docs/authentication
   - name: oauth
     description: OAuth 2.0 token exchange (Google, Auth0, Facebook, GitHub)
     externalDocs:
       description: Find out more
-      url: https://www.simplejwtlogin.com/docs/oauth
+      url: https://simplejwtlogin.com/docs/oauth
   - name: api_keys
     description: API key management
     externalDocs:
       description: Find out more
-      url: https://www.simplejwtlogin.com/docs/api-keys
+      url: https://simplejwtlogin.com/docs/api-keys
 paths:
   /autologin:
     get:

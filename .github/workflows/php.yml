@@ -36,41 +36,11 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
 
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
+    - name: Run PHPCS
+      run: vendor/bin/phpcs --no-cache simple-jwt-login/ tests/ --extensions=php
 
-    # - name: Run PHPCS
-    #   run: vendor/bin/phpcs simple-jwt-login/ --extensions=php --no-cache
-
-    - name: Run PHPMD design on plugin
-      run: vendor/bin/phpmd simple-jwt-login/ text design
-
-    - name: Run PHPMD cleancode on plugin
-      run: vendor/bin/phpmd simple-jwt-login/ text cleancode
-
-    - name: Run PHPMD unusedcode on plugin
-      run: vendor/bin/phpmd simple-jwt-login/ text unusedcode
-
-    - name: Run PHPMD naming on plugin
-      run: vendor/bin/phpmd simple-jwt-login/ text naming
-
-    - name: Run PHPMD controversial on plugin
-      run: vendor/bin/phpmd simple-jwt-login/ text controversial
+    - name: Run PHPMD
+      run: vendor/bin/phpmd simple-jwt-login/ text phpmd.xml
 
     - name: Run phpstan on plugin
       run: vendor/bin/phpstan analyse simple-jwt-login -c phpstan.neon --memory-limit=256M
-
-    # - name: Run PHPCS design on tests
-    #   run: vendor/bin/phpcs tests/ --extensions=php --no-cache
-
-    - name: Run PHPMD design on tests
-      run: vendor/bin/phpmd tests text design
-
-    - name: Run PHPMD unusedcode on tests
-      run: vendor/bin/phpmd tests/ text unusedcode
-
-    - name: Run PHPMD naming on tests
-      run: vendor/bin/phpmd tests/ text naming
-
-    - name: Run PHPMD controversial on tests
-      run: vendor/bin/phpmd tests/ text controversial

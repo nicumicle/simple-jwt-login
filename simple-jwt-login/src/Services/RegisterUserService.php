@@ -306,7 +306,8 @@ class RegisterUserService extends BaseService implements ServiceInterface
      */
     private function initPayload($user)
     {
-        if ($this->jwtSettings->getAuthenticationSettings()->isAuthenticationEnabled()) {
+        $authSettings = $this->jwtSettings->getAuthenticationSettings();
+        if ($authSettings->isAuthenticationEnabled()) {
             return AuthenticateService::generatePayload(
                 [],
                 $this->wordPressData,
@@ -321,8 +322,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
             ->getUserProperty($user, 'ID');
         $username = $this->wordPressData
             ->getUserProperty($user, 'user_login');
-        $iss = $this->jwtSettings
-            ->getAuthenticationSettings()->getAuthIss();
+        $iss = $authSettings->getAuthIss();
 
         return [
             AuthenticationSettings::JWT_PAYLOAD_PARAM_EMAIL    => $userEmail,

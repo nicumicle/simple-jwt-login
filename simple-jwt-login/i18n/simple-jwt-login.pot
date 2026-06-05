@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-04T05:14:36+00:00\n"
+"POT-Creation-Date: 2026-06-05T04:57:39+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -577,8 +577,88 @@ msgstr ""
 msgid "Allows customization of the two-factor verify endpoint response."
 msgstr ""
 
-#: src/Modules/SimpleJWTLoginSettings.php:251
+#: src/Modules/SimpleJWTLoginSettings.php:252
 msgid "Something is wrong. We can not save the settings."
+msgstr ""
+
+#: src/Modules/UserProperties.php:31
+msgid "(string) The plain-text user password."
+msgstr ""
+
+#: src/Modules/UserProperties.php:36
+msgid "(string) The user email address."
+msgstr ""
+
+#: src/Modules/UserProperties.php:41
+msgid "(string) The user's login username."
+msgstr ""
+
+#: src/Modules/UserProperties.php:46
+msgid "(string) The URL-friendly user name."
+msgstr ""
+
+#: src/Modules/UserProperties.php:51
+msgid "(string) The user URL."
+msgstr ""
+
+#: src/Modules/UserProperties.php:56
+msgid "(string) The user's display name. Default is the user's username."
+msgstr ""
+
+#: src/Modules/UserProperties.php:61
+msgid "(string) The user's nickname. Default is the user's username."
+msgstr ""
+
+#: src/Modules/UserProperties.php:66
+msgid "(string) The user's first name. For new users, will be used to build the first part of the user's display name if $display_name is not specified."
+msgstr ""
+
+#: src/Modules/UserProperties.php:75
+msgid "(string) The user's last name. For new users, will be used to build the second part of the user's display name if $display_name is not specified."
+msgstr ""
+
+#: src/Modules/UserProperties.php:84
+msgid "(string) The user's biographical description."
+msgstr ""
+
+#: src/Modules/UserProperties.php:89
+msgid "(string) Whether to enable the rich-editor for the user. Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'."
+msgstr ""
+
+#: src/Modules/UserProperties.php:98
+msgid "(string) Whether to enable the rich code editor for the user. Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'."
+msgstr ""
+
+#: src/Modules/UserProperties.php:107
+msgid "(string) Whether to enable comment moderation keyboard shortcuts for the user. Accepts 'true' or 'false' as a string literal, not boolean. Default 'false'."
+msgstr ""
+
+#: src/Modules/UserProperties.php:116
+msgid "(string) Admin color scheme for the user. Default 'fresh'."
+msgstr ""
+
+#: src/Modules/UserProperties.php:121
+msgid "(bool) Whether the user should always access the admin over https. Default false."
+msgstr ""
+
+#: src/Modules/UserProperties.php:126
+msgid "(string) Date the user registered. Format is 'Y-m-d H:m:s'."
+msgstr ""
+
+#: src/Modules/UserProperties.php:131
+msgid "(string) Password reset key. Default empty."
+msgstr ""
+
+#: src/Modules/UserProperties.php:136
+msgid "(bool) Multisite only. Whether the user is marked as spam. Default false."
+msgstr ""
+
+#: src/Modules/UserProperties.php:141
+msgid "(string) Whether to display the Admin Bar for the user on the site's front end. Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'."
+msgstr ""
+
+#: src/Modules/UserProperties.php:150
+msgid "(string) User's locale. Default empty."
 msgstr ""
 
 #: src/Plugin/LoginPageIntegration.php:53
@@ -715,26 +795,26 @@ msgstr ""
 
 #: src/Services/AuthenticateService.php:174
 #: src/Services/AuthenticateService.php:177
-#: src/Services/AuthenticateService.php:209
-#: src/Services/AuthenticateService.php:212
+#: src/Services/AuthenticateService.php:211
+#: src/Services/AuthenticateService.php:214
 #: src/Services/Oauth/AbstractOauth.php:338
 #: src/Services/Oauth/AbstractOauth.php:341
 msgid "Wrong user credentials."
 msgstr ""
 
-#: src/Services/AuthenticateService.php:339
+#: src/Services/AuthenticateService.php:341
 #: src/Services/Oauth/AbstractOauth.php:429
 #: src/Services/Oauth/AbstractOauth.php:490
 msgid "Unable to create two-factor nonce."
 msgstr ""
 
 #. translators: %s: client IP address
-#: src/Services/AuthenticateService.php:432
+#: src/Services/AuthenticateService.php:434
 #, php-format
 msgid "You are not allowed to Authenticate from this IP: %s"
 msgstr ""
 
-#: src/Services/AuthenticateService.php:448
+#: src/Services/AuthenticateService.php:450
 msgid "Authentication is not enabled."
 msgstr ""
 
@@ -1223,18 +1303,18 @@ msgstr ""
 #: views/auth-view.php:102
 #: views/delete-view.php:62
 #: views/integrations/3rd-party/two-factor.php:117
-#: views/integrations/oauth/auth0.php:166
-#: views/integrations/oauth/auth0.php:239
-#: views/integrations/oauth/auth0.php:299
-#: views/integrations/oauth/facebook.php:147
-#: views/integrations/oauth/facebook.php:220
-#: views/integrations/oauth/facebook.php:280
-#: views/integrations/oauth/github.php:147
-#: views/integrations/oauth/github.php:220
-#: views/integrations/oauth/github.php:280
-#: views/integrations/oauth/google.php:146
-#: views/integrations/oauth/google.php:219
-#: views/integrations/oauth/google.php:279
+#: views/integrations/oauth/auth0.php:176
+#: views/integrations/oauth/auth0.php:249
+#: views/integrations/oauth/auth0.php:309
+#: views/integrations/oauth/facebook.php:157
+#: views/integrations/oauth/facebook.php:230
+#: views/integrations/oauth/facebook.php:290
+#: views/integrations/oauth/github.php:157
+#: views/integrations/oauth/github.php:230
+#: views/integrations/oauth/github.php:290
+#: views/integrations/oauth/google.php:156
+#: views/integrations/oauth/google.php:229
+#: views/integrations/oauth/google.php:289
 #: views/login-view.php:63
 #: views/refresh-token-view.php:63
 #: views/register-view.php:65
@@ -1966,14 +2046,14 @@ msgstr ""
 
 #: views/delete-view.php:46
 #: views/integrations/3rd-party/two-factor.php:105
-#: views/integrations/oauth/auth0.php:215
-#: views/integrations/oauth/auth0.php:275
-#: views/integrations/oauth/facebook.php:196
-#: views/integrations/oauth/facebook.php:256
-#: views/integrations/oauth/github.php:196
-#: views/integrations/oauth/github.php:256
-#: views/integrations/oauth/google.php:195
-#: views/integrations/oauth/google.php:255
+#: views/integrations/oauth/auth0.php:225
+#: views/integrations/oauth/auth0.php:285
+#: views/integrations/oauth/facebook.php:206
+#: views/integrations/oauth/facebook.php:266
+#: views/integrations/oauth/github.php:206
+#: views/integrations/oauth/github.php:266
+#: views/integrations/oauth/google.php:205
+#: views/integrations/oauth/google.php:265
 #: views/login-view.php:47
 #: views/refresh-token-view.php:49
 #: views/register-view.php:48
@@ -2114,23 +2194,31 @@ msgstr ""
 msgid "Enable specific WordPress hooks to extend JWT functionality. Only enabled hooks will be triggered."
 msgstr ""
 
-#: views/hooks-view.php:47
+#: views/hooks-view.php:45
+msgid "Search hooks..."
+msgstr ""
+
+#: views/hooks-view.php:56
 msgid "enabled"
 msgstr ""
 
-#: views/hooks-view.php:51
+#: views/hooks-view.php:60
 msgid "Toggle all hooks"
 msgstr ""
 
-#: views/hooks-view.php:90
+#: views/hooks-view.php:67
+msgid "No hooks match your search."
+msgstr ""
+
+#: views/hooks-view.php:107
 msgid "Parameters"
 msgstr ""
 
-#: views/hooks-view.php:100
+#: views/hooks-view.php:117
 msgid "Return"
 msgstr ""
 
-#: views/hooks-view.php:111
+#: views/hooks-view.php:128
 msgid "Description"
 msgstr ""
 
@@ -2343,135 +2431,144 @@ msgid "Client ID"
 msgstr ""
 
 #: views/integrations/oauth/auth0.php:111
-#: views/integrations/oauth/auth0.php:117
+#: views/integrations/oauth/auth0.php:118
 #: views/integrations/oauth/github.php:93
-#: views/integrations/oauth/github.php:99
+#: views/integrations/oauth/github.php:100
 #: views/integrations/oauth/google.php:95
-#: views/integrations/oauth/google.php:101
+#: views/integrations/oauth/google.php:102
 msgid "Client Secret"
 msgstr ""
 
-#: views/integrations/oauth/auth0.php:129
-#: views/integrations/oauth/facebook.php:110
-#: views/integrations/oauth/github.php:110
-#: views/integrations/oauth/google.php:112
+#: views/integrations/oauth/auth0.php:124
+#: views/integrations/oauth/facebook.php:106
+#: views/integrations/oauth/github.php:106
+#: views/integrations/oauth/google.php:108
+#: views/jwt-rules-view.php:345
+#: views/refresh-token-view.php:164
+msgid "Toggle key visibility"
+msgstr ""
+
+#: views/integrations/oauth/auth0.php:139
+#: views/integrations/oauth/facebook.php:120
+#: views/integrations/oauth/github.php:120
+#: views/integrations/oauth/google.php:122
 msgid "OAuth on Login / Register"
 msgstr ""
 
-#: views/integrations/oauth/auth0.php:131
+#: views/integrations/oauth/auth0.php:141
 msgid "Display a \"Continue with Auth0\" button on the WordPress login and registration page."
 msgstr ""
 
-#: views/integrations/oauth/auth0.php:144
-#: views/integrations/oauth/facebook.php:125
-#: views/integrations/oauth/github.php:125
-#: views/integrations/oauth/google.php:127
+#: views/integrations/oauth/auth0.php:154
+#: views/integrations/oauth/facebook.php:135
+#: views/integrations/oauth/github.php:135
+#: views/integrations/oauth/google.php:137
 msgid "Enable OAuth on WordPress login"
 msgstr ""
 
 #. translators: %s: URL to the Auth0 Dashboard
-#: views/integrations/oauth/auth0.php:150
+#: views/integrations/oauth/auth0.php:160
 #, php-format
 msgid "Set the following Redirect URI in your <a href=\"%s\" target=\"_blank\">Auth0 Dashboard</a> for the OAuth flow to work correctly."
 msgstr ""
 
-#: views/integrations/oauth/auth0.php:160
-#: views/integrations/oauth/facebook.php:141
-#: views/integrations/oauth/github.php:141
-#: views/integrations/oauth/google.php:140
+#: views/integrations/oauth/auth0.php:170
+#: views/integrations/oauth/facebook.php:151
+#: views/integrations/oauth/github.php:151
+#: views/integrations/oauth/google.php:150
 msgid "Redirect URI:"
 msgstr ""
 
-#: views/integrations/oauth/auth0.php:180
+#: views/integrations/oauth/auth0.php:190
 msgid "Exchange Auth0 OAuth \"code\" for Auth0 tokens"
 msgstr ""
 
-#: views/integrations/oauth/auth0.php:183
+#: views/integrations/oauth/auth0.php:193
 msgid "Exchange the authorization code obtained in the OAuth flow for Auth0 tokens."
 msgstr ""
 
-#: views/integrations/oauth/auth0.php:197
+#: views/integrations/oauth/auth0.php:207
 msgid "Enable exchange of Auth0 OAuth code for Auth0 tokens"
 msgstr ""
 
-#: views/integrations/oauth/auth0.php:204
-#: views/integrations/oauth/auth0.php:210
-#: views/integrations/oauth/facebook.php:185
-#: views/integrations/oauth/facebook.php:191
-#: views/integrations/oauth/github.php:185
-#: views/integrations/oauth/github.php:191
-#: views/integrations/oauth/google.php:184
-#: views/integrations/oauth/google.php:190
+#: views/integrations/oauth/auth0.php:214
+#: views/integrations/oauth/auth0.php:220
+#: views/integrations/oauth/facebook.php:195
+#: views/integrations/oauth/facebook.php:201
+#: views/integrations/oauth/github.php:195
+#: views/integrations/oauth/github.php:201
+#: views/integrations/oauth/google.php:194
+#: views/integrations/oauth/google.php:200
 msgid "Redirect URI"
 msgstr ""
 
-#: views/integrations/oauth/auth0.php:220
+#: views/integrations/oauth/auth0.php:230
 msgid "auth0"
-msgstr ""
-
-#: views/integrations/oauth/auth0.php:224
-#: views/integrations/oauth/facebook.php:205
-#: views/integrations/oauth/github.php:205
-#: views/integrations/oauth/google.php:204
-msgid "the code received from the OAuth flow"
 msgstr ""
 
 #: views/integrations/oauth/auth0.php:234
 #: views/integrations/oauth/facebook.php:215
 #: views/integrations/oauth/github.php:215
 #: views/integrations/oauth/google.php:214
+msgid "the code received from the OAuth flow"
+msgstr ""
+
+#: views/integrations/oauth/auth0.php:244
+#: views/integrations/oauth/facebook.php:225
+#: views/integrations/oauth/github.php:225
+#: views/integrations/oauth/google.php:224
 msgid "your_code"
 msgstr ""
 
-#: views/integrations/oauth/auth0.php:252
+#: views/integrations/oauth/auth0.php:262
 msgid "Exchange Auth0 \"access_token\" for a WordPress JWT"
 msgstr ""
 
-#: views/integrations/oauth/auth0.php:255
+#: views/integrations/oauth/auth0.php:265
 msgid "Exchange an Auth0 access_token for a Simple-JWT-Login WordPress JWT."
 msgstr ""
 
-#: views/integrations/oauth/auth0.php:269
+#: views/integrations/oauth/auth0.php:279
 msgid "Enable exchange of Auth0 access_token for a WordPress JWT"
 msgstr ""
 
-#: views/integrations/oauth/auth0.php:284
+#: views/integrations/oauth/auth0.php:294
 msgid "the access_token from your Auth0 OAuth process"
 msgstr ""
 
-#: views/integrations/oauth/auth0.php:294
-#: views/integrations/oauth/facebook.php:275
-#: views/integrations/oauth/github.php:275
+#: views/integrations/oauth/auth0.php:304
+#: views/integrations/oauth/facebook.php:285
+#: views/integrations/oauth/github.php:285
 msgid "your_access_token"
 msgstr ""
 
-#: views/integrations/oauth/auth0.php:311
-#: views/integrations/oauth/facebook.php:292
-#: views/integrations/oauth/github.php:292
-#: views/integrations/oauth/google.php:291
+#: views/integrations/oauth/auth0.php:321
+#: views/integrations/oauth/facebook.php:302
+#: views/integrations/oauth/github.php:302
+#: views/integrations/oauth/google.php:301
 msgid "Other Options"
 msgstr ""
 
-#: views/integrations/oauth/auth0.php:313
+#: views/integrations/oauth/auth0.php:323
 msgid "Additional settings for the Auth0 integration."
 msgstr ""
 
-#: views/integrations/oauth/auth0.php:327
+#: views/integrations/oauth/auth0.php:337
 msgid "Allow usage of Auth0 access_token on all endpoints"
 msgstr ""
 
-#: views/integrations/oauth/auth0.php:330
+#: views/integrations/oauth/auth0.php:340
 msgid "The plugin will search for a WordPress user matching the email returned by Auth0's userinfo endpoint. You must also enable \"All WordPress endpoints check for JWT authentication\" in General settings."
 msgstr ""
 
-#: views/integrations/oauth/auth0.php:343
-#: views/integrations/oauth/facebook.php:324
-#: views/integrations/oauth/github.php:324
-#: views/integrations/oauth/google.php:323
+#: views/integrations/oauth/auth0.php:353
+#: views/integrations/oauth/facebook.php:334
+#: views/integrations/oauth/github.php:334
+#: views/integrations/oauth/google.php:333
 msgid "Create user if not exists"
 msgstr ""
 
-#: views/integrations/oauth/auth0.php:346
+#: views/integrations/oauth/auth0.php:356
 msgid "Automatically create a new WordPress user if no account is found matching the email returned by Auth0."
 msgstr ""
 
@@ -2502,65 +2599,65 @@ msgid "App ID"
 msgstr ""
 
 #: views/integrations/oauth/facebook.php:93
-#: views/integrations/oauth/facebook.php:99
+#: views/integrations/oauth/facebook.php:100
 msgid "App Secret"
 msgstr ""
 
-#: views/integrations/oauth/facebook.php:112
+#: views/integrations/oauth/facebook.php:122
 msgid "Display a \"Continue with Facebook\" button on the WordPress login and registration page."
 msgstr ""
 
 #. translators: %s: URL to Meta for Developers
-#: views/integrations/oauth/facebook.php:131
+#: views/integrations/oauth/facebook.php:141
 #, php-format
 msgid "Set the following Redirect URI in your <a href=\"%s\" target=\"_blank\">Meta for Developers</a> app for the OAuth flow to work correctly."
 msgstr ""
 
-#: views/integrations/oauth/facebook.php:161
+#: views/integrations/oauth/facebook.php:171
 msgid "Exchange Facebook OAuth \"code\" for Facebook tokens"
 msgstr ""
 
-#: views/integrations/oauth/facebook.php:164
+#: views/integrations/oauth/facebook.php:174
 msgid "Exchange the authorization code obtained in the OAuth flow for Facebook tokens."
 msgstr ""
 
-#: views/integrations/oauth/facebook.php:178
+#: views/integrations/oauth/facebook.php:188
 msgid "Enable exchange of Facebook OAuth code for Facebook tokens"
 msgstr ""
 
-#: views/integrations/oauth/facebook.php:201
+#: views/integrations/oauth/facebook.php:211
 msgid "facebook"
 msgstr ""
 
-#: views/integrations/oauth/facebook.php:233
+#: views/integrations/oauth/facebook.php:243
 msgid "Exchange Facebook \"access_token\" for a WordPress JWT"
 msgstr ""
 
-#: views/integrations/oauth/facebook.php:236
+#: views/integrations/oauth/facebook.php:246
 msgid "Exchange a Facebook access_token for a Simple-JWT-Login WordPress JWT."
 msgstr ""
 
-#: views/integrations/oauth/facebook.php:250
+#: views/integrations/oauth/facebook.php:260
 msgid "Enable exchange of Facebook access_token for a WordPress JWT"
 msgstr ""
 
-#: views/integrations/oauth/facebook.php:265
+#: views/integrations/oauth/facebook.php:275
 msgid "the access_token from your Facebook OAuth process"
 msgstr ""
 
-#: views/integrations/oauth/facebook.php:294
+#: views/integrations/oauth/facebook.php:304
 msgid "Additional settings for the Facebook integration."
 msgstr ""
 
-#: views/integrations/oauth/facebook.php:308
+#: views/integrations/oauth/facebook.php:318
 msgid "Allow usage of Facebook access_token on all endpoints"
 msgstr ""
 
-#: views/integrations/oauth/facebook.php:311
+#: views/integrations/oauth/facebook.php:321
 msgid "The plugin will search for a WordPress user matching the email returned by Facebook's Graph API. You must also enable \"All WordPress endpoints check for JWT authentication\" in General settings."
 msgstr ""
 
-#: views/integrations/oauth/facebook.php:327
+#: views/integrations/oauth/facebook.php:337
 msgid "Automatically create a new WordPress user if no account is found matching the email returned by Facebook."
 msgstr ""
 
@@ -2585,61 +2682,61 @@ msgstr ""
 msgid "Enter your GitHub OAuth App credentials from the GitHub Developer Settings."
 msgstr ""
 
-#: views/integrations/oauth/github.php:112
+#: views/integrations/oauth/github.php:122
 msgid "Display a \"Continue with GitHub\" button on the WordPress login and registration page."
 msgstr ""
 
 #. translators: %s: URL to GitHub OAuth App settings
-#: views/integrations/oauth/github.php:131
+#: views/integrations/oauth/github.php:141
 #, php-format
 msgid "Set the following Redirect URI in your <a href=\"%s\" target=\"_blank\">GitHub OAuth App settings</a> for the OAuth flow to work correctly."
 msgstr ""
 
-#: views/integrations/oauth/github.php:161
+#: views/integrations/oauth/github.php:171
 msgid "Exchange GitHub OAuth \"code\" for GitHub tokens"
 msgstr ""
 
-#: views/integrations/oauth/github.php:164
+#: views/integrations/oauth/github.php:174
 msgid "Exchange the authorization code obtained in the OAuth flow for GitHub tokens."
 msgstr ""
 
-#: views/integrations/oauth/github.php:178
+#: views/integrations/oauth/github.php:188
 msgid "Enable exchange of GitHub OAuth code for GitHub tokens"
 msgstr ""
 
-#: views/integrations/oauth/github.php:201
+#: views/integrations/oauth/github.php:211
 msgid "github"
 msgstr ""
 
-#: views/integrations/oauth/github.php:233
+#: views/integrations/oauth/github.php:243
 msgid "Exchange GitHub \"access_token\" for a WordPress JWT"
 msgstr ""
 
-#: views/integrations/oauth/github.php:236
+#: views/integrations/oauth/github.php:246
 msgid "Exchange a GitHub access_token for a Simple-JWT-Login WordPress JWT."
 msgstr ""
 
-#: views/integrations/oauth/github.php:250
+#: views/integrations/oauth/github.php:260
 msgid "Enable exchange of GitHub access_token for a WordPress JWT"
 msgstr ""
 
-#: views/integrations/oauth/github.php:265
+#: views/integrations/oauth/github.php:275
 msgid "the access_token from your GitHub OAuth process"
 msgstr ""
 
-#: views/integrations/oauth/github.php:294
+#: views/integrations/oauth/github.php:304
 msgid "Additional settings for the GitHub integration."
 msgstr ""
 
-#: views/integrations/oauth/github.php:308
+#: views/integrations/oauth/github.php:318
 msgid "Allow usage of GitHub access_token on all endpoints"
 msgstr ""
 
-#: views/integrations/oauth/github.php:311
+#: views/integrations/oauth/github.php:321
 msgid "The plugin will search for a WordPress user matching the primary email from the GitHub account. You must also enable \"All WordPress endpoints check for JWT authentication\" in General settings."
 msgstr ""
 
-#: views/integrations/oauth/github.php:327
+#: views/integrations/oauth/github.php:337
 msgid "Automatically create a new WordPress user if no account is found matching the primary email from the GitHub account."
 msgstr ""
 
@@ -2664,65 +2761,65 @@ msgstr ""
 msgid "Enter your Google OAuth application credentials from the Google Cloud Console."
 msgstr ""
 
-#: views/integrations/oauth/google.php:114
+#: views/integrations/oauth/google.php:124
 msgid "Display a \"Continue with Google\" button on the WordPress login and registration page."
 msgstr ""
 
 #. translators: %s: URL to Google Cloud Console
-#: views/integrations/oauth/google.php:133
+#: views/integrations/oauth/google.php:143
 #, php-format
 msgid "Set the following Redirect URI in your <a href=\"%s\" target=\"_blank\">Google Cloud Console</a> for the OAuth flow to work correctly."
 msgstr ""
 
-#: views/integrations/oauth/google.php:160
+#: views/integrations/oauth/google.php:170
 msgid "Exchange Google OAuth \"code\" for Google \"id_token\""
 msgstr ""
 
-#: views/integrations/oauth/google.php:163
+#: views/integrations/oauth/google.php:173
 msgid "Exchange the code obtained in the OAuth flow for a Google id_token."
 msgstr ""
 
-#: views/integrations/oauth/google.php:177
+#: views/integrations/oauth/google.php:187
 msgid "Enable exchange of Google OAuth code for Google id_token"
 msgstr ""
 
-#: views/integrations/oauth/google.php:200
+#: views/integrations/oauth/google.php:210
 msgid "google"
 msgstr ""
 
-#: views/integrations/oauth/google.php:232
+#: views/integrations/oauth/google.php:242
 msgid "Exchange Google \"id_token\" for a WordPress JWT"
 msgstr ""
 
-#: views/integrations/oauth/google.php:235
+#: views/integrations/oauth/google.php:245
 msgid "Exchange a Google id_token for a Simple-JWT-Login JWT."
 msgstr ""
 
-#: views/integrations/oauth/google.php:249
+#: views/integrations/oauth/google.php:259
 msgid "Enable exchange of Google id_token for a WordPress JWT"
 msgstr ""
 
-#: views/integrations/oauth/google.php:264
+#: views/integrations/oauth/google.php:274
 msgid "the id_token from your OAuth process"
 msgstr ""
 
-#: views/integrations/oauth/google.php:274
+#: views/integrations/oauth/google.php:284
 msgid "google_id_token"
 msgstr ""
 
-#: views/integrations/oauth/google.php:293
+#: views/integrations/oauth/google.php:303
 msgid "Additional settings for the Google integration."
 msgstr ""
 
-#: views/integrations/oauth/google.php:307
+#: views/integrations/oauth/google.php:317
 msgid "Allow usage of Google id_token on all endpoints"
 msgstr ""
 
-#: views/integrations/oauth/google.php:310
+#: views/integrations/oauth/google.php:320
 msgid "The plugin will search for a WordPress user matching the email in the Google JWT payload. You must also enable \"All WordPress endpoints check for JWT authentication\" in General settings."
 msgstr ""
 
-#: views/integrations/oauth/google.php:326
+#: views/integrations/oauth/google.php:336
 msgid "Automatically create a new WordPress user if no account is found matching the email in the Google JWT payload."
 msgstr ""
 
@@ -2969,11 +3066,6 @@ msgstr ""
 
 #: views/jwt-rules-view.php:339
 msgid "Enter JWT secret key"
-msgstr ""
-
-#: views/jwt-rules-view.php:345
-#: views/refresh-token-view.php:164
-msgid "Toggle key visibility"
 msgstr ""
 
 #: views/jwt-rules-view.php:351

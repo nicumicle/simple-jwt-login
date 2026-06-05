@@ -92,7 +92,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
             }
         }
         
-        $customClaims = $jwtSettings->getAuthenticationSettings()->getCustomPayloadClaims();
+        $customClaims = $authSettings->getCustomPayloadClaims();
         foreach ($customClaims as $claimKey => $claimValue) {
             if (!in_array($claimKey, AuthenticationSettings::$protectedPayloadKeys, true)) {
                 $payload[$claimKey] = $claimValue;
@@ -182,6 +182,8 @@ class AuthenticateService extends BaseService implements ServiceInterface
         $userId    = (int) $this->wordPressData->getUserProperty($user, 'ID');
         $userEmail = (string) $this->wordPressData->getUserProperty($user, 'user_email');
 
+        $authSettings = $this->jwtSettings->getAuthenticationSettings();
+
         $password = isset($this->request['password'])
             ? $this->wordPressData->wpSlash($this->request['password'])
             : null;
@@ -189,7 +191,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
             ? $this->request['password_hash']
             : null;
 
-        if ($this->jwtSettings->getAuthenticationSettings()->isAuthPasswordBase64Encoded()) {
+        if ($authSettings->isAuthPasswordBase64Encoded()) {
             if ($password !== null) {
                 $password = base64_decode($password);
             }
@@ -243,7 +245,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
         }
 
-        $customHeaderClaims = $this->jwtSettings->getAuthenticationSettings()->getCustomHeaderClaims();
+        $customHeaderClaims = $authSettings->getCustomHeaderClaims();
         $jwt = $this->getJwtWrapper()->encode(
             $payload,
             JwtKeyFactory::getFactory($this->jwtSettings)->getPrivateKey(),
@@ -253,9 +255,9 @@ class AuthenticateService extends BaseService implements ServiceInterface
 
         $responseData = ['jwt' => $jwt];
 
-        if ($this->jwtSettings->getAuthenticationSettings()->isRefreshTokenEnabled()) {
+        if ($authSettings->isRefreshTokenEnabled()) {
             $refreshToken = $this->generateRefreshToken();
-            $tokenExpiresAt = time() + ($this->jwtSettings->getAuthenticationSettings()->getAuthJwtRefreshTtl() * 60);
+            $tokenExpiresAt = time() + ($authSettings->getAuthJwtRefreshTtl() * 60);
 
             $this->tokenRepository->insert(
                 $userId,

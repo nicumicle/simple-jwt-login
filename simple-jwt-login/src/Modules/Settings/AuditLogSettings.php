@@ -88,6 +88,15 @@ class AuditLogSettings extends BaseSettings implements SettingsInterface
     }
 
     /**
+     * @param string $eventType
+     * @return bool
+     */
+    public function isAuditEventEnabled($eventType)
+    {
+        return $this->isEnabled() && $this->isEventEnabled($eventType);
+    }
+
+    /**
      * @return string[]
      */
     public function getEnabledEvents()

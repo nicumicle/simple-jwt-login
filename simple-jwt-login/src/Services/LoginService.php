@@ -5,6 +5,7 @@ namespace SimpleJWTLogin\Services;
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Exceptions\ValidationException;
+use SimpleJWTLogin\Modules\AuditEvents;
 use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use WP_REST_Response;
@@ -46,12 +47,14 @@ class LoginService extends BaseService implements ServiceInterface
         try {
             return $this->doLogin();
         } catch (Exception $exception) {
-            $this->wordPressData->doAction(
-                SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_SESSION_FAILED,
-                null,
-                null,
-                $exception->getMessage()
-            );
+            if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_LOGIN_SESSION_FAILED)) {
+                $this->wordPressData->doAction(
+                    SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_SESSION_FAILED,
+                    null,
+                    null,
+                    $exception->getMessage()
+                );
+            }
             throw $exception;
         }
     }
@@ -82,11 +85,13 @@ class LoginService extends BaseService implements ServiceInterface
         $this->validateJwtRevoked($userId, $this->jwt);
         $this->wordPressData->loginUser($user);
 
-        $this->wordPressData->doAction(
-            SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_SESSION_SUCCESS,
-            $userId,
-            $userEmail
-        );
+        if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_LOGIN_SESSION_SUCCESS)) {
+            $this->wordPressData->doAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_SESSION_SUCCESS,
+                $userId,
+                $userEmail
+            );
+        }
 
         (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
             WebhooksSettings::EVENT_LOGIN,

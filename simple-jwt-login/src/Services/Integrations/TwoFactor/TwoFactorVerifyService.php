@@ -6,6 +6,7 @@ use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
+use SimpleJWTLogin\Modules\AuditEvents;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Services\AuthenticateService;
 use SimpleJWTLogin\Services\ServiceInterface;
@@ -83,12 +84,14 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
         }
 
         if (!$bridge->verifyNonce($userId, $nonce)) {
-            $this->wordPressData->doAction(
-                SimpleJWTLoginHooks::AUDIT_2FA_VERIFY_FAILED,
-                $userId,
-                $userEmail,
-                __('Invalid or expired two-factor nonce.', 'simple-jwt-login')
-            );
+            if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_2FA_VERIFY_FAILED)) {
+                $this->wordPressData->doAction(
+                    SimpleJWTLoginHooks::AUDIT_2FA_VERIFY_FAILED,
+                    $userId,
+                    $userEmail,
+                    __('Invalid or expired two-factor nonce.', 'simple-jwt-login')
+                );
+            }
             throw new Exception(
                 esc_html(__('Invalid or expired two-factor session. Please authenticate again.', 'simple-jwt-login')),
                 absint(ErrorCodes::ERR_TWO_FACTOR_INVALID_NONCE)
@@ -107,12 +110,14 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
         }
 
         if (!$this->verifyCodeForProvider($provider, $user, $code, $userId)) {
-            $this->wordPressData->doAction(
-                SimpleJWTLoginHooks::AUDIT_2FA_VERIFY_FAILED,
-                $userId,
-                $userEmail,
-                __('Invalid two-factor code.', 'simple-jwt-login')
-            );
+            if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_2FA_VERIFY_FAILED)) {
+                $this->wordPressData->doAction(
+                    SimpleJWTLoginHooks::AUDIT_2FA_VERIFY_FAILED,
+                    $userId,
+                    $userEmail,
+                    __('Invalid two-factor code.', 'simple-jwt-login')
+                );
+            }
             throw new Exception(
                 esc_html(__('Invalid two-factor code.', 'simple-jwt-login')),
                 absint(ErrorCodes::ERR_TWO_FACTOR_INVALID_CODE)
@@ -169,11 +174,13 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
             );
         }
 
-        $this->wordPressData->doAction(
-            SimpleJWTLoginHooks::AUDIT_2FA_VERIFY_SUCCESS,
-            $userId,
-            $userEmail
-        );
+        if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_2FA_VERIFY_SUCCESS)) {
+            $this->wordPressData->doAction(
+                SimpleJWTLoginHooks::AUDIT_2FA_VERIFY_SUCCESS,
+                $userId,
+                $userEmail
+            );
+        }
 
         return $this->wordPressData->createResponse($response);
     }

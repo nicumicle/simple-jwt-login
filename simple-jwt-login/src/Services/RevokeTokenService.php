@@ -5,6 +5,7 @@ namespace SimpleJWTLogin\Services;
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Exceptions\ValidationException;
+use SimpleJWTLogin\Modules\AuditEvents;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
@@ -22,12 +23,14 @@ class RevokeTokenService extends AuthenticateService
 
             return $this->revokeToken();
         } catch (Exception $exception) {
-            $this->wordPressData->doAction(
-                SimpleJWTLoginHooks::AUDIT_AUTH_LOGOUT_FAILED,
-                null,
-                null,
-                $exception->getMessage()
-            );
+            if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_LOGOUT_FAILED)) {
+                $this->wordPressData->doAction(
+                    SimpleJWTLoginHooks::AUDIT_AUTH_LOGOUT_FAILED,
+                    null,
+                    null,
+                    $exception->getMessage()
+                );
+            }
             throw $exception;
         }
     }
@@ -84,11 +87,13 @@ class RevokeTokenService extends AuthenticateService
 
         $this->tokenRepository->deleteByUserId($userId);
 
-        $this->wordPressData->doAction(
-            SimpleJWTLoginHooks::AUDIT_AUTH_LOGOUT_SUCCESS,
-            $userId,
-            $userEmail
-        );
+        if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_LOGOUT_SUCCESS)) {
+            $this->wordPressData->doAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_LOGOUT_SUCCESS,
+                $userId,
+                $userEmail
+            );
+        }
 
         $response = [
             'success' => true,

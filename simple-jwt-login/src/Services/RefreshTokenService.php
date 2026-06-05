@@ -6,6 +6,7 @@ use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
+use SimpleJWTLogin\Modules\AuditEvents;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use WP_REST_Response;
 
@@ -24,12 +25,14 @@ class RefreshTokenService extends AuthenticateService
 
             return $this->refreshJwt();
         } catch (Exception $exception) {
-            $this->wordPressData->doAction(
-                SimpleJWTLoginHooks::AUDIT_AUTH_REFRESH_TOKEN_FAILED,
-                null,
-                null,
-                $exception->getMessage()
-            );
+            if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_REFRESH_TOKEN_FAILED)) {
+                $this->wordPressData->doAction(
+                    SimpleJWTLoginHooks::AUDIT_AUTH_REFRESH_TOKEN_FAILED,
+                    null,
+                    null,
+                    $exception->getMessage()
+                );
+            }
             throw $exception;
         }
     }
@@ -150,11 +153,13 @@ class RefreshTokenService extends AuthenticateService
         $userId    = (int) $this->wordPressData->getUserProperty($user, 'ID');
         $userEmail = (string) $this->wordPressData->getUserProperty($user, 'user_email');
 
-        $this->wordPressData->doAction(
-            SimpleJWTLoginHooks::AUDIT_AUTH_REFRESH_TOKEN_SUCCESS,
-            $userId,
-            $userEmail
-        );
+        if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_REFRESH_TOKEN_SUCCESS)) {
+            $this->wordPressData->doAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_REFRESH_TOKEN_SUCCESS,
+                $userId,
+                $userEmail
+            );
+        }
 
         $response = [
             'success' => true,

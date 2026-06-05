@@ -5,6 +5,7 @@ namespace SimpleJWTLogin\Services;
 use Exception;
 use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Modules\AuditEvents;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
@@ -21,12 +22,14 @@ class DeleteUserService extends BaseService implements ServiceInterface
         try {
             return $this->deleteUser();
         } catch (\Throwable $exception) {
-            $this->wordPressData->doAction(
-                SimpleJWTLoginHooks::AUDIT_AUTH_DELETE_USER_FAILED,
-                null,
-                null,
-                $exception->getMessage()
-            );
+            if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_DELETE_USER_FAILED)) {
+                $this->wordPressData->doAction(
+                    SimpleJWTLoginHooks::AUDIT_AUTH_DELETE_USER_FAILED,
+                    null,
+                    null,
+                    $exception->getMessage()
+                );
+            }
             throw $exception;
         }
     }
@@ -119,11 +122,13 @@ class DeleteUserService extends BaseService implements ServiceInterface
             );
         }
 
-        $this->wordPressData->doAction(
-            SimpleJWTLoginHooks::AUDIT_AUTH_DELETE_USER_SUCCESS,
-            $userId,
-            $userEmail
-        );
+        if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_DELETE_USER_SUCCESS)) {
+            $this->wordPressData->doAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_DELETE_USER_SUCCESS,
+                $userId,
+                $userEmail
+            );
+        }
 
         (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
             WebhooksSettings::EVENT_DELETE_USER,

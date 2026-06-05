@@ -6,6 +6,7 @@ use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
+use SimpleJWTLogin\Modules\AuditEvents;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
@@ -167,12 +168,14 @@ class AuthenticateService extends BaseService implements ServiceInterface
             $attemptedEmail = isset($this->request['email'])
                 ? $this->request['email']
                 : (isset($this->request['username']) ? $this->request['username'] : null);
-            $this->wordPressData->doAction(
-                SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_FAILED,
-                null,
-                $attemptedEmail,
-                __('Wrong user credentials.', 'simple-jwt-login')
-            );
+            if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_LOGIN_FAILED)) {
+                $this->wordPressData->doAction(
+                    SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_FAILED,
+                    null,
+                    $attemptedEmail,
+                    __('Wrong user credentials.', 'simple-jwt-login')
+                );
+            }
             throw new Exception(
                 esc_html(__('Wrong user credentials.', 'simple-jwt-login')),
                 absint(ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS)
@@ -204,12 +207,14 @@ class AuthenticateService extends BaseService implements ServiceInterface
         $passwordMatch = $this->wordPressData->checkPassword($password, $passwordHash, $dbPassword);
 
         if (!$passwordMatch) {
-            $this->wordPressData->doAction(
-                SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_FAILED,
-                $userId,
-                $userEmail,
-                __('Wrong user credentials.', 'simple-jwt-login')
-            );
+            if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_LOGIN_FAILED)) {
+                $this->wordPressData->doAction(
+                    SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_FAILED,
+                    $userId,
+                    $userEmail,
+                    __('Wrong user credentials.', 'simple-jwt-login')
+                );
+            }
             throw new Exception(
                 esc_html(__('Wrong user credentials.', 'simple-jwt-login')),
                 absint(ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS)
@@ -280,11 +285,13 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
         }
 
-        $this->wordPressData->doAction(
-            SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_SUCCESS,
-            $userId,
-            $userEmail
-        );
+        if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_LOGIN_SUCCESS)) {
+            $this->wordPressData->doAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_SUCCESS,
+                $userId,
+                $userEmail
+            );
+        }
 
         (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
             WebhooksSettings::EVENT_AUTH,
@@ -386,11 +393,13 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
         }
 
-        $this->wordPressData->doAction(
-            SimpleJWTLoginHooks::AUDIT_2FA_CHALLENGE_ISSUED,
-            $userId,
-            $this->wordPressData->getUserProperty($user, 'user_email')
-        );
+        if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_2FA_CHALLENGE_ISSUED)) {
+            $this->wordPressData->doAction(
+                SimpleJWTLoginHooks::AUDIT_2FA_CHALLENGE_ISSUED,
+                $userId,
+                $this->wordPressData->getUserProperty($user, 'user_email')
+            );
+        }
 
         return $this->wordPressData->createResponse($response);
     }

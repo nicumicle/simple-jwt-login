@@ -5,6 +5,7 @@ namespace SimpleJWTLogin\Services;
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Exceptions\ValidationException;
+use SimpleJWTLogin\Modules\AuditEvents;
 use SimpleJWTLogin\Modules\Settings\ResetPasswordSettings;
 use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
@@ -18,12 +19,14 @@ class ResetPasswordService extends BaseService implements ServiceInterface
             return $this->doResetPassword();
         } catch (Exception $exception) {
             $email = isset($this->request['email']) ? $this->request['email'] : null;
-            $this->wordPressData->doAction(
-                SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_FAILED,
-                null,
-                $email,
-                $exception->getMessage()
-            );
+            if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_PASSWORD_RESET_FAILED)) {
+                $this->wordPressData->doAction(
+                    SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_FAILED,
+                    null,
+                    $email,
+                    $exception->getMessage()
+                );
+            }
             throw $exception;
         }
     }
@@ -88,11 +91,13 @@ class ResetPasswordService extends BaseService implements ServiceInterface
             $this->wordPressData->sendPasswordChangedNotification($user);
         }
 
-        $this->wordPressData->doAction(
-            SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_SUCCESS,
-            $userId,
-            $userEmail
-        );
+        if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_PASSWORD_RESET_SUCCESS)) {
+            $this->wordPressData->doAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_SUCCESS,
+                $userId,
+                $userEmail
+            );
+        }
 
         (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
             WebhooksSettings::EVENT_RESET_PASSWORD,
@@ -222,11 +227,13 @@ class ResetPasswordService extends BaseService implements ServiceInterface
         $userId    = (int) $this->wordPressData->getUserProperty($user, 'ID');
         $userEmail = (string) $this->wordPressData->getUserProperty($user, 'user_email');
 
-        $this->wordPressData->doAction(
-            SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_REQUEST,
-            $userId,
-            $userEmail
-        );
+        if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_PASSWORD_RESET_REQUEST)) {
+            $this->wordPressData->doAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_REQUEST,
+                $userId,
+                $userEmail
+            );
+        }
 
         (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
             WebhooksSettings::EVENT_RESET_PASSWORD_REQUEST,

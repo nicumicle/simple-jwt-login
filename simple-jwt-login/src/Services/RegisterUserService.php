@@ -6,6 +6,7 @@ use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
+use SimpleJWTLogin\Modules\AuditEvents;
 use SimpleJWTLogin\Modules\AuthCodeBuilder;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
@@ -29,12 +30,14 @@ class RegisterUserService extends BaseService implements ServiceInterface
             return $this->createUser();
         } catch (Exception $exception) {
             $email = isset($this->request['email']) ? $this->request['email'] : null;
-            $this->wordPressData->doAction(
-                SimpleJWTLoginHooks::AUDIT_AUTH_REGISTER_FAILED,
-                null,
-                $email,
-                $exception->getMessage()
-            );
+            if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_REGISTER_FAILED)) {
+                $this->wordPressData->doAction(
+                    SimpleJWTLoginHooks::AUDIT_AUTH_REGISTER_FAILED,
+                    null,
+                    $email,
+                    $exception->getMessage()
+                );
+            }
             throw $exception;
         }
     }
@@ -121,11 +124,13 @@ class RegisterUserService extends BaseService implements ServiceInterface
             $this->wordPressData->doAction(SimpleJWTLoginHooks::REGISTER_ACTION_NAME, $user, $password);
         }
 
-        $this->wordPressData->doAction(
-            SimpleJWTLoginHooks::AUDIT_AUTH_REGISTER_SUCCESS,
-            $userId,
-            $userEmail
-        );
+        if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_REGISTER_SUCCESS)) {
+            $this->wordPressData->doAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_REGISTER_SUCCESS,
+                $userId,
+                $userEmail
+            );
+        }
 
         (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
             WebhooksSettings::EVENT_REGISTER,

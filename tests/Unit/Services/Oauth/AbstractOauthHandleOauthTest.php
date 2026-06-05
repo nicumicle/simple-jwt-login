@@ -4,6 +4,7 @@ namespace SimpleJwtLoginTests\Unit\Services\Oauth;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use SimpleJWTLogin\Modules\Settings\AuditLogSettings;
 use SimpleJWTLogin\Modules\Settings\GeneralSettings;
 use SimpleJWTLogin\Modules\Settings\IntegrationsSettings;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\TwoFactorSettings;
@@ -35,9 +36,13 @@ class AbstractOauthHandleOauthTest extends TestCase
         $integrationsSettings = $this->createStub(IntegrationsSettings::class);
         $integrationsSettings->method('twoFactor')->willReturn($tfaSettings);
 
+        $auditLogSettings = $this->createStub(AuditLogSettings::class);
+        $auditLogSettings->method('isAuditEventEnabled')->willReturn(false);
+
         $this->settings = $this->createStub(SimpleJWTLoginSettings::class);
         $this->settings->method('getGeneralSettings')->willReturn($generalSettings);
         $this->settings->method('getIntegrationsSettings')->willReturn($integrationsSettings);
+        $this->settings->method('getAuditLogSettings')->willReturn($auditLogSettings);
         $this->settings->method('generateExampleLink')
             ->willReturn('http://localhost/wp-json/simple-jwt-login/v1/oauth/token?provider=testprovider');
     }
@@ -164,9 +169,13 @@ class AbstractOauthHandleOauthTest extends TestCase
         $integrationsSettings = $this->createStub(IntegrationsSettings::class);
         $integrationsSettings->method('twoFactor')->willReturn($tfaSettings);
 
+        $auditLogSettings = $this->createStub(AuditLogSettings::class);
+        $auditLogSettings->method('isAuditEventEnabled')->willReturn(false);
+
         $settings = $this->createStub(SimpleJWTLoginSettings::class);
         $settings->method('getGeneralSettings')->willReturn($generalSettings);
         $settings->method('getIntegrationsSettings')->willReturn($integrationsSettings);
+        $settings->method('getAuditLogSettings')->willReturn($auditLogSettings);
         $settings->method('generateExampleLink')
             ->willReturn('http://localhost/wp-json/simple-jwt-login/v1/oauth/token?provider=testprovider');
 

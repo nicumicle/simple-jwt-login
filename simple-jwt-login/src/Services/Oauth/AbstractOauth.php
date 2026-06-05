@@ -6,6 +6,7 @@ use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
 use SimpleJWTLogin\Libraries\ServerCall;
+use SimpleJWTLogin\Modules\AuditEvents;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Services\AuthenticateService;
 use SimpleJWTLogin\Services\Integrations\TwoFactor\TwoFactorBridge;
@@ -249,12 +250,14 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
 
             if ($result['status_code'] !== 200 || !empty($result['response']['error'])) {
                 $errorMessage = $this->handleErrorMessage($result['response']);
-                $this->wordPressData->doAction(
-                    SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,
-                    null,
-                    null,
-                    $errorMessage
-                );
+                if ($this->settings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_OAUTH_FAILED)) {
+                    $this->wordPressData->doAction(
+                        SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,
+                        null,
+                        null,
+                        $errorMessage
+                    );
+                }
                 $this->doRedirect($this->wordPressData->getLoginURL([
                     'error' => $errorMessage,
                 ]));
@@ -272,22 +275,26 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
                         return;
                     }
                     $this->wordPressData->loginUser($user);
-                    $this->wordPressData->doAction(
-                        SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_SUCCESS,
-                        $this->wordPressData->getUserProperty($user, 'ID'),
-                        $this->wordPressData->getUserProperty($user, 'user_email')
-                    );
+                    if ($this->settings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_OAUTH_SUCCESS)) {
+                        $this->wordPressData->doAction(
+                            SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_SUCCESS,
+                            $this->wordPressData->getUserProperty($user, 'ID'),
+                            $this->wordPressData->getUserProperty($user, 'user_email')
+                        );
+                    }
                     $this->doRedirect($this->wordPressData->getAdminUrl());
 
                     return;
                 }
 
-                $this->wordPressData->doAction(
-                    SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,
-                    null,
-                    $email,
-                    __('User not found.', 'simple-jwt-login')
-                );
+                if ($this->settings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_OAUTH_FAILED)) {
+                    $this->wordPressData->doAction(
+                        SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,
+                        null,
+                        $email,
+                        __('User not found.', 'simple-jwt-login')
+                    );
+                }
                 $this->doRedirect($this->wordPressData->getLoginURL([]));
 
                 return;
@@ -298,20 +305,24 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
             }
 
             $this->wordPressData->loginUser($user);
-            $this->wordPressData->doAction(
-                SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_SUCCESS,
-                $this->wordPressData->getUserProperty($user, 'ID'),
-                $this->wordPressData->getUserProperty($user, 'user_email')
-            );
+            if ($this->settings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_OAUTH_SUCCESS)) {
+                $this->wordPressData->doAction(
+                    SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_SUCCESS,
+                    $this->wordPressData->getUserProperty($user, 'ID'),
+                    $this->wordPressData->getUserProperty($user, 'user_email')
+                );
+            }
 
             $this->doRedirect($this->wordPressData->getAdminUrl());
         } catch (Exception $exception) {
-            $this->wordPressData->doAction(
-                SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,
-                null,
-                null,
-                $exception->getMessage()
-            );
+            if ($this->settings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_OAUTH_FAILED)) {
+                $this->wordPressData->doAction(
+                    SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,
+                    null,
+                    null,
+                    $exception->getMessage()
+                );
+            }
             $this->doRedirect($this->wordPressData->getLoginURL(['error' => $exception->getMessage()]));
         }
     }
@@ -331,12 +342,14 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
         );
 
         if (empty($user)) {
-            $this->wordPressData->doAction(
-                SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,
-                null,
-                $email,
-                __('Wrong user credentials.', 'simple-jwt-login')
-            );
+            if ($this->settings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_OAUTH_FAILED)) {
+                $this->wordPressData->doAction(
+                    SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,
+                    null,
+                    $email,
+                    __('Wrong user credentials.', 'simple-jwt-login')
+                );
+            }
             throw new Exception(
                 esc_html(__('Wrong user credentials.', 'simple-jwt-login')),
                 absint($this->getUserNotFoundErrorCode())
@@ -348,11 +361,13 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
             return $challenge;
         }
 
-        $this->wordPressData->doAction(
-            SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_SUCCESS,
-            $this->wordPressData->getUserProperty($user, 'ID'),
-            $this->wordPressData->getUserProperty($user, 'user_email')
-        );
+        if ($this->settings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_OAUTH_SUCCESS)) {
+            $this->wordPressData->doAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_SUCCESS,
+                $this->wordPressData->getUserProperty($user, 'ID'),
+                $this->wordPressData->getUserProperty($user, 'user_email')
+            );
+        }
 
         $payload = AuthenticateService::generatePayload(
             [],

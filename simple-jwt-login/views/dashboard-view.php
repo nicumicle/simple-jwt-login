@@ -102,6 +102,15 @@ $securityCards = [
     ],
 ];
 
+$integrations    = $jwtSettings->getIntegrationsSettings();
+$oauthCount      = (int) $integrations->google()->isEnabled()
+    + (int) $integrations->auth0()->isEnabled()
+    + (int) $integrations->facebook()->isEnabled()
+    + (int) $integrations->github()->isEnabled();
+$thirdPartyCount = (int) $integrations->wpgraphql()->isEnabled()
+    + (int) $integrations->twoFactor()->isEnabled()
+    + (int) $integrations->forceLogin()->isEnabled();
+
 $configCards = [
     [
         'title'   => __('General Settings', 'simple-jwt-login'),
@@ -111,11 +120,18 @@ $configCards = [
         'link'    => __('Configure', 'simple-jwt-login'),
     ],
     [
-        'title'   => __('Integrations', 'simple-jwt-login'),
-        'tooltip' => __('Configure third-party integrations such as Google.', 'simple-jwt-login'),
-        'icon'    => 'dashicons-share',
-        'tab'     => SettingsErrors::PREFIX_APPLICATIONS,
-        'link'    => __('Configure', 'simple-jwt-login'),
+        'title'       => __('OAuth', 'simple-jwt-login'),
+        'tooltip'     => __('Configure OAuth providers such as Google, Facebook, GitHub, and Auth0.', 'simple-jwt-login'),
+        'icon'        => 'dashicons-share',
+        'tab'         => SettingsErrors::PREFIX_APPLICATIONS,
+        'count' => $oauthCount,
+    ],
+    [
+        'title'       => __('Third Party Integrations', 'simple-jwt-login'),
+        'tooltip'     => __('Configure third-party plugin integrations such as WPGraphQL and Two-Factor.', 'simple-jwt-login'),
+        'icon'        => 'dashicons-admin-plugins',
+        'tab'         => SettingsErrors::PREFIX_3RD_PARTY_APPS,
+        'count' => $thirdPartyCount,
     ],
     [
         'title'   => __('Hooks', 'simple-jwt-login'),

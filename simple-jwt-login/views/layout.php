@@ -138,7 +138,7 @@ $settingsPages = [
     ],
     [
         'id'   => 'simple-jwt-login-tab-integrations',
-        'name' => __('Integrations', 'simple-jwt-login'),
+        'name' => __('OAuth', 'simple-jwt-login'),
         'has_error' =>  (
             $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_APPLICATIONS
         ),

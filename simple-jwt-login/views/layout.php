@@ -273,6 +273,7 @@ $sidebarGroups = [
     }
     ?>
     <input type="hidden" name="active_tab" id="active_tab" value="<?php echo esc_attr($activeTab);?>"/>
+    <input type="hidden" name="theme[mode]" id="sjl-theme-mode-input" value="<?php echo esc_attr($jwtSettings->getThemeSettings()->getMode()); ?>"/>
     <?php
     $jwtSettings
         ->getWordPressData()
@@ -308,6 +309,10 @@ $sidebarGroups = [
                     </h1>
                 </div>
                 <div class="col-md-4 sjl-header-actions text-right">
+                    <button type="button" id="sjl-theme-toggle" class="sjl-theme-toggle">
+                        <span class="dashicons dashicons-admin-appearance"></span>
+                        <span id="sjl-theme-label"><?php echo esc_html__('Dark mode', 'simple-jwt-login'); ?></span>
+                    </button>
                     <input type="submit" class="btn btn-dark" value="<?php echo esc_attr__('Save', 'simple-jwt-login');?>">
                 </div>
             </div>
@@ -486,6 +491,14 @@ $sidebarGroups = [
         <!-- /.container -->
     </div>
 </form>
+
+<script>
+(function () {
+    window._sjlConfig = {
+        theme: <?php echo wp_json_encode($jwtSettings->getThemeSettings()->getMode()); ?>
+    };
+}());
+</script>
 
 <div id="sjl-payload-claim-line" style="display:none">
     <div class="sjl-claims-row">

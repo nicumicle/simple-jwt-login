@@ -26,6 +26,7 @@
 - Add option for sending default WordPress email on user registration
 - Add option for sending default password change WordPRess email when change password endpoint is called
 - Improve plugin security and performance
+- Add Light/Dark mode UI
 
 ## 3.6.6 (22 May 2026)
 - Update WordPress 7.0 Compatibility

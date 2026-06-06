@@ -19,6 +19,7 @@ use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
 use SimpleJWTLogin\Modules\Settings\RegisterSettings;
 use SimpleJWTLogin\Modules\Settings\ResetPasswordSettings;
+use SimpleJWTLogin\Modules\Settings\ThemeSettings;
 use SimpleJWTLogin\Modules\Settings\Migrations\SettingsMigrationService;
 use SimpleJWTLogin\Modules\Settings\SettingsFactory;
 use SimpleJWTLogin\Modules\Settings\SettingsInterface;
@@ -230,6 +231,14 @@ class SimpleJWTLoginSettings
     public function getApiKeysSettings()
     {
         return $this->getSettingsClassByType(SettingsFactory::API_KEYS_SETTINGS);
+    }
+
+    /**
+     * @return ThemeSettings
+     */
+    public function getThemeSettings()
+    {
+        return $this->getSettingsClassByType(SettingsFactory::THEME_SETTINGS);
     }
 
     /**

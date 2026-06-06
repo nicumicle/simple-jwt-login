@@ -1,9 +1,43 @@
 jQuery(document).ready(
     function ($) {
+        // Apply theme before revealing the page to avoid a flash.
+        // Priority: DB value (via _sjlConfig) > localStorage > system preference.
+        var sjlConfig     = window._sjlConfig || {};
+        var sjlDbTheme    = sjlConfig.theme || '';
+        var sjlLocalTheme = localStorage.getItem('sjl-theme') || '';
+        var sjlTheme      = sjlDbTheme || sjlLocalTheme;
+        var sjlPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var sjlIsDark     = sjlTheme === 'dark' || (!sjlTheme && sjlPrefersDark);
+        var $plugin       = $('#simple-jwt-login');
+
+        if (sjlIsDark) {
+            $plugin.attr('data-sjl-theme', 'dark');
+            $('#wpwrap').addClass('sjl-wp-dark');
+            $('#sjl-theme-label').text('Light mode');
+        }
+
         $('#simple-jwt-login').css('visibility', 'visible');
         $('#sjl-page-loader').addClass('sjl-loader-hidden');
         setTimeout(function () {
 			$('#sjl-page-loader').remove(); }, 250);
+
+        $('#sjl-theme-toggle').on('click', function () {
+            var isDark   = $plugin.attr('data-sjl-theme') === 'dark';
+            var newTheme = isDark ? 'light' : 'dark';
+
+            if (isDark) {
+                $plugin.removeAttr('data-sjl-theme');
+                $('#wpwrap').removeClass('sjl-wp-dark');
+                $('#sjl-theme-label').text('Dark mode');
+            } else {
+                $plugin.attr('data-sjl-theme', 'dark');
+                $('#wpwrap').addClass('sjl-wp-dark');
+                $('#sjl-theme-label').text('Light mode');
+            }
+
+            localStorage.setItem('sjl-theme', newTheme);
+            $('#sjl-theme-mode-input').val(newTheme);
+        });
 
         $('#auth_codes').append($('#code_line').html());
 

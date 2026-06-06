@@ -24,6 +24,7 @@ class SettingsFactory
     const JWT_RULES_SETTINGS = 12;
     const WEBHOOKS_SETTINGS  = 13;
     const API_KEYS_SETTINGS  = 14;
+    const THEME_SETTINGS     = 15;
 
     /**
      * @return array
@@ -46,13 +47,14 @@ class SettingsFactory
             self::INTEGRATIONS_SETTINGS     => 'SimpleJWTLogin\Modules\Settings\IntegrationsSettings',
             self::WEBHOOKS_SETTINGS         => 'SimpleJWTLogin\Modules\Settings\WebhooksSettings',
             self::API_KEYS_SETTINGS         => 'SimpleJWTLogin\Modules\Settings\ApiKeysSettings',
+            self::THEME_SETTINGS            => 'SimpleJWTLogin\Modules\Settings\ThemeSettings',
         );
     }
 
     /**
      * @param int $type
      *
-     * @return AuthCodesSettings|AuthenticationSettings|AuditLogSettings|CorsSettings|DeleteUserSettings|GeneralSettings|HooksSettings|JwtRulesSettings|LoginSettings|RegisterSettings|ResetPasswordSettings|ProtectEndpointSettings|IntegrationsSettings|WebhooksSettings|ApiKeysSettings
+     * @return AuthCodesSettings|AuthenticationSettings|AuditLogSettings|CorsSettings|DeleteUserSettings|GeneralSettings|HooksSettings|JwtRulesSettings|LoginSettings|RegisterSettings|ResetPasswordSettings|ProtectEndpointSettings|IntegrationsSettings|WebhooksSettings|ApiKeysSettings|ThemeSettings
      * @throws Exception
      */
     public static function getFactory($type)

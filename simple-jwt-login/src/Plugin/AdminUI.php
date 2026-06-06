@@ -41,6 +41,12 @@ class AdminUI
             array(),
             $pluginVersion
         );
+        wp_enqueue_style(
+            'simple-jwt-login-dark',
+            $pluginDirUrl . 'assets/css/dark.css',
+            array('simple-jwt-login-style'),
+            $pluginVersion
+        );
         wp_enqueue_script(
             'simple-jwt-bootstrap-min',
             $pluginDirUrl . 'assets/vendor/bootstrap/bootstrap.min.js',

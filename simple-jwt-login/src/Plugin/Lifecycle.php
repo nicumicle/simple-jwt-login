@@ -3,7 +3,6 @@
 namespace SimpleJWTLogin\Plugin;
 
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 use SimpleJWTLogin\Repositories\RefreshToken\RefreshTokenRepository;
 use SimpleJWTLogin\Repositories\AuditLog\AuditLogRepository;
 use SimpleJWTLogin\Repositories\WebhookLog\WebhookLogRepository;
@@ -11,15 +10,36 @@ use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepository;
 
 class Lifecycle
 {
-    /** @var \wpdb */
-    private $wpdb;
-    
     /**
-     * @param  \wpdb $wpdb
-    */
-    public function __construct($wpdb)
-    {
-        $this->wpdb = $wpdb;
+     * @var RefreshTokenRepository
+     */
+    private $refreshTokenRepo;
+
+    /**
+     * @var AuditLogRepository
+     */
+    private $auditLogRepository;
+
+    /**
+     * @var WebhookLogRepository
+     */
+    private $webhookLogRepository;
+
+    /**
+     * @var ApiKeyRepository
+     */
+    private $apiKeyRepository;
+
+    public function __construct(
+        RefreshTokenRepository $refreshTokenRepo,
+        AuditLogRepository $auditLogRepository,
+        WebhookLogRepository $webhookLogRepository,
+        ApiKeyRepository $apiKeyRepository
+    ) {
+        $this->refreshTokenRepo = $refreshTokenRepo;
+        $this->auditLogRepository = $auditLogRepository;
+        $this->webhookLogRepository = $webhookLogRepository;
+        $this->apiKeyRepository = $apiKeyRepository;
     }
 
     public function activate()
@@ -45,6 +65,7 @@ class Lifecycle
         wp_clear_scheduled_hook('simple_jwt_login_cleanup_webhook_logs');
     }
 
+    // WordPress requires a static callable for register_uninstall_hook — injection not possible here.
     public static function uninstall()
     {
         global $wpdb;
@@ -76,10 +97,10 @@ class Lifecycle
 
     protected function createAllTables()
     {
-        (new RefreshTokenRepository($this->wpdb))->createTable();
-        (new AuditLogRepository($this->wpdb))->createTable();
-        (new WebhookLogRepository($this->wpdb))->createTable();
-        (new ApiKeyRepository($this->wpdb))->createTable();
+        $this->refreshTokenRepo->createTable();
+        $this->auditLogRepository->createTable();
+        $this->webhookLogRepository->createTable();
+        $this->apiKeyRepository->createTable();
     }
 
     protected function ensureRefreshTokenKey()

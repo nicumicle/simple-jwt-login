@@ -3,49 +3,66 @@
 namespace SimpleJWTLogin\Plugin;
 
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 use SimpleJWTLogin\Repositories\RefreshToken\RefreshTokenRepository;
 use SimpleJWTLogin\Repositories\AuditLog\AuditLogRepository;
 use SimpleJWTLogin\Repositories\WebhookLog\WebhookLogRepository;
 
 class CronCleanup
 {
-    /** @var \wpdb */
-    private $wpdb;
+    /**
+     * @var SimpleJWTLoginSettings
+     */
+    private $jwtSettings;
 
     /**
-     * @param  \wpdb $wpdb
+     * @var RefreshTokenRepository
      */
-    public function __construct($wpdb)
-    {
-        $this->wpdb = $wpdb;
+    private $refreshTokenRepo;
+
+    /**
+     * @var AuditLogRepository
+     */
+    private $auditLogRepository;
+
+    /**
+     * @var WebhookLogRepository
+     */
+    private $webhookLogRepository;
+
+    public function __construct(
+        SimpleJWTLoginSettings $jwtSettings,
+        RefreshTokenRepository $refreshTokenRepo,
+        AuditLogRepository $auditLogRepository,
+        WebhookLogRepository $webhookLogRepository
+    ) {
+        $this->jwtSettings = $jwtSettings;
+        $this->refreshTokenRepo = $refreshTokenRepo;
+        $this->auditLogRepository = $auditLogRepository;
+        $this->webhookLogRepository = $webhookLogRepository;
     }
 
     public function cleanupRefreshTokens()
     {
-        $refreshTokenRepo = new RefreshTokenRepository($this->wpdb);
-        $refreshTokenRepo->cleanupExpired();
+        $this->refreshTokenRepo->cleanupExpired();
     }
 
     public function cleanupAuditLogs()
     {
-        $jwtSettings   = new SimpleJWTLoginSettings(new WordPressRepository());
-        $retentionDays = $jwtSettings->getAuditLogSettings()->getRetentionDays();
+        $retentionDays = $this->jwtSettings->getAuditLogSettings()->getRetentionDays();
         if ($retentionDays <= 0) {
             return;
         }
         $before = gmdate('Y-m-d H:i:s', strtotime("-{$retentionDays} days"));
-        (new AuditLogRepository($this->wpdb))->deleteOlderThan($before);
+        $this->auditLogRepository->deleteOlderThan($before);
     }
 
     public function cleanupWebhookLogs()
     {
-        $jwtSettings   = new SimpleJWTLoginSettings(new WordPressRepository());
-        $retentionDays = $jwtSettings->getWebhooksSettings()->getRetentionDays();
+        $retentionDays = $this->jwtSettings->getWebhooksSettings()->getRetentionDays();
         if ($retentionDays <= 0) {
             return;
         }
         $before = gmdate('Y-m-d H:i:s', strtotime("-{$retentionDays} days"));
-        (new WebhookLogRepository($this->wpdb))->deleteOlderThan($before);
+        $this->webhookLogRepository->deleteOlderThan($before);
     }
 }

@@ -10,6 +10,9 @@ if (!defined('ABSPATH')) {
     exit;
 } // Exit if accessed directly
 
+global $wpdb;
+$auditRepo = new AuditLogRepository($wpdb);
+
 /**
  * @var SimpleJWTLoginSettings $jwtSettings
  */
@@ -18,13 +21,10 @@ if (!defined('ABSPATH')) {
 //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 if (isset($_GET['sjl_audit_action']) && $_GET['sjl_audit_action'] === 'clear') {
     if (isset($_GET['_wpnonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'sjl_audit_clear_logs')) {
-        global $wpdb;
-        $repo = new AuditLogRepository($wpdb);
-        $repo->deleteAll();
-        $redirectUrl = remove_query_arg(['sjl_audit_action', '_wpnonce']);
-        wp_safe_redirect($redirectUrl);
-        exit;
+        $auditRepo->deleteAll();
     }
+    $redirectUrl = remove_query_arg(['sjl_audit_action', '_wpnonce']);
+    echo '<script>window.location.replace(' . wp_json_encode($redirectUrl) . ');</script>';
 }
 
 // Pagination & filters
@@ -42,9 +42,6 @@ $filterTo     = isset($_GET['filter_to'])     ? sanitize_text_field(wp_unslash($
 //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 $filterUser   = isset($_GET['filter_user'])   ? sanitize_text_field(wp_unslash($_GET['filter_user']))   : '';
 
-global $wpdb;
-$auditRepo = new AuditLogRepository($wpdb);
-
 $filters = array_filter([
     'event_type' => $filterEvent,
     'status'     => $filterStatus,
@@ -60,6 +57,8 @@ $totalPages = $totalLogs > 0 ? (int) ceil($totalLogs / $perPage) : 1;
 
 $allEvents   = AuditEvents::all();
 $eventLabels = AuditEvents::labels();
+
+$hasActiveFilters = !empty($filterEvent) || !empty($filterStatus) || !empty($filterFrom) || !empty($filterTo) || !empty($filterUser);
 
 $baseUrl = add_query_arg([
     'active_tab'    => SettingsErrors::PREFIX_AUDIT_LOG_LOGS,
@@ -78,20 +77,23 @@ $baseUrl = add_query_arg([
             <div>
                 <h3 class="sjl-gen-card-title"><?php echo esc_html(__('Activity Log', 'simple-jwt-login')); ?></h3>
                 <p class="sjl-gen-card-desc">
-                    <?php
-                    echo esc_html(
-                        sprintf(
-                            /* translators: %d: number of total log entries */
-                            __('Showing %d total entries.', 'simple-jwt-login'),
-                            $totalLogs
-                        )
-                    );
-                    ?>
+                    <?php if ($totalLogs > 0) : ?>
+                        <?php
+                        echo esc_html(
+                            sprintf(
+                                /* translators: %d: number of total log entries */
+                                __('Showing %d total entries.', 'simple-jwt-login'),
+                                $totalLogs
+                            )
+                        );
+                        ?>
+                    <?php endif; ?>
                 </p>
             </div>
         </div>
+        <?php if ($totalLogs > 0) : ?>
         <a
-            href="<?php echo esc_url(wp_nonce_url(add_query_arg(['sjl_audit_action' => 'clear']), 'sjl_audit_clear_logs')); ?>"
+            href="<?php echo esc_url(wp_nonce_url(add_query_arg(['sjl_audit_action' => 'clear', 'active_tab' => SettingsErrors::PREFIX_AUDIT_LOG_LOGS]), 'sjl_audit_clear_logs')); ?>"
             class="btn btn-sm btn-outline-danger"
             style="white-space: nowrap; align-self: center;"
             onclick="return confirm('<?php echo esc_js(__('Are you sure you want to delete all audit logs?', 'simple-jwt-login')); ?>');"
@@ -99,9 +101,17 @@ $baseUrl = add_query_arg([
             <span class="dashicons dashicons-trash" style="font-size: 14px; width: 14px; height: 14px; margin-right: 4px; vertical-align: middle;"></span>
             <?php echo esc_html(__('Clear All Logs', 'simple-jwt-login')); ?>
         </a>
+        <?php endif; ?>
     </div>
     <div class="sjl-gen-card-body">
 
+        <?php if ($totalLogs === 0 && !$hasActiveFilters) : ?>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 24px; color: #aaa;">
+            <span class="dashicons dashicons-backup" style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px;"></span>
+            <p style="font-size: 16px; margin: 0 0 8px;"><?php echo esc_html(__('No activity logs yet.', 'simple-jwt-login')); ?></p>
+            <p style="font-size: 13px; margin: 0;"><?php echo esc_html(__('Logs will appear here once events are recorded.', 'simple-jwt-login')); ?></p>
+        </div>
+        <?php else : ?>
         <!-- Filters -->
         <div class="row mb-3">
             <div class="col-md-12">
@@ -224,7 +234,7 @@ $baseUrl = add_query_arg([
         </div>
 
         <!-- Pagination -->
-        <?php if ($totalPages > 1) : ?>
+            <?php if ($totalPages > 1) : ?>
             <div class="row mt-3">
                 <div class="col-md-12 text-center">
                     <nav>
@@ -284,7 +294,9 @@ $baseUrl = add_query_arg([
                     </p>
                 </div>
             </div>
-        <?php endif; ?>
+            <?php endif; ?>
+
+        <?php endif; // end empty state check ?>
 
     </div>
 </div>

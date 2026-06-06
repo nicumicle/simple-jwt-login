@@ -23,10 +23,9 @@ if (isset($_GET['sjl_webhook_log_action']) && $_GET['sjl_webhook_log_action'] ==
     if (isset($_GET['_wpnonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'sjl_webhook_clear_logs')) {
         global $wpdb;
         (new WebhookLogRepository($wpdb))->deleteAll();
-        $redirectUrl = remove_query_arg(['sjl_webhook_log_action', '_wpnonce']);
-        wp_safe_redirect($redirectUrl);
-        exit;
     }
+    $redirectUrl = remove_query_arg(['sjl_webhook_log_action', '_wpnonce']);
+    echo '<script>window.location.replace(' . wp_json_encode($redirectUrl) . ');</script>';
 }
 
 // Pagination & filters
@@ -57,6 +56,8 @@ $wlItems      = $wlResult['items'];
 $wlTotal      = $wlResult['total'];
 $wlTotalPages = $wlTotal > 0 ? (int) ceil($wlTotal / $wlPerPage) : 1;
 
+$wlHasActiveFilters = !empty($wlFilterEvent) || !empty($wlFilterStatus) || !empty($wlFilterFrom) || !empty($wlFilterTo);
+
 $wlBaseUrl = add_query_arg([
     'active_tab'       => SettingsErrors::PREFIX_WEBHOOK_LOGS,
     'wl_filter_event'  => $wlFilterEvent,
@@ -73,7 +74,7 @@ $wlBaseUrl = add_query_arg([
             <div>
                 <h3 class="sjl-gen-card-title"><?php echo esc_html(__('Webhook Call Log', 'simple-jwt-login')); ?></h3>
                 <p class="sjl-gen-card-desc">
-                    <?php if ($webhookLogsEnabled) : ?>
+                    <?php if ($webhookLogsEnabled && $wlTotal > 0) : ?>
                         <?php
                         echo esc_html(
                             sprintf(
@@ -83,13 +84,13 @@ $wlBaseUrl = add_query_arg([
                             )
                         );
                         ?>
-                    <?php else : ?>
+                    <?php elseif (!$webhookLogsEnabled) : ?>
                         <?php echo esc_html(__('Logging is disabled. Enable it to record webhook calls.', 'simple-jwt-login')); ?>
                     <?php endif; ?>
                 </p>
             </div>
         </div>
-        <?php if ($webhookLogsEnabled) : ?>
+        <?php if ($webhookLogsEnabled && $wlTotal > 0) : ?>
         <a
             href="<?php echo esc_url(wp_nonce_url(add_query_arg(['sjl_webhook_log_action' => 'clear']), 'sjl_webhook_clear_logs')); ?>"
             class="btn btn-sm btn-outline-danger"
@@ -140,6 +141,12 @@ $wlBaseUrl = add_query_arg([
         <div class="sjl-logs-disabled-notice" style="display: flex; align-items: center; gap: 10px; padding: 16px; background: #f9f9f9; border: 1px dashed #ccc; border-radius: 6px; color: #555;">
             <span class="dashicons dashicons-info" style="font-size: 20px; color: #aaa;"></span>
             <span><?php echo esc_html(__('Webhook call logging is currently disabled. Toggle "Enable Logs" above and save settings to start recording calls.', 'simple-jwt-login')); ?></span>
+        </div>
+        <?php elseif ($wlTotal === 0 && !$wlHasActiveFilters) : ?>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 24px; color: #aaa;">
+            <span class="dashicons dashicons-backup" style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px;"></span>
+            <p style="font-size: 16px; margin: 0 0 8px;"><?php echo esc_html(__('No webhook logs yet.', 'simple-jwt-login')); ?></p>
+            <p style="font-size: 13px; margin: 0;"><?php echo esc_html(__('Logs will appear here once webhook calls are recorded.', 'simple-jwt-login')); ?></p>
         </div>
         <?php else : ?>
         <!-- Filters -->

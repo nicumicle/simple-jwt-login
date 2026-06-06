@@ -3,7 +3,6 @@
 namespace SimpleJWTLogin\Plugin;
 
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 
 class LoginPageIntegration
 {
@@ -13,11 +12,17 @@ class LoginPageIntegration
     protected $request;
 
     /**
+     * @var SimpleJWTLoginSettings
+     */
+    private $jwtSettings;
+
+    /**
      * @param array $request
      */
-    public function __construct($request)
+    public function __construct($request, SimpleJWTLoginSettings $jwtSettings)
     {
         $this->request = $request;
+        $this->jwtSettings = $jwtSettings;
     }
 
     public function enqueueLoginAssets()
@@ -33,11 +38,9 @@ class LoginPageIntegration
 
     public function showLoginMessage()
     {
-        $wordpressData = new WordPressRepository();
-        $jwtSettings   = new SimpleJWTLoginSettings($wordpressData);
         $hasError = false;
 
-        $integrationsSettings = $jwtSettings->getIntegrationsSettings();
+        $integrationsSettings = $this->jwtSettings->getIntegrationsSettings();
         $anyEnabled = ($integrationsSettings->google()->isEnabled() && $integrationsSettings->google()->isOauthEnabled())
             || ($integrationsSettings->auth0()->isEnabled() && $integrationsSettings->auth0()->isOauthEnabled())
             || ($integrationsSettings->facebook()->isEnabled() && $integrationsSettings->facebook()->isOauthEnabled())
@@ -61,11 +64,9 @@ class LoginPageIntegration
      */
     public function renderLoginFooter()
     {
-        $wordpressData = new WordPressRepository();
-        $jwtSettings = new SimpleJWTLoginSettings($wordpressData);
         $pluginDirUrl = plugin_dir_url(SIMPLE_JWT_LOGIN_PLUGIN_FILE);
 
-        $integrationsSettings = $jwtSettings->getIntegrationsSettings();
+        $integrationsSettings = $this->jwtSettings->getIntegrationsSettings();
         $googleEnabled   = $integrationsSettings->google()->isEnabled()
             && $integrationsSettings->google()->isOauthEnabled();
         $auth0Enabled    = $integrationsSettings->auth0()->isEnabled()

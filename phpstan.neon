@@ -28,7 +28,6 @@ parameters:
        message : '#Using (\$_POST|\$_GET|\$_REQUEST|\$_SERVER) is forbidden.*#'
        paths:
          - simple-jwt-login/views/
-         - simple-jwt-login/routes/api.php
          - simple-jwt-login/3rd-party/force_login.php
          - simple-jwt-login/3rd-party/wp-graphql.php
          - simple-jwt-login/simple-jwt-login.php

@@ -3,7 +3,6 @@
 namespace SimpleJWTLogin\Plugin;
 
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 use SimpleJWTLogin\Services\Oauth\Auth0Oauth;
 use SimpleJWTLogin\Services\Oauth\FacebookOauth;
 use SimpleJWTLogin\Services\Oauth\GithubOauth;
@@ -17,11 +16,17 @@ class Shortcodes
     protected $request;
 
     /**
+     * @var SimpleJWTLoginSettings
+     */
+    private $jwtSettings;
+
+    /**
      * @param array $request
      */
-    public function __construct($request)
+    public function __construct($request, SimpleJWTLoginSettings $jwtSettings)
     {
         $this->request = $request;
+        $this->jwtSettings = $jwtSettings;
     }
 
     /**
@@ -52,15 +57,13 @@ class Shortcodes
      */
     public function handleOauthShortcode($parameter = null)
     {
-        $wordpressData = new WordPressRepository();
-        $jwtSettings   = new SimpleJWTLoginSettings($wordpressData);
         $pluginDirUrl = plugin_dir_url(SIMPLE_JWT_LOGIN_PLUGIN_FILE);
 
         if (!isset($parameter['provider'])) {
             return '';
         }
 
-        if ($jwtSettings->getWordPressData()->isUserLoggedIn()) {
+        if ($this->jwtSettings->getWordPressData()->isUserLoggedIn()) {
             return '';
         }
 
@@ -110,7 +113,7 @@ class Shortcodes
         </style>';
         $haveProvider = false;
         $pluginDir = dirname(SIMPLE_JWT_LOGIN_PLUGIN_FILE);
-        $integrationsSettings = $jwtSettings->getIntegrationsSettings();
+        $integrationsSettings = $this->jwtSettings->getIntegrationsSettings();
         switch ($parameter['provider']) {
             case GoogleOauth::PROVIDER_SLUG:
                 if ($integrationsSettings->google()->isEnabled()

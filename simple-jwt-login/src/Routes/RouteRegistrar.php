@@ -34,6 +34,36 @@ class RouteRegistrar
     protected $cookies;
 
     /**
+     * @var WordPressRepository
+     */
+    protected $wordPressRepo;
+
+    /**
+     * @var SimpleJWTLoginSettings
+     */
+    protected $jwtSettings;
+
+    /**
+     * @var RefreshTokenRepository
+     */
+    protected $refreshTokenRepo;
+
+    /**
+     * @var AuditLogRepository
+     */
+    protected $auditLogRepo;
+
+    /**
+     * @var ApiKeyRepository
+     */
+    protected $apiKeyRepo;
+
+    /**
+     * @var WebhookLogRepository
+     */
+    protected $webhookLogRepo;
+
+    /**
      * @param array $server
      * @param array $requestVars
      * @param array $cookies
@@ -45,6 +75,66 @@ class RouteRegistrar
         $this->cookies = $cookies;
     }
 
+    /**
+     * @param WordPressRepository $wordPressRepo
+     * @return $this
+     */
+    public function withWordPressRepository($wordPressRepo)
+    {
+        $this->wordPressRepo = $wordPressRepo;
+        return $this;
+    }
+
+    /**
+     * @param SimpleJWTLoginSettings $jwtSettings
+     * @return $this
+     */
+    public function withSettings($jwtSettings)
+    {
+        $this->jwtSettings = $jwtSettings;
+        return $this;
+    }
+
+    /**
+     * @param RefreshTokenRepository $refreshTokenRepo
+     * @return $this
+     */
+    public function withRefreshTokenRepo($refreshTokenRepo)
+    {
+        $this->refreshTokenRepo = $refreshTokenRepo;
+        return $this;
+    }
+
+    /**
+     * @param AuditLogRepository $auditLogRepo
+     * @return $this
+     */
+    public function withAuditLogRepo($auditLogRepo)
+    {
+        $this->auditLogRepo = $auditLogRepo;
+        return $this;
+    }
+
+    /**
+     * @param ApiKeyRepository $apiKeyRepo
+     * @return $this
+     */
+    public function withApiKeyRepo($apiKeyRepo)
+    {
+        $this->apiKeyRepo = $apiKeyRepo;
+        return $this;
+    }
+
+    /**
+     * @param WebhookLogRepository $webhookLogRepo
+     * @return $this
+     */
+    public function withWebhookLogRepo($webhookLogRepo)
+    {
+        $this->webhookLogRepo = $webhookLogRepo;
+        return $this;
+    }
+
     public function register()
     {
         $parseRequest = ParseRequest::process($this->server);
@@ -54,67 +144,61 @@ class RouteRegistrar
         }
 
         $request = array_merge(wp_unslash($this->requestVars), $parsedVars);
-        $wordPressData = new WordPressRepository();
         $serverHelper = new ServerHelper($this->server);
-        $jwtSettings = new SimpleJWTLoginSettings($wordPressData);
 
-        global $wpdb;
-        $tokenRepository = new RefreshTokenRepository($wpdb);
-        $auditLogRepository     = new AuditLogRepository($wpdb);
-        $apiKeyRepository       = new ApiKeyRepository($wpdb);
-        $webhookLogRepository = $jwtSettings->getWebhooksSettings()->isWebhookLogsEnabled()
-            ? new WebhookLogRepository($wpdb)
+        $webhookLogRepo = $this->jwtSettings->getWebhooksSettings()->isWebhookLogsEnabled()
+            ? $this->webhookLogRepo
             : null;
+
         $auditLogger = new AuditLoggerService(
-            $auditLogRepository,
-            $jwtSettings->getAuditLogSettings(),
+            $this->auditLogRepo,
+            $this->jwtSettings->getAuditLogSettings(),
             $serverHelper
         );
-
         $auditLogger->registerAuditHooks();
 
         $routeService = new RouteService();
-        $routeService->withSettings($jwtSettings);
+        $routeService->withSettings($this->jwtSettings);
         $routeService->withRequest($request);
         $routeService->withCookies($this->cookies);
         $routeService->withServerHelper($serverHelper);
 
-        if ($jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
+        if ($this->jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
             $routeService->withSession(SessionService::init());
         }
 
-        if ($jwtSettings->getCorsSettings()->isCorsEnabled()) {
-            $corsHandler = new CorsHandler($jwtSettings->getCorsSettings());
+        if ($this->jwtSettings->getCorsSettings()->isCorsEnabled()) {
+            $corsHandler = new CorsHandler($this->jwtSettings->getCorsSettings());
             $corsHandler->register();
         }
 
         $this->registerMiddleware(
             $routeService,
-            $jwtSettings,
-            $wordPressData,
+            $this->jwtSettings,
+            $this->wordPressRepo,
             $serverHelper,
-            $apiKeyRepository,
+            $this->apiKeyRepo,
             $auditLogger
         );
         $documentRoot = isset($this->server['DOCUMENT_ROOT']) ? $this->server['DOCUMENT_ROOT'] : '';
-        $this->registerEndpointProtection($routeService, $jwtSettings, $serverHelper, $request, $documentRoot);
+        $this->registerEndpointProtection($routeService, $this->jwtSettings, $serverHelper, $request, $documentRoot);
         $this->registerRoutes(
             $routeService,
-            $jwtSettings,
+            $this->jwtSettings,
             $serverHelper,
             $request,
-            $tokenRepository,
-            $webhookLogRepository
+            $this->refreshTokenRepo,
+            $webhookLogRepo
         );
         $this->registerApiKeyRoutes(
             $routeService,
-            $jwtSettings,
-            $wordPressData,
+            $this->jwtSettings,
+            $this->wordPressRepo,
             $serverHelper,
             $request,
-            $apiKeyRepository,
-            $tokenRepository,
-            $webhookLogRepository,
+            $this->apiKeyRepo,
+            $this->refreshTokenRepo,
+            $webhookLogRepo,
             $auditLogger
         );
     }

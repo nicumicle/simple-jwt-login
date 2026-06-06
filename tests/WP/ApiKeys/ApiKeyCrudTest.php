@@ -19,7 +19,7 @@ use SimpleJwtLoginTests\WP\WPTestCase;
  *   DELETE /simple-jwt-login/v1/api-keys/{id}          (permanent delete)
  *   POST   /simple-jwt-login/v1/api-keys/{id}/revoke  (soft revoke)
  *
- * Error response shape (WP_Error returned by routes/api.php):
+ * Error response shape (WP_Error returned by api):
  *   {code: 'simple_jwt_login_api_key_error', message: '...', data: {status: N, errorCode: N}}
  */
 class ApiKeyCrudTest extends WPTestCase

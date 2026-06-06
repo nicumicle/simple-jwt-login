@@ -18,7 +18,7 @@ if (! defined('ABSPATH')) {
 
 <div class="sjl-gen-card">
     <div class="sjl-gen-card-header">
-        <span class="dashicons dashicons-image-rotate"></span>
+        <span class="dashicons dashicons-update"></span>
         <div>
             <h3 class="sjl-gen-card-title"><?php echo esc_html__('Allow Refresh Token Endpoint', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">

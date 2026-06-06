@@ -203,7 +203,7 @@ $sidebarGroups = [
             ['index' => SettingsErrors::PREFIX_REGISTER, 'name' => __('Register', 'simple-jwt-login'), 'icon' => 'dashicons-plus-alt'],
             ['index' => SettingsErrors::PREFIX_DELETE, 'name' => __('Delete', 'simple-jwt-login'), 'icon' => 'dashicons-trash'],
             ['index' => SettingsErrors::PREFIX_RESET_PASSWORD, 'icon' => 'dashicons-lock'],
-            ['index' => SettingsErrors::PREFIX_AUTHENTICATION, 'name' => __('Authenticate', 'simple-jwt-login'), 'icon' => 'dashicons-id-alt'],
+            ['index' => SettingsErrors::PREFIX_AUTHENTICATION, 'name' => __('Authenticate', 'simple-jwt-login'), 'icon' => 'dashicons-shield'],
             ['index' => SettingsErrors::PREFIX_REFRESH_TOKEN, 'name' => __('Refresh Token', 'simple-jwt-login'), 'icon' => 'dashicons-update'],
             ['index' => SettingsErrors::PREFIX_VALIDATE_TOKEN, 'name' => __('Validate Token', 'simple-jwt-login'), 'icon' => 'dashicons-yes-alt'],
             ['index' => SettingsErrors::PREFIX_REVOKE_TOKEN, 'name' => __('Revoke Token', 'simple-jwt-login'), 'icon' => 'dashicons-dismiss'],
@@ -225,7 +225,7 @@ $sidebarGroups = [
         'label' => __('Integrations', 'simple-jwt-login'),
         'icon'  => 'dashicons-admin-plugins',
         'items' => [
-            ['index' => SettingsErrors::PREFIX_APPLICATIONS, 'name' => __('OAuth', 'simple-jwt-login'), 'icon' => 'dashicons-admin-network'],
+            ['index' => SettingsErrors::PREFIX_APPLICATIONS, 'name' => __('OAuth', 'simple-jwt-login'), 'icon' => 'dashicons-cloud'],
             ['index' => SettingsErrors::PREFIX_3RD_PARTY_APPS, 'name' => __('Third Party Integrations', 'simple-jwt-login'), 'icon' => 'dashicons-admin-plugins'],
         ],
     ],

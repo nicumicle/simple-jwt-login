@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 
 <div class="sjl-gen-card">
     <div class="sjl-gen-card-header">
-        <span class="dashicons dashicons-email-alt"></span>
+        <span class="dashicons dashicons-lock"></span>
         <div>
             <h3 class="sjl-gen-card-title"><?php echo esc_html__('Password Reset', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">

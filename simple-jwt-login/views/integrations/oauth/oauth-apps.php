@@ -92,7 +92,7 @@ $sjlLayouts = [
 ?>
 <div class="sjl-gen-card">
     <div class="sjl-gen-card-header">
-        <span class="dashicons dashicons-align-center"></span>
+        <span class="dashicons dashicons-admin-appearance"></span>
         <div>
             <h3 class="sjl-gen-card-title"><?php echo esc_html__('Login Page Button Layout', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
@@ -138,7 +138,7 @@ $sjlLayouts = [
 
 <div class="sjl-gen-card">
     <div class="sjl-gen-card-header">
-        <span class="dashicons dashicons-shield-alt"></span>
+        <span class="dashicons dashicons-cloud"></span>
         <div>
             <h3 class="sjl-gen-card-title"><?php echo esc_html__('OAuth Applications', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">

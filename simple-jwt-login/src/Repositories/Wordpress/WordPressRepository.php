@@ -59,7 +59,7 @@ class WordPressRepository implements Repository
      */
     public function redirect($url)
     {
-        wp_safe_redirect($url);
+        wp_redirect($url);
         exit;
     }
 

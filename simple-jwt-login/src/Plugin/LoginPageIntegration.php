@@ -83,6 +83,7 @@ class LoginPageIntegration
         $layout = $integrationsSettings->getLoginButtonLayout();
         echo '<div class="sjl-oauth-buttons-wrapper layout-' . esc_attr($layout) . '">';
 
+        $jwtSettings = $this->jwtSettings; // Required for views
         $pluginDir = dirname(SIMPLE_JWT_LOGIN_PLUGIN_FILE);
 
         if ($googleEnabled) {

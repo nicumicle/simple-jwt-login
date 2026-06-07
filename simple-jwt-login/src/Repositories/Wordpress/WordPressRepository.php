@@ -45,10 +45,10 @@ class WordPressRepository implements Repository
     /**
      * @param WP_User $user
      */
-    public function loginUser($user)
+    public function loginUser($user, $token = null)
     {
         wp_set_current_user($user->get('ID'));
-        wp_set_auth_cookie($user->get('ID'));
+        wp_set_auth_cookie($user->get('ID'), false, is_ssl(), $token);
 
         do_action('wp_login', $user->user_login, $user);
     }

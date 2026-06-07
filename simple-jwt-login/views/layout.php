@@ -1,6 +1,7 @@
 <?php
 
 use SimpleJWTLogin\Helpers\ServerHelper;
+use SimpleJWTLogin\Helpers\ViewLoader;
 use SimpleJWTLogin\Modules\AuditEvents;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -411,72 +412,39 @@ $sidebarGroups = [
                                  aria-labelledby="<?php echo esc_attr($page['id']); ?>-tab"
                             >
 								<?php
-                                switch ($page['index']) {
-                                    case SettingsErrors::PREFIX_DASHBOARD:
-                                        include_once plugin_dir_path(__FILE__) . "dashboard-view.php";
-                                        break;
-                                    case SettingsErrors::PREFIX_GENERAL:
-                                        include_once plugin_dir_path(__FILE__) . "general-view.php";
-                                        break;
-                                    case SettingsErrors::PREFIX_LOGIN:
-                                        include_once plugin_dir_path(__FILE__) . "login-view.php";
-                                        break;
-                                    case SettingsErrors::PREFIX_REGISTER:
-                                        include_once plugin_dir_path(__FILE__) . "register-view.php";
-                                        break;
-                                    case SettingsErrors::PREFIX_DELETE:
-                                        include_once plugin_dir_path(__FILE__) . "delete-view.php";
-                                        break;
-                                    case SettingsErrors::PREFIX_RESET_PASSWORD:
-                                        include_once plugin_dir_path(__FILE__) . "reset-password-view.php";
-                                        break;
-                                    case SettingsErrors::PREFIX_AUTHENTICATION:
-                                        include_once plugin_dir_path(__FILE__) . "auth-view.php";
-                                        break;
-                                    case SettingsErrors::PREFIX_REFRESH_TOKEN:
-                                        include_once plugin_dir_path(__FILE__) . "refresh-token-view.php";
-                                        break;
-                                    case SettingsErrors::PREFIX_VALIDATE_TOKEN:
-                                        include_once plugin_dir_path(__FILE__) . "validate-token-view.php";
-                                        break;
-                                    case SettingsErrors::PREFIX_REVOKE_TOKEN:
-                                        include_once plugin_dir_path(__FILE__) . "revoke-token-view.php";
-                                        break;
-                                    case SettingsErrors::PREFIX_AUTH_CODES:
-                                        include_once plugin_dir_path(__FILE__) . "auth-codes-view.php";
-                                        break;
-                                    case SettingsErrors::PREFIX_HOOKS:
-                                        include_once plugin_dir_path(__FILE__) . "hooks-view.php";
-                                        break;
-                                    case SettingsErrors::PREFIX_CORS:
-                                        include_once plugin_dir_path(__FILE__) . "cors-view.php";
-                                        break;
-                                    case SettingsErrors::PREFIX_PROTECT_ENDPOINTS:
-                                        include_once plugin_dir_path(__FILE__) . "protect-endpoints-view.php";
-                                        break;
-                                    case SettingsErrors::PREFIX_APPLICATIONS:
-                                        include_once plugin_dir_path(__FILE__) . "integrations/oauth/oauth-apps.php";
-                                        break;
-                                    case SettingsErrors::PREFIX_AUDIT_LOGS:
-                                        include_once plugin_dir_path(__FILE__) . "audit-logs-view.php";
-                                        break;
-                                    case SettingsErrors::PREFIX_AUDIT_LOG_LOGS:
-                                        include_once plugin_dir_path(__FILE__) . "audit-logs-logs-view.php";
-                                        break;
-                                    case SettingsErrors::PREFIX_WEBHOOKS:
-                                        include_once plugin_dir_path(__FILE__) . "webhooks-view.php";
-                                        break;
-                                    case SettingsErrors::PREFIX_WEBHOOK_LOGS:
-                                        include_once plugin_dir_path(__FILE__) . "webhooks-logs-view.php";
-                                        break;
-                                    case SettingsErrors::PREFIX_API_KEYS:
-                                        include_once plugin_dir_path(__FILE__) . "api-keys-view.php";
-                                        break;
-                                    case SettingsErrors::PREFIX_3RD_PARTY_APPS:
-                                        include_once plugin_dir_path(__FILE__) . "integrations/3rd-party/3rd-party-apps.php";
-                                        break;
-                                    default:
-                                        echo esc_html__("View file does not exists.", 'simple-jwt-login');
+                                $viewMap = array(
+                                    SettingsErrors::PREFIX_DASHBOARD       => 'dashboard-view.php',
+                                    SettingsErrors::PREFIX_GENERAL         => 'general-view.php',
+                                    SettingsErrors::PREFIX_LOGIN           => 'login-view.php',
+                                    SettingsErrors::PREFIX_REGISTER        => 'register-view.php',
+                                    SettingsErrors::PREFIX_DELETE          => 'delete-view.php',
+                                    SettingsErrors::PREFIX_RESET_PASSWORD  => 'reset-password-view.php',
+                                    SettingsErrors::PREFIX_AUTHENTICATION  => 'auth-view.php',
+                                    SettingsErrors::PREFIX_REFRESH_TOKEN   => 'refresh-token-view.php',
+                                    SettingsErrors::PREFIX_VALIDATE_TOKEN  => 'validate-token-view.php',
+                                    SettingsErrors::PREFIX_REVOKE_TOKEN    => 'revoke-token-view.php',
+                                    SettingsErrors::PREFIX_AUTH_CODES      => 'auth-codes-view.php',
+                                    SettingsErrors::PREFIX_HOOKS           => 'hooks-view.php',
+                                    SettingsErrors::PREFIX_CORS            => 'cors-view.php',
+                                    SettingsErrors::PREFIX_PROTECT_ENDPOINTS => 'protect-endpoints-view.php',
+                                    SettingsErrors::PREFIX_APPLICATIONS    => 'integrations/oauth/oauth-apps.php',
+                                    SettingsErrors::PREFIX_AUDIT_LOGS      => 'audit-logs-view.php',
+                                    SettingsErrors::PREFIX_AUDIT_LOG_LOGS  => 'audit-logs-logs-view.php',
+                                    SettingsErrors::PREFIX_WEBHOOKS        => 'webhooks-view.php',
+                                    SettingsErrors::PREFIX_WEBHOOK_LOGS    => 'webhooks-logs-view.php',
+                                    SettingsErrors::PREFIX_API_KEYS        => 'api-keys-view.php',
+                                    SettingsErrors::PREFIX_3RD_PARTY_APPS  => 'integrations/3rd-party/3rd-party-apps.php',
+                                );
+                                $viewLoader = new ViewLoader(plugin_dir_path(__FILE__));
+                                $viewData = array(
+                                    'jwtSettings'    => $jwtSettings,
+                                    'settingsErrors' => $settingsErrors,
+                                    'errorCode'      => $errorCode,
+                                );
+                                if (array_key_exists($page['index'], $viewMap)) {
+                                    $viewLoader->render($viewMap[$page['index']], $viewData);
+                                } else {
+                                    echo esc_html__('View file does not exists.', 'simple-jwt-login');
                                 }
                                 ?>
                             </div>

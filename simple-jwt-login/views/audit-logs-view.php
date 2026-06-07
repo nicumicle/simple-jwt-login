@@ -52,7 +52,21 @@ $eventLabels      = AuditEvents::labels();
                 <?php echo esc_html(__('Enable All', 'simple-jwt-login')); ?>
             </button>
         </div>
-        <div class="row">
+
+        <div style="margin-bottom: 12px; position: relative;">
+            <span class="dashicons dashicons-search" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: #888; font-size: 16px; line-height: 1;"></span>
+            <input
+                type="text"
+                id="sjl-event-search"
+                placeholder="<?php echo esc_attr(__('Search events...', 'simple-jwt-login')); ?>"
+                style="width: 100%; padding: 6px 8px 6px 30px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; box-sizing: border-box;"
+            />
+        </div>
+        <p id="sjl-event-no-results" style="display: none; color: #888; font-size: 13px;">
+            <?php echo esc_html(__('No events match your search.', 'simple-jwt-login')); ?>
+        </p>
+
+        <div class="row" id="sjl-events-list">
             <?php foreach ($allEvents as $event) : ?>
                 <div class="col-md-6">
                     <div class="form-group">
@@ -97,25 +111,55 @@ $eventLabels      = AuditEvents::labels();
 
 <script>
 (function () {
-    var btn = document.getElementById('sjl-toggle-all-events');
+    var btn       = document.getElementById('sjl-toggle-all-events');
+    var searchInput = document.getElementById('sjl-event-search');
+    var noResults   = document.getElementById('sjl-event-no-results');
+    var eventRows   = document.querySelectorAll('#sjl-events-list .col-md-6');
+
     if (!btn) { return; }
 
     var checkboxes = document.querySelectorAll('input[name="audit_log[enabled_events][]"]');
 
     function syncButtonLabel() {
-        var allChecked = Array.prototype.every.call(checkboxes, function (cb) { return cb.checked; });
+        var visibleCheckboxes = Array.prototype.filter.call(
+            checkboxes,
+            function (cb) { return cb.closest('.col-md-6').style.display !== 'none'; }
+        );
+        var allChecked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(function (cb) { return cb.checked; });
         btn.dataset.allChecked = allChecked ? 'true' : 'false';
         btn.textContent = allChecked
             ? '<?php echo esc_js(__('Disable All', 'simple-jwt-login')); ?>'
             : '<?php echo esc_js(__('Enable All', 'simple-jwt-login')); ?>';
     }
 
+    function filterEvents() {
+        var term    = searchInput.value.toLowerCase().trim();
+        var visible = 0;
+
+        eventRows.forEach(function (row) {
+            var text = row.textContent.toLowerCase();
+            if (!term || text.indexOf(term) !== -1) {
+                row.style.display = '';
+                visible++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        noResults.style.display = visible === 0 ? '' : 'none';
+        syncButtonLabel();
+    }
+
     checkboxes.forEach(function (cb) { cb.addEventListener('change', syncButtonLabel); });
+    searchInput.addEventListener('input', filterEvents);
     syncButtonLabel();
 
     btn.addEventListener('click', function () {
         var shouldCheck = btn.dataset.allChecked !== 'true';
-        checkboxes.forEach(function (cb) { cb.checked = shouldCheck; });
+        Array.prototype.filter.call(
+            checkboxes,
+            function (cb) { return cb.closest('.col-md-6').style.display !== 'none'; }
+        ).forEach(function (cb) { cb.checked = shouldCheck; });
         syncButtonLabel();
     });
 }());

@@ -274,7 +274,7 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
                     if ($this->loginWithTwoFactorCheck($user)) {
                         return;
                     }
-                    $this->wordPressData->loginUser($user);
+                    $this->wordPressData->loginUser($user, null);
                     if ($this->settings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_OAUTH_SUCCESS)) {
                         $this->wordPressData->doAction(
                             SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_SUCCESS,
@@ -304,7 +304,7 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
                 return;
             }
 
-            $this->wordPressData->loginUser($user);
+            $this->wordPressData->loginUser($user, null);
             if ($this->settings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_OAUTH_SUCCESS)) {
                 $this->wordPressData->doAction(
                     SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_SUCCESS,

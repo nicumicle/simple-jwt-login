@@ -83,7 +83,7 @@ class LoginService extends BaseService implements ServiceInterface
         $userEmail = (string) $this->wordPressData->getUserProperty($user, 'user_email');
 
         $this->validateJwtRevoked($userId, $this->jwt);
-        $this->wordPressData->loginUser($user);
+        $this->wordPressData->loginUser($user, null);
 
         if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_LOGIN_SESSION_SUCCESS)) {
             $this->wordPressData->doAction(

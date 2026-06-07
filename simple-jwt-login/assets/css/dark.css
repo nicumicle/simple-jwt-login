@@ -686,6 +686,14 @@
     color: var(--sjl-text-muted);
     border-color: var(--sjl-border-light);
 }
+/** Table **/
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-ak-table{
+    background: none;
+}
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-ak-table tr td,
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-ak-table tr th {
+    color: #fff;
+}
 
 /* ── CORS ── */
 #simple-jwt-login[data-sjl-theme="dark"] .sjl-cors-header-row:has(input[type="checkbox"]:not(:checked)) .sjl-cors-header-input {

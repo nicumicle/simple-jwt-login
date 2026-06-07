@@ -36,21 +36,22 @@ class OAuthTwoFactorLoginHandler
     private $postVars;
 
     /**
+     * @var SimpleJWTLoginSettings
+     */
+    private $settings;
+
+    /**
      * @param array $serverVars  $_SERVER
      * @param array $getVars     $_GET
      * @param array $postVars    $_POST
+     * @param SimpleJWTLoginSettings $settings
      */
-    public function __construct($serverVars, $getVars, $postVars)
+    public function __construct($serverVars, $getVars, $postVars, $settings)
     {
         $this->serverVars = $serverVars;
         $this->getVars    = $getVars;
         $this->postVars   = $postVars;
-    }
-
-    protected function getSettings()
-    {
-        $wpData = new WordPressRepository();
-        return new SimpleJWTLoginSettings($wpData);
+        $this->settings = $settings;
     }
 
     protected function getBridge()
@@ -129,13 +130,14 @@ class OAuthTwoFactorLoginHandler
         }
 
         $bridge->deleteNonce($userId);
+        $wordPressData = $this->settings->getWordPressData();
 
-        wp_set_current_user($userId);
-        wp_set_auth_cookie($userId, false, is_ssl());
-        do_action('wp_login', $user->user_login, $user);
+        $wordPressData->loginUser($user, null);
+        if ($this->settings->getGeneralSettings()->isSafeRedirectEnabled()) {
+            $wordPressData->redirectSafe($redirectTo);
+        }
 
-        wp_safe_redirect($redirectTo);
-        exit;
+        $wordPressData->redirect($redirectTo);
     }
 
     /**
@@ -151,13 +153,12 @@ class OAuthTwoFactorLoginHandler
             throw new Exception(esc_html(__('Missing authentication token.', 'simple-jwt-login')));
         }
 
-        $settings   = $this->getSettings();
         $jwtWrapper = new JwtWrapper();
 
         $decoded = $jwtWrapper->decode(
             $jwt,
-            JwtKeyFactory::getFactory($settings)->getPublicKey(),
-            [$settings->getGeneralSettings()->getJWTDecryptAlgorithm()]
+            JwtKeyFactory::getFactory($this->settings)->getPublicKey(),
+            [$this->settings->getGeneralSettings()->getJWTDecryptAlgorithm()]
         );
         $payload = (array) $decoded;
 

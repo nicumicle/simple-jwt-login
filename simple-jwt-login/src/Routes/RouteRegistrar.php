@@ -369,7 +369,7 @@ class RouteRegistrar
                 return false;
             }
             try {
-                $wordPressData->loginUser($routeService->getUserFromJwt($jwt));
+                $wordPressData->loginUser($routeService->getUserFromJwt($jwt), null);
                 return true;
             } catch (\Exception $exception) {
                 return false;

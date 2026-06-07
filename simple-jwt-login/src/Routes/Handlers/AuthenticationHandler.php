@@ -86,7 +86,7 @@ class AuthenticationHandler
             $jwt = $this->routeService->getJwtFromRequestHeaderOrCookie();
             if (!empty($jwt)) {
                 try {
-                    $this->wordPressData->loginUser($this->routeService->getUserFromJwt($jwt));
+                    $this->wordPressData->loginUser($this->routeService->getUserFromJwt($jwt), null);
 
                     return true;
                 } catch (\Exception $exception) {
@@ -127,7 +127,8 @@ class AuthenticationHandler
                     );
                 }
                 $this->wordPressData->loginUser(
-                    $this->wordPressData->getUserDetailsById((int) $keyData['user_id'])
+                    $this->wordPressData->getUserDetailsById((int) $keyData['user_id']),
+                    null
                 );
                 $this->auditLogger->log(
                     AuditEvents::API_KEY_USED,

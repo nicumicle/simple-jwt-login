@@ -2,6 +2,7 @@
 
 namespace SimpleJWTLogin\Plugin;
 
+use SimpleJWTLogin\Helpers\ViewLoader;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
 class LoginPageIntegration
@@ -64,8 +65,6 @@ class LoginPageIntegration
      */
     public function renderLoginFooter()
     {
-        $pluginDirUrl = plugin_dir_url(SIMPLE_JWT_LOGIN_PLUGIN_FILE);
-
         $integrationsSettings = $this->jwtSettings->getIntegrationsSettings();
         $googleEnabled   = $integrationsSettings->google()->isEnabled()
             && $integrationsSettings->google()->isOauthEnabled();
@@ -83,23 +82,27 @@ class LoginPageIntegration
         $layout = $integrationsSettings->getLoginButtonLayout();
         echo '<div class="sjl-oauth-buttons-wrapper layout-' . esc_attr($layout) . '">';
 
-        $jwtSettings = $this->jwtSettings; // Required for views
         $pluginDir = dirname(SIMPLE_JWT_LOGIN_PLUGIN_FILE);
+        $viewLoader = new ViewLoader($pluginDir . '/views/integrations/oauth/');
+        $viewData = array(
+            'jwtSettings'   => $this->jwtSettings,
+            'pluginDirUrl'  => plugin_dir_url(SIMPLE_JWT_LOGIN_PLUGIN_FILE),
+        );
 
         if ($googleEnabled) {
-            include_once $pluginDir . '/views/integrations/oauth/google-form.php';
+            $viewLoader->render('google-form.php', $viewData);
         }
 
         if ($auth0Enabled) {
-            include_once $pluginDir . '/views/integrations/oauth/auth0-form.php';
+            $viewLoader->render('auth0-form.php', $viewData);
         }
 
         if ($facebookEnabled) {
-            include_once $pluginDir . '/views/integrations/oauth/facebook-form.php';
+            $viewLoader->render('facebook-form.php', $viewData);
         }
 
         if ($githubEnabled) {
-            include_once $pluginDir . '/views/integrations/oauth/github-form.php';
+            $viewLoader->render('github-form.php', $viewData);
         }
 
         echo '</div>';

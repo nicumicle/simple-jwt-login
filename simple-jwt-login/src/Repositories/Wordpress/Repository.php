@@ -31,8 +31,9 @@ interface Repository
 
     /**
      * @param \WP_User $user
+     * @param string|null $token
      */
-    public function loginUser($user);
+    public function loginUser($user, $token = null);
 
     /**
      * @param string $url

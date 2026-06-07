@@ -2,6 +2,7 @@
 
 namespace SimpleJWTLogin\Plugin;
 
+use SimpleJWTLogin\Helpers\ViewLoader;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Services\Oauth\Auth0Oauth;
 use SimpleJWTLogin\Services\Oauth\FacebookOauth;
@@ -114,41 +115,38 @@ class Shortcodes
         $haveProvider = false;
         $pluginDir = dirname(SIMPLE_JWT_LOGIN_PLUGIN_FILE);
         $integrationsSettings = $this->jwtSettings->getIntegrationsSettings();
+        $viewLoader = new ViewLoader($pluginDir . '/views/integrations/oauth/');
+        $viewData = array(
+            'jwtSettings'  => $this->jwtSettings,
+            'pluginDirUrl' => plugin_dir_url(SIMPLE_JWT_LOGIN_PLUGIN_FILE),
+        );
         switch ($parameter['provider']) {
             case GoogleOauth::PROVIDER_SLUG:
                 if ($integrationsSettings->google()->isEnabled()
                     && $integrationsSettings->google()->isOauthEnabled()) {
                     $haveProvider = true;
-                    ob_start();
-                    include_once $pluginDir . '/views/integrations/oauth/google-form.php';
-                    $html .= ob_get_clean();
+                    $html .= $viewLoader->fetch('google-form.php', $viewData);
                 }
                 break;
             case Auth0Oauth::PROVIDER_SLUG:
                 if ($integrationsSettings->auth0()->isEnabled()
                     && $integrationsSettings->auth0()->isOauthEnabled()) {
                     $haveProvider = true;
-                    ob_start();
-                    include_once $pluginDir . '/views/integrations/oauth/auth0-form.php';
-                    $html .= ob_get_clean();
+                    $html .= $viewLoader->fetch('auth0-form.php', $viewData);
                 }
                 break;
             case FacebookOauth::PROVIDER_SLUG:
                 if ($integrationsSettings->facebook()->isEnabled()
                     && $integrationsSettings->facebook()->isOauthEnabled()) {
                     $haveProvider = true;
-                    ob_start();
-                    include_once $pluginDir . '/views/integrations/oauth/facebook-form.php';
-                    $html .= ob_get_clean();
+                    $html .= $viewLoader->fetch('facebook-form.php', $viewData);
                 }
                 break;
             case GithubOauth::PROVIDER_SLUG:
                 if ($integrationsSettings->github()->isEnabled()
                     && $integrationsSettings->github()->isOauthEnabled()) {
                     $haveProvider = true;
-                    ob_start();
-                    include_once $pluginDir . '/views/integrations/oauth/github-form.php';
-                    $html .= ob_get_clean();
+                    $html .= $viewLoader->fetch('github-form.php', $viewData);
                 }
                 break;
         }

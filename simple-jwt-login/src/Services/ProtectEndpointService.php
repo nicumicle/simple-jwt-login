@@ -76,7 +76,7 @@ class ProtectEndpointService extends BaseService
                 $jwt
             );
 
-            $this->wordPressData->loginUser($user);
+            $this->wordPressData->loginUser($user, null);
 
             return true;
         } catch (Exception $exception) {

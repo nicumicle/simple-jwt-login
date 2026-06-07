@@ -143,7 +143,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
         if ($this->jwtSettings->getLoginSettings()->isAutologinEnabled()
             && $registerSettings->isForceLoginAfterCreateUserEnabled()
         ) {
-            $this->wordPressData->loginUser($user);
+            $this->wordPressData->loginUser($user, null);
             if ($hooksSettings->isHookEnabled(SimpleJWTLoginHooks::LOGIN_ACTION_NAME)) {
                 $this->wordPressData->doAction(SimpleJWTLoginHooks::LOGIN_ACTION_NAME, $user);
             }

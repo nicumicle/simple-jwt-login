@@ -62,7 +62,7 @@ add_action('login_footer', array($simpleJwtLoginLoginPage, 'renderLoginFooter'))
 
 // Browser-based OAuth + 2FA page (wp-login.php?action=sjl-oauth-2fa)
 //phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.NonceVerification.Missing
-$simpleJwtLoginOAuthTwoFactor = new OAuthTwoFactorLoginHandler($_SERVER, $_GET, $_POST);
+$simpleJwtLoginOAuthTwoFactor = new OAuthTwoFactorLoginHandler($_SERVER, $_GET, $_POST, $simpleJwtLoginJwtSettings);
 add_action(
     'login_form_' . AbstractOauth::BROWSER_2FA_ACTION,
     array($simpleJwtLoginOAuthTwoFactor, 'handleAction')

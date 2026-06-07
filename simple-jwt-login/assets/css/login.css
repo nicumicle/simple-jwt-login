@@ -17,6 +17,9 @@
     display: none;
 }
 
+.sjl-oauth-buttons-wrapper.layout-stacked .simple-jwt-login-auth-btn{
+    width: 190px;
+}
 .sjl-oauth-buttons-wrapper.layout-icon-stacked .simple-jwt-login-auth-btn,
 .sjl-oauth-buttons-wrapper.layout-icon-inline .simple-jwt-login-auth-btn {
     width: auto;

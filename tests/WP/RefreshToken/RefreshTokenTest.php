@@ -104,7 +104,7 @@ class RefreshTokenTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED, $data['data']['error_code']);
     }
 
     #[TestDox('Returns ERR_REFRESH_TOKEN_NOT_ENABLED when refresh endpoint is disabled')]
@@ -116,7 +116,7 @@ class RefreshTokenTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_REFRESH_TOKEN_NOT_ENABLED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_REFRESH_TOKEN_NOT_ENABLED, $data['data']['error_code']);
     }
 
     // ─── IP restriction ───────────────────────────────────────────────────────
@@ -130,7 +130,7 @@ class RefreshTokenTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP, $data['data']['error_code']);
     }
 
     // ─── Auth key validation ──────────────────────────────────────────────────
@@ -177,7 +177,7 @@ class RefreshTokenTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED, $data['data']['error_code']);
     }
 
     #[TestDox('Proceeds past auth key check when a valid AUTH_KEY is provided')]
@@ -238,7 +238,7 @@ class RefreshTokenTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH, $data['data']['error_code']);
     }
 
     #[TestDox('Returns ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH when refresh_token is not in the database')]
@@ -252,7 +252,7 @@ class RefreshTokenTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH, $data['data']['error_code']);
     }
 
     // ─── Revoked JWT check ────────────────────────────────────────────────────
@@ -276,7 +276,7 @@ class RefreshTokenTest extends WPTestCase
 
             $data = $response->get_data();
             $this->assertFalse($data['success']);
-            $this->assertSame(ErrorCodes::ERR_REVOKED_TOKEN, $data['data']['errorCode']);
+            $this->assertSame(ErrorCodes::ERR_REVOKED_TOKEN, $data['data']['error_code']);
         } finally {
             delete_user_meta($userId, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY);
         }
@@ -369,7 +369,7 @@ class RefreshTokenTest extends WPTestCase
 
         $data = $secondResponse->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH, $data['data']['error_code']);
     }
 
     #[TestDox('New refresh_token returned by the first refresh can itself be used for another refresh')]

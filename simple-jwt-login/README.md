@@ -123,10 +123,6 @@ Make a POST request to `{your-site}/wp-json/simple-jwt-login/v1/auth` with your 
 }
 ``
 
-**Add custom payload data:**
-
-Pass an optional `payload` parameter containing a JSON object with any extra claims you want embedded in the JWT.
-
 **Refresh a JWT without re-authentication:**
 
 POST to `{your-site}/wp-json/simple-jwt-login/v1/auth/refresh` with your `refresh_token`. A new JWT and a new refresh token are returned automatically.
@@ -323,7 +319,7 @@ When a request reaches a protected endpoint without a valid JWT, the plugin retu
     "success": false,
     "data": {
         "message": "Your are not authorized to access this endpoint.",
-        "errorCode": 403,
+        "error_code": 403,
         "type": "simple-jwt-login-route-protect"
     }
 }

@@ -226,17 +226,8 @@ class AuthenticateService extends BaseService implements ServiceInterface
             return $challengeResponse;
         }
 
-        $payload = isset($this->request['payload'])
-            ? json_decode(
-                stripslashes(
-                    $this->wordPressData->sanitizeTextField($this->request['payload'])
-                ),
-                true
-            )
-            : [];
-
         $payload = self::generatePayload(
-            $payload,
+            [],
             $this->wordPressData,
             $this->jwtSettings,
             $user

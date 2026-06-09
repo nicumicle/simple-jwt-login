@@ -143,8 +143,10 @@ class DeleteUserService extends BaseService implements ServiceInterface
         }
 
         $response = [
-            'message' => __('User was successfully deleted.', 'simple-jwt-login'),
-            'id' => $result
+            'success' => true,
+            'data'    => [
+                'message' => __('User was successfully deleted.', 'simple-jwt-login'),
+            ],
         ];
         if ($this->jwtSettings->getHooksSettings()
             ->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_DELETE_USER)

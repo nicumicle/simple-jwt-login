@@ -498,7 +498,7 @@ class ProtectEndpointTest extends WPTestCase
         $response    = $this->jsonRequest('POST', $pluginRoute, ['rest_route' => $pluginRoute]);
 
         $data      = $response->get_data();
-        $errorCode = $data['data']['errorCode'] ?? null;
+        $errorCode = $data['data']['error_code'] ?? null;
 
         $this->assertNotSame(
             ErrorCodes::ERR_PROTECT_ENDPOINTS_MISSING_JWT,
@@ -625,7 +625,7 @@ class ProtectEndpointTest extends WPTestCase
 
             $data = $response->get_data();
             $this->assertFalse($data['success']);
-            $this->assertSame(ErrorCodes::ERR_REVOKED_TOKEN, $data['data']['errorCode']);
+            $this->assertSame(ErrorCodes::ERR_REVOKED_TOKEN, $data['data']['error_code']);
         } finally {
             delete_user_meta($userId, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY);
         }

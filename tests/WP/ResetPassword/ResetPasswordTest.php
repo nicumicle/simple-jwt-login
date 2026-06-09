@@ -91,7 +91,7 @@ class ResetPasswordTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_RESET_PASSWORD_IS_NOT_ALLOWED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_RESET_PASSWORD_IS_NOT_ALLOWED, $data['data']['error_code']);
     }
 
     #[TestDox('PUT returns ERR_RESET_PASSWORD_IS_NOT_ALLOWED when feature is disabled')]
@@ -107,7 +107,7 @@ class ResetPasswordTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_RESET_PASSWORD_IS_NOT_ALLOWED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_RESET_PASSWORD_IS_NOT_ALLOWED, $data['data']['error_code']);
     }
 
     // ─── Auth key validation ──────────────────────────────────────────────────
@@ -156,7 +156,7 @@ class ResetPasswordTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_RESET_PASSWORD_INVALID_AUTH_KEY, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_RESET_PASSWORD_INVALID_AUTH_KEY, $data['data']['error_code']);
     }
 
     #[DataProvider('invalidAuthKeyProvider')]
@@ -182,7 +182,7 @@ class ResetPasswordTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_RESET_PASSWORD_INVALID_AUTH_KEY, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_RESET_PASSWORD_INVALID_AUTH_KEY, $data['data']['error_code']);
     }
 
     #[TestDox('POST proceeds past auth key check when a valid AUTH_KEY is provided')]
@@ -221,7 +221,7 @@ class ResetPasswordTest extends WPTestCase
         $this->assertFalse($data['success']);
         $this->assertSame(
             ErrorCodes::ERR_MISSING_NEW_PASSWORD_FOR_RESET_PASSWORD,
-            $data['data']['errorCode']
+            $data['data']['error_code']
         );
     }
 
@@ -238,7 +238,7 @@ class ResetPasswordTest extends WPTestCase
         $this->assertFalse($data['success']);
         $this->assertSame(
             ErrorCodes::ERR_USER_NOT_FOUND_FOR_RESET_PASSWORD,
-            $data['data']['errorCode']
+            $data['data']['error_code']
         );
     }
 
@@ -329,7 +329,7 @@ class ResetPasswordTest extends WPTestCase
         $this->assertFalse($data['success']);
         $this->assertSame(
             ErrorCodes::ERR_MISSING_EMAIL_FOR_CHANGE_PASSWORD,
-            $data['data']['errorCode']
+            $data['data']['error_code']
         );
     }
 
@@ -349,7 +349,7 @@ class ResetPasswordTest extends WPTestCase
         $this->assertFalse($data['success']);
         $this->assertSame(
             ErrorCodes::ERR_MISSING_NEW_PASSWORD_FOR_CHANGE_PASSWORD,
-            $data['data']['errorCode']
+            $data['data']['error_code']
         );
     }
 
@@ -371,7 +371,7 @@ class ResetPasswordTest extends WPTestCase
         $this->assertFalse($data['success']);
         $this->assertSame(
             ErrorCodes::ERR_MISSING_CODE_FOR_CHANGE_PASSWORD,
-            $data['data']['errorCode']
+            $data['data']['error_code']
         );
     }
 
@@ -394,7 +394,7 @@ class ResetPasswordTest extends WPTestCase
         $this->assertFalse($data['success']);
         $this->assertSame(
             ErrorCodes::ERR_INVALID_RESET_PASSWORD_CODE,
-            $data['data']['errorCode']
+            $data['data']['error_code']
         );
     }
 
@@ -418,7 +418,7 @@ class ResetPasswordTest extends WPTestCase
         $this->assertFalse($data['success']);
         $this->assertSame(
             ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE,
-            $data['data']['errorCode']
+            $data['data']['error_code']
         );
     }
 

@@ -86,7 +86,7 @@ class DeleteUserTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_DELETE_IS_NOT_ENABLED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_DELETE_IS_NOT_ENABLED, $data['data']['error_code']);
     }
 
     // ─── Missing JWT ──────────────────────────────────────────────────────────
@@ -100,7 +100,7 @@ class DeleteUserTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_DELETE_MISSING_JWT, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_DELETE_MISSING_JWT, $data['data']['error_code']);
     }
 
     // ─── Auth key validation ──────────────────────────────────────────────────
@@ -148,7 +148,7 @@ class DeleteUserTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame($expectedCode, $data['data']['errorCode']);
+        $this->assertSame($expectedCode, $data['data']['error_code']);
     }
 
     #[TestDox('Proceeds past auth key check when valid AUTH_KEY is provided')]
@@ -191,7 +191,7 @@ class DeleteUserTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP, $data['data']['error_code']);
     }
 
     // ─── JWT validation edge cases ────────────────────────────────────────────
@@ -260,7 +260,7 @@ class DeleteUserTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND, $data['data']['error_code']);
     }
 
     // ─── Revoked JWT ──────────────────────────────────────────────────────────
@@ -282,7 +282,7 @@ class DeleteUserTest extends WPTestCase
 
             $data = $response->get_data();
             $this->assertFalse($data['success']);
-            $this->assertSame(ErrorCodes::ERR_REVOKED_TOKEN, $data['data']['errorCode']);
+            $this->assertSame(ErrorCodes::ERR_REVOKED_TOKEN, $data['data']['error_code']);
         } finally {
             delete_user_meta($userId, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY);
         }

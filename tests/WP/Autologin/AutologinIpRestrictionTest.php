@@ -55,6 +55,6 @@ class AutologinIpRestrictionTest extends AutologinTestCase
         $this->assertSame(400, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_IP_IS_NOT_ALLOWED_TO_LOGIN, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_IP_IS_NOT_ALLOWED_TO_LOGIN, $data['data']['error_code']);
     }
 }

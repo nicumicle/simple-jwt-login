@@ -177,7 +177,7 @@ class ValidationsTest extends TestBase
         $this->assertSame(409, $second->getStatusCode());
         $body = json_decode($second->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_REGISTER_USER_ALREADY_EXISTS, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_REGISTER_USER_ALREADY_EXISTS, $body['data']['error_code']);
     }
 
     #[TestDox("Registering a duplicate username returns 409")]
@@ -205,7 +205,7 @@ class ValidationsTest extends TestBase
         $this->assertSame(409, $second->getStatusCode());
         $body = json_decode($second->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_REGISTER_USER_ALREADY_EXISTS, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_REGISTER_USER_ALREADY_EXISTS, $body['data']['error_code']);
     }
 
     /**

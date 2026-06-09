@@ -27,6 +27,7 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
     /**
      * @return WP_REST_Response
      * @throws Exception
+     * @throws ValidationException
      */
     protected function verifyTwoFactor()
     {
@@ -124,17 +125,7 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
             );
         }
 
-        $payload = isset($this->request['payload'])
-            ? json_decode(
-                stripslashes($this->wordPressData->sanitizeTextField($this->request['payload'])),
-                true
-            )
-            : [];
-        if (!is_array($payload)) {
-            $payload = [];
-        }
-
-        $payload = self::generatePayload($payload, $this->wordPressData, $this->jwtSettings, $user);
+        $payload = self::generatePayload([], $this->wordPressData, $this->jwtSettings, $user);
 
         if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME)) {
             $payload = $this->wordPressData->applyFilters(
@@ -144,15 +135,16 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
             );
         }
 
+        $authSettings = $this->jwtSettings->getAuthenticationSettings();
+        $customHeaderClaims = $authSettings->getCustomHeaderClaims();
         $jwt = $this->getJwtWrapper()->encode(
             $payload,
             JwtKeyFactory::getFactory($this->jwtSettings)->getPrivateKey(),
-            $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm()
+            $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm(),
+            empty($customHeaderClaims) ? null : $customHeaderClaims
         );
 
         $responseData = ['jwt' => $jwt];
-
-        $authSettings = $this->jwtSettings->getAuthenticationSettings();
         if ($authSettings->isRefreshTokenEnabled()) {
             $refreshToken   = $this->generateRefreshToken();
             $tokenExpiresAt = time() + ($authSettings->getAuthJwtRefreshTtl() * 60);
@@ -204,12 +196,12 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
 
     /**
      * @param array $payload
-     * @throws Exception
+     * @throws ValidationException
      */
     protected function assertIsInterimJwt($payload)
     {
         if (empty($payload[self::TFA_PENDING_CLAIM])) {
-            throw new Exception(
+            throw new ValidationException(
                 esc_html(__('A valid interim two-factor JWT is required.', 'simple-jwt-login')),
                 absint(ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REQUIRED)
             );

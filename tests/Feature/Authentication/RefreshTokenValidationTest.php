@@ -92,7 +92,7 @@ class RefreshTokenValidationTest extends FeatureTestCase
             $this->assertSame(403, $response->getStatusCode());
             $body = json_decode($response->getBody()->getContents(), true);
             $this->assertFalse($body['success']);
-            $this->assertSame(ErrorCodes::ERR_REFRESH_TOKEN_NOT_ENABLED, $body['data']['errorCode']);
+            $this->assertSame(ErrorCodes::ERR_REFRESH_TOKEN_NOT_ENABLED, $body['data']['error_code']);
         } finally {
             self::updateSimpleJWTOption(self::baseSettings());
         }
@@ -108,7 +108,7 @@ class RefreshTokenValidationTest extends FeatureTestCase
         $this->assertSame(422, $response->getStatusCode());
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH, $body['data']['error_code']);
         $this->assertSame('Refresh token is missing.', $body['data']['message']);
     }
 
@@ -122,7 +122,7 @@ class RefreshTokenValidationTest extends FeatureTestCase
         $this->assertSame(401, $response->getStatusCode());
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH, $body['data']['error_code']);
     }
 
     // ─── Success and rotation ─────────────────────────────────────────────────
@@ -164,7 +164,7 @@ class RefreshTokenValidationTest extends FeatureTestCase
         $this->assertSame(401, $second->getStatusCode());
         $body = json_decode($second->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH, $body['data']['error_code']);
     }
 
     #[TestDox('New refresh_token returned by rotation can be used for another refresh')]
@@ -217,6 +217,6 @@ class RefreshTokenValidationTest extends FeatureTestCase
         $this->assertSame(401, $response->getStatusCode());
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_REVOKED_TOKEN, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_REVOKED_TOKEN, $body['data']['error_code']);
     }
 }

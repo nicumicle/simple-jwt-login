@@ -79,8 +79,8 @@ class EndpointProtectionHandler
             }
             wp_send_json_error(
                 [
-                    'message'   => $exception->getMessage(),
-                    'errorCode' => $exception->getCode(),
+                    'message'    => $exception->getMessage(),
+                    'error_code' => $exception->getCode(),
                 ],
                 StatusCodeHelper::getStatusCodeFromException($exception)
             );
@@ -97,8 +97,8 @@ class EndpointProtectionHandler
         }
         wp_send_json_error(
             [
-                'message'   => __('You are not authorized to access this endpoint.', 'simple-jwt-login'),
-                'errorCode' => ErrorCodes::ERR_PROTECT_ENDPOINTS_MISSING_JWT,
+                'message'    => __('You are not authorized to access this endpoint.', 'simple-jwt-login'),
+                'error_code' => ErrorCodes::ERR_PROTECT_ENDPOINTS_MISSING_JWT,
             ],
             401
         );

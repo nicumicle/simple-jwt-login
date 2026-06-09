@@ -70,11 +70,11 @@ info:
       "success": false,
       "data": {
         "message": "Human-readable error description",
-        "errorCode": 42
+        "error_code": 42
       }
     }
     ```
-    The `errorCode` field maps to a specific internal error constant that can be used for programmatic error handling.
+    The `error_code` field maps to a specific internal error constant that can be used for programmatic error handling.
   contact:
     email: contact@simplejwtlogin.com
   license:
@@ -256,7 +256,7 @@ paths:
                 success: false
                 data:
                   message: "Invalid JWT."
-                  errorCode: 25
+                  error_code: 25
         '401':
           description: |
             Unauthorized. The JWT is structurally invalid, has an unsupported algorithm, has
@@ -270,7 +270,7 @@ paths:
                 success: false
                 data:
                   message: "JWT has expired."
-                  errorCode: 14
+                  error_code: 14
         '403':
           description: |
             Forbidden. Auto-login is disabled in the plugin settings, or the client IP
@@ -283,7 +283,7 @@ paths:
                 success: false
                 data:
                   message: "Auto-login is not enabled."
-                  errorCode: 26
+                  error_code: 26
         '404':
           description: The WordPress user identified by the JWT payload could not be found.
           content:
@@ -294,7 +294,7 @@ paths:
                 success: false
                 data:
                   message: "User not found."
-                  errorCode: 24
+                  error_code: 24
         '500':
           description: |
             Internal server error. Typically caused by an OpenSSL signing/verification
@@ -307,7 +307,7 @@ paths:
                 success: false
                 data:
                   message: "An unexpected error occurred."
-                  errorCode: 22
+                  error_code: 22
   /users:
     post:
       tags:
@@ -408,7 +408,7 @@ paths:
                 success: false
                 data:
                   message: "The email address or password is missing."
-                  errorCode: 35
+                  error_code: 35
         '401':
           description: |
             Unauthorized. The provided auth code is invalid or missing when required.
@@ -420,7 +420,7 @@ paths:
                 success: false
                 data:
                   message: "Invalid auth code."
-                  errorCode: 32
+                  error_code: 32
         '403':
           description: |
             Forbidden. User registration is disabled in the plugin settings, or the client
@@ -433,7 +433,7 @@ paths:
                 success: false
                 data:
                   message: "Register is not allowed."
-                  errorCode: 31
+                  error_code: 31
         '409':
           description: A WordPress user with the provided email address already exists.
           content:
@@ -444,7 +444,7 @@ paths:
                 success: false
                 data:
                   message: "User already exists."
-                  errorCode: 38
+                  error_code: 38
         '422':
           description: |
             Unprocessable entity. The email address format is invalid, or the email domain
@@ -457,7 +457,7 @@ paths:
                 success: false
                 data:
                   message: "The email address is invalid."
-                  errorCode: 36
+                  error_code: 36
         '500':
           description: |
             Internal server error. WordPress `wp_insert_user()` returned an error, or an
@@ -470,7 +470,7 @@ paths:
                 success: false
                 data:
                   message: "User could not be created."
-                  errorCode: 52
+                  error_code: 52
     delete:
       tags:
         - delete_user
@@ -508,14 +508,16 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
-                    description: Confirmation message.
-                    example: User was successfully deleted.
-                  id:
-                    type: integer
-                    description: ID of the deleted user.
-                    example: 1
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        description: Confirmation message.
+                        example: User was successfully deleted.
         '400':
           description: |
             Bad request. The JWT parameter is missing or cannot be decoded.
@@ -527,7 +529,7 @@ paths:
                 success: false
                 data:
                   message: "JWT is missing."
-                  errorCode: 42
+                  error_code: 42
         '401':
           description: |
             Unauthorized. The JWT is structurally invalid, has a bad signature, is expired,
@@ -540,7 +542,7 @@ paths:
                 success: false
                 data:
                   message: "JWT has expired."
-                  errorCode: 14
+                  error_code: 14
         '403':
           description: |
             Forbidden. User deletion is disabled in the plugin settings, or the client IP
@@ -553,7 +555,7 @@ paths:
                 success: false
                 data:
                   message: "Delete is not enabled."
-                  errorCode: 39
+                  error_code: 39
         '404':
           description: The WordPress user identified by the JWT payload could not be found.
           content:
@@ -564,7 +566,7 @@ paths:
                 success: false
                 data:
                   message: "User not found."
-                  errorCode: 24
+                  error_code: 24
         '500':
           description: Internal server error.
           content:
@@ -575,7 +577,7 @@ paths:
                 success: false
                 data:
                   message: "An unexpected error occurred."
-                  errorCode: 22
+                  error_code: 22
   /user/reset_password:
     post:
       tags:
@@ -636,7 +638,7 @@ paths:
                 success: false
                 data:
                   message: "Email is required."
-                  errorCode: 59
+                  error_code: 59
         '401':
           description: |
             Unauthorized. The provided auth code is invalid or missing when required.
@@ -648,7 +650,7 @@ paths:
                 success: false
                 data:
                   message: "Invalid auth code."
-                  errorCode: 58
+                  error_code: 58
         '403':
           description: |
             Forbidden. Password reset is disabled in the plugin settings.
@@ -660,7 +662,7 @@ paths:
                 success: false
                 data:
                   message: "Reset password is not allowed."
-                  errorCode: 56
+                  error_code: 56
         '404':
           description: No WordPress user with the provided email address was found.
           content:
@@ -671,7 +673,7 @@ paths:
                 success: false
                 data:
                   message: "User not found."
-                  errorCode: 64
+                  error_code: 64
         '500':
           description: Internal server error (e.g. email sending failure).
           content:
@@ -682,7 +684,7 @@ paths:
                 success: false
                 data:
                   message: "An unexpected error occurred."
-                  errorCode: 22
+                  error_code: 22
     put:
       tags:
         - reset_password
@@ -746,7 +748,7 @@ paths:
                 success: false
                 data:
                   message: "New password is required."
-                  errorCode: 61
+                  error_code: 61
         '401':
           description: |
             Unauthorized. The JWT is invalid or expired, the JWT was issued via a
@@ -760,7 +762,7 @@ paths:
                 success: false
                 data:
                   message: "This JWT cannot be used to change the password."
-                  errorCode: 93
+                  error_code: 93
         '403':
           description: |
             Forbidden. Password reset is disabled in the plugin settings.
@@ -772,7 +774,7 @@ paths:
                 success: false
                 data:
                   message: "Reset password is not allowed."
-                  errorCode: 56
+                  error_code: 56
         '404':
           description: No WordPress user with the provided email address was found.
           content:
@@ -783,7 +785,7 @@ paths:
                 success: false
                 data:
                   message: "User not found."
-                  errorCode: 64
+                  error_code: 64
         '422':
           description: |
             Unprocessable entity. The one-time reset code is invalid or expired, or the
@@ -797,7 +799,7 @@ paths:
                 success: false
                 data:
                   message: "Invalid reset password code."
-                  errorCode: 62
+                  error_code: 62
         '500':
           description: Internal server error.
           content:
@@ -808,7 +810,7 @@ paths:
                 success: false
                 data:
                   message: "An unexpected error occurred."
-                  errorCode: 22
+                  error_code: 22
   /auth:
     post:
       tags:
@@ -911,7 +913,7 @@ paths:
                 success: false
                 data:
                   message: "Email or username is required."
-                  errorCode: 46
+                  error_code: 46
         '401':
           description: |
             Unauthorized. The provided credentials are incorrect, or the auth code is
@@ -924,7 +926,7 @@ paths:
                 success: false
                 data:
                   message: "Wrong user credentials."
-                  errorCode: 48
+                  error_code: 48
         '403':
           description: |
             Forbidden. Authentication is disabled in the plugin settings.
@@ -936,7 +938,7 @@ paths:
                 success: false
                 data:
                   message: "Authentication is not enabled."
-                  errorCode: 45
+                  error_code: 45
         '500':
           description: |
             Internal server error. Typically an OpenSSL signing failure when generating
@@ -949,7 +951,7 @@ paths:
                 success: false
                 data:
                   message: "An unexpected error occurred."
-                  errorCode: 16
+                  error_code: 16
   /auth/refresh:
     post:
       tags:
@@ -1012,7 +1014,7 @@ paths:
                 success: false
                 data:
                   message: "Refresh token is missing."
-                  errorCode: 51
+                  error_code: 51
         '401':
           description: |
             Unauthorized. The refresh token is not found in the database, the associated
@@ -1026,7 +1028,7 @@ paths:
                 success: false
                 data:
                   message: "Refresh token is too old."
-                  errorCode: 50
+                  error_code: 50
         '403':
           description: |
             Forbidden. The refresh-token feature is disabled in the plugin settings.
@@ -1038,7 +1040,7 @@ paths:
                 success: false
                 data:
                   message: "Refresh token is not enabled."
-                  errorCode: 81
+                  error_code: 81
         '500':
           description: Internal server error.
           content:
@@ -1049,7 +1051,7 @@ paths:
                 success: false
                 data:
                   message: "An unexpected error occurred."
-                  errorCode: 22
+                  error_code: 22
   /auth/validate:
     get:
       tags:
@@ -1136,66 +1138,64 @@ paths:
                           type: string
                           example: "administrator"
                       jwt:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            token:
-                              type: string
-                              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-                            header:
-                              type: object
-                              properties:
-                                typ:
-                                  type: string
-                                  example: "JWT"
-                                alg:
-                                  type: string
-                                  example: "HS256"
-                            payload:
-                              type: object
-                              properties:
-                                iat:
-                                  type: number
-                                  description: Issued-at timestamp. Always present.
-                                  example: 1516239022
-                                exp:
-                                  type: number
-                                  nullable: true
-                                  description: Expiry timestamp. Present only when the `exp` payload parameter is enabled in plugin settings.
-                                  example: 1516242622
-                                email:
-                                  type: string
-                                  nullable: true
-                                  description: User email. Present only when enabled in plugin settings.
-                                  example: "myuser@simplejwtlogin.com"
-                                id:
-                                  type: number
-                                  nullable: true
-                                  description: WordPress user ID. Present only when enabled in plugin settings.
-                                  example: 1
-                                site:
-                                  type: string
-                                  nullable: true
-                                  description: Site URL. Present only when enabled in plugin settings.
-                                  example: "https://simplejwtlogin.com"
-                                username:
-                                  type: string
-                                  nullable: true
-                                  description: WordPress login username. Present only when enabled in plugin settings.
-                                  example: "myuser"
-                                iss:
-                                  type: string
-                                  nullable: true
-                                  description: Issuer claim. Present only when enabled in plugin settings.
-                                  example: "https://simplejwtlogin.com"
-                            expire_in:
-                              type: integer
-                              nullable: true
-                              description: |
-                                Seconds until the JWT expires (`exp - now`). Only present
-                                when the JWT payload contains an `exp` claim.
-                              example: 3600
+                        type: object
+                        properties:
+                          token:
+                            type: string
+                            example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                          header:
+                            type: object
+                            properties:
+                              typ:
+                                type: string
+                                example: "JWT"
+                              alg:
+                                type: string
+                                example: "HS256"
+                          payload:
+                            type: object
+                            properties:
+                              iat:
+                                type: number
+                                description: Issued-at timestamp. Always present.
+                                example: 1516239022
+                              exp:
+                                type: number
+                                nullable: true
+                                description: Expiry timestamp. Present only when the `exp` payload parameter is enabled in plugin settings.
+                                example: 1516242622
+                              email:
+                                type: string
+                                nullable: true
+                                description: User email. Present only when enabled in plugin settings.
+                                example: "myuser@simplejwtlogin.com"
+                              id:
+                                type: number
+                                nullable: true
+                                description: WordPress user ID. Present only when enabled in plugin settings.
+                                example: 1
+                              site:
+                                type: string
+                                nullable: true
+                                description: Site URL. Present only when enabled in plugin settings.
+                                example: "https://simplejwtlogin.com"
+                              username:
+                                type: string
+                                nullable: true
+                                description: WordPress login username. Present only when enabled in plugin settings.
+                                example: "myuser"
+                              iss:
+                                type: string
+                                nullable: true
+                                description: Issuer claim. Present only when enabled in plugin settings.
+                                example: "https://simplejwtlogin.com"
+                          expire_in:
+                            type: integer
+                            nullable: true
+                            description: |
+                              Seconds until the JWT expires (`exp - now`). Only present
+                              when the JWT payload contains an `exp` claim.
+                            example: 3600
         '400':
           description: |
             Bad request. The `JWT` parameter is missing.
@@ -1207,7 +1207,7 @@ paths:
                 success: false
                 data:
                   message: "JWT is missing."
-                  errorCode: 53
+                  error_code: 53
         '401':
           description: |
             Unauthorized. The JWT is structurally invalid, has a bad signature, is expired,
@@ -1220,7 +1220,7 @@ paths:
                 success: false
                 data:
                   message: "JWT has expired."
-                  errorCode: 14
+                  error_code: 14
         '403':
           description: |
             Forbidden. JWT validation is disabled in the plugin settings.
@@ -1232,7 +1232,7 @@ paths:
                 success: false
                 data:
                   message: "Validate token is not enabled."
-                  errorCode: 82
+                  error_code: 82
         '500':
           description: Internal server error.
           content:
@@ -1243,7 +1243,7 @@ paths:
                 success: false
                 data:
                   message: "An unexpected error occurred."
-                  errorCode: 22
+                  error_code: 22
     post:
       tags:
         - authenticate_user
@@ -1386,7 +1386,7 @@ paths:
                 success: false
                 data:
                   message: "JWT is missing."
-                  errorCode: 42
+                  error_code: 42
         '401':
           description: |
             Unauthorized. The JWT is structurally invalid, has a bad signature, or the
@@ -1399,7 +1399,7 @@ paths:
                 success: false
                 data:
                   message: "JWT signature verification failed."
-                  errorCode: 11
+                  error_code: 11
         '403':
           description: |
             Forbidden. Token revocation is disabled in the plugin settings.
@@ -1411,7 +1411,7 @@ paths:
                 success: false
                 data:
                   message: "Revoke token is not enabled."
-                  errorCode: 83
+                  error_code: 83
         '500':
           description: Internal server error.
           content:
@@ -1422,7 +1422,7 @@ paths:
                 success: false
                 data:
                   message: "An unexpected error occurred."
-                  errorCode: 22
+                  error_code: 22
   /auth/2fa:
     post:
       tags:
@@ -1490,11 +1490,11 @@ paths:
         '400':
           description: |
             Bad request. One of:
-            - The Two-Factor Authentication plugin is not active (`errorCode` 105).
-            - The interim JWT payload is missing required 2FA claims (`errorCode` 106).
-            - The 2FA session nonce is invalid or expired (`errorCode` 107).
-            - Too many failed attempts - rate limited (`errorCode` 108).
-            - The 2FA code is incorrect (`errorCode` 109).
+            - The Two-Factor Authentication plugin is not active (`error_code` 105).
+            - The interim JWT payload is missing required 2FA claims (`error_code` 106).
+            - The 2FA session nonce is invalid or expired (`error_code` 107).
+            - Too many failed attempts - rate limited (`error_code` 108).
+            - The 2FA code is incorrect (`error_code` 109).
           content:
             application/json:
               schema:
@@ -1503,7 +1503,7 @@ paths:
                 success: false
                 data:
                   message: "Invalid two-factor code."
-                  errorCode: 109
+                  error_code: 109
         '403':
           description: |
             Forbidden. Authentication is disabled in the plugin settings.
@@ -1515,7 +1515,7 @@ paths:
                 success: false
                 data:
                   message: "Authentication is not enabled."
-                  errorCode: 45
+                  error_code: 45
         '404':
           description: The WordPress user referenced by the interim JWT could not be found.
           content:
@@ -1526,7 +1526,7 @@ paths:
                 success: false
                 data:
                   message: "User not found."
-                  errorCode: 24
+                  error_code: 24
         '422':
           description: |
             Unprocessable entity. The interim JWT is missing from the request (not supplied
@@ -1539,7 +1539,7 @@ paths:
                 success: false
                 data:
                   message: "Interim JWT is missing."
-                  errorCode: 42
+                  error_code: 42
         '500':
           description: |
             Internal server error. Typically an OpenSSL signing failure when generating
@@ -1552,7 +1552,7 @@ paths:
                 success: false
                 data:
                   message: "An unexpected error occurred."
-                  errorCode: 22
+                  error_code: 22
   /oauth/token:
     get:
       tags:
@@ -1612,7 +1612,7 @@ paths:
         '400':
           description: |
             Bad request. The `code` parameter is missing, or the provider slug is
-            unrecognised. (`errorCode` 69 for invalid provider slug.)
+            unrecognised. (`error_code` 69 for invalid provider slug.)
           content:
             application/json:
               schema:
@@ -1621,7 +1621,7 @@ paths:
                 success: false
                 data:
                   message: "The Oauth provider is invalid."
-                  errorCode: 69
+                  error_code: 69
         '403':
           description: |
             Forbidden. The requested OAuth provider is not enabled in the plugin settings.
@@ -1633,7 +1633,7 @@ paths:
                 success: false
                 data:
                   message: "This Oauth provider is not available."
-                  errorCode: 70
+                  error_code: 70
         '500':
           description: Internal server error.
           content:
@@ -1644,7 +1644,7 @@ paths:
                 success: false
                 data:
                   message: "An unexpected error occurred."
-                  errorCode: 22
+                  error_code: 22
     post:
       tags:
         - oauth
@@ -1695,16 +1695,16 @@ paths:
         '400':
           description: |
             Bad request. One of:
-            - The `provider` slug is unrecognised (`errorCode` 69).
+            - The `provider` slug is unrecognised (`error_code` 69).
             - Required parameters are missing — `code` for Google/Auth0/Facebook/GitHub,
               or `id_token` for Google, or `access_token` for Facebook/GitHub
-              (`errorCode` 71 Google, 75 Auth0, 97 Facebook, 101 GitHub).
+              (`error_code` 71 Google, 75 Auth0, 97 Facebook, 101 GitHub).
             - The authorization code or access token was rejected by the provider
-              (`errorCode` 72 Google code, 79 Auth0 code, 98 Facebook code, 102 GitHub
+              (`error_code` 72 Google code, 79 Auth0 code, 98 Facebook code, 102 GitHub
               code; or 73 Google id_token, 80 Auth0 token, 99 Facebook token, 103 GitHub
               token).
             - The OAuth identity email did not match any WordPress user and auto-register
-              is disabled — Facebook (`errorCode` 100) or GitHub (`errorCode` 104).
+              is disabled — Facebook (`error_code` 100) or GitHub (`error_code` 104).
           content:
             application/json:
               schema:
@@ -1713,11 +1713,11 @@ paths:
                 success: false
                 data:
                   message: "The code or access_token parameter is missing from request."
-                  errorCode: 97
+                  error_code: 97
         '401':
           description: |
             Unauthorized. The Google `id_token` or Auth0 token is invalid or rejected by
-            the provider (`errorCode` 73, 80).
+            the provider (`error_code` 73, 80).
           content:
             application/json:
               schema:
@@ -1726,7 +1726,7 @@ paths:
                 success: false
                 data:
                   message: "The provided id_token is invalid."
-                  errorCode: 73
+                  error_code: 73
         '403':
           description: |
             Forbidden. The requested OAuth provider is not enabled in the plugin settings.
@@ -1738,11 +1738,11 @@ paths:
                 success: false
                 data:
                   message: "This Oauth provider is not available."
-                  errorCode: 70
+                  error_code: 70
         '404':
           description: |
             The Google or Auth0 identity email does not match any WordPress user and
-            automatic registration is disabled (`errorCode` 74 Google, 78 Auth0).
+            automatic registration is disabled (`error_code` 74 Google, 78 Auth0).
           content:
             application/json:
               schema:
@@ -1751,7 +1751,7 @@ paths:
                 success: false
                 data:
                   message: "User not found."
-                  errorCode: 74
+                  error_code: 74
         '500':
           description: Internal server error.
           content:
@@ -1762,7 +1762,7 @@ paths:
                 success: false
                 data:
                   message: "An unexpected error occurred."
-                  errorCode: 22
+                  error_code: 22
   /api-keys:
     get:
       tags:
@@ -1839,7 +1839,7 @@ paths:
                 success: false
                 data:
                   message: "You must be logged in to manage API keys."
-                  errorCode: 84
+                  error_code: 84
     post:
       tags:
         - api_keys
@@ -1927,7 +1927,7 @@ paths:
                 success: false
                 data:
                   message: "API key name is required."
-                  errorCode: 85
+                  error_code: 85
         '401':
           description: |
             Unauthorized. No active WordPress session.
@@ -1939,7 +1939,7 @@ paths:
                 success: false
                 data:
                   message: "You must be logged in to manage API keys."
-                  errorCode: 84
+                  error_code: 84
         '500':
           description: |
             Internal server error. The database insert for the new API key failed.
@@ -1951,7 +1951,7 @@ paths:
                 success: false
                 data:
                   message: "Failed to create API key."
-                  errorCode: 88
+                  error_code: 88
   /api-keys/{id}:
     put:
       tags:
@@ -2011,7 +2011,7 @@ paths:
                 success: false
                 data:
                   message: "API key name is required."
-                  errorCode: 85
+                  error_code: 85
         '401':
           description: |
             Unauthorized. No active WordPress session.
@@ -2023,7 +2023,7 @@ paths:
                 success: false
                 data:
                   message: "You must be logged in to manage API keys."
-                  errorCode: 84
+                  error_code: 84
         '403':
           description: |
             Forbidden. The authenticated user does not own this API key and does not have
@@ -2036,7 +2036,7 @@ paths:
                 success: false
                 data:
                   message: "You are not allowed to manage this API key."
-                  errorCode: 84
+                  error_code: 84
         '404':
           description: No API key with the provided ID was found.
           content:
@@ -2047,7 +2047,7 @@ paths:
                 success: false
                 data:
                   message: "Invalid API key ID."
-                  errorCode: 89
+                  error_code: 89
         '500':
           description: |
             Internal server error. The database update for the API key failed.
@@ -2059,7 +2059,7 @@ paths:
                 success: false
                 data:
                   message: "Failed to update API key."
-                  errorCode: 90
+                  error_code: 90
     delete:
       tags:
         - api_keys
@@ -2105,7 +2105,7 @@ paths:
                 success: false
                 data:
                   message: "You must be logged in to manage API keys."
-                  errorCode: 84
+                  error_code: 84
         '403':
           description: |
             Forbidden. The authenticated user does not own this API key and does not have
@@ -2118,7 +2118,7 @@ paths:
                 success: false
                 data:
                   message: "You are not allowed to manage this API key."
-                  errorCode: 84
+                  error_code: 84
         '404':
           description: No API key with the provided ID was found.
           content:
@@ -2129,7 +2129,7 @@ paths:
                 success: false
                 data:
                   message: "Invalid API key ID."
-                  errorCode: 89
+                  error_code: 89
         '500':
           description: |
             Internal server error. The database delete operation failed.
@@ -2141,7 +2141,7 @@ paths:
                 success: false
                 data:
                   message: "Failed to delete API key."
-                  errorCode: 92
+                  error_code: 92
   /api-keys/{id}/revoke:
     post:
       tags:
@@ -2188,7 +2188,7 @@ paths:
                 success: false
                 data:
                   message: "You must be logged in to manage API keys."
-                  errorCode: 84
+                  error_code: 84
         '403':
           description: |
             Forbidden. The authenticated user does not own this API key and does not have
@@ -2201,7 +2201,7 @@ paths:
                 success: false
                 data:
                   message: "You are not allowed to manage this API key."
-                  errorCode: 84
+                  error_code: 84
         '404':
           description: No API key with the provided ID was found.
           content:
@@ -2212,7 +2212,7 @@ paths:
                 success: false
                 data:
                   message: "Invalid API key ID."
-                  errorCode: 89
+                  error_code: 89
         '500':
           description: |
             Internal server error. The database revoke operation failed.
@@ -2224,7 +2224,7 @@ paths:
                 success: false
                 data:
                   message: "Failed to revoke API key."
-                  errorCode: 91
+                  error_code: 91
 components:
   securitySchemes:
     BearerAuth:
@@ -2264,7 +2264,7 @@ components:
               type: string
               description: Human-readable error description.
               example: "An error occurred."
-            errorCode:
+            error_code:
               type: number
               description: |
                 Internal error code. Use this for programmatic error handling.
@@ -2420,13 +2420,6 @@ components:
             Hashed password as stored in the WordPress database. Requires "Allow login with
             password hash" to be enabled in the plugin settings. Required when `password`
             is not provided.
-        payload:
-          type: string
-          nullable: true
-          description: |
-            Optional JSON-encoded object of additional claims to merge into the issued JWT
-            payload. Same semantics as the `payload` field in `authRefreshBody`.
-          example: '{"custom_claim":"value"}'
         AUTH_CODE:
           type: string
           nullable: true
@@ -2441,14 +2434,6 @@ components:
           type: string
           example: "a1b2c3d4e5f678901234567890123456789012345678901234567890123456789012"
           description: Refresh token obtained from a prior `/auth` response.
-        payload:
-          type: string
-          nullable: true
-          description: |
-            Optional JSON-encoded object of additional claims to merge into the new JWT
-            payload. When omitted the new JWT receives the same standard claims as a
-            fresh `/auth` response.
-          example: '{"custom_claim":"value"}'
         AUTH_CODE:
           type: string
           nullable: true
@@ -2678,13 +2663,6 @@ components:
             The 2FA verification code. Accepted formats depend on the user's configured
             provider: TOTP code (6-digit), email token, or backup code.
           example: "123456"
-        payload:
-          type: string
-          nullable: true
-          description: |
-            Optional JSON-encoded object of additional claims to merge into the issued JWT
-            payload. Must be a valid JSON string (with escaped slashes if sent as form data).
-          example: '{"custom_claim":"value"}'
     ApiKeyItem:
       type: object
       properties:

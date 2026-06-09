@@ -84,7 +84,7 @@ class AuthEndpointTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED, $data['data']['error_code']);
     }
 
     // ─── Missing credentials ──────────────────────────────────────────────────
@@ -129,7 +129,7 @@ class AuthEndpointTest extends WPTestCase
         $this->assertSame(400, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame($expectedCode, $data['data']['errorCode']);
+        $this->assertSame($expectedCode, $data['data']['error_code']);
     }
 
     // ─── Login parameter variants ─────────────────────────────────────────────
@@ -207,7 +207,7 @@ class AuthEndpointTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS, $data['data']['error_code']);
     }
 
     // ─── IP restriction ───────────────────────────────────────────────────────
@@ -226,7 +226,7 @@ class AuthEndpointTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP, $data['data']['error_code']);
     }
 
     // ─── Auth code validation ─────────────────────────────────────────────────
@@ -275,7 +275,7 @@ class AuthEndpointTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED, $data['data']['error_code']);
     }
 
     #[TestDox('Proceeds past auth key check when a valid AUTH_KEY is provided')]
@@ -339,7 +339,7 @@ class AuthEndpointTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS, $data['data']['error_code']);
     }
 
     // ─── Refresh token in response ────────────────────────────────────────────

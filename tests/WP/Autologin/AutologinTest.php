@@ -60,7 +60,7 @@ class AutologinTest extends AutologinTestCase
         $this->assertSame($expectedStatus, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame($expectedCode, $data['data']['errorCode']);
+        $this->assertSame($expectedCode, $data['data']['error_code']);
     }
 
     public static function jwtErrorProvider(): array
@@ -114,7 +114,7 @@ class AutologinTest extends AutologinTestCase
         $this->assertSame(400, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND, $data['data']['error_code']);
     }
 
     // ─── Successful autologin ─────────────────────────────────────────────────

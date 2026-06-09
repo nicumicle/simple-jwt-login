@@ -65,7 +65,7 @@ class AuthTest extends WPTestCase
         $this->assertSame(400, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(48, $data['data']['errorCode']);
+        $this->assertSame(48, $data['data']['error_code']);
     }
 
     #[TestDox('Validate endpoint confirms a freshly issued JWT')]

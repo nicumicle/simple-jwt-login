@@ -150,8 +150,14 @@ class DeleteUserServiceTest extends TestCase
             ->willReturn(true);
         $this->wordPressDataMock->method('doAction')
             ->willReturn(true);
+        $expectedResponse = [
+            'success' => true,
+            'data'    => [
+                'message' => 'User was successfully deleted.',
+            ],
+        ];
         $this->wordPressDataMock->method('createResponse')
-            ->willReturn(true);
+            ->willReturnArgument(0);
         $deleteUserService = (new DeleteUserService())
             ->withRequest([
                 'JWT' => JWT::encode(['id' => 1], $settings['decryption_key'], 'HS256')
@@ -163,7 +169,7 @@ class DeleteUserServiceTest extends TestCase
             ->withRefreshTokenRepository($this->tokenRepositoryMock);
 
         $response = $deleteUserService->makeAction();
-        $this->assertTrue($response);
+        $this->assertSame($expectedResponse, $response);
     }
 
     public function testDeleteByInvalidAction()

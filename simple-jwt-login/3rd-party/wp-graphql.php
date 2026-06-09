@@ -56,8 +56,8 @@ add_action('init_graphql_request', function () {
     } catch (\Exception $exception) {
         wp_send_json_error(
             [
-                'message'   => $exception->getMessage(),
-                'errorCode' => $exception->getCode(),
+                'message'    => $exception->getMessage(),
+                'error_code' => $exception->getCode(),
                 'type'      => 'simple-jwt-login-middleware'
             ],
             StatusCodeHelper::getStatusCodeFromException($exception)

@@ -150,7 +150,7 @@ class ApiKeyUsageTest extends FeatureTestCase
         $this->assertSame(401, $response->getStatusCode());
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_API_KEY_UNAUTHORIZED, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_API_KEY_UNAUTHORIZED, $body['data']['error_code']);
     }
 
     // ─── Tests: happy paths ───────────────────────────────────────────────────
@@ -349,7 +349,7 @@ class ApiKeyUsageTest extends FeatureTestCase
         $this->assertSame(401, $response->getStatusCode());
 
         $body      = json_decode($response->getBody()->getContents(), true);
-        $errorCode = isset($body['data']['errorCode']) ? (int) $body['data']['errorCode'] : 0;
+        $errorCode = isset($body['data']['error_code']) ? (int) $body['data']['error_code'] : 0;
         $this->assertNotSame(
             ErrorCodes::ERR_API_KEY_UNAUTHORIZED,
             $errorCode,
@@ -382,7 +382,7 @@ class ApiKeyUsageTest extends FeatureTestCase
             $this->assertSame(401, $response->getStatusCode());
 
             $body      = json_decode($response->getBody()->getContents(), true);
-            $errorCode = isset($body['data']['errorCode']) ? (int) $body['data']['errorCode'] : 0;
+            $errorCode = isset($body['data']['error_code']) ? (int) $body['data']['error_code'] : 0;
             $this->assertNotSame(ErrorCodes::ERR_API_KEY_UNAUTHORIZED, $errorCode);
         });
     }
@@ -412,7 +412,7 @@ class ApiKeyUsageTest extends FeatureTestCase
             $this->assertSame(401, $response->getStatusCode());
 
             $body      = json_decode($response->getBody()->getContents(), true);
-            $errorCode = isset($body['data']['errorCode']) ? (int) $body['data']['errorCode'] : 0;
+            $errorCode = isset($body['data']['error_code']) ? (int) $body['data']['error_code'] : 0;
             $this->assertNotSame(ErrorCodes::ERR_API_KEY_UNAUTHORIZED, $errorCode);
         });
     }

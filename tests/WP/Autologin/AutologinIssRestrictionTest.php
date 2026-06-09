@@ -60,7 +60,7 @@ class AutologinIssRestrictionTest extends AutologinTestCase
         $this->assertSame(400, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_INVALID_IIS_LOGIN, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_INVALID_IIS_LOGIN, $data['data']['error_code']);
     }
 
     public static function blockedIssProvider(): array

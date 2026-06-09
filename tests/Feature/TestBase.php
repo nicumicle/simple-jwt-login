@@ -70,7 +70,7 @@ class TestBase extends TestCase
             'success' => false,
             'data' => [
                 'message' => $message,
-                'errorCode' => $code,
+                'error_code' => $code,
             ],
         ];
 

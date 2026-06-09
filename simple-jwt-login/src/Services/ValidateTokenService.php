@@ -86,9 +86,7 @@ class ValidateTokenService extends AuthenticateService
             'data'    => [
                 'user' => $userArray,
                 'roles' => $this->wordPressData->getUserRoles($user),
-                'jwt'  => [
-                    $jwtParameters
-                ]
+                'jwt'  => $jwtParameters
             ]
         ];
 

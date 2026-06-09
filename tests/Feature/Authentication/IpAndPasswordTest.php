@@ -76,7 +76,7 @@ class IpAndPasswordTest extends FeatureTestCase
             // Note: AuthenticateService.checkAllowedIPAddress() uses ERR_DELETE_INVALID_CLIENT_IP
             // (a code-reuse quirk in the implementation — the behaviour is correct even if the
             // constant name is misleading).
-            $this->assertSame(ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP, $body['data']['errorCode']);
+            $this->assertSame(ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP, $body['data']['error_code']);
         } finally {
             self::updateSimpleJWTOption(self::baseSettings());
         }
@@ -147,7 +147,7 @@ class IpAndPasswordTest extends FeatureTestCase
             $this->assertSame(401, $response->getStatusCode());
             $body = json_decode($response->getBody()->getContents(), true);
             $this->assertFalse($body['success']);
-            $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS, $body['data']['errorCode']);
+            $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS, $body['data']['error_code']);
         } finally {
             self::updateSimpleJWTOption(self::baseSettings());
         }
@@ -192,7 +192,7 @@ class IpAndPasswordTest extends FeatureTestCase
             $this->assertSame(403, $response->getStatusCode());
             $body = json_decode($response->getBody()->getContents(), true);
             $this->assertFalse($body['success']);
-            $this->assertSame(ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP, $body['data']['errorCode']);
+            $this->assertSame(ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP, $body['data']['error_code']);
         } finally {
             self::updateSimpleJWTOption(self::baseSettings());
         }

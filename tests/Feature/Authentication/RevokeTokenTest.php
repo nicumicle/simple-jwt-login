@@ -97,7 +97,7 @@ class RevokeTokenTest extends FeatureTestCase
             $this->assertSame(403, $response->getStatusCode());
             $body = json_decode($response->getBody()->getContents(), true);
             $this->assertFalse($body['success']);
-            $this->assertSame(ErrorCodes::ERR_REVOKE_TOKEN_NOT_ENABLED, $body['data']['errorCode']);
+            $this->assertSame(ErrorCodes::ERR_REVOKE_TOKEN_NOT_ENABLED, $body['data']['error_code']);
         } finally {
             self::updateSimpleJWTOption(self::baseSettings());
         }
@@ -113,7 +113,7 @@ class RevokeTokenTest extends FeatureTestCase
         $this->assertSame(422, $response->getStatusCode());
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE, $body['data']['error_code']);
         $this->assertSame('The `jwt` parameter is missing.', $body['data']['message']);
     }
 
@@ -171,7 +171,7 @@ class RevokeTokenTest extends FeatureTestCase
         $this->assertSame(401, $response->getStatusCode());
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_REVOKED_TOKEN, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_REVOKED_TOKEN, $body['data']['error_code']);
     }
 
     // ─── Post-revoke endpoint rejections ─────────────────────────────────────
@@ -189,7 +189,7 @@ class RevokeTokenTest extends FeatureTestCase
         $this->assertSame(401, $response->getStatusCode());
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_REVOKED_TOKEN, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_REVOKED_TOKEN, $body['data']['error_code']);
     }
 
     #[TestDox('Revoked JWT is rejected by the autologin endpoint')]
@@ -207,7 +207,7 @@ class RevokeTokenTest extends FeatureTestCase
 
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_REVOKED_TOKEN, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_REVOKED_TOKEN, $body['data']['error_code']);
     }
 
     #[TestDox('Revoked JWT is rejected by the delete endpoint')]
@@ -225,7 +225,7 @@ class RevokeTokenTest extends FeatureTestCase
 
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_REVOKED_TOKEN, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_REVOKED_TOKEN, $body['data']['error_code']);
     }
 
     // ─── JWT passed as URL param ──────────────────────────────────────────────

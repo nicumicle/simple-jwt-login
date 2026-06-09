@@ -2799,3 +2799,13 @@
     color: var(--sjl-text-muted);
     border-color: var(--sjl-border-light);
 }
+
+/* ============================================
+   Plugin version tag
+   ============================================ */
+#simple-jwt-login .sjl-plugin-version {
+    font-size: 11px;
+    color: var(--sjl-text-muted);
+    margin-top: 4px;
+    text-align: right;
+}

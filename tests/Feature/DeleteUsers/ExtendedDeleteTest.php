@@ -68,7 +68,7 @@ class ExtendedDeleteTest extends FeatureTestCase
             $this->assertSame(403, $response->getStatusCode());
             $body = json_decode($response->getBody()->getContents(), true);
             $this->assertFalse($body['success']);
-            $this->assertSame(ErrorCodes::ERR_DELETE_IS_NOT_ENABLED, $body['data']['errorCode']);
+            $this->assertSame(ErrorCodes::ERR_DELETE_IS_NOT_ENABLED, $body['data']['error_code']);
         } finally {
             self::updateSimpleJWTOption(self::baseSettings());
         }
@@ -99,7 +99,7 @@ class ExtendedDeleteTest extends FeatureTestCase
             $this->assertNotSame(200, $response->getStatusCode());
             $body = json_decode($response->getBody()->getContents(), true);
             $this->assertFalse($body['success']);
-            $this->assertSame(ErrorCodes::ERR_AUTH_CODE_REQUIRED, $body['data']['errorCode']);
+            $this->assertSame(ErrorCodes::ERR_AUTH_CODE_REQUIRED, $body['data']['error_code']);
         } finally {
             self::updateSimpleJWTOption(self::baseSettings());
         }

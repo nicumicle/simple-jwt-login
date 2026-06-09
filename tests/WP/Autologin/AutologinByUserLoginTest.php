@@ -56,7 +56,7 @@ class AutologinByUserLoginTest extends AutologinTestCase
         $this->assertSame(400, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND, $data['data']['error_code']);
     }
 
     #[TestDox('Autologin succeeds when the JWT username matches a real WordPress user_login')]

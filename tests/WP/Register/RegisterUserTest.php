@@ -260,7 +260,7 @@ class RegisterUserTest extends WPTestCase
         $this->assertSame(400, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_REGISTER_IS_NOT_ALLOWED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_REGISTER_IS_NOT_ALLOWED, $data['data']['error_code']);
     }
 
     public static function missingCredentialsProvider(): array
@@ -292,7 +292,7 @@ class RegisterUserTest extends WPTestCase
         $this->assertSame(400, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame($expectedCode, $data['data']['errorCode']);
+        $this->assertSame($expectedCode, $data['data']['error_code']);
     }
 
     public static function invalidEmailProvider(): array
@@ -318,7 +318,7 @@ class RegisterUserTest extends WPTestCase
         $this->assertSame(400, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_REGISTER_INVALID_EMAIL_ADDRESS, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_REGISTER_INVALID_EMAIL_ADDRESS, $data['data']['error_code']);
     }
 
     #[TestDox('Returns ERR_REGISTER_DOMAIN_FOR_USER when email domain is not in the allowlist')]
@@ -334,7 +334,7 @@ class RegisterUserTest extends WPTestCase
         $this->assertSame(400, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_REGISTER_DOMAIN_FOR_USER, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_REGISTER_DOMAIN_FOR_USER, $data['data']['error_code']);
     }
 
     #[TestDox('Returns ERR_REGISTER_INVALID_AUTH_KEY when auth is required but not provided')]
@@ -356,7 +356,7 @@ class RegisterUserTest extends WPTestCase
         $this->assertSame(400, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_REGISTER_INVALID_AUTH_KEY, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_REGISTER_INVALID_AUTH_KEY, $data['data']['error_code']);
     }
 
     #[TestDox('Returns ERR_REGISTER_INVALID_AUTH_KEY when a wrong auth code is provided')]
@@ -379,7 +379,7 @@ class RegisterUserTest extends WPTestCase
         $this->assertSame(400, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_REGISTER_INVALID_AUTH_KEY, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_REGISTER_INVALID_AUTH_KEY, $data['data']['error_code']);
     }
 
     #[TestDox('Returns ERR_REGISTER_INVALID_AUTH_KEY when the auth code is past its expiration date')]
@@ -402,7 +402,7 @@ class RegisterUserTest extends WPTestCase
         $this->assertSame(400, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_REGISTER_INVALID_AUTH_KEY, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_REGISTER_INVALID_AUTH_KEY, $data['data']['error_code']);
     }
 
     #[TestDox('Returns ERR_REGISTER_USER_ALREADY_EXISTS when the email is already registered')]
@@ -420,7 +420,7 @@ class RegisterUserTest extends WPTestCase
         $this->assertSame(400, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_REGISTER_USER_ALREADY_EXISTS, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_REGISTER_USER_ALREADY_EXISTS, $data['data']['error_code']);
     }
 
     #[TestDox('Returns ERR_REGISTER_IP_IS_NOT_ALLOWED when the client IP is not in the allowlist')]
@@ -436,6 +436,6 @@ class RegisterUserTest extends WPTestCase
         $this->assertSame(400, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_REGISTER_IP_IS_NOT_ALLOWED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_REGISTER_IP_IS_NOT_ALLOWED, $data['data']['error_code']);
     }
 }

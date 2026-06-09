@@ -143,34 +143,35 @@ In order to install the latest stable version, from your WordPress admin:
 
 ## :bar_chart: How Simple JWT Login Compares
 
-Most WordPress JWT plugins lock advanced features behind paid plans. Simple JWT Login ships everything below for free.
+Most WordPress JWT plugins lock advanced features behind paid plans. Simple JWT Login ships everything below for **FREE**.
 
-| Feature | Simple JWT Login | Other Plugins |
-|---|---|---|
-| JWT Authentication | ✅ Free | ✅ Free |
-| Refresh Tokens | ✅ Free | ❌ Paid or unavailable |
-| API Keys | ✅ Free | ✅ Premium only |
-| Audit Logs | ✅ Free | ❌ Premium only |
-| Webhooks | ✅ Free | ❌ Premium only |
-| Google OAuth Login | ✅ Free | ❌ Premium only |
-| Facebook OAuth Login | ✅ Free | ❌ Premium only |
-| GitHub OAuth Login | ✅ Free | ❌ Premium only |
-| Auth0 Login | ✅ Free | ❌ Premium only |
-| Generic OAuth / OIDC | ⚠️ Partial | ⚠️ Limited or Premium |
-| WPGraphQL Support | ✅ Free | ❌ Not available |
-| User Auto-create | ✅ Free | ⚠️ Basic or Premium |
-| JWT Refresh Endpoint | ✅ Free | ❌ Premium only |
-| Custom JWT Claims | ✅ Free | ⚠️ Via hooks or Premium |
-| Token Revocation | ⚠️ Partial | ✅ Premium only |
-| Headless WordPress Focus | ✅ Strong | ⚠️ Basic or SSO-focused |
-| Mobile App Support | ✅ Excellent | ⚠️ Basic or Good |
-| External API Authentication | ✅ Free | ⚠️ Limited or Premium |
-| Open Source Transparency | ✅ Fully open | ⚠️ Varies - some obfuscation reported |
-| Setup Simplicity | ✅ Easy | ⚠️ Easy to Complex |
-| Enterprise SSO | ❌ Not yet | ✅ Premium only |
-| SAML Support | ❌ Not yet | ✅ Premium only |
-| Free Version Useful Without Upsell | ✅ Very strong | ⚠️ Minimal or limited |
-| Minimum PHP Version | ✅ PHP 5.5+ | ⚠️ PHP 7.0+ |
+| Feature                            | Simple JWT Login | Other Plugins                         |
+|------------------------------------|------------------|---------------------------------------|
+| JWT Authentication                 | ✅ Free           | ✅ Free                                |
+| Refresh Tokens                     | ✅ Free           | ❌ Paid or unavailable                 |
+| API Keys                           | ✅ Free           | ❌ Premium only                        |
+| Audit Logs                         | ✅ Free           | ❌ Premium only                        |
+| Webhooks                           | ✅ Free           | ❌ Premium only                        |
+| Google OAuth Login                 | ✅ Free           | ❌ Premium only                        |
+| Facebook OAuth Login               | ✅ Free           | ❌ Premium only                        |
+| GitHub OAuth Login                 | ✅ Free           | ❌ Premium only                        |
+| Auth0 Login                        | ✅ Free           | ❌ Premium only                        |
+| Generic OAuth / OIDC               | ❌ Not yet        | ⚠️ Limited or Premium                 |
+| WPGraphQL Support                  | ✅ Free           | ❌ Not available                       |
+| TWO Factor Support                 | ✅ Free           | ❌ Not available                       |
+| User Auto-create                   | ✅ Free           | ⚠️ Basic or Premium                   |
+| JWT Refresh Endpoint               | ✅ Free           | ❌ Premium only                        |
+| Custom JWT Claims                  | ✅ Free           | ⚠️ Via hooks or Premium               |
+| Token Revocation                   | ✅ Free           | ❌ Premium only                        |
+| Headless WordPress Focus           | ✅ Strong         | ⚠️ Basic or SSO-focused               |
+| Mobile App Support                 | ✅ Excellent      | ⚠️ Basic or Good                      |
+| External API Authentication        | ✅ Free           | ⚠️ Limited or Premium                 |
+| Open Source Transparency           | ✅ Fully open     | ⚠️ Varies - some obfuscation reported |
+| Setup Simplicity                   | ✅ Easy           | ⚠️ Easy to Complex                    |
+| Enterprise SSO                     | ❌ Not yet        | ✅ Premium only                        |
+| SAML Support                       | ❌ Not yet        | ✅ Premium only                        |
+| Free Version Useful Without Upsell | ✅ Very strong    | ⚠️ Minimal or limited                 |
+| Minimum PHP Version                | ✅ PHP 5.5+       | ⚠️ PHP 7.0+                           |
 
 ## :electric_plug: Integrate
 

@@ -133,7 +133,7 @@ class ApiKeyCrudTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertSame(self::ERROR_CODE, $data['code']);
-        $this->assertSame($expectedCode, $data['data']['errorCode']);
+        $this->assertSame($expectedCode, $data['data']['error_code']);
     }
 
     #[TestDox('Admin creates a key and the response contains id, raw key, key_prefix, and permissions')]
@@ -307,7 +307,7 @@ class ApiKeyCrudTest extends WPTestCase
         $this->assertSame(403, $response->get_status());
         $data = $response->get_data();
         $this->assertSame(self::ERROR_CODE, $data['code']);
-        $this->assertSame(ErrorCodes::ERR_API_KEY_UNAUTHORIZED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_API_KEY_UNAUTHORIZED, $data['data']['error_code']);
     }
 
     #[TestDox('Administrator can update any user\'s key')]
@@ -342,7 +342,7 @@ class ApiKeyCrudTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertSame(self::ERROR_CODE, $data['code']);
-        $this->assertSame(ErrorCodes::ERR_API_KEY_MISSING_NAME, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_API_KEY_MISSING_NAME, $data['data']['error_code']);
     }
 
     // ─── Revoke (soft-delete) ─────────────────────────────────────────────────
@@ -388,7 +388,7 @@ class ApiKeyCrudTest extends WPTestCase
         $this->assertSame(403, $response->get_status());
         $data = $response->get_data();
         $this->assertSame(self::ERROR_CODE, $data['code']);
-        $this->assertSame(ErrorCodes::ERR_API_KEY_UNAUTHORIZED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_API_KEY_UNAUTHORIZED, $data['data']['error_code']);
     }
 
     #[TestDox('Administrator can revoke any user\'s key')]
@@ -450,7 +450,7 @@ class ApiKeyCrudTest extends WPTestCase
         $this->assertSame(403, $response->get_status());
         $data = $response->get_data();
         $this->assertSame(self::ERROR_CODE, $data['code']);
-        $this->assertSame(ErrorCodes::ERR_API_KEY_UNAUTHORIZED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_API_KEY_UNAUTHORIZED, $data['data']['error_code']);
     }
 
     #[TestDox('Administrator can hard-delete any user\'s key')]

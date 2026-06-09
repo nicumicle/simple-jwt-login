@@ -56,7 +56,7 @@ class RestrictionsTest extends FeatureTestCase
             $this->assertSame(403, $response->getStatusCode());
             $body = json_decode($response->getBody()->getContents(), true);
             $this->assertFalse($body['success']);
-            $this->assertSame(ErrorCodes::ERR_REGISTER_IS_NOT_ALLOWED, $body['data']['errorCode']);
+            $this->assertSame(ErrorCodes::ERR_REGISTER_IS_NOT_ALLOWED, $body['data']['error_code']);
         } finally {
             self::updateSimpleJWTOption(self::baseSettings());
         }
@@ -123,7 +123,7 @@ class RestrictionsTest extends FeatureTestCase
             $this->assertFalse($body['success']);
             $this->assertSame(
                 ErrorCodes::ERR_REGISTER_DOMAIN_FOR_USER,
-                $body['data']['errorCode']
+                $body['data']['error_code']
             );
             $this->assertSame(
                 'This website does not allows users from this domain.',
@@ -179,7 +179,7 @@ class RestrictionsTest extends FeatureTestCase
             $this->assertSame(403, $response->getStatusCode());
             $body = json_decode($response->getBody()->getContents(), true);
             $this->assertFalse($body['success']);
-            $this->assertSame(ErrorCodes::ERR_REGISTER_IP_IS_NOT_ALLOWED, $body['data']['errorCode']);
+            $this->assertSame(ErrorCodes::ERR_REGISTER_IP_IS_NOT_ALLOWED, $body['data']['error_code']);
         } finally {
             self::updateSimpleJWTOption(self::baseSettings());
         }
@@ -224,7 +224,7 @@ class RestrictionsTest extends FeatureTestCase
             $this->assertNotSame(200, $response->getStatusCode());
             $body = json_decode($response->getBody()->getContents(), true);
             $this->assertFalse($body['success']);
-            $this->assertSame(ErrorCodes::ERR_AUTH_CODE_REQUIRED, $body['data']['errorCode']);
+            $this->assertSame(ErrorCodes::ERR_AUTH_CODE_REQUIRED, $body['data']['error_code']);
         } finally {
             self::updateSimpleJWTOption(self::baseSettings());
         }
@@ -275,7 +275,7 @@ class RestrictionsTest extends FeatureTestCase
             $this->assertSame(401, $response->getStatusCode());
             $body = json_decode($response->getBody()->getContents(), true);
             $this->assertFalse($body['success']);
-            $this->assertSame(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED, $body['data']['errorCode']);
+            $this->assertSame(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED, $body['data']['error_code']);
         } finally {
             self::updateSimpleJWTOption(self::baseSettings());
         }

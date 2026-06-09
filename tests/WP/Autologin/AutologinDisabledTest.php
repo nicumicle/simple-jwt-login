@@ -41,7 +41,7 @@ class AutologinDisabledTest extends AutologinTestCase
         $this->assertSame(400, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_AUTO_LOGIN_NOT_ENABLED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_AUTO_LOGIN_NOT_ENABLED, $data['data']['error_code']);
     }
 
     #[TestDox('Autologin returns ERR_AUTO_LOGIN_NOT_ENABLED even when no JWT is sent')]
@@ -52,6 +52,6 @@ class AutologinDisabledTest extends AutologinTestCase
         $this->assertSame(400, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_AUTO_LOGIN_NOT_ENABLED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_AUTO_LOGIN_NOT_ENABLED, $data['data']['error_code']);
     }
 }

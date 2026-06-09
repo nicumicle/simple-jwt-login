@@ -62,7 +62,7 @@ class AutologinAuthCodeTest extends AutologinTestCase
         $this->assertSame($expectedStatus, $response->get_status());
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame($expectedCode, $data['data']['errorCode']);
+        $this->assertSame($expectedCode, $data['data']['error_code']);
     }
 
     public static function invalidAuthCodeProvider(): array

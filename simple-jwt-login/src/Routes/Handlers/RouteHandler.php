@@ -170,8 +170,8 @@ class RouteHandler
                     'simple_jwt_login_api_key_error',
                     $exception->getMessage(),
                     [
-                        'status'    => StatusCodeHelper::getStatusCodeFromException($exception),
-                        'errorCode' => $exception->getCode(),
+                        'status'     => StatusCodeHelper::getStatusCodeFromException($exception),
+                        'error_code' => $exception->getCode(),
                     ]
                 );
             }
@@ -182,8 +182,8 @@ class RouteHandler
 
             wp_send_json_error(
                 [
-                    'message'   => $exception->getMessage(),
-                    'errorCode' => $exception->getCode(),
+                    'message'    => $exception->getMessage(),
+                    'error_code' => $exception->getCode(),
                 ],
                 StatusCodeHelper::getStatusCodeFromException($exception)
             );

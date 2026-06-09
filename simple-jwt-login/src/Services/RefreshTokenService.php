@@ -114,17 +114,8 @@ class RefreshTokenService extends AuthenticateService
         }
 
         // Generate new JWT payload for the user
-        $newPayload = isset($this->request['payload'])
-            ? json_decode(
-                stripslashes(
-                    $this->wordPressData->sanitizeTextField($this->request['payload'])
-                ),
-                true
-            )
-            : [];
-
         $newPayload = AuthenticateService::generatePayload(
-            $newPayload,
+            [],
             $this->wordPressData,
             $this->jwtSettings,
             $user
@@ -161,13 +152,16 @@ class RefreshTokenService extends AuthenticateService
             );
         }
 
+        $authSettings = $this->jwtSettings->getAuthenticationSettings();
+        $customHeaderClaims = $authSettings->getCustomHeaderClaims();
         $response = [
             'success' => true,
             'data'    => [
                 'jwt' => $this->getJwtWrapper()->encode(
                     $newPayload,
                     JwtKeyFactory::getFactory($this->jwtSettings)->getPrivateKey(),
-                    $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm()
+                    $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm(),
+                    empty($customHeaderClaims) ? null : $customHeaderClaims
                 ),
                 'refresh_token' => $newRefreshToken
             ]

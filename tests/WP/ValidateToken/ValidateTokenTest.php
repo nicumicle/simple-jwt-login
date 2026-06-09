@@ -92,7 +92,7 @@ class ValidateTokenTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED, $data['data']['error_code']);
     }
 
     #[TestDox('Returns ERR_VALIDATE_TOKEN_NOT_ENABLED when validate endpoint is disabled')]
@@ -104,7 +104,7 @@ class ValidateTokenTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_VALIDATE_TOKEN_NOT_ENABLED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_VALIDATE_TOKEN_NOT_ENABLED, $data['data']['error_code']);
     }
 
     // ─── IP restriction ───────────────────────────────────────────────────────
@@ -122,7 +122,7 @@ class ValidateTokenTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP, $data['data']['error_code']);
     }
 
     // ─── Auth key validation ──────────────────────────────────────────────────
@@ -171,7 +171,7 @@ class ValidateTokenTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED, $data['data']['error_code']);
     }
 
     #[TestDox('Proceeds past auth key check when valid AUTH_KEY is provided')]
@@ -230,7 +230,7 @@ class ValidateTokenTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE, $data['data']['error_code']);
     }
 
     // ─── JWT validation edge cases ────────────────────────────────────────────
@@ -297,7 +297,7 @@ class ValidateTokenTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND, $data['data']['error_code']);
     }
 
     // ─── Revoked JWT ──────────────────────────────────────────────────────────
@@ -317,7 +317,7 @@ class ValidateTokenTest extends WPTestCase
 
             $data = $response->get_data();
             $this->assertFalse($data['success']);
-            $this->assertSame(ErrorCodes::ERR_REVOKED_TOKEN, $data['data']['errorCode']);
+            $this->assertSame(ErrorCodes::ERR_REVOKED_TOKEN, $data['data']['error_code']);
         } finally {
             delete_user_meta($userId, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY);
         }

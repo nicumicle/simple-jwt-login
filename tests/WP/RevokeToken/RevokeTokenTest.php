@@ -91,7 +91,7 @@ class RevokeTokenTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED, $data['data']['error_code']);
     }
 
     #[TestDox('Returns ERR_REVOKE_TOKEN_NOT_ENABLED when revoke endpoint is disabled')]
@@ -103,7 +103,7 @@ class RevokeTokenTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_REVOKE_TOKEN_NOT_ENABLED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_REVOKE_TOKEN_NOT_ENABLED, $data['data']['error_code']);
     }
 
     // ─── IP restriction ───────────────────────────────────────────────────────
@@ -121,7 +121,7 @@ class RevokeTokenTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP, $data['data']['error_code']);
     }
 
     // ─── Auth key validation ──────────────────────────────────────────────────
@@ -170,7 +170,7 @@ class RevokeTokenTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED, $data['data']['error_code']);
     }
 
     #[TestDox('Proceeds past auth key check when valid AUTH_KEY is provided')]
@@ -229,7 +229,7 @@ class RevokeTokenTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE, $data['data']['error_code']);
     }
 
     /**
@@ -294,7 +294,7 @@ class RevokeTokenTest extends WPTestCase
 
         $data = $response->get_data();
         $this->assertFalse($data['success']);
-        $this->assertSame(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND, $data['data']['error_code']);
     }
 
     // ─── Already-revoked token ────────────────────────────────────────────────

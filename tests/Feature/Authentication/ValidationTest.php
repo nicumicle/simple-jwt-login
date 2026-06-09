@@ -127,7 +127,7 @@ class ValidationTest extends FeatureTestCase
         $this->assertSame(401, $response->getStatusCode());
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS, $body['data']['error_code']);
     }
 
     #[TestDox('Auth with unknown email returns 401')]
@@ -141,7 +141,7 @@ class ValidationTest extends FeatureTestCase
         $this->assertSame(401, $response->getStatusCode());
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS, $body['data']['error_code']);
     }
 
     #[TestDox('Auth with unknown username returns 401')]
@@ -155,7 +155,7 @@ class ValidationTest extends FeatureTestCase
         $this->assertSame(401, $response->getStatusCode());
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS, $body['data']['error_code']);
     }
 
     // ─── Tests: feature disabled ──────────────────────────────────────────────
@@ -175,7 +175,7 @@ class ValidationTest extends FeatureTestCase
             $this->assertSame(403, $response->getStatusCode());
             $body = json_decode($response->getBody()->getContents(), true);
             $this->assertFalse($body['success']);
-            $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED, $body['data']['errorCode']);
+            $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED, $body['data']['error_code']);
         } finally {
             self::updateSimpleJWTOption(self::baseSettings());
         }
@@ -195,7 +195,7 @@ class ValidationTest extends FeatureTestCase
             $this->assertSame(403, $response->getStatusCode());
             $body = json_decode($response->getBody()->getContents(), true);
             $this->assertFalse($body['success']);
-            $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED, $body['data']['errorCode']);
+            $this->assertSame(ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED, $body['data']['error_code']);
         } finally {
             self::updateSimpleJWTOption(self::baseSettings());
         }
@@ -226,7 +226,7 @@ class ValidationTest extends FeatureTestCase
             $this->assertSame(422, $response->getStatusCode());
             $body = json_decode($response->getBody()->getContents(), true);
             $this->assertFalse($body['success']);
-            $this->assertSame(ErrorCodes::ERR_AUTH_CODE_REQUIRED, $body['data']['errorCode']);
+            $this->assertSame(ErrorCodes::ERR_AUTH_CODE_REQUIRED, $body['data']['error_code']);
         } finally {
             self::updateSimpleJWTOption(self::baseSettings());
         }

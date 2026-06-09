@@ -85,7 +85,7 @@ class SubscriberPrivilegeEscalationTest extends WPTestCase
         $this->assertSame(403, $response->get_status());
         $data = $response->get_data();
         $this->assertSame('simple_jwt_login_api_key_error', $data['code']);
-        $this->assertSame(ErrorCodes::ERR_API_KEY_UNAUTHORIZED, $data['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_API_KEY_UNAUTHORIZED, $data['data']['error_code']);
     }
 
     #[TestDox('Subscriber can create a read-only API key')]

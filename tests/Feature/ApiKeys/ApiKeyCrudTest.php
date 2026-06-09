@@ -150,7 +150,7 @@ class ApiKeyCrudTest extends FeatureTestCase
         $this->assertNotSame(200, $response->getStatusCode());
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_API_KEY_MISSING_NAME, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_API_KEY_MISSING_NAME, $body['data']['error_code']);
     }
 
     #[TestDox('Creating an API key without permissions returns an error')]
@@ -169,7 +169,7 @@ class ApiKeyCrudTest extends FeatureTestCase
         $this->assertNotSame(200, $response->getStatusCode());
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_API_KEY_MISSING_PERMISSIONS, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_API_KEY_MISSING_PERMISSIONS, $body['data']['error_code']);
     }
 
     #[TestDox('Creating an API key with an invalid permission string returns an error')]
@@ -188,7 +188,7 @@ class ApiKeyCrudTest extends FeatureTestCase
         $this->assertNotSame(200, $response->getStatusCode());
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_API_KEY_INVALID_PERMISSION, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_API_KEY_INVALID_PERMISSION, $body['data']['error_code']);
     }
 
     #[TestDox('Unauthenticated POST to api-keys is rejected with 401')]
@@ -301,7 +301,7 @@ class ApiKeyCrudTest extends FeatureTestCase
         $this->assertSame(404, $response->getStatusCode());
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_API_KEY_NOT_FOUND, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_API_KEY_NOT_FOUND, $body['data']['error_code']);
     }
 
     // ─── Tests: revoke (soft delete) ──────────────────────────────────────────
@@ -335,7 +335,7 @@ class ApiKeyCrudTest extends FeatureTestCase
         );
         $this->assertSame(401, $postAttempt->getStatusCode());
         $postBody = json_decode($postAttempt->getBody()->getContents(), true);
-        $this->assertSame(ErrorCodes::ERR_API_KEY_UNAUTHORIZED, $postBody['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_API_KEY_UNAUTHORIZED, $postBody['data']['error_code']);
     }
 
     // ─── Tests: hard delete ───────────────────────────────────────────────────
@@ -376,7 +376,7 @@ class ApiKeyCrudTest extends FeatureTestCase
         $this->assertSame(404, $deleteResponse->getStatusCode());
         $body = json_decode($deleteResponse->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_API_KEY_NOT_FOUND, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_API_KEY_NOT_FOUND, $body['data']['error_code']);
     }
 
     // ─── Tests: ownership ─────────────────────────────────────────────────────
@@ -405,7 +405,7 @@ class ApiKeyCrudTest extends FeatureTestCase
         $this->assertSame(403, $revokeResponse->getStatusCode());
         $body = json_decode($revokeResponse->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_API_KEY_UNAUTHORIZED, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_API_KEY_UNAUTHORIZED, $body['data']['error_code']);
     }
 
     #[TestDox('Subscriber cannot update an API key owned by another user')]
@@ -432,7 +432,7 @@ class ApiKeyCrudTest extends FeatureTestCase
         $this->assertSame(403, $updateResponse->getStatusCode());
         $body = json_decode($updateResponse->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
-        $this->assertSame(ErrorCodes::ERR_API_KEY_UNAUTHORIZED, $body['data']['errorCode']);
+        $this->assertSame(ErrorCodes::ERR_API_KEY_UNAUTHORIZED, $body['data']['error_code']);
     }
 
     #[TestDox('Subscriber can manage their own API key')]

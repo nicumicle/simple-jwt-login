@@ -95,8 +95,8 @@ class AuthenticationHandler
                         'simple_jwt_login_middleware_error',
                         $exception->getMessage(),
                         [
-                            'status'    => $status,
-                            'errorCode' => $exception->getCode(),
+                            'status'     => $status,
+                            'error_code' => $exception->getCode(),
                         ]
                     );
                 }
@@ -123,7 +123,7 @@ class AuthenticationHandler
                     return new WP_Error(
                         'simple_jwt_login_api_key_error',
                         __('Invalid or unauthorized API key.', 'simple-jwt-login'),
-                        ['status' => 401, 'errorCode' => ErrorCodes::ERR_API_KEY_UNAUTHORIZED]
+                        ['status' => 401, 'error_code' => ErrorCodes::ERR_API_KEY_UNAUTHORIZED]
                     );
                 }
                 $this->wordPressData->loginUser(

@@ -141,10 +141,10 @@ class RefreshTokenService extends AuthenticateService
             $newTokenExpiresAt
         );
 
-        $userId    = (int) $this->wordPressData->getUserProperty($user, 'ID');
-        $userEmail = (string) $this->wordPressData->getUserProperty($user, 'user_email');
-
         if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_REFRESH_TOKEN_SUCCESS)) {
+            $userId    = (int) $this->wordPressData->getUserProperty($user, 'ID');
+            $userEmail = (string) $this->wordPressData->getUserProperty($user, 'user_email');
+
             $this->wordPressData->doAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_REFRESH_TOKEN_SUCCESS,
                 $userId,

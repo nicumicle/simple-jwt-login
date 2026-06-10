@@ -22,24 +22,32 @@ class CorsHandler
 
     public function register()
     {
-        $corsHelper = new CorsHelper();
         if ($this->corsSettings->isAllowOriginEnabled()) {
-            $corsHelper->addHeader(
+            $this->addHeader(
                 'Access-Control-Allow-Origin',
                 $this->corsSettings->getAllowOrigin()
             );
         }
         if ($this->corsSettings->isAllowMethodsEnabled()) {
-            $corsHelper->addHeader(
+            $this->addHeader(
                 'Access-Control-Allow-Methods',
                 $this->corsSettings->getAllowMethods()
             );
         }
         if ($this->corsSettings->isAllowHeadersEnabled()) {
-            $corsHelper->addHeader(
+            $this->addHeader(
                 'Access-Control-Allow-Headers',
                 $this->corsSettings->getAllowHeaders()
             );
         }
+    }
+
+    /**
+     * @param string $headerName
+     * @param string $value
+     */
+    private function addHeader($headerName, $value)
+    {
+        header($headerName . ': ' . $value);
     }
 }

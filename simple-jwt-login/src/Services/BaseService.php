@@ -421,7 +421,8 @@ abstract class BaseService
     */
     private function hasCorrectAuthCode($authCodeKey)
     {
-        foreach ($this->jwtSettings->getAuthCodesSettings()->getAuthCodes() as $code) {
+        $authCodes = $this->jwtSettings->getAuthCodesSettings()->getAuthCodes();
+        foreach ($authCodes as $code) {
             $authCodeBuilder = new AuthCodeBuilder($code);
             if (!empty($authCodeBuilder->getExpirationDate())
                 && (strtotime($authCodeBuilder->getExpirationDate()) < time())
@@ -503,10 +504,8 @@ abstract class BaseService
 
     private function getDelimiter($url)
     {
-        if (strpos($url, '?') !== false) {
-            return '&';
-        }
-
-        return '?';
+        return strpos($url, '?') !== false
+            ? '&'
+            : '?';
     }
 }

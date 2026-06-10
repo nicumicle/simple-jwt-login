@@ -71,7 +71,7 @@ class GoogleOauth extends AbstractOauth
      */
     protected function validateProviderToken($token)
     {
-        self::validateIdToken($token);
+        self::validateIdToken($token, $this->getClientId());
     }
 
     protected function getInvalidTokenErrorCode()
@@ -116,16 +116,18 @@ class GoogleOauth extends AbstractOauth
 
     /**
      * Validate a Google id_token against Google's tokeninfo endpoint.
+     * Verifies HTTP 200, iss (must be accounts.google.com), and aud (must match $clientId).
      *
      * @param string $idToken
+     * @param string $clientId Configured Google OAuth client ID to assert against the token's aud claim.
      * @return void
      * @throws Exception
      */
-    public static function validateIdToken($idToken)
+    public static function validateIdToken($idToken, $clientId)
     {
         $statusCode  = 400;
         $plainResult = '';
-        ServerCall::get(
+        $tokenInfo   = ServerCall::get(
             sprintf(self::CHECK_TOKEN_URL, $idToken),
             [],
             $statusCode,
@@ -135,6 +137,23 @@ class GoogleOauth extends AbstractOauth
         if ($statusCode !== 200) {
             throw new Exception(
                 esc_html(__('The provided id_token is invalid', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_GOOGLE_INVALID_ID_TOKEN)
+            );
+        }
+
+        $validIssuers = [self::IIS, 'https://' . self::IIS];
+        $tokenIss     = isset($tokenInfo['iss']) ? $tokenInfo['iss'] : '';
+        if (!in_array($tokenIss, $validIssuers, true)) {
+            throw new Exception(
+                esc_html(__('The provided id_token has an invalid issuer', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_GOOGLE_INVALID_ID_TOKEN)
+            );
+        }
+
+        $tokenAud = isset($tokenInfo['aud']) ? $tokenInfo['aud'] : '';
+        if ($tokenAud !== $clientId) {
+            throw new Exception(
+                esc_html(__('The provided id_token was not issued for this application', 'simple-jwt-login')),
                 absint(ErrorCodes::ERR_GOOGLE_INVALID_ID_TOKEN)
             );
         }

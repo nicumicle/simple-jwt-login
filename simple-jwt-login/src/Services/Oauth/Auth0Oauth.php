@@ -150,8 +150,9 @@ class Auth0Oauth extends AbstractOauth
     // -------------------------------------------------------------------------
 
     /**
-     * Validate an Auth0 JWT/access_token by calling the userinfo endpoint.
-     * Mirrors GoogleOauth::validateIdToken so that BaseService can call it via an instance.
+     * Validate an Auth0 JWT/access_token by calling the userinfo endpoint,
+     * then asserting the token's azp/aud claim matches the configured client ID
+     * to prevent cross-application token substitution.
      *
      * @param string $jwt
      * @param \SimpleJWTLogin\Modules\SimpleJWTLoginSettings $settings
@@ -178,6 +179,57 @@ class Auth0Oauth extends AbstractOauth
                 absint(ErrorCodes::ERR_AUTH0_INVALID_TOKEN)
             );
         }
+
+        $clientId = $settings->getIntegrationsSettings()->auth0()->getClientId();
+        if (!empty($clientId) && !self::tokenBelongsToClient($jwt, $clientId)) {
+            throw new Exception(
+                esc_html(__('The provided Auth0 token was not issued for this application', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_AUTH0_INVALID_TOKEN)
+            );
+        }
+    }
+
+    /**
+     * Decode the JWT payload and check that either azp or aud matches $clientId.
+     * azp (Authorized Party) is set for access tokens; aud is set for ID tokens.
+     * Returns true when the token belongs to the client, false otherwise.
+     *
+     * @param string $jwt
+     * @param string $clientId
+     * @return bool
+     */
+    private static function tokenBelongsToClient($jwt, $clientId)
+    {
+        $parts = explode('.', $jwt);
+        if (!isset($parts[1])) {
+            return false;
+        }
+        $segment   = $parts[1];
+        $remainder = strlen($segment) % 4;
+        if ($remainder !== 0) {
+            $segment .= str_repeat('=', 4 - $remainder);
+        }
+        $payload = json_decode(base64_decode(strtr($segment, '-_', '+/')), true);
+        if (!is_array($payload)) {
+            return false;
+        }
+
+        // Access tokens: azp = client that requested the token
+        if (isset($payload['azp']) && $payload['azp'] === $clientId) {
+            return true;
+        }
+
+        // ID tokens: aud = intended audience (client ID), may be a string or array
+        if (isset($payload['aud'])) {
+            if (is_string($payload['aud']) && $payload['aud'] === $clientId) {
+                return true;
+            }
+            if (is_array($payload['aud']) && in_array($clientId, $payload['aud'], true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // -------------------------------------------------------------------------

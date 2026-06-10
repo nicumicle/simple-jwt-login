@@ -70,7 +70,13 @@ class ResetPasswordService extends BaseService implements ServiceInterface
         $this->validateChangePassword();
         $newPassword = (string) $this->request['new_password'];
         if ($this->jwtSettings->getAuthenticationSettings()->isAuthPasswordBase64Encoded()) {
-            $newPassword = base64_decode($newPassword);
+            $newPassword = base64_decode($newPassword, true);
+            if ($newPassword === false) {
+                throw new ValidationException(
+                    esc_html(__('Parameter new_password does not contain a valid base64 text.', 'simple-jwt-login')),
+                    absint(ErrorCodes::ERR_MISSING_NEW_PASSWORD_FOR_RESET_PASSWORD)
+                );
+            }
         }
         $newPassword = $this->wordPressData->wpSlash($newPassword);
         $jwtAllowed = $this->jwtSettings->getResetPasswordSettings()->isJwtAllowed();

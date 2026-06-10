@@ -344,6 +344,19 @@ class ResetPasswordServiceTest extends TestCase
                 ],
                 'exceptionMessage' => 'Invalid email parameter.'
             ],
+            'invalid_base64_new_password' => [
+                'settings'  => [
+                    'allow_reset_password'              => 1,
+                    'reset_password_requires_auth_code' => 0,
+                    'auth_password_base64'              => 1,
+                ],
+                'request'   => [
+                    'email'        => 'email@email.com',
+                    'code'         => '123',
+                    'new_password' => '!!!not-valid-base64===',
+                ],
+                'exceptionMessage' => 'Parameter new_password does not contain a valid base64 text.'
+            ],
         ];
     }
 

@@ -262,7 +262,7 @@ class Auth0Oauth extends AbstractOauth
         }
 
         if ($this->settings->getIntegrationsSettings()->auth0()->allowUnverifiedEmail() === false
-            && $userinfo['email_verified'] === false ){
+            && $userinfo['email_verified'] === false) {
             throw new Exception(
                 esc_html(__('Email address is not verified.', 'simple-jwt-login')),
                 absint(ErrorCodes::ERR_AUTH0_EMAIL_NOT_VERIFIED)

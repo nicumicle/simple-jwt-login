@@ -343,23 +343,22 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
             $this->wordPressData->sanitizeTextField($email)
         );
 
-        if (empty($user)) {
-            if ($this->isCreateUserEnabled()) {
-                $user = $this->createUser($email);
-            } else {
-                if ($this->settings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_OAUTH_FAILED)) {
-                    $this->wordPressData->doAction(
-                        SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,
-                        null,
-                        $email,
-                        __('Wrong user credentials.', 'simple-jwt-login')
-                    );
-                }
-                throw new Exception(
-                    esc_html(__('Wrong user credentials.', 'simple-jwt-login')),
-                    absint($this->getUserNotFoundErrorCode())
+        if (empty($user) && !$this->isCreateUserEnabled()) {
+            if ($this->settings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_OAUTH_FAILED)) {
+                $this->wordPressData->doAction(
+                    SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,
+                    null,
+                    $email,
+                    __('Wrong user credentials.', 'simple-jwt-login')
                 );
             }
+            throw new Exception(
+                esc_html(__('Wrong user credentials.', 'simple-jwt-login')),
+                absint($this->getUserNotFoundErrorCode())
+            );
+        }
+        if (empty($user)) {
+            $user = $this->createUser($email);
         }
 
         $challenge = $this->handleTwoFactorChallengeForOauth($user);

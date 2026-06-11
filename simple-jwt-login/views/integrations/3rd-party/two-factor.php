@@ -14,9 +14,41 @@ if (!defined('ABSPATH')) {
 /**
  * @var SettingsErrors $settingsErrors
  * @var SimpleJWTLoginSettings $jwtSettings
+ * @var bool $sjlPluginInstalled
+ * @var bool $sjlPluginActivated
  */
 $tfaSettings = $jwtSettings->getIntegrationsSettings()->twoFactor();
 ?>
+
+<?php if (!$sjlPluginInstalled) : ?>
+<div class="notice notice-warning inline sjl-plugin-not-installed-notice">
+    <p>
+        <?php echo wp_kses(
+            sprintf(
+                /* translators: 1: opening anchor tag, 2: closing anchor tag */
+                __('The %1$sTwo Factor%2$s plugin is not installed. This integration will not work until the plugin is installed and activated.', 'simple-jwt-login'),
+                '<a href="https://wordpress.org/plugins/two-factor/" target="_blank">',
+                '</a>'
+            ),
+            ['a' => ['href' => [], 'target' => []]]
+        ); ?>
+    </p>
+</div>
+<?php elseif (!$sjlPluginActivated) : ?>
+<div class="notice notice-warning inline sjl-plugin-not-installed-notice">
+    <p>
+        <?php echo wp_kses(
+            sprintf(
+                /* translators: 1: opening anchor tag, 2: closing anchor tag */
+                __('The %1$sTwo Factor%2$s plugin is not activated. This integration will not work until the plugin is active.', 'simple-jwt-login'),
+                '<a href="https://wordpress.org/plugins/two-factor/" target="_blank">',
+                '</a>'
+            ),
+            ['a' => ['href' => [], 'target' => []]]
+        ); ?>
+    </p>
+</div>
+<?php endif; ?>
 
 <div class="sjl-gen-card">
     <div class="sjl-gen-card-header" style="justify-content: space-between;">

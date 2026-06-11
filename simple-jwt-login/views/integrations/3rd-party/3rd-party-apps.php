@@ -15,31 +15,37 @@ if (!defined('ABSPATH')) {
 
 $sjl3rdPartyApps = [
     [
-        'id'         => 'wpgraphql',
-        'name'       => __('WPGraphQL', 'simple-jwt-login'),
-        'desc'       => __('GraphQL authentication', 'simple-jwt-login'),
-        'logo_class' => 'wpgraphql',
-        'enabled'    => $jwtSettings->getIntegrationsSettings()->wpgraphql()->isEnabled(),
-        'view'       => plugin_dir_path(__FILE__) . 'wpgraphql.php',
-        'beta'       => false,
+        'id'                 => 'wpgraphql',
+        'name'               => __('WPGraphQL', 'simple-jwt-login'),
+        'desc'               => __('GraphQL authentication', 'simple-jwt-login'),
+        'logo_class'         => 'wpgraphql',
+        'enabled'            => $jwtSettings->getIntegrationsSettings()->wpgraphql()->isEnabled(),
+        'plugin_installed'   => file_exists(WP_PLUGIN_DIR . '/wp-graphql/wp-graphql.php'),
+        'plugin_activated'   => class_exists('\WPGraphQL'),
+        'view'               => plugin_dir_path(__FILE__) . 'wpgraphql.php',
+        'beta'               => false,
     ],
     [
-        'id'         => 'two_factor',
-        'name'       => __('Two-Factor', 'simple-jwt-login'),
-        'desc'       => __('2FA challenge before JWT issuance', 'simple-jwt-login'),
-        'logo_class' => 'two-factor',
-        'enabled'    => $jwtSettings->getIntegrationsSettings()->twoFactor()->isEnabled(),
-        'view'       => plugin_dir_path(__FILE__) . 'two-factor.php',
-        'beta'       => false,
+        'id'                 => 'two_factor',
+        'name'               => __('Two-Factor', 'simple-jwt-login'),
+        'desc'               => __('2FA challenge before JWT issuance', 'simple-jwt-login'),
+        'logo_class'         => 'two-factor',
+        'enabled'            => $jwtSettings->getIntegrationsSettings()->twoFactor()->isEnabled(),
+        'plugin_installed'   => file_exists(WP_PLUGIN_DIR . '/two-factor/two-factor.php'),
+        'plugin_activated'   => class_exists('\Two_Factor_Core'),
+        'view'               => plugin_dir_path(__FILE__) . 'two-factor.php',
+        'beta'               => false,
     ],
     [
-        'id'         => 'force_login',
-        'name'       => __('Force Login', 'simple-jwt-login'),
-        'desc'       => __('Bypass Force Login for JWT endpoints', 'simple-jwt-login'),
-        'logo_class' => 'force-login',
-        'enabled'    => $jwtSettings->getIntegrationsSettings()->forceLogin()->isEnabled(),
-        'view'       => plugin_dir_path(__FILE__) . 'force-login.php',
-        'beta'       => false,
+        'id'                 => 'force_login',
+        'name'               => __('Force Login', 'simple-jwt-login'),
+        'desc'               => __('Bypass Force Login for JWT endpoints', 'simple-jwt-login'),
+        'logo_class'         => 'force-login',
+        'enabled'            => $jwtSettings->getIntegrationsSettings()->forceLogin()->isEnabled(),
+        'plugin_installed'   => file_exists(WP_PLUGIN_DIR . '/wp-force-login/wp-force-login.php'),
+        'plugin_activated'   => class_exists('\ForceLogin'),
+        'view'               => plugin_dir_path(__FILE__) . 'force-login.php',
+        'beta'               => false,
     ],
 ];
 
@@ -88,7 +94,15 @@ if (!empty($_REQUEST['active_3rdparty_panel'])) {
                     aria-expanded="<?php echo $isActive ? 'true' : 'false'; ?>">
                     <div class="logo <?php echo esc_attr($sjl3rdPartyApp['logo_class']); ?>"></div>
                     <span class="sjl-app-tile-name"><?php echo esc_html($sjl3rdPartyApp['name']); ?></span>
-                    <span class="sjl-app-tile-dot <?php echo $sjl3rdPartyApp['enabled'] ? 'sjl-dot-on' : 'sjl-dot-off'; ?>"></span>
+                    <?php if (!$sjl3rdPartyApp['plugin_installed']) : ?>
+                        <span class="sjl-app-tile-not-installed dashicons dashicons-warning"
+                              title="<?php echo esc_attr__('Plugin not installed', 'simple-jwt-login'); ?>"></span>
+                    <?php elseif (!$sjl3rdPartyApp['plugin_activated']) : ?>
+                        <span class="sjl-app-tile-not-installed dashicons dashicons-warning"
+                              title="<?php echo esc_attr__('Plugin not activated', 'simple-jwt-login'); ?>"></span>
+                    <?php else : ?>
+                        <span class="sjl-app-tile-dot <?php echo $sjl3rdPartyApp['enabled'] ? 'sjl-dot-on' : 'sjl-dot-off'; ?>"></span>
+                    <?php endif; ?>
                 </div>
             <?php endforeach; ?>
         </div>
@@ -103,6 +117,8 @@ if (!empty($_REQUEST['active_3rdparty_panel'])) {
             <?php
             foreach ($sjl3rdPartyApps as $sjl3rdPartyApp) {
                 $isActive = $sjl3rdPartyApp['id'] === $active3rdPartyApp;
+                $sjlPluginInstalled  = $sjl3rdPartyApp['plugin_installed'];
+                $sjlPluginActivated = $sjl3rdPartyApp['plugin_activated'];
                 ?>
                 <div class="sjl-app-panel"
                     id="sjl-app-panel-<?php echo esc_attr($sjl3rdPartyApp['id']); ?>"

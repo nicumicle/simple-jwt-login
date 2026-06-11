@@ -1503,6 +1503,16 @@
 #simple-jwt-login .sjl-dot-on  { background: #22c55e; }
 #simple-jwt-login .sjl-dot-off { background: #cbd5e1; }
 
+#simple-jwt-login .sjl-app-tile-not-installed {
+    color: #d97706;
+    font-size: 14px;
+    line-height: 1;
+}
+
+#simple-jwt-login .sjl-plugin-not-installed-notice {
+    margin: 0 0 16px;
+}
+
 /* Status badges (used in provider settings cards) */
 #simple-jwt-login .sjl-app-card-badge {
     display: inline-block;

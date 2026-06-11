@@ -1,5 +1,6 @@
 <?php
 define('ABSPATH', 'PHPunit');
+define('WP_PLUGIN_DIR', 'PHPunit/plugins');
 error_reporting(E_ALL);
 
 require_once "simple-jwt-login/autoload.php";

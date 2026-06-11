@@ -186,24 +186,10 @@ $allowedEvents   = WebhooksSettings::ALLOWED_EVENTS;
             <?php endforeach; ?>
         </div>
 
-    </div>
-</div>
-
-<div class="sjl-gen-card">
-    <div class="sjl-gen-card-header">
-        <span class="dashicons dashicons-plus-alt2"></span>
-        <div>
-            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Add Webhook', 'simple-jwt-login'); ?></h3>
-            <p class="sjl-gen-card-desc">
-                <?php echo esc_html__('Register a new HTTP endpoint to receive event notifications.', 'simple-jwt-login'); ?>
-            </p>
-        </div>
-    </div>
-    <div class="sjl-gen-card-body">
-        <button type="button" id="sjl-add-webhook" class="btn btn-outline-secondary">
-            <span class="dashicons dashicons-plus-alt2" style="vertical-align: middle;"></span>
-            <?php echo esc_html__('Add Webhook', 'simple-jwt-login'); ?>
+        <button type="button" class="btn btn-outline-secondary" id="sjl-add-webhook" style="margin-top: 10px;">
+            <?php echo esc_html__('+ Add Webhook', 'simple-jwt-login'); ?>
         </button>
+
     </div>
 </div>
 

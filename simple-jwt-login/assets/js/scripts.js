@@ -618,6 +618,17 @@ jQuery(document).ready(
             $textarea.trigger('focus');
         });
 
+        // Reset password: insert variable chip at subject/body cursor
+        $(document).on('click', '#simple_jwt_reset_password_email_container .sjl-var-chip', function () {
+            var varText = $(this).data('var');
+            var el = document.getElementById($(this).data('target'));
+            var start = el.selectionStart;
+            var end = el.selectionEnd;
+            el.value = el.value.substring(0, start) + varText + el.value.substring(end);
+            el.selectionStart = el.selectionEnd = start + varText.length;
+            el.focus();
+        });
+
         // Dashboard cards — clicking navigates to the corresponding settings tab
         $('#simple-jwt-login [data-sjl-tab]').on('click', function () {
             var tabIndex = $(this).data('sjl-tab');

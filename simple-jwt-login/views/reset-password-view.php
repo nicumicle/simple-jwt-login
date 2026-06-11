@@ -197,6 +197,15 @@ if (!defined('ABSPATH')) {
                     <?php echo esc_html__('Email Subject', 'simple-jwt-login'); ?>
                     <span class="required">*</span>
                 </label>
+                <div class="sjl-vars-bar">
+                    <span class="sjl-vars-label"><?php echo esc_html__('Insert:', 'simple-jwt-login'); ?></span>
+                    <?php foreach ($jwtSettings->getResetPasswordSettings()->getEmailContentVariables() as $variable => $text) { ?>
+                        <span class="sjl-var-chip" data-target="jwt_email_subject"
+                              data-var="<?php echo esc_attr($variable); ?>"
+                              title="<?php echo esc_attr($text); ?>"
+                        ><?php echo esc_html($variable); ?></span>
+                    <?php } ?>
+                </div>
                 <input type="text" name="jwt_email_subject" id="jwt_email_subject"
                        class="form-control"
                        placeholder="<?php echo esc_attr__('e.g. Reset your password', 'simple-jwt-login'); ?>"
@@ -209,6 +218,15 @@ if (!defined('ABSPATH')) {
                     <?php echo esc_html__('Email Body', 'simple-jwt-login'); ?>
                     <span class="required">*</span>
                 </label>
+                <div class="sjl-vars-bar">
+                    <span class="sjl-vars-label"><?php echo esc_html__('Insert:', 'simple-jwt-login'); ?></span>
+                    <?php foreach ($jwtSettings->getResetPasswordSettings()->getEmailContentVariables() as $variable => $text) { ?>
+                        <span class="sjl-var-chip" data-target="reset_password_email_body"
+                              data-var="<?php echo esc_attr($variable); ?>"
+                              title="<?php echo esc_attr($text); ?>"
+                        ><?php echo esc_html($variable); ?></span>
+                    <?php } ?>
+                </div>
                 <textarea class="form-control" name="jwt_reset_password_email_body"
                           id="reset_password_email_body"
                           placeholder="<?php echo esc_attr__('Email content…', 'simple-jwt-login'); ?>"

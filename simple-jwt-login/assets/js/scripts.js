@@ -744,6 +744,21 @@ jQuery(document).ready(
                 + '</div>'
                 + '<div class="sjl-try-actions">'
                 + '<button class="btn sjl-btn-plugin sjl-try-send-btn" type="button">Send Request</button>'
+                + '<div class="sjl-try-code-btns">'
+                + '<span class="sjl-try-code-label">Code:</span>'
+                + '<button class="sjl-try-code-btn" data-lang="curl" type="button">cURL</button>'
+                + '<button class="sjl-try-code-btn" data-lang="js" type="button">JS</button>'
+                + '<button class="sjl-try-code-btn" data-lang="php" type="button">PHP</button>'
+                + '</div>'
+                + '</div>'
+                + '<div class="sjl-try-code-block" style="display:none">'
+                + '<div class="sjl-try-code-block-header">'
+                + '<span class="sjl-try-code-block-lang"></span>'
+                + '<button class="sjl-try-code-copy-btn" type="button">'
+                + '<span class="dashicons dashicons-clipboard"></span> Copy'
+                + '</button>'
+                + '</div>'
+                + '<pre class="sjl-try-code-pre"></pre>'
                 + '</div>'
                 + '<div class="sjl-try-response" style="display:none">'
                 + '<p class="sjl-try-section-label">Response</p>'
@@ -761,6 +776,22 @@ jQuery(document).ready(
                 if (!isBody) {
                     var cur = sjlTryCollectParams($panel);
                     $panel.find('.sjl-try-url-code').text(sjlTryBuildUrl(base, cur));
+                }
+
+                var $activeBtn = $panel.find('.sjl-try-code-btn.active');
+                if ($activeBtn.length) {
+                    var activeLang = $activeBtn.data('lang');
+                    var codeCur    = sjlTryCollectParamsForCode($panel);
+                    var codeUrl    = isBody ? base : sjlTryBuildUrl(base, codeCur);
+                    var rerendered = '';
+                    if (activeLang === 'curl') {
+                        rerendered = sjlTryGenCurl(codeUrl, method, codeCur, isBody);
+                    } else if (activeLang === 'js') {
+                        rerendered = sjlTryGenJs(codeUrl, method, codeCur, isBody);
+                    } else if (activeLang === 'php') {
+                        rerendered = sjlTryGenPhp(codeUrl, method, codeCur, isBody);
+                    }
+                    $panel.find('.sjl-try-code-pre').text(rerendered);
                 }
             });
 
@@ -806,6 +837,53 @@ jQuery(document).ready(
                         $body.text('');
                         $btn.prop('disabled', false).text('Send Request');
                     });
+            });
+
+            $panel.on('click', '.sjl-try-code-btn', function () {
+                var $btn       = jQuery(this);
+                var lang       = $btn.data('lang');
+                var $codeBlock = $panel.find('.sjl-try-code-block');
+                var $codePre   = $panel.find('.sjl-try-code-pre');
+                var $codeLang  = $panel.find('.sjl-try-code-block-lang');
+
+                if ($btn.hasClass('active')) {
+                    $btn.removeClass('active');
+                    $codeBlock.hide();
+                    return;
+                }
+
+                $panel.find('.sjl-try-code-btn').removeClass('active');
+                $btn.addClass('active');
+
+                var cur = sjlTryCollectParamsForCode($panel);
+                var url = isBody ? base : sjlTryBuildUrl(base, cur);
+                var code = '';
+                if (lang === 'curl') {
+                    code = sjlTryGenCurl(url, method, cur, isBody);
+                    $codeLang.text('cURL');
+                } else if (lang === 'js') {
+                    code = sjlTryGenJs(url, method, cur, isBody);
+                    $codeLang.text('JavaScript');
+                } else if (lang === 'php') {
+                    code = sjlTryGenPhp(url, method, cur, isBody);
+                    $codeLang.text('PHP');
+                }
+
+                $codePre.text(code);
+                $codeBlock.show();
+            });
+
+            $panel.on('click', '.sjl-try-code-copy-btn', function () {
+                var $btn = jQuery(this);
+                var code = $panel.find('.sjl-try-code-pre').text();
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(code).then(function () {
+                        $btn.html('<span class="dashicons dashicons-yes"></span> Copied!');
+                        setTimeout(function () {
+                            $btn.html('<span class="dashicons dashicons-clipboard"></span> Copy');
+                        }, 2000);
+                    });
+                }
             });
 
             $block.after($panel);
@@ -886,10 +964,72 @@ function sjlTryCollectParams($panel)
     return out;
 }
 
+function sjlTryCollectParamsForCode($panel)
+{
+    var out = {};
+    $panel.find('.sjl-try-param-input').each(function () {
+        var $input = jQuery(this);
+        var k      = $input.data('param');
+        var val    = $input.val();
+        out[k]     = val !== '' ? val : ($input.attr('placeholder') || '');
+    });
+    return out;
+}
+
 function jwt_login_remove_auth_line(a_element)
 {
     jQuery(a_element).closest('.auth_row').remove();
+}
 
+/* ── Try Now code generators ─────────────────────────────────────────────── */
+
+function sjlTryGenCurl(url, method, params, isBody)
+{
+    if (isBody) {
+        return 'curl -X ' + method + ' "' + url + '" \\\n'
+            + '  -H "Content-Type: application/json" \\\n'
+            + '  -d \'' + JSON.stringify(params, null, 2) + '\'';
+    }
+    return 'curl -X ' + method + ' "' + url + '"';
+}
+
+function sjlTryGenJs(url, method, params, isBody)
+{
+    if (isBody) {
+        return 'const response = await fetch(\'' + url + '\', {\n'
+            + '  method: \'' + method + '\',\n'
+            + '  headers: { \'Content-Type\': \'application/json\' },\n'
+            + '  body: JSON.stringify(' + JSON.stringify(params, null, 2) + ')\n'
+            + '});\n'
+            + 'const data = await response.json();\n'
+            + 'console.log(data);';
+    }
+    return 'const response = await fetch(\'' + url + '\', {\n'
+        + '  method: \'' + method + '\'\n'
+        + '});\n'
+        + 'const data = await response.json();\n'
+        + 'console.log(data);';
+}
+
+function sjlTryGenPhp(url, method, params, isBody)
+{
+    if (isBody) {
+        return '<?php\n'
+            + '$ch = curl_init(\'' + url + '\');\n'
+            + 'curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);\n'
+            + 'curl_setopt($ch, CURLOPT_CUSTOMREQUEST, \'' + method + '\');\n'
+            + 'curl_setopt($ch, CURLOPT_HTTPHEADER, [\'Content-Type: application/json\']);\n'
+            + 'curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(' + JSON.stringify(params, null, 2) + '));\n'
+            + '$body = curl_exec($ch);\n'
+            + 'curl_close($ch);\n'
+            + '$data = json_decode($body, true);';
+    }
+    return '<?php\n'
+        + '$ch = curl_init(\'' + url + '\');\n'
+        + 'curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);\n'
+        + '$body = curl_exec($ch);\n'
+        + 'curl_close($ch);\n'
+        + '$data = json_decode($body, true);';
 }
 
 function jwt_login_remove_endpoint_row(a_element)
@@ -1070,3 +1210,126 @@ function sjlRemoveClaimRow(btn)
 {
     jQuery(btn).closest('.sjl-claims-row').remove();
 }
+
+/* ============================================
+   JWT Decoder
+   ============================================ */
+(function ($) {
+    function sjlBase64UrlDecode(str) {
+        var s = str.replace(/-/g, '+').replace(/_/g, '/');
+        while (s.length % 4 !== 0) {
+            s += '=';
+        }
+        try {
+            return decodeURIComponent(
+                atob(s).split('').map(function (c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join('')
+            );
+        } catch (ex) {
+            return null;
+        }
+    }
+
+    function sjlHighlightJson(obj) {
+        var json = JSON.stringify(obj, null, 2);
+        return json.replace(
+            /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g,
+            function (match) {
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        return '<span class="sjl-json-key">' + match + '</span>';
+                    }
+                    return '<span class="sjl-json-string">' + match + '</span>';
+                }
+                if (/true|false/.test(match)) {
+                    return '<span class="sjl-json-bool">' + match + '</span>';
+                }
+                if (/null/.test(match)) {
+                    return '<span class="sjl-json-null">' + match + '</span>';
+                }
+                return '<span class="sjl-json-number">' + match + '</span>';
+            }
+        );
+    }
+
+    function sjlDecodeToken(token) {
+        var $error  = $('#sjl-decoder-error');
+        var $errMsg = $('#sjl-decoder-error-msg');
+
+        $error.hide();
+
+        if (!token) {
+            $('#sjl-decoder-header-json').empty();
+            $('#sjl-decoder-payload-json').empty();
+            return;
+        }
+
+        var parts = token.split('.');
+        if (parts.length !== 3) {
+            $errMsg.text('Invalid JWT: expected three dot-separated parts.');
+            $error.show();
+            return;
+        }
+
+        var headerRaw  = sjlBase64UrlDecode(parts[0]);
+        var payloadRaw = sjlBase64UrlDecode(parts[1]);
+
+        if (headerRaw === null || payloadRaw === null) {
+            $errMsg.text('Invalid JWT: could not base64url-decode token parts.');
+            $error.show();
+            return;
+        }
+
+        var headerObj, payloadObj;
+        try {
+            headerObj = JSON.parse(headerRaw);
+        } catch (ex) {
+            $errMsg.text('Invalid JWT: header is not valid JSON.');
+            $error.show();
+            return;
+        }
+        try {
+            payloadObj = JSON.parse(payloadRaw);
+        } catch (ex) {
+            $errMsg.text('Invalid JWT: payload is not valid JSON.');
+            $error.show();
+            return;
+        }
+
+        $('#sjl-decoder-header-json').html(sjlHighlightJson(headerObj));
+        $('#sjl-decoder-payload-json').html(sjlHighlightJson(payloadObj));
+    }
+
+    function sjlCopyText(targetId) {
+        var text = $('#' + targetId).text();
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text);
+        } else {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+        }
+    }
+
+    $(document).on('input', '#sjl-decoder-input', function () {
+        sjlDecodeToken($(this).val().trim());
+    });
+
+    $(document).on('click', '#sjl-decoder-clear', function () {
+        $('#sjl-decoder-input').val('').trigger('input');
+    });
+
+    $(document).on('click', '.sjl-decoder-copy-btn', function () {
+        sjlCopyText($(this).data('target'));
+        var $btn = $(this);
+        var $icon = $btn.find('.dashicons');
+        $icon.removeClass('dashicons-clipboard').addClass('dashicons-yes');
+        setTimeout(function () {
+            $icon.removeClass('dashicons-yes').addClass('dashicons-clipboard');
+        }, 1500);
+    });
+}(jQuery));

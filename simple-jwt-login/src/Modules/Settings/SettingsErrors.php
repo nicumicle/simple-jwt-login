@@ -27,6 +27,7 @@ class SettingsErrors extends \Exception
     const PREFIX_AUDIT_LOG_LOGS = 19;
     const PREFIX_API_KEYS          = 20;
     const PREFIX_3RD_PARTY_APPS    = 21;
+    const PREFIX_JWT_DECODER       = 22;
 
     #authentication
     const ERR_AUTHENTICATION_EMPTY_PAYLOAD = 1;

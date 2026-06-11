@@ -185,6 +185,12 @@ $settingsPages = [
         'has_error' => false,
         'index' => SettingsErrors::PREFIX_3RD_PARTY_APPS,
     ],
+    [
+        'id'   => 'simple-jwt-login-tab-jwt-decoder',
+        'name' => __('JWT Decoder', 'simple-jwt-login'),
+        'has_error' => false,
+        'index' => SettingsErrors::PREFIX_JWT_DECODER,
+    ],
 ];
 
 $pagesByIndex = [];
@@ -249,6 +255,7 @@ $sidebarGroups = [
         ],
     ],
     ['type' => 'item', 'index' => SettingsErrors::PREFIX_HOOKS, 'name' => __('Hooks', 'simple-jwt-login'), 'icon' => 'dashicons-admin-plugins'],
+    ['type' => 'item', 'index' => SettingsErrors::PREFIX_JWT_DECODER, 'name' => __('JWT Decoder', 'simple-jwt-login'), 'icon' => 'dashicons-editor-code'],
 ];
 
 ?>
@@ -435,6 +442,7 @@ $sidebarGroups = [
                                     SettingsErrors::PREFIX_WEBHOOK_LOGS    => 'webhooks-logs-view.php',
                                     SettingsErrors::PREFIX_API_KEYS        => 'api-keys-view.php',
                                     SettingsErrors::PREFIX_3RD_PARTY_APPS  => 'integrations/3rd-party/3rd-party-apps.php',
+                                    SettingsErrors::PREFIX_JWT_DECODER     => 'jwt-decoder-view.php',
                                 );
                                 $viewLoader = new ViewLoader(plugin_dir_path(__FILE__));
                                 $viewData = array(

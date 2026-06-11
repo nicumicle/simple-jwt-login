@@ -184,7 +184,7 @@ if (!defined('ABSPATH')) {
                         echo esc_html__('Password length:', 'simple-jwt-login');
                         ?>
                     </label>
-                    <input type="text" name="random_password_length" id="random_password_length"
+                    <input type="number" name="random_password_length" id="random_password_length"
                            class="sjl-gen-short-input"
                            value="<?php echo esc_attr($jwtSettings->getRegisterSettings()->getRandomPasswordLength()); ?>"
                            placeholder="12"

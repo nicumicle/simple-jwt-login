@@ -139,7 +139,7 @@ if (! defined('ABSPATH')) {
                     'simple-jwt-login'
                 ); ?>
             </p>
-            <input type="text" name="jwt_auth_refresh_ttl" id="jwt_auth_refresh_ttl"
+            <input type="number" name="jwt_auth_refresh_ttl" id="jwt_auth_refresh_ttl"
                    class="form-control sjl-gen-input-medium"
                    value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAuthJwtRefreshTtl()); ?>"
                    placeholder="<?php echo esc_attr__('Number of minutes', 'simple-jwt-login'); ?>"

@@ -456,7 +456,7 @@ if (! defined('ABSPATH')) {
             <?php echo esc_html__('Expiration time (minutes)', 'simple-jwt-login'); ?>
             <span class="required">*</span>
         </label>
-        <input type="text" name="jwt_auth_ttl" id="jwt_auth_ttl"
+        <input type="number" name="jwt_auth_ttl" id="jwt_auth_ttl"
                class="form-control sjl-gen-input-medium"
                value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAuthJwtTtl()); ?>"
                placeholder="<?php echo esc_attr__('Number of minutes', 'simple-jwt-login'); ?>"

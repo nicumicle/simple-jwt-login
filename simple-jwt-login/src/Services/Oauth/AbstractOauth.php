@@ -295,7 +295,9 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
                         __('User not found.', 'simple-jwt-login')
                     );
                 }
-                $this->doRedirect($this->wordPressData->getLoginURL([]));
+                $this->doRedirect($this->wordPressData->getLoginURL([
+                    'error' => __('User not found.', 'simple-jwt-login'),
+                ]));
 
                 return;
             }
@@ -342,18 +344,22 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
         );
 
         if (empty($user)) {
-            if ($this->settings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_OAUTH_FAILED)) {
-                $this->wordPressData->doAction(
-                    SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,
-                    null,
-                    $email,
-                    __('Wrong user credentials.', 'simple-jwt-login')
+            if ($this->isCreateUserEnabled()) {
+                $user = $this->createUser($email);
+            } else {
+                if ($this->settings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_OAUTH_FAILED)) {
+                    $this->wordPressData->doAction(
+                        SimpleJWTLoginHooks::AUDIT_AUTH_OAUTH_FAILED,
+                        null,
+                        $email,
+                        __('Wrong user credentials.', 'simple-jwt-login')
+                    );
+                }
+                throw new Exception(
+                    esc_html(__('Wrong user credentials.', 'simple-jwt-login')),
+                    absint($this->getUserNotFoundErrorCode())
                 );
             }
-            throw new Exception(
-                esc_html(__('Wrong user credentials.', 'simple-jwt-login')),
-                absint($this->getUserNotFoundErrorCode())
-            );
         }
 
         $challenge = $this->handleTwoFactorChallengeForOauth($user);

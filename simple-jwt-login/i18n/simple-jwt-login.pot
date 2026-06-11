@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-09T04:22:26+00:00\n"
+"POT-Creation-Date: 2026-06-10T07:51:42+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -671,6 +671,7 @@ msgstr ""
 #: src/Services/Integrations/TwoFactor/TwoFactorVerifyService.php:68
 #: src/Services/LoginService.php:77
 #: src/Services/Oauth/AbstractOauth.php:295
+#: src/Services/Oauth/AbstractOauth.php:299
 #: src/Services/RefreshTokenService.php:113
 #: src/Services/RevokeTokenService.php:70
 #: src/Services/ValidateTokenService.php:63
@@ -797,14 +798,14 @@ msgstr ""
 #: src/Services/AuthenticateService.php:180
 #: src/Services/AuthenticateService.php:215
 #: src/Services/AuthenticateService.php:219
-#: src/Services/Oauth/AbstractOauth.php:350
-#: src/Services/Oauth/AbstractOauth.php:354
+#: src/Services/Oauth/AbstractOauth.php:355
+#: src/Services/Oauth/AbstractOauth.php:359
 msgid "Wrong user credentials."
 msgstr ""
 
 #: src/Services/AuthenticateService.php:339
-#: src/Services/Oauth/AbstractOauth.php:444
-#: src/Services/Oauth/AbstractOauth.php:505
+#: src/Services/Oauth/AbstractOauth.php:450
+#: src/Services/Oauth/AbstractOauth.php:511
 msgid "Unable to create two-factor nonce."
 msgstr ""
 
@@ -853,7 +854,7 @@ msgid "Delete is not enabled."
 msgstr ""
 
 #: src/Services/DeleteUserService.php:53
-#: src/Services/ResetPasswordService.php:355
+#: src/Services/ResetPasswordService.php:361
 #: src/Services/RevokeTokenService.php:59
 #: src/Services/ValidateTokenService.php:51
 msgid "The `jwt` parameter is missing."
@@ -948,12 +949,20 @@ msgstr ""
 msgid "The provided Auth0 access_token is invalid."
 msgstr ""
 
-#: src/Services/Oauth/Auth0Oauth.php:177
+#: src/Services/Oauth/Auth0Oauth.php:178
 msgid "The provided Auth0 token is invalid."
 msgstr ""
 
-#: src/Services/Oauth/Auth0Oauth.php:207
+#: src/Services/Oauth/Auth0Oauth.php:186
+msgid "The provided Auth0 token was not issued for this application"
+msgstr ""
+
+#: src/Services/Oauth/Auth0Oauth.php:259
 msgid "Unable to retrieve user email from Auth0."
+msgstr ""
+
+#: src/Services/Oauth/Auth0Oauth.php:267
+msgid "Email address is not verified."
 msgstr ""
 
 #: src/Services/Oauth/FacebookOauth.php:73
@@ -984,8 +993,16 @@ msgstr ""
 msgid "No verified primary email found in the GitHub account."
 msgstr ""
 
-#: src/Services/Oauth/GoogleOauth.php:137
+#: src/Services/Oauth/GoogleOauth.php:139
 msgid "The provided id_token is invalid"
+msgstr ""
+
+#: src/Services/Oauth/GoogleOauth.php:148
+msgid "The provided id_token has an invalid issuer"
+msgstr ""
+
+#: src/Services/Oauth/GoogleOauth.php:156
+msgid "The provided id_token was not issued for this application"
 msgstr ""
 
 #: src/Services/OAuthService.php:77
@@ -1062,55 +1079,59 @@ msgstr ""
 msgid "Route called with invalid request method."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:79
-#: src/Services/ResetPasswordService.php:154
+#: src/Services/ResetPasswordService.php:76
+msgid "Parameter new_password does not contain a valid base64 text."
+msgstr ""
+
+#: src/Services/ResetPasswordService.php:85
+#: src/Services/ResetPasswordService.php:160
 msgid "Missing code parameter."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:113
+#: src/Services/ResetPasswordService.php:119
 msgid "User Password has been changed."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:135
-#: src/Services/ResetPasswordService.php:274
+#: src/Services/ResetPasswordService.php:141
+#: src/Services/ResetPasswordService.php:280
 msgid "Missing email parameter."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:141
+#: src/Services/ResetPasswordService.php:147
 msgid "Missing new_password parameter."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:148
+#: src/Services/ResetPasswordService.php:154
 msgid "Missing code or jwt parameter."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:160
-#: src/Services/ResetPasswordService.php:280
+#: src/Services/ResetPasswordService.php:166
+#: src/Services/ResetPasswordService.php:286
 msgid "Invalid email parameter."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:178
+#: src/Services/ResetPasswordService.php:184
 msgid "Wrong user."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:185
+#: src/Services/ResetPasswordService.php:191
 msgid "The Code has been saved into the database."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:191
-#: src/Services/ResetPasswordService.php:218
+#: src/Services/ResetPasswordService.php:197
+#: src/Services/ResetPasswordService.php:224
 msgid "Reset password email has been sent."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:222
+#: src/Services/ResetPasswordService.php:228
 msgid "Invalid flow type."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:367
+#: src/Services/ResetPasswordService.php:373
 msgid "This JWT can not change your password."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:387
+#: src/Services/ResetPasswordService.php:393
 msgid "Invalid code provided."
 msgstr ""
 
@@ -2595,6 +2616,14 @@ msgstr ""
 
 #: views/integrations/oauth/auth0.php:356
 msgid "Automatically create a new WordPress user if no account is found matching the email returned by Auth0."
+msgstr ""
+
+#: views/integrations/oauth/auth0.php:369
+msgid "Allow unverified email"
+msgstr ""
+
+#: views/integrations/oauth/auth0.php:372
+msgid "When disabled (default), users with an unverified email address returned by Auth0 will be rejected. Enable this only if you accept unverified emails."
 msgstr ""
 
 #: views/integrations/oauth/facebook-form.php:31

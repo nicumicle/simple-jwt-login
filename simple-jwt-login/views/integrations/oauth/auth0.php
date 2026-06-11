@@ -358,5 +358,21 @@ $auth0 = $jwtSettings->getIntegrationsSettings()->auth0();
             </div>
         </div>
 
+        <div class="sjl-gen-feature-toggle">
+            <div class="sjl-gen-feature-toggle-check">
+                <input type="checkbox" name="auth0[allow_unverified_email]" id="auth0_allow_unverified_email" value="1"
+                    <?php echo $auth0->allowUnverifiedEmail() ? 'checked="checked"' : ''; ?>
+                />
+            </div>
+            <div class="sjl-gen-feature-toggle-text">
+                <label for="auth0_allow_unverified_email" class="sjl-gen-feature-label">
+                    <?php echo esc_html__('Allow unverified email', 'simple-jwt-login'); ?>
+                </label>
+                <p class="sjl-gen-feature-desc">
+                    <?php echo esc_html__('When disabled (default), users with an unverified email address returned by Auth0 will be rejected. Enable this only if you accept unverified emails.', 'simple-jwt-login'); ?>
+                </p>
+            </div>
+        </div>
+
     </div>
 </div>

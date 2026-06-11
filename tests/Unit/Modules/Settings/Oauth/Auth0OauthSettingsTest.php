@@ -62,20 +62,38 @@ class Auth0OauthSettingsTest extends TestCase
         $this->assertSame($expected, $this->make()->withSettings($data)->isExchangeTokenEnabled());
     }
 
+    public static function allowUnverifiedEmailProvider(): array
+    {
+        return [
+            'enabled'  => [['allow_unverified_email' => true], true],
+            'disabled' => [['allow_unverified_email' => false], false],
+            'missing'  => [[], false],
+        ];
+    }
+
+    #[DataProvider('allowUnverifiedEmailProvider')]
+    public function testAllowUnverifiedEmail(array $data, bool $expected): void
+    {
+        $this->assertSame($expected, $this->make()->withSettings($data)->allowUnverifiedEmail());
+    }
+
     public function testProcessPostIncludesExtraFields(): void
     {
         $post = [
             'auth0' => [
-                'domain'                => 'myapp.auth0.com',
-                'enable_exchange_token' => '1',
+                'domain'                 => 'myapp.auth0.com',
+                'enable_exchange_token'  => '1',
+                'allow_unverified_email' => '1',
             ],
         ];
         $result = $this->make()->processPost($post, $this->wpData());
 
         $this->assertArrayHasKey('domain', $result);
         $this->assertArrayHasKey('enable_exchange_token', $result);
+        $this->assertArrayHasKey('allow_unverified_email', $result);
         $this->assertSame('myapp.auth0.com', $result['domain']);
         $this->assertSame(true, $result['enable_exchange_token']);
+        $this->assertSame(true, $result['allow_unverified_email']);
     }
 
     public function testProcessPostExtraFieldsDefaultWhenMissing(): void
@@ -84,6 +102,7 @@ class Auth0OauthSettingsTest extends TestCase
 
         $this->assertSame('', $result['domain']);
         $this->assertSame(false, $result['enable_exchange_token']);
+        $this->assertSame(false, $result['allow_unverified_email']);
     }
 
     public function testValidatePassesWhenNotEnabled(): void

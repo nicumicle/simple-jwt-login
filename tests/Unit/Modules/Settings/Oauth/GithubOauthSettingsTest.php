@@ -64,6 +64,37 @@ class GithubOauthSettingsTest extends TestCase
         $this->assertSame(false, $result['enable_exchange_token']);
     }
 
+    public static function allowUnverifiedEmailProvider(): array
+    {
+        return [
+            'enabled'  => [['allow_unverified_email' => true], true],
+            'disabled' => [['allow_unverified_email' => false], false],
+            'missing'  => [[], false],
+        ];
+    }
+
+    #[DataProvider('allowUnverifiedEmailProvider')]
+    public function testAllowUnverifiedEmail(array $data, bool $expected): void
+    {
+        $this->assertSame($expected, $this->make()->withSettings($data)->allowUnverifiedEmail());
+    }
+
+    public function testProcessPostIncludesAllowUnverifiedEmailField(): void
+    {
+        $post   = ['github' => ['allow_unverified_email' => '1']];
+        $result = $this->make()->processPost($post, $this->wpData());
+
+        $this->assertArrayHasKey('allow_unverified_email', $result);
+        $this->assertSame(true, $result['allow_unverified_email']);
+    }
+
+    public function testProcessPostAllowUnverifiedEmailDefaultsFalseWhenMissing(): void
+    {
+        $result = $this->make()->processPost(['github' => []], $this->wpData());
+
+        $this->assertSame(false, $result['allow_unverified_email']);
+    }
+
     public function testValidatePassesWhenNotEnabled(): void
     {
         $this->expectNotToPerformAssertions();

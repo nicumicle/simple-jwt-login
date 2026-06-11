@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\AuditLogSettings;
 use SimpleJWTLogin\Modules\Settings\GeneralSettings;
 use SimpleJWTLogin\Modules\Settings\IntegrationsSettings;
+use SimpleJWTLogin\Modules\Settings\RegisterSettings;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\TwoFactorSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
@@ -43,8 +44,17 @@ class AbstractOauthHandleOauthTest extends TestCase
         $this->settings->method('getGeneralSettings')->willReturn($generalSettings);
         $this->settings->method('getIntegrationsSettings')->willReturn($integrationsSettings);
         $this->settings->method('getAuditLogSettings')->willReturn($auditLogSettings);
+        $this->settings->method('getRegisterSettings')->willReturn($this->makeRegisterSettingsStub());
         $this->settings->method('generateExampleLink')
             ->willReturn('http://localhost/wp-json/simple-jwt-login/v1/oauth/token?provider=testprovider');
+    }
+
+    private function makeRegisterSettingsStub()
+    {
+        $registerSettings = $this->createStub(RegisterSettings::class);
+        $registerSettings->method('getRandomPasswordLength')->willReturn(10);
+        $registerSettings->method('getNewUserProfile')->willReturn('subscriber');
+        return $registerSettings;
     }
 
     private function makeOauth($request = [], $method = 'GET')
@@ -130,6 +140,35 @@ class AbstractOauthHandleOauthTest extends TestCase
         );
     }
 
+    public function testHandleOauthRedirectsToLoginWithErrorWhenUserNotFound()
+    {
+        $capturedUrl = null;
+
+        $this->wpData->method('getUserDetailsByEmail')->willReturn(null);
+        $this->wpData->method('getLoginURL')
+            ->willReturnCallback(function ($params) {
+                return 'http://localhost/wp-login.php?' . http_build_query($params);
+            });
+        $this->wpData->expects($this->once())
+            ->method('redirect')
+            ->willReturnCallback(function ($url) use (&$capturedUrl) {
+                $capturedUrl = $url;
+            });
+        $this->wpData->method('doAction')->willReturn(null);
+
+        $oauth = $this->makeOauth(['code' => 'valid-code']);
+        $oauth->exchangeStub = [
+            'status_code' => 200,
+            'response'    => ['access_token' => 'some-token'],
+        ];
+
+        $oauth->handleOauth('valid-code');
+
+        $this->assertNotNull($capturedUrl, 'redirect() should have been called');
+        $this->assertStringContainsString('error=', $capturedUrl, 'Login URL must include an error parameter');
+        $this->assertStringContainsString('User+not+found', $capturedUrl);
+    }
+
     public function testHandleOauthProceedsToEmailFetchOnSuccess()
     {
         $user = new stdClass();
@@ -176,6 +215,7 @@ class AbstractOauthHandleOauthTest extends TestCase
         $settings->method('getGeneralSettings')->willReturn($generalSettings);
         $settings->method('getIntegrationsSettings')->willReturn($integrationsSettings);
         $settings->method('getAuditLogSettings')->willReturn($auditLogSettings);
+        $settings->method('getRegisterSettings')->willReturn($this->makeRegisterSettingsStub());
         $settings->method('generateExampleLink')
             ->willReturn('http://localhost/wp-json/simple-jwt-login/v1/oauth/token?provider=testprovider');
 
@@ -257,6 +297,85 @@ class AbstractOauthHandleOauthTest extends TestCase
             $this->makeSettingsWith2FAEnabled(),
             $this->wpData
         );
+        $oauth->withTwoFactorBridge($bridge);
+        $oauth->exchangeStub = [
+            'status_code' => 200,
+            'response'    => ['access_token' => 'ghp_valid_token'],
+        ];
+
+        $oauth->handleOauth('valid-code');
+    }
+
+    public function testCreateWpJwtForEmailCreatesUserWhenNotFoundAndCreateEnabled()
+    {
+        $createdUser = new stdClass();
+        $createdUser->ID = 99;
+        $createdUser->user_email = 'new@example.com';
+
+        $this->wpData->method('getUserDetailsByEmail')->willReturn(null);
+        $this->wpData->method('sanitizeTextField')->willReturnArgument(0);
+        $this->wpData->method('generatePassword')->willReturn('generatedPass123!');
+        $this->wpData->method('getUserProperty')
+            ->willReturnCallback(function ($u, $prop) {
+                return $u->$prop;
+            });
+        $this->wpData->method('doAction')->willReturn(null);
+
+        $this->wpData->expects($this->once())
+            ->method('createUser')
+            ->willReturn($createdUser);
+
+        $bridge = $this->createStub(TwoFactorBridge::class);
+        $bridge->method('isAvailable')->willReturn(true);
+        $bridge->method('isUserUsing2FA')->willReturn(true);
+        $bridge->method('createNonce')->willReturn(['key' => 'nonce-new', 'expiration' => time() + 300]);
+        $bridge->method('getPrimaryProvider')->willReturn(null);
+
+        $oauth = new ConcreteOauth(
+            ['access_token' => 'some-token'],
+            'POST',
+            $this->makeSettingsWith2FAEnabled(),
+            $this->wpData
+        );
+        $oauth->createUserEnabled = true;
+        $oauth->withTwoFactorBridge($bridge);
+
+        $result = $oauth->call();
+
+        $this->assertTrue($result['success']);
+        $this->assertTrue($result['data']['two_factor_required']);
+        $this->assertArrayHasKey('jwt', $result['data']);
+    }
+
+    public function testHandleOauthCreatesUserWhenNotFoundAndCreateEnabled()
+    {
+        $createdUser = new stdClass();
+        $createdUser->ID = 77;
+        $createdUser->user_email = 'new@example.com';
+
+        $this->wpData->method('getUserDetailsByEmail')->willReturn(null);
+        $this->wpData->method('generatePassword')->willReturn('generatedPass123!');
+        $this->wpData->method('getUserProperty')
+            ->willReturnCallback(function ($u, $prop) {
+                return $u->$prop;
+            });
+        $this->wpData->method('doAction')->willReturn(null);
+        $this->wpData->method('getAdminUrl')->willReturn('http://localhost/wp-admin/');
+        $this->wpData->method('createUser')->willReturn($createdUser);
+
+        $this->wpData->expects($this->once())->method('loginUser');
+        $this->wpData->expects($this->once())->method('redirect')->with('http://localhost/wp-admin/');
+
+        $bridge = $this->createStub(TwoFactorBridge::class);
+        $bridge->method('isAvailable')->willReturn(false);
+
+        $oauth = new ConcreteOauth(
+            ['code' => 'valid-code'],
+            'GET',
+            $this->settings,
+            $this->wpData
+        );
+        $oauth->createUserEnabled = true;
         $oauth->withTwoFactorBridge($bridge);
         $oauth->exchangeStub = [
             'status_code' => 200,

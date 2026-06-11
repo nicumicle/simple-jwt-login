@@ -216,14 +216,25 @@ class GithubOauth extends AbstractOauth
             );
         }
 
+        $allowUnverified = $this->settings->getIntegrationsSettings()->github()->allowUnverifiedEmail();
         foreach ($emails as $entry) {
-            if (!empty($entry['primary']) && !empty($entry['verified']) && !empty($entry['email'])) {
+            if (empty($entry['primary']) || empty($entry['email'])) {
+                continue;
+            }
+            if (!empty($entry['verified']) || $allowUnverified) {
                 return $entry['email'];
             }
         }
 
+        if (!$allowUnverified) {
+            throw new Exception(
+                esc_html(__('No verified primary email found in the GitHub account.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_GITHUB_EMAIL_NOT_VERIFIED)
+            );
+        }
+
         throw new Exception(
-            esc_html(__('No verified primary email found in the GitHub account.', 'simple-jwt-login')),
+            esc_html(__('No primary email found in the GitHub account.', 'simple-jwt-login')),
             absint(ErrorCodes::ERR_GITHUB_INVALID_TOKEN)
         );
     }

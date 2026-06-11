@@ -63,9 +63,12 @@ class ConcreteOauth extends AbstractOauth
         return 'testprovider';
     }
 
+    /** @var boolean */
+    public $createUserEnabled = false;
+
     protected function isCreateUserEnabled()
     {
-        return false;
+        return $this->createUserEnabled;
     }
 
     protected function getEmailFromTokenResponse($tokenResponse)

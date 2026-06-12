@@ -167,13 +167,22 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                                 <label class="sjl-rule-field-label">
                                     <?php echo esc_html__('Secret Key', 'simple-jwt-login'); ?>
                                 </label>
-                                <input
-                                    type="password"
-                                    class="form-control sjl-rule-key"
-                                    value="<?php echo esc_attr($ruleKey); ?>"
-                                    placeholder="<?php echo esc_attr(__('Enter the shared secret used to sign this token', 'simple-jwt-login')); ?>"
-                                    autocomplete="off"
-                                />
+                                <div class="input-group sjl-rule-key-group">
+                                    <input
+                                        type="password"
+                                        class="form-control sjl-rule-key"
+                                        value="<?php echo esc_attr($ruleKey); ?>"
+                                        placeholder="<?php echo esc_attr(__('Enter the shared secret used to sign this token', 'simple-jwt-login')); ?>"
+                                        autocomplete="off"
+                                    />
+                                    <div class="input-group-addon">
+                                        <a href="javascript:void(0)"
+                                           class="toggle_key_button sjl-rule-toggle-key"
+                                           title="<?php echo esc_attr(__('Toggle key visibility', 'simple-jwt-login')); ?>">
+                                            <i class="toggle-image" aria-hidden="true"></i>
+                                        </a>
+                                    </div>
+                                </div>
                                 <div class="sjl-gen-checkbox-row">
                                     <input type="checkbox" class="sjl-rule-key-b64"
                                            <?php echo $ruleKeyB64 ? 'checked' : ''; ?> />
@@ -533,13 +542,22 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                     <label class="sjl-rule-field-label">
                         <?php echo esc_html__('Secret Key', 'simple-jwt-login'); ?>
                     </label>
-                    <input
-                        type="password"
-                        class="form-control sjl-rule-key"
-                        value=""
-                        placeholder="<?php echo esc_attr(__('Enter the shared secret used to sign this token', 'simple-jwt-login')); ?>"
-                        autocomplete="off"
-                    />
+                    <div class="input-group sjl-rule-key-group">
+                        <input
+                            type="password"
+                            class="form-control sjl-rule-key"
+                            value=""
+                            placeholder="<?php echo esc_attr(__('Enter the shared secret used to sign this token', 'simple-jwt-login')); ?>"
+                            autocomplete="off"
+                        />
+                        <div class="input-group-addon">
+                            <a href="javascript:void(0)"
+                               class="toggle_key_button sjl-rule-toggle-key"
+                               title="<?php echo esc_attr(__('Toggle key visibility', 'simple-jwt-login')); ?>">
+                                <i class="toggle-image" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
                     <div class="sjl-gen-checkbox-row">
                         <input type="checkbox" class="sjl-rule-key-b64" />
                         <label><?php echo esc_html__('Key is Base64 encoded', 'simple-jwt-login'); ?></label>

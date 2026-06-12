@@ -445,6 +445,20 @@ jQuery(document).ready(
             sjl_rule_bind_condition($clone);
         });
 
+        // Toggle Secret Key visibility in rule rows
+        $(document).on('click', '#sjl-jwt-rules .sjl-rule-toggle-key', function () {
+            var $group = $(this).closest('.sjl-rule-key-group');
+            var $input = $group.find('.sjl-rule-key');
+            var $icon  = $group.find('.toggle-image');
+            if ($input.attr('type') === 'password') {
+                $input.attr('type', 'text');
+                $icon.addClass('toggle_visible');
+            } else {
+                $input.attr('type', 'password');
+                $icon.removeClass('toggle_visible');
+            }
+        });
+
         // Remove a rule row
         $(document).on('click', '#sjl-jwt-rules .sjl-rule-remove', function () {
             $(this).closest('.sjl-rule-row').remove();

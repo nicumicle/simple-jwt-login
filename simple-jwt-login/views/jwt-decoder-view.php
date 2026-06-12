@@ -6,20 +6,24 @@ if (! defined('ABSPATH')) {
 } // Exit if accessed directly
 ?>
 
-<div class="sjl-jwt-decoder">
+<div class="sjl-jwt-decoder sjl-gen-card">
 
-    <div class="sjl-section-header">
-        <h2 class="sjl-section-title">
-            <?php echo esc_html__('JWT Decoder', 'simple-jwt-login'); ?>
-        </h2>
-        <p class="sjl-section-desc">
-            <?php echo esc_html__(
-                'Paste a JSON Web Token to inspect its header and payload. Decoding happens entirely in your browser - the token is never sent to the server.',
-                'simple-jwt-login'
-            ); ?>
-        </p>
+    <div class="sjl-gen-card-header">
+        <span class="dashicons dashicons-editor-code"></span>
+        <div>
+            <h3 class="sjl-gen-card-title">
+                <?php echo esc_html__('JWT Decoder', 'simple-jwt-login'); ?>
+            </h3>
+            <p class="sjl-gen-card-desc">
+                <?php echo esc_html__(
+                    'Paste a JSON Web Token to inspect its header and payload. Decoding happens entirely in your browser - the token is never sent to the server.',
+                    'simple-jwt-login'
+                ); ?>
+            </p>
+        </div>
     </div>
 
+    <div class="sjl-gen-card-body">
     <div class="row sjl-decoder-layout">
 
         <div class="col-md-5 sjl-decoder-left">
@@ -74,6 +78,7 @@ if (! defined('ABSPATH')) {
 
         </div>
 
+    </div>
     </div>
 
 </div>

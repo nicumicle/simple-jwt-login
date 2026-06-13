@@ -140,6 +140,14 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
         }
 
+        $authSettings = $this->jwtSettings->getAuthenticationSettings();
+        if (!empty($this->request['password_hash']) && !$authSettings->isAuthPasswordHashAllowed()) {
+            throw new ValidationException(
+                esc_html(__('Authentication with password_hash is not enabled.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_AUTHENTICATION_PASSWORD_HASH_NOT_ALLOWED)
+            );
+        }
+
         $user = null;
         switch (true) {
             case isset($this->request['username']):
@@ -184,8 +192,6 @@ class AuthenticateService extends BaseService implements ServiceInterface
 
         $userId    = (int) $this->wordPressData->getUserProperty($user, 'ID');
         $userEmail = (string) $this->wordPressData->getUserProperty($user, 'user_email');
-
-        $authSettings = $this->jwtSettings->getAuthenticationSettings();
 
         $password = isset($this->request['password'])
             ? $this->wordPressData->wpSlash($this->request['password'])
@@ -401,7 +407,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
      */
     protected function generateRefreshToken()
     {
-        return bin2hex(random_bytes(32));
+        return bin2hex(openssl_random_pseudo_bytes(32));
     }
 
     /**

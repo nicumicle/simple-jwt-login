@@ -47,8 +47,11 @@ class GeneralSettingsTest extends TestCase
                 'session' => 'jwt2',
                 'cookie' => 'jwt3',
                 'header' => 'jwt4'
-            ]
-
+            ],
+            'security' => [
+                'safe_redirect' => '1',
+                'trust_ip_headers' => '1',
+            ],
         ];
         $generalSettings = (new GeneralSettings())
             ->withSettings([])
@@ -74,6 +77,20 @@ class GeneralSettingsTest extends TestCase
         $this->assertSame('jwt3', $generalSettings->getRequestKeyCookie());
         $this->assertSame('jwt4', $generalSettings->getRequestKeyHeader());
         $this->assertTrue($generalSettings->isMiddlewareEnabled());
+        $this->assertTrue($generalSettings->isSafeRedirectEnabled());
+        $this->assertTrue($generalSettings->isTrustIpHeadersEnabled());
+    }
+
+    public function testSecurityTogglesDefaultToFalse()
+    {
+        $generalSettings = (new GeneralSettings())
+            ->withSettings([])
+            ->withWordPressData($this->wordPressData)
+            ->withPost([]);
+        $generalSettings->initSettingsFromPost();
+
+        $this->assertFalse($generalSettings->isSafeRedirectEnabled());
+        $this->assertFalse($generalSettings->isTrustIpHeadersEnabled());
     }
 
     public function testValidationFailsEmptyNamespace()

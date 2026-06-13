@@ -31,7 +31,11 @@ add_action('init_graphql_request', function () {
         //phpcs:ignore WordPress.Security.NonceVerification.Recommended
         ->withRequest(array_merge($_REQUEST, $parsedRequestVariables))
         ->withCookies($_COOKIE)
-        ->withServerHelper(new ServerHelper($_SERVER));
+        ->withServerHelper(
+            $jwtSettings->getGeneralSettings()->isTrustIpHeadersEnabled()
+                ? ServerHelper::withTrustedProxyHeaders($_SERVER)
+                : new ServerHelper($_SERVER)
+        );
 
     if ($jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
         $routeService->withSession(SessionService::init());

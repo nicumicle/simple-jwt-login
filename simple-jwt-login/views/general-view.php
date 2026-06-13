@@ -277,5 +277,25 @@ if (!defined('ABSPATH')) {
             </div>
         </div>
 
+        <div class="sjl-gen-feature-toggle">
+            <div class="sjl-gen-feature-toggle-check">
+                <input type="checkbox" name="security[trust_ip_headers]" id="security_trust_ip_headers"
+                       value="1"
+                    <?php echo $jwtSettings->getGeneralSettings()->isTrustIpHeadersEnabled() ? 'checked="checked"' : ''; ?>
+                />
+            </div>
+            <div class="sjl-gen-feature-toggle-text">
+                <label for="security_trust_ip_headers" class="sjl-gen-feature-label">
+                    <?php echo esc_html__('Trust reverse proxy IP headers', 'simple-jwt-login'); ?>
+                </label>
+                <p class="sjl-gen-feature-desc">
+                    <?php echo esc_html__(
+                        'Detect the client IP from the Client-IP / X-Forwarded-For headers. Enable this only when the site runs behind a trusted reverse proxy or load balancer. When disabled, IP restrictions use the connection address (REMOTE_ADDR), which cannot be spoofed.',
+                        'simple-jwt-login'
+                    ); ?>
+                </p>
+            </div>
+        </div>
+
     </div>
 </div>

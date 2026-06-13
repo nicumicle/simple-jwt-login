@@ -144,7 +144,9 @@ class RouteRegistrar
         }
 
         $request = array_merge(wp_unslash($this->requestVars), $parsedVars);
-        $serverHelper = new ServerHelper($this->server);
+        $serverHelper = $this->jwtSettings->getGeneralSettings()->isTrustIpHeadersEnabled()
+            ? ServerHelper::withTrustedProxyHeaders($this->server)
+            : new ServerHelper($this->server);
 
         $webhookLogRepo = $this->jwtSettings->getWebhooksSettings()->isWebhookLogsEnabled()
             ? $this->webhookLogRepo

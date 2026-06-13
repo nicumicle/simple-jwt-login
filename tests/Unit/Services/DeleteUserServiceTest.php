@@ -55,7 +55,7 @@ class DeleteUserServiceTest extends TestCase
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
-                'HTTP_CLIENT_IP' => '127.0.0.1',
+                'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
         $deleteUserService->makeAction();

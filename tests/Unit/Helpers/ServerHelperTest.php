@@ -11,11 +11,14 @@ class ServerHelperTest extends TestCase
     #[DataProvider('ipProvider')]
     /**
      * @param array $server
+     * @param bool $useProxyHeaders
      * @param mixed $expectedResult
      */
-    public function testGetClientIP($server, $expectedResult)
+    public function testGetClientIP($server, $useProxyHeaders, $expectedResult)
     {
-        $serverHelper = new ServerHelper($server);
+        $serverHelper = $useProxyHeaders
+            ? ServerHelper::withTrustedProxyHeaders($server)
+            : new ServerHelper($server);
         $this->assertSame($expectedResult, $serverHelper->getClientIP());
     }
 
@@ -25,36 +28,75 @@ class ServerHelperTest extends TestCase
     public static function ipProvider()
     {
         return [
-            [
+            'empty server' => [
                 'server' => [],
+                'useProxyHeaders' => false,
                 'expectedResult' => null,
             ],
-            [
+            'client-ip header is ignored by default' => [
                 'server' => [
-                    'HTTP_CLIENT_IP' => '127.0.0.1'
+                    'HTTP_CLIENT_IP' => '10.0.0.1',
+                    'REMOTE_ADDR' => '127.0.0.1',
                 ],
-                'expectedResult' => '127.0.0.1'
+                'useProxyHeaders' => false,
+                'expectedResult' => '127.0.0.1',
             ],
-            [
+            'x-forwarded-for header is ignored by default' => [
                 'server' => [
-                    'HTTP_X_FORWARDED_FOR' => '127.0.0.1'
+                    'HTTP_X_FORWARDED_FOR' => '10.0.0.1',
+                    'REMOTE_ADDR' => '127.0.0.1',
                 ],
-                'expectedResult' => '127.0.0.1'
+                'useProxyHeaders' => false,
+                'expectedResult' => '127.0.0.1',
             ],
-            [
+            'spoofed headers without remote addr return null' => [
                 'server' => [
-                    'REMOTE_ADDR' => '127.0.0.1'
+                    'HTTP_CLIENT_IP' => '10.0.0.1',
+                    'HTTP_X_FORWARDED_FOR' => '10.0.0.2',
                 ],
-                'expectedResult' => '127.0.0.1'
+                'useProxyHeaders' => false,
+                'expectedResult' => null,
             ],
-            [
+            'remote addr' => [
+                'server' => [
+                    'REMOTE_ADDR' => '127.0.0.1',
+                ],
+                'useProxyHeaders' => false,
+                'expectedResult' => '127.0.0.1',
+            ],
+            'client-ip header used when proxy headers are trusted' => [
+                'server' => [
+                    'HTTP_CLIENT_IP' => '10.0.0.1',
+                    'REMOTE_ADDR' => '127.0.0.1',
+                ],
+                'useProxyHeaders' => true,
+                'expectedResult' => '10.0.0.1',
+            ],
+            'x-forwarded-for used when proxy headers are trusted' => [
+                'server' => [
+                    'HTTP_X_FORWARDED_FOR' => '10.0.0.1',
+                    'REMOTE_ADDR' => '127.0.0.1',
+                ],
+                'useProxyHeaders' => true,
+                'expectedResult' => '10.0.0.1',
+            ],
+            'x-forwarded-for takes the right-most hop' => [
+                'server' => [
+                    'HTTP_X_FORWARDED_FOR' => '10.0.0.1, 10.0.0.2, 10.0.0.3',
+                    'REMOTE_ADDR' => '127.0.0.1',
+                ],
+                'useProxyHeaders' => true,
+                'expectedResult' => '10.0.0.3',
+            ],
+            'empty proxy headers fall back to remote addr' => [
                 'server' => [
                     'HTTP_CLIENT_IP' => '',
                     'HTTP_X_FORWARDED_FOR' => '',
-                    'REMOTE_ADDR' => '127.0.0.1'
+                    'REMOTE_ADDR' => '127.0.0.1',
                 ],
-                'expectedResult' => '127.0.0.1'
-            ]
+                'useProxyHeaders' => true,
+                'expectedResult' => '127.0.0.1',
+            ],
         ];
     }
 

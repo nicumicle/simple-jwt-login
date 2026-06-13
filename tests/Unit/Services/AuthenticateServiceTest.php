@@ -100,6 +100,16 @@ class AuthenticateServiceTest extends TestCase
                 ],
                 'exceptionMessage' => 'The password or password_hash parameter is missing from request.'
             ],
+            'password_hash_not_enabled' => [
+                'settings' => [
+                    'allow_authentication' => '1',
+                ],
+                'request' => [
+                    'username' => 'testuser',
+                    'password_hash' => 'some-stored-hash',
+                ],
+                'exceptionMessage' => 'Authentication with password_hash is not enabled.'
+            ],
             'missing_auth_code' => [
                 'settings' => [
                     'allow_authentication' => 1,
@@ -146,7 +156,7 @@ class AuthenticateServiceTest extends TestCase
                 'password' => '123'
             ])
             ->withCookies([])
-            ->withServerHelper(new ServerHelper(['HTTP_CLIENT_IP' => '127.0.0.2']))
+            ->withServerHelper(new ServerHelper(['REMOTE_ADDR' => '127.0.0.2']))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
             ->withRefreshTokenRepository($this->refreshTokenRepoMock);
         $authService->makeAction();
@@ -236,6 +246,7 @@ class AuthenticateServiceTest extends TestCase
             ->method('getOptionFromDatabase')
             ->willReturn(json_encode([
                 'allow_authentication' => 1,
+                'auth_password_hash_enabled' => 1,
             ]));
         $this->wordPressDataMock
             ->method('getUserByUserLogin')
@@ -321,6 +332,7 @@ class AuthenticateServiceTest extends TestCase
             ->willReturn(json_encode([
                 'allow_authentication' => 1,
                 'auth_requires_auth_code' => true,
+                'auth_password_hash_enabled' => 1,
                 'jwt_payload' => [
                     AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT,
                     AuthenticationSettings::JWT_PAYLOAD_PARAM_EMAIL,
@@ -478,7 +490,10 @@ class AuthenticateServiceTest extends TestCase
         $wordPressDataMock = $this->createMock(WordPressDataInterface::class);
         $wordPressDataMock->method('wpSlash')->willReturnCallback('addslashes');
         $wordPressDataMock->method('getOptionFromDatabase')
-            ->willReturn(json_encode(['allow_authentication' => 1]));
+            ->willReturn(json_encode([
+                'allow_authentication' => 1,
+                'auth_password_hash_enabled' => 1,
+            ]));
         $wordPressDataMock->method('getUserByUserLogin')->willReturn('user');
         $wordPressDataMock->method('getUserPassword')->willReturn('stored_hash');
         $wordPressDataMock->method('createResponse')->willReturn(true);

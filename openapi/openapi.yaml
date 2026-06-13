@@ -195,7 +195,7 @@ paths:
         **Requirements**
         - Auto-login must be enabled in the plugin settings.
         - The JWT must be valid, not expired, and not revoked.
-        - If "Auto-Login Requires Auth Code" is enabled, `AUTH_CODE` must be provided.
+        - If "Auto-Login Requires Auth Code" is enabled, `AUTH_KEY` must be provided.
         - The calling IP must pass any IP allow-list configured in the plugin settings.
 
         **JWT delivery**
@@ -222,10 +222,13 @@ paths:
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
           schema:
             type: string
-        - name: AUTH_CODE
+        - name: AUTH_KEY
           in: query
           example: "MY_SUPER_SECRET_AUTH_CODE"
-          description: Required when "Auto-Login Requires Auth Code" is enabled in the plugin settings.
+          description: |
+            Required when "Auto-Login Requires Auth Code" is enabled in the plugin settings.
+            The parameter name defaults to `AUTH_KEY` but is configurable in the plugin's
+            Auth Codes settings.
           schema:
             type: string
         - name: redirectUrl
@@ -239,15 +242,24 @@ paths:
       responses:
         '200':
           description: |
-            Login successful. The browser is redirected to the WordPress website. The response
-            body is empty HTML; the redirect is handled via HTTP headers.
+            Login successful. Two possible responses depending on the plugin's
+            "Redirect after auto-login" setting:
+
+            - **Redirect (default)**: The browser is redirected (302) to the WordPress
+              home URL, dashboard, or a custom URL. The response body is empty HTML.
+            - **No redirect**: When "No redirect" is configured, returns a JSON body:
+              `{"success": true, "message": "User was logged in."}`.
           content:
             application/html:
               example: ""
+            application/json:
+              example:
+                success: true
+                message: "User was logged in."
         '400':
           description: |
-            Bad request. Returned for unclassified errors not covered by more specific
-            status codes (e.g. malformed JWT encoding, JSON encode/decode failures).
+            Bad request. The JWT has a structural encoding error (wrong number of
+            segments, invalid base64 encoding of header, claims, or signature).
           content:
             application/json:
               schema:
@@ -255,13 +267,18 @@ paths:
               example:
                 success: false
                 data:
-                  message: "Invalid JWT."
-                  error_code: 25
+                  message: "Wrong number of segments."
+                  error_code: 2
         '401':
           description: |
-            Unauthorized. The JWT is structurally invalid, has an unsupported algorithm, has
-            a bad signature, is expired, has not-before/issued-at violations, is revoked, or
-            the provided auth code is wrong.
+            Unauthorized. One of:
+            - The JWT algorithm is unsupported or not allowed (`error_code` 6-10).
+            - The JWT signature verification failed (`error_code` 11).
+            - The JWT has `nbf`/`iat` violations or is expired (`error_code` 12-14).
+            - The JWT has been revoked (`error_code` 55).
+            - The JWT is structurally invalid for auto-login (`error_code` 25).
+            - The `iss` claim is not on the allowed-issuer list (`error_code` 68).
+            - The provided auth code is wrong (`error_code` 27).
           content:
             application/json:
               schema:
@@ -273,8 +290,9 @@ paths:
                   error_code: 14
         '403':
           description: |
-            Forbidden. Auto-login is disabled in the plugin settings, or the client IP
-            address is not on the allow-list.
+            Forbidden. One of:
+            - Auto-login is disabled in the plugin settings (`error_code` 26).
+            - The client IP address is not on the allow-list (`error_code` 28).
           content:
             application/json:
               schema:
@@ -295,6 +313,23 @@ paths:
                 data:
                   message: "User not found."
                   error_code: 24
+        '422':
+          description: |
+            Unprocessable entity. One of:
+            - The JWT is completely absent from the request (`error_code` 23).
+            - The auth code is required by the plugin settings but was not provided
+              (`error_code` 94).
+            - The JWT is a short-lived interim token issued during a 2FA challenge
+              and cannot be used for auto-login (`error_code` 110).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "JWT is missing."
+                  error_code: 23
         '500':
           description: |
             Internal server error. Typically caused by an OpenSSL signing/verification
@@ -320,7 +355,7 @@ paths:
 
         **Requirements**
         - User registration must be enabled in the plugin settings.
-        - If "Register Requires Auth Code" is enabled, `AUTH_CODE` must be provided.
+        - If "Register Requires Auth Code" is enabled, `AUTH_KEY` must be provided.
         - The calling IP must pass any IP allow-list configured in the plugin settings.
         - The email address must be unique and well-formed.
         - If email domain restrictions are configured, the domain must match.
@@ -447,8 +482,12 @@ paths:
                   error_code: 38
         '422':
           description: |
-            Unprocessable entity. The email address format is invalid, or the email domain
-            is not permitted by the plugin's domain allow-list.
+            Unprocessable entity. One of:
+            - The email address format is invalid (`error_code` 36).
+            - The `user_login` exceeds 60 characters, or the email address (used as
+              login when `user_login` is omitted) exceeds 60 characters (`error_code` 36).
+            - The email domain is not permitted by the plugin's domain allow-list
+              (`error_code` 37).
           content:
             application/json:
               schema:
@@ -483,7 +522,7 @@ paths:
         **Requirements**
         - User deletion must be enabled in the plugin settings.
         - The JWT must be valid, not expired, and not revoked.
-        - If "Delete Requires Auth Code" is enabled, `AUTH_CODE` must be provided.
+        - If "Delete Requires Auth Code" is enabled, `AUTH_KEY` must be provided.
         - The calling IP must pass any IP allow-list configured in the plugin settings.
       operationId: deleteUser
       parameters:
@@ -494,10 +533,13 @@ paths:
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
           schema:
             type: string
-        - name: AUTH_CODE
+        - name: AUTH_KEY
           in: query
           example: "MY_SUPER_SECRET_AUTH_CODE"
-          description: Required when "Delete User Requires Auth Code" is enabled in the plugin settings.
+          description: |
+            Required when "Delete User Requires Auth Code" is enabled in the plugin settings.
+            The parameter name defaults to `AUTH_KEY` but is configurable in the plugin's
+            Auth Codes settings.
           schema:
             type: string
       responses:
@@ -520,7 +562,8 @@ paths:
                         example: User was successfully deleted.
         '400':
           description: |
-            Bad request. The JWT parameter is missing or cannot be decoded.
+            Bad request. The JWT has a structural encoding error (wrong number of
+            segments, invalid base64 encoding of header, claims, or signature).
           content:
             application/json:
               schema:
@@ -528,12 +571,16 @@ paths:
               example:
                 success: false
                 data:
-                  message: "JWT is missing."
-                  error_code: 42
+                  message: "Wrong number of segments."
+                  error_code: 2
         '401':
           description: |
-            Unauthorized. The JWT is structurally invalid, has a bad signature, is expired,
-            is revoked, or the provided auth code is wrong.
+            Unauthorized. One of:
+            - The JWT signature verification failed or algorithm is unsupported
+              (`error_code` 6-11).
+            - The JWT has `nbf`/`iat` violations or is expired (`error_code` 12-14).
+            - The JWT has been revoked (`error_code` 55).
+            - The provided auth code is wrong (`error_code` 27).
           content:
             application/json:
               schema:
@@ -545,8 +592,9 @@ paths:
                   error_code: 14
         '403':
           description: |
-            Forbidden. User deletion is disabled in the plugin settings, or the client IP
-            address is not on the allow-list.
+            Forbidden. One of:
+            - User deletion is disabled in the plugin settings (`error_code` 39).
+            - The client IP address is not on the allow-list (`error_code` 41).
           content:
             application/json:
               schema:
@@ -567,6 +615,20 @@ paths:
                 data:
                   message: "User not found."
                   error_code: 24
+        '422':
+          description: |
+            Unprocessable entity. One of:
+            - The JWT is completely absent from the request (`error_code` 42).
+            - The auth code is required but was not provided (`error_code` 94).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "The `jwt` parameter is missing."
+                  error_code: 42
         '500':
           description: Internal server error.
           content:
@@ -590,11 +652,11 @@ paths:
 
         **Requirements**
         - Password reset must be enabled in the plugin settings.
-        - If "Reset Password Requires Auth Code" is enabled, `AUTH_CODE` must be provided.
+        - If "Reset Password Requires Auth Code" is enabled, `AUTH_KEY` must be provided.
         - The email address must belong to an existing WordPress user.
 
         **Flow**
-        1. Call `POST /user/reset_password` with `email` (and `AUTH_CODE` if required).
+        1. Call `POST /user/reset_password` with `email` (and `AUTH_KEY` if required).
         2. The user receives an email containing a one-time `code`.
         3. Call `PUT /user/reset_password` with `email`, `code`, and `new_password`.
       requestBody:
@@ -627,21 +689,9 @@ paths:
                       message:
                         type: string
                         example: Reset password email has been sent.
-        '400':
-          description: |
-            Bad request. The `email` field is missing.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
-              example:
-                success: false
-                data:
-                  message: "Email is required."
-                  error_code: 59
         '401':
           description: |
-            Unauthorized. The provided auth code is invalid or missing when required.
+            Unauthorized. The provided auth code is wrong (`error_code` 27).
           content:
             application/json:
               schema:
@@ -649,11 +699,11 @@ paths:
               example:
                 success: false
                 data:
-                  message: "Invalid auth code."
-                  error_code: 58
+                  message: "Invalid Auth Code ( AUTH_KEY ) provided."
+                  error_code: 27
         '403':
           description: |
-            Forbidden. Password reset is disabled in the plugin settings.
+            Forbidden. Password reset is disabled in the plugin settings (`error_code` 56).
           content:
             application/json:
               schema:
@@ -661,7 +711,7 @@ paths:
               example:
                 success: false
                 data:
-                  message: "Reset password is not allowed."
+                  message: "Reset Password is not allowed."
                   error_code: 56
         '404':
           description: No WordPress user with the provided email address was found.
@@ -672,8 +722,23 @@ paths:
               example:
                 success: false
                 data:
-                  message: "User not found."
+                  message: "Wrong user."
                   error_code: 64
+        '422':
+          description: |
+            Unprocessable entity. One of:
+            - The `email` field is missing (`error_code` 63).
+            - The email address format is invalid (`error_code` 96).
+            - The auth code is required but was not provided (`error_code` 94).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "Missing email parameter."
+                  error_code: 63
         '500':
           description: Internal server error (e.g. email sending failure).
           content:
@@ -705,7 +770,7 @@ paths:
 
         **Requirements**
         - Password reset must be enabled in the plugin settings.
-        - If "Reset Password Requires Auth Code" is enabled, `AUTH_CODE` must be provided.
+        - If "Reset Password Requires Auth Code" is enabled, `AUTH_KEY` must be provided.
       requestBody:
         description: New password plus either a one-time code or a valid JWT for authentication.
         content:
@@ -736,24 +801,12 @@ paths:
                       message:
                         type: string
                         example: User password has been changed.
-        '400':
-          description: |
-            Bad request. One or more required fields are missing (`email`, `code`,
-            or `new_password`).
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
-              example:
-                success: false
-                data:
-                  message: "New password is required."
-                  error_code: 61
         '401':
           description: |
-            Unauthorized. The JWT is invalid or expired, the JWT was issued via a
-            password-reset flow and cannot be reused to change a password, or the
-            provided auth code is wrong.
+            Unauthorized. One of:
+            - The JWT is invalid, expired, or does not match the provided email
+              (`error_code` 93).
+            - The provided auth code is wrong (`error_code` 27).
           content:
             application/json:
               schema:
@@ -761,11 +814,11 @@ paths:
               example:
                 success: false
                 data:
-                  message: "This JWT cannot be used to change the password."
+                  message: "This JWT can not change your password."
                   error_code: 93
         '403':
           description: |
-            Forbidden. Password reset is disabled in the plugin settings.
+            Forbidden. Password reset is disabled in the plugin settings (`error_code` 56).
           content:
             application/json:
               schema:
@@ -773,7 +826,7 @@ paths:
               example:
                 success: false
                 data:
-                  message: "Reset password is not allowed."
+                  message: "Reset Password is not allowed."
                   error_code: 56
         '404':
           description: No WordPress user with the provided email address was found.
@@ -788,9 +841,16 @@ paths:
                   error_code: 64
         '422':
           description: |
-            Unprocessable entity. The one-time reset code is invalid or expired, or the
-            reset flow configuration is inconsistent (e.g. JWT-based reset is disabled
-            but no code was supplied).
+            Unprocessable entity. One of:
+            - The `email` field is missing (`error_code` 59).
+            - The `new_password` field is missing (`error_code` 61).
+            - JWT-based reset is enabled but neither `code` nor a JWT was provided
+              (`error_code` 53).
+            - JWT-based reset is disabled and the `code` field is missing
+              (`error_code` 60).
+            - The email address format is invalid (`error_code` 95).
+            - The one-time reset code is invalid or expired (`error_code` 62).
+            - The auth code is required but was not provided (`error_code` 94).
           content:
             application/json:
               schema:
@@ -798,7 +858,7 @@ paths:
               example:
                 success: false
                 data:
-                  message: "Invalid reset password code."
+                  message: "Invalid code provided."
                   error_code: 62
         '500':
           description: Internal server error.
@@ -829,7 +889,7 @@ paths:
 
         **Requirements**
         - Authentication must be enabled in the plugin settings.
-        - If "Authentication Requires Auth Code" is enabled, `AUTH_CODE` must be provided.
+        - If "Authentication Requires Auth Code" is enabled, `AUTH_KEY` must be provided.
 
         **Two-Factor Authentication**
         When the authenticated user has Two-Factor Authentication enabled and the 2FA
@@ -901,23 +961,12 @@ paths:
                           Fully-qualified class name of the user's primary 2FA provider.
                           Only present when `two_factor_required` is `true`.
                         example: "Two_Factor_Totp"
-        '400':
-          description: |
-            Bad request. `email` (or `username`) or `password` (or `password_hash`) is
-            missing.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
-              example:
-                success: false
-                data:
-                  message: "Email or username is required."
-                  error_code: 46
         '401':
           description: |
-            Unauthorized. The provided credentials are incorrect, or the auth code is
-            invalid.
+            Unauthorized. One of:
+            - The provided credentials (password or password hash) are incorrect
+              (`error_code` 48).
+            - The provided auth code is wrong (`error_code` 27).
           content:
             application/json:
               schema:
@@ -929,7 +978,10 @@ paths:
                   error_code: 48
         '403':
           description: |
-            Forbidden. Authentication is disabled in the plugin settings.
+            Forbidden. One of:
+            - Authentication is disabled in the plugin settings (`error_code` 45).
+            - The client IP address is not on the allow-list configured in the plugin
+              settings (`error_code` 41).
           content:
             application/json:
               schema:
@@ -939,6 +991,23 @@ paths:
                 data:
                   message: "Authentication is not enabled."
                   error_code: 45
+        '422':
+          description: |
+            Unprocessable entity. One of:
+            - The `email`, `username`, or `login` field is missing (`error_code` 46).
+            - The `password` or `password_hash` field is missing (`error_code` 47).
+            - The `password_hash` field was provided but "Allow login with password hash"
+              is not enabled in the plugin settings (`error_code` 113).
+            - The auth code is required but was not provided (`error_code` 94).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "The email, username, or login parameter is missing from the request."
+                  error_code: 46
         '500':
           description: |
             Internal server error. Typically an OpenSSL signing failure when generating
@@ -965,7 +1034,7 @@ paths:
         - The refresh-token feature must be enabled in the plugin settings.
         - The refresh token must exist in the database and not have exceeded the maximum
           token age configured in the plugin settings.
-        - If "Authentication Requires Auth Code" is enabled, `AUTH_CODE` must be provided.
+        - If "Authentication Requires Auth Code" is enabled, `AUTH_KEY` must be provided.
       operationId: refreshJWT
       requestBody:  
         description: Refresh token obtained from a prior `/auth` response.
@@ -1003,9 +1072,45 @@ paths:
                         type: string
                         description: New refresh token replacing the one that was consumed.
                         example: "f6e7g8h9i0j123456789012345678901234567890123456789012345678901234567"
-        '400':
+        '401':
           description: |
-            Bad request. The `refresh_token` field is missing.
+            Unauthorized. One of:
+            - The refresh token was not found in the database (expired, already rotated,
+              or never issued) (`error_code` 51).
+            - A JWT was supplied alongside the refresh token but has been revoked —
+              revoked JWTs cannot be used to obtain new tokens (`error_code` 55).
+            - The WordPress user linked to the refresh token no longer exists
+              (`error_code` 55).
+            - The provided auth code is wrong (`error_code` 27).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "Invalid refresh token."
+                  error_code: 51
+        '403':
+          description: |
+            Forbidden. One of:
+            - The refresh-token feature is disabled in the plugin settings (`error_code` 81).
+            - Authentication is disabled in the plugin settings (`error_code` 45).
+            - The client IP address is not on the allow-list (`error_code` 41).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "Refresh Token endpoint is not enabled."
+                  error_code: 81
+        '422':
+          description: |
+            Unprocessable entity. One of:
+            - The `refresh_token` field is absent from the request (`error_code` 51).
+            - The auth code is required but was not provided (`error_code` 94).
           content:
             application/json:
               schema:
@@ -1015,32 +1120,6 @@ paths:
                 data:
                   message: "Refresh token is missing."
                   error_code: 51
-        '401':
-          description: |
-            Unauthorized. The refresh token is not found in the database, the associated
-            JWT is malformed or structurally invalid, or the token has exceeded the maximum
-            allowed age.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
-              example:
-                success: false
-                data:
-                  message: "Refresh token is too old."
-                  error_code: 50
-        '403':
-          description: |
-            Forbidden. The refresh-token feature is disabled in the plugin settings.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
-              example:
-                success: false
-                data:
-                  message: "Refresh token is not enabled."
-                  error_code: 81
         '500':
           description: Internal server error.
           content:
@@ -1069,7 +1148,7 @@ paths:
 
         **Requirements**
         - Token validation must be enabled in the plugin settings.
-        - If "Authentication Requires Auth Code" is enabled, `AUTH_CODE` must be provided.
+        - If "Authentication Requires Auth Code" is enabled, `AUTH_KEY` must be provided.
       operationId: validateJWT
       security:
         - BearerAuth: []
@@ -1082,10 +1161,13 @@ paths:
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
           schema:
             type: string
-        - name: AUTH_CODE
+        - name: AUTH_KEY
           in: query
           example: "MY_SUPER_SECRET_AUTH_CODE"
-          description: Required when "Authentication Requires Auth Code" is enabled.
+          description: |
+            Required when "Authentication Requires Auth Code" is enabled. The parameter
+            name defaults to `AUTH_KEY` but is configurable in the plugin's Auth Codes
+            settings.
           schema:
             type: string
       responses:
@@ -1198,7 +1280,8 @@ paths:
                             example: 3600
         '400':
           description: |
-            Bad request. The `JWT` parameter is missing.
+            Bad request. The JWT has a structural encoding error (wrong number of
+            segments, invalid base64 encoding of header, claims, or signature).
           content:
             application/json:
               schema:
@@ -1206,12 +1289,16 @@ paths:
               example:
                 success: false
                 data:
-                  message: "JWT is missing."
-                  error_code: 53
+                  message: "Wrong number of segments."
+                  error_code: 2
         '401':
           description: |
-            Unauthorized. The JWT is structurally invalid, has a bad signature, is expired,
-            or has been revoked.
+            Unauthorized. One of:
+            - The JWT signature verification failed or algorithm is unsupported
+              (`error_code` 6-11).
+            - The JWT has `nbf`/`iat` violations or is expired (`error_code` 12-14).
+            - The JWT has been revoked (`error_code` 55).
+            - The provided auth code is wrong (`error_code` 27).
           content:
             application/json:
               schema:
@@ -1223,7 +1310,7 @@ paths:
                   error_code: 14
         '403':
           description: |
-            Forbidden. JWT validation is disabled in the plugin settings.
+            Forbidden. JWT validation is disabled in the plugin settings (`error_code` 82).
           content:
             application/json:
               schema:
@@ -1233,6 +1320,20 @@ paths:
                 data:
                   message: "Validate token is not enabled."
                   error_code: 82
+        '422':
+          description: |
+            Unprocessable entity. One of:
+            - The JWT is completely absent from the request (`error_code` 53).
+            - The auth code is required but was not provided (`error_code` 94).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "JWT is missing."
+                  error_code: 53
         '500':
           description: Internal server error.
           content:
@@ -1289,22 +1390,31 @@ paths:
                     description: Same structure as the GET /auth/validate 200 response.
         '400':
           description: |
-            Bad request. The `JWT` field is missing from the request body.
+            Bad request. The JWT has a structural encoding error (wrong number of
+            segments, invalid base64 encoding of header, claims, or signature).
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseError'
         '401':
           description: |
-            Unauthorized. The JWT is structurally invalid, has a bad signature, is expired,
-            or has been revoked.
+            Unauthorized. The JWT signature verification failed, is expired, or has
+            been revoked. The provided auth code is wrong.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseError'
         '403':
           description: |
-            Forbidden. JWT validation is disabled in the plugin settings.
+            Forbidden. JWT validation is disabled in the plugin settings (`error_code` 82).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+        '422':
+          description: |
+            Unprocessable entity. The `JWT` field is absent from the request body
+            (`error_code` 53), or the auth code is required but not provided (`error_code` 94).
           content:
             application/json:
               schema:
@@ -1333,7 +1443,7 @@ paths:
         **Requirements**
         - Token revocation must be enabled in the plugin settings.
         - The JWT must be structurally valid (it does not need to be un-expired).
-        - If "Authentication Requires Auth Code" is enabled, `AUTH_CODE` must be provided.
+        - If "Authentication Requires Auth Code" is enabled, `AUTH_KEY` must be provided.
       operationId: revokeJWT
       security:
         - BearerAuth: []
@@ -1377,7 +1487,8 @@ paths:
                           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
         '400':
           description: |
-            Bad request. The `JWT` field is missing from the request body.
+            Bad request. The JWT has a structural encoding error (wrong number of
+            segments, invalid base64 encoding of header, claims, or signature).
           content:
             application/json:
               schema:
@@ -1385,12 +1496,15 @@ paths:
               example:
                 success: false
                 data:
-                  message: "JWT is missing."
-                  error_code: 42
+                  message: "Wrong number of segments."
+                  error_code: 2
         '401':
           description: |
-            Unauthorized. The JWT is structurally invalid, has a bad signature, or the
-            provided auth code is wrong.
+            Unauthorized. One of:
+            - The JWT signature verification failed or algorithm is unsupported
+              (`error_code` 6-11).
+            - The token was already revoked (`error_code` 55).
+            - The provided auth code is wrong (`error_code` 27).
           content:
             application/json:
               schema:
@@ -1402,7 +1516,10 @@ paths:
                   error_code: 11
         '403':
           description: |
-            Forbidden. Token revocation is disabled in the plugin settings.
+            Forbidden. One of:
+            - Authentication is disabled in the plugin settings (`error_code` 45).
+            - Token revocation is disabled in the plugin settings (`error_code` 83).
+            - The client IP address is not on the allow-list (`error_code` 41).
           content:
             application/json:
               schema:
@@ -1410,8 +1527,34 @@ paths:
               example:
                 success: false
                 data:
-                  message: "Revoke token is not enabled."
+                  message: "Revoke Token endpoint is not enabled."
                   error_code: 83
+        '404':
+          description: |
+            The WordPress user identified by the JWT payload could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "User not found."
+                  error_code: 24
+        '422':
+          description: |
+            Unprocessable entity. One of:
+            - The JWT is completely absent from the request (`error_code` 53).
+            - The auth code is required but was not provided (`error_code` 94).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "The `jwt` parameter is missing."
+                  error_code: 53
         '500':
           description: Internal server error.
           content:
@@ -1596,9 +1739,12 @@ paths:
           description: Authorization code returned by the OAuth provider's consent screen.
           schema:
             type: string
-        - name: AUTH_CODE
+        - name: AUTH_KEY
           in: query
-          description: Required when "Authentication Requires Auth Code" is enabled.
+          description: |
+            Required when "Authentication Requires Auth Code" is enabled. The parameter
+            name defaults to `AUTH_KEY` but is configurable in the plugin's Auth Codes
+            settings.
           schema:
             type: string
       responses:
@@ -2384,11 +2530,14 @@ components:
             - type: object
               additionalProperties:
                 type: string
-        AUTH_CODE:
+        AUTH_KEY:
           type: string
           nullable: true
           example: "MY_SUPER_SECRET_AUTH_CODE"
-          description: Required when "Register Requires Auth Code" is enabled in the plugin settings.
+          description: |
+            Required when "Register Requires Auth Code" is enabled in the plugin settings.
+            The parameter name defaults to `AUTH_KEY` but is configurable in the plugin's
+            Auth Codes settings.
     authBody:
       type: object
       properties:
@@ -2412,19 +2561,26 @@ components:
         password:
           type: string
           nullable: true
-          description: User plaintext password. Required when `password_hash` is not provided.
+          description: |
+            User plaintext password. Required when `password_hash` is not provided.
+            When "Base64-encoded password" is enabled in the plugin settings, supply the
+            password base64-encoded and it will be decoded server-side before verification.
         password_hash:
           type: string
           nullable: true
           description: |
             Hashed password as stored in the WordPress database. Requires "Allow login with
-            password hash" to be enabled in the plugin settings. Required when `password`
-            is not provided.
-        AUTH_CODE:
+            password hash" to be enabled in the plugin settings (`error_code` 113 when not
+            enabled). Required when `password` is not provided. When "Base64-encoded
+            password" is enabled, supply the hash base64-encoded.
+        AUTH_KEY:
           type: string
           nullable: true
           example: "MY_SUPER_SECRET_AUTH_CODE"
-          description: Required when "Authentication Requires Auth Code" is enabled.
+          description: |
+            Required when "Authentication Requires Auth Code" is enabled. The parameter
+            name defaults to `AUTH_KEY` but is configurable in the plugin's Auth Codes
+            settings.
     authRefreshBody:
       type: object
       required:
@@ -2434,11 +2590,14 @@ components:
           type: string
           example: "a1b2c3d4e5f678901234567890123456789012345678901234567890123456789012"
           description: Refresh token obtained from a prior `/auth` response.
-        AUTH_CODE:
+        AUTH_KEY:
           type: string
           nullable: true
           example: "MY_SUPER_SECRET_AUTH_CODE"
-          description: Required when "Authentication Requires Auth Code" is enabled.
+          description: |
+            Required when "Authentication Requires Auth Code" is enabled. The parameter
+            name defaults to `AUTH_KEY` but is configurable in the plugin's Auth Codes
+            settings.
     validateBody:
       type: object
       required:
@@ -2448,11 +2607,14 @@ components:
           type: string
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
           description: The JWT to validate.
-        AUTH_CODE:
+        AUTH_KEY:
           type: string
           nullable: true
           example: "MY_SUPER_SECRET_AUTH_CODE"
-          description: Required when "Authentication Requires Auth Code" is enabled.
+          description: |
+            Required when "Authentication Requires Auth Code" is enabled. The parameter
+            name defaults to `AUTH_KEY` but is configurable in the plugin's Auth Codes
+            settings.
     authRevokeBody:
       type: object
       required:
@@ -2462,11 +2624,14 @@ components:
           type: string
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
           description: The JWT to revoke. May be expired — the signature is still verified.
-        AUTH_CODE:
+        AUTH_KEY:
           type: string
           nullable: true
           example: "MY_SUPER_SECRET_AUTH_CODE"
-          description: Required when "Authentication Requires Auth Code" is enabled.
+          description: |
+            Required when "Authentication Requires Auth Code" is enabled. The parameter
+            name defaults to `AUTH_KEY` but is configurable in the plugin's Auth Codes
+            settings.
     resetPasswordBody:
       type: object
       required:
@@ -2476,11 +2641,14 @@ components:
           type: string
           example: contact@simplejwtlogin.com
           description: Email address of the account to reset.
-        AUTH_CODE:
+        AUTH_KEY:
           type: string
           nullable: true
           example: "MY_SUPER_SECRET_AUTH_CODE"
-          description: Required when "Reset Password Requires Auth Code" is enabled.
+          description: |
+            Required when "Reset Password Requires Auth Code" is enabled. The parameter
+            name defaults to `AUTH_KEY` but is configurable in the plugin's Auth Codes
+            settings.
     changePasswordBody:
       type: object
       required:
@@ -2511,11 +2679,14 @@ components:
             Valid JWT for the user. When "Allow Reset Password with JWT" is enabled,
             supplying a `JWT` makes the `code` field optional. JWTs issued by a prior
             password-reset flow cannot be reused here.
-        AUTH_CODE:
+        AUTH_KEY:
           type: string
           nullable: true
           example: "MY_SUPER_SECRET_AUTH_CODE"
-          description: Required when "Reset Password Requires Auth Code" is enabled.
+          description: |
+            Required when "Reset Password Requires Auth Code" is enabled. The parameter
+            name defaults to `AUTH_KEY` but is configurable in the plugin's Auth Codes
+            settings.
     oauthBody:
       type: object
       required:
@@ -2547,11 +2718,14 @@ components:
             Provider access token passed directly by the client. Used by Facebook
             (`provider=facebook`) and GitHub (`provider=github`) instead of `code`.
           example: "EAABs..."
-        AUTH_CODE:
+        AUTH_KEY:
           type: string
           nullable: true
           example: "MY_SUPER_SECRET_AUTH_CODE"
-          description: Required when "Authentication Requires Auth Code" is enabled.
+          description: |
+            Required when "Authentication Requires Auth Code" is enabled. The parameter
+            name defaults to `AUTH_KEY` but is configurable in the plugin's Auth Codes
+            settings.
     OAuthResponse:
       type: object
       properties:

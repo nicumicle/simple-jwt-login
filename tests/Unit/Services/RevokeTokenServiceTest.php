@@ -56,7 +56,7 @@ class RevokeTokenServiceTest extends TestCase
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
                 'REQUEST_METHOD' => 'POST',
-                'HTTP_CLIENT_IP' => '127.0.0.1',
+                'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
         $revokeService->makeAction();
@@ -91,7 +91,7 @@ class RevokeTokenServiceTest extends TestCase
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
                 'REQUEST_METHOD' => 'POST',
-                'HTTP_CLIENT_IP' => '127.0.0.1',
+                'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
         $revokeService->makeAction();
@@ -142,7 +142,7 @@ class RevokeTokenServiceTest extends TestCase
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
                 'REQUEST_METHOD' => 'POST',
-                'HTTP_CLIENT_IP' => '127.0.0.1',
+                'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
             ->withRefreshTokenRepository($this->tokenRepositoryMock);
@@ -233,7 +233,7 @@ class RevokeTokenServiceTest extends TestCase
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
                 'REQUEST_METHOD' => 'POST',
-                'HTTP_CLIENT_IP' => '127.0.0.1',
+                'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
 

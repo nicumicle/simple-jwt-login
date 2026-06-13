@@ -145,6 +145,14 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
             'safe_redirect',
             BaseSettings::SETTINGS_TYPE_BOL
         );
+
+        $this->assignSettingsPropertyFromPost(
+            'security',
+            'trust_ip_headers',
+            'security',
+            'trust_ip_headers',
+            BaseSettings::SETTINGS_TYPE_BOL
+        );
     }
 
     /**
@@ -412,5 +420,13 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
     public function isSafeRedirectEnabled()
     {
         return !empty($this->settings['security']['safe_redirect']);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTrustIpHeadersEnabled()
+    {
+        return !empty($this->settings['security']['trust_ip_headers']);
     }
 }

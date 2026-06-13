@@ -54,7 +54,7 @@ class RefreshTokenServiceTest extends TestCase
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
                 'REQUEST_METHOD' => 'POST',
-                'HTTP_CLIENT_IP' => '127.0.0.1',
+                'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
             ->withRefreshTokenRepository($this->refreshTokenRepoMock);
@@ -81,7 +81,7 @@ class RefreshTokenServiceTest extends TestCase
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
                 'REQUEST_METHOD' => 'POST',
-                'HTTP_CLIENT_IP' => '127.0.0.1',
+                'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
             ->withRefreshTokenRepository($this->refreshTokenRepoMock);
@@ -113,7 +113,7 @@ class RefreshTokenServiceTest extends TestCase
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
                 'REQUEST_METHOD' => 'POST',
-                'HTTP_CLIENT_IP' => '127.0.0.1',
+                'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
             ->withRefreshTokenRepository($this->refreshTokenRepoMock);
@@ -145,7 +145,7 @@ class RefreshTokenServiceTest extends TestCase
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
                 'REQUEST_METHOD' => 'POST',
-                'HTTP_CLIENT_IP' => '127.0.0.1',
+                'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
             ->withRefreshTokenRepository($this->refreshTokenRepoMock);
@@ -189,7 +189,7 @@ class RefreshTokenServiceTest extends TestCase
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
                 'REQUEST_METHOD' => 'POST',
-                'HTTP_CLIENT_IP' => '127.0.0.1',
+                'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
             ->withRefreshTokenRepository($this->refreshTokenRepoMock);
@@ -226,7 +226,7 @@ class RefreshTokenServiceTest extends TestCase
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
                 'REQUEST_METHOD' => 'POST',
-                'HTTP_CLIENT_IP' => '127.0.0.1',
+                'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
             ->withRefreshTokenRepository($this->refreshTokenRepoMock);

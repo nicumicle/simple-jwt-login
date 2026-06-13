@@ -29,10 +29,13 @@ try {
     $showStatusBar = $saved;
     if ($saved) {
         global $wpdb;
+        $serverHelper = $jwtSettings->getGeneralSettings()->isTrustIpHeadersEnabled()
+            ? ServerHelper::withTrustedProxyHeaders($_SERVER)
+            : new ServerHelper($_SERVER);
         $auditLogger = new AuditLoggerService(
             new AuditLogRepository($wpdb),
             $jwtSettings->getAuditLogSettings(),
-            new ServerHelper($_SERVER)
+            $serverHelper
         );
         $currentUser = wp_get_current_user();
         $diff        = $jwtSettings->getLastSettingsDiff();

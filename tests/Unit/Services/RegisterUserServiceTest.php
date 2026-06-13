@@ -56,7 +56,7 @@ class RegisterUserServiceTest extends TestCase
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
-                'HTTP_CLIENT_IP' => '127.0.0.1'
+                'REMOTE_ADDR' => '127.0.0.1'
             ]))
             ->withSession([])
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
@@ -260,7 +260,7 @@ class RegisterUserServiceTest extends TestCase
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
-                'HTTP_CLIENT_IP' => '127.0.0.1'
+                'REMOTE_ADDR' => '127.0.0.1'
             ]))
             ->withSession([])
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
@@ -312,7 +312,7 @@ class RegisterUserServiceTest extends TestCase
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
-                'HTTP_CLIENT_IP' => '127.0.0.1'
+                'REMOTE_ADDR' => '127.0.0.1'
             ]))
             ->withSession([])
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
@@ -366,7 +366,7 @@ class RegisterUserServiceTest extends TestCase
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
-                'HTTP_CLIENT_IP' => '127.0.0.1'
+                'REMOTE_ADDR' => '127.0.0.1'
             ]))
             ->withSession([])
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
@@ -415,7 +415,7 @@ class RegisterUserServiceTest extends TestCase
         $service = (new RegisterUserService())
             ->withRequest(['email' => 'test@test.com', 'password' => $rawPassword])
             ->withCookies([])
-            ->withServerHelper(new ServerHelper(['HTTP_CLIENT_IP' => '127.0.0.1']))
+            ->withServerHelper(new ServerHelper(['REMOTE_ADDR' => '127.0.0.1']))
             ->withSession([])
             ->withSettings(new SimpleJWTLoginSettings($wordPressDataMock));
 
@@ -475,7 +475,7 @@ class RegisterUserServiceTest extends TestCase
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
-                'HTTP_CLIENT_IP' => '127.0.0.1'
+                'REMOTE_ADDR' => '127.0.0.1'
             ]))
             ->withSession([])
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
@@ -516,7 +516,7 @@ class RegisterUserServiceTest extends TestCase
         $service = (new RegisterUserService())
             ->withRequest(['email' => 'test@test.com', 'password' => 'pass123'])
             ->withCookies([])
-            ->withServerHelper(new ServerHelper(['HTTP_CLIENT_IP' => '127.0.0.1']))
+            ->withServerHelper(new ServerHelper(['REMOTE_ADDR' => '127.0.0.1']))
             ->withSession([])
             ->withSettings(new SimpleJWTLoginSettings($wordPressDataMock));
 
@@ -550,7 +550,7 @@ class RegisterUserServiceTest extends TestCase
         $service = (new RegisterUserService())
             ->withRequest(['email' => 'test@test.com', 'password' => 'pass123'])
             ->withCookies([])
-            ->withServerHelper(new ServerHelper(['HTTP_CLIENT_IP' => '127.0.0.1']))
+            ->withServerHelper(new ServerHelper(['REMOTE_ADDR' => '127.0.0.1']))
             ->withSession([])
             ->withSettings(new SimpleJWTLoginSettings($wordPressDataMock));
 

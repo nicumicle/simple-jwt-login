@@ -199,6 +199,11 @@ class AuthenticationSettingsTest extends TestCase
             'isAuthPasswordBase64Encoded: true'          => ['isAuthPasswordBase64Encoded', ['password_base64' => true], true],
             'isAuthPasswordBase64Encoded: false'         => ['isAuthPasswordBase64Encoded', ['password_base64' => false], false],
 
+            // isAuthPasswordHashAllowed
+            'isAuthPasswordHashAllowed: default false' => ['isAuthPasswordHashAllowed', [], false],
+            'isAuthPasswordHashAllowed: true'          => ['isAuthPasswordHashAllowed', ['password_hash_enabled' => true], true],
+            'isAuthPasswordHashAllowed: false'         => ['isAuthPasswordHashAllowed', ['password_hash_enabled' => false], false],
+
             // isRefreshAuthKeyRequired
             'isRefreshAuthKeyRequired: default false' => ['isRefreshAuthKeyRequired', [], false],
             'isRefreshAuthKeyRequired: true'          => ['isRefreshAuthKeyRequired', ['refresh_auth_code' => true], true],
@@ -308,6 +313,8 @@ class AuthenticationSettingsTest extends TestCase
             'auth_requires_auth_code false missing'  => [[], 'isAuthKeyRequired', false],
             'auth_password_base64 true'              => [['auth_password_base64' => '1'], 'isAuthPasswordBase64Encoded', true],
             'auth_password_base64 false missing'     => [[], 'isAuthPasswordBase64Encoded', false],
+            'auth_password_hash_enabled true'        => [['auth_password_hash_enabled' => '1'], 'isAuthPasswordHashAllowed', true],
+            'auth_password_hash_enabled missing'     => [[], 'isAuthPasswordHashAllowed', false],
             'allow_refresh_token persisted'          => [['allow_refresh_token' => '1'], 'isRefreshTokenEnabled', true],
             'refresh_token_key persisted'            => [['refresh_token_key' => 'key123'], 'getRefreshTokenKey', 'key123'],
             'refresh_requires_auth_code true'        => [['refresh_requires_auth_code' => '1'], 'isRefreshAuthKeyRequired', true],

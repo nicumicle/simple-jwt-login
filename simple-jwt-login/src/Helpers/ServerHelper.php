@@ -10,11 +10,31 @@ class ServerHelper
     private $server;
 
     /**
+     * @var boolean
+     */
+    private $useProxyHeaders = false;
+
+    /**
      * @param array $server
      */
     public function __construct($server)
     {
         $this->server = $server;
+    }
+
+    /**
+     * Named constructor for sites behind a trusted reverse proxy:
+     * the Client-IP / X-Forwarded-For headers are used to detect the client IP.
+     *
+     * @param array $server
+     * @return ServerHelper
+     */
+    public static function withTrustedProxyHeaders($server)
+    {
+        $serverHelper = new self($server);
+        $serverHelper->useProxyHeaders = true;
+
+        return $serverHelper;
     }
 
     /**
@@ -47,14 +67,30 @@ class ServerHelper
      */
     public function getClientIP()
     {
-        if (!empty($this->server['HTTP_CLIENT_IP'])) {
-            return $this->server['HTTP_CLIENT_IP'];
-        }
-        if (!empty($this->server['HTTP_X_FORWARDED_FOR'])) {
-            return $this->server['HTTP_X_FORWARDED_FOR'];
+        if ($this->useProxyHeaders) {
+            $proxyClientIp = $this->getClientIpFromProxyHeaders();
+            if ($proxyClientIp !== null) {
+                return $proxyClientIp;
+            }
         }
         if (!empty($this->server['REMOTE_ADDR'])) {
             return $this->server['REMOTE_ADDR'];
+        }
+        return null;
+    }
+
+    /**
+     * @return string|null
+     */
+    private function getClientIpFromProxyHeaders()
+    {
+        if (!empty($this->server['HTTP_CLIENT_IP'])) {
+            return trim($this->server['HTTP_CLIENT_IP']);
+        }
+        if (!empty($this->server['HTTP_X_FORWARDED_FOR'])) {
+            // The right-most entry is the hop appended by the trusted proxy
+            $forwardedIps = explode(',', $this->server['HTTP_X_FORWARDED_FOR']);
+            return trim(end($forwardedIps));
         }
         return null;
     }

@@ -164,6 +164,24 @@ if (! defined('ABSPATH')) {
                 </p>
             </div>
         </div>
+        <div class="sjl-gen-feature-toggle">
+            <div class="sjl-gen-feature-toggle-check">
+                <input type="checkbox" name="auth_password_hash_enabled" id="auth_password_hash_enabled" value="1"
+                    <?php echo $jwtSettings->getAuthenticationSettings()->isAuthPasswordHashAllowed()
+                        ? esc_html('checked="checked"')
+                        : '';
+                    ?>
+                />
+            </div>
+            <div class="sjl-gen-feature-toggle-text">
+                <label for="auth_password_hash_enabled" class="sjl-gen-feature-label">
+                    <?php echo esc_html__('Allow authentication with password hash', 'simple-jwt-login'); ?>
+                </label>
+                <p class="sjl-gen-feature-desc">
+                    <?php echo esc_html__('Allow the password_hash parameter to authenticate by comparing it directly with the stored WordPress password hash. Warning: anyone who obtains a stored password hash can authenticate without knowing the password. Leave this disabled unless you really need it.', 'simple-jwt-login'); ?>
+                </p>
+            </div>
+        </div>
     </div>
 </div>
 

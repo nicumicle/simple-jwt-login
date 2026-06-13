@@ -83,6 +83,14 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
         );
         $this->assignSettingsPropertyFromPost(
             null,
+            'password_hash_enabled',
+            null,
+            'auth_password_hash_enabled',
+            BaseSettings::SETTINGS_TYPE_BOL,
+            false
+        );
+        $this->assignSettingsPropertyFromPost(
+            null,
             'iss',
             null,
             'jwt_auth_iss',
@@ -369,6 +377,16 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
     {
         return isset($this->settings['password_base64'])
             ? (bool) $this->settings['password_base64']
+            : false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAuthPasswordHashAllowed()
+    {
+        return isset($this->settings['password_hash_enabled'])
+            ? (bool) $this->settings['password_hash_enabled']
             : false;
     }
 

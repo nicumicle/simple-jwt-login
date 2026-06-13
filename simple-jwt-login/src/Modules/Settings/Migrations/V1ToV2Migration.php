@@ -158,6 +158,7 @@ class V1ToV2Migration implements MigrationInterface
             'jwt_auth_refresh_ttl'        => 'refresh_ttl',
             'auth_ip'                     => 'ip_whitelist',
             'auth_password_base64'        => 'password_base64',
+            'auth_password_hash_enabled'  => 'password_hash_enabled',
             'jwt_auth_iss'                => 'iss',
             'allow_refresh_token'         => 'refresh_token_enabled',
             'refresh_token_key'           => 'refresh_token_key',

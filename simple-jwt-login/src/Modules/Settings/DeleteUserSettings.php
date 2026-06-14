@@ -9,29 +9,13 @@ class DeleteUserSettings extends BaseSettings implements SettingsInterface
         return 'delete_user';
     }
 
-    public function initSettingsFromPost()
+    protected function getFieldDefinitions()
     {
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'enabled',
-            null,
-            'allow_delete',
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'auth_code',
-            null,
-            'require_delete_auth',
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'ip_whitelist',
-            null,
-            'delete_ip',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
+        return [
+            [null, 'enabled',      null, 'allow_delete',        self::SETTINGS_TYPE_BOL],
+            [null, 'auth_code',    null, 'require_delete_auth', self::SETTINGS_TYPE_BOL],
+            [null, 'ip_whitelist', null, 'delete_ip',          self::SETTINGS_TYPE_STRING],
+        ];
     }
 
     public function validateSettings()

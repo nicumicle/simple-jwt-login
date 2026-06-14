@@ -301,10 +301,9 @@ class RouteRegistrar
         $namespace = rtrim($jwtSettings->getGeneralSettings()->getRouteNamespace(), '/\\');
 
         foreach ($routeService->getAllRoutes() as $route) {
-            $handler = new RouteHandler(
+            $handler = $this->buildRouteHandler(
                 $route,
                 $request,
-                $this->cookies,
                 $jwtSettings,
                 $serverHelper,
                 $tokenRepository,
@@ -312,6 +311,38 @@ class RouteRegistrar
             );
             $handler->register($namespace, '__return_true');
         }
+    }
+
+    /**
+     * Build a RouteHandler wired with the shared per-request dependencies.
+     * The two route loops differ only in API-key/audit wiring and the
+     * permission callback, applied by the caller.
+     *
+     * @param array $route
+     * @param array $request
+     * @param SimpleJWTLoginSettings $jwtSettings
+     * @param ServerHelper $serverHelper
+     * @param RefreshTokenRepository $tokenRepository
+     * @param WebhookLogRepository|null $webhookLogRepository
+     * @return RouteHandler
+     */
+    protected function buildRouteHandler(
+        $route,
+        $request,
+        $jwtSettings,
+        $serverHelper,
+        $tokenRepository,
+        $webhookLogRepository
+    ) {
+        return new RouteHandler(
+            $route,
+            $request,
+            $this->cookies,
+            $jwtSettings,
+            $serverHelper,
+            $tokenRepository,
+            $webhookLogRepository
+        );
     }
 
     /**
@@ -339,10 +370,9 @@ class RouteRegistrar
         $namespace = rtrim($jwtSettings->getGeneralSettings()->getRouteNamespace(), '/\\');
 
         foreach ($routeService->getApiKeyRoutes() as $route) {
-            $handler = new RouteHandler(
+            $handler = $this->buildRouteHandler(
                 $route,
                 $request,
-                $this->cookies,
                 $jwtSettings,
                 $serverHelper,
                 $tokenRepository,

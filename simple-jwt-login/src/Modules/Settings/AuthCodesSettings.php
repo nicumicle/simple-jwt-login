@@ -13,8 +13,17 @@ class AuthCodesSettings extends BaseSettings implements SettingsInterface
         return 'auth_codes';
     }
 
+    protected function getFieldDefinitions()
+    {
+        return [
+            [null, 'key', null, 'auth_code_key', self::SETTINGS_TYPE_STRING],
+        ];
+    }
+
     public function initSettingsFromPost()
     {
+        parent::initSettingsFromPost();
+
         $codes = [];
         if (isset($this->post['auth_codes']['code'])) {
             foreach ($this->post['auth_codes']['code'] as $key => $code) {
@@ -34,14 +43,6 @@ class AuthCodesSettings extends BaseSettings implements SettingsInterface
             }
         }
         $this->settings['codes'] = $codes;
-
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'key',
-            null,
-            'auth_code_key',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
     }
 
     public function validateSettings()

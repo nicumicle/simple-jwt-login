@@ -14,63 +14,17 @@ class CorsSettings extends BaseSettings implements SettingsInterface
         return 'cors';
     }
 
-    public function initSettingsFromPost()
+    protected function getFieldDefinitions()
     {
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'enabled',
-            'cors',
-            'enabled',
-            BaseSettings::SETTINGS_TYPE_INT
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'allow_origin_enabled',
-            'cors',
-            'allow_origin_enabled',
-            BaseSettings::SETTINGS_TYPE_BOL,
-            false
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'allow_origin',
-            'cors',
-            'allow_origin',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'allow_methods_enabled',
-            'cors',
-            'allow_methods_enabled',
-            BaseSettings::SETTINGS_TYPE_BOL,
-            false
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'allow_methods',
-            'cors',
-            'allow_methods',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'allow_headers_enabled',
-            'cors',
-            'allow_headers_enabled',
-            BaseSettings::SETTINGS_TYPE_BOL,
-            false
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'allow_headers',
-            'cors',
-            'allow_headers',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
+        return [
+            [null, 'enabled',               'cors', 'enabled',               self::SETTINGS_TYPE_INT],
+            [null, 'allow_origin_enabled',  'cors', 'allow_origin_enabled',  self::SETTINGS_TYPE_BOL, false],
+            [null, 'allow_origin',          'cors', 'allow_origin',          self::SETTINGS_TYPE_STRING],
+            [null, 'allow_methods_enabled', 'cors', 'allow_methods_enabled', self::SETTINGS_TYPE_BOL, false],
+            [null, 'allow_methods',         'cors', 'allow_methods',         self::SETTINGS_TYPE_STRING],
+            [null, 'allow_headers_enabled', 'cors', 'allow_headers_enabled', self::SETTINGS_TYPE_BOL, false],
+            [null, 'allow_headers',         'cors', 'allow_headers',         self::SETTINGS_TYPE_STRING],
+        ];
     }
 
     public function validateSettings()

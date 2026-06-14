@@ -89,6 +89,36 @@ abstract class BaseSettings
     }
 
     /**
+     * Declarative field map for this settings class.
+     *
+     * Each row is the positional argument list for assignSettingsPropertyFromPost():
+     * array($propertyGroup, $propertyName, $postKeyGroup, $postKey, $type, $defaultValue, $base64Encode).
+     * Subclasses override this to declare their fields instead of hand-writing
+     * initSettingsFromPost(). Defaults to an empty list so nothing breaks.
+     *
+     * @return array<int, array>
+     */
+    protected function getFieldDefinitions()
+    {
+        return [];
+    }
+
+    /**
+     * Populate $this->settings from $this->post using the declarative field map.
+     *
+     * Subclasses with extra, non-declarative logic should override this, call
+     * parent::initSettingsFromPost() first, then run their bespoke handling.
+     *
+     * @return void
+     */
+    public function initSettingsFromPost()
+    {
+        foreach ($this->getFieldDefinitions() as $field) {
+            call_user_func_array([$this, 'assignSettingsPropertyFromPost'], $field);
+        }
+    }
+
+    /**
      * @param null|string $propertyGroup
      * @param string $propertyName
      * @param null|string $postKeyGroup

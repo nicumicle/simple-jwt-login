@@ -18,67 +18,24 @@ class ResetPasswordSettings extends BaseSettings implements SettingsInterface
         return 'reset_password';
     }
 
-    public function initSettingsFromPost()
+    protected function getFieldDefinitions()
     {
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'enabled',
-            null,
-            'allow_reset_password',
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'auth_code',
-            null,
-            'reset_password_requires_auth_code',
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'flow',
-            null,
-            'jwt_reset_password_flow',
-            BaseSettings::SETTINGS_TYPE_INT
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'email_subject',
-            null,
-            'jwt_email_subject',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'email_body',
-            null,
-            'jwt_reset_password_email_body',
-            BaseSettings::SETTINGS_TYPE_STRING,
-            '',
-            true
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'email_type',
-            null,
-            'jwt_email_type',
-            BaseSettings::SETTINGS_TYPE_INT
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'return_jwt',
-            null,
-            'reset_password_jwt',
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'send_password_changed_email',
-            null,
-            'reset_password_send_changed_email',
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
+        return [
+            [null, 'enabled',       null, 'allow_reset_password',              self::SETTINGS_TYPE_BOL],
+            [null, 'auth_code',     null, 'reset_password_requires_auth_code', self::SETTINGS_TYPE_BOL],
+            [null, 'flow',          null, 'jwt_reset_password_flow',           self::SETTINGS_TYPE_INT],
+            [null, 'email_subject', null, 'jwt_email_subject',                 self::SETTINGS_TYPE_STRING],
+            [null, 'email_body',    null, 'jwt_reset_password_email_body',     self::SETTINGS_TYPE_STRING, '', true],
+            [null, 'email_type',    null, 'jwt_email_type',                    self::SETTINGS_TYPE_INT],
+            [null, 'return_jwt',    null, 'reset_password_jwt',                self::SETTINGS_TYPE_BOL],
+            [
+                null,
+                'send_password_changed_email',
+                null,
+                'reset_password_send_changed_email',
+                self::SETTINGS_TYPE_BOL,
+            ],
+        ];
     }
 
     /**

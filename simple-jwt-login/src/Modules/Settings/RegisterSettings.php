@@ -13,96 +13,21 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
         return 'register';
     }
 
-    public function initSettingsFromPost()
+    protected function getFieldDefinitions()
     {
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'enabled',
-            null,
-            'allow_register',
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'new_user_profile',
-            null,
-            'new_user_profile',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'ip_whitelist',
-            null,
-            'register_ip',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'domain_whitelist',
-            null,
-            'register_domain',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'auth_code',
-            null,
-            'require_register_auth',
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'random_password',
-            null,
-            'random_password',
-            BaseSettings::SETTINGS_TYPE_BOL,
-            false
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'random_password_length',
-            null,
-            'random_password_length',
-            BaseSettings::SETTINGS_TYPE_INT,
-            10
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'force_login',
-            null,
-            'register_force_login',
-            BaseSettings::SETTINGS_TYPE_BOL,
-            false
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'return_jwt',
-            null,
-            'register_jwt',
-            BaseSettings::SETTINGS_TYPE_BOL,
-            false
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'allowed_user_meta',
-            null,
-            'allowed_user_meta',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'send_welcome_email',
-            null,
-            'register_send_welcome_email',
-            BaseSettings::SETTINGS_TYPE_BOL,
-            false
-        );
+        return [
+            [null, 'enabled',                null, 'allow_register',              self::SETTINGS_TYPE_BOL],
+            [null, 'new_user_profile',       null, 'new_user_profile',            self::SETTINGS_TYPE_STRING],
+            [null, 'ip_whitelist',           null, 'register_ip',                 self::SETTINGS_TYPE_STRING],
+            [null, 'domain_whitelist',       null, 'register_domain',             self::SETTINGS_TYPE_STRING],
+            [null, 'auth_code',              null, 'require_register_auth',       self::SETTINGS_TYPE_BOL],
+            [null, 'random_password',        null, 'random_password',             self::SETTINGS_TYPE_BOL, false],
+            [null, 'random_password_length', null, 'random_password_length',      self::SETTINGS_TYPE_INT, 10],
+            [null, 'force_login',            null, 'register_force_login',        self::SETTINGS_TYPE_BOL, false],
+            [null, 'return_jwt',             null, 'register_jwt',                self::SETTINGS_TYPE_BOL, false],
+            [null, 'allowed_user_meta',      null, 'allowed_user_meta',           self::SETTINGS_TYPE_STRING],
+            [null, 'send_welcome_email',     null, 'register_send_welcome_email', self::SETTINGS_TYPE_BOL, false],
+        ];
     }
 
     public function validateSettings()

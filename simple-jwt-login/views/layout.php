@@ -4,6 +4,7 @@ use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Helpers\ViewLoader;
 use SimpleJWTLogin\Modules\AuditEvents;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
+use SimpleJWTLogin\Modules\Settings\SettingsTabRegistry;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\AuditLog\AuditLogRepository;
 use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
@@ -53,213 +54,23 @@ try {
     $errorCode     = $e->getCode();
 }
 $settingsErrors = new SettingsErrors();
-$settingsPages = [
-    [
-        'id'   => 'simple-jwt-login-tab-dashboard',
-        'name' => __('Dashboard', 'simple-jwt-login'),
-        'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_DASHBOARD,
-        'index' => SettingsErrors::PREFIX_DASHBOARD,
-    ],
-    [
-        'id'   => 'simple-jwt-login-tab-general',
-        'name' => __('General', 'simple-jwt-login'),
-        'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_GENERAL,
-        'index' => SettingsErrors::PREFIX_GENERAL,
-    ],
-    [
-        'id'   => 'simple-jwt-login-tab-login',
-        'name' => __('Login', 'simple-jwt-login'),
-        'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_LOGIN,
-        'index' => SettingsErrors::PREFIX_LOGIN,
-    ],
-    [
-        'id'   => 'simple-jwt-login-tab-register',
-        'name' => __('Register User', 'simple-jwt-login'),
-        'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_REGISTER,
-        'index' => SettingsErrors::PREFIX_REGISTER,
-    ],
-    [
-        'id'   => 'simple-jwt-login-tab-delete',
-        'name' => __('Delete User', 'simple-jwt-login'),
-        'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_DELETE,
-        'index' => SettingsErrors::PREFIX_DELETE,
-    ],
-    [
-        'id'   => 'simple-jwt-login-tab-reset-password',
-        'name' => __('Reset Password', 'simple-jwt-login'),
-        'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_RESET_PASSWORD,
-        'index' => SettingsErrors::PREFIX_RESET_PASSWORD,
-    ],
-    [
-        'id'   => 'auth-tab-login',
-        'name' => __('Authentication', 'simple-jwt-login'),
-        'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_AUTHENTICATION,
-        'index' => SettingsErrors::PREFIX_AUTHENTICATION,
-    ],
-    [
-        'id'   => 'simple-jwt-login-tab-refresh-token',
-        'name' => __('Refresh Token', 'simple-jwt-login'),
-        'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_REFRESH_TOKEN,
-        'index' => SettingsErrors::PREFIX_REFRESH_TOKEN,
-    ],
-    [
-        'id'   => 'simple-jwt-login-tab-validate-token',
-        'name' => __('Validate Token', 'simple-jwt-login'),
-        'has_error' => false,
-        'index' => SettingsErrors::PREFIX_VALIDATE_TOKEN,
-    ],
-    [
-        'id'   => 'simple-jwt-login-tab-revoke-token',
-        'name' => __('Revoke Token', 'simple-jwt-login'),
-        'has_error' => false,
-        'index' => SettingsErrors::PREFIX_REVOKE_TOKEN,
-    ],
-    [
-        'id'   => 'simple-jwt-login-tab-auth-codes',
-        'name' => __('Auth Codes', 'simple-jwt-login'),
-        'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_AUTH_CODES,
-        'index' => SettingsErrors::PREFIX_AUTH_CODES,
-    ],
-    [
-        'id'   => 'simple-jwt-login-tab-hooks',
-        'name' => __('Hooks', 'simple-jwt-login'),
-        'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_HOOKS,
-        'index' => SettingsErrors::PREFIX_HOOKS,
-    ],
-    [
-        'id'   => 'simple-jwt-login-tab-cors',
-        'name' => __('CORS', 'simple-jwt-login'),
-        'has_error' => $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_CORS,
-        'index' => SettingsErrors::PREFIX_CORS,
-    ],
-    [
-        'id'   => 'simple-jwt-login-tab-protect-endpoints',
-        'name' => __('Protect endpoints', 'simple-jwt-login'),
-        'has_error' =>  (
-                $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_PROTECT_ENDPOINTS
-        ),
-        'index' => SettingsErrors::PREFIX_PROTECT_ENDPOINTS,
-    ],
-    [
-        'id'   => 'simple-jwt-login-tab-integrations',
-        'name' => __('OAuth', 'simple-jwt-login'),
-        'has_error' =>  (
-            $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_APPLICATIONS
-        ),
-        'index' => SettingsErrors::PREFIX_APPLICATIONS,
-    ],
-    [
-        'id'   => 'simple-jwt-login-tab-webhooks',
-        'name' => __('Webhooks', 'simple-jwt-login'),
-        'has_error' => (
-            $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_WEBHOOKS
-        ),
-        'index' => SettingsErrors::PREFIX_WEBHOOKS,
-    ],
-    [
-        'id'   => 'simple-jwt-login-tab-webhook-logs',
-        'name' => __('Webhook Logs', 'simple-jwt-login'),
-        'has_error' => false,
-        'index' => SettingsErrors::PREFIX_WEBHOOK_LOGS,
-    ],
-    [
-        'id'   => 'simple-jwt-login-tab-audit-logs',
-        'name' => __('Audit Logs', 'simple-jwt-login'),
-        'has_error' => (
-            $settingsErrors->getSectionFromErrorCode($errorCode) === SettingsErrors::PREFIX_AUDIT_LOGS
-        ),
-        'index' => SettingsErrors::PREFIX_AUDIT_LOGS,
-    ],
-    [
-        'id'   => 'simple-jwt-login-tab-audit-log-logs',
-        'name' => __('Audit Log Entries', 'simple-jwt-login'),
-        'has_error' => false,
-        'index' => SettingsErrors::PREFIX_AUDIT_LOG_LOGS,
-    ],
-    [
-        'id'   => 'simple-jwt-login-tab-api-keys',
-        'name' => __('API Keys', 'simple-jwt-login'),
-        'has_error' => false,
-        'index' => SettingsErrors::PREFIX_API_KEYS,
-    ],
-    [
-        'id'   => 'simple-jwt-login-tab-3rd-party-apps',
-        'name' => __('Third Party Integrations', 'simple-jwt-login'),
-        'has_error' => false,
-        'index' => SettingsErrors::PREFIX_3RD_PARTY_APPS,
-    ],
-    [
-        'id'   => 'simple-jwt-login-tab-jwt-decoder',
-        'name' => __('JWT Decoder', 'simple-jwt-login'),
-        'has_error' => false,
-        'index' => SettingsErrors::PREFIX_JWT_DECODER,
-    ],
-];
+$settingsPages = [];
+foreach (SettingsTabRegistry::pages() as $sjlTab) {
+    $settingsPages[] = [
+        'id'        => $sjlTab['id'],
+        'name'      => $sjlTab['name'],
+        'has_error' => $sjlTab['check_error']
+            && $settingsErrors->getSectionFromErrorCode($errorCode) === $sjlTab['index'],
+        'index'     => $sjlTab['index'],
+    ];
+}
 
 $pagesByIndex = [];
 foreach ($settingsPages as $p) {
     $pagesByIndex[$p['index']] = $p;
 }
 
-$sidebarGroups = [
-    ['type' => 'item', 'index' => SettingsErrors::PREFIX_DASHBOARD, 'icon' => 'dashicons-dashboard'],
-    ['type' => 'item', 'index' => SettingsErrors::PREFIX_GENERAL, 'icon' => 'dashicons-admin-settings'],
-    [
-        'type'  => 'group',
-        'label' => __('Routes', 'simple-jwt-login'),
-        'icon'  => 'dashicons-networking',
-        'items' => [
-            ['index' => SettingsErrors::PREFIX_LOGIN, 'icon' => 'dashicons-admin-users'],
-            ['index' => SettingsErrors::PREFIX_REGISTER, 'name' => __('Register', 'simple-jwt-login'), 'icon' => 'dashicons-plus-alt'],
-            ['index' => SettingsErrors::PREFIX_DELETE, 'name' => __('Delete', 'simple-jwt-login'), 'icon' => 'dashicons-trash'],
-            ['index' => SettingsErrors::PREFIX_RESET_PASSWORD, 'icon' => 'dashicons-lock'],
-            ['index' => SettingsErrors::PREFIX_AUTHENTICATION, 'name' => __('Authenticate', 'simple-jwt-login'), 'icon' => 'dashicons-shield'],
-            ['index' => SettingsErrors::PREFIX_REFRESH_TOKEN, 'name' => __('Refresh Token', 'simple-jwt-login'), 'icon' => 'dashicons-update'],
-            ['index' => SettingsErrors::PREFIX_VALIDATE_TOKEN, 'name' => __('Validate Token', 'simple-jwt-login'), 'icon' => 'dashicons-yes-alt'],
-            ['index' => SettingsErrors::PREFIX_REVOKE_TOKEN, 'name' => __('Revoke Token', 'simple-jwt-login'), 'icon' => 'dashicons-dismiss'],
-        ],
-    ],
-    [
-        'type'  => 'group',
-        'label' => __('Security', 'simple-jwt-login'),
-        'icon'  => 'dashicons-shield',
-        'items' => [
-            ['index' => SettingsErrors::PREFIX_AUTH_CODES, 'icon' => 'dashicons-tickets-alt'],
-            ['index' => SettingsErrors::PREFIX_PROTECT_ENDPOINTS, 'name' => __('Protect Endpoints', 'simple-jwt-login'), 'icon' => 'dashicons-shield-alt'],
-            ['index' => SettingsErrors::PREFIX_CORS, 'icon' => 'dashicons-randomize'],
-            ['index' => SettingsErrors::PREFIX_API_KEYS, 'name' => __('API Keys', 'simple-jwt-login'), 'icon' => 'dashicons-admin-network'],
-        ],
-    ],
-    [
-        'type'  => 'group',
-        'label' => __('Integrations', 'simple-jwt-login'),
-        'icon'  => 'dashicons-admin-plugins',
-        'items' => [
-            ['index' => SettingsErrors::PREFIX_APPLICATIONS, 'name' => __('OAuth', 'simple-jwt-login'), 'icon' => 'dashicons-cloud'],
-            ['index' => SettingsErrors::PREFIX_3RD_PARTY_APPS, 'name' => __('Third Party Integrations', 'simple-jwt-login'), 'icon' => 'dashicons-admin-plugins'],
-        ],
-    ],
-    [
-        'type'  => 'group',
-        'label' => __('Webhooks', 'simple-jwt-login'),
-        'icon'  => 'dashicons-rest-api',
-        'items' => [
-            ['index' => SettingsErrors::PREFIX_WEBHOOKS, 'name' => __('Config', 'simple-jwt-login'), 'icon' => 'dashicons-admin-settings'],
-            ['index' => SettingsErrors::PREFIX_WEBHOOK_LOGS, 'name' => __('Logs', 'simple-jwt-login'), 'icon' => 'dashicons-list-view'],
-        ],
-    ],
-    [
-        'type'  => 'group',
-        'label' => __('Audit Logs', 'simple-jwt-login'),
-        'icon'  => 'dashicons-backup',
-        'items' => [
-            ['index' => SettingsErrors::PREFIX_AUDIT_LOGS, 'name' => __('Config', 'simple-jwt-login'), 'icon' => 'dashicons-admin-settings'],
-            ['index' => SettingsErrors::PREFIX_AUDIT_LOG_LOGS, 'name' => __('Logs', 'simple-jwt-login'), 'icon' => 'dashicons-list-view'],
-        ],
-    ],
-    ['type' => 'item', 'index' => SettingsErrors::PREFIX_HOOKS, 'name' => __('Hooks', 'simple-jwt-login'), 'icon' => 'dashicons-admin-plugins'],
-    ['type' => 'item', 'index' => SettingsErrors::PREFIX_JWT_DECODER, 'name' => __('JWT Decoder', 'simple-jwt-login'), 'icon' => 'dashicons-editor-code'],
-];
+$sidebarGroups = SettingsTabRegistry::sidebar();
 
 ?>
 <div id="sjl-page-loader" aria-hidden="true">
@@ -423,30 +234,7 @@ $sidebarGroups = [
                                  aria-labelledby="<?php echo esc_attr($page['id']); ?>-tab"
                             >
 								<?php
-                                $viewMap = array(
-                                    SettingsErrors::PREFIX_DASHBOARD       => 'dashboard-view.php',
-                                    SettingsErrors::PREFIX_GENERAL         => 'general-view.php',
-                                    SettingsErrors::PREFIX_LOGIN           => 'login-view.php',
-                                    SettingsErrors::PREFIX_REGISTER        => 'register-view.php',
-                                    SettingsErrors::PREFIX_DELETE          => 'delete-view.php',
-                                    SettingsErrors::PREFIX_RESET_PASSWORD  => 'reset-password-view.php',
-                                    SettingsErrors::PREFIX_AUTHENTICATION  => 'auth-view.php',
-                                    SettingsErrors::PREFIX_REFRESH_TOKEN   => 'refresh-token-view.php',
-                                    SettingsErrors::PREFIX_VALIDATE_TOKEN  => 'validate-token-view.php',
-                                    SettingsErrors::PREFIX_REVOKE_TOKEN    => 'revoke-token-view.php',
-                                    SettingsErrors::PREFIX_AUTH_CODES      => 'auth-codes-view.php',
-                                    SettingsErrors::PREFIX_HOOKS           => 'hooks-view.php',
-                                    SettingsErrors::PREFIX_CORS            => 'cors-view.php',
-                                    SettingsErrors::PREFIX_PROTECT_ENDPOINTS => 'protect-endpoints-view.php',
-                                    SettingsErrors::PREFIX_APPLICATIONS    => 'integrations/oauth/oauth-apps.php',
-                                    SettingsErrors::PREFIX_AUDIT_LOGS      => 'audit-logs-view.php',
-                                    SettingsErrors::PREFIX_AUDIT_LOG_LOGS  => 'audit-logs-logs-view.php',
-                                    SettingsErrors::PREFIX_WEBHOOKS        => 'webhooks-view.php',
-                                    SettingsErrors::PREFIX_WEBHOOK_LOGS    => 'webhooks-logs-view.php',
-                                    SettingsErrors::PREFIX_API_KEYS        => 'api-keys-view.php',
-                                    SettingsErrors::PREFIX_3RD_PARTY_APPS  => 'integrations/3rd-party/3rd-party-apps.php',
-                                    SettingsErrors::PREFIX_JWT_DECODER     => 'jwt-decoder-view.php',
-                                );
+                                $viewMap = SettingsTabRegistry::views();
                                 $viewLoader = new ViewLoader(plugin_dir_path(__FILE__));
                                 $viewData = array(
                                     'jwtSettings'    => $jwtSettings,

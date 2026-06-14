@@ -29,26 +29,6 @@ class JwtKeyFactory
     }
 
     /**
-     * Resolve the key factory by the JWT "iss" claim.
-     * Falls back to the default factory when no matching rule is configured.
-     *
-     * @param SimpleJWTLoginSettings $settings
-     * @param string|null            $iss
-     *
-     * @return JwtKeyInterface
-     */
-    public static function getFactoryForRule($settings, $iss)
-    {
-        if ($iss !== null) {
-            $ruleConfig = $settings->getJwtRulesSettings()->findByIss($iss);
-            if ($ruleConfig !== null) {
-                return new JwtKeyRule($ruleConfig);
-            }
-        }
-        return self::getFactory($settings);
-    }
-
-    /**
      * Resolve the key factory from an already-matched rule config array.
      * Accepts a nullable $ruleConfig: returns a JwtKeyRule when it is set,
      * or falls back to the default factory derived from $settings.

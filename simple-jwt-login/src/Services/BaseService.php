@@ -170,17 +170,6 @@ abstract class BaseService
     }
 
     /**
-     * @param JwtInterface $jwtWrapper
-     * @return $this
-     */
-    public function withJwtWrapper(JwtInterface $jwtWrapper)
-    {
-        $this->jwtWrapper = $jwtWrapper;
-
-        return $this;
-    }
-
-    /**
      * @return JwtInterface
      */
     protected function getJwtWrapper()

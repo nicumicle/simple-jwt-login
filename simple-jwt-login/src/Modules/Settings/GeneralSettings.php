@@ -17,142 +17,28 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
         return 'general';
     }
 
-    public function initSettingsFromPost()
+    protected function getFieldDefinitions()
     {
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'route_namespace',
-            null,
-            'route_namespace',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'jwt_algorithm',
-            null,
-            'jwt_algorithm',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'decryption_source',
-            null,
-            'decryption_source',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'decryption_key',
-            null,
-            'decryption_key',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'decryption_key_base64',
-            null,
-            'decryption_key_base64',
-            BaseSettings::SETTINGS_TYPE_BOL,
-            false
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'decryption_key_public',
-            null,
-            'decryption_key_public',
-            BaseSettings::SETTINGS_TYPE_STRING,
-            null,
-            true
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'decryption_key_private',
-            null,
-            'decryption_key_private',
-            BaseSettings::SETTINGS_TYPE_STRING,
-            null,
-            true
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'request_jwt_url',
-            null,
-            'request_jwt_url',
-            BaseSettings::SETTINGS_TYPE_INT
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'request_jwt_cookie',
-            null,
-            'request_jwt_cookie',
-            BaseSettings::SETTINGS_TYPE_INT
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'request_jwt_header',
-            null,
-            'request_jwt_header',
-            BaseSettings::SETTINGS_TYPE_INT
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'request_jwt_session',
-            null,
-            'request_jwt_session',
-            BaseSettings::SETTINGS_TYPE_INT
-        );
-        $this->assignSettingsPropertyFromPost(
-            'api_middleware',
-            'enabled',
-            'api_middleware',
-            'enabled',
-            BaseSettings::SETTINGS_TYPE_BOL,
-            false
-        );
-        $this->assignSettingsPropertyFromPost(
-            'request_keys',
-            'url',
-            'request_keys',
-            'url',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            'request_keys',
-            'session',
-            'request_keys',
-            'session',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            'request_keys',
-            'cookie',
-            'request_keys',
-            'cookie',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            'request_keys',
-            'header',
-            'request_keys',
-            'header',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            'security',
-            'safe_redirect',
-            'security',
-            'safe_redirect',
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            'security',
-            'trust_ip_headers',
-            'security',
-            'trust_ip_headers',
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
+        return [
+            [null, 'route_namespace',        null, 'route_namespace',        self::SETTINGS_TYPE_STRING],
+            [null, 'jwt_algorithm',          null, 'jwt_algorithm',          self::SETTINGS_TYPE_STRING],
+            [null, 'decryption_source',      null, 'decryption_source',      self::SETTINGS_TYPE_STRING],
+            [null, 'decryption_key',         null, 'decryption_key',         self::SETTINGS_TYPE_STRING],
+            [null, 'decryption_key_base64',  null, 'decryption_key_base64',  self::SETTINGS_TYPE_BOL, false],
+            [null, 'decryption_key_public',  null, 'decryption_key_public',  self::SETTINGS_TYPE_STRING, null, true],
+            [null, 'decryption_key_private', null, 'decryption_key_private', self::SETTINGS_TYPE_STRING, null, true],
+            [null, 'request_jwt_url',        null, 'request_jwt_url',        self::SETTINGS_TYPE_INT],
+            [null, 'request_jwt_cookie',     null, 'request_jwt_cookie',     self::SETTINGS_TYPE_INT],
+            [null, 'request_jwt_header',     null, 'request_jwt_header',     self::SETTINGS_TYPE_INT],
+            [null, 'request_jwt_session',    null, 'request_jwt_session',    self::SETTINGS_TYPE_INT],
+            ['api_middleware', 'enabled', 'api_middleware', 'enabled',       self::SETTINGS_TYPE_BOL, false],
+            ['request_keys', 'url',     'request_keys', 'url',               self::SETTINGS_TYPE_STRING],
+            ['request_keys', 'session', 'request_keys', 'session',           self::SETTINGS_TYPE_STRING],
+            ['request_keys', 'cookie',  'request_keys', 'cookie',            self::SETTINGS_TYPE_STRING],
+            ['request_keys', 'header',  'request_keys', 'header',            self::SETTINGS_TYPE_STRING],
+            ['security', 'safe_redirect',    'security', 'safe_redirect',    self::SETTINGS_TYPE_BOL],
+            ['security', 'trust_ip_headers', 'security', 'trust_ip_headers', self::SETTINGS_TYPE_BOL],
+        ];
     }
 
     /**

@@ -29,136 +29,28 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
         return 'authorization';
     }
 
-    public function initSettingsFromPost()
+    protected function getFieldDefinitions()
     {
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'enabled',
-            null,
-            'allow_authentication',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'jwt_payload',
-            null,
-            'jwt_payload',
-            BaseSettings::SETTINGS_TYPE_ARRAY
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'ttl',
-            null,
-            'jwt_auth_ttl',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'refresh_ttl',
-            null,
-            'jwt_auth_refresh_ttl',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'ip_whitelist',
-            null,
-            'auth_ip',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'auth_code',
-            null,
-            'auth_requires_auth_code',
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'password_base64',
-            null,
-            'auth_password_base64',
-            BaseSettings::SETTINGS_TYPE_BOL,
-            false
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'password_hash_enabled',
-            null,
-            'auth_password_hash_enabled',
-            BaseSettings::SETTINGS_TYPE_BOL,
-            false
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'iss',
-            null,
-            'jwt_auth_iss',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'refresh_token_enabled',
-            null,
-            'allow_refresh_token',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'refresh_token_key',
-            null,
-            'refresh_token_key',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'validate_token_enabled',
-            null,
-            'allow_validate_token',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'revoke_token_enabled',
-            null,
-            'allow_revoke_token',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'refresh_auth_code',
-            null,
-            'refresh_requires_auth_code',
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'validate_auth_code',
-            null,
-            'validate_requires_auth_code',
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'revoke_auth_code',
-            null,
-            'revoke_requires_auth_code',
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
-        $this->assignSettingsPropertyFromPost(
-            'custom_claims',
-            'payload',
-            null,
-            'custom_claims_payload',
-            BaseSettings::SETTINGS_TYPE_ARRAY
-        );
-        $this->assignSettingsPropertyFromPost(
-            'custom_claims',
-            'header',
-            null,
-            'custom_claims_header',
-            BaseSettings::SETTINGS_TYPE_ARRAY
-        );
+        return [
+            [null, 'enabled',                null, 'allow_authentication',        self::SETTINGS_TYPE_STRING],
+            [null, 'jwt_payload',            null, 'jwt_payload',                 self::SETTINGS_TYPE_ARRAY],
+            [null, 'ttl',                    null, 'jwt_auth_ttl',                self::SETTINGS_TYPE_STRING],
+            [null, 'refresh_ttl',            null, 'jwt_auth_refresh_ttl',        self::SETTINGS_TYPE_STRING],
+            [null, 'ip_whitelist',           null, 'auth_ip',                     self::SETTINGS_TYPE_STRING],
+            [null, 'auth_code',              null, 'auth_requires_auth_code',     self::SETTINGS_TYPE_BOL],
+            [null, 'password_base64',        null, 'auth_password_base64',        self::SETTINGS_TYPE_BOL, false],
+            [null, 'password_hash_enabled',  null, 'auth_password_hash_enabled',  self::SETTINGS_TYPE_BOL, false],
+            [null, 'iss',                    null, 'jwt_auth_iss',                self::SETTINGS_TYPE_STRING],
+            [null, 'refresh_token_enabled',  null, 'allow_refresh_token',         self::SETTINGS_TYPE_STRING],
+            [null, 'refresh_token_key',      null, 'refresh_token_key',           self::SETTINGS_TYPE_STRING],
+            [null, 'validate_token_enabled', null, 'allow_validate_token',        self::SETTINGS_TYPE_STRING],
+            [null, 'revoke_token_enabled',   null, 'allow_revoke_token',          self::SETTINGS_TYPE_STRING],
+            [null, 'refresh_auth_code',      null, 'refresh_requires_auth_code',  self::SETTINGS_TYPE_BOL],
+            [null, 'validate_auth_code',     null, 'validate_requires_auth_code', self::SETTINGS_TYPE_BOL],
+            [null, 'revoke_auth_code',       null, 'revoke_requires_auth_code',   self::SETTINGS_TYPE_BOL],
+            ['custom_claims', 'payload', null, 'custom_claims_payload',           self::SETTINGS_TYPE_ARRAY],
+            ['custom_claims', 'header',  null, 'custom_claims_header',            self::SETTINGS_TYPE_ARRAY],
+        ];
     }
 
     /**

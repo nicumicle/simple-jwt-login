@@ -21,29 +21,26 @@ class LoginSettings extends BaseSettings implements SettingsInterface
         return 'login';
     }
 
+    protected function getFieldDefinitions()
+    {
+        return [
+            [null, 'login_by',                   null, 'jwt_login_by',                     self::SETTINGS_TYPE_INT],
+            [null, 'login_by_parameter',         null, 'jwt_login_by_parameter',           self::SETTINGS_TYPE_STRING],
+            [null, 'enabled',                    null, 'allow_autologin',                  self::SETTINGS_TYPE_BOL],
+            [null, 'fail_redirect',              null, 'login_fail_redirect',              self::SETTINGS_TYPE_STRING],
+            [null, 'auth_code',                  null, 'require_login_auth',               self::SETTINGS_TYPE_BOL],
+            [null, 'include_request_parameters', null, 'include_login_request_parameters', self::SETTINGS_TYPE_BOL, false],
+            [null, 'allow_redirect_parameter',   null, 'allow_usage_redirect_parameter',   self::SETTINGS_TYPE_BOL, false],
+            [null, 'remove_request_parameters',  null, 'login_remove_request_parameters',  self::SETTINGS_TYPE_STRING, null],
+            [null, 'ip_whitelist',               null, 'login_ip',                         self::SETTINGS_TYPE_STRING],
+            [null, 'iss_whitelist',              null, 'login_iss',                        self::SETTINGS_TYPE_STRING],
+        ];
+    }
+
     public function initSettingsFromPost()
     {
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'login_by',
-            null,
-            'jwt_login_by',
-            BaseSettings::SETTINGS_TYPE_INT
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'login_by_parameter',
-            null,
-            'jwt_login_by_parameter',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'enabled',
-            null,
-            'allow_autologin',
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
+        parent::initSettingsFromPost();
+
         if (isset($this->post['redirect'])) {
             $this->settings['redirect'] = (int)$this->post['redirect'];
             $this->settings['redirect_url'] = (int)$this->post['redirect'] === self::REDIRECT_CUSTOM
@@ -51,61 +48,6 @@ class LoginSettings extends BaseSettings implements SettingsInterface
                 ? (string)$this->post['redirect_url']
                 : '';
         }
-
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'fail_redirect',
-            null,
-            'login_fail_redirect',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'auth_code',
-            null,
-            'require_login_auth',
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'include_request_parameters',
-            null,
-            'include_login_request_parameters',
-            BaseSettings::SETTINGS_TYPE_BOL,
-            false
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'allow_redirect_parameter',
-            null,
-            'allow_usage_redirect_parameter',
-            BaseSettings::SETTINGS_TYPE_BOL,
-            false
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'remove_request_parameters',
-            null,
-            'login_remove_request_parameters',
-            BaseSettings::SETTINGS_TYPE_STRING,
-            null
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'ip_whitelist',
-            null,
-            'login_ip',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'iss_whitelist',
-            null,
-            'login_iss',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
     }
 
     public function validateSettings()

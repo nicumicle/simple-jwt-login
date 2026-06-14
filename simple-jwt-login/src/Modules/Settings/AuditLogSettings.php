@@ -17,32 +17,20 @@ class AuditLogSettings extends BaseSettings implements SettingsInterface
         return 'audit_log';
     }
 
-    public function initSettingsFromPost()
+    protected function getFieldDefinitions()
     {
-        $this->assignSettingsPropertyFromPost(
-            null,
-            self::SETTING_ENABLED,
-            'audit_log',
-            self::SETTING_ENABLED,
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            null,
-            self::SETTING_ENABLED_EVENTS,
-            'audit_log',
-            self::SETTING_ENABLED_EVENTS,
-            BaseSettings::SETTINGS_TYPE_ARRAY
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            null,
-            self::SETTING_RETENTION_DAYS,
-            'audit_log',
-            self::SETTING_RETENTION_DAYS,
-            BaseSettings::SETTINGS_TYPE_INT,
-            self::DEFAULT_RETENTION_DAYS
-        );
+        return [
+            [null, self::SETTING_ENABLED,        'audit_log', self::SETTING_ENABLED,        self::SETTINGS_TYPE_BOL],
+            [null, self::SETTING_ENABLED_EVENTS, 'audit_log', self::SETTING_ENABLED_EVENTS, self::SETTINGS_TYPE_ARRAY],
+            [
+                null,
+                self::SETTING_RETENTION_DAYS,
+                'audit_log',
+                self::SETTING_RETENTION_DAYS,
+                self::SETTINGS_TYPE_INT,
+                self::DEFAULT_RETENTION_DAYS,
+            ],
+        ];
     }
 
     /**

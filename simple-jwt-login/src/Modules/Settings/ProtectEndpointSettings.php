@@ -26,65 +26,20 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
         return 'protect_endpoint';
     }
 
-    public function initSettingsFromPost()
+    protected function getFieldDefinitions()
     {
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'enabled',
-            'protect_endpoints',
-            'enabled',
-            BaseSettings::SETTINGS_TYPE_INT
-        );
+        $group = self::PROPERTY_GROUP;
 
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'action',
-            'protect_endpoints',
-            'action',
-            BaseSettings::SETTINGS_TYPE_INT
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'protect',
-            'protect_endpoints',
-            'protect',
-            BaseSettings::SETTINGS_TYPE_ARRAY
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'protect_method',
-            'protect_endpoints',
-            'protect_method',
-            BaseSettings::SETTINGS_TYPE_ARRAY
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'protect_match',
-            'protect_endpoints',
-            'protect_match',
-            BaseSettings::SETTINGS_TYPE_ARRAY
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'whitelist',
-            'protect_endpoints',
-            'whitelist',
-            BaseSettings::SETTINGS_TYPE_ARRAY
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'whitelist_method',
-            'protect_endpoints',
-            'whitelist_method',
-            BaseSettings::SETTINGS_TYPE_ARRAY
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'whitelist_match',
-            'protect_endpoints',
-            'whitelist_match',
-            BaseSettings::SETTINGS_TYPE_ARRAY
-        );
+        return [
+            [null, 'enabled',          $group, 'enabled',          self::SETTINGS_TYPE_INT],
+            [null, 'action',           $group, 'action',           self::SETTINGS_TYPE_INT],
+            [null, 'protect',          $group, 'protect',          self::SETTINGS_TYPE_ARRAY],
+            [null, 'protect_method',   $group, 'protect_method',   self::SETTINGS_TYPE_ARRAY],
+            [null, 'protect_match',    $group, 'protect_match',    self::SETTINGS_TYPE_ARRAY],
+            [null, 'whitelist',        $group, 'whitelist',        self::SETTINGS_TYPE_ARRAY],
+            [null, 'whitelist_method', $group, 'whitelist_method', self::SETTINGS_TYPE_ARRAY],
+            [null, 'whitelist_match',  $group, 'whitelist_match',  self::SETTINGS_TYPE_ARRAY],
+        ];
     }
 
     public function validateSettings()

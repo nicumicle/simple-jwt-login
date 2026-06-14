@@ -9,15 +9,11 @@ class HooksSettings extends BaseSettings implements SettingsInterface
         return 'hooks';
     }
 
-    public function initSettingsFromPost()
+    protected function getFieldDefinitions()
     {
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'enabled_hooks',
-            null,
-            'enabled_hooks',
-            BaseSettings::SETTINGS_TYPE_ARRAY
-        );
+        return [
+            [null, 'enabled_hooks', null, 'enabled_hooks', self::SETTINGS_TYPE_ARRAY],
+        ];
     }
 
     public function validateSettings()

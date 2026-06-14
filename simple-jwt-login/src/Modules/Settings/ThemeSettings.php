@@ -12,15 +12,11 @@ class ThemeSettings extends BaseSettings implements SettingsInterface
         return 'theme';
     }
 
-    public function initSettingsFromPost()
+    protected function getFieldDefinitions()
     {
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'mode',
-            'theme',
-            'mode',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
+        return [
+            [null, 'mode', 'theme', 'mode', self::SETTINGS_TYPE_STRING],
+        ];
     }
 
     public function validateSettings()

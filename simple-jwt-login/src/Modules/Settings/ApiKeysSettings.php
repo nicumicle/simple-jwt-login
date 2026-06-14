@@ -13,22 +13,12 @@ class ApiKeysSettings extends BaseSettings implements SettingsInterface
         return 'api_keys';
     }
 
-    public function initSettingsFromPost()
+    protected function getFieldDefinitions()
     {
-        $this->assignSettingsPropertyFromPost(
-            null,
-            self::SETTING_ENABLED,
-            'api_keys',
-            self::SETTING_ENABLED,
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            self::SETTING_HEADER_NAME,
-            'api_keys',
-            self::SETTING_HEADER_NAME,
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
+        return [
+            [null, self::SETTING_ENABLED,     'api_keys', self::SETTING_ENABLED,     self::SETTINGS_TYPE_BOL],
+            [null, self::SETTING_HEADER_NAME, 'api_keys', self::SETTING_HEADER_NAME, self::SETTINGS_TYPE_STRING],
+        ];
     }
 
     public function validateSettings()

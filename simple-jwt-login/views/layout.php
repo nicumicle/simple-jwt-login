@@ -15,7 +15,7 @@ if (! defined('ABSPATH')) {
     exit;
 } // Exit if accessed directly
 
-$jwtSettings   = new SimpleJWTLoginSettings(new WordPressRepository());
+$jwtSettings   = new SimpleJWTLoginSettings(WordPressRepository::getInstance());
 $saved         = false;
 $message       = __('Settings successfully saved', 'simple-jwt-login');
 $showStatusBar = false;

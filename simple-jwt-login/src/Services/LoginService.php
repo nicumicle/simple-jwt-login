@@ -135,8 +135,8 @@ class LoginService extends BaseService implements ServiceInterface
             );
         }
 
-        $interimPayload = $this->getPayloadFromJWT($this->jwt);
-        if (!empty($interimPayload[AuthenticateService::TFA_PENDING_CLAIM])) {
+        $payload = $this->getPayloadFromJWT($this->jwt);
+        if (!empty($payload[AuthenticateService::TFA_PENDING_CLAIM])) {
             throw new Exception(
                 esc_html(__('This JWT requires two-factor verification before it can be used for login.', 'simple-jwt-login')),
                 absint(ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REJECTED)
@@ -165,7 +165,6 @@ class LoginService extends BaseService implements ServiceInterface
         // Validate ISS
         $allowedIss = $this->jwtSettings->getLoginSettings()->getAllowedLoginIss();
         if (!empty($allowedIss)) {
-            $payload = $this->getPayloadFromJWT($this->jwt);
             if ($payload === null ||
                 !isset($payload['iss']) ||
                 !in_array($payload['iss'], array_map('trim', explode(',', $allowedIss)), true)) {

@@ -12,6 +12,44 @@ class WordPressRepository implements Repository
 {
     const NONCE_NAME = 'simple-jwt-login-nonce';
 
+    /** @var WordPressRepository|null */
+    private static $singletonInstance = null;
+
+    /** @var array<int,WP_User> */
+    protected static $userInstances = array();
+
+    /** @var array */
+    protected static $optionsInstances = array();
+
+    protected function __construct()
+    {
+    }
+
+    /**
+     * @return WordPressRepository
+     */
+    public static function getInstance()
+    {
+        if (self::$singletonInstance === null) {
+            self::$singletonInstance = new self();
+        }
+        return self::$singletonInstance;
+    }
+
+    /**
+     * @param WP_User $user
+     */
+    protected static function storeUserInCache($user)
+    {
+        if (!($user instanceof WP_User)) {
+            return;
+        }
+        $userId = (int) $user->get('ID');
+        $userEmail = $user->get('user_email');
+        self::$userInstances['id_' . $userId] = $user;
+        self::$userInstances['email_' . $userEmail] = $user;
+    }
+
     /**
      * @param int $userID
      *
@@ -19,7 +57,13 @@ class WordPressRepository implements Repository
      */
     public function getUserDetailsById($userID)
     {
-        return get_userdata((int) $userID);
+        $cacheKey = 'id_' . (int) $userID;
+        if (isset(self::$userInstances[$cacheKey])) {
+            return self::$userInstances[$cacheKey];
+        }
+        $user = get_userdata((int) $userID);
+        self::storeUserInCache($user);
+        return $user;
     }
 
     /**
@@ -29,7 +73,13 @@ class WordPressRepository implements Repository
      */
     public function getUserDetailsByEmail($emailAddress)
     {
-        return get_user_by('email', $emailAddress);
+        $cacheKey = 'email_' . $emailAddress;
+        if (isset(self::$userInstances[$cacheKey])) {
+            return self::$userInstances[$cacheKey];
+        }
+        $user = get_user_by('email', $emailAddress);
+        self::storeUserInCache($user);
+        return $user;
     }
 
     /**
@@ -164,7 +214,12 @@ class WordPressRepository implements Repository
      */
     public function getOptionFromDatabase($option)
     {
-        return get_option($option);
+        if (array_key_exists($option, self::$optionsInstances)) {
+            return self::$optionsInstances[$option];
+        }
+        $value = get_option($option);
+        self::$optionsInstances[$option] = $value;
+        return $value;
     }
 
     /**
@@ -186,6 +241,7 @@ class WordPressRepository implements Repository
     public function addOption($optionName, $value)
     {
         add_option($optionName, $value);
+        self::$optionsInstances[$optionName] = $value;
     }
 
     /**
@@ -196,6 +252,7 @@ class WordPressRepository implements Repository
     public function updateOption($optionName, $value)
     {
         update_option($optionName, $value);
+        unset(self::$optionsInstances[$optionName]);
     }
 
     /**

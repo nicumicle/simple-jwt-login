@@ -15,7 +15,7 @@ use SimpleJWTLogin\Services\RouteService;
 
 // This will allow to log in  a user to WPGraphQL is not authenticated
 add_action('init_graphql_request', function () {
-    $wordPressReo = new WordPressRepository();
+    $wordPressReo = WordPressRepository::getInstance();
     $jwtSettings = new SimpleJWTLoginSettings($wordPressReo);
     if (!$jwtSettings->getIntegrationsSettings()->wpgraphql()->isEnabled()) {
         return;

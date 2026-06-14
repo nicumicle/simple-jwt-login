@@ -152,13 +152,11 @@ class RevokeTokenService extends AuthenticateService
         if (empty($userRevokedTokens)) {
             return false;
         }
-        foreach ($userRevokedTokens as $token) {
-            if ($token === $this->jwt) {
-                throw new Exception(
-                    esc_html(__('Token was already revoked.', 'simple-jwt-login')),
-                    absint(ErrorCodes::ERR_REVOKED_TOKEN)
-                );
-            }
+        if (in_array($this->jwt, $userRevokedTokens, true)) {
+            throw new Exception(
+                esc_html(__('Token was already revoked.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_REVOKED_TOKEN)
+            );
         }
 
         return false;

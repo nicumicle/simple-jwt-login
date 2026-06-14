@@ -11,6 +11,11 @@ use SimpleJWTLogin\Repositories\AuditLog\Repository as AuditLogRepositoryInterfa
 class AuditLoggerService
 {
     /**
+     * @var boolean
+     */
+    private static $hooksRegistered = false;
+
+    /**
      * @var AuditLogRepositoryInterface
      */
     private $repository;
@@ -58,6 +63,11 @@ class AuditLoggerService
      */
     public function registerAuditHooks()
     {
+        if (self::$hooksRegistered) {
+            return;
+        }
+        self::$hooksRegistered = true;
+
         $auditLogger = $this;
 
         $successHooks = array(

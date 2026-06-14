@@ -50,7 +50,7 @@ add_filter(
 );
 
 // Shared settings (used by LoginPageIntegration and CronCleanup)
-$simpleJwtLoginWordPressRepository = new WordPressRepository();
+$simpleJwtLoginWordPressRepository = WordPressRepository::getInstance();
 $simpleJwtLoginJwtSettings = new SimpleJWTLoginSettings($simpleJwtLoginWordPressRepository);
 
 // Login page integration

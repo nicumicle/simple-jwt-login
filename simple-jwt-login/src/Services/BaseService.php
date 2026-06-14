@@ -241,9 +241,11 @@ abstract class BaseService
      */
     public function getJwtFromRequestHeaderOrCookie()
     {
-        if ($this->jwtSettings->getGeneralSettings()->isJwtFromHeaderEnabled()) {
+        $generalSettings = $this->jwtSettings->getGeneralSettings();
+
+        if ($generalSettings->isJwtFromHeaderEnabled()) {
             $headers = array_change_key_case($this->serverHelper->getHeaders(), CASE_LOWER);
-            $headerKey = strtolower($this->jwtSettings->getGeneralSettings()->getRequestKeyHeader());
+            $headerKey = strtolower($generalSettings->getRequestKeyHeader());
             if (isset($headers[$headerKey])) {
                 $matches = [];
                 $match = preg_match(
@@ -257,22 +259,24 @@ abstract class BaseService
                 }
             }
         }
-        if ($this->jwtSettings->getGeneralSettings()->isJwtFromCookieEnabled()) {
-            if (isset($this->cookie[$this->jwtSettings->getGeneralSettings()->getRequestKeyCookie()])) {
-                return $this->cookie[$this->jwtSettings->getGeneralSettings()->getRequestKeyCookie()];
+        if ($generalSettings->isJwtFromCookieEnabled()) {
+            $cookieKey = $generalSettings->getRequestKeyCookie();
+            if (isset($this->cookie[$cookieKey])) {
+                return $this->cookie[$cookieKey];
             }
         }
 
-        if ($this->jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
-            if (isset($this->session[$this->jwtSettings->getGeneralSettings()->getRequestKeySession()])) {
-                return $this->session[$this->jwtSettings->getGeneralSettings()->getRequestKeySession()];
+        if ($generalSettings->isJwtFromSessionEnabled()) {
+            $sessionKey = $generalSettings->getRequestKeySession();
+            if (isset($this->session[$sessionKey])) {
+                return $this->session[$sessionKey];
             }
         }
 
-        $requestUrlKey = strtolower($this->jwtSettings->getGeneralSettings()->getRequestKeyUrl());
+        $requestUrlKey = strtolower($generalSettings->getRequestKeyUrl());
         $request = array_change_key_case($this->request, CASE_LOWER);
 
-        return $this->jwtSettings->getGeneralSettings()->isJwtFromURLEnabled() && isset($request[$requestUrlKey])
+        return $generalSettings->isJwtFromURLEnabled() && isset($request[$requestUrlKey])
             ? $request[$requestUrlKey]
             : null;
     }
@@ -293,10 +297,8 @@ abstract class BaseService
         if (empty($revokedTokensArray)) {
             return true;
         }
-        foreach ($revokedTokensArray as $token) {
-            if ($token === $jwt) {
-                throw new Exception(esc_html(__('This JWT is invalid.', 'simple-jwt-login')), absint(ErrorCodes::ERR_REVOKED_TOKEN));
-            }
+        if (in_array($jwt, $revokedTokensArray, true)) {
+            throw new Exception(esc_html(__('This JWT is invalid.', 'simple-jwt-login')), absint(ErrorCodes::ERR_REVOKED_TOKEN));
         }
 
         return true;

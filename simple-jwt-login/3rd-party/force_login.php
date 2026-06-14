@@ -12,7 +12,7 @@ use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 add_filter(
     'rest_authentication_errors',
     function ($bypass) {
-        $jwtSettings = new SimpleJWTLoginSettings(new WordPressRepository());
+        $jwtSettings = new SimpleJWTLoginSettings(WordPressRepository::getInstance());
         if (!$jwtSettings->getIntegrationsSettings()->forceLogin()->isEnabled()) {
             return $bypass;
         }

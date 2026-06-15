@@ -2,6 +2,7 @@
 
 namespace SimpleJWTLogin\Plugin;
 
+use SimpleJWTLogin\Helpers\ViewLoader;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepository;
 
@@ -19,7 +20,9 @@ class UserApiKeysPage
 
     public function registerMenuEntry()
     {
-        if (!$this->jwtSettings->getApiKeysSettings()->isUserApiKeysEnabled()) {
+        $apiKeysSettings = $this->jwtSettings->getApiKeysSettings();
+        if (!$apiKeysSettings->isEnabled() ||
+            !$apiKeysSettings->isUserApiKeysEnabled()) {
             return;
         }
         if (current_user_can('manage_options')) {
@@ -40,7 +43,6 @@ class UserApiKeysPage
     {
         global $wpdb;
 
-        $jwtSettings    = $this->jwtSettings;
         $pluginData     = get_plugin_data(SIMPLE_JWT_LOGIN_PLUGIN_FILE);
         $pluginVersion  = isset($pluginData['Version']) ? $pluginData['Version'] : false;
         $pluginDirUrl   = plugin_dir_url(SIMPLE_JWT_LOGIN_PLUGIN_FILE);
@@ -73,6 +75,10 @@ class UserApiKeysPage
             false
         );
 
-        require_once dirname(SIMPLE_JWT_LOGIN_PLUGIN_FILE) . '/views/user-api-keys.php';
+        $viewLoader = new ViewLoader(dirname(SIMPLE_JWT_LOGIN_PLUGIN_FILE) . '/views/');
+        $viewLoader->render('user-api-keys.php', array(
+            'jwtSettings' => $this->jwtSettings,
+            'apiKeyRepo'  => $apiKeyRepo,
+        ));
     }
 }

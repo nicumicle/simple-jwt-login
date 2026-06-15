@@ -29,10 +29,10 @@ $akTotal   = $akResult['total'];
 $akPages   = $akTotal > 0 ? (int) ceil($akTotal / $akPerPage) : 1;
 
 $permissionLabels = [
-    ApiKeyPermissions::READ   => 'dashicons-visibility',
-    ApiKeyPermissions::CREATE => 'dashicons-plus-alt',
-    ApiKeyPermissions::UPDATE => 'dashicons-edit',
-    ApiKeyPermissions::DELETE => 'dashicons-trash',
+    ApiKeyPermissions::READ   => ['GET',    'dashicons-visibility'],
+    ApiKeyPermissions::CREATE => ['POST',   'dashicons-plus-alt'],
+    ApiKeyPermissions::UPDATE => ['PUT',    'dashicons-edit'],
+    ApiKeyPermissions::DELETE => ['DELETE', 'dashicons-trash'],
 ];
 ?>
 
@@ -119,8 +119,10 @@ $permissionLabels = [
                         <td><?php echo esc_html($ak->name); ?></td>
                         <td><code><?php echo esc_html($ak->key_prefix); ?></code></td>
                         <td class="sjl-ak-perm-badges">
-                            <?php foreach ($perms as $perm) : ?>
-                                <span class="sjl-ak-method sjl-method-<?php echo esc_attr(strtolower($perm)); ?>"><?php echo esc_html($perm); ?></span>
+                            <?php foreach ($perms as $perm) :
+                                $httpMethod = isset($permissionLabels[$perm]) ? $permissionLabels[$perm][0] : strtoupper($perm);
+                                ?>
+                                <span class="sjl-ak-method sjl-method-<?php echo esc_attr(strtolower($httpMethod)); ?>"><?php echo esc_html($perm); ?></span>
                             <?php endforeach; ?>
                         </td>
                         <td><?php echo esc_html($ak->expires_at ?: '-'); ?></td>

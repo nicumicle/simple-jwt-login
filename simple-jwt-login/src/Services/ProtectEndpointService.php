@@ -4,7 +4,10 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Helpers\ApiKeyPermissions;
+use SimpleJWTLogin\Middleware\ApiKeyAuthMiddleware;
 use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
+use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepositoryInterface;
 
 class ProtectEndpointService extends BaseService
 {
@@ -14,6 +17,11 @@ class ProtectEndpointService extends BaseService
     private $routeService;
 
     /**
+     * @var ApiKeyRepositoryInterface|null
+     */
+    private $apiKeyRepository;
+
+    /**
      * @param RouteService $routeService
      *
      * @return $this
@@ -21,6 +29,18 @@ class ProtectEndpointService extends BaseService
     public function withRouteService($routeService)
     {
         $this->routeService = $routeService;
+
+        return $this;
+    }
+
+    /**
+     * @param ApiKeyRepositoryInterface $repository
+     *
+     * @return $this
+     */
+    public function withApiKeyRepository($repository)
+    {
+        $this->apiKeyRepository = $repository;
 
         return $this;
     }
@@ -69,7 +89,7 @@ class ProtectEndpointService extends BaseService
                     ErrorCodes::ERR_PROTECT_ENDPOINTS_MISSING_JWT
                 );
             }
-            
+
             $user = $this->routeService->getUserFromJwt($jwt);
             $this->validateJwtRevoked(
                 $this->wordPressData->getUserProperty($user, 'ID'),
@@ -83,8 +103,41 @@ class ProtectEndpointService extends BaseService
             if ($exception->getCode() === ErrorCodes::ERR_REVOKED_TOKEN) {
                 throw $exception;
             }
+        }
+
+        return $this->tryApiKeyAuth();
+    }
+
+    /**
+     * @return bool
+     */
+    private function tryApiKeyAuth()
+    {
+        if ($this->apiKeyRepository === null) {
             return false;
         }
+
+        if (!$this->jwtSettings->getApiKeysSettings()->isEnabled()) {
+            return false;
+        }
+
+        $requiredPermission = ApiKeyPermissions::httpMethodToPermission($this->requestMethod);
+        if ($requiredPermission === null) {
+            return false;
+        }
+
+        $headerName = $this->jwtSettings->getApiKeysSettings()->getHeaderName();
+        $keyData = (new ApiKeyAuthMiddleware($this->apiKeyRepository))
+            ->validate($this->serverHelper, $requiredPermission, $headerName);
+
+        if ($keyData === null) {
+            return false;
+        }
+
+        $user = $this->wordPressData->getUserDetailsById((int) $keyData['user_id']);
+        $this->wordPressData->loginUser($user, null);
+
+        return true;
     }
 
     /**

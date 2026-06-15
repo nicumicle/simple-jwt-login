@@ -7,6 +7,7 @@ use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Helpers\StatusCodeHelper;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepositoryInterface;
 use SimpleJWTLogin\Services\ProtectEndpointService;
 use SimpleJWTLogin\Services\RouteService;
 
@@ -32,6 +33,10 @@ class EndpointProtectionHandler
      * @var string
      */
     protected $documentRoot;
+    /**
+     * @var ApiKeyRepositoryInterface|null
+     */
+    protected $apiKeyRepository;
 
     /**
      * @param RouteService $routeService
@@ -50,6 +55,18 @@ class EndpointProtectionHandler
     }
 
     /**
+     * @param ApiKeyRepositoryInterface $repository
+     *
+     * @return $this
+     */
+    public function withApiKeyRepository($repository)
+    {
+        $this->apiKeyRepository = $repository;
+
+        return $this;
+    }
+
+    /**
      * @param mixed $endpoint
      *
      * @return mixed
@@ -65,6 +82,9 @@ class EndpointProtectionHandler
             ->withRouteService($this->routeService);
         if ($this->jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
             $service->withSession(simple_jwt_login_init_session());
+        }
+        if ($this->apiKeyRepository !== null) {
+            $service->withApiKeyRepository($this->apiKeyRepository);
         }
 
         $currentURL = esc_url_raw($this->serverHelper->getCurrentURL());

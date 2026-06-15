@@ -9,9 +9,11 @@ use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepositoryInterface;
 use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 use SimpleJWTLogin\Services\ProtectEndpointService;
 use SimpleJWTLogin\Services\RouteService;
+use stdClass;
 
 class ProtectEndpointServiceTest extends TestCase
 {
@@ -335,6 +337,114 @@ class ProtectEndpointServiceTest extends TestCase
             ->withSession([]);
 
         $result = $service->hasAccess('/wp-json/v2/posts', '/var/www/html');
+        $this->assertFalse($result);
+    }
+
+    public function testApiKeyGrantsAccessWhenJwtMissing()
+    {
+        $rawKey = 'test-api-key-value';
+        $keyHash = hash('sha256', $rawKey);
+
+        $keyRow = (object) [
+            'id'          => 1,
+            'user_id'     => 42,
+            'permissions' => json_encode(['read']),
+            'key_hash'    => $keyHash,
+        ];
+
+        $apiKeyRepo = $this->createStub(ApiKeyRepositoryInterface::class);
+        $apiKeyRepo->method('getByKeyHash')->willReturn($keyRow);
+        $apiKeyRepo->method('touchLastUsed')->willReturn(null);
+
+        $settings = [
+            'decryption_key' => 'test',
+            ProtectEndpointSettings::PROPERTY_GROUP => [
+                'enabled' => true,
+                'action'  => ProtectEndpointSettings::ALL_ENDPOINTS,
+                'whitelist' => [],
+            ],
+            'api_keys' => [
+                'enabled'     => true,
+                'header_name' => 'x-api-key',
+            ],
+        ];
+
+        $userStub = new stdClass();
+        $this->wordPressData->method('getOptionFromDatabase')
+            ->willReturn(json_encode($settings));
+        $this->wordPressData->method('isUserLoggedIn')
+            ->willReturn(false);
+        $this->wordPressData->method('getUserDetailsById')
+            ->willReturn($userStub);
+        $this->wordPressData->method('loginUser')
+            ->willReturn(null);
+
+        $routeService = (new RouteService())
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressData))
+            ->withRequest([])
+            ->withSession([])
+            ->withCookies([]);
+
+        $serverHelper = new ServerHelper([
+            'HTTP_X_API_KEY' => $rawKey,
+            'REQUEST_METHOD' => 'GET',
+        ]);
+
+        $service = (new ProtectEndpointService())
+            ->withRequest([])
+            ->withCookies([])
+            ->withRequestMethod('GET')
+            ->withServerHelper($serverHelper)
+            ->withRouteService($routeService)
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressData))
+            ->withSession([])
+            ->withApiKeyRepository($apiKeyRepo);
+
+        $result = $service->hasAccess('/wp-json/wp/v2/posts', '/var/www/html');
+        $this->assertTrue($result);
+    }
+
+    public function testApiKeyAuthSkippedWhenRepositoryNotSet()
+    {
+        $settings = [
+            'decryption_key' => 'test',
+            ProtectEndpointSettings::PROPERTY_GROUP => [
+                'enabled' => true,
+                'action'  => ProtectEndpointSettings::ALL_ENDPOINTS,
+                'whitelist' => [],
+            ],
+            'api_keys' => [
+                'enabled'     => true,
+                'header_name' => 'x-api-key',
+            ],
+        ];
+
+        $this->wordPressData->method('getOptionFromDatabase')
+            ->willReturn(json_encode($settings));
+        $this->wordPressData->method('isUserLoggedIn')
+            ->willReturn(false);
+
+        $routeService = (new RouteService())
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressData))
+            ->withRequest([])
+            ->withSession([])
+            ->withCookies([]);
+
+        $serverHelper = new ServerHelper([
+            'HTTP_X_API_KEY' => 'some-key',
+            'REQUEST_METHOD' => 'GET',
+        ]);
+
+        $service = (new ProtectEndpointService())
+            ->withRequest([])
+            ->withCookies([])
+            ->withRequestMethod('GET')
+            ->withServerHelper($serverHelper)
+            ->withRouteService($routeService)
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressData))
+            ->withSession([]);
+
+        $result = $service->hasAccess('/wp-json/wp/v2/posts', '/var/www/html');
         $this->assertFalse($result);
     }
 

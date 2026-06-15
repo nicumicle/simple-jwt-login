@@ -387,6 +387,61 @@ class ApiKeyUsageTest extends FeatureTestCase
         });
     }
 
+    // ─── Tests: /wp/v2/users/me endpoint ─────────────────────────────────────
+
+    #[TestDox('Valid API key on GET /wp/v2/users/me returns the authenticated user profile')]
+    public function testValidApiKeyGrantsAccessToUsersMe(): void
+    {
+        [, , $userId] = $this->createAdminUser();
+        [, $rawKey]   = $this->createApiKey($userId, ['read']);
+
+        $response = $this->request('GET', '/wp/v2/users/me', [], [self::API_KEY_HEADER => $rawKey]);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $body = json_decode($response->getBody()->getContents(), true);
+        $this->assertArrayHasKey('id', $body);
+        $this->assertSame($userId, $body['id']);
+    }
+
+    #[TestDox('GET /wp/v2/users/me without an API key header returns WP-native 401')]
+    public function testGetUsersMeWithoutApiKeyReturnsWordPressNative401(): void
+    {
+        $response = $this->request('GET', '/wp/v2/users/me');
+
+        $this->assertSame(401, $response->getStatusCode());
+        $body      = json_decode($response->getBody()->getContents(), true);
+        $errorCode = isset($body['data']['error_code']) ? (int) $body['data']['error_code'] : 0;
+        $this->assertNotSame(
+            ErrorCodes::ERR_API_KEY_UNAUTHORIZED,
+            $errorCode,
+            'The 401 must come from WordPress, not from the plugin API-key middleware'
+        );
+    }
+
+    #[TestDox('When API keys feature is disabled, key header on GET /wp/v2/users/me is ignored and WP returns 401')]
+    public function testGetUsersMeWithApiKeysDisabledReturnsWordPressNative401(): void
+    {
+        [, , $userId] = $this->createAdminUser();
+        [, $rawKey]   = $this->createApiKey($userId, ['read']);
+
+        $disabledSettings = array_merge(self::baseSettings(), [
+            'api_keys' => ['enabled' => false],
+        ]);
+
+        $this->withSettings($disabledSettings, function () use ($rawKey) {
+            $response = $this->request('GET', '/wp/v2/users/me', [], [self::API_KEY_HEADER => $rawKey]);
+
+            $this->assertSame(401, $response->getStatusCode());
+            $body      = json_decode($response->getBody()->getContents(), true);
+            $errorCode = isset($body['data']['error_code']) ? (int) $body['data']['error_code'] : 0;
+            $this->assertNotSame(
+                ErrorCodes::ERR_API_KEY_UNAUTHORIZED,
+                $errorCode,
+                'With API keys disabled, the key header must be ignored (WP own 401, not plugin error)'
+            );
+        });
+    }
+
     // ─── Tests: custom header name ────────────────────────────────────────────
 
     #[TestDox('Key sent in the default header fails when a custom header name is configured')]

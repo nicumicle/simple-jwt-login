@@ -19,6 +19,7 @@ use SimpleJWTLogin\Plugin\Lifecycle;
 use SimpleJWTLogin\Plugin\LoginPageIntegration;
 use SimpleJWTLogin\Plugin\OAuthTwoFactorLoginHandler;
 use SimpleJWTLogin\Plugin\Shortcodes;
+use SimpleJWTLogin\Plugin\UserApiKeysPage;
 use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepository;
 use SimpleJWTLogin\Repositories\AuditLog\AuditLogRepository;
 use SimpleJWTLogin\Repositories\RefreshToken\RefreshTokenRepository;
@@ -44,6 +45,7 @@ global $wpdb;
 // Admin UI
 $simpleJwtLoginAdminUI = new AdminUI();
 add_action('admin_menu', array($simpleJwtLoginAdminUI, 'registerMenuEntry'));
+
 add_filter(
     'plugin_action_links_' . plugin_basename(__FILE__),
     array($simpleJwtLoginAdminUI, 'addPluginActionLinks')
@@ -52,6 +54,10 @@ add_filter(
 // Shared settings (used by LoginPageIntegration and CronCleanup)
 $simpleJwtLoginWordPressRepository = WordPressRepository::getInstance();
 $simpleJwtLoginJwtSettings = new SimpleJWTLoginSettings($simpleJwtLoginWordPressRepository);
+
+// User-facing API Keys menu (for non-admin users when the setting is enabled)
+$simpleJwtLoginUserApiKeysPage = new UserApiKeysPage($simpleJwtLoginJwtSettings);
+add_action('admin_menu', array($simpleJwtLoginUserApiKeysPage, 'registerMenuEntry'));
 
 // Login page integration
 //phpcs:ignore WordPress.Security.NonceVerification.Recommended

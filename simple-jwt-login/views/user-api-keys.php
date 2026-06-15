@@ -2,16 +2,8 @@
 
 use SimpleJWTLogin\Helpers\ApiKeyPermissions;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepository;
 use SimpleJWTLogin\Services\RouteService;
-
-$permissionLabels = [
-    ApiKeyPermissions::READ   => ['GET',    '/wp/v2/*', 'Read WordPress resources',   'dashicons-visibility'],
-    ApiKeyPermissions::CREATE => ['POST',   '/wp/v2/*', 'Create WordPress resources',  'dashicons-plus-alt'],
-    ApiKeyPermissions::UPDATE => ['PUT',    '/wp/v2/*', 'Update WordPress resources',  'dashicons-edit'],
-    ApiKeyPermissions::DELETE => ['DELETE', '/wp/v2/*', 'Delete WordPress resources',  'dashicons-trash'],
-];
 
 if (! defined('ABSPATH')) {
     /** @phpstan-ignore-next-line  */
@@ -19,108 +11,35 @@ if (! defined('ABSPATH')) {
 }
 
 /**
- * @var SettingsErrors $settingsErrors
  * @var SimpleJWTLoginSettings $jwtSettings
+ * @var ApiKeyRepository $apiKeyRepo
  */
 
-$namespace  = rtrim($jwtSettings->getGeneralSettings()->getRouteNamespace(), '/');
-$restBase   = rest_url($namespace);
-$restNonce  = wp_create_nonce('wp_rest');
+$namespace   = rtrim($jwtSettings->getGeneralSettings()->getRouteNamespace(), '/');
+$restBase    = rest_url($namespace);
+$restNonce   = wp_create_nonce('wp_rest');
+$currentUser = get_current_user_id();
 
-global $wpdb;
-$apiKeyRepo  = new ApiKeyRepository($wpdb);
-$akIsAdmin   = current_user_can('manage_options');
 //phpcs:ignore WordPress.Security.NonceVerification.Recommended
-$akPage      = isset($_GET['ak_page']) ? max(1, (int) $_GET['ak_page']) : 1;
-$akPerPage   = 20;
+$akPage    = isset($_GET['ak_page']) ? max(1, (int) $_GET['ak_page']) : 1;
+$akPerPage = 20;
+$akResult  = $apiKeyRepo->findByUserId($currentUser, $akPage, $akPerPage);
+$akItems   = $akResult['items'];
+$akTotal   = $akResult['total'];
+$akPages   = $akTotal > 0 ? (int) ceil($akTotal / $akPerPage) : 1;
 
-if ($akIsAdmin) {
-    $akResult = $apiKeyRepo->findAll($akPage, $akPerPage);
-} else {
-    $akResult = $apiKeyRepo->findByUserId(get_current_user_id(), $akPage, $akPerPage);
-}
-
-$akItems  = $akResult['items'];
-$akTotal  = $akResult['total'];
-$akPages  = $akTotal > 0 ? (int) ceil($akTotal / $akPerPage) : 1;
+$permissionLabels = [
+    ApiKeyPermissions::READ   => 'dashicons-visibility',
+    ApiKeyPermissions::CREATE => 'dashicons-plus-alt',
+    ApiKeyPermissions::UPDATE => 'dashicons-edit',
+    ApiKeyPermissions::DELETE => 'dashicons-trash',
+];
 ?>
 
+<div class="wrap">
+<div id="simple-jwt-login">
+
 <div class="sjl-gen-card">
-    <div class="sjl-gen-card-header">
-        <span class="dashicons dashicons-admin-network"></span>
-        <div>
-            <h3 class="sjl-gen-card-title"><?php echo esc_html__('API Keys', 'simple-jwt-login'); ?></h3>
-            <p class="sjl-gen-card-desc">
-                <?php echo esc_html__(
-                    'Allow external clients to authenticate using scoped API keys instead of JWTs. Send the key via the configured header below.',
-                    'simple-jwt-login'
-                ); ?>
-            </p>
-        </div>
-    </div>
-    <div class="sjl-gen-card-body">
-        <div class="sjl-gen-radio-group">
-            <label class="sjl-gen-radio-option">
-                <input type="radio" name="api_keys[enabled]" value="0"
-                    <?php echo !$jwtSettings->getApiKeysSettings()->isEnabled() ? 'checked' : ''; ?>
-                />
-                <span class="sjl-gen-radio-label"><?php echo esc_html__('Disabled', 'simple-jwt-login'); ?></span>
-            </label>
-            <label class="sjl-gen-radio-option">
-                <input type="radio" name="api_keys[enabled]" value="1"
-                    <?php echo $jwtSettings->getApiKeysSettings()->isEnabled() ? 'checked' : ''; ?>
-                />
-                <span class="sjl-gen-radio-label"><?php echo esc_html__('Enabled', 'simple-jwt-login'); ?></span>
-            </label>
-        </div>
-
-        <div class="form-group row mt-3">
-            <label class="col-sm-2 col-form-label">
-                <?php echo esc_html__('Header name', 'simple-jwt-login'); ?>
-            </label>
-            <div class="col-sm-4">
-                <input type="text" class="form-control"
-                    name="api_keys[header_name]"
-                    value="<?php echo esc_attr($jwtSettings->getApiKeysSettings()->getHeaderName()); ?>"
-                    placeholder="X-API-Key"
-                />
-                <small class="form-text text-muted">
-                    <?php echo esc_html__('HTTP header clients must send the API key in. Default: X-API-Key', 'simple-jwt-login'); ?>
-                </small>
-            </div>
-        </div>
-
-        <div class="form-group row mt-3">
-            <label class="col-sm-2 col-form-label">
-                <?php echo esc_html__('Allow users to manage their own API keys', 'simple-jwt-login'); ?>
-            </label>
-            <div class="col-sm-10">
-                <div class="sjl-gen-radio-group">
-                    <label class="sjl-gen-radio-option">
-                        <input type="radio" name="api_keys[allow_user_api_keys]" value="0"
-                            <?php echo !$jwtSettings->getApiKeysSettings()->isUserApiKeysEnabled() ? 'checked' : ''; ?>
-                        />
-                        <span class="sjl-gen-radio-label"><?php echo esc_html__('Disabled', 'simple-jwt-login'); ?></span>
-                    </label>
-                    <label class="sjl-gen-radio-option">
-                        <input type="radio" name="api_keys[allow_user_api_keys]" value="1"
-                            <?php echo $jwtSettings->getApiKeysSettings()->isUserApiKeysEnabled() ? 'checked' : ''; ?>
-                        />
-                        <span class="sjl-gen-radio-label"><?php echo esc_html__('Enabled', 'simple-jwt-login'); ?></span>
-                    </label>
-                </div>
-                <small class="form-text text-muted mt-1">
-                    <?php echo esc_html__(
-                        'When enabled, non-admin users see a "My API Keys" menu entry where they can create and manage their own keys.',
-                        'simple-jwt-login'
-                    ); ?>
-                </small>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="sjl-gen-card" id="sjl-api-keys-section">
     <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-plus-alt"></span>
         <div>
@@ -150,16 +69,14 @@ $akPages  = $akTotal > 0 ? (int) ceil($akTotal / $akPerPage) : 1;
         <div class="form-group row mb-3">
             <label class="col-sm-2 col-form-label"><?php echo esc_html__('Permissions', 'simple-jwt-login'); ?></label>
             <div class="col-sm-10">
+                <?php foreach (ApiKeyPermissions::$all as $perm) : ?>
                 <div>
-                    <?php foreach (ApiKeyPermissions::$all as $perm) : ?>
-                    <div>
-                        <label>
-                            <input type="checkbox" class="sjl-ak-perm-check" value="<?php echo esc_attr($perm); ?>" />
-                            <?php echo esc_html(ucfirst($perm)); ?>
-                        </label>
-                    </div>
-                    <?php endforeach; ?>
+                    <label>
+                        <input type="checkbox" class="sjl-ak-perm-check" value="<?php echo esc_attr($perm); ?>" />
+                        <?php echo esc_html(ucfirst($perm)); ?>
+                    </label>
                 </div>
+                <?php endforeach; ?>
             </div>
         </div>
 
@@ -170,11 +87,11 @@ $akPages  = $akTotal > 0 ? (int) ceil($akTotal / $akPerPage) : 1;
     </div>
 </div>
 
-<div class="sjl-gen-card" id="sjl-api-keys-list-section">
+<div class="sjl-gen-card">
     <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-list-view"></span>
         <div>
-            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Existing API Keys', 'simple-jwt-login'); ?></h3>
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('My API Keys', 'simple-jwt-login'); ?></h3>
         </div>
     </div>
     <div class="sjl-gen-card-body">
@@ -185,9 +102,6 @@ $akPages  = $akTotal > 0 ? (int) ceil($akTotal / $akPerPage) : 1;
                 <thead>
                     <tr>
                         <th><?php echo esc_html__('Name', 'simple-jwt-login'); ?></th>
-                        <?php if ($akIsAdmin) : ?>
-                        <th><?php echo esc_html__('User ID', 'simple-jwt-login'); ?></th>
-                        <?php endif; ?>
                         <th><?php echo esc_html__('Prefix', 'simple-jwt-login'); ?></th>
                         <th><?php echo esc_html__('Permissions', 'simple-jwt-login'); ?></th>
                         <th><?php echo esc_html__('Expires', 'simple-jwt-login'); ?></th>
@@ -203,15 +117,10 @@ $akPages  = $akTotal > 0 ? (int) ceil($akTotal / $akPerPage) : 1;
                         ?>
                     <tr>
                         <td><?php echo esc_html($ak->name); ?></td>
-                        <?php if ($akIsAdmin) : ?>
-                        <td><?php echo (int) $ak->user_id; ?></td>
-                        <?php endif; ?>
                         <td><code><?php echo esc_html($ak->key_prefix); ?></code></td>
                         <td class="sjl-ak-perm-badges">
-                            <?php foreach ($perms as $p) :
-                                $method = isset($permissionLabels[$p]) ? $permissionLabels[$p][0] : strtoupper($p);
-                                ?>
-                                <span class="sjl-ak-method sjl-method-<?php echo esc_attr(strtolower($method)); ?>"><?php echo esc_html($p); ?></span>
+                            <?php foreach ($perms as $perm) : ?>
+                                <span class="sjl-ak-method sjl-method-<?php echo esc_attr(strtolower($perm)); ?>"><?php echo esc_html($perm); ?></span>
                             <?php endforeach; ?>
                         </td>
                         <td><?php echo esc_html($ak->expires_at ?: '-'); ?></td>
@@ -238,9 +147,8 @@ $akPages  = $akTotal > 0 ? (int) ceil($akTotal / $akPerPage) : 1;
                     <?php endforeach; ?>
                 </tbody>
             </table>
-            <?php if ($akPages > 1) : ?>
-                <?php
-                $akBaseUrl = add_query_arg(array('active_tab' => SettingsErrors::PREFIX_API_KEYS));
+            <?php if ($akPages > 1) :
+                $akBaseUrl = admin_url('admin.php?page=sjl-user-api-keys');
                 ?>
                 <div class="row mt-3">
                     <div class="col-md-12 text-center">
@@ -332,6 +240,9 @@ $akPages  = $akTotal > 0 ? (int) ceil($akTotal / $akPerPage) : 1;
         </div>
     </div>
 </div>
+
+</div><!-- #simple-jwt-login -->
+</div><!-- .wrap -->
 
 <script>
 (function () {

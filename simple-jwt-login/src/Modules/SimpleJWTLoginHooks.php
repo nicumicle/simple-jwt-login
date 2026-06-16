@@ -275,43 +275,6 @@ class SimpleJWTLoginHooks
                 ),
             ],
             [
-                'name' => self::AUDIT_2FA_CHALLENGE_ISSUED,
-                'type' => self::HOOK_TYPE_ACTION,
-                'parameters' => [
-                    'int $userId',
-                    'string $userEmail'
-                ],
-                'description' => __(
-                    'Triggered when a two-factor authentication challenge has been issued.',
-                    'simple-jwt-login'
-                ),
-            ],
-            [
-                'name' => self::AUDIT_2FA_VERIFY_SUCCESS,
-                'type' => self::HOOK_TYPE_ACTION,
-                'parameters' => [
-                    'int $userId',
-                    'string $userEmail'
-                ],
-                'description' => __(
-                    'Triggered after a successful two-factor authentication verification.',
-                    'simple-jwt-login'
-                ),
-            ],
-            [
-                'name' => self::AUDIT_2FA_VERIFY_FAILED,
-                'type' => self::HOOK_TYPE_ACTION,
-                'parameters' => [
-                    'int $userId',
-                    'string $userEmail',
-                    'string $message'
-                ],
-                'description' => __(
-                    'Triggered when a two-factor authentication verification attempt fails.',
-                    'simple-jwt-login'
-                ),
-            ],
-            [
                 'name' => self::HOOK_RESPONSE_2FA_CHALLENGE,
                 'type' => self::HOOK_TYPE_FILTER,
                 'parameters' => [

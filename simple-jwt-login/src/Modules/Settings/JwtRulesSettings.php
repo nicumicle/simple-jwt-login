@@ -184,6 +184,18 @@ class JwtRulesSettings extends BaseSettings implements SettingsInterface
             }
             $seen[] = $signature;
 
+            $loginByParam = isset($rule['login_by_parameter']) ? trim((string)$rule['login_by_parameter']) : '';
+            if ($loginByParam === '') {
+                throw new Exception(
+                    esc_html(sprintf(
+                        // translators: 1: rule number, 2: condition value
+                        __('JWT Rule #%1$d ("%2$s"): JWT payload key is required.', 'simple-jwt-login'),
+                        $i + 1,
+                        $conditionValue
+                    ))
+                );
+            }
+
             $algorithm = isset($rule['algorithm']) ? $rule['algorithm'] : '';
             if (strpos($algorithm, 'RS') !== false) {
                 $pub  = isset($rule['decryption_key_public'])

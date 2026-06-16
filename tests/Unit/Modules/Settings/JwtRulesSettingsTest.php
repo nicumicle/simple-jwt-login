@@ -306,8 +306,8 @@ class JwtRulesSettingsTest extends TestCase
             ],
             'duplicate_iss' => [
                 'rules'           => [
-                    ['iss' => 'same', 'algorithm' => 'HS256', 'decryption_key' => 'secret1'],
-                    ['iss' => 'same', 'algorithm' => 'HS256', 'decryption_key' => 'secret2'],
+                    ['iss' => 'same', 'algorithm' => 'HS256', 'decryption_key' => 'secret1', 'login_by_parameter' => 'email'],
+                    ['iss' => 'same', 'algorithm' => 'HS256', 'decryption_key' => 'secret2', 'login_by_parameter' => 'email'],
                 ],
                 'expectedMessage' => 'duplicate condition',
             ],
@@ -339,7 +339,7 @@ class JwtRulesSettingsTest extends TestCase
             ],
             'hs256_empty_key' => [
                 'rules'           => [
-                    ['iss' => 'app', 'algorithm' => 'HS256', 'decryption_key' => ''],
+                    ['iss' => 'app', 'algorithm' => 'HS256', 'decryption_key' => '', 'login_by_parameter' => 'email'],
                 ],
                 'expectedMessage' => 'decryption key is required',
             ],
@@ -350,6 +350,7 @@ class JwtRulesSettingsTest extends TestCase
                         'algorithm'              => 'RS256',
                         'decryption_key_public'  => base64_encode(''),
                         'decryption_key_private' => base64_encode('some-private'),
+                        'login_by_parameter'     => 'email',
                     ],
                 ],
                 'expectedMessage' => 'public and private keys are required',
@@ -361,9 +362,16 @@ class JwtRulesSettingsTest extends TestCase
                         'algorithm'              => 'RS256',
                         'decryption_key_public'  => base64_encode('some-public'),
                         'decryption_key_private' => base64_encode(''),
+                        'login_by_parameter'     => 'email',
                     ],
                 ],
                 'expectedMessage' => 'public and private keys are required',
+            ],
+            'empty_login_by_parameter' => [
+                'rules'           => [
+                    ['iss' => 'app', 'algorithm' => 'HS256', 'decryption_key' => 'secret', 'login_by_parameter' => ''],
+                ],
+                'expectedMessage' => 'JWT payload key is required',
             ],
         ];
     }
@@ -398,7 +406,7 @@ class JwtRulesSettingsTest extends TestCase
         $sut = (new JwtRulesSettings())
             ->withSettings([
                 'jwt_rules' => ['rules' => [
-                    ['iss' => 'my-app', 'algorithm' => 'HS256', 'decryption_key' => 'secret'],
+                    ['iss' => 'my-app', 'algorithm' => 'HS256', 'decryption_key' => 'secret', 'login_by_parameter' => 'email'],
                 ]],
             ])
             ->withWordPressData($this->wordPressData)
@@ -418,6 +426,7 @@ class JwtRulesSettingsTest extends TestCase
                         'algorithm'              => 'RS256',
                         'decryption_key_public'  => base64_encode('-----BEGIN PUBLIC KEY-----'),
                         'decryption_key_private' => base64_encode('-----BEGIN RSA PRIVATE KEY-----'),
+                        'login_by_parameter'     => 'email',
                     ],
                 ]],
             ])

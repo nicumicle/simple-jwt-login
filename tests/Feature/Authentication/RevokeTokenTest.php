@@ -243,4 +243,59 @@ class RevokeTokenTest extends FeatureTestCase
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertTrue($body['success']);
     }
+
+    // ─── Bearer prefix requirement ────────────────────────────────────────────
+
+    #[TestDox('Revoke: bare JWT in Authorization header is ignored when Bearer prefix is required')]
+    public function testBearerRequiredRejectsBareJwtInHeader(): void
+    {
+        $jwt = $this->freshJwt();
+
+        self::updateSimpleJWTOption(array_merge(self::baseSettings(), [
+            'request_jwt_header_require_bearer' => true,
+        ]));
+        try {
+            $response = $this->jsonRequest(
+                'POST',
+                '/simple-jwt-login/v1/auth/revoke',
+                [],
+                ['Authorization' => $jwt]
+            );
+
+            $this->assertSame(422, $response->getStatusCode());
+            $body = json_decode($response->getBody()->getContents(), true);
+            $this->assertFalse($body['success']);
+            $this->assertSame(ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE, $body['data']['error_code']);
+        } finally {
+            self::updateSimpleJWTOption(self::baseSettings());
+            // Clean up: revoke via URL param (header source is irrelevant here)
+            $uri = self::API_URL . '?rest_route=/simple-jwt-login/v1/auth/revoke&JWT=' . $jwt;
+            $this->client->post($uri, ['http_errors' => false]);
+        }
+    }
+
+    #[TestDox('Revoke: Bearer-prefixed JWT in header is accepted when Bearer prefix is required')]
+    public function testBearerRequiredAcceptsBearerJwtInHeader(): void
+    {
+        $jwt = $this->freshJwt();
+
+        self::updateSimpleJWTOption(array_merge(self::baseSettings(), [
+            'request_jwt_header_require_bearer' => true,
+        ]));
+        try {
+            $response = $this->jsonRequest(
+                'POST',
+                '/simple-jwt-login/v1/auth/revoke',
+                [],
+                $this->authHeader($jwt)
+            );
+
+            $this->assertSame(200, $response->getStatusCode());
+            $body = json_decode($response->getBody()->getContents(), true);
+            $this->assertTrue($body['success']);
+            $this->assertSame('Token was revoked.', $body['message']);
+        } finally {
+            self::updateSimpleJWTOption(self::baseSettings());
+        }
+    }
 }

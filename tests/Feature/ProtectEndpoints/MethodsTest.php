@@ -283,4 +283,60 @@ class MethodsTest extends TestBase
         // Validate
         $this->assertSame($expectedStatusCode, $result->getStatusCode());
     }
+
+    #[TestDox("ProtectEndpoints: bare JWT in Authorization header is ignored when Bearer prefix is required")]
+    public function testBearerRequiredBlocksJwtInHeaderWithoutPrefix(): void
+    {
+        $options = $this->defaultOptions;
+        $options['protect_endpoints'] = [
+            'enabled' => true,
+            'action'  => 2,
+            'protect' => ['/wp/v2/users'],
+            'protect_method' => ['GET'],
+            'whitelist' => [],
+        ];
+        $options['request_jwt_header_require_bearer'] = true;
+        self::updateSimpleJWTOption($options);
+
+        try {
+            list ($email, $password, $statusCode) = $this->registerRandomUser();
+            $this->assertSame(200, $statusCode, 'register failed');
+            $jwt = $this->getJWTForUser($email, $password);
+
+            $url    = self::API_URL . '?rest_route=/wp/v2/users';
+            $result = $this->client->get($url, ['headers' => ['Authorization' => $jwt]]);
+
+            $this->assertSame(401, $result->getStatusCode());
+        } finally {
+            self::updateSimpleJWTOption($this->defaultOptions);
+        }
+    }
+
+    #[TestDox("ProtectEndpoints: URL param source is unaffected when Bearer prefix is required for header")]
+    public function testBearerRequiredDoesNotAffectUrlParamSource(): void
+    {
+        $options = $this->defaultOptions;
+        $options['protect_endpoints'] = [
+            'enabled' => true,
+            'action'  => 2,
+            'protect' => ['/wp/v2/users'],
+            'protect_method' => ['GET'],
+            'whitelist' => [],
+        ];
+        $options['request_jwt_header_require_bearer'] = true;
+        self::updateSimpleJWTOption($options);
+
+        try {
+            list ($email, $password, $statusCode) = $this->registerRandomUser();
+            $this->assertSame(200, $statusCode, 'register failed');
+            $jwt = $this->getJWTForUser($email, $password);
+
+            $url    = self::API_URL . '?rest_route=/wp/v2/users&JWT=' . $jwt;
+            $result = $this->client->get($url);
+
+            $this->assertSame(200, $result->getStatusCode());
+        } finally {
+            self::updateSimpleJWTOption($this->defaultOptions);
+        }
+    }
 }

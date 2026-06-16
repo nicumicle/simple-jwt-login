@@ -81,6 +81,34 @@ class GeneralSettingsTest extends TestCase
         $this->assertTrue($generalSettings->isTrustIpHeadersEnabled());
     }
 
+    public function testBearerRequiredDefaultsFalse()
+    {
+        $generalSettings = (new GeneralSettings())
+            ->withSettings([])
+            ->withWordPressData($this->wordPressData)
+            ->withPost([]);
+        $generalSettings->initSettingsFromPost();
+
+        $this->assertFalse($generalSettings->isJwtFromHeaderBearerRequired());
+    }
+
+    public function testBearerRequiredCanBeEnabled()
+    {
+        $post = [
+            'route_namespace'                   => 'jwt',
+            'request_jwt_url'                   => '1',
+            'request_keys'                      => ['url' => 'JWT', 'session' => 's', 'cookie' => 'c', 'header' => 'h'],
+            'request_jwt_header_require_bearer' => '1',
+        ];
+        $generalSettings = (new GeneralSettings())
+            ->withSettings([])
+            ->withWordPressData($this->wordPressData)
+            ->withPost($post);
+        $generalSettings->initSettingsFromPost();
+
+        $this->assertTrue($generalSettings->isJwtFromHeaderBearerRequired());
+    }
+
     public function testSecurityTogglesDefaultToFalse()
     {
         $generalSettings = (new GeneralSettings())

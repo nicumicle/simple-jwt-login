@@ -36,6 +36,7 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
             ['request_keys', 'session', 'request_keys', 'session',           self::SETTINGS_TYPE_STRING],
             ['request_keys', 'cookie',  'request_keys', 'cookie',            self::SETTINGS_TYPE_STRING],
             ['request_keys', 'header',  'request_keys', 'header',            self::SETTINGS_TYPE_STRING],
+            [null, 'request_jwt_header_require_bearer', null, 'request_jwt_header_require_bearer', self::SETTINGS_TYPE_BOL, false],
             ['security', 'safe_redirect',    'security', 'safe_redirect',    self::SETTINGS_TYPE_BOL],
             ['security', 'trust_ip_headers', 'security', 'trust_ip_headers', self::SETTINGS_TYPE_BOL],
         ];
@@ -293,6 +294,16 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
         return isset($this->settings['request_keys']['header'])
             ? esc_html($this->settings['request_keys']['header'])
             : 'Authorization';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isJwtFromHeaderBearerRequired()
+    {
+        return isset($this->settings['request_jwt_header_require_bearer'])
+            ? (bool)$this->settings['request_jwt_header_require_bearer']
+            : false;
     }
 
     /**

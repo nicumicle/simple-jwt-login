@@ -67,6 +67,7 @@ class V1ToV2Migration implements MigrationInterface
             'request_jwt_cookie',
             'request_jwt_header',
             'request_jwt_session',
+            'request_jwt_header_require_bearer',
         ];
         foreach ($flatKeys as $key) {
             if (array_key_exists($key, $settings)) {

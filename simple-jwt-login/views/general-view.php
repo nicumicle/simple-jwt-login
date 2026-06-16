@@ -190,6 +190,20 @@ if (!defined('ABSPATH')) {
                             placeholder="<?php echo esc_attr__('e.g. Authorization', 'simple-jwt-login'); ?>"
                             value="<?php echo esc_attr($jwtSettings->getGeneralSettings()->getRequestKeyHeader()); ?>"
                         />
+                        <label class="sjl-gen-bearer-label">
+                            <input
+                                type="hidden"
+                                name="request_jwt_header_require_bearer"
+                                value="0"
+                            />
+                            <input
+                                type="checkbox"
+                                name="request_jwt_header_require_bearer"
+                                value="1"
+                                <?php echo $jwtSettings->getGeneralSettings()->isJwtFromHeaderBearerRequired() ? 'checked' : ''; ?>
+                            />
+                            <?php echo esc_html__('Require "Bearer" prefix', 'simple-jwt-login'); ?>
+                        </label>
                     </td>
                     <td>
                         <select name="request_jwt_header" class="form-control onOff sjl-gen-onoff">

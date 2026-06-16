@@ -254,7 +254,14 @@ abstract class BaseService
                     $matches
                 );
 
-                if ($match && (empty($matches[1]) || strtolower($matches[1]) === 'bearer')) {
+                $hasBearer = $match && strtolower($matches[1]) === 'bearer';
+                $noPrefix  = $match && empty($matches[1]);
+
+                if ($generalSettings->isJwtFromHeaderBearerRequired()) {
+                    if ($hasBearer) {
+                        return $matches[2];
+                    }
+                } elseif ($hasBearer || $noPrefix) {
                     return $matches[2];
                 }
             }

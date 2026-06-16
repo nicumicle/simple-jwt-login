@@ -1261,6 +1261,7 @@
 #simple-jwt-login .sjl-gen-onoff       { height: 30px; font-size: 12px; }
 #simple-jwt-login .sjl-gen-param-input { padding: 4px 8px; }
 #simple-jwt-login .sjl-gen-onoff       { padding: 0 4px; max-width: 60px; }
+#simple-jwt-login .sjl-gen-bearer-label { display: flex; align-items: center; gap: 5px; margin-top: 6px; font-size: 11px; color: var(--sjl-text-light); }
 
 /* ============================================
    Shared: Code + Monospace

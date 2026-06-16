@@ -237,4 +237,59 @@ class ExtendedDeleteTest extends FeatureTestCase
         $body = json_decode($reg2->getBody()->getContents(), true);
         $this->assertTrue($body['success']);
     }
+
+    // ─── Bearer prefix requirement ────────────────────────────────────────────
+
+    #[TestDox('Delete: bare JWT in Authorization header is ignored when Bearer prefix is required')]
+    public function testBearerRequiredRejectsBareJwtInHeader(): void
+    {
+        [$email, $password, $status] = $this->createUser();
+        $this->assertSame(200, $status, 'register failed');
+        $jwt = $this->getJWTForUser($email, $password);
+
+        self::updateSimpleJWTOption(array_merge(self::baseSettings(), [
+            'request_jwt_header_require_bearer' => true,
+        ]));
+        try {
+            $response = $this->request(
+                'DELETE',
+                '/simple-jwt-login/v1/users',
+                [],
+                ['Authorization' => $jwt]
+            );
+
+            $body = json_decode($response->getBody()->getContents(), true);
+            $this->assertFalse($body['success']);
+            $this->assertSame(ErrorCodes::ERR_DELETE_MISSING_JWT, $body['data']['error_code']);
+        } finally {
+            self::updateSimpleJWTOption(self::baseSettings());
+            $this->deleteUser($jwt);
+        }
+    }
+
+    #[TestDox('Delete: Bearer-prefixed JWT in header is accepted when Bearer prefix is required')]
+    public function testBearerRequiredAcceptsBearerJwtInHeader(): void
+    {
+        [$email, $password, $status] = $this->createUser();
+        $this->assertSame(200, $status, 'register failed');
+        $jwt = $this->getJWTForUser($email, $password);
+
+        self::updateSimpleJWTOption(array_merge(self::baseSettings(), [
+            'request_jwt_header_require_bearer' => true,
+        ]));
+        try {
+            $response = $this->request(
+                'DELETE',
+                '/simple-jwt-login/v1/users',
+                [],
+                $this->authHeader($jwt)
+            );
+
+            $this->assertSame(200, $response->getStatusCode());
+            $body = json_decode($response->getBody()->getContents(), true);
+            $this->assertTrue($body['success']);
+        } finally {
+            self::updateSimpleJWTOption(self::baseSettings());
+        }
+    }
 }

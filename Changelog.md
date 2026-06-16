@@ -27,6 +27,8 @@
 - Add option for sending default password change WordPRess email when change password endpoint is called
 - Improve plugin security and performance
 - Add Light/Dark mode UI
+- Allow non admin users to manage their own API keys
+- Add option for 'Require "Bearer" prefix' [#96](https://github.com/nicumicle/simple-jwt-login/issues/96)
 
 ## 3.6.6 (22 May 2026)
 - Update WordPress 7.0 Compatibility

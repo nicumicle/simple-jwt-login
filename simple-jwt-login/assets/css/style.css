@@ -273,23 +273,6 @@
     max-width: 60px;
 }
 
-/* Legacy status indicators (kept for compatibility) */
-#simple-jwt-login .box-status {
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    width: 100%;
-    height: 20px;
-}
-
-#simple-jwt-login .box-status.box-status-on {
-    background-image: url('../images/correct.svg');
-}
-
-#simple-jwt-login .box-status.box-status-off {
-    background-image: url('../images/close.svg');
-}
-
 /* ============================================
    Dashboard
    ============================================ */
@@ -491,25 +474,6 @@
     height: 15px;
     line-height: 15px;
     font-size: 15px;
-}
-
-/**
-  Auth codes
- */
-#simple-jwt-login .auth-code-delete-container a {
-    width: 100%;
-    height: 100%;
-    display: block;
-}
-
-#simple-jwt-login .delete-auth-code {
-    background-image: url("../images/delete.svg");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 25px;
-    width: 100%;
-    height: 100%;
-    display: block;
 }
 
 /* ============================================

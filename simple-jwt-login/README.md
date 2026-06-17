@@ -441,20 +441,27 @@ See the [CLI repository](https://github.com/simple-jwt-login/simple-jwt-login-cl
 
 == Screenshots ==
 
-1. Dashboard - overview of enabled features and quick links
-2. General Settings - configure JWT key, algorithm, and token parameters
-3. Auto-login configuration - redirect options, IP restriction, and JWT source
-4. Register new users - role assignment, domain filtering, and random password generation
-5. Delete user configuration - identifier type and IP allowlist
-6. Reset Password - endpoint toggle, email template customization
-7. Authentication - JWT generation, refresh tokens, and validation endpoint
-8. Auth Codes - manage access codes with expiration and role overrides
-9. API Keys - issue and revoke per-client API keys
-10. Audit Logs - paginated event log for login, register, and auth events
-11. Webhooks - configure outbound HTTP callbacks per event type
-12. Protect Endpoints - global or per-route JWT enforcement with method filtering
-13. CORS - configure allowed origins and headers for cross-domain clients
-14. Applications - OAuth and third-party integrations (Google, Facebook, GitHub, Auth0, WPGraphQL)
+1. Dashboard - overview of routes, security, configuration, and monitoring sections with status cards
+2. General - JWT algorithm, verification key, user identification, JWT input sources, and security options
+3. Login - auto-login toggle, redirect behavior after login/failure, and access control by IP and JWT user
+4. Register - user registration endpoint, role assignment, random password generation, post-registration options, and user meta keys
+5. Delete - delete user endpoint, authentication code requirement, and IP access control
+6. Reset Password - password reset endpoint, reset flow options, and email customization with template variables
+7. Authenticate - JWT generation endpoint, authentication options, header configuration, payload claims, and token expiration
+8. Refresh Token - refresh token endpoint, token lifetime window, and secret key configuration
+9. Validate Token - validate token endpoint and authentication code requirement
+10. Revoke Token - revoke token endpoint and authentication code requirement
+11. Auth Codes - authorization codes list with per-code WordPress role and expiration date
+12. Protect Endpoints - JWT protection scope selector and whitelisted endpoint rules
+13. CORS - CORS support toggle and header configuration (Allow-Origin, Allow-Methods, Allow-Headers)
+14. API Keys - API key management with create form, permissions, expiry, and existing keys table
+15. OAuth - login page button layout and OAuth provider configuration (Google, Auth0, Facebook, GitHub)
+16. Third-Party Integrations - WPGraphQL, Two-Factor, and Force Login plugin integrations
+17. Webhooks Config - outbound webhook configuration with HTTP method, event filters, and endpoint URL
+18. Audit Logs Config - audit logging events selection and log retention period settings
+19. Hooks - WordPress action and filter hooks exposed by the plugin with parameters and descriptions
+20. JWT Decoder - in-browser JWT decoder tool to inspect token header and payload
+21. Login page - WordPress login page with OAuth provider buttons (Google, Auth0, Facebook, GitHub)
 
 == Installation ==
 

@@ -60,7 +60,7 @@ class SettingsTabRegistry
                         SettingsErrors::PREFIX_LOGIN,
                         'simple-jwt-login-tab-login',
                         __('Login', 'simple-jwt-login'),
-                        'login-view.php',
+                        'routes/login-view.php',
                         true,
                         'dashicons-admin-users'
                     ),
@@ -68,7 +68,7 @@ class SettingsTabRegistry
                         SettingsErrors::PREFIX_REGISTER,
                         'simple-jwt-login-tab-register',
                         __('Register User', 'simple-jwt-login'),
-                        'register-view.php',
+                        'routes/register-view.php',
                         true,
                         'dashicons-plus-alt',
                         __('Register', 'simple-jwt-login')
@@ -77,7 +77,7 @@ class SettingsTabRegistry
                         SettingsErrors::PREFIX_DELETE,
                         'simple-jwt-login-tab-delete',
                         __('Delete User', 'simple-jwt-login'),
-                        'delete-view.php',
+                        'routes/delete-view.php',
                         true,
                         'dashicons-trash',
                         __('Delete', 'simple-jwt-login')
@@ -86,7 +86,7 @@ class SettingsTabRegistry
                         SettingsErrors::PREFIX_RESET_PASSWORD,
                         'simple-jwt-login-tab-reset-password',
                         __('Reset Password', 'simple-jwt-login'),
-                        'reset-password-view.php',
+                        'routes/reset-password-view.php',
                         true,
                         'dashicons-lock'
                     ),
@@ -94,7 +94,7 @@ class SettingsTabRegistry
                         SettingsErrors::PREFIX_AUTHENTICATION,
                         'auth-tab-login',
                         __('Authentication', 'simple-jwt-login'),
-                        'auth-view.php',
+                        'routes/auth-view.php',
                         true,
                         'dashicons-shield',
                         __('Authenticate', 'simple-jwt-login')
@@ -103,7 +103,7 @@ class SettingsTabRegistry
                         SettingsErrors::PREFIX_REFRESH_TOKEN,
                         'simple-jwt-login-tab-refresh-token',
                         __('Refresh Token', 'simple-jwt-login'),
-                        'refresh-token-view.php',
+                        'routes/refresh-token-view.php',
                         true,
                         'dashicons-update',
                         __('Refresh Token', 'simple-jwt-login')
@@ -112,7 +112,7 @@ class SettingsTabRegistry
                         SettingsErrors::PREFIX_VALIDATE_TOKEN,
                         'simple-jwt-login-tab-validate-token',
                         __('Validate Token', 'simple-jwt-login'),
-                        'validate-token-view.php',
+                        'routes/validate-token-view.php',
                         false,
                         'dashicons-yes-alt',
                         __('Validate Token', 'simple-jwt-login')
@@ -121,7 +121,7 @@ class SettingsTabRegistry
                         SettingsErrors::PREFIX_REVOKE_TOKEN,
                         'simple-jwt-login-tab-revoke-token',
                         __('Revoke Token', 'simple-jwt-login'),
-                        'revoke-token-view.php',
+                        'routes/revoke-token-view.php',
                         false,
                         'dashicons-dismiss',
                         __('Revoke Token', 'simple-jwt-login')
@@ -137,7 +137,7 @@ class SettingsTabRegistry
                         SettingsErrors::PREFIX_AUTH_CODES,
                         'simple-jwt-login-tab-auth-codes',
                         __('Auth Codes', 'simple-jwt-login'),
-                        'auth-codes-view.php',
+                        'security/auth-codes-view.php',
                         true,
                         'dashicons-tickets-alt'
                     ),
@@ -145,7 +145,7 @@ class SettingsTabRegistry
                         SettingsErrors::PREFIX_PROTECT_ENDPOINTS,
                         'simple-jwt-login-tab-protect-endpoints',
                         __('Protect endpoints', 'simple-jwt-login'),
-                        'protect-endpoints-view.php',
+                        'security/protect-endpoints-view.php',
                         true,
                         'dashicons-shield-alt',
                         __('Protect Endpoints', 'simple-jwt-login')
@@ -154,7 +154,7 @@ class SettingsTabRegistry
                         SettingsErrors::PREFIX_CORS,
                         'simple-jwt-login-tab-cors',
                         __('CORS', 'simple-jwt-login'),
-                        'cors-view.php',
+                        'security/cors-view.php',
                         true,
                         'dashicons-randomize'
                     ),
@@ -162,7 +162,7 @@ class SettingsTabRegistry
                         SettingsErrors::PREFIX_API_KEYS,
                         'simple-jwt-login-tab-api-keys',
                         __('API Keys', 'simple-jwt-login'),
-                        'api-keys-view.php',
+                        'security/api-keys-view.php',
                         false,
                         'dashicons-admin-network',
                         __('API Keys', 'simple-jwt-login')
@@ -203,7 +203,7 @@ class SettingsTabRegistry
                         SettingsErrors::PREFIX_WEBHOOKS,
                         'simple-jwt-login-tab-webhooks',
                         __('Webhooks', 'simple-jwt-login'),
-                        'webhooks-view.php',
+                        'webhooks/config.php',
                         true,
                         'dashicons-admin-settings',
                         __('Config', 'simple-jwt-login')
@@ -212,7 +212,7 @@ class SettingsTabRegistry
                         SettingsErrors::PREFIX_WEBHOOK_LOGS,
                         'simple-jwt-login-tab-webhook-logs',
                         __('Webhook Logs', 'simple-jwt-login'),
-                        'webhooks-logs-view.php',
+                        'webhooks/logs-view.php',
                         false,
                         'dashicons-list-view',
                         __('Logs', 'simple-jwt-login')
@@ -228,7 +228,7 @@ class SettingsTabRegistry
                         SettingsErrors::PREFIX_AUDIT_LOGS,
                         'simple-jwt-login-tab-audit-logs',
                         __('Audit Logs', 'simple-jwt-login'),
-                        'audit-logs-view.php',
+                        'audit-logs/config.php',
                         true,
                         'dashicons-admin-settings',
                         __('Config', 'simple-jwt-login')
@@ -237,7 +237,7 @@ class SettingsTabRegistry
                         SettingsErrors::PREFIX_AUDIT_LOG_LOGS,
                         'simple-jwt-login-tab-audit-log-logs',
                         __('Audit Log Entries', 'simple-jwt-login'),
-                        'audit-logs-logs-view.php',
+                        'audit-logs/logs-view.php',
                         false,
                         'dashicons-list-view',
                         __('Logs', 'simple-jwt-login')

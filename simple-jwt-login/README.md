@@ -462,6 +462,7 @@ See the [CLI repository](https://github.com/simple-jwt-login/simple-jwt-login-cl
 19. Hooks - WordPress action and filter hooks exposed by the plugin with parameters and descriptions
 20. JWT Decoder - in-browser JWT decoder tool to inspect token header and payload
 21. Login page - WordPress login page with OAuth provider buttons (Google, Auth0, Facebook, GitHub)
+22. Try it out - built-in endpoint tester with parameter fields, live request URL, and cURL/JS/PHP code snippets
 
 == Installation ==
 

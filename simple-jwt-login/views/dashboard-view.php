@@ -179,7 +179,7 @@ $monitoringCards = [
 /**
  * @param array{title: string, tooltip: string, icon: string, tab: int, enabled?: bool, count?: int, count_label?: string, link?: string} $card
  */
-function sjl_render_dash_card(array $card): void
+function sjl_render_dash_card(array $card)
 {
     $link       = isset($card['link']) ? $card['link'] : __('Configure', 'simple-jwt-login');
     $hasCount   = array_key_exists('count', $card);

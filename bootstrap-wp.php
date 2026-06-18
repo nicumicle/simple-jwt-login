@@ -7,6 +7,10 @@
  * WordPress so that WP_REST_Request / rest_do_request() are available.
  */
 
+// WP integration tests use a dedicated database; override the value injected by phpunit.xml.dist.
+putenv('WORDPRESS_DB_NAME=wordpress_test');
+$_ENV['WORDPRESS_DB_NAME'] = 'wordpress_test';
+
 // Force wp_send_json() to call wp_die() instead of raw `die;` everywhere.
 // This ensures WP_UnitTestCase's die handler can convert error responses
 // into catchable WPDieException rather than killing the test process.

@@ -104,4 +104,4 @@ jobs:
             
             cd /var/www/html/wp-content/plugins/
             echo "🧪 Running the tests..."
-            vendor/bin/phpunit --testsuite "Feature" --testdox --do-not-cache-result
+            vendor/bin/phpunit --testsuite "Feature" --testdox

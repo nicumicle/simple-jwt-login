@@ -26,6 +26,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-php-
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: xdebug
+          tools: composer
+
       - name: Check PHP Version
         run: php --version
 
@@ -33,16 +40,9 @@ jobs:
         run: composer install --prefer-dist --no-progress
 
       - name: PHPUnit Tests
-        uses: php-actions/phpunit@v2
         env:
           XDEBUG_MODE: coverage
-        with:
-          memory_limit: 256M
-          configuration: phpunit.xml.dist
-          php_extensions: xdebug
-          testsuite: "Unit"
-          coverage_clover: "./coverage.xml"
-#          args: tests/Unit --coverage-clover ./coverage.xml
+        run: vendor/bin/phpunit --testsuite "Unit" --coverage-clover ./coverage.xml
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1

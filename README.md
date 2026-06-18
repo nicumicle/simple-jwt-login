@@ -108,12 +108,60 @@ In order to install the latest stable version, from your WordPress admin:
 
 ### Set up the Plugin
 
-1. Go to "General" section
-2. Set a "JWT Decryption key". With this key the JWT will be validated.
-3. Choose "JWT Decryption algorithm".
-4. Go to "Login" section
-5. Set "JWT parameter key" with the payload key where user can be identified
-6. Save Changes.
+After activating the plugin, navigate to **Settings > Simple JWT Login** in your WordPress admin.
+
+#### 1. General (required)
+
+- **Route Namespace** - base URL prefix for all plugin REST endpoints. Default: `simple-jwt-login/v1/`. Change only if another plugin conflicts.
+- **JWT Verification Rules** - define how incoming JWTs are verified:
+  - For symmetric algorithms (HS256, HS384, HS512): enter a **Decryption Key** (any strong secret string).
+  - For asymmetric algorithms (RS256, RS384, RS512): enter a **Public Key** and a **Private Key** (PEM format).
+  - The **ELSE** row is the required fallback rule applied when no conditional rule matches.
+- **JWT Input Sources** - choose where the plugin looks for the JWT in each request. At least one source must be enabled:
+  - **Request (URL param)** - e.g. `?JWT=<token>` (parameter name is configurable, default: `JWT`)
+  - **Header** - e.g. `Authorization: Bearer <token>` (default header name: `Authorization`)
+  - **Cookie** - reads the JWT from a cookie (default cookie name: `simple-jwt-login-token`)
+  - **Session** - reads the JWT from a PHP session variable
+
+Click **Save Changes** before moving to the next section.
+
+#### 2. Authentication (optional - generate JWTs via REST)
+
+Go to the **Authentication** tab to enable the `/auth` endpoint that issues JWTs:
+
+- Toggle **Allow Authentication** to enable the endpoint.
+- Select the **JWT Payload** fields you want included in the token (e.g. `email`, `id`, `username`).
+- Set **JWT TTL** (token lifetime in minutes, default: 60) and **JWT Refresh TTL** (refresh window, default: 20160).
+- Optionally enable **Refresh Token**, **Validate Token**, and **Revoke Token** sub-endpoints.
+
+#### 3. Login / Autologin (optional - log users in via JWT)
+
+Go to the **Login** tab to enable browser-based autologin using a JWT:
+
+- Toggle **Allow Autologin** to enable the `/autologin` endpoint.
+- Set **Login By** to the user attribute the plugin should match (`email`, `WordPress User ID`, or `User Login`).
+- Set **JWT Parameter Key** to the JWT payload claim that holds the matching value (e.g. `email`).
+- Choose a **Redirect** destination after a successful login (Dashboard, Homepage, or a custom URL).
+
+#### 4. Auth Codes (optional - restrict API access)
+
+Go to the **Auth Codes** tab to add shared secrets that callers must supply alongside the JWT:
+
+- Enter one or more codes, each with an optional **Role** (limits which WordPress role the code grants access to) and an optional **Expiration Date**.
+- Back in the Login, Authentication, Register, or Delete User tabs, enable **Require Auth Code** to enforce it for that operation.
+
+#### Minimum viable setup
+
+For a headless or mobile app that needs to authenticate users and receive JWTs:
+
+1. **General**: set a Decryption Key and ensure at least one JWT Input Source is enabled.
+2. **Authentication**: enable **Allow Authentication** and select the payload fields you need.
+3. Click **Save Changes**.
+
+Your JWT endpoint will be available at:
+```
+POST /wp-json/simple-jwt-login/v1/auth
+```
 
 
 ## :tada: Features
@@ -212,13 +260,13 @@ You can check this [GitHub repository](https://github.com/simple-jwt-login/simpl
 
 Plugin documentation is available at [simplejwtlogin.com](https://simplejwtlogin.com).
 
-- [Introduction](https://simplejwtlogin.com/docs/)<br>
-- [Authentication](https://simplejwtlogin.com/docs/authentication)<br>
-- [Autologin](https://simplejwtlogin.com/docs/autologin)<br>
-- [Register User](https://simplejwtlogin.com/docs/register-user)<br>
-- [Reset Password](https://simplejwtlogin.com/docs/reset-password)<br>
-- [Delete User](https://simplejwtlogin.com/docs/delete-user)<br>
-- [Protect Endpoints](https://simplejwtlogin.com/docs/protect-endpoints)<br>
+- [Introduction](https://simplejwtlogin.com/docs/)
+- [Authentication](https://simplejwtlogin.com/docs/authentication)
+- [Autologin](https://simplejwtlogin.com/docs/autologin)
+- [Register User](https://simplejwtlogin.com/docs/register-user)
+- [Reset Password](https://simplejwtlogin.com/docs/reset-password)
+- [Delete User](https://simplejwtlogin.com/docs/delete-user)
+- [Protect Endpoints](https://simplejwtlogin.com/docs/protect-endpoints)
 - [Hooks](https://simplejwtlogin.com/docs/hooks)
 
 

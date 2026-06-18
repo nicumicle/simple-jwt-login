@@ -122,7 +122,7 @@ if (!defined('ABSPATH')) {
                     />
                     <button type="button"
                             class="sjl-endpoint-remove"
-                            onclick="jwt_login_remove_auth_line(jQuery(this));"
+                            onclick="sjlRemoveAuthLine(jQuery(this));"
                             title="<?php echo esc_attr__('Remove', 'simple-jwt-login'); ?>">
                         <span class="dashicons dashicons-trash"></span>
                     </button>

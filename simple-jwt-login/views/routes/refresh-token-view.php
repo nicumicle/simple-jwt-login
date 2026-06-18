@@ -159,7 +159,7 @@ if (! defined('ABSPATH')) {
                 />
                 <div class="input-group-addon">
                     <a href="javascript:void(0)"
-                       onclick="showRefreshTokenKey()"
+                       onclick="sjlShowRefreshTokenKey()"
                        class="toggle_key_button"
                        title="<?php echo esc_attr__('Toggle key visibility', 'simple-jwt-login'); ?>"
                     >
@@ -174,7 +174,7 @@ if (! defined('ABSPATH')) {
             </div>
             <div class="sjl-gen-key-actions">
                 <button type="button"
-                        onclick="generateRefreshTokenKey()"
+                        onclick="sjlGenerateRefreshTokenKey()"
                         class="sjl-gen-btn-generate"
                         title="<?php echo esc_attr__('Generate a cryptographically secure random key', 'simple-jwt-login'); ?>"
                 >

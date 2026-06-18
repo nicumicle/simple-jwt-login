@@ -61,7 +61,7 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
         />
         <button type="button"
                 class="sjl-endpoint-remove"
-                onclick="jwt_login_remove_endpoint_row(jQuery(this));"
+                onclick="sjlRemoveEndpointRow(jQuery(this));"
                 title="<?php echo esc_attr__('Remove', 'simple-jwt-login'); ?>">
             <span class="dashicons dashicons-trash"></span>
         </button>

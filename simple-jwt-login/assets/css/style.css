@@ -3095,6 +3095,13 @@
 }
 
 /* Dark mode */
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-decoder-input-card,
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-decoder-part-card {
+    background: #1e2330;
+    border-color: var(--sjl-border);
+    color: var(--sjl-text);
+}
+
 #simple-jwt-login[data-sjl-theme="dark"] .sjl-json-key    { color: #79b8ff; }
 #simple-jwt-login[data-sjl-theme="dark"] .sjl-json-string { color: #85e89d; }
 #simple-jwt-login[data-sjl-theme="dark"] .sjl-json-number { color: #f8ae1a; }

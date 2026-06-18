@@ -349,7 +349,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                             />
                             <div class="input-group-addon">
                                 <a href="javascript:void(0)"
-                                   onclick="showDecryptionKey()"
+                                   onclick="sjlShowDecryptionKey()"
                                    class="toggle_key_button"
                                    title="<?php echo esc_attr(__('Toggle key visibility', 'simple-jwt-login')); ?>">
                                     <i class="toggle-image" aria-hidden="true"></i>

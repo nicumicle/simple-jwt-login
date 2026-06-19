@@ -234,6 +234,7 @@ class SimpleJWTLoginSettingsTest extends TestCase
                 'request_jwt_url'       => true,
                 'new_user_profile'      => 'subscriber',
                 'allow_authentication'  => 1,
+                'jwt_auth_iss'          => 'https://example.com',
                 'jwt_payload'           => ['exp', 'id'],
                 'jwt_auth_ttl'          => 60,
                 'allow_refresh_token'   => 1,

@@ -72,6 +72,19 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
         if (!isset($this->post['allow_authentication'])) {
             return;
         }
+
+        if (empty($this->post['jwt_auth_iss'])) {
+            throw new Exception(
+                esc_html__(
+                    'Authentication iss can not be empty.',
+                    'simple-jwt-login'
+                ),
+                absint($this->settingsErrors->generateCode(
+                    SettingsErrors::PREFIX_AUTHENTICATION,
+                    SettingsErrors::ERR_AUTHENTICATION_EMPTY_ISS
+                ))
+            );
+        }
         if ((int)$this->post['allow_authentication'] === 1
             && empty($this->post['jwt_payload'])
         ) {

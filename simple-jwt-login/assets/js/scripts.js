@@ -98,6 +98,24 @@ jQuery(document).ready(
             }
         );
 
+        var $payloadCheckboxes = $('#authentication_payload_data input[type="checkbox"][name="jwt_payload[]"]');
+        var $checkAll = $('#sjl-payload-check-all');
+
+        function syncCheckAll() {
+            var total   = $payloadCheckboxes.length;
+            var checked = $payloadCheckboxes.filter(':checked').length;
+            $checkAll.prop('checked', total > 0 && checked === total);
+            $checkAll.prop('indeterminate', checked > 0 && checked < total);
+        }
+
+        $checkAll.on('change', function () {
+            $payloadCheckboxes.prop('checked', $(this).is(':checked'));
+        });
+
+        $payloadCheckboxes.on('change', syncCheckAll);
+
+        syncCheckAll();
+
         $('#simple-jwt-login #sjl-add-payload-claim').click(function () {
             $('#sjl-payload-claims-table').append($('#sjl-payload-claim-line').html());
         });

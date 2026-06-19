@@ -3,10 +3,10 @@
 namespace SimpleJWTLogin\Modules\Settings;
 
 use Exception;
+use SimpleJWTLogin\Services\BaseService;
 
 class LoginSettings extends BaseSettings implements SettingsInterface
 {
-    const REDIRECT_URL_PARAMETER = 'redirectUrl';
     const JWT_LOGIN_BY_EMAIL = 0;
     const JWT_LOGIN_BY_WORDPRESS_USER_ID = 1;
     const JWT_LOGIN_BY_USER_LOGIN = 2;
@@ -197,7 +197,7 @@ class LoginSettings extends BaseSettings implements SettingsInterface
             'JWT',
             'email',
             'password',
-            'redirectUrl',
+            BaseService::REDIRECT_URL_PARAMETER,
         ];
 
         if (isset($this->fullSettings['auth_codes']['key'])) {

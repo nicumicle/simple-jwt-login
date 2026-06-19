@@ -211,11 +211,16 @@ if (! defined('ABSPATH')) {
                 <li>{</li>
                 <li>
                     <ul>
+                        <?php
+                        $headerAlg = $jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm();
+                        $headerCustomClaims = $jwtSettings->getAuthenticationSettings()->getCustomHeaderClaims();
+                        $headerItemIndex = 0;
+                        ?>
                         <li>
                             <span class="checkbox"></span>
                             <span class="key">"alg"</span>
                             <span class="delimiter">:</span>
-                            <span class="value">HS256</span>
+                            <span class="value">"<?php echo esc_html($headerAlg); ?>"</span>
                             <span class="line-separator">,</span>
                         </li>
                         <li>
@@ -223,8 +228,20 @@ if (! defined('ABSPATH')) {
                             <span class="key">"typ"</span>
                             <span class="delimiter">:</span>
                             <span class="value">"JWT"</span>
-                            <span class="line-separator"></span>
+                            <span class="line-separator"><?php echo count($headerCustomClaims) > 0 ? ',' : ''; ?></span>
                         </li>
+                        <?php foreach ($headerCustomClaims as $claimKey => $claimValue) {
+                            $headerItemIndex++;
+                            $isLast = $headerItemIndex === count($headerCustomClaims);
+                            ?>
+                            <li>
+                                <span class="checkbox"></span>
+                                <span class="key">"<?php echo esc_html($claimKey); ?>"</span>
+                                <span class="delimiter">:</span>
+                                <span class="value">"<?php echo esc_html($claimValue); ?>"</span>
+                                <span class="line-separator"><?php echo $isLast ? '' : ','; ?></span>
+                            </li>
+                        <?php } ?>
                     </ul>
                 </li>
                 <li>}</li>
@@ -315,6 +332,12 @@ if (! defined('ABSPATH')) {
         </div>
     </div>
     <div class="sjl-gen-card-body">
+        <div class="sjl-payload-select-all-row">
+            <label class="sjl-gen-feature-label">
+                <input type="checkbox" id="sjl-payload-check-all" />
+                <?php echo esc_html__('Select all', 'simple-jwt-login'); ?>
+            </label>
+        </div>
         <div id="authentication_payload_data" class="authentication_jwt_container">
             <ul>
                 <li>{</li>
@@ -386,6 +409,14 @@ if (! defined('ABSPATH')) {
 
         <div class="sjl-webhook-subsection">
             <div class="sjl-webhook-subsection-header">
+                <?php
+                if (isset($errorCode) && $errorCode === $settingsErrors->generateCode(
+                    SettingsErrors::PREFIX_AUTHENTICATION,
+                    SettingsErrors::ERR_AUTHENTICATION_EMPTY_ISS
+                )) {
+                    echo '<span class="simple-jwt-error">!</span> ';
+                }
+                ?>
                 <?php echo esc_html__('Issuer (iss)', 'simple-jwt-login'); ?>
             </div>
             <label class="sjl-gen-field-label" for="jwt_auth_iss">

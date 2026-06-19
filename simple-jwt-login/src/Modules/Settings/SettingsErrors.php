@@ -37,6 +37,7 @@ class SettingsErrors extends \Exception
     const ERR_AUTHENTICATION_CUSTOM_CLAIM_PROTECTED_PAYLOAD = 5;
     const ERR_AUTHENTICATION_CUSTOM_CLAIM_PROTECTED_HEADER  = 6;
     const ERR_AUTHENTICATION_CUSTOM_CLAIM_EMPTY_KEY         = 7;
+    const ERR_AUTHENTICATION_EMPTY_ISS = 8;
 
     #general
     const ERR_GENERAL_EMPTY_NAMESPACE = 1;
@@ -46,7 +47,6 @@ class SettingsErrors extends \Exception
     const ERR_GENERAL_DECRYPTION_KEY_REQUIRED = 5;
     const ERR_GENERAL_GET_JWT_FROM = 7;
     const ERR_GENERAL_REQUEST_KEYS = 8;
-    const ERR_GENERAL_REFRESH_TOKEN_KEY_REQUIRED = 9;
 
     #auth-codes
     const ERR_EMPTY_AUTH_CODES = 1;
@@ -55,9 +55,6 @@ class SettingsErrors extends \Exception
     #login
     const ERR_LOGIN_MISSING_JWT_PARAMETER_KEY = 1;
     const ERR_LOGIN_INVALID_CUSTOM_URL = 2;
-
-    #delete
-    const ERR_DELETE_MISSING_JWT_PARAM = 1;
 
     #cors
     const ERR_CORS_NO_OPTION = 1;
@@ -77,7 +74,6 @@ class SettingsErrors extends \Exception
     const ERR_GOOGLE_CLIENT_ID_REQUIRED = 2;
     const ERR_GOOGLE_CLIENT_SECRET_REQUIRED = 3;
     const ERR_GOOGLE_REDIRECT_URI_REQUIRED_FOR_EXCHANGE_CODE = 4;
-    const ERR_GOOGLE_REDIRECT_URI_REQUIRED_FOR_EXCHANGE_ID_TOKEN = 5;
 
     # Applications - Auth0
     const ERR_AUTH0_AT_LEAST_ONE_OPTION_ENABLED = 6;

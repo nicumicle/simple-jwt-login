@@ -20,6 +20,8 @@ use SimpleJWTLogin\Services\Oauth\Auth0Oauth;
 
 abstract class BaseService
 {
+    const REDIRECT_URL_PARAMETER = 'redirectUrl';
+
     /**
      * @var string
      */
@@ -484,14 +486,14 @@ abstract class BaseService
                 return $url;
             }
 
-            if (isset($requestParams['redirectUrl'])) {
-                 $redirectUrl = $requestParams['redirectUrl'];
-                 unset($requestParams['redirectUrl']);
+            if (isset($requestParams[self::REDIRECT_URL_PARAMETER])) {
+                 $redirectUrl = $requestParams[self::REDIRECT_URL_PARAMETER];
+                 unset($requestParams[self::REDIRECT_URL_PARAMETER]);
                  $redirectUrl .=  $this->getDelimiter($redirectUrl)
                      . urldecode(http_build_query($requestParams));
                  return  $url
                      . $this->getDelimiter($url)
-                     . 'redirectUrl=' . urlencode($redirectUrl);
+                     . self::REDIRECT_URL_PARAMETER . '=' . urlencode($redirectUrl);
             }
 
             return $url . $this->getDelimiter($url) . http_build_query($requestParams);

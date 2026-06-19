@@ -320,6 +320,7 @@ class AuthenticationSettingsTest extends TestCase
             'refresh_requires_auth_code true'        => [['refresh_requires_auth_code' => '1'], 'isRefreshAuthKeyRequired', true],
             'validate_requires_auth_code true'       => [['validate_requires_auth_code' => '1'], 'isValidateAuthKeyRequired', true],
             'revoke_requires_auth_code true'         => [['revoke_requires_auth_code' => '1'], 'isRevokeAuthKeyRequired', true],
+            'jwt_auth_iss persisted'                 => [['jwt_auth_iss' => 'https://my-site.com'], 'getAuthIss', 'https://my-site.com'],
         ];
     }
 
@@ -341,60 +342,74 @@ class AuthenticationSettingsTest extends TestCase
     public static function invalidSettingsProvider(): array
     {
         return [
-            'empty payload when auth enabled' => [
+            'empty iss when auth set' => [
+                ['allow_authentication' => 1, 'jwt_auth_iss' => ''],
+                'Authentication iss can not be empty.',
+            ],
+            'missing iss when auth set' => [
                 ['allow_authentication' => 1],
+                'Authentication iss can not be empty.',
+            ],
+            'empty payload when auth enabled' => [
+                ['allow_authentication' => 1, 'jwt_auth_iss' => 'https://example.com'],
                 'Authentication payload data can not be empty.',
             ],
             'zero TTL' => [
-                ['allow_authentication' => 1, 'jwt_payload' => ['exp'], 'jwt_auth_ttl' => 0],
+                ['allow_authentication' => 1, 'jwt_auth_iss' => 'https://example.com', 'jwt_payload' => ['exp'], 'jwt_auth_ttl' => 0],
                 'Authentication JWT time to live should be greater than zero.',
             ],
             'negative TTL' => [
-                ['allow_authentication' => 1, 'jwt_payload' => ['exp'], 'jwt_auth_ttl' => -1],
+                ['allow_authentication' => 1, 'jwt_auth_iss' => 'https://example.com', 'jwt_payload' => ['exp'], 'jwt_auth_ttl' => -1],
                 'Authentication JWT time to live should be greater than zero.',
             ],
             'missing TTL field' => [
-                ['allow_authentication' => 1, 'jwt_payload' => ['exp']],
+                ['allow_authentication' => 1, 'jwt_auth_iss' => 'https://example.com', 'jwt_payload' => ['exp']],
                 'Authentication JWT time to live should be greater than zero.',
             ],
             'refresh enabled, zero refresh TTL' => [
                 [
-                    'allow_authentication' => 1, 'jwt_payload' => ['exp'], 'jwt_auth_ttl' => 60,
+                    'allow_authentication' => 1, 'jwt_auth_iss' => 'https://example.com',
+                    'jwt_payload' => ['exp'], 'jwt_auth_ttl' => 60,
                     'allow_refresh_token' => 1, 'jwt_auth_refresh_ttl' => 0,
                 ],
                 'Authentication JWT Refresh time to live should be greater than zero.',
             ],
             'refresh enabled, negative refresh TTL' => [
                 [
-                    'allow_authentication' => 1, 'jwt_payload' => ['exp'], 'jwt_auth_ttl' => 60,
+                    'allow_authentication' => 1, 'jwt_auth_iss' => 'https://example.com',
+                    'jwt_payload' => ['exp'], 'jwt_auth_ttl' => 60,
                     'allow_refresh_token' => 1, 'jwt_auth_refresh_ttl' => -1,
                 ],
                 'Authentication JWT Refresh time to live should be greater than zero.',
             ],
             'refresh enabled, missing refresh TTL' => [
                 [
-                    'allow_authentication' => 1, 'jwt_payload' => ['exp'], 'jwt_auth_ttl' => 60,
+                    'allow_authentication' => 1, 'jwt_auth_iss' => 'https://example.com',
+                    'jwt_payload' => ['exp'], 'jwt_auth_ttl' => 60,
                     'allow_refresh_token' => 1,
                 ],
                 'Authentication JWT Refresh time to live should be greater than zero.',
             ],
             'refresh enabled, empty refresh key' => [
                 [
-                    'allow_authentication' => 1, 'jwt_payload' => ['exp'], 'jwt_auth_ttl' => 60,
+                    'allow_authentication' => 1, 'jwt_auth_iss' => 'https://example.com',
+                    'jwt_payload' => ['exp'], 'jwt_auth_ttl' => 60,
                     'allow_refresh_token' => 1, 'jwt_auth_refresh_ttl' => 60, 'refresh_token_key' => '',
                 ],
                 'Refresh Token Secret Key is required.',
             ],
             'refresh enabled, whitespace-only refresh key' => [
                 [
-                    'allow_authentication' => 1, 'jwt_payload' => ['exp'], 'jwt_auth_ttl' => 60,
+                    'allow_authentication' => 1, 'jwt_auth_iss' => 'https://example.com',
+                    'jwt_payload' => ['exp'], 'jwt_auth_ttl' => 60,
                     'allow_refresh_token' => 1, 'jwt_auth_refresh_ttl' => 60, 'refresh_token_key' => '   ',
                 ],
                 'Refresh Token Secret Key is required.',
             ],
             'refresh enabled, missing refresh key field' => [
                 [
-                    'allow_authentication' => 1, 'jwt_payload' => ['exp'], 'jwt_auth_ttl' => 60,
+                    'allow_authentication' => 1, 'jwt_auth_iss' => 'https://example.com',
+                    'jwt_payload' => ['exp'], 'jwt_auth_ttl' => 60,
                     'allow_refresh_token' => 1, 'jwt_auth_refresh_ttl' => 60,
                 ],
                 'Refresh Token Secret Key is required.',
@@ -419,16 +434,22 @@ class AuthenticationSettingsTest extends TestCase
     {
         return [
             'allow_authentication not set – no validation triggered' => [[]],
-            'allow_authentication disabled with valid ttl' => [['allow_authentication' => 0, 'jwt_auth_ttl' => 60]],
+            'allow_authentication disabled with valid ttl' => [
+                ['allow_authentication' => 0, 'jwt_auth_iss' => 'https://example.com', 'jwt_auth_ttl' => 60],
+            ],
             'auth enabled with payload and positive ttl' => [
-                ['allow_authentication' => 1, 'jwt_payload' => ['exp', 'id'], 'jwt_auth_ttl' => 60],
+                ['allow_authentication' => 1, 'jwt_auth_iss' => 'https://example.com', 'jwt_payload' => ['exp', 'id'], 'jwt_auth_ttl' => 60],
             ],
             'refresh disabled – refresh fields not validated' => [
-                ['allow_authentication' => 1, 'jwt_payload' => ['exp'], 'jwt_auth_ttl' => 60, 'allow_refresh_token' => 0],
+                [
+                    'allow_authentication' => 1, 'jwt_auth_iss' => 'https://example.com',
+                    'jwt_payload' => ['exp'], 'jwt_auth_ttl' => 60, 'allow_refresh_token' => 0,
+                ],
             ],
             'refresh enabled with valid key and positive ttl' => [
                 [
-                    'allow_authentication' => 1, 'jwt_payload' => ['exp'], 'jwt_auth_ttl' => 60,
+                    'allow_authentication' => 1, 'jwt_auth_iss' => 'https://example.com',
+                    'jwt_payload' => ['exp'], 'jwt_auth_ttl' => 60,
                     'allow_refresh_token' => 1, 'jwt_auth_refresh_ttl' => 20160, 'refresh_token_key' => 'secret',
                 ],
             ],

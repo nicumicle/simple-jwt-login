@@ -667,6 +667,18 @@
   Authentication
  */
 
+#simple-jwt-login .sjl-payload-select-all-row {
+    margin-bottom: 6px;
+}
+
+#simple-jwt-login .sjl-payload-select-all-row label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
 #simple-jwt-login .authentication_jwt_container,
 #simple-jwt-login .jwt_sub_container
 {

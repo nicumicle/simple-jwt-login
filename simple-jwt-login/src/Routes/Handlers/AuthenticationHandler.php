@@ -130,12 +130,16 @@ class AuthenticationHandler
                     $this->wordPressData->getUserDetailsById((int) $keyData['user_id']),
                     null
                 );
+                $endpointWithoutQuery = strtok($currentURL, '?');
+                $message = json_encode([
+                    'url' => $endpointWithoutQuery !== false ? $endpointWithoutQuery : $currentURL,
+                ]);
                 $this->auditLogger->log(
                     AuditEvents::API_KEY_USED,
                     (int) $keyData['user_id'],
                     null,
                     'success',
-                    null,
+                    $message !== false ? $message : null,
                     (int) $keyData['id']
                 );
                 return true;

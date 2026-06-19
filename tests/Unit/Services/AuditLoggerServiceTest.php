@@ -145,11 +145,18 @@ class AuditLoggerServiceTest extends TestCase
                 null,
                 '1.2.3.4',
                 'success',
-                null,
+                '{"url":"http://example.com/wp-json/wp/v2/posts"}',
                 42
             );
 
-        $this->makeLogger()->log(AuditEvents::API_KEY_USED, 10, null, 'success', null, 42);
+        $this->makeLogger()->log(
+            AuditEvents::API_KEY_USED,
+            10,
+            null,
+            'success',
+            '{"url":"http://example.com/wp-json/wp/v2/posts"}',
+            42
+        );
     }
 
     public function testLogWithoutApiKeyIdDefaultsToNull()

@@ -63,6 +63,9 @@
 #simple-jwt-login[data-sjl-theme="dark"] a.nav-link.active {
     background: rgba(125, 179, 217, 0.12);
 }
+#simple-jwt-login[data-sjl-theme="dark"]  a:hover{
+    color:  var(--sjl-text) !important;
+}
 
 #simple-jwt-login[data-sjl-theme="dark"] .sjl-sidebar-col {
     border-right-color: var(--sjl-border-light);
@@ -223,11 +226,22 @@
     border-color: #2563eb;
 }
 
+/* ── Plugin-not-installed notice ── */
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-plugin-not-installed-notice
+{
+    background-color: #2a1f00;
+    color:  var(--sjl-text);
+    border-left-color: #7a5800;
+}
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-plugin-not-installed-notice p {
+    color:  var(--sjl-text);
+}
+
 /* ── Warning banner ── */
 #simple-jwt-login[data-sjl-theme="dark"] .sjl-gen-warning-banner {
     background: #2a1f00;
     border-color: #7a5800;
-    color: #fcd34d;
+    color: #fff;
 }
 
 #simple-jwt-login[data-sjl-theme="dark"] .sjl-gen-warning-banner .dashicons {

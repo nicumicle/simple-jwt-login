@@ -104,6 +104,17 @@ class WordPressRepository implements Repository
     }
 
     /**
+     * @param WP_User $user
+     */
+    public function setCurrentUser($user)
+    {
+        if ($this->getCurrentUserId() === (int) $user->get('ID')) {
+            return;
+        }
+        wp_set_current_user($user->get('ID'));
+    }
+
+    /**
      * @SuppressWarnings(ExitExpression)
      * @param string $url
      */

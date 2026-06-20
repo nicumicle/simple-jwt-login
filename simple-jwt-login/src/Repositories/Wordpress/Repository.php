@@ -36,6 +36,15 @@ interface Repository
     public function loginUser($user, $token = null);
 
     /**
+     * Sets the current WordPress user for the duration of a REST API request.
+     * Unlike loginUser(), this does NOT set auth cookies or fire the wp_login action.
+     * Safe to call multiple times per request - subsequent calls for the same user are no-ops.
+     *
+     * @param \WP_User $user
+     */
+    public function setCurrentUser($user);
+
+    /**
      * @param string $url
      */
     public function redirect($url);

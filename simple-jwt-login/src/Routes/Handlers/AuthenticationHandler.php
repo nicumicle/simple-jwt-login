@@ -86,7 +86,7 @@ class AuthenticationHandler
             $jwt = $this->routeService->getJwtFromRequestHeaderOrCookie();
             if (!empty($jwt)) {
                 try {
-                    $this->wordPressData->loginUser($this->routeService->getUserFromJwt($jwt), null);
+                    $this->wordPressData->setCurrentUser($this->routeService->getUserFromJwt($jwt));
 
                     return true;
                 } catch (\Exception $exception) {
@@ -126,9 +126,8 @@ class AuthenticationHandler
                         ['status' => 401, 'error_code' => ErrorCodes::ERR_API_KEY_UNAUTHORIZED]
                     );
                 }
-                $this->wordPressData->loginUser(
-                    $this->wordPressData->getUserDetailsById((int) $keyData['user_id']),
-                    null
+                $this->wordPressData->setCurrentUser(
+                    $this->wordPressData->getUserDetailsById((int) $keyData['user_id'])
                 );
                 $endpointWithoutQuery = strtok($currentURL, '?');
                 $message = json_encode([

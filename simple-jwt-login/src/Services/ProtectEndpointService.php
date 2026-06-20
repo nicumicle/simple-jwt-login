@@ -96,7 +96,7 @@ class ProtectEndpointService extends BaseService
                 $jwt
             );
 
-            $this->wordPressData->loginUser($user, null);
+            $this->wordPressData->setCurrentUser($user);
 
             return true;
         } catch (Exception $exception) {
@@ -135,7 +135,7 @@ class ProtectEndpointService extends BaseService
         }
 
         $user = $this->wordPressData->getUserDetailsById((int) $keyData['user_id']);
-        $this->wordPressData->loginUser($user, null);
+        $this->wordPressData->setCurrentUser($user);
 
         return true;
     }

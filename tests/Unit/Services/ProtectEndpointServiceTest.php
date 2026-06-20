@@ -376,7 +376,7 @@ class ProtectEndpointServiceTest extends TestCase
             ->willReturn(false);
         $this->wordPressData->method('getUserDetailsById')
             ->willReturn($userStub);
-        $this->wordPressData->method('loginUser')
+        $this->wordPressData->method('setCurrentUser')
             ->willReturn(null);
 
         $routeService = (new RouteService())

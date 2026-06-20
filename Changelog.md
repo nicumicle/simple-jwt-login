@@ -15,6 +15,7 @@
 - Allow JWT authentication on the API Keys endpoint (in addition to cookie-based login)
 - Improve HTTP Status Codes for errors
 - Add Auth0, Facebook and Github Oauth
+- **BREAKING CHANGE** Rename errorCode to error_code in error responses
 - **BREAKING CHANGE** Add 2FA support
 - **BREAKING CHANGE** Add refresh token to Authentication
 - **BREAKING CHANGE** Remove User Identification from Delete, and use the one from General 

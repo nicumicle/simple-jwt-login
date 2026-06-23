@@ -72,6 +72,8 @@ class StatusCodeHelper
         ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP,
         // OAuth provider inactive
         ErrorCodes::ERR_OAUTH_PROVIDER_NOT_ACTIVE,
+        // Two-factor plugin inactive
+        ErrorCodes::ERR_TWO_FACTOR_NOT_ACTIVE,
         // API key unauthorized
         ErrorCodes::ERR_API_KEY_UNAUTHORIZED,
     ];

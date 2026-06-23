@@ -1633,7 +1633,6 @@ paths:
         '400':
           description: |
             Bad request. One of:
-            - The Two-Factor Authentication plugin is not active (`error_code` 105).
             - The interim JWT payload is missing required 2FA claims (`error_code` 106).
             - The 2FA session nonce is invalid or expired (`error_code` 107).
             - Too many failed attempts - rate limited (`error_code` 108).
@@ -1649,7 +1648,9 @@ paths:
                   error_code: 109
         '403':
           description: |
-            Forbidden. Authentication is disabled in the plugin settings.
+            Forbidden. One of:
+            - Authentication is disabled in the plugin settings (`error_code` 45).
+            - The Two-Factor Authentication plugin is not active (`error_code` 105).
           content:
             application/json:
               schema:

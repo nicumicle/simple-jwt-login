@@ -71,8 +71,9 @@ class StatusCodeHelperTest extends TestCase
             'ERR_IP_IS_NOT_ALLOWED_TO_LOGIN'         => [ErrorCodes::ERR_IP_IS_NOT_ALLOWED_TO_LOGIN, 403],
             'ERR_REGISTER_IP_IS_NOT_ALLOWED'         => [ErrorCodes::ERR_REGISTER_IP_IS_NOT_ALLOWED, 403],
             'ERR_DELETE_INVALID_CLIENT_IP'           => [ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP, 403],
-            // 403 — OAuth provider inactive / API key
+            // 403 — OAuth provider inactive / 2FA plugin inactive / API key
             'ERR_OAUTH_PROVIDER_NOT_ACTIVE'          => [ErrorCodes::ERR_OAUTH_PROVIDER_NOT_ACTIVE, 403],
+            'ERR_TWO_FACTOR_NOT_ACTIVE'              => [ErrorCodes::ERR_TWO_FACTOR_NOT_ACTIVE, 403],
             'ERR_API_KEY_UNAUTHORIZED'               => [ErrorCodes::ERR_API_KEY_UNAUTHORIZED, 403],
 
             // 404 — Not found

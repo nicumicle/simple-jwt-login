@@ -326,14 +326,14 @@ class WebhooksSettingsTest extends TestCase
         $settings->validateSettings();
     }
 
-    public function testIsEnabledDefaultsToTrueWhenNotSet()
+    public function testIsEnabledDefaultsToFalseWhenNotSet()
     {
         $settings = (new WebhooksSettings())
             ->withSettings([])
             ->withWordPressData($this->wordPressData)
             ->withPost(null);
 
-        $this->assertTrue($settings->isEnabled());
+        $this->assertFalse($settings->isEnabled());
     }
 
     public function testIsEnabledTrueFromPost()

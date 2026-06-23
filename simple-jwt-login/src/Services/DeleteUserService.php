@@ -130,13 +130,15 @@ class DeleteUserService extends BaseService implements ServiceInterface
             );
         }
 
-        (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
-            WebhooksSettings::EVENT_DELETE_USER,
-            [
-                'user_id'    => $userId,
-                'user_email' => $userEmail,
-            ]
-        );
+        if ($this->jwtSettings->getWebhooksSettings()->isEnabled()) {
+            (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
+                WebhooksSettings::EVENT_DELETE_USER,
+                [
+                    'user_id'    => $userId,
+                    'user_email' => $userEmail,
+                ]
+            );
+        }
 
         if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME)) {
             $this->wordPressData->doAction(SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME, $user);

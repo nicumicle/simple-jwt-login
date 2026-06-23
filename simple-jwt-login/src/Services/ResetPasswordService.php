@@ -105,13 +105,15 @@ class ResetPasswordService extends BaseService implements ServiceInterface
             );
         }
 
-        (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
-            WebhooksSettings::EVENT_RESET_PASSWORD,
-            [
-                'user_id'    => $userId,
-                'user_email' => $userEmail,
-            ]
-        );
+        if ($this->jwtSettings->getWebhooksSettings()->isEnabled()) {
+            (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
+                WebhooksSettings::EVENT_RESET_PASSWORD,
+                [
+                    'user_id'    => $userId,
+                    'user_email' => $userEmail,
+                ]
+            );
+        }
 
         $response = [
             'success' => true,
@@ -241,13 +243,15 @@ class ResetPasswordService extends BaseService implements ServiceInterface
             );
         }
 
-        (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
-            WebhooksSettings::EVENT_RESET_PASSWORD_REQUEST,
-            [
-                'user_id'    => $userId,
-                'user_email' => $userEmail,
-            ]
-        );
+        if ($this->jwtSettings->getWebhooksSettings()->isEnabled()) {
+            (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
+                WebhooksSettings::EVENT_RESET_PASSWORD_REQUEST,
+                [
+                    'user_id'    => $userId,
+                    'user_email' => $userEmail,
+                ]
+            );
+        }
 
         $response = [
             'success' => true,

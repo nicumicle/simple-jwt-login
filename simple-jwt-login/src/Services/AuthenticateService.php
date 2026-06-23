@@ -141,6 +141,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
         }
 
         $authSettings = $this->jwtSettings->getAuthenticationSettings();
+        $auditLogSettings = $this->jwtSettings->getAuditLogSettings();
         if (!empty($this->request['password_hash']) && !$authSettings->isAuthPasswordHashAllowed()) {
             throw new ValidationException(
                 esc_html(__('Authentication with password_hash is not enabled.', 'simple-jwt-login')),
@@ -176,7 +177,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
             $attemptedEmail = isset($this->request['email'])
                 ? $this->request['email']
                 : (isset($this->request['username']) ? $this->request['username'] : null);
-            if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_LOGIN_FAILED)) {
+            if ($auditLogSettings->isAuditEventEnabled(AuditEvents::AUTH_LOGIN_FAILED)) {
                 $this->wordPressData->doAction(
                     SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_FAILED,
                     null,
@@ -213,7 +214,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
         $passwordMatch = $this->wordPressData->checkPassword($password, $passwordHash, $dbPassword);
 
         if (!$passwordMatch) {
-            if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_LOGIN_FAILED)) {
+            if ($auditLogSettings->isAuditEventEnabled(AuditEvents::AUTH_LOGIN_FAILED)) {
                 $this->wordPressData->doAction(
                     SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_FAILED,
                     $userId,
@@ -282,7 +283,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
         }
 
-        if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_LOGIN_SUCCESS)) {
+        if ($auditLogSettings->isAuditEventEnabled(AuditEvents::AUTH_LOGIN_SUCCESS)) {
             $this->wordPressData->doAction(
                 SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_SUCCESS,
                 $userId,
@@ -290,13 +291,15 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
         }
 
-        (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
-            WebhooksSettings::EVENT_AUTH,
-            [
-                'user_id'    => $userId,
-                'user_email' => $userEmail,
-            ]
-        );
+        if ($this->jwtSettings->getWebhooksSettings()->isEnabled()) {
+            (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
+                WebhooksSettings::EVENT_AUTH,
+                [
+                    'user_id'    => $userId,
+                    'user_email' => $userEmail,
+                ]
+            );
+        }
 
         return $this->wordPressData->createResponse($response);
     }

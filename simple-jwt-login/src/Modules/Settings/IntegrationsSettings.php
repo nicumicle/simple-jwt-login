@@ -43,20 +43,40 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
     const LAYOUT_ICON_INLINE  = 'icon-inline';
 
     /**
-     * @var AbstractOauthSettings[] keyed by provider slug
+     * @var AbstractOauthSettings[]|null keyed by provider slug
      */
     private $providers;
 
     /**
-     * @var AbstractThirdPartySettings[] keyed by integration slug
+     * @var AbstractThirdPartySettings[]|null keyed by integration slug
      */
     private $thirdPartyApps;
 
     public function __construct()
     {
         parent::__construct();
-        $this->providers      = $this->buildProviders();
-        $this->thirdPartyApps = $this->buildThirdPartyApps();
+    }
+
+    /**
+     * @return AbstractOauthSettings[]
+     */
+    private function ensureProviders()
+    {
+        if ($this->providers === null) {
+            $this->providers = $this->buildProviders();
+        }
+        return $this->providers;
+    }
+
+    /**
+     * @return AbstractThirdPartySettings[]
+     */
+    private function ensureThirdPartyApps()
+    {
+        if ($this->thirdPartyApps === null) {
+            $this->thirdPartyApps = $this->buildThirdPartyApps();
+        }
+        return $this->thirdPartyApps;
     }
 
     protected function getSectionKey()
@@ -99,14 +119,14 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
 
     public function initSettingsFromPost()
     {
-        foreach ($this->providers as $slug => $provider) {
+        foreach ($this->ensureProviders() as $slug => $provider) {
             $this->settings[self::OAUTH_KEY][$slug] = $provider->processPost(
                 $this->post,
                 $this->wordPressData
             );
         }
 
-        foreach ($this->thirdPartyApps as $slug => $app) {
+        foreach ($this->ensureThirdPartyApps() as $slug => $app) {
             $this->settings[self::THIRD_PARTY_KEY][$slug] = $app->processPost(
                 $this->post,
                 $this->wordPressData
@@ -130,7 +150,7 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
 
     public function validateSettings()
     {
-        foreach ($this->providers as $provider) {
+        foreach ($this->ensureProviders() as $provider) {
             $provider->validate($this->post);
         }
     }
@@ -164,7 +184,8 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
      */
     public function getProvider($slug)
     {
-        if (!isset($this->providers[$slug])) {
+        $providers = $this->ensureProviders();
+        if (!isset($providers[$slug])) {
             throw new InvalidArgumentException(esc_html("Unknown OAuth provider: {$slug}"));
         }
 
@@ -172,7 +193,7 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
             ? $this->settings[self::OAUTH_KEY][$slug]
             : [];
 
-        return (clone $this->providers[$slug])->withSettings($stored);
+        return (clone $providers[$slug])->withSettings($stored);
     }
 
     /**
@@ -189,7 +210,7 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
      */
     public function auth0()
     {
-        /** @var Auth0OauthSettings */
+        /** @var Aut0.290224sh0OauthSettings */
         return $this->getProvider('auth0');
     }
 
@@ -225,7 +246,8 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
      */
     public function getThirdParty($slug)
     {
-        if (!isset($this->thirdPartyApps[$slug])) {
+        $thirdPartyApps = $this->ensureThirdPartyApps();
+        if (!isset($thirdPartyApps[$slug])) {
             throw new InvalidArgumentException(esc_html("Unknown 3rd-party integration: {$slug}"));
         }
 
@@ -233,7 +255,7 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
             ? $this->settings[self::THIRD_PARTY_KEY][$slug]
             : [];
 
-        return (clone $this->thirdPartyApps[$slug])->withSettings($stored);
+        return (clone $thirdPartyApps[$slug])->withSettings($stored);
     }
 
     /**

@@ -197,7 +197,7 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
      */
     public function isEnabled()
     {
-        return !isset($this->settings['enabled']) || !empty($this->settings['enabled']);
+        return !empty($this->settings['enabled']);
     }
 
     /**

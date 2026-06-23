@@ -132,13 +132,15 @@ class RegisterUserService extends BaseService implements ServiceInterface
             );
         }
 
-        (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
-            WebhooksSettings::EVENT_REGISTER,
-            [
-                'user_id'    => $userId,
-                'user_email' => $userEmail,
-            ]
-        );
+        if ($this->jwtSettings->getWebhooksSettings()->isEnabled()) {
+            (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
+                WebhooksSettings::EVENT_REGISTER,
+                [
+                    'user_id'    => $userId,
+                    'user_email' => $userEmail,
+                ]
+            );
+        }
 
         if ($this->jwtSettings->getLoginSettings()->isAutologinEnabled()
             && $registerSettings->isForceLoginAfterCreateUserEnabled()

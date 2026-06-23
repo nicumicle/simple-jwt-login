@@ -144,8 +144,11 @@ class RouteHandler
                 ->withCookies($this->cookies)
                 ->withServerHelper($this->serverHelper)
                 ->withSettings($this->jwtSettings)
-                ->withRefreshTokenRepository($this->tokenRepository)
-                ->withWebhookLogRepository($this->webhookLogRepo);
+                ->withRefreshTokenRepository($this->tokenRepository);
+
+            if ($this->webhookLogRepo !== null) {
+                $service->withWebhookLogRepository($this->webhookLogRepo);
+            }
 
             if ($this->apiKeyRepository !== null) {
                 $service->withApiKeyRepository($this->apiKeyRepository);

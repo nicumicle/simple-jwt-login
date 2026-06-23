@@ -93,13 +93,15 @@ class LoginService extends BaseService implements ServiceInterface
             );
         }
 
-        (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
-            WebhooksSettings::EVENT_LOGIN,
-            [
-                'user_id'    => $userId,
-                'user_email' => $userEmail,
-            ]
-        );
+        if ($this->jwtSettings->getWebhooksSettings()->isEnabled()) {
+            (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
+                WebhooksSettings::EVENT_LOGIN,
+                [
+                    'user_id'    => $userId,
+                    'user_email' => $userEmail,
+                ]
+            );
+        }
 
         if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::LOGIN_ACTION_NAME)) {
             $this->wordPressData->doAction(SimpleJWTLoginHooks::LOGIN_ACTION_NAME, $user);

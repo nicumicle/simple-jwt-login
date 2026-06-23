@@ -39,7 +39,7 @@ $allowedEvents   = WebhooksSettings::ALLOWED_EVENTS;
                 <input type="checkbox" name="webhooks_enabled" value="1" <?php echo $webhooksEnabled ? 'checked' : ''; ?>>
                 <span class="sjl-toggle-slider"></span>
             </label>
-            <span style="font-size: 12px; color: #555; white-space: nowrap;">
+            <span class="sjl-toggle-enable-label">
                 <?php echo esc_html__('Enable Webhooks', 'simple-jwt-login'); ?>
             </span>
         </div>

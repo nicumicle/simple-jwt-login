@@ -44,10 +44,12 @@ class WordPressRepository implements Repository
         if (!($user instanceof WP_User)) {
             return;
         }
-        $userId = (int) $user->get('ID');
-        $userEmail = $user->get('user_email');
-        self::$userInstances['id_' . $userId] = $user;
+        $userId    = (int) $user->get('ID');
+        $userEmail = (string) $user->get('user_email');
+        $userLogin = (string) $user->get('user_login');
+        self::$userInstances['id_'    . $userId]    = $user;
         self::$userInstances['email_' . $userEmail] = $user;
+        self::$userInstances['login_' . $userLogin] = $user;
     }
 
     /**
@@ -89,7 +91,13 @@ class WordPressRepository implements Repository
      */
     public function getUserByUserLogin($username)
     {
-        return get_user_by('login', $username);
+        $cacheKey = 'login_' . $username;
+        if (isset(self::$userInstances[$cacheKey])) {
+            return self::$userInstances[$cacheKey];
+        }
+        $user = get_user_by('login', $username);
+        self::storeUserInCache($user);
+        return $user;
     }
 
     /**

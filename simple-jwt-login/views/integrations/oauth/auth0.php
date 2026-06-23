@@ -62,7 +62,7 @@ $auth0 = $jwtSettings->getIntegrationsSettings()->auth0();
                     <?php echo $auth0->isEnabled() ? 'checked' : ''; ?>>
                 <span class="sjl-toggle-slider"></span>
             </label>
-            <span style="font-size: 12px; color: #555; white-space: nowrap;">
+            <span class="sjl-toggle-enable-label">
                 <?php echo esc_html(__('Enable', 'simple-jwt-login')); ?>
             </span>
         </div>

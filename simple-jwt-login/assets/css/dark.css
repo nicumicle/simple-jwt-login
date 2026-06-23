@@ -77,6 +77,21 @@
     border-color: var(--sjl-border);
 }
 
+/* ── Form tables (WP admin sets direct color on th/label which beats inheritance) ── */
+#simple-jwt-login[data-sjl-theme="dark"] .form-table th,
+#simple-jwt-login[data-sjl-theme="dark"] .form-table th label {
+    color: var(--sjl-text);
+}
+
+#simple-jwt-login[data-sjl-theme="dark"] .form-table .description {
+    color: var(--sjl-text-meta);
+}
+
+/* ── Toggle enable label (used next to on/off switches in card headers) ── */
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-toggle-enable-label {
+    color: var(--sjl-text-meta);
+}
+
 /* ── Inputs + selects ── */
 #simple-jwt-login[data-sjl-theme="dark"] .form-control,
 #simple-jwt-login[data-sjl-theme="dark"] input[type="text"],

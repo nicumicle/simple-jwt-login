@@ -527,6 +527,48 @@ class AuthenticateServiceTest extends TestCase
         ];
     }
 
+    public function testLoginParamWithEmailGoesDirectlyToEmailLookup(): void
+    {
+        $wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode(['allow_authentication' => 1]));
+        $wordPressDataMock->expects($this->never())->method('getUserByUserLogin');
+        $wordPressDataMock->expects($this->once())->method('getUserDetailsByEmail')
+            ->with('user@example.com')
+            ->willReturn(null);
+
+        $authService = (new AuthenticateService())
+            ->withRequest(['login' => 'user@example.com', 'password' => 'pass'])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSettings(new SimpleJWTLoginSettings($wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+
+        $this->expectException(Exception::class);
+        $authService->makeAction();
+    }
+
+    public function testLoginParamWithUsernameGoesDirectlyToUserLoginLookup(): void
+    {
+        $wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode(['allow_authentication' => 1]));
+        $wordPressDataMock->expects($this->never())->method('getUserDetailsByEmail');
+        $wordPressDataMock->expects($this->once())->method('getUserByUserLogin')
+            ->with('johndoe')
+            ->willReturn(null);
+
+        $authService = (new AuthenticateService())
+            ->withRequest(['login' => 'johndoe', 'password' => 'pass'])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSettings(new SimpleJWTLoginSettings($wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+
+        $this->expectException(Exception::class);
+        $authService->makeAction();
+    }
+
     public function testTwoFactorChallengeSkippedWhenIntegrationDisabled(): void
     {
         $this->wordPressDataMock

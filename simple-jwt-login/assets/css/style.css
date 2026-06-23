@@ -1911,6 +1911,12 @@
     transform: translateX(16px);
 }
 
+#simple-jwt-login .sjl-toggle-enable-label {
+    font-size: 12px;
+    color: var(--sjl-text-muted);
+    white-space: nowrap;
+}
+
 #simple-jwt-login .sjl-webhook-remove {
     background: none;
     border: none;

@@ -140,8 +140,9 @@ class AuthenticateService extends BaseService implements ServiceInterface
             );
         }
 
-        $authSettings = $this->jwtSettings->getAuthenticationSettings();
+        $authSettings     = $this->jwtSettings->getAuthenticationSettings();
         $auditLogSettings = $this->jwtSettings->getAuditLogSettings();
+        $hooksSettings    = $this->jwtSettings->getHooksSettings();
         if (!empty($this->request['password_hash']) && !$authSettings->isAuthPasswordHashAllowed()) {
             throw new ValidationException(
                 esc_html(__('Authentication with password_hash is not enabled.', 'simple-jwt-login')),
@@ -240,7 +241,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
             $user
         );
 
-        if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME)) {
+        if ($hooksSettings->isHookEnabled(SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME)) {
             $payload = $this->wordPressData->applyFilters(
                 SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME,
                 $payload,
@@ -275,7 +276,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
             'success' => true,
             'data'    => $responseData,
         ];
-        if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_AUTH_USER)) {
+        if ($hooksSettings->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_AUTH_USER)) {
             $response = $this->wordPressData->applyFilters(
                 SimpleJWTLoginHooks::HOOK_RESPONSE_AUTH_USER,
                 $response,

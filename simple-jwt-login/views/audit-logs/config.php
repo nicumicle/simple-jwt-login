@@ -34,7 +34,7 @@ $eventLabels      = AuditEvents::labels();
                 <input type="checkbox" name="audit_log[enabled]" value="1" <?php echo $auditLogSettings->isEnabled() ? 'checked' : ''; ?>>
                 <span class="sjl-toggle-slider"></span>
             </label>
-            <span style="font-size: 12px; color: #555; white-space: nowrap;">
+            <span class="sjl-toggle-enable-label">
                 <?php echo esc_html(__('Enable Audit Logging', 'simple-jwt-login')); ?>
             </span>
         </div>

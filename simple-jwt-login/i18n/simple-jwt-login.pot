@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-17T05:08:46+00:00\n"
+"POT-Creation-Date: 2026-06-25T04:45:24+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -218,7 +218,7 @@ msgid "Settings Saved"
 msgstr ""
 
 #: src/Modules/AuditEvents.php:105
-#: views/api-keys-view.php:310
+#: views/security/api-keys-view.php:310
 #: views/user-api-keys.php:220
 msgid "API Key Created"
 msgstr ""
@@ -267,28 +267,32 @@ msgstr ""
 msgid "Invalid role provided."
 msgstr ""
 
-#: src/Modules/Settings/AuthenticationSettings.php:79
+#: src/Modules/Settings/AuthenticationSettings.php:78
+msgid "Authentication iss can not be empty."
+msgstr ""
+
+#: src/Modules/Settings/AuthenticationSettings.php:92
 msgid "Authentication payload data can not be empty. Please choose the ones you want to be added in the JWT."
 msgstr ""
 
-#: src/Modules/Settings/AuthenticationSettings.php:95
+#: src/Modules/Settings/AuthenticationSettings.php:108
 msgid "Authentication JWT time to live should be greater than zero."
 msgstr ""
 
-#: src/Modules/Settings/AuthenticationSettings.php:114
+#: src/Modules/Settings/AuthenticationSettings.php:127
 msgid "Authentication JWT Refresh time to live should be greater than zero."
 msgstr ""
 
-#: src/Modules/Settings/AuthenticationSettings.php:129
+#: src/Modules/Settings/AuthenticationSettings.php:142
 msgid "Refresh Token Secret Key is required."
 msgstr ""
 
-#: src/Modules/Settings/AuthenticationSettings.php:153
+#: src/Modules/Settings/AuthenticationSettings.php:166
 msgid "Custom claim key cannot be empty."
 msgstr ""
 
 #. translators: %s: JWT claim key name
-#: src/Modules/Settings/AuthenticationSettings.php:165
+#: src/Modules/Settings/AuthenticationSettings.php:178
 #, php-format
 msgid "Custom claim key \"%s\" is a reserved JWT claim and cannot be overwritten."
 msgstr ""
@@ -438,7 +442,7 @@ msgid "User name"
 msgstr ""
 
 #: src/Modules/Settings/ResetPasswordSettings.php:151
-#: views/login-view.php:276
+#: views/routes/login-view.php:277
 msgid "User email"
 msgstr ""
 
@@ -467,7 +471,7 @@ msgid "Settings implementation not found."
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:41
-#: views/login-view.php:139
+#: views/routes/login-view.php:140
 msgid "Dashboard"
 msgstr ""
 
@@ -496,12 +500,12 @@ msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:79
 #: views/dashboard-view.php:31
-#: views/delete-view.php:22
+#: views/routes/delete-view.php:22
 msgid "Delete User"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:83
-#: views/api-keys-view.php:233
+#: views/security/api-keys-view.php:233
 #: views/user-api-keys.php:144
 msgid "Delete"
 msgstr ""
@@ -545,8 +549,8 @@ msgid "Security"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:139
-#: views/auth-codes-view.php:73
 #: views/dashboard-view.php:90
+#: views/security/auth-codes-view.php:73
 msgid "Auth Codes"
 msgstr ""
 
@@ -556,7 +560,7 @@ msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:151
 #: views/dashboard-view.php:83
-#: views/protect-endpoints-view.php:82
+#: views/security/protect-endpoints-view.php:82
 msgid "Protect Endpoints"
 msgstr ""
 
@@ -567,8 +571,8 @@ msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:164
 #: src/Modules/Settings/SettingsTabRegistry.php:168
-#: views/api-keys-view.php:52
 #: views/dashboard-view.php:97
+#: views/security/api-keys-view.php:52
 msgid "API Keys"
 msgstr ""
 
@@ -591,7 +595,7 @@ msgstr ""
 #: src/Modules/Settings/SettingsTabRegistry.php:199
 #: src/Modules/Settings/SettingsTabRegistry.php:205
 #: views/dashboard-view.php:147
-#: views/webhooks-view.php:25
+#: views/webhooks/config.php:25
 msgid "Webhooks"
 msgstr ""
 
@@ -633,12 +637,12 @@ msgstr ""
 msgid "JWT Decoder"
 msgstr ""
 
-#: src/Modules/Settings/WebhooksSettings.php:153
+#: src/Modules/Settings/WebhooksSettings.php:155
 msgid "Webhook log retention days must be at least 1."
 msgstr ""
 
 #. translators: %d: webhook index number
-#: src/Modules/Settings/WebhooksSettings.php:172
+#: src/Modules/Settings/WebhooksSettings.php:174
 #, php-format
 msgid "Webhook #%d: invalid URL."
 msgstr ""
@@ -946,61 +950,61 @@ msgstr ""
 msgid "The password or password_hash parameter is missing from request."
 msgstr ""
 
-#: src/Services/AuthenticateService.php:146
+#: src/Services/AuthenticateService.php:148
 msgid "Authentication with password_hash is not enabled."
 msgstr ""
 
-#: src/Services/AuthenticateService.php:184
-#: src/Services/AuthenticateService.php:188
-#: src/Services/AuthenticateService.php:221
-#: src/Services/AuthenticateService.php:225
+#: src/Services/AuthenticateService.php:186
+#: src/Services/AuthenticateService.php:190
+#: src/Services/AuthenticateService.php:223
+#: src/Services/AuthenticateService.php:227
 #: src/Services/Oauth/AbstractOauth.php:352
 #: src/Services/Oauth/AbstractOauth.php:356
 msgid "Wrong user credentials."
 msgstr ""
 
-#: src/Services/AuthenticateService.php:345
+#: src/Services/AuthenticateService.php:349
 #: src/Services/Oauth/AbstractOauth.php:449
 #: src/Services/Oauth/AbstractOauth.php:510
 msgid "Unable to create two-factor nonce."
 msgstr ""
 
 #. translators: %s: client IP address
-#: src/Services/AuthenticateService.php:440
+#: src/Services/AuthenticateService.php:444
 #, php-format
 msgid "You are not allowed to Authenticate from this IP: %s"
 msgstr ""
 
-#: src/Services/AuthenticateService.php:456
+#: src/Services/AuthenticateService.php:460
 msgid "Authentication is not enabled."
 msgstr ""
 
 #. translators: 1: JWT property name, 2: settings parameter
-#: src/Services/BaseService.php:202
+#: src/Services/BaseService.php:204
 #, php-format
 msgid "Unable to find user %1$s property in JWT.( Settings: %2$s )"
 msgstr ""
 
-#: src/Services/BaseService.php:218
+#: src/Services/BaseService.php:220
 msgid "This JWT requires two-factor verification before it can be used."
 msgstr ""
 
 #. translators: %s: JWT property name
-#: src/Services/BaseService.php:228
+#: src/Services/BaseService.php:230
 #, php-format
 msgid "Unable to find user %s property in JWT."
 msgstr ""
 
-#: src/Services/BaseService.php:308
+#: src/Services/BaseService.php:310
 msgid "This JWT is invalid."
 msgstr ""
 
-#: src/Services/BaseService.php:397
+#: src/Services/BaseService.php:399
 msgid "Auth Code is required."
 msgstr ""
 
 #. translators: %s: auth code key name
-#: src/Services/BaseService.php:407
+#: src/Services/BaseService.php:409
 #, php-format
 msgid "Invalid Auth Code ( %s ) provided."
 msgstr ""
@@ -1010,7 +1014,7 @@ msgid "Delete is not enabled."
 msgstr ""
 
 #: src/Services/DeleteUserService.php:53
-#: src/Services/ResetPasswordService.php:361
+#: src/Services/ResetPasswordService.php:365
 #: src/Services/RevokeTokenService.php:59
 #: src/Services/ValidateTokenService.php:51
 msgid "The `jwt` parameter is missing."
@@ -1022,7 +1026,7 @@ msgstr ""
 msgid "You are not allowed to delete users from this IP: %s"
 msgstr ""
 
-#: src/Services/DeleteUserService.php:148
+#: src/Services/DeleteUserService.php:150
 msgid "User was successfully deleted."
 msgstr ""
 
@@ -1065,25 +1069,25 @@ msgstr ""
 msgid "A valid interim two-factor JWT is required."
 msgstr ""
 
-#: src/Services/LoginService.php:125
+#: src/Services/LoginService.php:127
 msgid "Auto-login is not enabled on this website."
 msgstr ""
 
-#: src/Services/LoginService.php:133
+#: src/Services/LoginService.php:135
 msgid "JWT is missing."
 msgstr ""
 
-#: src/Services/LoginService.php:141
+#: src/Services/LoginService.php:143
 msgid "This JWT requires two-factor verification before it can be used for login."
 msgstr ""
 
 #. translators: %s: client IP address
-#: src/Services/LoginService.php:157
+#: src/Services/LoginService.php:159
 #, php-format
 msgid "This IP[ %s ] is not allowed to auto-login."
 msgstr ""
 
-#: src/Services/LoginService.php:172
+#: src/Services/LoginService.php:174
 msgid "The JWT issuer(iss) is not allowed to auto-login."
 msgstr ""
 
@@ -1165,11 +1169,11 @@ msgstr ""
 msgid "The provided id_token was not issued for this application"
 msgstr ""
 
-#: src/Services/OAuthService.php:77
+#: src/Services/OAuthService.php:78
 msgid "The Oauth provider is invalid."
 msgstr ""
 
-#: src/Services/OAuthService.php:96
+#: src/Services/OAuthService.php:97
 msgid "This Oauth provider is not available."
 msgstr ""
 
@@ -1197,37 +1201,37 @@ msgstr ""
 msgid "User already exists."
 msgstr ""
 
-#: src/Services/RegisterUserService.php:227
+#: src/Services/RegisterUserService.php:229
 msgid "Register is not allowed."
 msgstr ""
 
 #. translators: %s: client IP address
-#: src/Services/RegisterUserService.php:244
+#: src/Services/RegisterUserService.php:246
 #, php-format
 msgid "This IP[%s] is not allowed to register users."
 msgstr ""
 
-#: src/Services/RegisterUserService.php:254
+#: src/Services/RegisterUserService.php:256
 msgid "Missing email."
 msgstr ""
 
-#: src/Services/RegisterUserService.php:261
+#: src/Services/RegisterUserService.php:263
 msgid "Missing password."
 msgstr ""
 
-#: src/Services/RegisterUserService.php:268
+#: src/Services/RegisterUserService.php:270
 msgid "Invalid email address."
 msgstr ""
 
-#: src/Services/RegisterUserService.php:275
+#: src/Services/RegisterUserService.php:277
 msgid "Username must be less than 60 characters."
 msgstr ""
 
-#: src/Services/RegisterUserService.php:281
+#: src/Services/RegisterUserService.php:283
 msgid "Email must be less than 60 characters."
 msgstr ""
 
-#: src/Services/RegisterUserService.php:300
+#: src/Services/RegisterUserService.php:302
 msgid "This website does not allows users from this domain."
 msgstr ""
 
@@ -1244,54 +1248,54 @@ msgid "Parameter new_password does not contain a valid base64 text."
 msgstr ""
 
 #: src/Services/ResetPasswordService.php:85
-#: src/Services/ResetPasswordService.php:160
+#: src/Services/ResetPasswordService.php:162
 msgid "Missing code parameter."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:119
+#: src/Services/ResetPasswordService.php:121
 msgid "User Password has been changed."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:141
-#: src/Services/ResetPasswordService.php:280
+#: src/Services/ResetPasswordService.php:143
+#: src/Services/ResetPasswordService.php:284
 msgid "Missing email parameter."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:147
+#: src/Services/ResetPasswordService.php:149
 msgid "Missing new_password parameter."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:154
+#: src/Services/ResetPasswordService.php:156
 msgid "Missing code or jwt parameter."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:166
-#: src/Services/ResetPasswordService.php:286
+#: src/Services/ResetPasswordService.php:168
+#: src/Services/ResetPasswordService.php:290
 msgid "Invalid email parameter."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:184
+#: src/Services/ResetPasswordService.php:186
 msgid "Wrong user."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:191
+#: src/Services/ResetPasswordService.php:193
 msgid "The Code has been saved into the database."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:197
-#: src/Services/ResetPasswordService.php:224
+#: src/Services/ResetPasswordService.php:199
+#: src/Services/ResetPasswordService.php:226
 msgid "Reset password email has been sent."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:228
+#: src/Services/ResetPasswordService.php:230
 msgid "Invalid flow type."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:373
+#: src/Services/ResetPasswordService.php:377
 msgid "This JWT can not change your password."
 msgstr ""
 
-#: src/Services/ResetPasswordService.php:393
+#: src/Services/ResetPasswordService.php:397
 msgid "Invalid code provided."
 msgstr ""
 
@@ -1315,731 +1319,183 @@ msgstr ""
 msgid "Validate Token endpoint is not enabled."
 msgstr ""
 
-#: views/api-keys-view.php:54
-msgid "Allow external clients to authenticate using scoped API keys instead of JWTs. Send the key via the configured header below."
+#: views/audit-logs/config.php:24
+msgid "Audit Logging"
 msgstr ""
 
-#: views/api-keys-view.php:67
-#: views/api-keys-view.php:103
-#: views/auth-view.php:34
-#: views/cors-view.php:31
-#: views/dashboard-view.php:209
-#: views/delete-view.php:35
-#: views/login-view.php:36
-#: views/protect-endpoints-view.php:100
-#: views/refresh-token-view.php:38
-#: views/register-view.php:37
-#: views/reset-password-view.php:36
-#: views/revoke-token-view.php:37
-#: views/validate-token-view.php:37
-msgid "Disabled"
+#: views/audit-logs/config.php:26
+msgid "Record authentication events to the database for monitoring and compliance."
 msgstr ""
 
-#: views/api-keys-view.php:73
-#: views/api-keys-view.php:109
-#: views/auth-view.php:40
-#: views/cors-view.php:37
-#: views/dashboard-view.php:209
-#: views/delete-view.php:41
-#: views/login-view.php:42
-#: views/protect-endpoints-view.php:112
-#: views/refresh-token-view.php:44
-#: views/register-view.php:43
-#: views/reset-password-view.php:42
-#: views/revoke-token-view.php:43
-#: views/validate-token-view.php:43
-msgid "Enabled"
+#: views/audit-logs/config.php:33
+msgid "Enable / Disable audit logging"
 msgstr ""
 
-#: views/api-keys-view.php:79
-#: views/webhooks-view.php:142
-#: views/webhooks-view.php:292
-msgid "Header name"
+#: views/audit-logs/config.php:38
+msgid "Enable Audit Logging"
 msgstr ""
 
-#: views/api-keys-view.php:88
-msgid "HTTP header clients must send the API key in. Default: X-API-Key"
+#: views/audit-logs/config.php:45
+msgid "Events to Log"
 msgstr ""
 
-#: views/api-keys-view.php:95
-msgid "Allow users to manage their own API keys"
+#: views/audit-logs/config.php:52
+#: views/audit-logs/config.php:132
+msgid "Enable All"
 msgstr ""
 
-#: views/api-keys-view.php:113
-msgid "When enabled, non-admin users see a \"My API Keys\" menu entry where they can create and manage their own keys."
+#: views/audit-logs/config.php:61
+msgid "Search events..."
 msgstr ""
 
-#: views/api-keys-view.php:127
-#: views/api-keys-view.php:167
-#: views/user-api-keys.php:46
-#: views/user-api-keys.php:84
-msgid "Create API Key"
+#: views/audit-logs/config.php:66
+msgid "No events match your search."
 msgstr ""
 
-#: views/api-keys-view.php:129
-#: views/user-api-keys.php:48
-msgid "The raw key is shown only once at creation - store it securely."
+#: views/audit-logs/config.php:92
+#: views/webhooks/logs-view.php:122
+msgid "Retention Period (days)"
 msgstr ""
 
-#: views/api-keys-view.php:135
-#: views/api-keys-view.php:187
-#: views/user-api-keys.php:54
-#: views/user-api-keys.php:104
-msgid "Name"
+#: views/audit-logs/config.php:105
+#: views/webhooks/logs-view.php:135
+msgid "Log entries older than this many days are automatically deleted. Minimum: 1."
 msgstr ""
 
-#: views/api-keys-view.php:138
-#: views/user-api-keys.php:57
-msgid "e.g. Mobile App"
+#: views/audit-logs/config.php:131
+msgid "Disable All"
 msgstr ""
 
-#: views/api-keys-view.php:143
-#: views/user-api-keys.php:62
-msgid "Expires at"
-msgstr ""
-
-#: views/api-keys-view.php:146
-#: views/user-api-keys.php:65
-msgid "Leave blank for no expiration."
-msgstr ""
-
-#: views/api-keys-view.php:151
-#: views/api-keys-view.php:192
-#: views/user-api-keys.php:70
-#: views/user-api-keys.php:106
-msgid "Permissions"
-msgstr ""
-
-#: views/api-keys-view.php:177
-msgid "Existing API Keys"
-msgstr ""
-
-#: views/api-keys-view.php:182
-#: views/user-api-keys.php:99
-msgid "No API keys found."
-msgstr ""
-
-#: views/api-keys-view.php:189
-msgid "User ID"
-msgstr ""
-
-#: views/api-keys-view.php:191
-#: views/user-api-keys.php:105
-msgid "Prefix"
-msgstr ""
-
-#: views/api-keys-view.php:193
-#: views/user-api-keys.php:107
-msgid "Expires"
-msgstr ""
-
-#: views/api-keys-view.php:194
-#: views/user-api-keys.php:108
-msgid "Last Used"
-msgstr ""
-
-#: views/api-keys-view.php:195
-#: views/user-api-keys.php:109
-msgid "Action"
-msgstr ""
-
-#: views/api-keys-view.php:222
-#: views/user-api-keys.php:133
-msgid "Revoked"
-msgstr ""
-
-#: views/api-keys-view.php:227
-#: views/user-api-keys.php:138
-msgid "Revoke"
-msgstr ""
-
-#: views/api-keys-view.php:251
-#: views/audit-logs-logs-view.php:244
-#: views/user-api-keys.php:161
-#: views/webhooks-logs-view.php:284
-msgid "First"
-msgstr ""
-
-#: views/api-keys-view.php:256
-#: views/audit-logs-logs-view.php:249
-#: views/user-api-keys.php:166
-#: views/webhooks-logs-view.php:289
-msgid "Prev"
-msgstr ""
-
-#: views/api-keys-view.php:277
-#: views/audit-logs-logs-view.php:270
-#: views/user-api-keys.php:187
-#: views/webhooks-logs-view.php:310
-msgid "Next"
-msgstr ""
-
-#: views/api-keys-view.php:282
-#: views/audit-logs-logs-view.php:275
-#: views/user-api-keys.php:192
-#: views/webhooks-logs-view.php:315
-msgid "Last"
-msgstr ""
-
-#. translators: %1$d current page, %2$d total pages, %3$d total entries
-#: views/api-keys-view.php:291
-#: views/audit-logs-logs-view.php:286
-#: views/user-api-keys.php:201
-#: views/webhooks-logs-view.php:326
-#, php-format
-msgid "Page %1$d of %2$d (%3$d entries total)"
-msgstr ""
-
-#: views/api-keys-view.php:311
-#: views/user-api-keys.php:221
-msgid "Copy the key below - it will not be shown again."
-msgstr ""
-
-#: views/api-keys-view.php:317
-#: views/user-api-keys.php:227
-msgid "Store this key securely. It cannot be recovered after closing this dialog."
-msgstr ""
-
-#: views/api-keys-view.php:323
-#: views/auth-view.php:62
-#: views/auth-view.php:82
-#: views/auth-view.php:102
-#: views/delete-view.php:62
-#: views/integrations/3rd-party/two-factor.php:149
-#: views/integrations/oauth/auth0.php:176
-#: views/integrations/oauth/auth0.php:249
-#: views/integrations/oauth/auth0.php:309
-#: views/integrations/oauth/facebook.php:157
-#: views/integrations/oauth/facebook.php:230
-#: views/integrations/oauth/facebook.php:290
-#: views/integrations/oauth/github.php:157
-#: views/integrations/oauth/github.php:230
-#: views/integrations/oauth/github.php:290
-#: views/integrations/oauth/google.php:156
-#: views/integrations/oauth/google.php:229
-#: views/integrations/oauth/google.php:289
-#: views/jwt-decoder-view.php:60
-#: views/jwt-decoder-view.php:72
-#: views/login-view.php:63
-#: views/refresh-token-view.php:63
-#: views/register-view.php:65
-#: views/reset-password-view.php:113
-#: views/reset-password-view.php:328
-#: views/revoke-token-view.php:62
-#: views/user-api-keys.php:233
-#: views/validate-token-view.php:63
-msgid "Copy"
-msgstr ""
-
-#: views/api-keys-view.php:329
-#: views/user-api-keys.php:239
-msgid "Done"
-msgstr ""
-
-#: views/audit-logs-logs-view.php:78
+#: views/audit-logs/logs-view.php:78
 msgid "Activity Log"
 msgstr ""
 
 #. translators: %d: number of total log entries
-#: views/audit-logs-logs-view.php:85
-#: views/webhooks-logs-view.php:82
+#: views/audit-logs/logs-view.php:85
+#: views/webhooks/logs-view.php:82
 #, php-format
 msgid "Showing %d total entries."
 msgstr ""
 
-#: views/audit-logs-logs-view.php:99
+#: views/audit-logs/logs-view.php:99
 msgid "Are you sure you want to delete all audit logs?"
 msgstr ""
 
-#: views/audit-logs-logs-view.php:102
-#: views/webhooks-logs-view.php:101
+#: views/audit-logs/logs-view.php:102
+#: views/webhooks/logs-view.php:101
 msgid "Clear All Logs"
 msgstr ""
 
-#: views/audit-logs-logs-view.php:111
+#: views/audit-logs/logs-view.php:111
 msgid "No activity logs yet."
 msgstr ""
 
-#: views/audit-logs-logs-view.php:112
+#: views/audit-logs/logs-view.php:112
 msgid "Logs will appear here once events are recorded."
 msgstr ""
 
-#: views/audit-logs-logs-view.php:121
-#: views/webhooks-logs-view.php:158
+#: views/audit-logs/logs-view.php:121
+#: views/webhooks/logs-view.php:158
 msgid "All Events"
 msgstr ""
 
-#: views/audit-logs-logs-view.php:131
-#: views/webhooks-logs-view.php:168
+#: views/audit-logs/logs-view.php:131
+#: views/webhooks/logs-view.php:168
 msgid "All Statuses"
 msgstr ""
 
-#: views/audit-logs-logs-view.php:132
-#: views/audit-logs-logs-view.php:223
-#: views/webhooks-logs-view.php:169
+#: views/audit-logs/logs-view.php:132
+#: views/audit-logs/logs-view.php:223
+#: views/webhooks/logs-view.php:169
 msgid "Success"
 msgstr ""
 
-#: views/audit-logs-logs-view.php:133
-#: views/audit-logs-logs-view.php:225
-#: views/webhooks-logs-view.php:170
+#: views/audit-logs/logs-view.php:133
+#: views/audit-logs/logs-view.php:225
+#: views/webhooks/logs-view.php:170
 msgid "Failure"
 msgstr ""
 
-#: views/audit-logs-logs-view.php:137
+#: views/audit-logs/logs-view.php:137
 msgid "User (email)"
 msgstr ""
 
-#: views/audit-logs-logs-view.php:146
-#: views/webhooks-logs-view.php:180
+#: views/audit-logs/logs-view.php:146
+#: views/webhooks/logs-view.php:180
 msgid "Filter"
 msgstr ""
 
-#: views/audit-logs-logs-view.php:182
-#: views/webhooks-logs-view.php:214
+#: views/audit-logs/logs-view.php:182
+#: views/webhooks/logs-view.php:214
 msgid "Date / Time"
 msgstr ""
 
-#: views/audit-logs-logs-view.php:183
-#: views/webhooks-logs-view.php:216
+#: views/audit-logs/logs-view.php:183
+#: views/webhooks/logs-view.php:216
 msgid "Event"
 msgstr ""
 
-#: views/audit-logs-logs-view.php:184
+#: views/audit-logs/logs-view.php:184
 msgid "User"
 msgstr ""
 
-#: views/audit-logs-logs-view.php:185
+#: views/audit-logs/logs-view.php:185
 msgid "API Key"
 msgstr ""
 
-#: views/audit-logs-logs-view.php:186
+#: views/audit-logs/logs-view.php:186
 msgid "IP Address"
 msgstr ""
 
-#: views/audit-logs-logs-view.php:187
+#: views/audit-logs/logs-view.php:187
 #: views/general-view.php:84
-#: views/webhooks-logs-view.php:218
+#: views/webhooks/logs-view.php:218
 msgid "Status"
 msgstr ""
 
-#: views/audit-logs-logs-view.php:188
+#: views/audit-logs/logs-view.php:188
 msgid "Message"
 msgstr ""
 
-#: views/audit-logs-logs-view.php:195
+#: views/audit-logs/logs-view.php:195
 msgid "No log entries found."
 msgstr ""
 
-#: views/audit-logs-view.php:24
-msgid "Audit Logging"
-msgstr ""
-
-#: views/audit-logs-view.php:26
-msgid "Record authentication events to the database for monitoring and compliance."
-msgstr ""
-
-#: views/audit-logs-view.php:33
-msgid "Enable / Disable audit logging"
-msgstr ""
-
-#: views/audit-logs-view.php:38
-msgid "Enable Audit Logging"
-msgstr ""
-
-#: views/audit-logs-view.php:45
-msgid "Events to Log"
-msgstr ""
-
-#: views/audit-logs-view.php:52
-#: views/audit-logs-view.php:132
-msgid "Enable All"
-msgstr ""
-
-#: views/audit-logs-view.php:61
-msgid "Search events..."
-msgstr ""
-
-#: views/audit-logs-view.php:66
-msgid "No events match your search."
-msgstr ""
-
-#: views/audit-logs-view.php:92
-#: views/webhooks-logs-view.php:122
-msgid "Retention Period (days)"
-msgstr ""
-
-#: views/audit-logs-view.php:105
-#: views/webhooks-logs-view.php:135
-msgid "Log entries older than this many days are automatically deleted. Minimum: 1."
-msgstr ""
-
-#: views/audit-logs-view.php:131
-msgid "Disable All"
-msgstr ""
-
-#: views/auth-codes-view.php:21
-msgid "Authorization Codes"
-msgstr ""
-
-#: views/auth-codes-view.php:23
-msgid "Auth codes act as a shared secret that must accompany API requests when required. Use a random, hard-to-guess string for each code."
-msgstr ""
-
-#: views/auth-codes-view.php:29
-msgid "Example auth code:"
-msgstr ""
-
-#: views/auth-codes-view.php:39
-#: views/dashboard-view.php:258
-msgid "Configuration"
-msgstr ""
-
-#: views/auth-codes-view.php:41
-msgid "Set the URL query parameter name used to pass the auth code in API requests."
-msgstr ""
-
-#: views/auth-codes-view.php:47
-msgid "Auth Code URL Key"
-msgstr ""
-
-#: views/auth-codes-view.php:54
-msgid "Auth Code Key"
-msgstr ""
-
-#: views/auth-codes-view.php:76
-msgid "Manage the list of active authentication codes. Each code can optionally target a specific WordPress user role and carry an expiration date."
-msgstr ""
-
-#: views/auth-codes-view.php:84
-#: views/auth-codes-view.php:109
-#: views/auth-codes-view.php:142
-#: views/layout.php:318
-msgid "Authentication Key"
-msgstr ""
-
-#: views/auth-codes-view.php:85
-#: views/auth-codes-view.php:148
-msgid "WordPress User Role"
-msgstr ""
-
-#: views/auth-codes-view.php:86
-#: views/auth-codes-view.php:157
-msgid "Expiration Date"
-msgstr ""
-
-#: views/auth-codes-view.php:95
-#: views/layout.php:323
-msgid "WordPress new user Role ( when new users are created )"
-msgstr ""
-
-#: views/auth-codes-view.php:99
-#: views/layout.php:331
-msgid "Expiration date: YYYY-MM-DD HH:MM:SS ( Example: 2020-12-23 23:34:59)"
-msgstr ""
-
-#: views/auth-codes-view.php:126
-#: views/auth-view.php:270
-#: views/auth-view.php:437
-#: views/layout.php:286
-#: views/layout.php:307
-#: views/layout.php:339
-#: views/protect-endpoints-view.php:65
-msgid "Remove"
-msgstr ""
-
-#: views/auth-codes-view.php:134
-msgid "+ Add Auth Code"
-msgstr ""
-
-#: views/auth-codes-view.php:139
-msgid "Field reference:"
-msgstr ""
-
-#: views/auth-codes-view.php:144
-msgid "The code that must be included in the request."
-msgstr ""
-
-#: views/auth-codes-view.php:150
-msgid "Assigns a WordPress role when a new user is created via this code. Leave blank to use the default role from Register Settings."
-msgstr ""
-
-#: views/auth-codes-view.php:152
-msgid "More details"
-msgstr ""
-
-#: views/auth-codes-view.php:159
-msgid "Optional expiry in <code>YYYY-MM-DD HH:MM:SS</code> format (e.g. 2020-12-24 23:00:00). Leave blank for no expiration."
-msgstr ""
-
-#: views/auth-view.php:22
-msgid "Allow JWT Authentication"
-msgstr ""
-
-#: views/auth-view.php:24
-msgid "Allow users to authenticate and receive JWT tokens via API endpoints."
-msgstr ""
-
-#: views/auth-view.php:45
-msgid "Endpoint examples:"
-msgstr ""
-
-#: views/auth-view.php:51
-#: views/reset-password-view.php:104
-#: views/reset-password-view.php:316
-msgid "Email"
-msgstr ""
-
-#: views/auth-view.php:52
-#: views/auth-view.php:72
-#: views/auth-view.php:92
-msgid "Password"
-msgstr ""
-
-#: views/auth-view.php:56
-#: views/auth-view.php:76
-#: views/auth-view.php:96
-#: views/delete-view.php:56
-#: views/login-view.php:57
-#: views/refresh-token-view.php:57
-#: views/register-view.php:59
-#: views/reset-password-view.php:107
-#: views/reset-password-view.php:322
-#: views/revoke-token-view.php:56
-#: views/validate-token-view.php:57
-msgid "AUTH_KEY_VALUE"
-msgstr ""
-
-#: views/auth-view.php:65
-#: views/auth-view.php:85
-msgid "OR"
-msgstr ""
-
-#: views/auth-view.php:71
-#: views/login-view.php:277
-msgid "Username"
-msgstr ""
-
-#: views/auth-view.php:91
-msgid "Username_or_email"
-msgstr ""
-
-#: views/auth-view.php:114
-msgid "Require Authentication Code for JWT Generation"
-msgstr ""
-
-#: views/auth-view.php:116
-msgid "If enabled, an additional authentication code must be provided to generate JWT tokens."
-msgstr ""
-
-#: views/auth-view.php:126
-#: views/delete-view.php:90
-#: views/login-view.php:91
-#: views/refresh-token-view.php:87
-#: views/register-view.php:89
-#: views/reset-password-view.php:66
-#: views/revoke-token-view.php:86
-#: views/validate-token-view.php:87
-msgid "Not required"
-msgstr ""
-
-#: views/auth-view.php:132
-#: views/delete-view.php:96
-#: views/login-view.php:97
-#: views/refresh-token-view.php:93
-#: views/register-view.php:95
-#: views/reset-password-view.php:73
-#: views/revoke-token-view.php:92
-#: views/validate-token-view.php:93
-msgid "Required"
-msgstr ""
-
-#: views/auth-view.php:142
-msgid "Authentication Options"
-msgstr ""
-
-#: views/auth-view.php:144
-msgid "Additional settings for the authentication process."
-msgstr ""
-
-#: views/auth-view.php:160
-msgid "Authentication password / passhash is base64 encoded"
-msgstr ""
-
-#: views/auth-view.php:163
-msgid "Enable this if the password or password hash sent in the request is base64 encoded."
-msgstr ""
-
-#: views/auth-view.php:178
-msgid "Allow authentication with password hash"
-msgstr ""
-
-#: views/auth-view.php:181
-msgid "Allow the password_hash parameter to authenticate by comparing it directly with the stored WordPress password hash. Warning: anyone who obtains a stored password hash can authenticate without knowing the password. Leave this disabled unless you really need it."
-msgstr ""
-
-#: views/auth-view.php:201
-msgid "JWT Header Configuration"
-msgstr ""
-
-#: views/auth-view.php:204
-msgid "The standard header included in generated JWT tokens."
-msgstr ""
-
-#: views/auth-view.php:236
-msgid "Custom Header Claims"
-msgstr ""
-
-#: views/auth-view.php:239
-msgid "Add custom key-value pairs to the JWT header. Reserved header fields cannot be overwritten:"
-msgstr ""
-
-#: views/auth-view.php:246
-#: views/auth-view.php:413
-#: views/jwt-rules-view.php:104
-#: views/jwt-rules-view.php:486
-msgid "Claim Key"
-msgstr ""
-
-#: views/auth-view.php:247
-#: views/auth-view.php:414
-msgid "Claim Value"
-msgstr ""
-
-#: views/auth-view.php:259
-#: views/layout.php:297
-msgid "e.g. x-app-id"
-msgstr ""
-
-#: views/auth-view.php:265
-#: views/layout.php:302
-msgid "e.g. my-app"
-msgstr ""
-
-#: views/auth-view.php:279
-msgid "+ Add Header Claim"
-msgstr ""
-
-#: views/auth-view.php:309
-msgid "JWT Payload Configuration"
-msgstr ""
-
-#: views/auth-view.php:313
-msgid "Select which user data to include in the JWT payload."
-msgstr ""
-
-#: views/auth-view.php:389
-msgid "Issuer (iss)"
-msgstr ""
-
-#: views/auth-view.php:392
-msgid "Issuer value"
-msgstr ""
-
-#: views/auth-view.php:397
-msgid "Default issuer"
-msgstr ""
-
-#: views/auth-view.php:403
-msgid "Custom Payload Claims"
-msgstr ""
-
-#: views/auth-view.php:406
-msgid "Add custom key-value pairs to the JWT payload. Reserved claims cannot be overwritten:"
-msgstr ""
-
-#: views/auth-view.php:426
-#: views/layout.php:276
-msgid "e.g. department"
-msgstr ""
-
-#: views/auth-view.php:432
-#: views/layout.php:281
-msgid "e.g. engineering"
-msgstr ""
-
-#: views/auth-view.php:446
-msgid "+ Add Payload Claim"
-msgstr ""
-
-#: views/auth-view.php:465
-msgid "JWT Expiration"
-msgstr ""
-
-#: views/auth-view.php:468
-msgid "Configure how long generated JWT tokens are valid."
-msgstr ""
-
-#: views/auth-view.php:474
-msgid "Expiration time (minutes)"
-msgstr ""
-
-#: views/auth-view.php:480
-#: views/refresh-token-view.php:145
-msgid "Number of minutes"
-msgstr ""
-
-#: views/auth-view.php:489
-#: views/delete-view.php:113
-#: views/login-view.php:297
-#: views/register-view.php:268
-msgid "Access Control"
-msgstr ""
-
-#: views/auth-view.php:491
-msgid "Restrict JWT authentication to specific IP addresses. Leave blank to allow from any IP."
-msgstr ""
-
-#: views/auth-view.php:497
-#: views/delete-view.php:121
-#: views/login-view.php:307
-#: views/register-view.php:278
-msgid "Allowed IP Addresses"
-msgstr ""
-
-#: views/auth-view.php:502
-#: views/delete-view.php:125
-#: views/login-view.php:311
-#: views/register-view.php:282
-msgid "e.g. 192.168.1.1, 10.0.0.0"
-msgstr ""
-
-#: views/auth-view.php:505
-msgid "Comma-separated. Leave blank to allow all IP addresses."
-msgstr ""
-
-#: views/cors-view.php:19
-msgid "Allow CORS Support"
-msgstr ""
-
-#: views/cors-view.php:21
-msgid "Allow cross-origin requests to JWT API endpoints."
-msgstr ""
-
-#: views/cors-view.php:48
-msgid "CORS Headers Configuration"
-msgstr ""
-
-#: views/cors-view.php:51
-msgid "Configure which CORS headers to include in API responses. Enable a header and set its value."
-msgstr ""
-
-#: views/cors-view.php:68
-msgid "Specifies which origins are permitted to access the resource. Use <code>*</code> to allow any origin, or list specific domains."
-msgstr ""
-
-#: views/cors-view.php:76
-#: views/cors-view.php:101
-#: views/cors-view.php:126
-msgid "MDN Reference &nearr;"
-msgstr ""
-
-#: views/cors-view.php:93
-msgid "Specifies the HTTP methods permitted when accessing the resource in response to a preflight request."
-msgstr ""
-
-#: views/cors-view.php:118
-msgid "Indicates which HTTP headers can be used during the actual request following a preflight."
+#: views/audit-logs/logs-view.php:244
+#: views/security/api-keys-view.php:251
+#: views/user-api-keys.php:161
+#: views/webhooks/logs-view.php:284
+msgid "First"
+msgstr ""
+
+#: views/audit-logs/logs-view.php:249
+#: views/security/api-keys-view.php:256
+#: views/user-api-keys.php:166
+#: views/webhooks/logs-view.php:289
+msgid "Prev"
+msgstr ""
+
+#: views/audit-logs/logs-view.php:270
+#: views/security/api-keys-view.php:277
+#: views/user-api-keys.php:187
+#: views/webhooks/logs-view.php:310
+msgid "Next"
+msgstr ""
+
+#: views/audit-logs/logs-view.php:275
+#: views/security/api-keys-view.php:282
+#: views/user-api-keys.php:192
+#: views/webhooks/logs-view.php:315
+msgid "Last"
+msgstr ""
+
+#. translators: %1$d current page, %2$d total pages, %3$d total entries
+#: views/audit-logs/logs-view.php:286
+#: views/security/api-keys-view.php:291
+#: views/user-api-keys.php:201
+#: views/webhooks/logs-view.php:326
+#, php-format
+msgid "Page %1$d of %2$d (%3$d entries total)"
 msgstr ""
 
 #: views/dashboard-view.php:18
@@ -2147,12 +1603,49 @@ msgstr ""
 msgid "active"
 msgstr ""
 
+#: views/dashboard-view.php:209
+#: views/routes/auth-view.php:40
+#: views/routes/delete-view.php:41
+#: views/routes/login-view.php:43
+#: views/routes/refresh-token-view.php:44
+#: views/routes/register-view.php:43
+#: views/routes/reset-password-view.php:42
+#: views/routes/revoke-token-view.php:43
+#: views/routes/validate-token-view.php:43
+#: views/security/api-keys-view.php:73
+#: views/security/api-keys-view.php:109
+#: views/security/cors-view.php:37
+#: views/security/protect-endpoints-view.php:112
+msgid "Enabled"
+msgstr ""
+
+#: views/dashboard-view.php:209
+#: views/routes/auth-view.php:34
+#: views/routes/delete-view.php:35
+#: views/routes/login-view.php:37
+#: views/routes/refresh-token-view.php:38
+#: views/routes/register-view.php:37
+#: views/routes/reset-password-view.php:36
+#: views/routes/revoke-token-view.php:37
+#: views/routes/validate-token-view.php:37
+#: views/security/api-keys-view.php:67
+#: views/security/api-keys-view.php:103
+#: views/security/cors-view.php:31
+#: views/security/protect-endpoints-view.php:100
+msgid "Disabled"
+msgstr ""
+
 #: views/dashboard-view.php:231
 msgid "REST API endpoints exposed by this plugin."
 msgstr ""
 
 #: views/dashboard-view.php:246
 msgid "Access control, CORS policy, and authentication codes."
+msgstr ""
+
+#: views/dashboard-view.php:258
+#: views/security/auth-codes-view.php:39
+msgid "Configuration"
 msgstr ""
 
 #: views/dashboard-view.php:261
@@ -2165,68 +1658,6 @@ msgstr ""
 
 #: views/dashboard-view.php:276
 msgid "Webhooks and audit logging for plugin events."
-msgstr ""
-
-#: views/delete-view.php:24
-msgid "Allow users to delete their accounts via the JWT API endpoint."
-msgstr ""
-
-#: views/delete-view.php:46
-#: views/integrations/3rd-party/two-factor.php:137
-#: views/integrations/oauth/auth0.php:225
-#: views/integrations/oauth/auth0.php:285
-#: views/integrations/oauth/facebook.php:206
-#: views/integrations/oauth/facebook.php:266
-#: views/integrations/oauth/github.php:206
-#: views/integrations/oauth/github.php:266
-#: views/integrations/oauth/google.php:205
-#: views/integrations/oauth/google.php:265
-#: views/login-view.php:47
-#: views/refresh-token-view.php:49
-#: views/register-view.php:48
-#: views/reset-password-view.php:99
-#: views/reset-password-view.php:310
-#: views/revoke-token-view.php:48
-#: views/validate-token-view.php:48
-msgid "Endpoint example:"
-msgstr ""
-
-#: views/delete-view.php:52
-#: views/login-view.php:53
-msgid "JWT"
-msgstr ""
-
-#: views/delete-view.php:66
-#: views/login-view.php:67
-msgid "You can also pass the JWT in the Authorization header:"
-msgstr ""
-
-#: views/delete-view.php:78
-#: views/login-view.php:79
-#: views/refresh-token-view.php:75
-#: views/register-view.php:77
-#: views/reset-password-view.php:53
-#: views/revoke-token-view.php:74
-#: views/validate-token-view.php:75
-msgid "Require Authentication Code"
-msgstr ""
-
-#: views/delete-view.php:80
-msgid "If enabled, an additional Auth Code must be included in the deletion request. Configure Auth Codes in the Auth Codes tab."
-msgstr ""
-
-#: views/delete-view.php:104
-msgid "Allowing account deletion without an Auth Code is not recommended. Any valid JWT holder could delete accounts."
-msgstr ""
-
-#: views/delete-view.php:115
-msgid "Restrict account deletion to specific IP addresses. Leave blank to allow all."
-msgstr ""
-
-#: views/delete-view.php:128
-#: views/login-view.php:314
-#: views/register-view.php:285
-msgid "Comma-separated. Leave blank to allow all IPs."
 msgstr ""
 
 #: views/general-view.php:31
@@ -2499,12 +1930,63 @@ msgstr ""
 msgid "Exchange an interim JWT (from POST /auth) and a 2FA code for a full JWT."
 msgstr ""
 
+#: views/integrations/3rd-party/two-factor.php:137
+#: views/integrations/oauth/auth0.php:225
+#: views/integrations/oauth/auth0.php:285
+#: views/integrations/oauth/facebook.php:206
+#: views/integrations/oauth/facebook.php:266
+#: views/integrations/oauth/github.php:206
+#: views/integrations/oauth/github.php:266
+#: views/integrations/oauth/google.php:205
+#: views/integrations/oauth/google.php:265
+#: views/routes/delete-view.php:46
+#: views/routes/login-view.php:48
+#: views/routes/refresh-token-view.php:49
+#: views/routes/register-view.php:48
+#: views/routes/reset-password-view.php:99
+#: views/routes/reset-password-view.php:310
+#: views/routes/revoke-token-view.php:48
+#: views/routes/validate-token-view.php:48
+msgid "Endpoint example:"
+msgstr ""
+
 #: views/integrations/3rd-party/two-factor.php:143
 msgid "interim_jwt"
 msgstr ""
 
 #: views/integrations/3rd-party/two-factor.php:144
 msgid "123456"
+msgstr ""
+
+#: views/integrations/3rd-party/two-factor.php:149
+#: views/integrations/oauth/auth0.php:176
+#: views/integrations/oauth/auth0.php:249
+#: views/integrations/oauth/auth0.php:309
+#: views/integrations/oauth/facebook.php:157
+#: views/integrations/oauth/facebook.php:230
+#: views/integrations/oauth/facebook.php:290
+#: views/integrations/oauth/github.php:157
+#: views/integrations/oauth/github.php:230
+#: views/integrations/oauth/github.php:290
+#: views/integrations/oauth/google.php:156
+#: views/integrations/oauth/google.php:229
+#: views/integrations/oauth/google.php:289
+#: views/jwt-decoder-view.php:60
+#: views/jwt-decoder-view.php:72
+#: views/routes/auth-view.php:62
+#: views/routes/auth-view.php:82
+#: views/routes/auth-view.php:102
+#: views/routes/delete-view.php:62
+#: views/routes/login-view.php:64
+#: views/routes/refresh-token-view.php:63
+#: views/routes/register-view.php:65
+#: views/routes/reset-password-view.php:113
+#: views/routes/reset-password-view.php:328
+#: views/routes/revoke-token-view.php:62
+#: views/routes/validate-token-view.php:63
+#: views/security/api-keys-view.php:323
+#: views/user-api-keys.php:233
+msgid "Copy"
 msgstr ""
 
 #: views/integrations/3rd-party/two-factor.php:166
@@ -2629,7 +2111,7 @@ msgstr ""
 #: views/jwt-rules-view.php:181
 #: views/jwt-rules-view.php:354
 #: views/jwt-rules-view.php:556
-#: views/refresh-token-view.php:164
+#: views/routes/refresh-token-view.php:164
 msgid "Toggle key visibility"
 msgstr ""
 
@@ -3140,6 +2622,13 @@ msgstr ""
 msgid "Header claim"
 msgstr ""
 
+#: views/jwt-rules-view.php:104
+#: views/jwt-rules-view.php:486
+#: views/routes/auth-view.php:263
+#: views/routes/auth-view.php:444
+msgid "Claim Key"
+msgstr ""
+
 #: views/jwt-rules-view.php:110
 #: views/jwt-rules-view.php:492
 msgid "e.g. iss"
@@ -3292,7 +2781,7 @@ msgid "Enter JWT secret key"
 msgstr ""
 
 #: views/jwt-rules-view.php:360
-#: views/refresh-token-view.php:171
+#: views/routes/refresh-token-view.php:171
 msgid "Strength"
 msgstr ""
 
@@ -3336,700 +2825,1219 @@ msgstr ""
 msgid "View file does not exists."
 msgstr ""
 
-#: views/login-view.php:23
+#: views/layout.php:276
+#: views/routes/auth-view.php:457
+msgid "e.g. department"
+msgstr ""
+
+#: views/layout.php:281
+#: views/routes/auth-view.php:463
+msgid "e.g. engineering"
+msgstr ""
+
+#: views/layout.php:286
+#: views/layout.php:307
+#: views/layout.php:339
+#: views/routes/auth-view.php:287
+#: views/routes/auth-view.php:468
+#: views/security/auth-codes-view.php:126
+#: views/security/protect-endpoints-view.php:65
+msgid "Remove"
+msgstr ""
+
+#: views/layout.php:297
+#: views/routes/auth-view.php:276
+msgid "e.g. x-app-id"
+msgstr ""
+
+#: views/layout.php:302
+#: views/routes/auth-view.php:282
+msgid "e.g. my-app"
+msgstr ""
+
+#: views/layout.php:318
+#: views/security/auth-codes-view.php:84
+#: views/security/auth-codes-view.php:109
+#: views/security/auth-codes-view.php:142
+msgid "Authentication Key"
+msgstr ""
+
+#: views/layout.php:323
+#: views/security/auth-codes-view.php:95
+msgid "WordPress new user Role ( when new users are created )"
+msgstr ""
+
+#: views/layout.php:331
+#: views/security/auth-codes-view.php:99
+msgid "Expiration date: YYYY-MM-DD HH:MM:SS ( Example: 2020-12-23 23:34:59)"
+msgstr ""
+
+#: views/routes/auth-view.php:22
+msgid "Allow JWT Authentication"
+msgstr ""
+
+#: views/routes/auth-view.php:24
+msgid "Allow users to authenticate and receive JWT tokens via API endpoints."
+msgstr ""
+
+#: views/routes/auth-view.php:45
+msgid "Endpoint examples:"
+msgstr ""
+
+#: views/routes/auth-view.php:51
+#: views/routes/reset-password-view.php:104
+#: views/routes/reset-password-view.php:316
+msgid "Email"
+msgstr ""
+
+#: views/routes/auth-view.php:52
+#: views/routes/auth-view.php:72
+#: views/routes/auth-view.php:92
+msgid "Password"
+msgstr ""
+
+#: views/routes/auth-view.php:56
+#: views/routes/auth-view.php:76
+#: views/routes/auth-view.php:96
+#: views/routes/delete-view.php:56
+#: views/routes/login-view.php:58
+#: views/routes/refresh-token-view.php:57
+#: views/routes/register-view.php:59
+#: views/routes/reset-password-view.php:107
+#: views/routes/reset-password-view.php:322
+#: views/routes/revoke-token-view.php:56
+#: views/routes/validate-token-view.php:57
+msgid "AUTH_KEY_VALUE"
+msgstr ""
+
+#: views/routes/auth-view.php:65
+#: views/routes/auth-view.php:85
+msgid "OR"
+msgstr ""
+
+#: views/routes/auth-view.php:71
+#: views/routes/login-view.php:278
+msgid "Username"
+msgstr ""
+
+#: views/routes/auth-view.php:91
+msgid "Username_or_email"
+msgstr ""
+
+#: views/routes/auth-view.php:114
+msgid "Require Authentication Code for JWT Generation"
+msgstr ""
+
+#: views/routes/auth-view.php:116
+msgid "If enabled, an additional authentication code must be provided to generate JWT tokens."
+msgstr ""
+
+#: views/routes/auth-view.php:126
+#: views/routes/delete-view.php:90
+#: views/routes/login-view.php:92
+#: views/routes/refresh-token-view.php:87
+#: views/routes/register-view.php:89
+#: views/routes/reset-password-view.php:66
+#: views/routes/revoke-token-view.php:86
+#: views/routes/validate-token-view.php:87
+msgid "Not required"
+msgstr ""
+
+#: views/routes/auth-view.php:132
+#: views/routes/delete-view.php:96
+#: views/routes/login-view.php:98
+#: views/routes/refresh-token-view.php:93
+#: views/routes/register-view.php:95
+#: views/routes/reset-password-view.php:73
+#: views/routes/revoke-token-view.php:92
+#: views/routes/validate-token-view.php:93
+msgid "Required"
+msgstr ""
+
+#: views/routes/auth-view.php:142
+msgid "Authentication Options"
+msgstr ""
+
+#: views/routes/auth-view.php:144
+msgid "Additional settings for the authentication process."
+msgstr ""
+
+#: views/routes/auth-view.php:160
+msgid "Authentication password / passhash is base64 encoded"
+msgstr ""
+
+#: views/routes/auth-view.php:163
+msgid "Enable this if the password or password hash sent in the request is base64 encoded."
+msgstr ""
+
+#: views/routes/auth-view.php:178
+msgid "Allow authentication with password hash"
+msgstr ""
+
+#: views/routes/auth-view.php:181
+msgid "Allow the password_hash parameter to authenticate by comparing it directly with the stored WordPress password hash. Warning: anyone who obtains a stored password hash can authenticate without knowing the password. Leave this disabled unless you really need it."
+msgstr ""
+
+#: views/routes/auth-view.php:201
+msgid "JWT Header Configuration"
+msgstr ""
+
+#: views/routes/auth-view.php:204
+msgid "The standard header included in generated JWT tokens."
+msgstr ""
+
+#: views/routes/auth-view.php:253
+msgid "Custom Header Claims"
+msgstr ""
+
+#: views/routes/auth-view.php:256
+msgid "Add custom key-value pairs to the JWT header. Reserved header fields cannot be overwritten:"
+msgstr ""
+
+#: views/routes/auth-view.php:264
+#: views/routes/auth-view.php:445
+msgid "Claim Value"
+msgstr ""
+
+#: views/routes/auth-view.php:296
+msgid "+ Add Header Claim"
+msgstr ""
+
+#: views/routes/auth-view.php:326
+msgid "JWT Payload Configuration"
+msgstr ""
+
+#: views/routes/auth-view.php:330
+msgid "Select which user data to include in the JWT payload."
+msgstr ""
+
+#: views/routes/auth-view.php:338
+msgid "Select all"
+msgstr ""
+
+#: views/routes/auth-view.php:420
+msgid "Issuer (iss)"
+msgstr ""
+
+#: views/routes/auth-view.php:423
+msgid "Issuer value"
+msgstr ""
+
+#: views/routes/auth-view.php:428
+msgid "Default issuer"
+msgstr ""
+
+#: views/routes/auth-view.php:434
+msgid "Custom Payload Claims"
+msgstr ""
+
+#: views/routes/auth-view.php:437
+msgid "Add custom key-value pairs to the JWT payload. Reserved claims cannot be overwritten:"
+msgstr ""
+
+#: views/routes/auth-view.php:477
+msgid "+ Add Payload Claim"
+msgstr ""
+
+#: views/routes/auth-view.php:496
+msgid "JWT Expiration"
+msgstr ""
+
+#: views/routes/auth-view.php:499
+msgid "Configure how long generated JWT tokens are valid."
+msgstr ""
+
+#: views/routes/auth-view.php:505
+msgid "Expiration time (minutes)"
+msgstr ""
+
+#: views/routes/auth-view.php:511
+#: views/routes/refresh-token-view.php:145
+msgid "Number of minutes"
+msgstr ""
+
+#: views/routes/auth-view.php:520
+#: views/routes/delete-view.php:113
+#: views/routes/login-view.php:298
+#: views/routes/register-view.php:268
+msgid "Access Control"
+msgstr ""
+
+#: views/routes/auth-view.php:522
+msgid "Restrict JWT authentication to specific IP addresses. Leave blank to allow from any IP."
+msgstr ""
+
+#: views/routes/auth-view.php:528
+#: views/routes/delete-view.php:121
+#: views/routes/login-view.php:308
+#: views/routes/register-view.php:278
+msgid "Allowed IP Addresses"
+msgstr ""
+
+#: views/routes/auth-view.php:533
+#: views/routes/delete-view.php:125
+#: views/routes/login-view.php:312
+#: views/routes/register-view.php:282
+msgid "e.g. 192.168.1.1, 10.0.0.0"
+msgstr ""
+
+#: views/routes/auth-view.php:536
+msgid "Comma-separated. Leave blank to allow all IP addresses."
+msgstr ""
+
+#: views/routes/delete-view.php:24
+msgid "Allow users to delete their accounts via the JWT API endpoint."
+msgstr ""
+
+#: views/routes/delete-view.php:52
+#: views/routes/login-view.php:54
+msgid "JWT"
+msgstr ""
+
+#: views/routes/delete-view.php:66
+#: views/routes/login-view.php:68
+msgid "You can also pass the JWT in the Authorization header:"
+msgstr ""
+
+#: views/routes/delete-view.php:78
+#: views/routes/login-view.php:80
+#: views/routes/refresh-token-view.php:75
+#: views/routes/register-view.php:77
+#: views/routes/reset-password-view.php:53
+#: views/routes/revoke-token-view.php:74
+#: views/routes/validate-token-view.php:75
+msgid "Require Authentication Code"
+msgstr ""
+
+#: views/routes/delete-view.php:80
+msgid "If enabled, an additional Auth Code must be included in the deletion request. Configure Auth Codes in the Auth Codes tab."
+msgstr ""
+
+#: views/routes/delete-view.php:104
+msgid "Allowing account deletion without an Auth Code is not recommended. Any valid JWT holder could delete accounts."
+msgstr ""
+
+#: views/routes/delete-view.php:115
+msgid "Restrict account deletion to specific IP addresses. Leave blank to allow all."
+msgstr ""
+
+#: views/routes/delete-view.php:128
+#: views/routes/login-view.php:315
+#: views/routes/register-view.php:285
+msgid "Comma-separated. Leave blank to allow all IPs."
+msgstr ""
+
+#: views/routes/login-view.php:24
 msgid "Auto-Login"
 msgstr ""
 
-#: views/login-view.php:25
+#: views/routes/login-view.php:26
 msgid "Allow users to log in automatically by providing a valid JWT via URL parameter or Authorization header."
 msgstr ""
 
-#: views/login-view.php:81
+#: views/routes/login-view.php:82
 msgid "If enabled, an additional Auth Code must be provided alongside the JWT to allow login. Configure Auth Codes in the Auth Codes tab."
 msgstr ""
 
-#: views/login-view.php:117
+#: views/routes/login-view.php:118
 msgid "Redirect Behavior"
 msgstr ""
 
-#: views/login-view.php:120
+#: views/routes/login-view.php:121
 msgid "Control where users are sent after login succeeds or fails."
 msgstr ""
 
-#: views/login-view.php:130
+#: views/routes/login-view.php:131
 msgid "After successful login, redirect to:"
 msgstr ""
 
-#: views/login-view.php:147
+#: views/routes/login-view.php:148
 msgid "Homepage"
 msgstr ""
 
-#: views/login-view.php:155
+#: views/routes/login-view.php:156
 msgid "No redirect"
 msgstr ""
 
-#: views/login-view.php:163
+#: views/routes/login-view.php:164
 msgid "Custom URL"
 msgstr ""
 
-#: views/login-view.php:180
+#: views/routes/login-view.php:181
 msgid "On login failure, redirect to:"
 msgstr ""
 
-#: views/login-view.php:183
+#: views/routes/login-view.php:184
 msgid "Leave blank to show an error response without redirecting."
 msgstr ""
 
-#: views/login-view.php:200
+#: views/routes/login-view.php:201
 msgid "Advanced Options"
 msgstr ""
 
-#: views/login-view.php:202
+#: views/routes/login-view.php:203
 msgid "Fine-tune URL parameters and redirect behavior after login."
 msgstr ""
 
-#: views/login-view.php:218
+#: views/routes/login-view.php:219
 msgid "Pass login request parameters to the redirect URL"
 msgstr ""
 
-#: views/login-view.php:221
+#: views/routes/login-view.php:222
 msgid "Appends the original JWT and any other login request parameters to the redirect URL as query string arguments."
 msgstr ""
 
-#: views/login-view.php:229
+#: views/routes/login-view.php:230
 msgid "Strip these parameters from the redirect URL"
 msgstr ""
 
-#: views/login-view.php:232
+#: views/routes/login-view.php:233
 msgid "Comma-separated list of query parameters to remove after redirect (e.g. jwt,auth_code). Leave blank to keep all parameters."
 msgstr ""
 
-#: views/login-view.php:237
+#: views/routes/login-view.php:238
 msgid "e.g. jwt, auth_code"
 msgstr ""
 
 #. translators: %s: URL query parameter name
-#: views/login-view.php:254
+#: views/routes/login-view.php:255
 #, php-format
 msgid "Honor the <code>%s</code> query parameter as a redirect override"
 msgstr ""
 
 #. translators: %s: URL query parameter name
-#: views/login-view.php:264
+#: views/routes/login-view.php:265
 #, php-format
 msgid "When present in the request, the <code>%s</code> parameter overrides any configured redirect destination."
 msgstr ""
 
-#: views/login-view.php:272
+#: views/routes/login-view.php:273
 msgid "Available URL template variables:"
 msgstr ""
 
-#: views/login-view.php:274
+#: views/routes/login-view.php:275
 msgid "Site URL"
 msgstr ""
 
-#: views/login-view.php:275
+#: views/routes/login-view.php:276
 msgid "Logged-in user ID"
 msgstr ""
 
-#: views/login-view.php:278
+#: views/routes/login-view.php:279
 msgid "First name"
 msgstr ""
 
-#: views/login-view.php:279
+#: views/routes/login-view.php:280
 msgid "Last name"
 msgstr ""
 
-#: views/login-view.php:280
+#: views/routes/login-view.php:281
 msgid "Nice name"
 msgstr ""
 
-#: views/login-view.php:283
-#: views/register-view.php:323
+#: views/routes/login-view.php:284
+#: views/routes/register-view.php:323
 msgid "Example:"
 msgstr ""
 
-#: views/login-view.php:299
+#: views/routes/login-view.php:300
 msgid "Restrict auto-login to specific IP addresses or JWT issuers. Leave fields blank to allow all."
 msgstr ""
 
-#: views/login-view.php:319
+#: views/routes/login-view.php:320
 msgid "Allowed JWT Issuers (iss)"
 msgstr ""
 
-#: views/login-view.php:323
+#: views/routes/login-view.php:324
 msgid "e.g. https://auth.example.com"
 msgstr ""
 
-#: views/login-view.php:326
+#: views/routes/login-view.php:327
 msgid "Comma-separated. Leave blank to allow any issuer."
 msgstr ""
 
-#: views/protect-endpoints-view.php:22
-msgid "GET"
-msgstr ""
-
-#: views/protect-endpoints-view.php:23
-msgid "POST"
-msgstr ""
-
-#: views/protect-endpoints-view.php:24
-msgid "PUT"
-msgstr ""
-
-#: views/protect-endpoints-view.php:25
-msgid "PATCH"
-msgstr ""
-
-#: views/protect-endpoints-view.php:26
-msgid "DELETE"
-msgstr ""
-
-#: views/protect-endpoints-view.php:30
-msgid "Starts with"
-msgstr ""
-
-#: views/protect-endpoints-view.php:31
-msgid "Exact match"
-msgstr ""
-
-#: views/protect-endpoints-view.php:39
-msgid "ALL"
-msgstr ""
-
-#: views/protect-endpoints-view.php:40
-msgid "HTTP Methods"
-msgstr ""
-
-#: views/protect-endpoints-view.php:60
-msgid "/wp-json/namespace/endpoint"
-msgstr ""
-
-#: views/protect-endpoints-view.php:84
-msgid "When enabled, REST endpoints will require a valid JWT to be accessed. Requests without a JWT will receive an error instead of content."
-msgstr ""
-
-#: views/protect-endpoints-view.php:122
-msgid "Protection Scope"
-msgstr ""
-
-#: views/protect-endpoints-view.php:124
-msgid "Choose whether to apply JWT protection to all REST endpoints or only to specific ones."
-msgstr ""
-
-#: views/protect-endpoints-view.php:130
-msgid "Apply protection to:"
-msgstr ""
-
-#: views/protect-endpoints-view.php:142
-msgid "Apply on All REST Endpoints"
-msgstr ""
-
-#: views/protect-endpoints-view.php:150
-msgid "Apply only on Specific REST endpoints"
-msgstr ""
-
-#: views/protect-endpoints-view.php:160
-msgid "Whitelisted Endpoints"
-msgstr ""
-
-#: views/protect-endpoints-view.php:162
-msgid "These endpoints will skip the JWT check and remain publicly accessible."
-msgstr ""
-
-#: views/protect-endpoints-view.php:176
-#: views/protect-endpoints-view.php:201
-msgid "+ Add Endpoint"
-msgstr ""
-
-#: views/protect-endpoints-view.php:185
-msgid "Protected Endpoints"
-msgstr ""
-
-#: views/protect-endpoints-view.php:187
-msgid "A valid JWT will be required to access these endpoints."
-msgstr ""
-
-#: views/refresh-token-view.php:23
+#: views/routes/refresh-token-view.php:23
 msgid "Allow Refresh Token Endpoint"
 msgstr ""
 
-#: views/refresh-token-view.php:25
+#: views/routes/refresh-token-view.php:25
 msgid "When enabled, the refresh token endpoint is active and a refresh token will be returned alongside the JWT on authentication."
 msgstr ""
 
-#: views/refresh-token-view.php:77
+#: views/routes/refresh-token-view.php:77
 msgid "If enabled, an additional authentication code must be provided to use the refresh token endpoint."
 msgstr ""
 
-#: views/refresh-token-view.php:119
+#: views/routes/refresh-token-view.php:119
 msgid "Refresh Token Settings"
 msgstr ""
 
-#: views/refresh-token-view.php:122
+#: views/routes/refresh-token-view.php:122
 msgid "Configure the refresh token lifetime and the secret key used to encrypt refresh tokens stored in the database."
 msgstr ""
 
-#: views/refresh-token-view.php:133
+#: views/routes/refresh-token-view.php:133
 msgid "JWT Refresh Window"
 msgstr ""
 
-#: views/refresh-token-view.php:137
+#: views/routes/refresh-token-view.php:137
 msgid "Specify the length of time (in minutes) that the refresh token is valid for. Defaults to 2 weeks."
 msgstr ""
 
-#: views/refresh-token-view.php:151
+#: views/routes/refresh-token-view.php:151
 msgid "Refresh Token Secret Key"
 msgstr ""
 
-#: views/refresh-token-view.php:158
+#: views/routes/refresh-token-view.php:158
 msgid "Enter refresh token secret key"
 msgstr ""
 
-#: views/refresh-token-view.php:179
+#: views/routes/refresh-token-view.php:179
 msgid "Generate a cryptographically secure random key"
 msgstr ""
 
-#: views/refresh-token-view.php:182
+#: views/routes/refresh-token-view.php:182
 msgid "Generate Secure Key"
 msgstr ""
 
-#: views/register-view.php:24
+#: views/routes/register-view.php:24
 msgid "User Registration"
 msgstr ""
 
-#: views/register-view.php:26
+#: views/routes/register-view.php:26
 msgid "Allow new users to register via the JWT API endpoint."
 msgstr ""
 
-#: views/register-view.php:54
+#: views/routes/register-view.php:54
 msgid "NEW_USER_EMAIL"
 msgstr ""
 
-#: views/register-view.php:55
+#: views/routes/register-view.php:55
 msgid "NEW_USER_PASSWORD"
 msgstr ""
 
-#: views/register-view.php:79
+#: views/routes/register-view.php:79
 msgid "If enabled, an additional Auth Code must be included in the registration request. Configure Auth Codes in the Auth Codes tab."
 msgstr ""
 
-#: views/register-view.php:103
+#: views/routes/register-view.php:103
 msgid "Allowing registration without an Auth Code is not recommended. Anyone can create accounts on your site."
 msgstr ""
 
-#: views/register-view.php:122
+#: views/routes/register-view.php:122
 msgid "New User Settings"
 msgstr ""
 
-#: views/register-view.php:125
+#: views/routes/register-view.php:125
 msgid "Configure the default role and password behaviour for newly registered users."
 msgstr ""
 
-#: views/register-view.php:139
+#: views/routes/register-view.php:139
 msgid "Default User Role"
 msgstr ""
 
-#: views/register-view.php:144
+#: views/routes/register-view.php:144
 msgid "WordPress role assigned to new users."
 msgstr ""
 
-#: views/register-view.php:145
+#: views/routes/register-view.php:145
 msgid "Common values:"
 msgstr ""
 
-#: views/register-view.php:151
+#: views/routes/register-view.php:151
 msgid "full list"
 msgstr ""
 
-#: views/register-view.php:155
+#: views/routes/register-view.php:155
 msgid "e.g. subscriber"
 msgstr ""
 
-#: views/register-view.php:168
+#: views/routes/register-view.php:168
 msgid "Generate a random password"
 msgstr ""
 
-#: views/register-view.php:171
+#: views/routes/register-view.php:171
 msgid "When enabled, a secure random password is generated automatically and the password field is not required in the registration request."
 msgstr ""
 
-#: views/register-view.php:184
+#: views/routes/register-view.php:184
 msgid "Password length:"
 msgstr ""
 
-#: views/register-view.php:192
+#: views/routes/register-view.php:192
 msgid "characters"
 msgstr ""
 
-#: views/register-view.php:204
+#: views/routes/register-view.php:204
 msgid "Post-Registration Options"
 msgstr ""
 
-#: views/register-view.php:206
+#: views/routes/register-view.php:206
 msgid "What happens immediately after a user is successfully registered."
 msgstr ""
 
-#: views/register-view.php:220
+#: views/routes/register-view.php:220
 msgid "Auto-login after registration"
 msgstr ""
 
-#: views/register-view.php:223
+#: views/routes/register-view.php:223
 msgid "Automatically authenticates the new user after successful registration, using the Login tab redirect settings. Requires Auto-Login to be enabled."
 msgstr ""
 
-#: views/register-view.php:236
+#: views/routes/register-view.php:236
 msgid "Return a JWT in the registration response"
 msgstr ""
 
-#: views/register-view.php:239
+#: views/routes/register-view.php:239
 msgid "Includes a signed JWT in the API response. The payload contains email, user ID, and username by default. If Authentication is configured, the payload follows those settings instead."
 msgstr ""
 
-#: views/register-view.php:253
+#: views/routes/register-view.php:253
 msgid "Send WordPress welcome email"
 msgstr ""
 
-#: views/register-view.php:256
+#: views/routes/register-view.php:256
 msgid "When enabled, WordPress sends its default new-user notification emails (to the new user and the site admin) after successful registration via this endpoint."
 msgstr ""
 
-#: views/register-view.php:270
+#: views/routes/register-view.php:270
 msgid "Restrict registrations by IP address or email domain. Leave fields blank to allow all."
 msgstr ""
 
-#: views/register-view.php:290
+#: views/routes/register-view.php:290
 msgid "Allowed Email Domains"
 msgstr ""
 
-#: views/register-view.php:294
+#: views/routes/register-view.php:294
 msgid "e.g. gmail.com, company.org"
 msgstr ""
 
-#: views/register-view.php:297
+#: views/routes/register-view.php:297
 msgid "Comma-separated. Leave blank to allow all domains."
 msgstr ""
 
-#: views/register-view.php:308
+#: views/routes/register-view.php:308
 msgid "User Data"
 msgstr ""
 
-#: views/register-view.php:310
+#: views/routes/register-view.php:310
 msgid "Control which extra user properties and meta keys can be set during registration."
 msgstr ""
 
-#: views/register-view.php:319
+#: views/routes/register-view.php:319
 msgid "Allowed User Meta Keys"
 msgstr ""
 
-#: views/register-view.php:322
+#: views/routes/register-view.php:322
 msgid "Comma-separated list of <code>user_meta</code> keys that may be set during registration. Leave blank to disallow all meta."
 msgstr ""
 
-#: views/register-view.php:328
+#: views/routes/register-view.php:328
 msgid "e.g. my_meta1, my_meta2"
 msgstr ""
 
-#: views/register-view.php:334
+#: views/routes/register-view.php:334
 msgid "Available User Properties"
 msgstr ""
 
-#: views/register-view.php:336
+#: views/routes/register-view.php:336
 msgid "These standard WordPress user properties can be included in the registration POST body."
 msgstr ""
 
-#: views/reset-password-view.php:24
+#: views/routes/reset-password-view.php:24
 msgid "Password Reset"
 msgstr ""
 
-#: views/reset-password-view.php:26
+#: views/routes/reset-password-view.php:26
 msgid "Allow users to request a password reset via the JWT API endpoint. A reset code is sent by email and then used to set the new password."
 msgstr ""
 
-#: views/reset-password-view.php:55
+#: views/routes/reset-password-view.php:55
 msgid "If enabled, an additional Auth Code must be included in password reset requests. Configure Auth Codes in the Auth Codes tab."
 msgstr ""
 
-#: views/reset-password-view.php:83
+#: views/routes/reset-password-view.php:83
 msgid "Step 1 - Request Reset Link"
 msgstr ""
 
-#: views/reset-password-view.php:85
+#: views/routes/reset-password-view.php:85
 msgid "Sends a reset code to the provided email address."
 msgstr ""
 
-#: views/reset-password-view.php:94
+#: views/routes/reset-password-view.php:94
 msgid "The email address for which the password reset is requested."
 msgstr ""
 
-#: views/reset-password-view.php:135
+#: views/routes/reset-password-view.php:135
 msgid "Reset Flow"
 msgstr ""
 
-#: views/reset-password-view.php:138
+#: views/routes/reset-password-view.php:138
 msgid "Choose how the reset code is delivered to the user."
 msgstr ""
 
-#: views/reset-password-view.php:155
+#: views/routes/reset-password-view.php:155
 msgid "Save code in database only"
 msgstr ""
 
-#: views/reset-password-view.php:156
+#: views/routes/reset-password-view.php:156
 msgid "No email is sent. Retrieve the reset code from the database and use it programmatically."
 msgstr ""
 
-#: views/reset-password-view.php:170
+#: views/routes/reset-password-view.php:170
 msgid "Send default WordPress reset email"
 msgstr ""
 
-#: views/reset-password-view.php:171
+#: views/routes/reset-password-view.php:171
 msgid "Uses the standard WordPress password reset email template."
 msgstr ""
 
-#: views/reset-password-view.php:185
+#: views/routes/reset-password-view.php:185
 msgid "Send custom email"
 msgstr ""
 
-#: views/reset-password-view.php:186
+#: views/routes/reset-password-view.php:186
 msgid "Compose a custom subject and body below."
 msgstr ""
 
-#: views/reset-password-view.php:197
+#: views/routes/reset-password-view.php:197
 msgid "Email Subject"
 msgstr ""
 
-#: views/reset-password-view.php:201
-#: views/reset-password-view.php:222
+#: views/routes/reset-password-view.php:201
+#: views/routes/reset-password-view.php:222
 msgid "Insert:"
 msgstr ""
 
-#: views/reset-password-view.php:211
+#: views/routes/reset-password-view.php:211
 msgid "e.g. Reset your password"
 msgstr ""
 
-#: views/reset-password-view.php:218
+#: views/routes/reset-password-view.php:218
 msgid "Email Body"
 msgstr ""
 
-#: views/reset-password-view.php:232
+#: views/routes/reset-password-view.php:232
 msgid "Email content…"
 msgstr ""
 
-#: views/reset-password-view.php:237
+#: views/routes/reset-password-view.php:237
 msgid "Email Format"
 msgstr ""
 
-#: views/reset-password-view.php:243
+#: views/routes/reset-password-view.php:243
 msgid "Plain text"
 msgstr ""
 
-#: views/reset-password-view.php:256
+#: views/routes/reset-password-view.php:256
 msgid "Available template variables:"
 msgstr ""
 
 #. translators: %s: placeholder variable name
-#: views/reset-password-view.php:262
+#: views/routes/reset-password-view.php:262
 #, php-format
 msgid "Include %s in your body to embed the reset link."
 msgstr ""
 
-#: views/reset-password-view.php:286
+#: views/routes/reset-password-view.php:286
 msgid "Step 2 - Set New Password"
 msgstr ""
 
-#: views/reset-password-view.php:288
+#: views/routes/reset-password-view.php:288
 msgid "Submits the reset code received by email along with the new password to complete the reset."
 msgstr ""
 
-#: views/reset-password-view.php:297
+#: views/routes/reset-password-view.php:297
 msgid "The email address of the account being reset."
 msgstr ""
 
-#: views/reset-password-view.php:301
+#: views/routes/reset-password-view.php:301
 msgid "The reset code received by email."
 msgstr ""
 
-#: views/reset-password-view.php:305
+#: views/routes/reset-password-view.php:305
 msgid "The new password to set for the account."
 msgstr ""
 
-#: views/reset-password-view.php:317
+#: views/routes/reset-password-view.php:317
 msgid "Code"
 msgstr ""
 
-#: views/reset-password-view.php:318
+#: views/routes/reset-password-view.php:318
 msgid "New password"
 msgstr ""
 
-#: views/reset-password-view.php:341
+#: views/routes/reset-password-view.php:341
 msgid "Allow JWT-based password reset (skip reset code)"
 msgstr ""
 
-#: views/reset-password-view.php:344
+#: views/routes/reset-password-view.php:344
 msgid "When enabled, the <code>code</code> parameter is not required. The plugin identifies the user from the JWT payload directly. The JWT must be valid."
 msgstr ""
 
-#: views/reset-password-view.php:358
+#: views/routes/reset-password-view.php:358
 msgid "Send WordPress default password changed notification"
 msgstr ""
 
-#: views/reset-password-view.php:361
+#: views/routes/reset-password-view.php:361
 msgid "When enabled, WordPress sends its default password changed notification email to the site admin after the password is successfully updated."
 msgstr ""
 
-#: views/revoke-token-view.php:22
+#: views/routes/revoke-token-view.php:22
 msgid "Allow Revoke Token Endpoint"
 msgstr ""
 
-#: views/revoke-token-view.php:24
+#: views/routes/revoke-token-view.php:24
 msgid "When enabled, the revoke token endpoint is active and clients can invalidate a JWT for future requests."
 msgstr ""
 
-#: views/revoke-token-view.php:76
+#: views/routes/revoke-token-view.php:76
 msgid "If enabled, an additional authentication code must be provided to use the revoke token endpoint."
 msgstr ""
 
-#: views/validate-token-view.php:22
+#: views/routes/validate-token-view.php:22
 msgid "Allow Validate Token Endpoint"
 msgstr ""
 
-#: views/validate-token-view.php:24
+#: views/routes/validate-token-view.php:24
 msgid "When enabled, the validate token endpoint is active and clients can verify a JWT and retrieve the associated WordPress user details."
 msgstr ""
 
-#: views/validate-token-view.php:77
+#: views/routes/validate-token-view.php:77
 msgid "If enabled, an additional authentication code must be provided to use the validate token endpoint."
 msgstr ""
 
-#: views/webhooks-logs-view.php:75
-msgid "Webhook Call Log"
+#: views/security/api-keys-view.php:54
+msgid "Allow external clients to authenticate using scoped API keys instead of JWTs. Send the key via the configured header below."
 msgstr ""
 
-#: views/webhooks-logs-view.php:88
-msgid "Logging is disabled. Enable it to record webhook calls."
+#: views/security/api-keys-view.php:79
+#: views/webhooks/config.php:142
+#: views/webhooks/config.php:292
+msgid "Header name"
 msgstr ""
 
-#: views/webhooks-logs-view.php:98
-msgid "Are you sure you want to delete all webhook logs?"
+#: views/security/api-keys-view.php:88
+msgid "HTTP header clients must send the API key in. Default: X-API-Key"
 msgstr ""
 
-#: views/webhooks-logs-view.php:109
-msgid "Enable / Disable webhook logs"
+#: views/security/api-keys-view.php:95
+msgid "Allow users to manage their own API keys"
 msgstr ""
 
-#: views/webhooks-logs-view.php:114
-msgid "Enable Webhook Logs"
+#: views/security/api-keys-view.php:113
+msgid "When enabled, non-admin users see a \"My API Keys\" menu entry where they can create and manage their own keys."
 msgstr ""
 
-#: views/webhooks-logs-view.php:143
-msgid "Webhook call logging is currently disabled. Toggle \"Enable Logs\" above and save settings to start recording calls."
+#: views/security/api-keys-view.php:127
+#: views/security/api-keys-view.php:167
+#: views/user-api-keys.php:46
+#: views/user-api-keys.php:84
+msgid "Create API Key"
 msgstr ""
 
-#: views/webhooks-logs-view.php:148
-msgid "No webhook logs yet."
+#: views/security/api-keys-view.php:129
+#: views/user-api-keys.php:48
+msgid "The raw key is shown only once at creation - store it securely."
 msgstr ""
 
-#: views/webhooks-logs-view.php:149
-msgid "Logs will appear here once webhook calls are recorded."
+#: views/security/api-keys-view.php:135
+#: views/security/api-keys-view.php:187
+#: views/user-api-keys.php:54
+#: views/user-api-keys.php:104
+msgid "Name"
 msgstr ""
 
-#: views/webhooks-logs-view.php:215
-msgid "Webhook URL"
+#: views/security/api-keys-view.php:138
+#: views/user-api-keys.php:57
+msgid "e.g. Mobile App"
 msgstr ""
 
-#: views/webhooks-logs-view.php:217
-#: views/webhooks-view.php:97
-#: views/webhooks-view.php:226
-msgid "Method"
+#: views/security/api-keys-view.php:143
+#: views/user-api-keys.php:62
+msgid "Expires at"
 msgstr ""
 
-#: views/webhooks-logs-view.php:219
-msgid "Error Body"
+#: views/security/api-keys-view.php:146
+#: views/user-api-keys.php:65
+msgid "Leave blank for no expiration."
 msgstr ""
 
-#: views/webhooks-logs-view.php:226
-msgid "No webhook log entries found."
+#: views/security/api-keys-view.php:151
+#: views/security/api-keys-view.php:192
+#: views/user-api-keys.php:70
+#: views/user-api-keys.php:106
+msgid "Permissions"
 msgstr ""
 
-#: views/webhooks-logs-view.php:250
-msgid "Error"
+#: views/security/api-keys-view.php:177
+msgid "Existing API Keys"
 msgstr ""
 
-#: views/webhooks-logs-view.php:261
-msgid "View"
+#: views/security/api-keys-view.php:182
+#: views/user-api-keys.php:99
+msgid "No API keys found."
 msgstr ""
 
-#: views/webhooks-view.php:27
+#: views/security/api-keys-view.php:189
+msgid "User ID"
+msgstr ""
+
+#: views/security/api-keys-view.php:191
+#: views/user-api-keys.php:105
+msgid "Prefix"
+msgstr ""
+
+#: views/security/api-keys-view.php:193
+#: views/user-api-keys.php:107
+msgid "Expires"
+msgstr ""
+
+#: views/security/api-keys-view.php:194
+#: views/user-api-keys.php:108
+msgid "Last Used"
+msgstr ""
+
+#: views/security/api-keys-view.php:195
+#: views/user-api-keys.php:109
+msgid "Action"
+msgstr ""
+
+#: views/security/api-keys-view.php:222
+#: views/user-api-keys.php:133
+msgid "Revoked"
+msgstr ""
+
+#: views/security/api-keys-view.php:227
+#: views/user-api-keys.php:138
+msgid "Revoke"
+msgstr ""
+
+#: views/security/api-keys-view.php:311
+#: views/user-api-keys.php:221
+msgid "Copy the key below - it will not be shown again."
+msgstr ""
+
+#: views/security/api-keys-view.php:317
+#: views/user-api-keys.php:227
+msgid "Store this key securely. It cannot be recovered after closing this dialog."
+msgstr ""
+
+#: views/security/api-keys-view.php:329
+#: views/user-api-keys.php:239
+msgid "Done"
+msgstr ""
+
+#: views/security/auth-codes-view.php:21
+msgid "Authorization Codes"
+msgstr ""
+
+#: views/security/auth-codes-view.php:23
+msgid "Auth codes act as a shared secret that must accompany API requests when required. Use a random, hard-to-guess string for each code."
+msgstr ""
+
+#: views/security/auth-codes-view.php:29
+msgid "Example auth code:"
+msgstr ""
+
+#: views/security/auth-codes-view.php:41
+msgid "Set the URL query parameter name used to pass the auth code in API requests."
+msgstr ""
+
+#: views/security/auth-codes-view.php:47
+msgid "Auth Code URL Key"
+msgstr ""
+
+#: views/security/auth-codes-view.php:54
+msgid "Auth Code Key"
+msgstr ""
+
+#: views/security/auth-codes-view.php:76
+msgid "Manage the list of active authentication codes. Each code can optionally target a specific WordPress user role and carry an expiration date."
+msgstr ""
+
+#: views/security/auth-codes-view.php:85
+#: views/security/auth-codes-view.php:148
+msgid "WordPress User Role"
+msgstr ""
+
+#: views/security/auth-codes-view.php:86
+#: views/security/auth-codes-view.php:157
+msgid "Expiration Date"
+msgstr ""
+
+#: views/security/auth-codes-view.php:134
+msgid "+ Add Auth Code"
+msgstr ""
+
+#: views/security/auth-codes-view.php:139
+msgid "Field reference:"
+msgstr ""
+
+#: views/security/auth-codes-view.php:144
+msgid "The code that must be included in the request."
+msgstr ""
+
+#: views/security/auth-codes-view.php:150
+msgid "Assigns a WordPress role when a new user is created via this code. Leave blank to use the default role from Register Settings."
+msgstr ""
+
+#: views/security/auth-codes-view.php:152
+msgid "More details"
+msgstr ""
+
+#: views/security/auth-codes-view.php:159
+msgid "Optional expiry in <code>YYYY-MM-DD HH:MM:SS</code> format (e.g. 2020-12-24 23:00:00). Leave blank for no expiration."
+msgstr ""
+
+#: views/security/cors-view.php:19
+msgid "Allow CORS Support"
+msgstr ""
+
+#: views/security/cors-view.php:21
+msgid "Allow cross-origin requests to JWT API endpoints."
+msgstr ""
+
+#: views/security/cors-view.php:48
+msgid "CORS Headers Configuration"
+msgstr ""
+
+#: views/security/cors-view.php:51
+msgid "Configure which CORS headers to include in API responses. Enable a header and set its value."
+msgstr ""
+
+#: views/security/cors-view.php:68
+msgid "Specifies which origins are permitted to access the resource. Use <code>*</code> to allow any origin, or list specific domains."
+msgstr ""
+
+#: views/security/cors-view.php:76
+#: views/security/cors-view.php:101
+#: views/security/cors-view.php:126
+msgid "MDN Reference &nearr;"
+msgstr ""
+
+#: views/security/cors-view.php:93
+msgid "Specifies the HTTP methods permitted when accessing the resource in response to a preflight request."
+msgstr ""
+
+#: views/security/cors-view.php:118
+msgid "Indicates which HTTP headers can be used during the actual request following a preflight."
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:22
+msgid "GET"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:23
+msgid "POST"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:24
+msgid "PUT"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:25
+msgid "PATCH"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:26
+msgid "DELETE"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:30
+msgid "Starts with"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:31
+msgid "Exact match"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:39
+msgid "ALL"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:40
+msgid "HTTP Methods"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:60
+msgid "/wp-json/namespace/endpoint"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:84
+msgid "When enabled, REST endpoints will require a valid JWT to be accessed. Requests without a JWT will receive an error instead of content."
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:122
+msgid "Protection Scope"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:124
+msgid "Choose whether to apply JWT protection to all REST endpoints or only to specific ones."
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:130
+msgid "Apply protection to:"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:142
+msgid "Apply on All REST Endpoints"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:150
+msgid "Apply only on Specific REST endpoints"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:160
+msgid "Whitelisted Endpoints"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:162
+msgid "These endpoints will skip the JWT check and remain publicly accessible."
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:176
+#: views/security/protect-endpoints-view.php:201
+msgid "+ Add Endpoint"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:185
+msgid "Protected Endpoints"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:187
+msgid "A valid JWT will be required to access these endpoints."
+msgstr ""
+
+#: views/webhooks/config.php:27
 msgid "Fire HTTP requests on login, register, or auth events. Customize the method, headers, and payload with dynamic variables."
 msgstr ""
 
-#: views/webhooks-view.php:38
+#: views/webhooks/config.php:38
 msgid "Enable / Disable Webhooks"
 msgstr ""
 
-#: views/webhooks-view.php:43
+#: views/webhooks/config.php:43
 msgid "Enable Webhooks"
 msgstr ""
 
-#: views/webhooks-view.php:66
-#: views/webhooks-view.php:203
+#: views/webhooks/config.php:66
+#: views/webhooks/config.php:203
 msgid "New Webhook"
 msgstr ""
 
-#: views/webhooks-view.php:76
+#: views/webhooks/config.php:76
 msgid "Enable / Disable"
 msgstr ""
 
-#: views/webhooks-view.php:81
-#: views/webhooks-view.php:215
+#: views/webhooks/config.php:81
+#: views/webhooks/config.php:215
 msgid "Remove webhook"
 msgstr ""
 
-#: views/webhooks-view.php:90
-#: views/webhooks-view.php:222
+#: views/webhooks/config.php:90
+#: views/webhooks/config.php:222
 msgid "Endpoint URL"
 msgstr ""
 
-#: views/webhooks-view.php:110
-#: views/webhooks-view.php:238
+#: views/webhooks/config.php:97
+#: views/webhooks/config.php:226
+#: views/webhooks/logs-view.php:217
+msgid "Method"
+msgstr ""
+
+#: views/webhooks/config.php:110
+#: views/webhooks/config.php:238
 msgid "Trigger on Events"
 msgstr ""
 
-#: views/webhooks-view.php:131
-#: views/webhooks-view.php:253
+#: views/webhooks/config.php:131
+#: views/webhooks/config.php:253
 msgid "Custom Headers"
 msgstr ""
 
-#: views/webhooks-view.php:147
-#: views/webhooks-view.php:297
+#: views/webhooks/config.php:147
+#: views/webhooks/config.php:297
 msgid "Value"
 msgstr ""
 
-#: views/webhooks-view.php:150
-#: views/webhooks-view.php:300
+#: views/webhooks/config.php:150
+#: views/webhooks/config.php:300
 msgid "Remove header"
 msgstr ""
 
-#: views/webhooks-view.php:158
-#: views/webhooks-view.php:259
+#: views/webhooks/config.php:158
+#: views/webhooks/config.php:259
 msgid "Add Header"
 msgstr ""
 
-#: views/webhooks-view.php:165
-#: views/webhooks-view.php:265
+#: views/webhooks/config.php:165
+#: views/webhooks/config.php:265
 msgid "Custom Payload"
 msgstr ""
 
-#: views/webhooks-view.php:168
-#: views/webhooks-view.php:268
+#: views/webhooks/config.php:168
+#: views/webhooks/config.php:268
 msgid "Variables:"
 msgstr ""
 
-#: views/webhooks-view.php:177
-#: views/webhooks-view.php:277
+#: views/webhooks/config.php:177
+#: views/webhooks/config.php:277
 msgid "Leave empty to send the default payload. Click a variable to insert it at the cursor."
 msgstr ""
 
-#: views/webhooks-view.php:190
+#: views/webhooks/config.php:190
 msgid "+ Add Webhook"
+msgstr ""
+
+#: views/webhooks/logs-view.php:75
+msgid "Webhook Call Log"
+msgstr ""
+
+#: views/webhooks/logs-view.php:88
+msgid "Logging is disabled. Enable it to record webhook calls."
+msgstr ""
+
+#: views/webhooks/logs-view.php:98
+msgid "Are you sure you want to delete all webhook logs?"
+msgstr ""
+
+#: views/webhooks/logs-view.php:109
+msgid "Enable / Disable webhook logs"
+msgstr ""
+
+#: views/webhooks/logs-view.php:114
+msgid "Enable Webhook Logs"
+msgstr ""
+
+#: views/webhooks/logs-view.php:143
+msgid "Webhook call logging is currently disabled. Toggle \"Enable Logs\" above and save settings to start recording calls."
+msgstr ""
+
+#: views/webhooks/logs-view.php:148
+msgid "No webhook logs yet."
+msgstr ""
+
+#: views/webhooks/logs-view.php:149
+msgid "Logs will appear here once webhook calls are recorded."
+msgstr ""
+
+#: views/webhooks/logs-view.php:215
+msgid "Webhook URL"
+msgstr ""
+
+#: views/webhooks/logs-view.php:219
+msgid "Error Body"
+msgstr ""
+
+#: views/webhooks/logs-view.php:226
+msgid "No webhook log entries found."
+msgstr ""
+
+#: views/webhooks/logs-view.php:250
+msgid "Error"
+msgstr ""
+
+#: views/webhooks/logs-view.php:261
+msgid "View"
 msgstr ""

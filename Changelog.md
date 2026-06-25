@@ -11,10 +11,10 @@
 - Move User identification from Login to General
 - Add Webhooks
 - Enable/disable Revoke and Validate token 
-- Add suport for API Keys (X-API-Key) to access wordpress endpoints as an authenticated user 
+- Add support for API Keys (X-API-Key) to access WordPress endpoints as an authenticated user 
 - Allow JWT authentication on the API Keys endpoint (in addition to cookie-based login)
 - Improve HTTP Status Codes for errors
-- Add Auth0, Facebook and Github Oauth
+- Add Auth0, Facebook and GitHub Oauth
 - **BREAKING CHANGE** Rename errorCode to error_code in error responses
 - **BREAKING CHANGE** Add 2FA support
 - **BREAKING CHANGE** Add refresh token to Authentication
@@ -25,7 +25,7 @@
 - Fix register, authenticate, and reset password special characters for passwords
 - Replace variables in reset password email subject
 - Add option for sending default WordPress email on user registration
-- Add option for sending default password change WordPRess email when change password endpoint is called
+- Add option for sending default password change WordPress email when change password endpoint is called
 - Improve plugin security and performance
 - Add Light/Dark mode UI
 - Allow non admin users to manage their own API keys

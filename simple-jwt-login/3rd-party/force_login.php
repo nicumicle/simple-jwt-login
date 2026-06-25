@@ -37,7 +37,7 @@ add_filter(
             $check = sprintf(
                 $url,
                 $jwtSettings->getWordPressData()->getSiteUrl(),
-                $jwtSettings->getGeneralSettings()->getRouteNamespace(),
+                $jwtSettings->getGeneralSettings()->getRouteNamespace()
             );
             if (strpos($currentURL, $check) === 0) {
                 return true;

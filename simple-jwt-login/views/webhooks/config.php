@@ -14,8 +14,8 @@ if (! defined('ABSPATH')) {
 
 $webhooksEnabled = $jwtSettings->getWebhooksSettings()->isEnabled();
 $webhooks        = $jwtSettings->getWebhooksSettings()->getWebhooks();
-$allowedMethods  = WebhooksSettings::ALLOWED_METHODS;
-$allowedEvents   = WebhooksSettings::ALLOWED_EVENTS;
+$allowedMethods  = WebhooksSettings::$allowedMethods;
+$allowedEvents   = WebhooksSettings::$allowedEvents;
 ?>
 
 <div class="sjl-gen-card">

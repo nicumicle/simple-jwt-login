@@ -193,7 +193,8 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
             ? $this->settings[self::OAUTH_KEY][$slug]
             : [];
 
-        return (clone $providers[$slug])->withSettings($stored);
+        $clone = clone $providers[$slug];
+        return $clone->withSettings($stored);
     }
 
     /**
@@ -210,7 +211,7 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
      */
     public function auth0()
     {
-        /** @var Aut0.290224sh0OauthSettings */
+        /** @var Auth0OauthSettings */
         return $this->getProvider('auth0');
     }
 
@@ -255,7 +256,8 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
             ? $this->settings[self::THIRD_PARTY_KEY][$slug]
             : [];
 
-        return (clone $thirdPartyApps[$slug])->withSettings($stored);
+        $thirdPartyApp = clone $thirdPartyApps[$slug];
+        return $thirdPartyApp->withSettings($stored);
     }
 
     /**

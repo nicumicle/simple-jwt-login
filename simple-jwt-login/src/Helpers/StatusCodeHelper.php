@@ -9,7 +9,7 @@ use SimpleJWTLogin\Exceptions\ValidationException;
 class StatusCodeHelper
 {
     /** @var list<int> */
-    private static array $codes401 = [
+    private static $codes401 = [
         // JWT structure / signature
         ErrorCodes::ERR_EMPTY_KEY,
         ErrorCodes::ERR_WRONG_NUMBER_OF_SEGMENTS,
@@ -56,7 +56,7 @@ class StatusCodeHelper
     ];
 
     /** @var list<int> */
-    private static array $codes403 = [
+    private static $codes403 = [
         // Feature not enabled
         ErrorCodes::ERR_AUTO_LOGIN_NOT_ENABLED,
         ErrorCodes::ERR_REGISTER_IS_NOT_ALLOWED,
@@ -79,7 +79,7 @@ class StatusCodeHelper
     ];
 
     /** @var list<int> */
-    private static array $codes404 = [
+    private static $codes404 = [
         ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND,
         ErrorCodes::ERR_USER_NOT_FOUND_FOR_RESET_PASSWORD,
         ErrorCodes::ERR_GOOGLE_USER_NOT_FOUND,
@@ -88,17 +88,17 @@ class StatusCodeHelper
     ];
 
     /** @var list<int> */
-    private static array $codes405 = [
+    private static $codes405 = [
         ErrorCodes::ERR_ROUTE_CALLED_WITH_INVALID_METHOD,
     ];
 
     /** @var list<int> */
-    private static array $codes409 = [
+    private static $codes409 = [
         ErrorCodes::ERR_REGISTER_USER_ALREADY_EXISTS,
     ];
 
     /** @var list<int> */
-    private static array $codes422 = [
+    private static $codes422 = [
         ErrorCodes::ERR_REGISTER_INVALID_EMAIL_ADDRESS,
         ErrorCodes::ERR_REGISTER_DOMAIN_FOR_USER,
         ErrorCodes::ERR_INVALID_RESET_PASSWORD_CODE,
@@ -109,7 +109,7 @@ class StatusCodeHelper
     ];
 
     /** @var list<int> */
-    private static array $codes500 = [
+    private static $codes500 = [
         // OpenSSL / signing failures
         ErrorCodes::ERR_OPENSSL_SIGN,
         ErrorCodes::ERR_UNSUPPORTED_SIGN_FUNCTION,

@@ -49,8 +49,9 @@ class OAuthService extends BaseService implements ServiceInterface
 
         $this->assertProviderEnabled($provider);
 
-        /** @var OauthInterface $app */
-        $app = ($this->providerFactories[$provider])(
+        /** @var callable $factory */
+        $factory = $this->providerFactories[$provider];
+        $app = $factory(
             $this->request,
             $this->requestMethod,
             $this->jwtSettings,

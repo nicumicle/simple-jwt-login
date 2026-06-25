@@ -156,7 +156,7 @@ $wlBaseUrl = add_query_arg([
                     <div class="col-md-3">
                         <select id="sjl-wl-filter-event" class="form-control">
                             <option value=""><?php echo esc_html(__('All Events', 'simple-jwt-login')); ?></option>
-                            <?php foreach (WebhooksSettings::ALLOWED_EVENTS as $ev) : ?>
+                            <?php foreach (WebhooksSettings::$allowedEvents as $ev) : ?>
                                 <option value="<?php echo esc_attr($ev); ?>" <?php echo $wlFilterEvent === $ev ? 'selected' : ''; ?>>
                                     <?php echo esc_html(ucfirst($ev)); ?>
                                 </option>

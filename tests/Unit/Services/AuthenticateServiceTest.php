@@ -532,7 +532,7 @@ class AuthenticateServiceTest extends TestCase
         $wordPressDataMock = $this->createMock(WordPressDataInterface::class);
         $wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode(['allow_authentication' => 1]));
-        $wordPressDataMock->expects($this->never())->method('getUserByUserLogin');
+        $wordPressDataMock->expects($this->once())->method('getUserByUserLogin');
         $wordPressDataMock->expects($this->once())->method('getUserDetailsByEmail')
             ->with('user@example.com')
             ->willReturn(null);

@@ -13,14 +13,15 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
     const EVENT_RESET_PASSWORD_REQUEST  = 'reset_password_request';
     const EVENT_RESET_PASSWORD          = 'reset_password';
 
-    const ALLOWED_EVENTS = [
+    /** @var string[] */
+    public static $allowedEvents = array(
         self::EVENT_LOGIN,
         self::EVENT_REGISTER,
         self::EVENT_AUTH,
         self::EVENT_DELETE_USER,
         self::EVENT_RESET_PASSWORD_REQUEST,
         self::EVENT_RESET_PASSWORD,
-    ];
+    );
 
     const METHOD_GET   = 'GET';
     const METHOD_POST  = 'POST';
@@ -28,13 +29,14 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
     const METHOD_PATCH = 'PATCH';
     const METHOD_DELETE = 'DELETE';
 
-    const ALLOWED_METHODS = [
+    /** @var string[] */
+    public static $allowedMethods = array(
         self::METHOD_GET,
         self::METHOD_POST,
         self::METHOD_PUT,
         self::METHOD_PATCH,
         self::METHOD_DELETE,
-    ];
+    );
 
     const DEFAULT_METHOD = self::METHOD_POST;
 
@@ -96,7 +98,7 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
             if (isset($entry['events']) && is_array($entry['events'])) {
                 foreach ($entry['events'] as $event) {
                     $sanitized = $this->wordPressData->sanitizeTextField((string)$event);
-                    if (in_array($sanitized, self::ALLOWED_EVENTS, true)) {
+                    if (in_array($sanitized, self::$allowedEvents, true)) {
                         $events[] = $sanitized;
                     }
                 }
@@ -105,7 +107,7 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
             $rawMethod = $this->wordPressData->sanitizeTextField(
                 isset($entry['method']) ? strtoupper((string)$entry['method']) : ''
             );
-            $method = in_array($rawMethod, self::ALLOWED_METHODS, true)
+            $method = in_array($rawMethod, self::$allowedMethods, true)
                 ? $rawMethod
                 : self::DEFAULT_METHOD;
 

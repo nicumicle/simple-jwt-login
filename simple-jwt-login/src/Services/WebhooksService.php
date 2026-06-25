@@ -67,7 +67,7 @@ class WebhooksService
                 continue;
             }
 
-            $method = isset($webhook['method']) && in_array($webhook['method'], WebhooksSettings::ALLOWED_METHODS, true)
+            $method = isset($webhook['method']) && in_array($webhook['method'], WebhooksSettings::$allowedMethods, true)
                 ? $webhook['method']
                 : WebhooksSettings::DEFAULT_METHOD;
 

@@ -82,7 +82,7 @@ class WebhooksService
 
             $blocking = $this->logRepository !== null;
 
-            $response = wp_remote_request($url, [
+            $response = wp_safe_remote_request($url, [
                 'method'   => $method,
                 'body'     => $this->buildBody($webhook, $event, $payload),
                 'headers'  => $headers,

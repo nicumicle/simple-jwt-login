@@ -19,7 +19,6 @@ use SimpleJWTLogin\Libraries\ServerCall;
 class Auth0Oauth extends AbstractOauth
 {
     const PROVIDER_SLUG         = 'auth0';
-    const IIS                   = 'accounts.auth0.com';
     const TOKEN_ENDPOINT_TPL    = 'https://%s/oauth/token';
     const AUTH_URL_TPL          = 'https://%s/authorize';
     const USERINFO_ENDPOINT_TPL = 'https://%s/userinfo';

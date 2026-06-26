@@ -155,7 +155,7 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
 
 <div class="sjl-gen-card sjl-gen-card--whitelist" id="protected_endpoints_whitelisted">
     <div class="sjl-gen-card-header">
-        <span class="dashicons dashicons-yes-alt" style="color: #00a32a;"></span>
+        <span class="dashicons dashicons-yes-alt"></span>
         <div style="flex: 1;">
             <h3 class="sjl-gen-card-title"><?php echo esc_html__('Whitelisted Endpoints', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
@@ -180,7 +180,7 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
 
 <div class="sjl-gen-card sjl-gen-card--protected" id="protected_endpoints_protected">
     <div class="sjl-gen-card-header">
-        <span class="dashicons dashicons-lock" style="color: #d63638;"></span>
+        <span class="dashicons dashicons-lock"></span>
         <div style="flex: 1;">
             <h3 class="sjl-gen-card-title"><?php echo esc_html__('Protected Endpoints', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">

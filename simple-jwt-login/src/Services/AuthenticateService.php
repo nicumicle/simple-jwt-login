@@ -166,7 +166,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
                 break;
             case isset($this->request['login']):
                 // login by username or email
-                $loginParameter = $this->request['login'];
+                $loginParameter = $this->wordPressData->sanitizeTextField($this->request['login']);
                 $user = $this->wordPressData->getUserByUserLogin($loginParameter);
                 if (!$user && strpos($loginParameter, '@') !== false) {
                     $user = $this->wordPressData->getUserDetailsByEmail($loginParameter);

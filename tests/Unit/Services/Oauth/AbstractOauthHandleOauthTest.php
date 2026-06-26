@@ -53,7 +53,7 @@ class AbstractOauthHandleOauthTest extends TestCase
     {
         $registerSettings = $this->createStub(RegisterSettings::class);
         $registerSettings->method('getRandomPasswordLength')->willReturn(10);
-        $registerSettings->method('getNewUserProfile')->willReturn('subscriber');
+        $registerSettings->method('getNewUserRoles')->willReturn(['subscriber']);
         return $registerSettings;
     }
 

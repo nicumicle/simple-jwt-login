@@ -105,7 +105,7 @@ class BaseOauth
             $username,
             $email,
             $password,
-            $this->settings->getRegisterSettings()->getNewUserProfile(),
+            $this->settings->getRegisterSettings()->getNewUserRoles(),
             []
         );
 

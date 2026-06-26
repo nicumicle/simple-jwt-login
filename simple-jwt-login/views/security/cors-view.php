@@ -69,7 +69,7 @@ if (!defined('ABSPATH')) {
                 </p>
                 <input type="text" class="form-control sjl-gen-input-medium sjl-cors-header-input" name="cors[allow_origin]"
                        value="<?php echo esc_attr($jwtSettings->getCorsSettings()->getAllowOrigin()); ?>"
-                       placeholder="*"
+                       placeholder="https://your-site.com"
                 />
                 <p class="sjl-gen-feature-desc">
                     <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin" target="_blank">

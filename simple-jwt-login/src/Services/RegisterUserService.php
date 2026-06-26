@@ -70,7 +70,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
             )
             : $this->wordPressData->wpSlash($this->request['password']);
 
-        $newUserRole = $registerSettings->getNewUserProfile();
+        $newUserRoles = $registerSettings->getNewUserRoles();
         $authCodesSettings = $this->jwtSettings->getAuthCodesSettings();
         $authCodeKey = $authCodesSettings->getAuthCodeKey();
         if (isset($this->request[$authCodeKey])) {
@@ -79,7 +79,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
                 if ($authCodeBuilder->getCode() === $this->request[$authCodeKey]
                     && !empty($authCodeBuilder->getRole())
                 ) {
-                    $newUserRole = $authCodeBuilder->getRole();
+                    $newUserRoles = array($authCodeBuilder->getRole());
                     break;
                 }
             }
@@ -89,7 +89,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
             $username,
             $email,
             $password,
-            $newUserRole,
+            $newUserRoles,
             $extraParameters
         );
         $userId    = $this->wordPressData->getUserIdFromUser($user);

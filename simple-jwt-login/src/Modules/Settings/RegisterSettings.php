@@ -42,14 +42,27 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
             );
         }
 
-        if (!$this->wordPressData->roleExists($this->post['new_user_profile'])) {
+        $roles = array_filter(array_map('trim', explode(',', $this->post['new_user_profile'])));
+        if (empty($roles)) {
             throw new Exception(
-                esc_html__('Invalid user role provided.', 'simple-jwt-login'),
+                esc_html__('New User profile slug can not be empty.', 'simple-jwt-login'),
                 absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_REGISTER,
-                    SettingsErrors::ERR_REGISTER_INVALID_ROLE
+                    SettingsErrors::ERR_REGISTER_MISSING_NEW_USER_PROFILE
                 ))
             );
+        }
+
+        foreach ($roles as $role) {
+            if (!$this->wordPressData->roleExists($role)) {
+                throw new Exception(
+                    esc_html__('Invalid user role provided.', 'simple-jwt-login'),
+                    absint($this->settingsErrors->generateCode(
+                        SettingsErrors::PREFIX_REGISTER,
+                        SettingsErrors::ERR_REGISTER_INVALID_ROLE
+                    ))
+                );
+            }
         }
 
         if (isset($this->post['random_password_length']) && !is_numeric($this->post['random_password_length'])) {
@@ -91,13 +104,14 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getNewUserProfile()
+    public function getNewUserRoles()
     {
-        return isset($this->settings['new_user_profile'])
+        $raw = isset($this->settings['new_user_profile'])
             ? $this->settings['new_user_profile']
             : self::DEFAULT_USER_PROFILE;
+        return array_values(array_filter(array_map('trim', explode(',', $raw))));
     }
 
     /**

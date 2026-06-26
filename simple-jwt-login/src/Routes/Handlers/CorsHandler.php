@@ -23,10 +23,10 @@ class CorsHandler
     public function register()
     {
         if ($this->corsSettings->isAllowOriginEnabled()) {
-            $this->addHeader(
-                'Access-Control-Allow-Origin',
-                $this->corsSettings->getAllowOrigin()
-            );
+            $origin = $this->corsSettings->getAllowOrigin();
+            if ($origin !== '') {
+                $this->addHeader('Access-Control-Allow-Origin', $origin);
+            }
         }
         if ($this->corsSettings->isAllowMethodsEnabled()) {
             $this->addHeader(
@@ -48,6 +48,7 @@ class CorsHandler
      */
     private function addHeader($headerName, $value)
     {
-        header($headerName . ': ' . $value);
+        $safeValue = str_replace(array("\r", "\n"), '', $value);
+        header($headerName . ': ' . $safeValue);
     }
 }

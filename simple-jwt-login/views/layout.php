@@ -136,7 +136,6 @@ $sidebarGroups = SettingsTabRegistry::sidebar();
                         <span id="sjl-theme-label"><?php echo esc_html__('Dark mode', 'simple-jwt-login'); ?></span>
                     </button>
                     <input type="submit" class="btn btn-dark" value="<?php echo esc_attr__('Save', 'simple-jwt-login');?>">
-                    <div class="sjl-plugin-version">v<?php echo esc_html(SIMPLE_JWT_LOGIN_VERSION); ?></div>
                 </div>
             </div>
             <hr/>

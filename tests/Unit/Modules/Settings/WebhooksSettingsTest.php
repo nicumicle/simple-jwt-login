@@ -229,6 +229,32 @@ class WebhooksSettingsTest extends TestCase
         $settings->validateSettings();
     }
 
+    #[DataProvider('insecureUrlProvider')]
+    public function testValidateThrowsOnNonHttpsUrl(string $url)
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Webhook #1: only HTTPS URLs are allowed.');
+
+        $settings = (new WebhooksSettings())
+            ->withSettings(['webhooks' => ['items' => [
+                ['url' => $url, 'enabled' => true, 'events' => ['login']],
+            ]]])
+            ->withWordPressData($this->wordPressData)
+            ->withPost([]);
+        $settings->validateSettings();
+    }
+
+    public static function insecureUrlProvider(): array
+    {
+        return [
+            'plain http'         => ['http://example.com/hook'],
+            'localhost http'     => ['http://localhost/admin'],
+            'link-local'         => ['http://169.254.169.254/latest/meta-data/'],
+            'private range'      => ['http://192.168.1.1/'],
+            'ftp scheme'         => ['ftp://example.com/hook'],
+        ];
+    }
+
     public function testPayloadTemplateIsStoredWhenProvided()
     {
         $webhooksData = [

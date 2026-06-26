@@ -38,6 +38,11 @@ if (!class_exists('WP_User')) {
 
         public function set_role($role)
         {
+            $this->roles = [$role];
+        }
+
+        public function add_role($role)
+        {
             $this->roles[] = $role;
         }
 
@@ -826,6 +831,12 @@ if (!function_exists('get_current_user_id')) {
 
 if (!function_exists('wp_remote_request')) {
     function wp_remote_request($url, $args)
+    {
+    }
+}
+
+if (!function_exists('wp_safe_remote_request')) {
+    function wp_safe_remote_request($url, $args)
     {
     }
 }

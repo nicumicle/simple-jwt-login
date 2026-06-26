@@ -73,7 +73,7 @@ class CorsSettings extends BaseSettings implements SettingsInterface
     {
         return isset($this->settings['allow_origin'])
             ? $this->settings['allow_origin']
-            : self::DEFAULT_HEADER_PARAMETER;
+            : '';
     }
 
     /**

@@ -53,8 +53,8 @@ class RegisterSettingsTest extends TestCase
             $registerSettings->isRegisterAllowed()
         );
         $this->assertSame(
-            'subscriber',
-            $registerSettings->getNewUserProfile()
+            ['subscriber'],
+            $registerSettings->getNewUserRoles()
         );
         $this->assertSame(
             '127.0.0.1',
@@ -102,6 +102,46 @@ class RegisterSettingsTest extends TestCase
             ->withPost([]);
         $registerUser->initSettingsFromPost();
         $registerUser->validateSettings();
+    }
+
+    public function testMultipleRolesStoredAndRetrievedAsArray()
+    {
+        $this->wordPressData->method('roleExists')
+            ->willReturn(true);
+        $registerSettings = (new RegisterSettings())
+            ->withWordPressData($this->wordPressData)
+            ->withSettings([])
+            ->withPost([
+                'allow_register'   => '1',
+                'new_user_profile' => 'subscriber, editor',
+            ]);
+        $registerSettings->initSettingsFromPost();
+        $registerSettings->validateSettings();
+
+        $this->assertSame(
+            ['subscriber', 'editor'],
+            $registerSettings->getNewUserRoles()
+        );
+    }
+
+    public function testRolesAreTrimmed()
+    {
+        $this->wordPressData->method('roleExists')
+            ->willReturn(true);
+        $registerSettings = (new RegisterSettings())
+            ->withWordPressData($this->wordPressData)
+            ->withSettings([])
+            ->withPost([
+                'allow_register'   => '1',
+                'new_user_profile' => '  subscriber  ,  editor  ',
+            ]);
+        $registerSettings->initSettingsFromPost();
+        $registerSettings->validateSettings();
+
+        $this->assertSame(
+            ['subscriber', 'editor'],
+            $registerSettings->getNewUserRoles()
+        );
     }
 
     #[DataProvider('invalidRoleProvider')]

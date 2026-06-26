@@ -75,6 +75,14 @@ class CorsSettingsTest extends TestCase
         );
     }
 
+    public function testGetAllowOriginDefaultsToEmptyString()
+    {
+        $corsSettings = (new CorsSettings())
+            ->withWordPressData($this->wordPressData)
+            ->withSettings([]);
+        $this->assertSame('', $corsSettings->getAllowOrigin());
+    }
+
     public function testValidation()
     {
         $this->expectException(Exception::class);

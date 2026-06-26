@@ -194,13 +194,13 @@ class WordPressRepository implements Repository
      * @param string $username
      * @param string $email
      * @param string $password
-     * @param string $role
+     * @param array  $roles
      * @param array  $extraParameters
      *
      * @return WP_User
      * @throws Exception
      */
-    public function createUser($username, $email, $password, $role, $extraParameters = [])
+    public function createUser($username, $email, $password, $roles, $extraParameters = [])
     {
         $userParameters = [
             'user_pass'  => $password,
@@ -221,7 +221,11 @@ class WordPressRepository implements Repository
         }
 
         $user = new WP_User($result);
-        $user->set_role($role);
+        $primaryRole = array_shift($roles);
+        $user->set_role($primaryRole);
+        foreach ($roles as $additionalRole) {
+            $user->add_role($additionalRole);
+        }
 
         return $user;
     }
@@ -651,5 +655,10 @@ class WordPressRepository implements Repository
     public function getCurrentUserId()
     {
         return get_current_user_id();
+    }
+
+    public function parseUrl($url, $component = -1)
+    {
+        return wp_parse_url($url, $component);
     }
 }

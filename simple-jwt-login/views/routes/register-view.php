@@ -128,7 +128,7 @@ if (!defined('ABSPATH')) {
     </div>
     <div class="sjl-gen-card-body">
 
-        <!-- Default Role -->
+        <!-- Default Roles -->
         <div class="sjl-gen-feature-item">
             <label class="sjl-gen-feature-label" for="new_user_profile">
                 <?php
@@ -136,12 +136,12 @@ if (!defined('ABSPATH')) {
                     echo '<span class="simple-jwt-error">!</span>';
                 }
                 ?>
-                <?php echo esc_html__('Default User Role', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Default User Roles', 'simple-jwt-login'); ?>
                  <span class="required">*</span>
-               
+
             </label>
             <p class="sjl-gen-feature-desc">
-                <?php echo esc_html__('WordPress role assigned to new users.', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Comma-separated list of WordPress roles assigned to new users.', 'simple-jwt-login'); ?>
                 <?php echo esc_html__('Common values:', 'simple-jwt-login'); ?>
                 <code class="sjl-gen-var-chip">administrator</code>
                 <code class="sjl-gen-var-chip">editor</code>
@@ -151,8 +151,8 @@ if (!defined('ABSPATH')) {
                 &mdash; <a href="https://wordpress.org/support/article/roles-and-capabilities/" target="_blank"><?php echo esc_html__('full list', 'simple-jwt-login'); ?></a>
             </p>
             <input type="text" name="new_user_profile" id="new_user_profile" class="form-control sjl-gen-input-medium"
-                   value="<?php echo esc_attr($jwtSettings->getRegisterSettings()->getNewUserProfile()); ?>"
-                   placeholder="<?php echo esc_attr__('e.g. subscriber', 'simple-jwt-login'); ?>"
+                   value="<?php echo esc_attr(implode(', ', $jwtSettings->getRegisterSettings()->getNewUserRoles())); ?>"
+                   placeholder="<?php echo esc_attr__('e.g. subscriber, editor', 'simple-jwt-login'); ?>"
             />
         </div>
 

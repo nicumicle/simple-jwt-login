@@ -31,14 +31,14 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
         $group = self::PROPERTY_GROUP;
 
         return [
-            [null, 'enabled',          $group, 'enabled',          self::SETTINGS_TYPE_INT],
-            [null, 'action',           $group, 'action',           self::SETTINGS_TYPE_INT],
-            [null, 'protect',          $group, 'protect',          self::SETTINGS_TYPE_ARRAY],
-            [null, 'protect_method',   $group, 'protect_method',   self::SETTINGS_TYPE_ARRAY],
-            [null, 'protect_match',    $group, 'protect_match',    self::SETTINGS_TYPE_ARRAY],
-            [null, 'whitelist',        $group, 'whitelist',        self::SETTINGS_TYPE_ARRAY],
-            [null, 'whitelist_method', $group, 'whitelist_method', self::SETTINGS_TYPE_ARRAY],
-            [null, 'whitelist_match',  $group, 'whitelist_match',  self::SETTINGS_TYPE_ARRAY],
+            [null, 'enabled',            $group, 'enabled',            self::SETTINGS_TYPE_INT],
+            [null, 'action',             $group, 'action',             self::SETTINGS_TYPE_INT],
+            [null, 'protect',            $group, 'protect',            self::SETTINGS_TYPE_ARRAY],
+            [null, 'protect_method',     $group, 'protect_method',     self::SETTINGS_TYPE_ARRAY],
+            [null, 'protect_match',      $group, 'protect_match',      self::SETTINGS_TYPE_ARRAY],
+            [null, 'whitelist',          $group, 'whitelist',          self::SETTINGS_TYPE_ARRAY],
+            [null, 'whitelist_method',   $group, 'whitelist_method',   self::SETTINGS_TYPE_ARRAY],
+            [null, 'whitelist_match',    $group, 'whitelist_match',    self::SETTINGS_TYPE_ARRAY],
         ];
     }
 

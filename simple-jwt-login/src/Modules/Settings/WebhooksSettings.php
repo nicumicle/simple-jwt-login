@@ -181,6 +181,21 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
                     ))
                 );
             }
+            if (parse_url($url, PHP_URL_SCHEME) !== 'https') {
+                throw new Exception(
+                    esc_html(
+                        sprintf(
+                            /* translators: %d: webhook index number */
+                            __('Webhook #%d: only HTTPS URLs are allowed.', 'simple-jwt-login'),
+                            $i + 1
+                        )
+                    ),
+                    absint($this->settingsErrors->generateCode(
+                        SettingsErrors::PREFIX_WEBHOOKS,
+                        SettingsErrors::ERR_WEBHOOKS_INVALID_URL
+                    ))
+                );
+            }
         }
     }
 

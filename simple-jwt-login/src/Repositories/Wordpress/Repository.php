@@ -82,13 +82,13 @@ interface Repository
      * @param string $username
      * @param string $email
      * @param string $password
-     * @param string $role
+     * @param array  $roles
      * @param array  $extraParameters
      *
      * @return WP_User
      * @throws Exception
      */
-    public function createUser($username, $email, $password, $role, $extraParameters);
+    public function createUser($username, $email, $password, $roles, $extraParameters);
 
     /**
      * @param string $optionName
@@ -345,4 +345,11 @@ interface Repository
      * @return int
      */
     public function getCurrentUserId();
+
+    /**
+     * @param string $url
+     * @param int $component
+     * @return array|string|int|false|null
+     */
+    public function parseUrl($url, $component = -1);
 }

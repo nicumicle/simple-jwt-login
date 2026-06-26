@@ -438,4 +438,42 @@ class RegisterUserTest extends WPTestCase
         $this->assertFalse($data['success']);
         $this->assertSame(ErrorCodes::ERR_REGISTER_IP_IS_NOT_ALLOWED, $data['data']['error_code']);
     }
+
+    #[TestDox('Registered user receives all comma-separated default roles')]
+    public function testRegisterWithMultipleRoles(): void
+    {
+        static::configurePlugin(static::baseConfig([
+            'new_user_profile' => 'subscriber, editor',
+        ]));
+
+        $faker    = Factory::create();
+        $response = $this->jsonRequest('POST', self::ROUTE, [
+            'email'    => $faker->randomNumber(6) . $faker->email(),
+            'password' => 'password123',
+        ]);
+
+        $this->assertSame(200, $response->get_status());
+        $roles = $response->get_data()['data']['roles'];
+        $this->assertContains('subscriber', $roles);
+        $this->assertContains('editor', $roles);
+    }
+
+    #[TestDox('Roles with extra whitespace around names are trimmed and all applied')]
+    public function testRegisterWithWhitespaceTrimmedRoles(): void
+    {
+        static::configurePlugin(static::baseConfig([
+            'new_user_profile' => '  subscriber  ,  contributor  ',
+        ]));
+
+        $faker    = Factory::create();
+        $response = $this->jsonRequest('POST', self::ROUTE, [
+            'email'    => $faker->randomNumber(6) . $faker->email(),
+            'password' => 'password123',
+        ]);
+
+        $this->assertSame(200, $response->get_status());
+        $roles = $response->get_data()['data']['roles'];
+        $this->assertContains('subscriber', $roles);
+        $this->assertContains('contributor', $roles);
+    }
 }

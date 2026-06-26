@@ -530,6 +530,8 @@ class AuthenticateServiceTest extends TestCase
     public function testLoginParamWithEmailGoesDirectlyToEmailLookup(): void
     {
         $wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $wordPressDataMock->method('sanitizeTextField')
+            ->willReturnArgument(0);
         $wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode(['allow_authentication' => 1]));
         $wordPressDataMock->expects($this->once())->method('getUserByUserLogin');
@@ -551,6 +553,8 @@ class AuthenticateServiceTest extends TestCase
     public function testLoginParamWithUsernameGoesDirectlyToUserLoginLookup(): void
     {
         $wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $wordPressDataMock->method('sanitizeTextField')
+            ->willReturnArgument(0);
         $wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode(['allow_authentication' => 1]));
         $wordPressDataMock->expects($this->never())->method('getUserDetailsByEmail');
@@ -648,7 +652,7 @@ class AuthenticateServiceTest extends TestCase
             ->withWordPressData($wordPressDataStub)
             ->withSettings([]);
 
-        $jwtSettingsMock = $this->createMock(SimpleJWTLoginSettings::class);
+        $jwtSettingsMock = $this->createStub(SimpleJWTLoginSettings::class);
         $jwtSettingsMock->method('getAuthenticationSettings')->willReturn($authSettings);
         $jwtSettingsMock->method('getHooksSettings')->willReturn($hooksSettings);
 

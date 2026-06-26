@@ -844,6 +844,7 @@
 #simple-jwt-login .sjl-gen-card--protected {
     border-left: 3px solid #d63638;
 }
+
 #simple-jwt-login small{
     color: var(--sjl-text-muted) !important;
     font-size: 10px;

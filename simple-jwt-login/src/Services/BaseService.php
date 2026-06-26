@@ -332,13 +332,15 @@ abstract class BaseService
                 return $jwtParts['payload']['email'];
             }
         }
-        if ($iss === Auth0Oauth::IIS) {
-            $auth0Settings = $this->jwtSettings->getIntegrationsSettings()->auth0();
-            if ($auth0Settings->isEnabled() && $auth0Settings->isAllowedOnAllEndpoints()) {
-                Auth0Oauth::validateIdToken($this->jwt, $this->jwtSettings);
+        $auth0Settings = $this->jwtSettings->getIntegrationsSettings()->auth0();
+        if ($auth0Settings->isEnabled()
+            && !empty($auth0Settings->getDomain())
+            && $iss === $auth0Settings->getDomain()
+            && $auth0Settings->isAllowedOnAllEndpoints()
+        ) {
+            Auth0Oauth::validateIdToken($this->jwt, $this->jwtSettings);
 
-                return $jwtParts['payload']['sub'];
-            }
+            return $jwtParts['payload']['sub'];
         }
 
         $ruleConfig = $this->jwtSettings->getJwtRulesSettings()->findMatchingRuleConfig($jwtParts);

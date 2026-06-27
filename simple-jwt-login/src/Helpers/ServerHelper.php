@@ -63,6 +63,30 @@ class ServerHelper
     }
 
     /**
+     * Read a single request header by name (case-insensitive) without building
+     * the full header map. Used on the hot path where only one header matters.
+     *
+     * @param string $name
+     * @return string|null
+     */
+    public function getHeader($name)
+    {
+        $allHeaders = $this->getAllHeaders();
+        if (!empty($allHeaders)) {
+            $lowerName = strtolower($name);
+            foreach ($allHeaders as $key => $value) {
+                if (strtolower($key) === $lowerName) {
+                    return $value;
+                }
+            }
+            return null;
+        }
+
+        $serverKey = 'HTTP_' . strtoupper(str_replace('-', '_', $name));
+        return isset($this->server[$serverKey]) ? $this->server[$serverKey] : null;
+    }
+
+    /**
      * @return string|null
      */
     public function getClientIP()

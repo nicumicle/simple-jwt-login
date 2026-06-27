@@ -66,12 +66,7 @@ class RouteService extends BaseService
             ],
             [
                 'name' => self::AUTHENTICATION_VALIDATE_ROUTE,
-                'method' => self::METHOD_GET,
-                'service' => ValidateTokenService::class,
-            ],
-            [
-                'name' => self::AUTHENTICATION_VALIDATE_ROUTE,
-                'method' => self::METHOD_POST,
+                'method' => self::METHOD_GET . ', ' . self::METHOD_POST,
                 'service' => ValidateTokenService::class,
             ],
             [
@@ -81,22 +76,12 @@ class RouteService extends BaseService
             ],
             [
                 'name' => self::RESET_PASSWORD_LINK,
-                'method' => self::METHOD_PUT,
-                'service' => ResetPasswordService::class
-            ],
-            [
-                'name' => self::RESET_PASSWORD_LINK,
-                'method' => self::METHOD_POST,
+                'method' => self::METHOD_PUT . ', ' . self::METHOD_POST,
                 'service' => ResetPasswordService::class
             ],
             [
                 'name' => self::OAUTH_TOKEN,
-                'method' => self::METHOD_GET,
-                'service' => OAuthService::class
-            ],
-            [
-                'name' => self::OAUTH_TOKEN,
-                'method' => self::METHOD_POST,
+                'method' => self::METHOD_GET . ', ' . self::METHOD_POST,
                 'service' => OAuthService::class
             ],
             [

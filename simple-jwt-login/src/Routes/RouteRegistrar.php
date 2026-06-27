@@ -137,10 +137,22 @@ class RouteRegistrar
 
     public function register()
     {
-        $parseRequest = ParseRequest::process($this->server);
+        // Reading and parsing php://input is only useful when the request actually
+        // carries a body. Skip it when there is no body indicator (no Content-Length
+        // and no Content-Type), which is the case for the vast majority of GET
+        // requests hitting the REST API site-wide. Parameters for those arrive via
+        // the query string ($_REQUEST) and are merged below.
+        $contentLength = isset($this->server['CONTENT_LENGTH'])
+            ? (int) $this->server['CONTENT_LENGTH']
+            : 0;
+        $hasContentType = isset($this->server['CONTENT_TYPE'])
+            && trim((string) $this->server['CONTENT_TYPE']) !== '';
         $parsedVars = [];
-        if (isset($parseRequest['variables'])) {
-            $parsedVars = (array) $parseRequest['variables'];
+        if ($contentLength > 0 || $hasContentType) {
+            $parseRequest = ParseRequest::process($this->server);
+            if (isset($parseRequest['variables'])) {
+                $parsedVars = (array) $parseRequest['variables'];
+            }
         }
 
         $request = array_merge(wp_unslash($this->requestVars), $parsedVars);

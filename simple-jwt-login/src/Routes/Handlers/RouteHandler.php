@@ -134,12 +134,19 @@ class RouteHandler
 
         $keyId = isset($request['id']) ? (int) $request['id'] : null;
 
+        // Use the actual HTTP method of the request rather than the registered one,
+        // so a single route registered for several methods dispatches correctly.
+        $requestMethod = $this->serverHelper->getRequestMethod();
+        if ($requestMethod === null) {
+            $requestMethod = $this->route['method'];
+        }
+
         try {
-            $this->triggerBeforeHook();
+            $this->triggerBeforeHook($requestMethod);
 
             $service = new $this->route['service']();
             $service
-                ->withRequestMethod($this->route['method'])
+                ->withRequestMethod($requestMethod)
                 ->withRequest($request)
                 ->withCookies($this->cookies)
                 ->withServerHelper($this->serverHelper)
@@ -195,7 +202,10 @@ class RouteHandler
         }
     }
 
-    protected function triggerBeforeHook()
+    /**
+     * @param string $requestMethod
+     */
+    protected function triggerBeforeHook($requestMethod)
     {
         if ($this->apiKeyRepository !== null) {
             return;
@@ -206,7 +216,7 @@ class RouteHandler
         /** @phpstan-ignore-next-line */
         $this->jwtSettings->getWordPressData()->doAction(
             SimpleJWTLoginHooks::HOOK_BEFORE_ENDPOINT,
-            $this->route['method'],
+            $requestMethod,
             $this->route['name'],
             $this->request
         );

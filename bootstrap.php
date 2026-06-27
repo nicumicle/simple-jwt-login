@@ -818,6 +818,16 @@ if (!function_exists('is_user_logged_in')) {
     }
 }
 
+if (!function_exists('is_admin')) {
+    /**
+     * @return bool
+     */
+    function is_admin()
+    {
+        return false;
+    }
+}
+
 if (!function_exists('current_user_can')) {
     /**
      * @param string $capability

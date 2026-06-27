@@ -104,11 +104,8 @@ class AuthenticationHandler
         }
 
         if ($this->jwtSettings->getApiKeysSettings()->isEnabled()) {
-            $headers          = array_change_key_case($this->serverHelper->getHeaders(), CASE_LOWER);
             $configuredHeader = strtolower($this->jwtSettings->getApiKeysSettings()->getHeaderName());
-            $apiKeyHeader     = isset($headers[$configuredHeader])
-                ? trim((string) $headers[$configuredHeader])
-                : '';
+            $apiKeyHeader     = trim((string) $this->serverHelper->getHeader($configuredHeader));
 
             if ($apiKeyHeader !== '') {
                 $requiredPermission = ApiKeyPermissions::httpMethodToPermission(

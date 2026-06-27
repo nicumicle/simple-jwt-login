@@ -46,9 +46,12 @@ global $wpdb;
 $simpleJwtLoginWordPressRepository = WordPressRepository::getInstance();
 $simpleJwtLoginJwtSettings = new SimpleJWTLoginSettings($simpleJwtLoginWordPressRepository);
 
-// User-facing API Keys menu (for non-admin users when the setting is enabled)
-$simpleJwtLoginUserApiKeysPage = new UserApiKeysPage($simpleJwtLoginJwtSettings);
-add_action('admin_menu', array($simpleJwtLoginUserApiKeysPage, 'registerMenuEntry'));
+// User-facing API Keys menu (for non-admin users when the setting is enabled).
+// Only relevant inside wp-admin, so skip building it on front-end/REST/cron requests.
+if (is_admin()) {
+    $simpleJwtLoginUserApiKeysPage = new UserApiKeysPage($simpleJwtLoginJwtSettings);
+    add_action('admin_menu', array($simpleJwtLoginUserApiKeysPage, 'registerMenuEntry'));
+}
 
 // Login page integration
 //phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -77,21 +80,23 @@ $simpleJwtLoginAuditLogRepo = new AuditLogRepository($wpdb);
 $simpleJwtLoginWebhookLogRepo = new WebhookLogRepository($wpdb);
 $simpleJwtLoginApiKeyRepo = new ApiKeyRepository($wpdb);
 
-// Admin UI
-//phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.NonceVerification.Missing
-$simpleJwtLoginAdminUI = new AdminUI(
-    $_SERVER,
-    $_POST,
-    $simpleJwtLoginJwtSettings,
-    $simpleJwtLoginAuditLogRepo,
-    $simpleJwtLoginWebhookLogRepo,
-    $simpleJwtLoginApiKeyRepo
-);
-add_action('admin_menu', array($simpleJwtLoginAdminUI, 'registerMenuEntry'));
-add_filter(
-    'plugin_action_links_' . plugin_basename(__FILE__),
-    array($simpleJwtLoginAdminUI, 'addPluginActionLinks')
-);
+// Admin UI - only needed inside wp-admin, so skip building it on front-end/REST/cron requests.
+if (is_admin()) {
+    //phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.NonceVerification.Missing
+    $simpleJwtLoginAdminUI = new AdminUI(
+        $_SERVER,
+        $_POST,
+        $simpleJwtLoginJwtSettings,
+        $simpleJwtLoginAuditLogRepo,
+        $simpleJwtLoginWebhookLogRepo,
+        $simpleJwtLoginApiKeyRepo
+    );
+    add_action('admin_menu', array($simpleJwtLoginAdminUI, 'registerMenuEntry'));
+    add_filter(
+        'plugin_action_links_' . plugin_basename(__FILE__),
+        array($simpleJwtLoginAdminUI, 'addPluginActionLinks')
+    );
+}
 
 // Lifecycle (activation, deactivation, uninstall, migration, i18n)
 $simpleJwtLoginLifecycle = new Lifecycle(

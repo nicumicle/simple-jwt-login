@@ -3200,3 +3200,31 @@
     border-color: #7a2020;
     color: #ff7c7c;
 }
+
+/* Webhook log response body */
+#simple-jwt-login .sjl-webhook-log-summary {
+    cursor: pointer;
+    color: #0073aa;
+}
+
+#simple-jwt-login .sjl-webhook-log-body {
+    font-size: 11px;
+    max-height: 120px;
+    overflow: auto;
+    background: #f6f7f7;
+    border: 1px solid #e2e4e7;
+    color: #1d2327;
+    padding: 6px;
+    border-radius: 4px;
+    margin-top: 4px;
+}
+
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-webhook-log-summary {
+    color: #79b8ff;
+}
+
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-webhook-log-body {
+    background: #1e2330;
+    border-color: var(--sjl-border);
+    color: var(--sjl-text);
+}

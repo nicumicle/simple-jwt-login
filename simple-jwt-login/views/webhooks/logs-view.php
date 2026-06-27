@@ -255,11 +255,11 @@ $wlBaseUrl = add_query_arg([
                                 </td>
                                 <td>
                                     <?php if ($wlHasBody) : ?>
-                                        <details>
-                                            <summary style="cursor:pointer; color:#0073aa;">
+                                        <details class="sjl-webhook-log-details">
+                                            <summary class="sjl-webhook-log-summary">
                                                 <small><?php echo esc_html(__('View', 'simple-jwt-login')); ?></small>
                                             </summary>
-                                            <pre style="font-size:11px; max-height:120px; overflow:auto; background:#f6f7f7; padding:6px; border-radius:4px; margin-top:4px;"><?php echo esc_html($wlLog->response_body); ?></pre>
+                                            <pre class="sjl-webhook-log-body"><?php echo esc_html($wlLog->response_body); ?></pre>
                                         </details>
                                     <?php else : ?>
                                         <small class="text-muted">-</small>

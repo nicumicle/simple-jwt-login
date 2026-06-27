@@ -21,6 +21,7 @@ use SimpleJWTLogin\Modules\Settings\RegisterSettings;
 use SimpleJWTLogin\Modules\Settings\ResetPasswordSettings;
 use SimpleJWTLogin\Modules\Settings\ThemeSettings;
 use SimpleJWTLogin\Modules\Settings\Migrations\SettingsMigrationService;
+use SimpleJWTLogin\Modules\Settings\SettingsDiff;
 use SimpleJWTLogin\Modules\Settings\SettingsFactory;
 use SimpleJWTLogin\Modules\Settings\SettingsInterface;
 use SimpleJWTLogin\Repositories\Wordpress\Repository;
@@ -310,80 +311,7 @@ class SimpleJWTLoginSettings
      */
     public function buildSettingsDiff($old, $new)
     {
-        $flatOld = $this->flattenSettings($old);
-        $flatNew = $this->flattenSettings($new);
-
-        $changed = [];
-        $added   = [];
-        $removed = [];
-
-        foreach ($flatNew as $key => $value) {
-            if (!array_key_exists($key, $flatOld)) {
-                $added[] = $key;
-                continue;
-            }
-            if ($flatOld[$key] !== $value) {
-                $changed[$key] = [
-                    'from' => $this->redactIfSensitive($key, $flatOld[$key]),
-                    'to'   => $this->redactIfSensitive($key, $value),
-                ];
-            }
-        }
-
-        foreach (array_keys($flatOld) as $key) {
-            if (!array_key_exists($key, $flatNew)) {
-                $removed[] = $key;
-            }
-        }
-
-        return array_filter([
-            'changed' => $changed,
-            'added'   => $added,
-            'removed' => $removed,
-        ]);
-    }
-
-    /**
-     * Flatten a nested settings array into dot-notation keys.
-     * Indexed (list) arrays are serialised as JSON strings rather than recursed into.
-     *
-     * @param array  $settings
-     * @param string $prefix
-     * @return array<string, string>
-     */
-    private function flattenSettings($settings, $prefix = '')
-    {
-        $result = [];
-        if (!is_array($settings)) {
-            return $result;
-        }
-        foreach ($settings as $key => $value) {
-            $fullKey = $prefix !== '' ? $prefix . '.' . $key : (string) $key;
-            if (is_array($value) && !empty($value) && array_keys($value) !== range(0, count($value) - 1)) {
-                $result = array_merge($result, $this->flattenSettings($value, $fullKey));
-                continue;
-            }
-            $result[$fullKey] = is_array($value) ? (string) json_encode($value) : (string) $value;
-        }
-        return $result;
-    }
-
-    /**
-     * Replace the value with '[REDACTED]' for keys that may hold sensitive data.
-     *
-     * @param string $key
-     * @param string $value
-     * @return string
-     */
-    private function redactIfSensitive($key, $value)
-    {
-        $lowerKey = strtolower($key);
-        foreach (['secret', 'password', '_key'] as $pattern) {
-            if (strpos($lowerKey, $pattern) !== false) {
-                return '[REDACTED]';
-            }
-        }
-        return $value;
+        return (new SettingsDiff())->build($old, $new);
     }
 
     /**

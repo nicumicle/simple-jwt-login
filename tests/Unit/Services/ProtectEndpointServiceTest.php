@@ -255,21 +255,19 @@ class ProtectEndpointServiceTest extends TestCase
                     ]
                 ]
             ],
-            'test_invalid_action' => [
-                'expectedResult' => false,
+            'test_allow_all_with_no_matching_rule' => [
+                'expectedResult' => true,
                 'requestMethod' => 'GET',
-                'currentUrl' => '/wp-json/wp/v2/posts',
+                'currentUrl' => '/wp-json/wp/v2/other',
                 'documentRoot' => '/var/www/html',
                 'request' => [
-                    'rest_route' => '/wp-json/wp/v2/posts'
+                    'rest_route' => '/wp/v2/other'
                 ],
                 'settings' => [
-                    'enabled' => true,
-                    'action' => -1, //invalid action
-                    'whitelist' => [
-                        'wp-json/wp/v2/posts',
-                        '',
-                    ]
+                    'enabled'        => true,
+                    'default_action' => ProtectEndpointSettings::DEFAULT_ALLOW_ALL,
+                    'rules_url'      => ['/wp/v2/posts'],
+                    'rules_type'     => [ProtectEndpointSettings::RULE_TYPE_PROTECTED],
                 ]
             ],
             'test_empty_endpoint' => [
@@ -492,6 +490,133 @@ class ProtectEndpointServiceTest extends TestCase
             ->withSession([]);
 
         $result = $service->hasAccess('/wp-json/simple-jwt-login/v1/auth', '/var/www/html');
+        $this->assertTrue($result);
+    }
+
+    public function testRoleCheckPassesWhenUserHasRequiredRole()
+    {
+        $user = new stdClass();
+        $user->ID = 5;
+        $user->roles = ['editor'];
+
+        $settings = [
+            ProtectEndpointSettings::PROPERTY_GROUP => [
+                'enabled'        => true,
+                'default_action' => ProtectEndpointSettings::DEFAULT_ALLOW_ALL,
+                'rules_url'      => ['/wp/v2/posts'],
+                'rules_type'     => [ProtectEndpointSettings::RULE_TYPE_PROTECTED_ROLES],
+                'rules_roles'    => ['administrator, editor'],
+            ],
+        ];
+
+        $this->wordPressData->method('getOptionFromDatabase')
+            ->willReturn(json_encode($settings));
+        $this->wordPressData->method('isUserLoggedIn')->willReturn(false);
+        $this->wordPressData->method('getUserProperty')->willReturn(5);
+        $this->wordPressData->method('getUserMeta')->willReturn([]);
+        $this->wordPressData->method('getUserRoles')->willReturn(['editor']);
+        $this->wordPressData->method('setCurrentUser')->willReturn(null);
+
+        $jwtSettings = new SimpleJWTLoginSettings($this->wordPressData);
+
+        $routeServiceMock = $this->createStub(RouteService::class);
+        $routeServiceMock->method('getUserFromJwt')->willReturn($user);
+
+        $service = (new ProtectEndpointService())
+            ->withRequest(['rest_route' => '/wp/v2/posts', 'JWT' => 'fake-jwt'])
+            ->withCookies([])
+            ->withRequestMethod('GET')
+            ->withServerHelper(new ServerHelper(['HTTP_AUTHORIZATION' => 'Bearer fake-jwt']))
+            ->withRouteService($routeServiceMock)
+            ->withSettings($jwtSettings)
+            ->withSession([]);
+
+        $result = $service->hasAccess('/wp-json/wp/v2/posts', '/var/www/html');
+        $this->assertTrue($result);
+    }
+
+    public function testRoleCheckThrowsWhenUserLacksRequiredRole()
+    {
+        $user = new stdClass();
+        $user->ID = 7;
+        $user->roles = ['subscriber'];
+
+        $settings = [
+            ProtectEndpointSettings::PROPERTY_GROUP => [
+                'enabled'        => true,
+                'default_action' => ProtectEndpointSettings::DEFAULT_ALLOW_ALL,
+                'rules_url'      => ['/wp/v2/posts'],
+                'rules_type'     => [ProtectEndpointSettings::RULE_TYPE_PROTECTED_ROLES],
+                'rules_roles'    => ['administrator'],
+            ],
+        ];
+
+        $this->wordPressData->method('getOptionFromDatabase')
+            ->willReturn(json_encode($settings));
+        $this->wordPressData->method('isUserLoggedIn')->willReturn(false);
+        $this->wordPressData->method('getUserProperty')->willReturn(7);
+        $this->wordPressData->method('getUserMeta')->willReturn([]);
+        $this->wordPressData->method('getUserRoles')->willReturn(['subscriber']);
+        $this->wordPressData->method('setCurrentUser')->willReturn(null);
+
+        $jwtSettings = new SimpleJWTLoginSettings($this->wordPressData);
+
+        $routeServiceMock = $this->createStub(RouteService::class);
+        $routeServiceMock->method('getUserFromJwt')->willReturn($user);
+
+        $service = (new ProtectEndpointService())
+            ->withRequest(['rest_route' => '/wp/v2/posts', 'JWT' => 'fake-jwt'])
+            ->withCookies([])
+            ->withRequestMethod('GET')
+            ->withServerHelper(new ServerHelper(['HTTP_AUTHORIZATION' => 'Bearer fake-jwt']))
+            ->withRouteService($routeServiceMock)
+            ->withSettings($jwtSettings)
+            ->withSession([]);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('You do not have the required role to access this endpoint.');
+        $service->hasAccess('/wp-json/wp/v2/posts', '/var/www/html');
+    }
+
+    public function testNoRolesRequiredAllowsAnyAuthenticatedUser()
+    {
+        $user = new stdClass();
+        $user->ID = 9;
+        $user->roles = ['subscriber'];
+
+        $settings = [
+            ProtectEndpointSettings::PROPERTY_GROUP => [
+                'enabled'        => true,
+                'default_action' => ProtectEndpointSettings::DEFAULT_ALLOW_ALL,
+                'rules_url'      => ['/wp/v2/posts'],
+                'rules_type'     => [ProtectEndpointSettings::RULE_TYPE_PROTECTED],
+                'rules_roles'    => [''],
+            ],
+        ];
+
+        $this->wordPressData->method('getOptionFromDatabase')
+            ->willReturn(json_encode($settings));
+        $this->wordPressData->method('isUserLoggedIn')->willReturn(false);
+        $this->wordPressData->method('getUserProperty')->willReturn(9);
+        $this->wordPressData->method('getUserMeta')->willReturn([]);
+        $this->wordPressData->method('getUserRoles')->willReturn(['subscriber']);
+        $this->wordPressData->method('setCurrentUser')->willReturn(null);
+
+        $jwtSettings = new SimpleJWTLoginSettings($this->wordPressData);
+
+        $routeServiceMock = $this->createStub(RouteService::class);
+        $routeServiceMock->method('getUserFromJwt')->willReturn($user);
+
+        $service = (new ProtectEndpointService())
+            ->withRequest(['rest_route' => '/wp/v2/posts', 'JWT' => 'fake-jwt'])
+            ->withCookies([])
+            ->withRequestMethod('GET')
+            ->withServerHelper(new ServerHelper(['HTTP_AUTHORIZATION' => 'Bearer fake-jwt']))
+            ->withRouteService($routeServiceMock)
+            ->withSettings($jwtSettings)
+            ->withSession([]);
+
+        $result = $service->hasAccess('/wp-json/wp/v2/posts', '/var/www/html');
         $this->assertTrue($result);
     }
 }

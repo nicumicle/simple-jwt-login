@@ -779,6 +779,8 @@
     border-radius: var(--sjl-radius-sm);
     background: #fff;
     padding: 0 4px;
+    appearance: auto;
+    -webkit-appearance: auto;
 }
 
 #simple-jwt-login .sjl-endpoint-url-input.form-control {
@@ -790,6 +792,19 @@
     border-radius: var(--sjl-radius-sm) !important;
     padding: 0 8px;
     background: #fff;
+}
+
+#simple-jwt-login .sjl-endpoint-roles-input.form-control {
+    flex-shrink: 0;
+    width: 175px;
+    height: 30px !important;
+    font-size: 11px;
+    font-style: italic;
+    border: 1px solid var(--sjl-border);
+    border-radius: var(--sjl-radius-sm) !important;
+    padding: 0 8px;
+    background: #fff;
+    color: var(--sjl-text-muted, #666);
 }
 
 #simple-jwt-login .sjl-endpoint-remove {
@@ -817,6 +832,45 @@
     width: 16px;
     height: 16px;
 }
+
+#simple-jwt-login .sjl-endpoint-type-select {
+    flex-shrink: 0;
+    width: 118px;
+    height: 30px;
+    font-size: 11px;
+    border: 1px solid var(--sjl-border);
+    border-radius: var(--sjl-radius-sm);
+    background: #fff;
+    padding: 0 4px;
+    appearance: auto;
+    -webkit-appearance: auto;
+}
+
+/* Column header row for the rules table */
+#simple-jwt-login .sjl-endpoint-header-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 10px 4px;
+    margin-bottom: 2px;
+    border-bottom: 1px solid var(--sjl-border-light);
+}
+
+#simple-jwt-login .sjl-endpoint-col-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--sjl-text-meta);
+    flex-shrink: 0;
+}
+
+#simple-jwt-login .sjl-endpoint-col-label:nth-child(1) { width: 88px; }
+#simple-jwt-login .sjl-endpoint-col-label:nth-child(2) { width: 118px; }
+#simple-jwt-login .sjl-endpoint-col-url { flex: 1; }
+#simple-jwt-login .sjl-endpoint-col-label:nth-child(4) { width: 118px; }
+#simple-jwt-login .sjl-endpoint-col-roles { width: 175px; }
+#simple-jwt-login .sjl-endpoint-col-del { width: 30px; }
 
 /* Count badge in whitelist / protected card headers */
 #simple-jwt-login .sjl-endpoint-count {
@@ -1489,6 +1543,16 @@
 
 #simple-jwt-login .sjl-plugin-not-installed-notice {
     margin: 0 0 16px;
+}
+
+#simple-jwt-login .sjl-logs-disabled-notice {
+    background: #f9f9f9;
+    border: 1px dashed #ccc;
+    color: #555;
+}
+
+#simple-jwt-login .sjl-logs-disabled-icon {
+    color: #aaa;
 }
 
 /* Status badges (used in provider settings cards) */
@@ -2454,6 +2518,11 @@
     display: flex;
     justify-content: flex-end;
     margin-top: 14px;
+}
+
+#simple-jwt-login input[type="date"]::-webkit-calendar-picker-indicator,
+#simple-jwt-login input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
 }
 
 /* ============================================

@@ -76,6 +76,8 @@ class StatusCodeHelper
         ErrorCodes::ERR_TWO_FACTOR_NOT_ACTIVE,
         // API key unauthorized
         ErrorCodes::ERR_API_KEY_UNAUTHORIZED,
+        // Endpoint role restriction
+        ErrorCodes::ERR_PROTECT_ENDPOINTS_INSUFFICIENT_ROLE,
     ];
 
     /** @var list<int> */

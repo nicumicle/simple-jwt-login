@@ -1,59 +1,34 @@
 <?php
 
-use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Helpers\ViewLoader;
-use SimpleJWTLogin\Modules\AuditEvents;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\Settings\SettingsTabRegistry;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepository;
 use SimpleJWTLogin\Repositories\AuditLog\AuditLogRepository;
+use SimpleJWTLogin\Repositories\WebhookLog\WebhookLogRepository;
 use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
-use SimpleJWTLogin\Services\AuditLoggerService;
 
 if (! defined('ABSPATH')) {
     /** @phpstan-ignore-next-line  */
     exit;
 } // Exit if accessed directly
 
-$jwtSettings   = new SimpleJWTLoginSettings(WordPressRepository::getInstance());
-$saved         = false;
-$message       = __('Settings successfully saved', 'simple-jwt-login');
-$showStatusBar = false;
-$errorCode = null;
+/**
+ * All objects below are prepared by SimpleJWTLogin\Plugin\AdminUI and injected
+ * into this view - the layout never instantiates services or repositories.
+ *
+ * @var SimpleJWTLoginSettings $jwtSettings
+ * @var bool                   $saved
+ * @var string                 $message
+ * @var bool                   $showStatusBar
+ * @var int|null               $errorCode
+ * @var SettingsErrors         $settingsErrors
+ * @var AuditLogRepository     $auditLogRepository
+ * @var WebhookLogRepository   $webhookLogRepository
+ * @var ApiKeyRepository       $apiKeyRepository
+ */
 
-
-try {
-    if (!empty($_POST)) {
-        check_admin_referer(WordPressRepository::NONCE_NAME);
-    }
-    $saved         = $jwtSettings->watchForUpdates($_POST);
-    $showStatusBar = $saved;
-    if ($saved) {
-        global $wpdb;
-        $serverHelper = $jwtSettings->getGeneralSettings()->isTrustIpHeadersEnabled()
-            ? ServerHelper::withTrustedProxyHeaders($_SERVER)
-            : new ServerHelper($_SERVER);
-        $auditLogger = new AuditLoggerService(
-            new AuditLogRepository($wpdb),
-            $jwtSettings->getAuditLogSettings(),
-            $serverHelper
-        );
-        $currentUser = wp_get_current_user();
-        $diff        = $jwtSettings->getLastSettingsDiff();
-        $auditLogger->log(
-            AuditEvents::SETTINGS_SAVE_SUCCESS,
-            $currentUser->ID ?: null,
-            $currentUser->user_email ?: null,
-            'success',
-            !empty($diff) ? (string) json_encode($diff) : null
-        );
-    }
-} catch (\Exception $e) {
-    $showStatusBar = true;
-    $message       = $e->getMessage();
-    $errorCode     = $e->getCode();
-}
-$settingsErrors = new SettingsErrors();
 $settingsPages = [];
 foreach (SettingsTabRegistry::pages() as $sjlTab) {
     $settingsPages[] = [
@@ -236,9 +211,12 @@ $sidebarGroups = SettingsTabRegistry::sidebar();
                                 $viewMap = SettingsTabRegistry::views();
                                 $viewLoader = new ViewLoader(plugin_dir_path(__FILE__));
                                 $viewData = array(
-                                    'jwtSettings'    => $jwtSettings,
-                                    'settingsErrors' => $settingsErrors,
-                                    'errorCode'      => $errorCode,
+                                    'jwtSettings'          => $jwtSettings,
+                                    'settingsErrors'       => $settingsErrors,
+                                    'errorCode'            => $errorCode,
+                                    'auditLogRepository'   => $auditLogRepository,
+                                    'webhookLogRepository' => $webhookLogRepository,
+                                    'apiKeyRepository'     => $apiKeyRepository,
                                 );
                                 if (array_key_exists($page['index'], $viewMap)) {
                                     $viewLoader->render($viewMap[$page['index']], $viewData);

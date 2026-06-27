@@ -71,11 +71,16 @@ class ProtectEndpointService extends BaseService
         $path = isset($parsed['path']) ? str_replace($basePath . '/wp-json', '', $parsed['path']) : '';
 
         $isEndpointsProtected = true;
+        $requiredRoles = [];
         if (!empty(trim($path, '/'))) {
-            $isEndpointsProtected = $this->isEndpointProtected($path);
+            $endpointInfo = $this->isEndpointProtected($path);
+            $isEndpointsProtected = $endpointInfo['protected'];
+            $requiredRoles = $endpointInfo['roles'];
         }
         if (!empty($this->request['rest_route'])) {
-            $isEndpointsProtected = $this->isEndpointProtected($this->request['rest_route']);
+            $endpointInfo = $this->isEndpointProtected($this->request['rest_route']);
+            $isEndpointsProtected = $endpointInfo['protected'];
+            $requiredRoles = $endpointInfo['roles'];
         }
         if (!$isEndpointsProtected) {
             return true;
@@ -98,9 +103,21 @@ class ProtectEndpointService extends BaseService
 
             $this->wordPressData->setCurrentUser($user);
 
+            if (!empty($requiredRoles)) {
+                $userRoles = $this->wordPressData->getUserRoles($user);
+                if (empty(array_intersect($userRoles, $requiredRoles))) {
+                    throw new Exception(
+                        __('You do not have the required role to access this endpoint.', 'simple-jwt-login'),
+                        ErrorCodes::ERR_PROTECT_ENDPOINTS_INSUFFICIENT_ROLE
+                    );
+                }
+            }
+
             return true;
         } catch (Exception $exception) {
-            if ($exception->getCode() === ErrorCodes::ERR_REVOKED_TOKEN) {
+            if ($exception->getCode() === ErrorCodes::ERR_REVOKED_TOKEN
+                || $exception->getCode() === ErrorCodes::ERR_PROTECT_ENDPOINTS_INSUFFICIENT_ROLE
+            ) {
                 throw $exception;
             }
         }
@@ -141,16 +158,21 @@ class ProtectEndpointService extends BaseService
     }
 
     /**
+     * Evaluates endpoint rules in order; the first matching rule wins.
+     * Falls back to the configured default action when no rule matches.
+     *
      * @param string $endpoint
-     * @return bool
+     * @return array{protected: bool, roles: array}
      */
     private function isEndpointProtected($endpoint)
     {
+        $notProtected = ['protected' => false, 'roles' => []];
+
         if (strpos($endpoint, '/') !== 0) {
             $endpoint = '/' . $endpoint;
         }
 
-        $action = $this->jwtSettings->getProtectEndpointsSettings()->getAction();
+        $protectSettings = $this->jwtSettings->getProtectEndpointsSettings();
         $skipNamespace = '/' . trim(
             $this->jwtSettings->getGeneralSettings()->getRouteNamespace(),
             '/'
@@ -162,71 +184,44 @@ class ProtectEndpointService extends BaseService
         );
         if (strpos($endpoint, $skipNamespace) === 0
             || strpos(trim($endpoint, '/'), $adminPath) === 0) {
-            // Skip simple-jwt-login endpoints and wp-admin.
-            return false;
+            return $notProtected;
         }
 
-        $protectSettings = $this->jwtSettings->getProtectEndpointsSettings();
-        switch ($action) {
-            case ProtectEndpointSettings::ALL_ENDPOINTS:
-                return $this->parseDomainsAndGetResult(
-                    $endpoint,
-                    $protectSettings->getWhitelistedDomains(),
-                    true,
-                    false
-                );
-            case ProtectEndpointSettings::SPECIFIC_ENDPOINTS:
-                return $this->parseDomainsAndGetResult(
-                    $endpoint,
-                    $protectSettings->getProtectedEndpoints(),
-                    false,
-                    true
-                );
-        }
+        $defaultProtected = $protectSettings->getDefaultAction() === ProtectEndpointSettings::DEFAULT_PROTECT_ALL;
+        $cleanEndpoint = $this->removeWpJsonFromEndpoint($endpoint);
 
-        return true;
-    }
+        foreach ($protectSettings->getRules() as $rule) {
+            $ruleUrl = $this->removeWpJsonFromEndpoint($rule['url']);
 
-    /**
-     * @param string $endpoint
-     * @param array $domains
-     * @param bool $defaultValue
-     * @param bool $setValue
-     * @return bool
-     */
-    private function parseDomainsAndGetResult($endpoint, $domains, $defaultValue, $setValue)
-    {
-        $isEndpointProtected = $defaultValue;
-        foreach ($domains as $protectedEndpoint) {
-            $protectedURL = $this->removeWpJsonFromEndpoint($protectedEndpoint['url']);
-            $endpoint = $this->removeWpJsonFromEndpoint($endpoint);
-            if (empty(trim($protectedURL, '/'))) {
+            if (empty(trim($ruleUrl, '/'))) {
                 continue;
             }
-            // By default, start_with match
-            $match = strpos(strtolower($endpoint), strtolower($protectedURL)) === 0;
 
-            if ($protectedEndpoint['match'] === ProtectEndpointSettings::ENDPOINT_MATCH_EXACT) {
-                $match = strtolower($endpoint) === strtolower($protectedURL);
+            $matched = strpos(strtolower($cleanEndpoint), strtolower($ruleUrl)) === 0;
+            if ($rule['match'] === ProtectEndpointSettings::ENDPOINT_MATCH_EXACT) {
+                $matched = strtolower($cleanEndpoint) === strtolower($ruleUrl);
             }
 
-            if (!$match) {
+            if (!$matched) {
                 continue;
             }
-           
-            switch ($protectedEndpoint['method']) {
-                case ProtectEndpointSettings::REQUEST_METHOD_ALL:
-                    $isEndpointProtected = $setValue; // Same as before.
-                    break;
-                default:
-                    if ($protectedEndpoint['method'] === $this->requestMethod) {
-                        $isEndpointProtected = $setValue;
-                    }
-                    break;
+
+            $methodMatches = $rule['method'] === ProtectEndpointSettings::REQUEST_METHOD_ALL
+                || $rule['method'] === $this->requestMethod;
+
+            if (!$methodMatches) {
+                continue;
             }
+
+            if ($rule['type'] === ProtectEndpointSettings::RULE_TYPE_PUBLIC) {
+                return $notProtected;
+            }
+
+            $roles = isset($rule['roles']) ? $rule['roles'] : [];
+            return ['protected' => true, 'roles' => $roles];
         }
 
-        return $isEndpointProtected;
+        return ['protected' => $defaultProtected, 'roles' => []];
     }
 
     /**

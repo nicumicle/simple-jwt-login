@@ -155,7 +155,8 @@ class RouteRegistrar
         $auditLogger = new AuditLoggerService(
             $this->auditLogRepo,
             $this->jwtSettings->getAuditLogSettings(),
-            $serverHelper
+            $serverHelper,
+            $this->jwtSettings->getWordPressData()
         );
         $auditLogger->registerAuditHooks();
 

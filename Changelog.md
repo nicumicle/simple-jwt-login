@@ -3,6 +3,7 @@
 ## Unreleased
 
 ## 4.0.0 - Unreleased
+- Redesign Protect Endpoints: replace separate whitelist/protected lists with a unified ordered rules table where each rule explicitly sets access to Public, JWT required, or JWT + Roles; rules are evaluated top-to-bottom with first-match-wins; old settings auto-migrate;
 - Redesigned Plugin Settings interface 
 - Fix double encoding for Reset Password email body[#165](https://github.com/nicumicle/simple-jwt-login/issues/165)
 - New refresh token handling

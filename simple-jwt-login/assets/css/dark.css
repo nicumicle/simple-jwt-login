@@ -99,11 +99,35 @@
 #simple-jwt-login[data-sjl-theme="dark"] input[type="password"],
 #simple-jwt-login[data-sjl-theme="dark"] input[type="number"],
 #simple-jwt-login[data-sjl-theme="dark"] input[type="url"],
+#simple-jwt-login[data-sjl-theme="dark"] input[type="date"],
+#simple-jwt-login[data-sjl-theme="dark"] input[type="datetime-local"],
 #simple-jwt-login[data-sjl-theme="dark"] select,
 #simple-jwt-login[data-sjl-theme="dark"] textarea {
     background: #1e2330;
     color: var(--sjl-text);
     border-color: var(--sjl-border);
+}
+
+#simple-jwt-login[data-sjl-theme="dark"] input[type="date"],
+#simple-jwt-login[data-sjl-theme="dark"] input[type="datetime-local"],
+#simple-jwt-login[data-sjl-theme="dark"] select {
+    color-scheme: dark;
+}
+
+/*
+ * WordPress draws the select dropdown arrow as an SVG background-image with a
+ * dark fill (#1e1e1e). The dark background above replaces that shorthand and
+ * removes the arrow - restore it here with a light fill so it stays visible.
+ */
+#simple-jwt-login[data-sjl-theme="dark"] select,
+#simple-jwt-login[data-sjl-theme="dark"] select.form-control,
+#simple-jwt-login[data-sjl-theme="dark"] select:focus,
+#simple-jwt-login[data-sjl-theme="dark"] select.form-control:focus {
+    background: #1e2330 url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%206l5%205%205-5%202%201-7%207-7-7%202-1z%22%20fill%3D%22%23dde3ec%22%2F%3E%3C%2Fsvg%3E") no-repeat right 8px top 55%;
+    -webkit-appearance: none;
+    appearance: none;
+    padding-right: 24px;
+    background-size: 16px 16px;
 }
 
 #simple-jwt-login[data-sjl-theme="dark"] .form-control:focus,
@@ -187,6 +211,12 @@
     background: #1e2330;
 }
 
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-endpoint-method-select option,
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-endpoint-method-select optgroup {
+    background: #1e2330;
+    color: var(--sjl-text);
+}
+
 #simple-jwt-login[data-sjl-theme="dark"] .sjl-endpoint-remove:hover {
     background: #2d1616;
     color: #f87171;
@@ -250,6 +280,17 @@
 }
 #simple-jwt-login[data-sjl-theme="dark"] .sjl-plugin-not-installed-notice p {
     color:  var(--sjl-text);
+}
+
+/* ── Webhook logs disabled notice ── */
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-logs-disabled-notice {
+    background: var(--sjl-bg-card);
+    border-color: var(--sjl-border);
+    color: var(--sjl-text-meta);
+}
+
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-logs-disabled-icon {
+    color: var(--sjl-text-muted);
 }
 
 /* ── Warning banner ── */

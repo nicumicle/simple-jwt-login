@@ -59,6 +59,15 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
                value="<?php echo !empty($endpoint) ? esc_attr($endpoint['url']) : ''; ?>"
                placeholder="<?php echo esc_attr__('/wp-json/namespace/endpoint', 'simple-jwt-login'); ?>"
         />
+            <?php if ($type === 'protect') { ?>
+        <input type="text"
+               class="form-control sjl-endpoint-roles-input"
+               name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP . '[protect_roles][]'); ?>"
+               value="<?php echo (!empty($endpoint) && !empty($endpoint['roles'])) ? esc_attr(implode(', ', $endpoint['roles'])) : ''; ?>"
+               placeholder="<?php echo esc_attr__('roles: administrator, editor', 'simple-jwt-login'); ?>"
+               title="<?php echo esc_attr__('Comma-separated roles required to access this endpoint. Leave empty to allow any authenticated user.', 'simple-jwt-login'); ?>"
+        />
+            <?php } ?>
         <button type="button"
                 class="sjl-endpoint-remove"
                 onclick="sjlRemoveEndpointRow(jQuery(this));"

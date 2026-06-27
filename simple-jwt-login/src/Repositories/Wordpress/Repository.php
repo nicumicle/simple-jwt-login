@@ -147,6 +147,35 @@ interface Repository
     public function applyFilters();
 
     /**
+     * Register a WordPress action callback.
+     *
+     * @param string   $hookName
+     * @param callable $callback
+     * @param int      $priority
+     * @param int      $acceptedArgs
+     *
+     * @return void
+     */
+    public function addAction($hookName, $callback, $priority = 10, $acceptedArgs = 1);
+
+    /**
+     * Whether the SAPI can flush the response to the client and keep running
+     * (PHP-FPM). When false, callers should run deferred work inline instead.
+     *
+     * @return bool
+     */
+    public function canFinishRequest();
+
+    /**
+     * Flush the response to the client and close the connection while PHP keeps
+     * running, so deferred work does not add to request latency. No-op when the
+     * SAPI does not provide fastcgi_finish_request().
+     *
+     * @return void
+     */
+    public function finishRequest();
+
+    /**
      * @param int $userId
      *
      * @return mixed

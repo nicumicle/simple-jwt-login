@@ -363,6 +363,37 @@ class WordPressRepository implements Repository
     }
 
     /**
+     * @param string   $hookName
+     * @param callable $callback
+     * @param int      $priority
+     * @param int      $acceptedArgs
+     *
+     * @return void
+     */
+    public function addAction($hookName, $callback, $priority = 10, $acceptedArgs = 1)
+    {
+        add_action($hookName, $callback, $priority, $acceptedArgs);
+    }
+
+    /**
+     * @return bool
+     */
+    public function canFinishRequest()
+    {
+        return function_exists('fastcgi_finish_request');
+    }
+
+    /**
+     * @return void
+     */
+    public function finishRequest()
+    {
+        if (function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request();
+        }
+    }
+
+    /**
      * @param int $userID
      *
      * @return WP_User

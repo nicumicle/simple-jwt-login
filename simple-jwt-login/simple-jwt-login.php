@@ -42,15 +42,6 @@ require_once(ABSPATH . 'wp-admin/includes/user.php');
 
 global $wpdb;
 
-// Admin UI
-$simpleJwtLoginAdminUI = new AdminUI();
-add_action('admin_menu', array($simpleJwtLoginAdminUI, 'registerMenuEntry'));
-
-add_filter(
-    'plugin_action_links_' . plugin_basename(__FILE__),
-    array($simpleJwtLoginAdminUI, 'addPluginActionLinks')
-);
-
 // Shared settings (used by LoginPageIntegration and CronCleanup)
 $simpleJwtLoginWordPressRepository = WordPressRepository::getInstance();
 $simpleJwtLoginJwtSettings = new SimpleJWTLoginSettings($simpleJwtLoginWordPressRepository);
@@ -85,6 +76,22 @@ $simpleJwtLoginRefreshTokenRepo = new RefreshTokenRepository($wpdb);
 $simpleJwtLoginAuditLogRepo = new AuditLogRepository($wpdb);
 $simpleJwtLoginWebhookLogRepo = new WebhookLogRepository($wpdb);
 $simpleJwtLoginApiKeyRepo = new ApiKeyRepository($wpdb);
+
+// Admin UI
+//phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.NonceVerification.Missing
+$simpleJwtLoginAdminUI = new AdminUI(
+    $_SERVER,
+    $_POST,
+    $simpleJwtLoginJwtSettings,
+    $simpleJwtLoginAuditLogRepo,
+    $simpleJwtLoginWebhookLogRepo,
+    $simpleJwtLoginApiKeyRepo
+);
+add_action('admin_menu', array($simpleJwtLoginAdminUI, 'registerMenuEntry'));
+add_filter(
+    'plugin_action_links_' . plugin_basename(__FILE__),
+    array($simpleJwtLoginAdminUI, 'addPluginActionLinks')
+);
 
 // Lifecycle (activation, deactivation, uninstall, migration, i18n)
 $simpleJwtLoginLifecycle = new Lifecycle(

@@ -20,164 +20,105 @@ class ProtectEndpointSettingsTest extends TestCase
         parent::setUp();
         $this->wordPressData = $this->createStub(WordPressDataInterface::class);
         $this->wordPressData->method('sanitizeTextField')
-            ->willReturnCallback(
-                function ($parameter) {
-                    return $parameter;
-                }
-            );
+            ->willReturnCallback(function ($parameter) {
+                return $parameter;
+            });
+        $this->wordPressData->method('roleExists')
+            ->willReturnCallback(function ($role) {
+                return in_array($role, ['administrator', 'editor', 'author', 'contributor', 'subscriber'], true);
+            });
     }
 
-    public function testAssignCodesFromPost()
+    public function testAssignRulesFromPost()
     {
         $protectSettings = (new ProtectEndpointSettings())
             ->withSettings([])
             ->withPost([
                 ProtectEndpointSettings::PROPERTY_GROUP => [
-                    'enabled' => '1',
-                    'action' => ProtectEndpointSettings::ALL_ENDPOINTS,
-                    'protect' => [
-                        '123',
-                        '',
-                        '123'
-                    ],
-                    'whitelist' => [
-                        'abc',
-                        '',
-                        'abc'
+                    'enabled'        => '1',
+                    'default_action' => ProtectEndpointSettings::DEFAULT_PROTECT_ALL,
+                    'rules_url'      => ['123', '', '456'],
+                    'rules_type'     => [
+                        ProtectEndpointSettings::RULE_TYPE_PROTECTED,
+                        ProtectEndpointSettings::RULE_TYPE_PROTECTED,
+                        ProtectEndpointSettings::RULE_TYPE_PUBLIC,
                     ],
                 ]
             ])
             ->withWordPressData($this->wordPressData);
         $protectSettings->initSettingsFromPost();
 
-        $this->assertSame(
-            true,
-            $protectSettings->isEnabled()
-        );
-
-        $this->assertSame(
-            ProtectEndpointSettings::ALL_ENDPOINTS,
-            $protectSettings->getAction()
-        );
-
+        $this->assertSame(true, $protectSettings->isEnabled());
+        $this->assertSame(ProtectEndpointSettings::DEFAULT_PROTECT_ALL, $protectSettings->getDefaultAction());
         $this->assertSame(
             [
-                [
-                    'url' => '123',
-                    'method' => 'ALL',
-                    'match'  => 'STARTS_WITH',
-                ],
-                [
-                    'url' => '123',
-                    'method' => 'ALL',
-                    'match'  => 'STARTS_WITH',
-                ],
+                ['url' => '123', 'method' => 'ALL', 'match' => 'STARTS_WITH', 'type' => 'protected', 'roles' => []],
+                ['url' => '456', 'method' => 'ALL', 'match' => 'STARTS_WITH', 'type' => 'public',    'roles' => []],
             ],
-            $protectSettings->getProtectedEndpoints()
-        );
-
-        $this->assertSame(
-            [
-                [
-                    'url' => 'abc',
-                    'method' => 'ALL',
-                    'match'  => 'STARTS_WITH',
-                ],
-                [
-                    'url' => 'abc',
-                    'method' => 'ALL',
-                    'match'  => 'STARTS_WITH',
-                ],
-            ],
-            $protectSettings->getWhitelistedDomains()
+            $protectSettings->getRules()
         );
     }
 
-    public function testAssignCodesFromPostWithHTTPMethods()
+    public function testAssignRulesFromPostWithHTTPMethods()
     {
         $protectSettings = (new ProtectEndpointSettings())
             ->withSettings([])
             ->withPost([
                 ProtectEndpointSettings::PROPERTY_GROUP => [
-                    'enabled' => '1',
-                    'action' => ProtectEndpointSettings::ALL_ENDPOINTS,
-                    'protect' => [
-                        '/protect-first',
-                        '/protect-second',
-                        '/protect-third'
+                    'enabled'        => '1',
+                    'default_action' => ProtectEndpointSettings::DEFAULT_ALLOW_ALL,
+                    'rules_url'      => ['/posts', '/users', '/comments'],
+                    'rules_method'   => ['GET', 'ALL', 'PUT'],
+                    'rules_type'     => [
+                        ProtectEndpointSettings::RULE_TYPE_PROTECTED,
+                        ProtectEndpointSettings::RULE_TYPE_PUBLIC,
+                        ProtectEndpointSettings::RULE_TYPE_PROTECTED_ROLES,
                     ],
-                    'protect_method' => [
-                        'GET',
-                        'ALL',
-                        'PUT',
+                    'rules_roles'    => ['', '', 'administrator'],
+                ]
+            ])
+            ->withWordPressData($this->wordPressData);
+        $protectSettings->initSettingsFromPost();
+
+        $this->assertSame(true, $protectSettings->isEnabled());
+        $this->assertSame(ProtectEndpointSettings::DEFAULT_ALLOW_ALL, $protectSettings->getDefaultAction());
+        $this->assertSame(
+            [
+                ['url' => '/posts',    'method' => 'GET', 'match' => 'STARTS_WITH', 'type' => 'protected',       'roles' => []],
+                ['url' => '/users',    'method' => 'ALL', 'match' => 'STARTS_WITH', 'type' => 'public',          'roles' => []],
+                ['url' => '/comments', 'method' => 'PUT', 'match' => 'STARTS_WITH', 'type' => 'protected_roles', 'roles' => ['administrator']],
+            ],
+            $protectSettings->getRules()
+        );
+    }
+
+    public function testRolesAreParsedCorrectly()
+    {
+        $protectSettings = (new ProtectEndpointSettings())
+            ->withSettings([])
+            ->withPost([
+                ProtectEndpointSettings::PROPERTY_GROUP => [
+                    'enabled'        => '1',
+                    'default_action' => ProtectEndpointSettings::DEFAULT_ALLOW_ALL,
+                    'rules_url'      => ['/posts', '/users', '/comments'],
+                    'rules_type'     => [
+                        ProtectEndpointSettings::RULE_TYPE_PROTECTED_ROLES,
+                        ProtectEndpointSettings::RULE_TYPE_PROTECTED,
+                        ProtectEndpointSettings::RULE_TYPE_PROTECTED_ROLES,
                     ],
-                    'whitelist' => [
-                        '/whitelist-first',
-                        '/whitelist-second',
-                        '/whitelist-third'
-                    ],
-                    'whitelist_method' => [
-                        'GET',
-                        'ALL',
-                        'PUT'
-                    ]
+                    'rules_roles'    => ['administrator, editor', '', 'subscriber'],
                 ]
             ])
             ->withWordPressData($this->wordPressData);
         $protectSettings->initSettingsFromPost();
 
         $this->assertSame(
-            true,
-            $protectSettings->isEnabled()
-        );
-
-        $this->assertSame(
-            ProtectEndpointSettings::ALL_ENDPOINTS,
-            $protectSettings->getAction()
-        );
-
-        $this->assertSame(
             [
-                [
-                    'url' => '/protect-first',
-                    'method' => 'GET',
-                    'match'  => 'STARTS_WITH',
-                ],
-                [
-                    'url' => '/protect-second',
-                    'method' => 'ALL',
-                    'match'  => 'STARTS_WITH',
-                ],
-                [
-                    'url' => '/protect-third',
-                    'method' => 'PUT',
-                    'match'  => 'STARTS_WITH',
-                ],
-
+                ['url' => '/posts',    'method' => 'ALL', 'match' => 'STARTS_WITH', 'type' => 'protected_roles', 'roles' => ['administrator', 'editor']],
+                ['url' => '/users',    'method' => 'ALL', 'match' => 'STARTS_WITH', 'type' => 'protected',       'roles' => []],
+                ['url' => '/comments', 'method' => 'ALL', 'match' => 'STARTS_WITH', 'type' => 'protected_roles', 'roles' => ['subscriber']],
             ],
-            $protectSettings->getProtectedEndpoints()
-        );
-
-        $this->assertSame(
-            [
-                [
-                    'url' => '/whitelist-first',
-                    'method' => 'GET',
-                    'match'  => 'STARTS_WITH',
-                ],
-                [
-                    'url' => '/whitelist-second',
-                    'method' => 'ALL',
-                    'match'  => 'STARTS_WITH',
-                ],
-                [
-                    'url' => '/whitelist-third',
-                    'method' => 'PUT',
-                    'match'  => 'STARTS_WITH',
-                ],
-
-            ],
-            $protectSettings->getWhitelistedDomains()
+            $protectSettings->getRules()
         );
     }
 
@@ -187,12 +128,8 @@ class ProtectEndpointSettingsTest extends TestCase
             ->withSettings([])
             ->withPost([
                 ProtectEndpointSettings::PROPERTY_GROUP => [
-                    'enabled' => '0',
-                    'action' => ProtectEndpointSettings::ALL_ENDPOINTS,
-                    'protect' => [
-                    ],
-                    'whitelist' => [
-                    ]
+                    'enabled'        => '0',
+                    'default_action' => ProtectEndpointSettings::DEFAULT_ALLOW_ALL,
                 ]
             ])
             ->withWordPressData($this->wordPressData);
@@ -201,88 +138,21 @@ class ProtectEndpointSettingsTest extends TestCase
         $this->assertFalse($protectSettings->isEnabled());
     }
 
-    public function testExceptionIsThrownWhenNoEndpointIsAdded()
+    public function testNoExceptionThrownWhenDefaultIsProtectAll()
     {
         $protectSettings = (new ProtectEndpointSettings())
             ->withSettings([])
-            ->withPost(
-                [
-                    ProtectEndpointSettings::PROPERTY_GROUP => [
-                        'enabled' => '1',
-                        'action' => ProtectEndpointSettings::ALL_ENDPOINTS,
-                        'protect' => [
-                            '',
-                            '0',
-                            'null',
-                        ]
-                    ]
+            ->withPost([
+                ProtectEndpointSettings::PROPERTY_GROUP => [
+                    'enabled'        => '1',
+                    'default_action' => ProtectEndpointSettings::DEFAULT_PROTECT_ALL,
+                    'rules_url'      => [],
                 ]
-            )
+            ])
             ->withWordPressData($this->wordPressData);
         $protectSettings->initSettingsFromPost();
-
+        $this->expectNotToPerformAssertions();
         $protectSettings->validateSettings();
-        $this->assertTrue($protectSettings->isEnabled());
-    }
-
-    public function testInitProperties()
-    {
-        $post = [
-            ProtectEndpointSettings::PROPERTY_GROUP => [
-                'enabled' => 1,
-                'action' => ProtectEndpointSettings::ALL_ENDPOINTS,
-                'protect' => [
-                    'test',
-                    '',
-                    'test'
-                ],
-                'whitelist' => [
-                    '123',
-                    '',
-                    '123'
-                ]
-            ]
-        ];
-        $settings = (new ProtectEndpointSettings())
-            ->withSettings([])
-            ->withWordPressData($this->wordPressData)
-            ->withPost($post);
-        $settings->initSettingsFromPost();
-        $this->assertTrue($settings->isEnabled());
-        $this->assertSame(
-            ProtectEndpointSettings::ALL_ENDPOINTS,
-            $settings->getAction()
-        );
-        $this->assertSame(
-            [
-                [
-                    'url' => 'test',
-                    'method' => 'ALL',
-                    'match'  => 'STARTS_WITH',
-                ],
-                [
-                    'url' => 'test',
-                    'method' => 'ALL',
-                    'match'  => 'STARTS_WITH',
-                ],
-            ],
-            $settings->getProtectedEndpoints()
-        );
-        $this->assertSame(
-            [
-                [
-                    'url' => '123',
-                    'method' => 'ALL',
-                    'match'  => 'STARTS_WITH',
-                ],
-                [
-                    'url' => '123',
-                    'method' => 'ALL',
-                    'match'  => 'STARTS_WITH',
-                ],
-            ],
-            $settings->getWhitelistedDomains()
-        );
     }
 
     public function testGetDefaultValues()
@@ -292,22 +162,11 @@ class ProtectEndpointSettingsTest extends TestCase
             ->withWordPressData($this->wordPressData)
             ->withSettings([]);
 
-        $this->assertSame(
-            false,
-            $settings->isEnabled()
-        );
-        $this->assertSame(
-            0,
-            $settings->getAction()
-        );
-        $this->assertSame(
-            [],
-            $settings->getWhitelistedDomains()
-        );
-        $this->assertSame(
-            [],
-            $settings->getProtectedEndpoints()
-        );
+        $this->assertSame(false, $settings->isEnabled());
+        $this->assertSame(ProtectEndpointSettings::DEFAULT_ALLOW_ALL, $settings->getDefaultAction());
+        $this->assertSame([], $settings->getRules());
+        $this->assertSame([], $settings->getWhitelistedDomains());
+        $this->assertSame([], $settings->getProtectedEndpoints());
     }
 
     public function testValidateWhenNotEnabled()
@@ -325,19 +184,20 @@ class ProtectEndpointSettingsTest extends TestCase
 
     #[DataProvider('endpointsProvider')]
     /**
-     * @param mixed $endpointLists
+     * @param mixed $ruleLists
      * @throws Exception
      */
-    public function testNoEndpointProvided($endpointLists)
+    public function testNoEndpointProvided($ruleLists)
     {
         $settings = (new ProtectEndpointSettings())
             ->withPost([])
             ->withWordPressData($this->wordPressData)
             ->withSettings([
                 'protect_endpoint' => [
-                    'enabled' => true,
-                    'action' => ProtectEndpointSettings::SPECIFIC_ENDPOINTS,
-                    'protect' => $endpointLists
+                    'enabled'        => true,
+                    'default_action' => ProtectEndpointSettings::DEFAULT_ALLOW_ALL,
+                    'rules_url'      => $ruleLists,
+                    'rules_type'     => array_fill(0, count($ruleLists), ProtectEndpointSettings::RULE_TYPE_PROTECTED),
                 ]
             ]);
         $this->expectException(Exception::class);
@@ -349,21 +209,138 @@ class ProtectEndpointSettingsTest extends TestCase
     {
         return [
             'empty_array' => [
-                'endpointLists' => ['']
+                'ruleLists' => ['']
             ],
             'array_with_empty_values' => [
-                'endpointLists' => [
-                    '',
-                    '',
-                    '',
-                ]
+                'ruleLists' => ['', '', '']
             ],
             'array_with_space' => [
-                'endpointLists' => [
-                    '    ',
-                    '    ',
-                ]
+                'ruleLists' => ['    ', '    ']
             ],
         ];
+    }
+
+    public function testValidationFailsWhenProtectedRolesRuleHasNoRoles()
+    {
+        $settings = (new ProtectEndpointSettings())
+            ->withPost([])
+            ->withWordPressData($this->wordPressData)
+            ->withSettings([
+                'protect_endpoint' => [
+                    'enabled'        => true,
+                    'default_action' => ProtectEndpointSettings::DEFAULT_PROTECT_ALL,
+                    'rules_url'      => ['/wp/v2/posts'],
+                    'rules_type'     => [ProtectEndpointSettings::RULE_TYPE_PROTECTED_ROLES],
+                    'rules_roles'    => [''],
+                ]
+            ]);
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('A "JWT + Roles" rule must have at least one role specified.');
+        $settings->validateSettings();
+    }
+
+    public function testValidationPassesWhenProtectedRolesRuleHasRoles()
+    {
+        $settings = (new ProtectEndpointSettings())
+            ->withPost([])
+            ->withWordPressData($this->wordPressData)
+            ->withSettings([
+                'protect_endpoint' => [
+                    'enabled'        => true,
+                    'default_action' => ProtectEndpointSettings::DEFAULT_PROTECT_ALL,
+                    'rules_url'      => ['/wp/v2/posts'],
+                    'rules_type'     => [ProtectEndpointSettings::RULE_TYPE_PROTECTED_ROLES],
+                    'rules_roles'    => ['administrator'],
+                ]
+            ]);
+        $this->expectNotToPerformAssertions();
+        $settings->validateSettings();
+    }
+
+    public function testValidationFailsWhenRoleDoesNotExistInWordPress()
+    {
+        $settings = (new ProtectEndpointSettings())
+            ->withPost([])
+            ->withWordPressData($this->wordPressData)
+            ->withSettings([
+                'protect_endpoint' => [
+                    'enabled'        => true,
+                    'default_action' => ProtectEndpointSettings::DEFAULT_PROTECT_ALL,
+                    'rules_url'      => ['/wp/v2/posts'],
+                    'rules_type'     => [ProtectEndpointSettings::RULE_TYPE_PROTECTED_ROLES],
+                    'rules_roles'    => ['nonexistent_role'],
+                ]
+            ]);
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Role "nonexistent_role" does not exist in WordPress.');
+        $settings->validateSettings();
+    }
+
+    public function testOldFormatIsAutoMigratedOnRead()
+    {
+        $settings = (new ProtectEndpointSettings())
+            ->withPost([])
+            ->withWordPressData($this->wordPressData)
+            ->withSettings([
+                'protect_endpoint' => [
+                    'enabled'          => true,
+                    'action'           => ProtectEndpointSettings::ALL_ENDPOINTS,
+                    'protect'          => ['/wp/v2/posts', '/wp/v2/users'],
+                    'protect_method'   => ['GET', 'ALL'],
+                    'protect_roles'    => ['administrator', ''],
+                    'whitelist'        => ['/wp/v2/public'],
+                    'whitelist_method' => ['ALL'],
+                ]
+            ]);
+
+        $this->assertSame(ProtectEndpointSettings::DEFAULT_PROTECT_ALL, $settings->getDefaultAction());
+        $this->assertSame(
+            [
+                ['url' => '/wp/v2/posts',  'method' => 'GET', 'match' => 'STARTS_WITH', 'type' => 'protected_roles', 'roles' => ['administrator']],
+                ['url' => '/wp/v2/users',  'method' => 'ALL', 'match' => 'STARTS_WITH', 'type' => 'protected',       'roles' => []],
+                ['url' => '/wp/v2/public', 'method' => 'ALL', 'match' => 'STARTS_WITH', 'type' => 'public',          'roles' => []],
+            ],
+            $settings->getRules()
+        );
+    }
+
+    public function testGetActionLegacyAlias()
+    {
+        $settingsProtectAll = (new ProtectEndpointSettings())
+            ->withPost([])
+            ->withWordPressData($this->wordPressData)
+            ->withSettings(['protect_endpoint' => ['default_action' => ProtectEndpointSettings::DEFAULT_PROTECT_ALL]]);
+
+        $settingsAllowAll = (new ProtectEndpointSettings())
+            ->withPost([])
+            ->withWordPressData($this->wordPressData)
+            ->withSettings(['protect_endpoint' => ['default_action' => ProtectEndpointSettings::DEFAULT_ALLOW_ALL]]);
+
+        $this->assertSame(ProtectEndpointSettings::ALL_ENDPOINTS, $settingsProtectAll->getAction());
+        $this->assertSame(ProtectEndpointSettings::SPECIFIC_ENDPOINTS, $settingsAllowAll->getAction());
+    }
+
+    public function testGetWhitelistedDomainsFiltersCorrectly()
+    {
+        $settings = (new ProtectEndpointSettings())
+            ->withPost([])
+            ->withWordPressData($this->wordPressData)
+            ->withSettings([
+                'protect_endpoint' => [
+                    'enabled'        => true,
+                    'default_action' => ProtectEndpointSettings::DEFAULT_PROTECT_ALL,
+                    'rules_url'      => ['/public', '/protected'],
+                    'rules_type'     => [ProtectEndpointSettings::RULE_TYPE_PUBLIC, ProtectEndpointSettings::RULE_TYPE_PROTECTED],
+                ]
+            ]);
+
+        $this->assertSame(
+            [['url' => '/public', 'method' => 'ALL', 'match' => 'STARTS_WITH', 'type' => 'public', 'roles' => []]],
+            $settings->getWhitelistedDomains()
+        );
+        $this->assertSame(
+            [['url' => '/protected', 'method' => 'ALL', 'match' => 'STARTS_WITH', 'type' => 'protected', 'roles' => []]],
+            $settings->getProtectedEndpoints()
+        );
     }
 }

@@ -68,6 +68,7 @@ class SettingsErrors extends \Exception
 
     #protect endpoints
     const ERR_EMPTY_SPECIFIC_ENDPOINT = 1;
+    const ERR_PROTECTED_ROLES_RULE_MISSING_ROLES = 2;
 
     # Applications - Google
     const ERR_GOOGLE_AT_LEAST_ONE_OPTION_ENABLED = 1;

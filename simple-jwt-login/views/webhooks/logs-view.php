@@ -12,6 +12,7 @@ if (! defined('ABSPATH')) {
 
 /**
  * @var SimpleJWTLoginSettings $jwtSettings
+ * @var WebhookLogRepository $webhookLogRepository
  */
 
 $webhookLogsEnabled  = $jwtSettings->getWebhooksSettings()->isWebhookLogsEnabled();
@@ -21,8 +22,7 @@ $webhookLogRetention = $jwtSettings->getWebhooksSettings()->getRetentionDays();
 //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 if (isset($_GET['sjl_webhook_log_action']) && $_GET['sjl_webhook_log_action'] === 'clear') {
     if (isset($_GET['_wpnonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'sjl_webhook_clear_logs')) {
-        global $wpdb;
-        (new WebhookLogRepository($wpdb))->deleteAll();
+        $webhookLogRepository->deleteAll();
     }
     $redirectUrl = remove_query_arg(['sjl_webhook_log_action', '_wpnonce']);
     echo '<script>window.location.replace(' . wp_json_encode($redirectUrl) . ');</script>';
@@ -41,8 +41,7 @@ $wlFilterFrom   = isset($_GET['wl_filter_from'])   ? sanitize_text_field(wp_unsl
 //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 $wlFilterTo     = isset($_GET['wl_filter_to'])     ? sanitize_text_field(wp_unslash($_GET['wl_filter_to']))     : '';
 
-global $wpdb;
-$webhookLogRepo = new WebhookLogRepository($wpdb);
+$webhookLogRepo = $webhookLogRepository;
 
 $wlFilters = array_filter([
     'event'       => $wlFilterEvent,
@@ -138,8 +137,8 @@ $wlBaseUrl = add_query_arg([
         </div>
 
         <?php if (!$webhookLogsEnabled) : ?>
-        <div class="sjl-logs-disabled-notice" style="display: flex; align-items: center; gap: 10px; padding: 16px; background: #f9f9f9; border: 1px dashed #ccc; border-radius: 6px; color: #555;">
-            <span class="dashicons dashicons-info" style="font-size: 20px; color: #aaa;"></span>
+        <div class="sjl-logs-disabled-notice" style="display: flex; align-items: center; gap: 10px; padding: 16px; border-radius: 6px;">
+            <span class="dashicons dashicons-info sjl-logs-disabled-icon" style="font-size: 20px;"></span>
             <span><?php echo esc_html(__('Webhook call logging is currently disabled. Toggle "Enable Logs" above and save settings to start recording calls.', 'simple-jwt-login')); ?></span>
         </div>
         <?php elseif ($wlTotal === 0 && !$wlHasActiveFilters) : ?>

@@ -588,6 +588,16 @@ if (!function_exists('add_action')) {
     }
 }
 
+if (!function_exists('fastcgi_finish_request')) {
+    /**
+     * @return bool
+     */
+    function fastcgi_finish_request()
+    {
+        return true;
+    }
+}
+
 if (!function_exists('add_filter')) {
     /**
      * @param string $hook_name

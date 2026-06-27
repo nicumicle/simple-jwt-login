@@ -187,6 +187,7 @@ class WebhooksServiceTest extends TestCase
 
         $service = new WebhooksService($this->makeSettings($webhooks), $this->logRepoMock);
         $service->dispatch(WebhooksSettings::EVENT_LOGIN, ['user_id' => 1]);
+        $service->runPendingJobs();
     }
 
     public function testDispatchDoesNotLogWhenNoRepository()
@@ -198,6 +199,7 @@ class WebhooksServiceTest extends TestCase
 
         $service = new WebhooksService($this->makeSettings($webhooks));
         $service->dispatch(WebhooksSettings::EVENT_LOGIN, ['user_id' => 1]);
+        $service->runPendingJobs();
     }
 
     public function testDispatchLogsOncePerWebhook()
@@ -212,6 +214,7 @@ class WebhooksServiceTest extends TestCase
 
         $service = new WebhooksService($this->makeSettings($webhooks), $this->logRepoMock);
         $service->dispatch(WebhooksSettings::EVENT_LOGIN, ['user_id' => 1]);
+        $service->runPendingJobs();
     }
 
     public function testDispatchDoesNotLogDisabledWebhooks()
@@ -226,5 +229,89 @@ class WebhooksServiceTest extends TestCase
 
         $service = new WebhooksService($this->makeSettings($webhooks), $this->logRepoMock);
         $service->dispatch(WebhooksSettings::EVENT_LOGIN, ['user_id' => 1]);
+        $service->runPendingJobs();
+    }
+
+    public function testDispatchDefersWorkUntilShutdownAndDoesNotLogInline()
+    {
+        $this->logRepoMock = $this->createMock(WebhookLogRepositoryInterface::class);
+        $webhooks = [
+            ['url' => 'https://example.com', 'enabled' => true, 'method' => 'POST', 'events' => ['login'], 'headers' => []],
+        ];
+
+        // On PHP-FPM the deferral must be registered on the WordPress `shutdown`
+        // hook, and no log write may happen inline during dispatch().
+        $this->wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $this->wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode(['webhooks' => $webhooks]));
+        $this->wordPressDataMock->method('canFinishRequest')->willReturn(true);
+        $this->wordPressDataMock->expects($this->once())
+            ->method('addAction')
+            ->with('shutdown', $this->anything());
+        $this->logRepoMock->expects($this->never())->method('insert');
+
+        $jwtSettings = new SimpleJWTLoginSettings($this->wordPressDataMock);
+        $service     = new WebhooksService($jwtSettings, $this->logRepoMock);
+        $service->dispatch(WebhooksSettings::EVENT_LOGIN, ['user_id' => 1]);
+    }
+
+    public function testRunPendingJobsFlushesResponseThenLogsQueuedWebhooks()
+    {
+        $this->logRepoMock = $this->createMock(WebhookLogRepositoryInterface::class);
+        $webhooks = [
+            ['url' => 'https://example.com', 'enabled' => true, 'method' => 'POST', 'events' => ['login'], 'headers' => []],
+        ];
+
+        $this->wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $this->wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode(['webhooks' => $webhooks]));
+        $this->wordPressDataMock->method('canFinishRequest')->willReturn(true);
+        $this->wordPressDataMock->expects($this->once())->method('finishRequest');
+        $this->logRepoMock->expects($this->once())->method('insert');
+
+        $jwtSettings = new SimpleJWTLoginSettings($this->wordPressDataMock);
+        $service     = new WebhooksService($jwtSettings, $this->logRepoMock);
+        $service->dispatch(WebhooksSettings::EVENT_LOGIN, ['user_id' => 1]);
+        $service->runPendingJobs();
+    }
+
+    public function testDispatchProcessesInlineWhenResponseCannotBeFlushed()
+    {
+        $this->logRepoMock = $this->createMock(WebhookLogRepositoryInterface::class);
+        $webhooks = [
+            ['url' => 'https://example.com', 'enabled' => true, 'method' => 'POST', 'events' => ['login'], 'headers' => []],
+        ];
+
+        // No PHP-FPM: webhooks run inline during dispatch(), no shutdown hook.
+        $this->wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $this->wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode(['webhooks' => $webhooks]));
+        $this->wordPressDataMock->method('canFinishRequest')->willReturn(false);
+        $this->wordPressDataMock->expects($this->never())->method('addAction');
+        $this->logRepoMock->expects($this->once())->method('insert');
+
+        $jwtSettings = new SimpleJWTLoginSettings($this->wordPressDataMock);
+        $service     = new WebhooksService($jwtSettings, $this->logRepoMock);
+        $service->dispatch(WebhooksSettings::EVENT_LOGIN, ['user_id' => 1]);
+    }
+
+    public function testDispatchRegistersShutdownHookOnlyOnceForMultipleEvents()
+    {
+        $webhooks = [
+            ['url' => 'https://example.com', 'enabled' => true, 'method' => 'POST', 'events' => ['login', 'auth'], 'headers' => []],
+        ];
+
+        $this->wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $this->wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode(['webhooks' => $webhooks]));
+        $this->wordPressDataMock->method('canFinishRequest')->willReturn(true);
+        $this->wordPressDataMock->expects($this->once())
+            ->method('addAction')
+            ->with('shutdown', $this->anything());
+
+        $jwtSettings = new SimpleJWTLoginSettings($this->wordPressDataMock);
+        $service     = new WebhooksService($jwtSettings);
+        $service->dispatch(WebhooksSettings::EVENT_LOGIN, ['user_id' => 1]);
+        $service->dispatch(WebhooksSettings::EVENT_AUTH, ['user_id' => 1]);
     }
 }

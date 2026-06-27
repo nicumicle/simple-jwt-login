@@ -7,6 +7,7 @@ use SimpleJWTLogin\Modules\AuditEvents;
 use SimpleJWTLogin\Modules\Settings\AuditLogSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Repositories\AuditLog\Repository as AuditLogRepositoryInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 
 class AuditLoggerService
 {
@@ -31,18 +32,39 @@ class AuditLoggerService
     private $serverHelper;
 
     /**
+     * @var WordPressDataInterface
+     */
+    private $wordPressData;
+
+    /**
+     * Audit entries queued during the request, written after the response is
+     * flushed to the client.
+     *
+     * @var array
+     */
+    private $pendingEntries = [];
+
+    /**
+     * @var boolean
+     */
+    private $deferralRegistered = false;
+
+    /**
      * @param AuditLogRepositoryInterface $repository
      * @param AuditLogSettings            $settings
      * @param ServerHelper                $serverHelper
+     * @param WordPressDataInterface      $wordPressData
      */
     public function __construct(
         AuditLogRepositoryInterface $repository,
         AuditLogSettings $settings,
-        ServerHelper $serverHelper
+        ServerHelper $serverHelper,
+        WordPressDataInterface $wordPressData
     ) {
-        $this->repository   = $repository;
-        $this->settings     = $settings;
-        $this->serverHelper = $serverHelper;
+        $this->repository    = $repository;
+        $this->settings      = $settings;
+        $this->serverHelper  = $serverHelper;
+        $this->wordPressData = $wordPressData;
     }
 
     /**
@@ -119,14 +141,64 @@ class AuditLoggerService
             return;
         }
 
+        // Capture the client IP now (at the time of the event), not at flush time.
+        $entry = array(
+            'eventType' => $eventType,
+            'userId'    => $userId,
+            'userEmail' => $userEmail,
+            'ip'        => $this->serverHelper->getClientIP(),
+            'status'    => $status,
+            'message'   => $message,
+            'apiKeyId'  => $apiKeyId,
+        );
+
+        // When the SAPI cannot flush the response early (no PHP-FPM), deferring
+        // gives no benefit, so write the entry inline.
+        if (!$this->wordPressData->canFinishRequest()) {
+            $this->insertEntry($entry);
+            return;
+        }
+
+        $this->pendingEntries[] = $entry;
+
+        if ($this->deferralRegistered) {
+            return;
+        }
+        $this->deferralRegistered = true;
+        $this->wordPressData->addAction('shutdown', array($this, 'runPendingJobs'));
+    }
+
+    /**
+     * Flush the response to the client, then write every queued audit entry.
+     * Runs on the WordPress `shutdown` hook.
+     *
+     * @return void
+     */
+    public function runPendingJobs()
+    {
+        $this->wordPressData->finishRequest();
+
+        $entries              = $this->pendingEntries;
+        $this->pendingEntries = [];
+        foreach ($entries as $entry) {
+            $this->insertEntry($entry);
+        }
+    }
+
+    /**
+     * @param array $entry
+     * @return void
+     */
+    private function insertEntry(array $entry)
+    {
         $this->repository->insert(
-            $eventType,
-            $userId,
-            $userEmail,
-            $this->serverHelper->getClientIP(),
-            $status,
-            $message,
-            $apiKeyId
+            $entry['eventType'],
+            $entry['userId'],
+            $entry['userEmail'],
+            $entry['ip'],
+            $entry['status'],
+            $entry['message'],
+            $entry['apiKeyId']
         );
     }
 }

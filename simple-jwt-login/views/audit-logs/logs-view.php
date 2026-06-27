@@ -10,12 +10,12 @@ if (!defined('ABSPATH')) {
     exit;
 } // Exit if accessed directly
 
-global $wpdb;
-$auditRepo = new AuditLogRepository($wpdb);
-
 /**
  * @var SimpleJWTLoginSettings $jwtSettings
+ * @var AuditLogRepository $auditLogRepository
  */
+
+$auditRepo = $auditLogRepository;
 
 // Handle "Clear All Logs" action
 //phpcs:ignore WordPress.Security.NonceVerification.Recommended

@@ -124,15 +124,10 @@ jQuery(document).ready(
             $('#sjl-header-claims-table').append($('#sjl-header-claim-line').html());
         });
 
-        $('#simple-jwt-login #add_whitelist_endpoint').click(
+        $('#simple-jwt-login #add_rule_endpoint').click(
             function () {
-                $('#whitelisted-domains').append($('#endpoint_whitelist_line').html());
-            }
-        );
-
-        $('#simple-jwt-login #add_protect_endpoint').click(
-            function () {
-                $('#protected-domains').append($('#endpoint_protect_line').html());
+                $('#endpoint-rules').append($('#endpoint_rule_line').html());
+                sjlUpdateRuleCount();
             }
         );
 
@@ -143,12 +138,9 @@ jQuery(document).ready(
             }
         )
 
-        $('#simple-jwt-login #protection_type').on(
-            'change',
-            function () {
-                sjlBindProtectedEndpoints();
-            }
-        )
+        $(document).on('change', '#simple-jwt-login .sjl-endpoint-type-select', function () {
+            sjlToggleRolesInput(this);
+        });
 
         $('#simple-jwt-login input[name="redirect"]').on('change', function () {
             $('#simple-jwt-login #redirect_url').toggle(~~$(this).val() === 9);
@@ -274,16 +266,10 @@ jQuery(document).ready(
             }
         }
 
-        function sjlBindProtectedEndpoints()
+        function sjlUpdateRuleCount()
         {
-            var protection_mode = jQuery('#simple-jwt-login #protection_type').val();
-            if (protection_mode === '2') {
-                $('#simple-jwt-login #protected_endpoints_protected').show();
-                $('#simple-jwt-login #protected_endpoints_whitelisted').hide();
-            } else {
-                $('#simple-jwt-login #protected_endpoints_protected').hide();
-                $('#simple-jwt-login #protected_endpoints_whitelisted').show();
-            }
+            var count = $('#simple-jwt-login #endpoint-rules .endpoint_row').length;
+            $('#simple-jwt-login #rules_endpoint_count').text(count);
         }
 
         function sjlCalculateStrength(value, labelId, progressId)
@@ -353,7 +339,6 @@ jQuery(document).ready(
 
         sjlBindDecryptionKey();
         sjlBindResetPassword();
-        sjlBindProtectedEndpoints();
 
         // -----------------------------------------------------------------------
         // JWT Rules — per-row algorithm toggle and dynamic add/remove
@@ -1025,6 +1010,19 @@ function sjlTryGenPhp(url, method, params, isBody)
 function sjlRemoveEndpointRow(a_element)
 {
     jQuery(a_element).closest('.endpoint_row').remove();
+    jQuery('#simple-jwt-login #rules_endpoint_count').text(
+        jQuery('#simple-jwt-login #endpoint-rules .endpoint_row').length
+    );
+}
+
+function sjlToggleRolesInput(selectEl)
+{
+    var rolesInput = jQuery(selectEl).closest('.endpoint_row').find('.sjl-endpoint-roles-input');
+    if (jQuery(selectEl).val() === 'protected_roles') {
+        rolesInput.show();
+    } else {
+        rolesInput.hide();
+    }
 }
 
 function sjlShowDecryptionKey()

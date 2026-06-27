@@ -21,14 +21,14 @@ if (! defined('ABSPATH')) {
 /**
  * @var SettingsErrors $settingsErrors
  * @var SimpleJWTLoginSettings $jwtSettings
+ * @var ApiKeyRepository $apiKeyRepository
  */
 
 $namespace  = rtrim($jwtSettings->getGeneralSettings()->getRouteNamespace(), '/');
 $restBase   = rest_url($namespace);
 $restNonce  = wp_create_nonce('wp_rest');
 
-global $wpdb;
-$apiKeyRepo  = new ApiKeyRepository($wpdb);
+$apiKeyRepo  = $apiKeyRepository;
 $akIsAdmin   = current_user_can('manage_options');
 //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 $akPage      = isset($_GET['ak_page']) ? max(1, (int) $_GET['ak_page']) : 1;

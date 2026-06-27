@@ -5,6 +5,7 @@ namespace SimpleJWTLogin\Services;
 use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\WebhookLog\Repository as WebhookLogRepositoryInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 
 class WebhooksService
 {
@@ -19,6 +20,24 @@ class WebhooksService
     private $logRepository;
 
     /**
+     * @var WordPressDataInterface
+     */
+    private $wordPressData;
+
+    /**
+     * Webhook jobs queued during the request, processed after the response is
+     * flushed to the client.
+     *
+     * @var array
+     */
+    private $pendingJobs = [];
+
+    /**
+     * @var boolean
+     */
+    private $deferralRegistered = false;
+
+    /**
      * @param SimpleJWTLoginSettings             $jwtSettings
      * @param WebhookLogRepositoryInterface|null $logRepository
      */
@@ -26,6 +45,7 @@ class WebhooksService
     {
         $this->jwtSettings   = $jwtSettings;
         $this->logRepository = $logRepository;
+        $this->wordPressData = $jwtSettings->getWordPressData();
     }
 
     /**
@@ -50,6 +70,13 @@ class WebhooksService
     }
 
     /**
+     * Fire the webhooks for an event.
+     *
+     * On PHP-FPM the work is queued and run on the `shutdown` hook, after the
+     * response has been flushed to the client, so the HTTP calls and log writes
+     * never add to request latency. When the SAPI cannot flush the response
+     * early, deferring gives no benefit, so the webhooks are processed inline.
+     *
      * @param string $event
      * @param array  $payload
      */
@@ -60,7 +87,50 @@ class WebhooksService
         }
 
         $webhooks = $this->jwtSettings->getWebhooksSettings()->getEnabledWebhooksForEvent($event);
+        if (empty($webhooks)) {
+            return;
+        }
 
+        if (!$this->wordPressData->canFinishRequest()) {
+            $this->process($webhooks, $event, $payload);
+            return;
+        }
+
+        $this->pendingJobs[] = [
+            'webhooks' => $webhooks,
+            'event'    => $event,
+            'payload'  => $payload,
+        ];
+
+        if ($this->deferralRegistered) {
+            return;
+        }
+        $this->deferralRegistered = true;
+        $this->wordPressData->addAction('shutdown', array($this, 'runPendingJobs'));
+    }
+
+    /**
+     * Flush the response to the client, then process every queued webhook job.
+     * Runs on the WordPress `shutdown` hook.
+     */
+    public function runPendingJobs()
+    {
+        $this->wordPressData->finishRequest();
+
+        $jobs              = $this->pendingJobs;
+        $this->pendingJobs = [];
+        foreach ($jobs as $job) {
+            $this->process($job['webhooks'], $job['event'], $job['payload']);
+        }
+    }
+
+    /**
+     * @param array  $webhooks
+     * @param string $event
+     * @param array  $payload
+     */
+    protected function process(array $webhooks, $event, array $payload)
+    {
         foreach ($webhooks as $webhook) {
             $url = isset($webhook['url']) ? $webhook['url'] : '';
             if (empty($url)) {

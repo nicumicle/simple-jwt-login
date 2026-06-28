@@ -3,6 +3,7 @@
 namespace SimpleJWTLogin\Plugin;
 
 use SimpleJWTLogin\Helpers\ViewLoader;
+use SimpleJWTLogin\Modules\Settings\Oauth\OauthProviderRegistry;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
 class LoginPageIntegration
@@ -41,11 +42,7 @@ class LoginPageIntegration
     {
         $hasError = false;
 
-        $integrationsSettings = $this->jwtSettings->getIntegrationsSettings();
-        $anyEnabled = ($integrationsSettings->google()->isEnabled() && $integrationsSettings->google()->isOauthEnabled())
-            || ($integrationsSettings->auth0()->isEnabled() && $integrationsSettings->auth0()->isOauthEnabled())
-            || ($integrationsSettings->facebook()->isEnabled() && $integrationsSettings->facebook()->isOauthEnabled())
-            || ($integrationsSettings->github()->isEnabled() && $integrationsSettings->github()->isOauthEnabled());
+        $anyEnabled = !empty($this->oauthLoginEnabledSlugs());
 
         if ($anyEnabled && isset($this->request['error'])) {
             $hasError = true;
@@ -60,26 +57,14 @@ class LoginPageIntegration
         }
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
-     */
     public function renderLoginFooter()
     {
-        $integrationsSettings = $this->jwtSettings->getIntegrationsSettings();
-        $googleEnabled   = $integrationsSettings->google()->isEnabled()
-            && $integrationsSettings->google()->isOauthEnabled();
-        $auth0Enabled    = $integrationsSettings->auth0()->isEnabled()
-            && $integrationsSettings->auth0()->isOauthEnabled();
-        $facebookEnabled = $integrationsSettings->facebook()->isEnabled()
-            && $integrationsSettings->facebook()->isOauthEnabled();
-        $githubEnabled   = $integrationsSettings->github()->isEnabled()
-            && $integrationsSettings->github()->isOauthEnabled();
-
-        if (!$googleEnabled && !$auth0Enabled && !$facebookEnabled && !$githubEnabled) {
+        $enabledSlugs = $this->oauthLoginEnabledSlugs();
+        if (empty($enabledSlugs)) {
             return;
         }
 
-        $layout = $integrationsSettings->getLoginButtonLayout();
+        $layout = $this->jwtSettings->getIntegrationsSettings()->getLoginButtonLayout();
         echo '<div class="sjl-oauth-buttons-wrapper layout-' . esc_attr($layout) . '">';
 
         $pluginDir = dirname(SIMPLE_JWT_LOGIN_PLUGIN_FILE);
@@ -89,22 +74,29 @@ class LoginPageIntegration
             'pluginDirUrl'  => plugin_dir_url(SIMPLE_JWT_LOGIN_PLUGIN_FILE),
         );
 
-        if ($googleEnabled) {
-            $viewLoader->render('google-form.php', $viewData);
-        }
-
-        if ($auth0Enabled) {
-            $viewLoader->render('auth0-form.php', $viewData);
-        }
-
-        if ($facebookEnabled) {
-            $viewLoader->render('facebook-form.php', $viewData);
-        }
-
-        if ($githubEnabled) {
-            $viewLoader->render('github-form.php', $viewData);
+        foreach ($enabledSlugs as $slug) {
+            $viewLoader->render($slug . '-form.php', $viewData);
         }
 
         echo '</div>';
+    }
+
+    /**
+     * Slugs of OAuth providers that are both enabled and have the OAuth login flow turned on.
+     *
+     * @return string[]
+     */
+    private function oauthLoginEnabledSlugs()
+    {
+        $integrationsSettings = $this->jwtSettings->getIntegrationsSettings();
+        $slugs = array();
+        foreach (array_keys(OauthProviderRegistry::all()) as $slug) {
+            $provider = $integrationsSettings->getProvider($slug);
+            if ($provider->isEnabled() && $provider->isOauthEnabled()) {
+                $slugs[] = $slug;
+            }
+        }
+
+        return $slugs;
     }
 }

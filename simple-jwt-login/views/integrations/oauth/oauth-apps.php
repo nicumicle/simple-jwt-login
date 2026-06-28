@@ -14,45 +14,20 @@ if (!defined('ABSPATH')) {
  */
 
 use SimpleJWTLogin\Modules\Settings\IntegrationsSettings;
+use SimpleJWTLogin\Modules\Settings\Oauth\OauthProviderRegistry;
 
-$sjlApps = [
-    [
-        'id'         => 'google',
-        'name'       => __('Google', 'simple-jwt-login'),
-        'desc'       => __('OAuth 2.0', 'simple-jwt-login'),
-        'logo_class' => 'google',
-        'enabled'    => $jwtSettings->getIntegrationsSettings()->google()->isEnabled(),
-        'view'       => plugin_dir_path(__FILE__) . 'google.php',
-        'beta'       => false,
-    ],
-    [
-        'id'         => 'auth0',
-        'name'       => __('Auth0', 'simple-jwt-login'),
-        'desc'       => __('OAuth 2.0 / OIDC', 'simple-jwt-login'),
-        'logo_class' => 'auth0',
-        'enabled'    => $jwtSettings->getIntegrationsSettings()->auth0()->isEnabled(),
-        'view'       => plugin_dir_path(__FILE__) . 'auth0.php',
-        'beta'       => false,
-    ],
-    [
-        'id'         => 'facebook',
-        'name'       => __('Facebook', 'simple-jwt-login'),
-        'desc'       => __('OAuth 2.0', 'simple-jwt-login'),
-        'logo_class' => 'facebook',
-        'enabled'    => $jwtSettings->getIntegrationsSettings()->facebook()->isEnabled(),
-        'view'       => plugin_dir_path(__FILE__) . 'facebook.php',
-        'beta'       => false,
-    ],
-    [
-        'id'         => 'github',
-        'name'       => __('GitHub', 'simple-jwt-login'),
-        'desc'       => __('OAuth 2.0', 'simple-jwt-login'),
-        'logo_class' => 'github',
-        'enabled'    => $jwtSettings->getIntegrationsSettings()->github()->isEnabled(),
-        'view'       => plugin_dir_path(__FILE__) . 'github.php',
-        'beta'       => false,
-    ],
-];
+$sjlIntegrationsSettings = $jwtSettings->getIntegrationsSettings();
+$sjlApps = [];
+foreach (OauthProviderRegistry::all() as $sjlSlug => $sjlProvider) {
+    $sjlApps[] = [
+        'id'         => $sjlSlug,
+        'name'       => $sjlProvider->getName(),
+        'desc'       => $sjlProvider->getDescription(),
+        'logo_class' => $sjlSlug,
+        'enabled'    => $sjlIntegrationsSettings->getProvider($sjlSlug)->isEnabled(),
+        'view'       => plugin_dir_path(__FILE__) . $sjlSlug . '.php',
+    ];
+}
 
 $activeApp = $sjlApps[0]['id'];
 

@@ -3,11 +3,8 @@
 namespace SimpleJWTLogin\Plugin;
 
 use SimpleJWTLogin\Helpers\ViewLoader;
+use SimpleJWTLogin\Modules\Settings\Oauth\OauthProviderRegistry;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Services\Oauth\Auth0Oauth;
-use SimpleJWTLogin\Services\Oauth\FacebookOauth;
-use SimpleJWTLogin\Services\Oauth\GithubOauth;
-use SimpleJWTLogin\Services\Oauth\GoogleOauth;
 
 class Shortcodes
 {
@@ -120,35 +117,14 @@ class Shortcodes
             'jwtSettings'  => $this->jwtSettings,
             'pluginDirUrl' => plugin_dir_url(SIMPLE_JWT_LOGIN_PLUGIN_FILE),
         );
-        switch ($parameter['provider']) {
-            case GoogleOauth::PROVIDER_SLUG:
-                if ($integrationsSettings->google()->isEnabled()
-                    && $integrationsSettings->google()->isOauthEnabled()) {
-                    $haveProvider = true;
-                    $html .= $viewLoader->fetch('google-form.php', $viewData);
-                }
-                break;
-            case Auth0Oauth::PROVIDER_SLUG:
-                if ($integrationsSettings->auth0()->isEnabled()
-                    && $integrationsSettings->auth0()->isOauthEnabled()) {
-                    $haveProvider = true;
-                    $html .= $viewLoader->fetch('auth0-form.php', $viewData);
-                }
-                break;
-            case FacebookOauth::PROVIDER_SLUG:
-                if ($integrationsSettings->facebook()->isEnabled()
-                    && $integrationsSettings->facebook()->isOauthEnabled()) {
-                    $haveProvider = true;
-                    $html .= $viewLoader->fetch('facebook-form.php', $viewData);
-                }
-                break;
-            case GithubOauth::PROVIDER_SLUG:
-                if ($integrationsSettings->github()->isEnabled()
-                    && $integrationsSettings->github()->isOauthEnabled()) {
-                    $haveProvider = true;
-                    $html .= $viewLoader->fetch('github-form.php', $viewData);
-                }
-                break;
+
+        $providerSlug = $parameter['provider'];
+        if (OauthProviderRegistry::has($providerSlug)) {
+            $provider = $integrationsSettings->getProvider($providerSlug);
+            if ($provider->isEnabled() && $provider->isOauthEnabled()) {
+                $haveProvider = true;
+                $html .= $viewLoader->fetch($providerSlug . '-form.php', $viewData);
+            }
         }
 
         if (!$haveProvider) {

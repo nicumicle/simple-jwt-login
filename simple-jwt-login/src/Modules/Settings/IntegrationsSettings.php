@@ -8,11 +8,11 @@ use SimpleJWTLogin\Modules\Settings\Oauth\Auth0OauthSettings;
 use SimpleJWTLogin\Modules\Settings\Oauth\FacebookOauthSettings;
 use SimpleJWTLogin\Modules\Settings\Oauth\GithubOauthSettings;
 use SimpleJWTLogin\Modules\Settings\Oauth\GoogleOauthSettings;
+use SimpleJWTLogin\Modules\Settings\Oauth\OauthProviderRegistry;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\AbstractThirdPartySettings;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\ForceLoginSettings;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\TwoFactorSettings;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\WpGraphQLSettings;
-use SimpleJWTLogin\Services\Oauth\GoogleOauth;
 
 /**
  * Registry for OAuth / OIDC providers and 3rd-party integrations.
@@ -93,12 +93,12 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
      */
     private function buildProviders()
     {
-        return [
-            'google'   => new GoogleOauthSettings(),
-            'auth0'    => new Auth0OauthSettings(),
-            'facebook' => new FacebookOauthSettings(),
-            'github'   => new GithubOauthSettings(),
-        ];
+        $providers = [];
+        foreach (OauthProviderRegistry::all() as $slug => $definition) {
+            $providers[$slug] = $definition->createSettings();
+        }
+
+        return $providers;
     }
 
     /**
@@ -203,7 +203,7 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
     public function google()
     {
         /** @var GoogleOauthSettings */
-        return $this->getProvider(GoogleOauth::PROVIDER_SLUG);
+        return $this->getProvider('google');
     }
 
     /**

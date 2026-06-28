@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-25T04:45:24+00:00\n"
+"POT-Creation-Date: 2026-06-28T05:55:15+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -397,27 +397,37 @@ msgstr ""
 msgid "%1$s Redirect URI is required when exchange code is enabled."
 msgstr ""
 
-#: src/Modules/Settings/ProtectEndpointSettings.php:57
+#: src/Modules/Settings/ProtectEndpointSettings.php:66
 msgid "You need to add at least one endpoint."
 msgstr ""
 
+#: src/Modules/Settings/ProtectEndpointSettings.php:81
+msgid "A \"JWT + Roles\" rule must have at least one role specified."
+msgstr ""
+
+#: src/Modules/Settings/ProtectEndpointSettings.php:92
+#, php-format
+msgid "Role \"%s\" does not exist in WordPress."
+msgstr ""
+
 #: src/Modules/Settings/RegisterSettings.php:37
+#: src/Modules/Settings/RegisterSettings.php:48
 msgid "New User profile slug can not be empty."
 msgstr ""
 
-#: src/Modules/Settings/RegisterSettings.php:47
+#: src/Modules/Settings/RegisterSettings.php:59
 msgid "Invalid user role provided."
 msgstr ""
 
-#: src/Modules/Settings/RegisterSettings.php:57
+#: src/Modules/Settings/RegisterSettings.php:70
 msgid "Random password length should be an integer."
 msgstr ""
 
-#: src/Modules/Settings/RegisterSettings.php:67
+#: src/Modules/Settings/RegisterSettings.php:80
 msgid "Random password length should be at least 6 characters."
 msgstr ""
 
-#: src/Modules/Settings/RegisterSettings.php:76
+#: src/Modules/Settings/RegisterSettings.php:89
 msgid "Random password length can be max 255."
 msgstr ""
 
@@ -560,7 +570,7 @@ msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:151
 #: views/dashboard-view.php:83
-#: views/security/protect-endpoints-view.php:82
+#: views/security/protect-endpoints-view.php:91
 msgid "Protect Endpoints"
 msgstr ""
 
@@ -647,6 +657,12 @@ msgstr ""
 msgid "Webhook #%d: invalid URL."
 msgstr ""
 
+#. translators: %d: webhook index number
+#: src/Modules/Settings/WebhooksSettings.php:189
+#, php-format
+msgid "Webhook #%d: only HTTPS URLs are allowed."
+msgstr ""
+
 #: src/Modules/SimpleJWTLoginHooks.php:65
 msgid "Triggered after a successful user login via JWT."
 msgstr ""
@@ -727,7 +743,7 @@ msgstr ""
 msgid "Allows customization of the two-factor verify endpoint response."
 msgstr ""
 
-#: src/Modules/SimpleJWTLoginSettings.php:261
+#: src/Modules/SimpleJWTLoginSettings.php:262
 msgid "Something is wrong. We can not save the settings."
 msgstr ""
 
@@ -811,7 +827,11 @@ msgstr ""
 msgid "(string) User's locale. Default empty."
 msgstr ""
 
-#: src/Plugin/LoginPageIntegration.php:57
+#: src/Plugin/AdminUI.php:146
+msgid "Settings successfully saved"
+msgstr ""
+
+#: src/Plugin/LoginPageIntegration.php:54
 msgid "OAuth Error:"
 msgstr ""
 
@@ -874,7 +894,7 @@ msgstr ""
 msgid "My API Keys"
 msgstr ""
 
-#: src/Routes/Handlers/AuthenticationHandler.php:125
+#: src/Routes/Handlers/AuthenticationHandler.php:122
 msgid "Invalid or unauthorized API key."
 msgstr ""
 
@@ -999,12 +1019,12 @@ msgstr ""
 msgid "This JWT is invalid."
 msgstr ""
 
-#: src/Services/BaseService.php:399
+#: src/Services/BaseService.php:401
 msgid "Auth Code is required."
 msgstr ""
 
 #. translators: %s: auth code key name
-#: src/Services/BaseService.php:409
+#: src/Services/BaseService.php:411
 #, php-format
 msgid "Invalid Auth Code ( %s ) provided."
 msgstr ""
@@ -1101,27 +1121,27 @@ msgstr ""
 msgid "The code you provided is invalid."
 msgstr ""
 
-#: src/Services/Oauth/Auth0Oauth.php:78
+#: src/Services/Oauth/Auth0Oauth.php:77
 msgid "Auth0 did not return an access_token."
 msgstr ""
 
-#: src/Services/Oauth/Auth0Oauth.php:107
+#: src/Services/Oauth/Auth0Oauth.php:106
 msgid "The provided Auth0 access_token is invalid."
 msgstr ""
 
-#: src/Services/Oauth/Auth0Oauth.php:178
+#: src/Services/Oauth/Auth0Oauth.php:177
 msgid "The provided Auth0 token is invalid."
 msgstr ""
 
-#: src/Services/Oauth/Auth0Oauth.php:186
+#: src/Services/Oauth/Auth0Oauth.php:185
 msgid "The provided Auth0 token was not issued for this application"
 msgstr ""
 
-#: src/Services/Oauth/Auth0Oauth.php:259
+#: src/Services/Oauth/Auth0Oauth.php:258
 msgid "Unable to retrieve user email from Auth0."
 msgstr ""
 
-#: src/Services/Oauth/Auth0Oauth.php:267
+#: src/Services/Oauth/Auth0Oauth.php:266
 msgid "Email address is not verified."
 msgstr ""
 
@@ -1169,16 +1189,20 @@ msgstr ""
 msgid "The provided id_token was not issued for this application"
 msgstr ""
 
-#: src/Services/OAuthService.php:78
+#: src/Services/OAuthService.php:41
 msgid "The Oauth provider is invalid."
 msgstr ""
 
-#: src/Services/OAuthService.php:97
+#: src/Services/OAuthService.php:60
 msgid "This Oauth provider is not available."
 msgstr ""
 
-#: src/Services/ProtectEndpointService.php:88
+#: src/Services/ProtectEndpointService.php:93
 msgid "JWT is not present and we can not search for a user."
+msgstr ""
+
+#: src/Services/ProtectEndpointService.php:110
+msgid "You do not have the required role to access this endpoint."
 msgstr ""
 
 #: src/Services/RedirectService.php:82
@@ -1311,7 +1335,7 @@ msgstr ""
 msgid "Token was already revoked."
 msgstr ""
 
-#: src/Services/RouteService.php:180
+#: src/Services/RouteService.php:165
 msgid "WordPress User not found."
 msgstr ""
 
@@ -1353,12 +1377,12 @@ msgid "No events match your search."
 msgstr ""
 
 #: views/audit-logs/config.php:92
-#: views/webhooks/logs-view.php:122
+#: views/webhooks/logs-view.php:121
 msgid "Retention Period (days)"
 msgstr ""
 
 #: views/audit-logs/config.php:105
-#: views/webhooks/logs-view.php:135
+#: views/webhooks/logs-view.php:134
 msgid "Log entries older than this many days are automatically deleted. Minimum: 1."
 msgstr ""
 
@@ -1372,7 +1396,7 @@ msgstr ""
 
 #. translators: %d: number of total log entries
 #: views/audit-logs/logs-view.php:85
-#: views/webhooks/logs-view.php:82
+#: views/webhooks/logs-view.php:81
 #, php-format
 msgid "Showing %d total entries."
 msgstr ""
@@ -1382,7 +1406,7 @@ msgid "Are you sure you want to delete all audit logs?"
 msgstr ""
 
 #: views/audit-logs/logs-view.php:102
-#: views/webhooks/logs-view.php:101
+#: views/webhooks/logs-view.php:100
 msgid "Clear All Logs"
 msgstr ""
 
@@ -1395,24 +1419,24 @@ msgid "Logs will appear here once events are recorded."
 msgstr ""
 
 #: views/audit-logs/logs-view.php:121
-#: views/webhooks/logs-view.php:158
+#: views/webhooks/logs-view.php:157
 msgid "All Events"
 msgstr ""
 
 #: views/audit-logs/logs-view.php:131
-#: views/webhooks/logs-view.php:168
+#: views/webhooks/logs-view.php:167
 msgid "All Statuses"
 msgstr ""
 
 #: views/audit-logs/logs-view.php:132
 #: views/audit-logs/logs-view.php:223
-#: views/webhooks/logs-view.php:169
+#: views/webhooks/logs-view.php:168
 msgid "Success"
 msgstr ""
 
 #: views/audit-logs/logs-view.php:133
 #: views/audit-logs/logs-view.php:225
-#: views/webhooks/logs-view.php:170
+#: views/webhooks/logs-view.php:169
 msgid "Failure"
 msgstr ""
 
@@ -1421,17 +1445,17 @@ msgid "User (email)"
 msgstr ""
 
 #: views/audit-logs/logs-view.php:146
-#: views/webhooks/logs-view.php:180
+#: views/webhooks/logs-view.php:179
 msgid "Filter"
 msgstr ""
 
 #: views/audit-logs/logs-view.php:182
-#: views/webhooks/logs-view.php:214
+#: views/webhooks/logs-view.php:213
 msgid "Date / Time"
 msgstr ""
 
 #: views/audit-logs/logs-view.php:183
-#: views/webhooks/logs-view.php:216
+#: views/webhooks/logs-view.php:215
 msgid "Event"
 msgstr ""
 
@@ -1449,7 +1473,7 @@ msgstr ""
 
 #: views/audit-logs/logs-view.php:187
 #: views/general-view.php:84
-#: views/webhooks/logs-view.php:218
+#: views/webhooks/logs-view.php:217
 msgid "Status"
 msgstr ""
 
@@ -1464,28 +1488,28 @@ msgstr ""
 #: views/audit-logs/logs-view.php:244
 #: views/security/api-keys-view.php:251
 #: views/user-api-keys.php:161
-#: views/webhooks/logs-view.php:284
+#: views/webhooks/logs-view.php:283
 msgid "First"
 msgstr ""
 
 #: views/audit-logs/logs-view.php:249
 #: views/security/api-keys-view.php:256
 #: views/user-api-keys.php:166
-#: views/webhooks/logs-view.php:289
+#: views/webhooks/logs-view.php:288
 msgid "Prev"
 msgstr ""
 
 #: views/audit-logs/logs-view.php:270
 #: views/security/api-keys-view.php:277
 #: views/user-api-keys.php:187
-#: views/webhooks/logs-view.php:310
+#: views/webhooks/logs-view.php:309
 msgid "Next"
 msgstr ""
 
 #: views/audit-logs/logs-view.php:275
 #: views/security/api-keys-view.php:282
 #: views/user-api-keys.php:192
-#: views/webhooks/logs-view.php:315
+#: views/webhooks/logs-view.php:314
 msgid "Last"
 msgstr ""
 
@@ -1493,7 +1517,7 @@ msgstr ""
 #: views/audit-logs/logs-view.php:286
 #: views/security/api-keys-view.php:291
 #: views/user-api-keys.php:201
-#: views/webhooks/logs-view.php:326
+#: views/webhooks/logs-view.php:325
 #, php-format
 msgid "Page %1$d of %2$d (%3$d entries total)"
 msgstr ""
@@ -1615,7 +1639,7 @@ msgstr ""
 #: views/security/api-keys-view.php:73
 #: views/security/api-keys-view.php:109
 #: views/security/cors-view.php:37
-#: views/security/protect-endpoints-view.php:112
+#: views/security/protect-endpoints-view.php:121
 msgid "Enabled"
 msgstr ""
 
@@ -1631,7 +1655,7 @@ msgstr ""
 #: views/security/api-keys-view.php:67
 #: views/security/api-keys-view.php:103
 #: views/security/cors-view.php:31
-#: views/security/protect-endpoints-view.php:100
+#: views/security/protect-endpoints-view.php:109
 msgid "Disabled"
 msgstr ""
 
@@ -2048,7 +2072,6 @@ msgid "Continue with Auth0"
 msgstr ""
 
 #: views/integrations/oauth/auth0.php:29
-#: views/integrations/oauth/oauth-apps.php:30
 msgid "Auth0"
 msgstr ""
 
@@ -2253,7 +2276,6 @@ msgid "Continue with Facebook"
 msgstr ""
 
 #: views/integrations/oauth/facebook.php:29
-#: views/integrations/oauth/oauth-apps.php:39
 msgid "Facebook"
 msgstr ""
 
@@ -2342,7 +2364,6 @@ msgid "Continue with GitHub"
 msgstr ""
 
 #: views/integrations/oauth/github.php:29
-#: views/integrations/oauth/oauth-apps.php:48
 msgid "GitHub"
 msgstr ""
 
@@ -2425,7 +2446,6 @@ msgid "Continue with Google"
 msgstr ""
 
 #: views/integrations/oauth/google.php:30
-#: views/integrations/oauth/oauth-apps.php:21
 msgid "Google"
 msgstr ""
 
@@ -2503,69 +2523,59 @@ msgstr ""
 msgid "Automatically create a new WordPress user if no account is found matching the email in the Google JWT payload."
 msgstr ""
 
-#: views/integrations/oauth/oauth-apps.php:22
-#: views/integrations/oauth/oauth-apps.php:40
-#: views/integrations/oauth/oauth-apps.php:49
-msgid "OAuth 2.0"
-msgstr ""
-
-#: views/integrations/oauth/oauth-apps.php:31
-msgid "OAuth 2.0 / OIDC"
-msgstr ""
-
-#: views/integrations/oauth/oauth-apps.php:73
+#: views/integrations/oauth/oauth-apps.php:48
 msgid "Stacked"
 msgstr ""
 
-#: views/integrations/oauth/oauth-apps.php:74
+#: views/integrations/oauth/oauth-apps.php:49
 msgid "One button per line"
 msgstr ""
 
-#: views/integrations/oauth/oauth-apps.php:78
+#: views/integrations/oauth/oauth-apps.php:53
 msgid "Side by side"
 msgstr ""
 
-#: views/integrations/oauth/oauth-apps.php:79
+#: views/integrations/oauth/oauth-apps.php:54
 msgid "Buttons in a row"
 msgstr ""
 
-#: views/integrations/oauth/oauth-apps.php:83
+#: views/integrations/oauth/oauth-apps.php:58
 msgid "Icons stacked"
 msgstr ""
 
-#: views/integrations/oauth/oauth-apps.php:84
+#: views/integrations/oauth/oauth-apps.php:59
 msgid "Icon only, one per line"
 msgstr ""
 
-#: views/integrations/oauth/oauth-apps.php:88
+#: views/integrations/oauth/oauth-apps.php:63
 msgid "Icons side by side"
 msgstr ""
 
-#: views/integrations/oauth/oauth-apps.php:89
+#: views/integrations/oauth/oauth-apps.php:64
 msgid "Icon only, in a row"
 msgstr ""
 
-#: views/integrations/oauth/oauth-apps.php:97
+#: views/integrations/oauth/oauth-apps.php:72
 msgid "Login Page Button Layout"
 msgstr ""
 
-#: views/integrations/oauth/oauth-apps.php:99
+#: views/integrations/oauth/oauth-apps.php:74
 msgid "Choose how OAuth buttons are displayed on the WordPress login page."
 msgstr ""
 
-#: views/integrations/oauth/oauth-apps.php:143
+#: views/integrations/oauth/oauth-apps.php:118
 msgid "OAuth Applications"
 msgstr ""
 
-#: views/integrations/oauth/oauth-apps.php:145
+#: views/integrations/oauth/oauth-apps.php:120
 msgid "Configure OAuth 2.0 providers to allow users to sign in with their existing accounts."
 msgstr ""
 
-#: views/integrations/oauth/oauth-apps.php:155
+#: views/integrations/oauth/oauth-apps.php:130
 msgid "Filter applications..."
 msgstr ""
 
-#: views/integrations/oauth/oauth-apps.php:176
+#: views/integrations/oauth/oauth-apps.php:151
 msgid "No applications found."
 msgstr ""
 
@@ -2805,69 +2815,65 @@ msgstr ""
 msgid "Use dot notation for nested values, e.g. <code>user.id</code>."
 msgstr ""
 
-#: views/layout.php:20
-msgid "Settings successfully saved"
-msgstr ""
-
-#: views/layout.php:130
+#: views/layout.php:105
 msgid "Simple JWT Login Settings"
 msgstr ""
 
-#: views/layout.php:136
+#: views/layout.php:111
 msgid "Dark mode"
 msgstr ""
 
-#: views/layout.php:138
+#: views/layout.php:113
 msgid "Save"
 msgstr ""
 
-#: views/layout.php:247
+#: views/layout.php:224
 msgid "View file does not exists."
 msgstr ""
 
-#: views/layout.php:276
+#: views/layout.php:253
 #: views/routes/auth-view.php:457
 msgid "e.g. department"
 msgstr ""
 
-#: views/layout.php:281
+#: views/layout.php:258
 #: views/routes/auth-view.php:463
 msgid "e.g. engineering"
 msgstr ""
 
-#: views/layout.php:286
-#: views/layout.php:307
-#: views/layout.php:339
+#: views/layout.php:263
+#: views/layout.php:284
+#: views/layout.php:316
 #: views/routes/auth-view.php:287
 #: views/routes/auth-view.php:468
 #: views/security/auth-codes-view.php:126
-#: views/security/protect-endpoints-view.php:65
+#: views/security/protect-endpoints-view.php:74
 msgid "Remove"
 msgstr ""
 
-#: views/layout.php:297
+#: views/layout.php:274
 #: views/routes/auth-view.php:276
 msgid "e.g. x-app-id"
 msgstr ""
 
-#: views/layout.php:302
+#: views/layout.php:279
 #: views/routes/auth-view.php:282
 msgid "e.g. my-app"
 msgstr ""
 
-#: views/layout.php:318
+#: views/layout.php:295
 #: views/security/auth-codes-view.php:84
 #: views/security/auth-codes-view.php:109
 #: views/security/auth-codes-view.php:142
 msgid "Authentication Key"
 msgstr ""
 
-#: views/layout.php:323
+#: views/layout.php:300
 #: views/security/auth-codes-view.php:95
 msgid "WordPress new user Role ( when new users are created )"
 msgstr ""
 
-#: views/layout.php:331
+#: views/layout.php:308
 #: views/security/auth-codes-view.php:99
 msgid "Expiration date: YYYY-MM-DD HH:MM:SS ( Example: 2020-12-23 23:34:59)"
 msgstr ""
@@ -3333,11 +3339,11 @@ msgid "Configure the default role and password behaviour for newly registered us
 msgstr ""
 
 #: views/routes/register-view.php:139
-msgid "Default User Role"
+msgid "Default User Roles"
 msgstr ""
 
 #: views/routes/register-view.php:144
-msgid "WordPress role assigned to new users."
+msgid "Comma-separated list of WordPress roles assigned to new users."
 msgstr ""
 
 #: views/routes/register-view.php:145
@@ -3349,7 +3355,7 @@ msgid "full list"
 msgstr ""
 
 #: views/routes/register-view.php:155
-msgid "e.g. subscriber"
+msgid "e.g. subscriber, editor"
 msgstr ""
 
 #: views/routes/register-view.php:168
@@ -3864,48 +3870,56 @@ msgstr ""
 msgid "/wp-json/namespace/endpoint"
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:84
+#: views/security/protect-endpoints-view.php:67
+msgid "roles: administrator, editor"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:68
+msgid "Comma-separated roles required to access this endpoint. Leave empty to allow any authenticated user."
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:93
 msgid "When enabled, REST endpoints will require a valid JWT to be accessed. Requests without a JWT will receive an error instead of content."
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:122
+#: views/security/protect-endpoints-view.php:131
 msgid "Protection Scope"
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:124
+#: views/security/protect-endpoints-view.php:133
 msgid "Choose whether to apply JWT protection to all REST endpoints or only to specific ones."
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:130
+#: views/security/protect-endpoints-view.php:139
 msgid "Apply protection to:"
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:142
+#: views/security/protect-endpoints-view.php:151
 msgid "Apply on All REST Endpoints"
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:150
+#: views/security/protect-endpoints-view.php:159
 msgid "Apply only on Specific REST endpoints"
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:160
+#: views/security/protect-endpoints-view.php:169
 msgid "Whitelisted Endpoints"
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:162
+#: views/security/protect-endpoints-view.php:171
 msgid "These endpoints will skip the JWT check and remain publicly accessible."
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:176
-#: views/security/protect-endpoints-view.php:201
+#: views/security/protect-endpoints-view.php:185
+#: views/security/protect-endpoints-view.php:210
 msgid "+ Add Endpoint"
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:185
+#: views/security/protect-endpoints-view.php:194
 msgid "Protected Endpoints"
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:187
+#: views/security/protect-endpoints-view.php:196
 msgid "A valid JWT will be required to access these endpoints."
 msgstr ""
 
@@ -3942,7 +3956,7 @@ msgstr ""
 
 #: views/webhooks/config.php:97
 #: views/webhooks/config.php:226
-#: views/webhooks/logs-view.php:217
+#: views/webhooks/logs-view.php:216
 msgid "Method"
 msgstr ""
 
@@ -3990,54 +4004,54 @@ msgstr ""
 msgid "+ Add Webhook"
 msgstr ""
 
-#: views/webhooks/logs-view.php:75
+#: views/webhooks/logs-view.php:74
 msgid "Webhook Call Log"
 msgstr ""
 
-#: views/webhooks/logs-view.php:88
+#: views/webhooks/logs-view.php:87
 msgid "Logging is disabled. Enable it to record webhook calls."
 msgstr ""
 
-#: views/webhooks/logs-view.php:98
+#: views/webhooks/logs-view.php:97
 msgid "Are you sure you want to delete all webhook logs?"
 msgstr ""
 
-#: views/webhooks/logs-view.php:109
+#: views/webhooks/logs-view.php:108
 msgid "Enable / Disable webhook logs"
 msgstr ""
 
-#: views/webhooks/logs-view.php:114
+#: views/webhooks/logs-view.php:113
 msgid "Enable Webhook Logs"
 msgstr ""
 
-#: views/webhooks/logs-view.php:143
+#: views/webhooks/logs-view.php:142
 msgid "Webhook call logging is currently disabled. Toggle \"Enable Logs\" above and save settings to start recording calls."
 msgstr ""
 
-#: views/webhooks/logs-view.php:148
+#: views/webhooks/logs-view.php:147
 msgid "No webhook logs yet."
 msgstr ""
 
-#: views/webhooks/logs-view.php:149
+#: views/webhooks/logs-view.php:148
 msgid "Logs will appear here once webhook calls are recorded."
 msgstr ""
 
-#: views/webhooks/logs-view.php:215
+#: views/webhooks/logs-view.php:214
 msgid "Webhook URL"
 msgstr ""
 
-#: views/webhooks/logs-view.php:219
+#: views/webhooks/logs-view.php:218
 msgid "Error Body"
 msgstr ""
 
-#: views/webhooks/logs-view.php:226
+#: views/webhooks/logs-view.php:225
 msgid "No webhook log entries found."
 msgstr ""
 
-#: views/webhooks/logs-view.php:250
+#: views/webhooks/logs-view.php:249
 msgid "Error"
 msgstr ""
 
-#: views/webhooks/logs-view.php:261
+#: views/webhooks/logs-view.php:260
 msgid "View"
 msgstr ""

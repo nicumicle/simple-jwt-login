@@ -272,4 +272,93 @@ class ServerHelperTest extends TestCase
         ]);
         $this->assertSame('POST', $serverHelper->getRequestMethod());
     }
+
+    public function testGetRequestMethodReturnsNullWhenMissing()
+    {
+        $serverHelper = new ServerHelper([]);
+        $this->assertNull($serverHelper->getRequestMethod());
+    }
+
+    #[DataProvider('getHeaderProvider')]
+    /**
+     * @param array $server
+     * @param string $name
+     * @param mixed $expectedResult
+     */
+    public function testGetHeader($server, $name, $expectedResult)
+    {
+        $serverHelper = new ServerHelper($server);
+        $this->assertSame($expectedResult, $serverHelper->getHeader($name));
+    }
+
+    /**
+     * @return array[]
+     */
+    public static function getHeaderProvider()
+    {
+        return [
+            'missing header returns null' => [
+                'server' => [],
+                'name' => 'Authorization',
+                'expectedResult' => null,
+            ],
+            'header found case-insensitively' => [
+                'server' => [
+                    'HTTP_AUTHORIZATION' => 'Bearer 123',
+                ],
+                'name' => 'authorization',
+                'expectedResult' => 'Bearer 123',
+            ],
+            'custom header with dashes mapped to underscores' => [
+                'server' => [
+                    'HTTP_X_CUSTOM_HEADER' => 'value',
+                ],
+                'name' => 'X-Custom-Header',
+                'expectedResult' => 'value',
+            ],
+        ];
+    }
+
+    #[DataProvider('getCurrentURLProvider')]
+    /**
+     * @param array $server
+     * @param string $expectedResult
+     */
+    public function testGetCurrentURL($server, $expectedResult)
+    {
+        $serverHelper = new ServerHelper($server);
+        $this->assertSame($expectedResult, $serverHelper->getCurrentURL());
+    }
+
+    /**
+     * @return array[]
+     */
+    public static function getCurrentURLProvider()
+    {
+        return [
+            'http when https is not set' => [
+                'server' => [
+                    'HTTP_HOST' => 'example.com',
+                    'REQUEST_URI' => '/path',
+                ],
+                'expectedResult' => 'http://example.com/path',
+            ],
+            'https when https is on' => [
+                'server' => [
+                    'HTTPS' => 'on',
+                    'HTTP_HOST' => 'example.com',
+                    'REQUEST_URI' => '/secure',
+                ],
+                'expectedResult' => 'https://example.com/secure',
+            ],
+            'http when https is off' => [
+                'server' => [
+                    'HTTPS' => 'off',
+                    'HTTP_HOST' => 'example.com',
+                    'REQUEST_URI' => '/path',
+                ],
+                'expectedResult' => 'http://example.com/path',
+            ],
+        ];
+    }
 }

@@ -870,6 +870,7 @@ if (!function_exists('wp_remote_retrieve_response_code')) {
 if (!function_exists('wp_remote_retrieve_body')) {
     function wp_remote_retrieve_body($response)
     {
+        return '';
     }
 }
 

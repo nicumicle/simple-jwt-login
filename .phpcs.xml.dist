@@ -44,6 +44,10 @@
     <!-- Exclude WordPress wpdb adapter - intentionally uses snake_case to mirror the wpdb interface. -->
     <exclude-pattern>/tests/Feature/MysqliWpdb.php</exclude-pattern>
 
+    <!-- Exclude Two Factor plugin test doubles - intentionally use snake_case and group several
+         doubles in one file to mirror the external plugin's static API. -->
+    <exclude-pattern>/tests/Unit/Stubs/TwoFactorStubs.php</exclude-pattern>
+
     <rule ref="Generic.Files.LineEndings">
         <exclude name="Generic.Files.LineEndings.InvalidEOLChar"/>
     </rule>

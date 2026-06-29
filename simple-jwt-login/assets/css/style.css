@@ -1519,7 +1519,7 @@
 }
 
 #simple-jwt-login .sjl-app-tile-name {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 600;
     color: var(--sjl-text);
     line-height: 1.2;
@@ -1623,6 +1623,9 @@
 }
 #simple-jwt-login .logo.force-login {
     background-image: url("../images/integrations/force-login.svg");
+}
+#simple-jwt-login .logo.woocommerce {
+    background-image: url("../images/integrations/woocommerce.svg");
 }
 
 /* ============================================

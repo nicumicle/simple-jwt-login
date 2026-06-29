@@ -12,6 +12,7 @@ use SimpleJWTLogin\Modules\Settings\Oauth\OauthProviderRegistry;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\AbstractThirdPartySettings;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\ForceLoginSettings;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\TwoFactorSettings;
+use SimpleJWTLogin\Modules\Settings\ThirdParty\WooCommerceSettings;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\WpGraphQLSettings;
 
 /**
@@ -110,6 +111,7 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
             'wpgraphql'   => new WpGraphQLSettings(),
             'two_factor'  => new TwoFactorSettings(),
             'force_login' => new ForceLoginSettings(),
+            'woocommerce' => new WooCommerceSettings(),
         ];
     }
 
@@ -285,5 +287,14 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
     {
         /** @var ForceLoginSettings */
         return $this->getThirdParty('force_login');
+    }
+
+    /**
+     * @return WooCommerceSettings
+     */
+    public function woocommerce()
+    {
+        /** @var WooCommerceSettings */
+        return $this->getThirdParty('woocommerce');
     }
 }

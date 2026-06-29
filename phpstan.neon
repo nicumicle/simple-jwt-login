@@ -12,9 +12,6 @@ parameters:
        message: '#Method SimpleJWTLogin\\Repositories\\Wordpress\\Repository::(doAction|applyFilters)\(\) invoked with .* parameters, 0 required.#'
        path: simple-jwt-login/src
     -
-       message: '#(Call to static method|Access to constant) .* on an unknown class Two_Factor_(Core|Totp|Email|Backup_Codes)\.#'
-       path: simple-jwt-login/src/Services/Integrations/TwoFactor/TwoFactorBridge.php
-    -
        message : '#Unsafe call to private method SimpleJWTLogin\\Libraries\\JWT\\JWT::.*\(\) through static::.#'
        path: simple-jwt-login/src
     -
@@ -29,6 +26,7 @@ parameters:
          - simple-jwt-login/views/
          - simple-jwt-login/3rd-party/force_login.php
          - simple-jwt-login/3rd-party/wp-graphql.php
+         - simple-jwt-login/3rd-party/woocommerce.php
          - simple-jwt-login/simple-jwt-login.php
   disallowedFunctionCalls:
     -

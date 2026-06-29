@@ -47,6 +47,17 @@ $sjl3rdPartyApps = [
         'view'               => plugin_dir_path(__FILE__) . 'force-login.php',
         'beta'               => false,
     ],
+    [
+        'id'                 => 'woocommerce',
+        'name'               => __('WooCommerce', 'simple-jwt-login'),
+        'desc'               => __('JWT auth for WooCommerce REST API', 'simple-jwt-login'),
+        'logo_class'         => 'woocommerce',
+        'enabled'            => $jwtSettings->getIntegrationsSettings()->woocommerce()->isEnabled(),
+        'plugin_installed'   => file_exists(WP_PLUGIN_DIR . '/woocommerce/woocommerce.php'),
+        'plugin_activated'   => class_exists('WooCommerce'),
+        'view'               => plugin_dir_path(__FILE__) . 'woocommerce.php',
+        'beta'               => true,
+    ],
 ];
 
 $active3rdPartyApp = $sjl3rdPartyApps[0]['id'];

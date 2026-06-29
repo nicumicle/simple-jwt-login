@@ -239,35 +239,52 @@ abstract class BaseService
     }
 
     /**
+     * Extract the JWT from the configured request header only.
+     * Returns null when header extraction is disabled or no valid token is present.
+     *
+     * @return string|null
+     */
+    public function getJwtFromHeader()
+    {
+        $generalSettings = $this->jwtSettings->getGeneralSettings();
+        if (!$generalSettings->isJwtFromHeaderEnabled()) {
+            return null;
+        }
+
+        $headers = array_change_key_case($this->serverHelper->getHeaders(), CASE_LOWER);
+        $headerKey = strtolower($generalSettings->getRequestKeyHeader());
+        if (!isset($headers[$headerKey])) {
+            return null;
+        }
+
+        $matches = [];
+        $match = preg_match(
+            '/^(?:(\w+)\s+)?([\w\-.]+)$/mi',
+            $headers[$headerKey],
+            $matches
+        );
+
+        $hasBearer = $match && strtolower($matches[1]) === 'bearer';
+        $noPrefix  = $match && empty($matches[1]);
+
+        if ($generalSettings->isJwtFromHeaderBearerRequired()) {
+            return $hasBearer ? $matches[2] : null;
+        }
+
+        return ($hasBearer || $noPrefix) ? $matches[2] : null;
+    }
+
+    /**
      * @return string|null
      */
     public function getJwtFromRequestHeaderOrCookie()
     {
-        $generalSettings = $this->jwtSettings->getGeneralSettings();
-
-        if ($generalSettings->isJwtFromHeaderEnabled()) {
-            $headers = array_change_key_case($this->serverHelper->getHeaders(), CASE_LOWER);
-            $headerKey = strtolower($generalSettings->getRequestKeyHeader());
-            if (isset($headers[$headerKey])) {
-                $matches = [];
-                $match = preg_match(
-                    '/^(?:(\w+)\s+)?([\w\-.]+)$/mi',
-                    $headers[$headerKey],
-                    $matches
-                );
-
-                $hasBearer = $match && strtolower($matches[1]) === 'bearer';
-                $noPrefix  = $match && empty($matches[1]);
-
-                if ($generalSettings->isJwtFromHeaderBearerRequired()) {
-                    if ($hasBearer) {
-                        return $matches[2];
-                    }
-                } elseif ($hasBearer || $noPrefix) {
-                    return $matches[2];
-                }
-            }
+        $headerJwt = $this->getJwtFromHeader();
+        if (!empty($headerJwt)) {
+            return $headerJwt;
         }
+
+        $generalSettings = $this->jwtSettings->getGeneralSettings();
         if ($generalSettings->isJwtFromCookieEnabled()) {
             $cookieKey = $generalSettings->getRequestKeyCookie();
             if (isset($this->cookie[$cookieKey])) {

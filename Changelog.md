@@ -32,6 +32,7 @@
 - Allow non admin users to manage their own API keys
 - Add option for 'Require "Bearer" prefix' [#96](https://github.com/nicumicle/simple-jwt-login/issues/96)
 - Support multiple default user roles on registration
+- Add Full WooCommerce support
 
 ## 3.6.6 (22 May 2026)
 - Update WordPress 7.0 Compatibility

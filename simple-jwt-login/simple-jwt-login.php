@@ -149,3 +149,4 @@ add_action(
 // 3rd-party integrations
 include_once '3rd-party/force_login.php';
 include_once '3rd-party/wp-graphql.php';
+include_once '3rd-party/woocommerce.php';

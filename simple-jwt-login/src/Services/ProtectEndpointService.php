@@ -217,7 +217,12 @@ class ProtectEndpointService extends BaseService
                 return $notProtected;
             }
 
-            $roles = isset($rule['roles']) ? $rule['roles'] : [];
+            // Only enforce roles for "JWT + Roles" rules. A "JWT required" rule
+            // must ignore any previously saved roles.
+            $roles = $rule['type'] === ProtectEndpointSettings::RULE_TYPE_PROTECTED_ROLES
+                && isset($rule['roles'])
+                ? $rule['roles']
+                : [];
             return ['protected' => true, 'roles' => $roles];
         }
 

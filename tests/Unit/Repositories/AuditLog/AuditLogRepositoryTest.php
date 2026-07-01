@@ -39,7 +39,6 @@ class AuditLogRepositoryTest extends TestCase
                 [
                     'event_type' => 'auth.login.success',
                     'user_id'    => 5,
-                    'user_email' => 'test@example.com',
                     'ip_address' => '127.0.0.1',
                     'status'     => 'success',
                     'message'    => null,
@@ -51,7 +50,6 @@ class AuditLogRepositoryTest extends TestCase
         $result = $repository->insert(
             'auth.login.success',
             5,
-            'test@example.com',
             '127.0.0.1',
             'success',
             null
@@ -73,7 +71,6 @@ class AuditLogRepositoryTest extends TestCase
                 [
                     'event_type' => 'api_key.used',
                     'user_id'    => 3,
-                    'user_email' => null,
                     'ip_address' => '10.0.0.1',
                     'status'     => 'success',
                     'message'    => null,
@@ -85,7 +82,6 @@ class AuditLogRepositoryTest extends TestCase
         $result = $repository->insert(
             'api_key.used',
             3,
-            null,
             '10.0.0.1',
             'success',
             null,
@@ -102,7 +98,6 @@ class AuditLogRepositoryTest extends TestCase
         $result = $this->repository->insert(
             'auth.login.failed',
             null,
-            'bad@example.com',
             '10.0.0.1',
             'failure',
             'Wrong credentials.',

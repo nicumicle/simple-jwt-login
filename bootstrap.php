@@ -390,6 +390,9 @@ if (!class_exists('wpdb')) {
         /** @var string */
         public $prefix = '';
 
+        /** @var string */
+        public $users = 'wp_users';
+
         /** @var int */
         public $insert_id = 0;
 

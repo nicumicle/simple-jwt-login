@@ -92,6 +92,69 @@ class ProtectEndpointSettingsTest extends TestCase
         );
     }
 
+    /**
+     * Full round-trip: parse the admin POST, serialize it the way it is stored
+     * in the DB option, then read it back through a fresh settings instance.
+     * Guards against the view/settings POST-key drift that silently dropped rules.
+     */
+    public function testRulesArePersistedAndReloaded()
+    {
+        $writer = (new ProtectEndpointSettings())
+            ->withSettings([])
+            ->withPost([
+                ProtectEndpointSettings::PROPERTY_GROUP => [
+                    'enabled'        => '1',
+                    'default_action' => ProtectEndpointSettings::DEFAULT_ALLOW_ALL,
+                    'rules_url'      => ['/public/health', '/wp/v2/posts', '/wp/v2/users'],
+                    'rules_method'   => ['GET', 'POST', 'ALL'],
+                    'rules_match'    => [
+                        ProtectEndpointSettings::ENDPOINT_MATCH_EXACT,
+                        ProtectEndpointSettings::ENDPOINT_MATCH_START_WITH,
+                        ProtectEndpointSettings::ENDPOINT_MATCH_START_WITH,
+                    ],
+                    'rules_type'     => [
+                        ProtectEndpointSettings::RULE_TYPE_PUBLIC,
+                        ProtectEndpointSettings::RULE_TYPE_PROTECTED,
+                        ProtectEndpointSettings::RULE_TYPE_PROTECTED_ROLES,
+                    ],
+                    'rules_roles'    => ['', '', 'administrator, editor'],
+                ]
+            ])
+            ->withWordPressData($this->wordPressData);
+        $writer->initSettingsFromPost();
+
+        // Serialize exactly as SimpleJWTLoginSettings persists it into the DB option.
+        $stored = $writer->getSettings();
+
+        $reader = (new ProtectEndpointSettings())
+            ->withPost([])
+            ->withWordPressData($this->wordPressData)
+            ->withSettings($stored);
+
+        $expectedRules = [
+            ['url' => '/public/health', 'method' => 'GET',  'match' => 'EXACT',       'type' => 'public',          'roles' => []],
+            ['url' => '/wp/v2/posts',   'method' => 'POST', 'match' => 'STARTS_WITH', 'type' => 'protected',       'roles' => []],
+            ['url' => '/wp/v2/users',   'method' => 'ALL',  'match' => 'STARTS_WITH', 'type' => 'protected_roles', 'roles' => ['administrator', 'editor']],
+        ];
+
+        $this->assertSame(true, $reader->isEnabled());
+        $this->assertSame(ProtectEndpointSettings::DEFAULT_ALLOW_ALL, $reader->getDefaultAction());
+        $this->assertSame($expectedRules, $reader->getRules());
+
+        // The reloaded rules are what the admin UI renders in each card.
+        $this->assertSame(
+            [['url' => '/public/health', 'method' => 'GET', 'match' => 'EXACT', 'type' => 'public', 'roles' => []]],
+            $reader->getWhitelistedDomains()
+        );
+        $this->assertSame(
+            [
+                ['url' => '/wp/v2/posts', 'method' => 'POST', 'match' => 'STARTS_WITH', 'type' => 'protected',       'roles' => []],
+                ['url' => '/wp/v2/users', 'method' => 'ALL',  'match' => 'STARTS_WITH', 'type' => 'protected_roles', 'roles' => ['administrator', 'editor']],
+            ],
+            $reader->getProtectedEndpoints()
+        );
+    }
+
     public function testRolesAreParsedCorrectly()
     {
         $protectSettings = (new ProtectEndpointSettings())

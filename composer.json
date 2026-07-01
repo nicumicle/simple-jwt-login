@@ -29,7 +29,8 @@
     }
   },
   "config": {
-    "sort-packages": true
+    "sort-packages": true,
+    "process-timeout": 900
   },
   "scripts": {
     "tests": "vendor/bin/phpunit --testsuite 'Unit' --coverage-text",

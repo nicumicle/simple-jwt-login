@@ -10,14 +10,15 @@ if (!defined('ABSPATH')) {
 } // Exit if accessed directly
 
 /**
- * Helper function for drawing protect endpoint line
- * @param string $type
- * @param ?array<string,mixed> $endpoint
+ * Helper function for drawing a protect endpoint rule line
+ * @param ?array<string,mixed> $rule
  * @return void
  * @throws Exception
  */
-function simple_jwt_login_draw_endpoin_row($type, $endpoint)
+function simple_jwt_login_draw_endpoin_row($rule)
 {
+    $group = ProtectEndpointSettings::PROPERTY_GROUP;
+
     $requestMethodsOpts = [
         ProtectEndpointSettings::REQUEST_METHOD_GET    => __('GET', 'simple-jwt-login'),
         ProtectEndpointSettings::REQUEST_METHOD_POST   => __('POST', 'simple-jwt-login'),
@@ -30,44 +31,64 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
         ProtectEndpointSettings::ENDPOINT_MATCH_START_WITH => __('Starts with', 'simple-jwt-login'),
         ProtectEndpointSettings::ENDPOINT_MATCH_EXACT      => __('Exact match', 'simple-jwt-login'),
     ];
+
+    $typeOpts = [
+        ProtectEndpointSettings::RULE_TYPE_PUBLIC          => __('Public', 'simple-jwt-login'),
+        ProtectEndpointSettings::RULE_TYPE_PROTECTED       => __('JWT required', 'simple-jwt-login'),
+        ProtectEndpointSettings::RULE_TYPE_PROTECTED_ROLES => __('JWT + Roles', 'simple-jwt-login'),
+    ];
+
+    $ruleMethod = !empty($rule['method']) ? $rule['method'] : ProtectEndpointSettings::REQUEST_METHOD_ALL;
+    $ruleMatch  = !empty($rule['match']) ? $rule['match'] : ProtectEndpointSettings::ENDPOINT_MATCH_START_WITH;
+    $ruleType   = !empty($rule['type']) ? $rule['type'] : ProtectEndpointSettings::RULE_TYPE_PROTECTED;
+    $ruleUrl    = !empty($rule['url']) ? $rule['url'] : '';
+    $ruleRoles  = (!empty($rule['roles']) && is_array($rule['roles'])) ? implode(', ', $rule['roles']) : '';
+    $rolesHidden = $ruleType === ProtectEndpointSettings::RULE_TYPE_PROTECTED_ROLES ? '' : 'display:none;';
     ?>
     <div class="endpoint_row sjl-endpoint-row">
         <select class="sjl-endpoint-method-select"
-                name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP . '[' . $type . '_method][]'); ?>">
+                name="<?php echo esc_attr($group . '[rules_method][]'); ?>">
             <option value="<?php echo esc_attr(ProtectEndpointSettings::REQUEST_METHOD_ALL); ?>"
-                <?php echo (!empty($endpoint) && $endpoint['method'] == ProtectEndpointSettings::REQUEST_METHOD_ALL ? 'selected' : ''); ?>
+                <?php simple_jwt_login_selected_attr($ruleMethod === ProtectEndpointSettings::REQUEST_METHOD_ALL); ?>
             ><?php echo esc_html__('ALL', 'simple-jwt-login'); ?></option>
             <optgroup label="<?php echo esc_attr__('HTTP Methods', 'simple-jwt-login'); ?>">
                 <?php foreach ($requestMethodsOpts as $method => $translation) { ?>
                     <option value="<?php echo esc_attr($method); ?>"
-                        <?php echo (!empty($endpoint) && $endpoint['method'] == $method ? 'selected' : ''); ?>
+                        <?php simple_jwt_login_selected_attr($ruleMethod === $method); ?>
                     ><?php echo esc_html($translation); ?></option>
                 <?php } ?>
             </optgroup>
         </select>
         <select class="sjl-endpoint-match-select"
-                name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP . '[' . $type . '_match][]'); ?>">
+                name="<?php echo esc_attr($group . '[rules_match][]'); ?>">
             <?php foreach ($matchesOpts as $match => $translation) { ?>
                 <option value="<?php echo esc_attr($match); ?>"
-                    <?php echo (!empty($endpoint) && $endpoint['match'] === $match ? 'selected' : ''); ?>
+                    <?php simple_jwt_login_selected_attr($ruleMatch === $match); ?>
                 ><?php echo esc_html($translation); ?></option>
             <?php } ?>
         </select>
         <input type="text"
                class="form-control sjl-endpoint-url-input"
-               name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP . '[' . $type . '][]'); ?>"
-               value="<?php echo !empty($endpoint) ? esc_attr($endpoint['url']) : ''; ?>"
+               name="<?php echo esc_attr($group . '[rules_url][]'); ?>"
+               value="<?php echo esc_attr($ruleUrl); ?>"
                placeholder="<?php echo esc_attr__('/wp-json/namespace/endpoint', 'simple-jwt-login'); ?>"
         />
-            <?php if ($type === 'protect') { ?>
+        <select class="sjl-endpoint-type-select"
+                name="<?php echo esc_attr($group . '[rules_type][]'); ?>">
+            <?php foreach ($typeOpts as $type => $translation) { ?>
+                <option value="<?php echo esc_attr($type); ?>"
+                    <?php simple_jwt_login_selected_attr($ruleType === $type); ?>
+                ><?php echo esc_html($translation); ?></option>
+            <?php } ?>
+        </select>
         <input type="text"
                class="form-control sjl-endpoint-roles-input"
-               name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP . '[protect_roles][]'); ?>"
-               value="<?php echo (!empty($endpoint) && !empty($endpoint['roles'])) ? esc_attr(implode(', ', $endpoint['roles'])) : ''; ?>"
-               placeholder="<?php echo esc_attr__('roles: administrator, editor', 'simple-jwt-login'); ?>"
-               title="<?php echo esc_attr__('Comma-separated roles required to access this endpoint. Leave empty to allow any authenticated user.', 'simple-jwt-login'); ?>"
+               name="<?php echo esc_attr($group . '[rules_roles][]'); ?>"
+               value="<?php echo esc_attr($ruleRoles); ?>"
+               placeholder="<?php echo esc_attr__('administrator, editor', 'simple-jwt-login'); ?>"
+               title="<?php echo esc_attr__('Comma-separated roles required to access this endpoint.', 'simple-jwt-login'); ?>"
+               style="<?php echo esc_attr($rolesHidden); ?>"
         />
-            <?php } ?>
         <button type="button"
                 class="sjl-endpoint-remove"
                 onclick="sjlRemoveEndpointRow(jQuery(this));"
@@ -79,9 +100,32 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
 }
 
 /**
+ * Echoes the `selected` attribute when the condition is truthy.
+ * @param bool $isSelected
+ * @return void
+ */
+function simple_jwt_login_selected_attr($isSelected)
+{
+    echo $isSelected ? esc_html('selected') : esc_html('');
+}
+
+/**
+ * Echoes the `checked` attribute when the condition is truthy.
+ * @param bool $isChecked
+ * @return void
+ */
+function simple_jwt_login_checked_attr($isChecked)
+{
+    echo $isChecked ? esc_html('checked') : esc_html('');
+}
+
+/**
  * @var SettingsErrors $settingsErrors
  * @var SimpleJWTLoginSettings $jwtSettings
  */
+$protectSettings = $jwtSettings->getProtectEndpointsSettings();
+$defaultAction   = $protectSettings->getDefaultAction();
+$rules           = $protectSettings->getRules();
 ?>
 
 <div class="sjl-gen-card">
@@ -101,10 +145,7 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
                        id="protect_endpoints_enabled_no"
                        name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP); ?>[enabled]"
                        value="0"
-                    <?php echo !$jwtSettings->getProtectEndpointsSettings()->isEnabled()
-                        ? esc_html('checked')
-                        : esc_html('');
-                    ?>
+                    <?php simple_jwt_login_checked_attr(!$protectSettings->isEnabled()); ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Disabled', 'simple-jwt-login'); ?></span>
             </label>
@@ -113,10 +154,7 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
                        id="protect_endpoints_enabled_yes"
                        name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP); ?>[enabled]"
                        value="1"
-                    <?php echo $jwtSettings->getProtectEndpointsSettings()->isEnabled()
-                        ? esc_html('checked')
-                        : esc_html('');
-                    ?>
+                    <?php simple_jwt_login_checked_attr($protectSettings->isEnabled()); ?>
                 />
                 <span class="sjl-gen-radio-label"><?php echo esc_html__('Enabled', 'simple-jwt-login'); ?></span>
             </label>
@@ -124,99 +162,74 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
     </div>
 </div>
 
+<div class="sjl-gen-card" id="protected_endpoints_rules">
+    <div class="sjl-gen-card-header">
+        <span class="dashicons dashicons-lock"></span>
+        <div style="flex: 1;">
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Endpoint Rules', 'simple-jwt-login'); ?></h3>
+            <p class="sjl-gen-card-desc">
+                <?php echo esc_html__('Rules are evaluated top to bottom; the first matching rule wins. Set each endpoint as Public, JWT required, or JWT + Roles.', 'simple-jwt-login'); ?>
+            </p>
+        </div>
+        <span class="sjl-endpoint-count" id="rules_endpoint_count">
+            <?php echo count($rules); ?>
+        </span>
+    </div>
+    <div class="sjl-gen-card-body">
+        <?php if (!empty($rules)) { ?>
+        <div class="sjl-endpoint-header-row">
+            <span class="sjl-endpoint-col-label"><?php echo esc_html__('Method', 'simple-jwt-login'); ?></span>
+            <span class="sjl-endpoint-col-label"><?php echo esc_html__('Match', 'simple-jwt-login'); ?></span>
+            <span class="sjl-endpoint-col-label sjl-endpoint-col-url"><?php echo esc_html__('Endpoint', 'simple-jwt-login'); ?></span>
+            <span class="sjl-endpoint-col-label"><?php echo esc_html__('Type', 'simple-jwt-login'); ?></span>
+            <span class="sjl-endpoint-col-label sjl-endpoint-col-roles"><?php echo esc_html__('Roles', 'simple-jwt-login'); ?></span>
+            <span class="sjl-endpoint-col-label sjl-endpoint-col-del"></span>
+        </div>
+        <?php } ?>
+        <div id="endpoint-rules">
+            <?php foreach ($rules as $rule) {
+                simple_jwt_login_draw_endpoin_row($rule);
+            } ?>
+        </div>
+        <button type="button" class="btn btn-outline-secondary" id="add_rule_endpoint" style="margin-top: 10px;">
+            <?php echo esc_html__('+ Add Endpoint', 'simple-jwt-login'); ?>
+        </button>
+    </div>
+</div>
+
 <div class="sjl-gen-card">
     <div class="sjl-gen-card-header">
         <span class="dashicons dashicons-filter"></span>
         <div>
-            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Protection Scope', 'simple-jwt-login'); ?></h3>
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Default Action', 'simple-jwt-login'); ?></h3>
             <p class="sjl-gen-card-desc">
-                <?php echo esc_html__('Choose whether to apply JWT protection to all REST endpoints or only to specific ones.', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('What happens to any endpoint that does not match a rule above.', 'simple-jwt-login'); ?>
             </p>
         </div>
     </div>
     <div class="sjl-gen-card-body">
-        <label class="sjl-gen-field-label" for="protection_type">
-            <?php echo esc_html__('Apply protection to:', 'simple-jwt-login'); ?>
+        <label class="sjl-gen-field-label" for="protection_default_action">
+            <?php echo esc_html__('Default behavior for endpoints not listed above:', 'simple-jwt-login'); ?>
         </label>
-        <select id="protection_type"
-                name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP); ?>[action]"
+        <select id="protection_default_action"
+                name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP); ?>[default_action]"
                 class="form-control sjl-gen-select"
         >
-            <option value="<?php echo esc_attr(ProtectEndpointSettings::ALL_ENDPOINTS); ?>"
-                <?php echo $jwtSettings->getProtectEndpointsSettings()->getAction() === ProtectEndpointSettings::ALL_ENDPOINTS
-                    ? esc_html('selected')
-                    : esc_html('');
-                ?>
+            <option value="<?php echo esc_attr(ProtectEndpointSettings::DEFAULT_ALLOW_ALL); ?>"
+                <?php simple_jwt_login_selected_attr($defaultAction === ProtectEndpointSettings::DEFAULT_ALLOW_ALL); ?>
             >
-                <?php echo esc_html__('Apply on All REST Endpoints', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Allow access - protect only the endpoints listed above', 'simple-jwt-login'); ?>
             </option>
-            <option value="<?php echo esc_attr(ProtectEndpointSettings::SPECIFIC_ENDPOINTS); ?>"
-                <?php echo $jwtSettings->getProtectEndpointsSettings()->getAction() === ProtectEndpointSettings::SPECIFIC_ENDPOINTS
-                    ? esc_html('selected')
-                    : esc_html('');
-                ?>
+            <option value="<?php echo esc_attr(ProtectEndpointSettings::DEFAULT_PROTECT_ALL); ?>"
+                <?php simple_jwt_login_selected_attr($defaultAction === ProtectEndpointSettings::DEFAULT_PROTECT_ALL); ?>
             >
-                <?php echo esc_html__('Apply only on Specific REST endpoints', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Require a valid JWT - keep only the endpoints listed above public', 'simple-jwt-login'); ?>
             </option>
         </select>
     </div>
 </div>
 
-<div class="sjl-gen-card sjl-gen-card--whitelist" id="protected_endpoints_whitelisted">
-    <div class="sjl-gen-card-header">
-        <span class="dashicons dashicons-yes-alt"></span>
-        <div style="flex: 1;">
-            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Whitelisted Endpoints', 'simple-jwt-login'); ?></h3>
-            <p class="sjl-gen-card-desc">
-                <?php echo esc_html__('These endpoints will skip the JWT check and remain publicly accessible.', 'simple-jwt-login'); ?>
-            </p>
-        </div>
-        <span class="sjl-endpoint-count" id="whitelist_endpoint_count">
-            <?php echo count($jwtSettings->getProtectEndpointsSettings()->getWhitelistedDomains()); ?>
-        </span>
-    </div>
-    <div class="sjl-gen-card-body">
-        <div id="whitelisted-domains">
-            <?php foreach ($jwtSettings->getProtectEndpointsSettings()->getWhitelistedDomains() as $endpoint) {
-                simple_jwt_login_draw_endpoin_row('whitelist', $endpoint);
-            } ?>
-        </div>
-        <button type="button" class="btn btn-outline-secondary" id="add_whitelist_endpoint" style="margin-top: 10px;">
-            <?php echo esc_html__('+ Add Endpoint', 'simple-jwt-login'); ?>
-        </button>
-    </div>
-</div>
-
-<div class="sjl-gen-card sjl-gen-card--protected" id="protected_endpoints_protected">
-    <div class="sjl-gen-card-header">
-        <span class="dashicons dashicons-lock"></span>
-        <div style="flex: 1;">
-            <h3 class="sjl-gen-card-title"><?php echo esc_html__('Protected Endpoints', 'simple-jwt-login'); ?></h3>
-            <p class="sjl-gen-card-desc">
-                <?php echo esc_html__('A valid JWT will be required to access these endpoints.', 'simple-jwt-login'); ?>
-            </p>
-        </div>
-        <span class="sjl-endpoint-count" id="protected_endpoint_count">
-            <?php echo count($jwtSettings->getProtectEndpointsSettings()->getProtectedEndpoints()); ?>
-        </span>
-    </div>
-    <div class="sjl-gen-card-body">
-        <div id="protected-domains">
-            <?php foreach ($jwtSettings->getProtectEndpointsSettings()->getProtectedEndpoints() as $endpoint) {
-                simple_jwt_login_draw_endpoin_row('protect', $endpoint);
-            } ?>
-        </div>
-        <button type="button" class="btn btn-outline-secondary" id="add_protect_endpoint" style="margin-top: 10px;">
-            <?php echo esc_html__('+ Add Endpoint', 'simple-jwt-login'); ?>
-        </button>
-    </div>
-</div>
-
-<?php // Empty endpoint lines used by JS for inserting new rows ?>
-<div id="endpoint_whitelist_line" style="display: none;">
-    <?php simple_jwt_login_draw_endpoin_row('whitelist', null); ?>
-</div>
-
-<div id="endpoint_protect_line" style="display: none;">
-    <?php simple_jwt_login_draw_endpoin_row('protect', null); ?>
+<?php // Empty endpoint line used by JS for inserting new rows ?>
+<div id="endpoint_rule_line" style="display: none;">
+    <?php simple_jwt_login_draw_endpoin_row(null); ?>
 </div>

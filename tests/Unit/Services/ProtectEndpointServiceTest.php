@@ -619,4 +619,48 @@ class ProtectEndpointServiceTest extends TestCase
         $result = $service->hasAccess('/wp-json/wp/v2/posts', '/var/www/html');
         $this->assertTrue($result);
     }
+
+    public function testJwtRequiredRuleIgnoresSavedRoles()
+    {
+        $user = new stdClass();
+        $user->ID = 11;
+        $user->roles = ['subscriber'];
+
+        // Rule is "JWT required" but still has saved roles from a previous
+        // "JWT + Roles" configuration. The saved roles must be ignored.
+        $settings = [
+            ProtectEndpointSettings::PROPERTY_GROUP => [
+                'enabled'        => true,
+                'default_action' => ProtectEndpointSettings::DEFAULT_ALLOW_ALL,
+                'rules_url'      => ['/wp/v2/posts'],
+                'rules_type'     => [ProtectEndpointSettings::RULE_TYPE_PROTECTED],
+                'rules_roles'    => ['administrator'],
+            ],
+        ];
+
+        $this->wordPressData->method('getOptionFromDatabase')
+            ->willReturn(json_encode($settings));
+        $this->wordPressData->method('isUserLoggedIn')->willReturn(false);
+        $this->wordPressData->method('getUserProperty')->willReturn(11);
+        $this->wordPressData->method('getUserMeta')->willReturn([]);
+        $this->wordPressData->method('getUserRoles')->willReturn(['subscriber']);
+        $this->wordPressData->method('setCurrentUser')->willReturn(null);
+
+        $jwtSettings = new SimpleJWTLoginSettings($this->wordPressData);
+
+        $routeServiceMock = $this->createStub(RouteService::class);
+        $routeServiceMock->method('getUserFromJwt')->willReturn($user);
+
+        $service = (new ProtectEndpointService())
+            ->withRequest(['rest_route' => '/wp/v2/posts', 'JWT' => 'fake-jwt'])
+            ->withCookies([])
+            ->withRequestMethod('GET')
+            ->withServerHelper(new ServerHelper(['HTTP_AUTHORIZATION' => 'Bearer fake-jwt']))
+            ->withRouteService($routeServiceMock)
+            ->withSettings($jwtSettings)
+            ->withSession([]);
+
+        $result = $service->hasAccess('/wp-json/wp/v2/posts', '/var/www/html');
+        $this->assertTrue($result);
+    }
 }

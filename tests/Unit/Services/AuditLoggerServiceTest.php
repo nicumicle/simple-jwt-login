@@ -81,7 +81,6 @@ class AuditLoggerServiceTest extends TestCase
             ->with(
                 AuditEvents::AUTH_LOGIN_SUCCESS,
                 5,
-                'test@example.com',
                 '1.2.3.4',
                 'success',
                 null,
@@ -102,7 +101,6 @@ class AuditLoggerServiceTest extends TestCase
             ->with(
                 AuditEvents::AUTH_LOGIN_FAILED,
                 null,
-                'bad@example.com',
                 '10.0.0.1',
                 'failure',
                 'Wrong user credentials.',
@@ -129,7 +127,6 @@ class AuditLoggerServiceTest extends TestCase
             ->with(
                 $this->anything(),
                 $this->anything(),
-                $this->anything(),
                 '192.168.1.100',
                 $this->anything(),
                 $this->anything(),
@@ -150,7 +147,6 @@ class AuditLoggerServiceTest extends TestCase
             ->with(
                 AuditEvents::API_KEY_USED,
                 10,
-                null,
                 '1.2.3.4',
                 'success',
                 '{"url":"http://example.com/wp-json/wp/v2/posts"}',
@@ -178,7 +174,6 @@ class AuditLoggerServiceTest extends TestCase
             ->with(
                 AuditEvents::AUTH_LOGIN_SUCCESS,
                 1,
-                'a@b.com',
                 '1.2.3.4',
                 'success',
                 null,
@@ -220,7 +215,6 @@ class AuditLoggerServiceTest extends TestCase
             ->with(
                 AuditEvents::AUTH_LOGIN_SUCCESS,
                 5,
-                'test@example.com',
                 '1.2.3.4',
                 'success',
                 null,

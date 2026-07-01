@@ -194,7 +194,6 @@ class AuditLoggerService
         $this->repository->insert(
             $entry['eventType'],
             $entry['userId'],
-            $entry['userEmail'],
             $entry['ip'],
             $entry['status'],
             $entry['message'],

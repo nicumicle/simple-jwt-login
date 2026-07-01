@@ -7,19 +7,19 @@ interface Repository
     /**
      * @param string      $eventType
      * @param int|null    $userId
-     * @param string|null $userEmail
      * @param string|null $ipAddress
      * @param string      $status
      * @param string|null $message
      * @param int|null    $apiKeyId
      * @return bool
      */
-    public function insert($eventType, $userId, $userEmail, $ipAddress, $status, $message, $apiKeyId = null);
+    public function insert($eventType, $userId, $ipAddress, $status, $message, $apiKeyId = null);
 
     /**
      * Returns paginated log entries matching the given filters.
      *
      * Supported filter keys: event_type, status, user_id, user_email, date_from (Y-m-d), date_to (Y-m-d).
+     * The user email is resolved by joining the WordPress users table on user_id.
      *
      * @param array $filters
      * @param int   $page    1-based page number

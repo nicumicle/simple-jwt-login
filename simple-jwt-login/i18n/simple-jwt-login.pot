@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-29T03:09:50+00:00\n"
+"POT-Creation-Date: 2026-07-02T04:40:21+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -570,7 +570,7 @@ msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:151
 #: views/dashboard-view.php:83
-#: views/security/protect-endpoints-view.php:91
+#: views/security/protect-endpoints-view.php:135
 msgid "Protect Endpoints"
 msgstr ""
 
@@ -647,18 +647,18 @@ msgstr ""
 msgid "JWT Decoder"
 msgstr ""
 
-#: src/Modules/Settings/WebhooksSettings.php:155
+#: src/Modules/Settings/WebhooksSettings.php:159
 msgid "Webhook log retention days must be at least 1."
 msgstr ""
 
 #. translators: %d: webhook index number
-#: src/Modules/Settings/WebhooksSettings.php:174
+#: src/Modules/Settings/WebhooksSettings.php:178
 #, php-format
 msgid "Webhook #%d: invalid URL."
 msgstr ""
 
 #. translators: %d: webhook index number
-#: src/Modules/Settings/WebhooksSettings.php:189
+#: src/Modules/Settings/WebhooksSettings.php:193
 #, php-format
 msgid "Webhook #%d: only HTTPS URLs are allowed."
 msgstr ""
@@ -1639,7 +1639,7 @@ msgstr ""
 #: views/security/api-keys-view.php:73
 #: views/security/api-keys-view.php:109
 #: views/security/cors-view.php:37
-#: views/security/protect-endpoints-view.php:121
+#: views/security/protect-endpoints-view.php:159
 msgid "Enabled"
 msgstr ""
 
@@ -1655,7 +1655,7 @@ msgstr ""
 #: views/security/api-keys-view.php:67
 #: views/security/api-keys-view.php:103
 #: views/security/cors-view.php:31
-#: views/security/protect-endpoints-view.php:109
+#: views/security/protect-endpoints-view.php:150
 msgid "Disabled"
 msgstr ""
 
@@ -2915,7 +2915,7 @@ msgstr ""
 #: views/routes/auth-view.php:287
 #: views/routes/auth-view.php:468
 #: views/security/auth-codes-view.php:126
-#: views/security/protect-endpoints-view.php:74
+#: views/security/protect-endpoints-view.php:95
 msgid "Remove"
 msgstr ""
 
@@ -3686,8 +3686,8 @@ msgid "Allow external clients to authenticate using scoped API keys instead of J
 msgstr ""
 
 #: views/security/api-keys-view.php:79
-#: views/webhooks/config.php:142
-#: views/webhooks/config.php:292
+#: views/webhooks/config.php:153
+#: views/webhooks/config.php:313
 msgid "Header name"
 msgstr ""
 
@@ -3898,97 +3898,123 @@ msgstr ""
 msgid "Indicates which HTTP headers can be used during the actual request following a preflight."
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:22
+#: views/security/protect-endpoints-view.php:23
 msgid "GET"
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:23
+#: views/security/protect-endpoints-view.php:24
 msgid "POST"
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:24
+#: views/security/protect-endpoints-view.php:25
 msgid "PUT"
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:25
+#: views/security/protect-endpoints-view.php:26
 msgid "PATCH"
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:26
+#: views/security/protect-endpoints-view.php:27
 msgid "DELETE"
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:30
+#: views/security/protect-endpoints-view.php:31
 msgid "Starts with"
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:31
+#: views/security/protect-endpoints-view.php:32
 msgid "Exact match"
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:39
+#: views/security/protect-endpoints-view.php:36
+msgid "Public"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:37
+msgid "JWT required"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:38
+msgid "JWT + Roles"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:53
 msgid "ALL"
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:40
+#: views/security/protect-endpoints-view.php:54
 msgid "HTTP Methods"
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:60
+#: views/security/protect-endpoints-view.php:74
 msgid "/wp-json/namespace/endpoint"
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:67
-msgid "roles: administrator, editor"
+#: views/security/protect-endpoints-view.php:88
+msgid "administrator, editor"
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:68
-msgid "Comma-separated roles required to access this endpoint. Leave empty to allow any authenticated user."
+#: views/security/protect-endpoints-view.php:89
+msgid "Comma-separated roles required to access this endpoint."
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:93
+#: views/security/protect-endpoints-view.php:137
 msgid "When enabled, REST endpoints will require a valid JWT to be accessed. Requests without a JWT will receive an error instead of content."
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:131
-msgid "Protection Scope"
-msgstr ""
-
-#: views/security/protect-endpoints-view.php:133
-msgid "Choose whether to apply JWT protection to all REST endpoints or only to specific ones."
-msgstr ""
-
-#: views/security/protect-endpoints-view.php:139
-msgid "Apply protection to:"
-msgstr ""
-
-#: views/security/protect-endpoints-view.php:151
-msgid "Apply on All REST Endpoints"
-msgstr ""
-
-#: views/security/protect-endpoints-view.php:159
-msgid "Apply only on Specific REST endpoints"
-msgstr ""
-
 #: views/security/protect-endpoints-view.php:169
-msgid "Whitelisted Endpoints"
+msgid "Endpoint Rules"
 msgstr ""
 
 #: views/security/protect-endpoints-view.php:171
-msgid "These endpoints will skip the JWT check and remain publicly accessible."
+msgid "Rules are evaluated top to bottom; the first matching rule wins. Set each endpoint as Public, JWT required, or JWT + Roles."
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:181
+#: views/webhooks/config.php:98
+#: views/webhooks/config.php:237
+#: views/webhooks/logs-view.php:216
+msgid "Method"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:182
+msgid "Match"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:183
+msgid "Endpoint"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:184
+msgid "Type"
 msgstr ""
 
 #: views/security/protect-endpoints-view.php:185
-#: views/security/protect-endpoints-view.php:210
+msgid "Roles"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:195
 msgid "+ Add Endpoint"
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:194
-msgid "Protected Endpoints"
+#: views/security/protect-endpoints-view.php:204
+msgid "Default Action"
 msgstr ""
 
-#: views/security/protect-endpoints-view.php:196
-msgid "A valid JWT will be required to access these endpoints."
+#: views/security/protect-endpoints-view.php:206
+msgid "What happens to any endpoint that does not match a rule above."
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:212
+msgid "Default behavior for endpoints not listed above:"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:221
+msgid "Allow access - protect only the endpoints listed above"
+msgstr ""
+
+#: views/security/protect-endpoints-view.php:226
+msgid "Require a valid JWT - keep only the endpoints listed above public"
 msgstr ""
 
 #: views/webhooks/config.php:27
@@ -4003,72 +4029,76 @@ msgstr ""
 msgid "Enable Webhooks"
 msgstr ""
 
-#: views/webhooks/config.php:66
-#: views/webhooks/config.php:203
+#: views/webhooks/config.php:67
+#: views/webhooks/config.php:214
 msgid "New Webhook"
 msgstr ""
 
-#: views/webhooks/config.php:76
+#: views/webhooks/config.php:77
 msgid "Enable / Disable"
 msgstr ""
 
-#: views/webhooks/config.php:81
-#: views/webhooks/config.php:215
+#: views/webhooks/config.php:82
+#: views/webhooks/config.php:226
 msgid "Remove webhook"
 msgstr ""
 
-#: views/webhooks/config.php:90
-#: views/webhooks/config.php:222
+#: views/webhooks/config.php:91
+#: views/webhooks/config.php:233
 msgid "Endpoint URL"
 msgstr ""
 
-#: views/webhooks/config.php:97
-#: views/webhooks/config.php:226
-#: views/webhooks/logs-view.php:216
-msgid "Method"
+#: views/webhooks/config.php:108
+#: views/webhooks/config.php:247
+msgid "Timeout (seconds)"
 msgstr ""
 
-#: views/webhooks/config.php:110
-#: views/webhooks/config.php:238
+#: views/webhooks/config.php:114
+#: views/webhooks/config.php:253
+msgid "0 means no timeout."
+msgstr ""
+
+#: views/webhooks/config.php:121
+#: views/webhooks/config.php:259
 msgid "Trigger on Events"
 msgstr ""
 
-#: views/webhooks/config.php:131
-#: views/webhooks/config.php:253
+#: views/webhooks/config.php:142
+#: views/webhooks/config.php:274
 msgid "Custom Headers"
 msgstr ""
 
-#: views/webhooks/config.php:147
-#: views/webhooks/config.php:297
+#: views/webhooks/config.php:158
+#: views/webhooks/config.php:318
 msgid "Value"
 msgstr ""
 
-#: views/webhooks/config.php:150
-#: views/webhooks/config.php:300
+#: views/webhooks/config.php:161
+#: views/webhooks/config.php:321
 msgid "Remove header"
 msgstr ""
 
-#: views/webhooks/config.php:158
-#: views/webhooks/config.php:259
+#: views/webhooks/config.php:169
+#: views/webhooks/config.php:280
 msgid "Add Header"
 msgstr ""
 
-#: views/webhooks/config.php:165
-#: views/webhooks/config.php:265
+#: views/webhooks/config.php:176
+#: views/webhooks/config.php:286
 msgid "Custom Payload"
 msgstr ""
 
-#: views/webhooks/config.php:168
-#: views/webhooks/config.php:268
+#: views/webhooks/config.php:179
+#: views/webhooks/config.php:289
 msgid "Variables:"
 msgstr ""
 
-#: views/webhooks/config.php:177
-#: views/webhooks/config.php:277
+#: views/webhooks/config.php:188
+#: views/webhooks/config.php:298
 msgid "Leave empty to send the default payload. Click a variable to insert it at the cursor."
 msgstr ""
 
-#: views/webhooks/config.php:190
+#: views/webhooks/config.php:201
 msgid "+ Add Webhook"
 msgstr ""
 

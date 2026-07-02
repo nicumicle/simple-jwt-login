@@ -69,6 +69,10 @@ Table of contents
   * [Setup the Plugin](#setup-the-plugin)
 * [Features](#tada-features)
 * [Comparison](#bar_chart-how-simple-jwt-login-compares)
+* [Integrations](#link-integrations)
+  * [Two-Factor Authentication](#two-factor-authentication)
+  * [WooCommerce](#woocommerce)
+  * [Force Login](#force-login)
 * [Integrate](#electric_plug-integrate)
   * [PHP SDK](#php-sdk)
   * [JavaScript SDK](#javascript-sdk)
@@ -185,6 +189,9 @@ POST /wp-json/simple-jwt-login/v1/auth
 - **GitHub OAuth** - Allow users to log in with their GitHub account via OAuth
 - **Auth0 Login** - Allow users to log in via Auth0
 - **WPGraphQL support** - Works with WPGraphQL so headless frontends using GraphQL can authenticate through the same plugin
+- **Two-Factor Authentication** - Integrates with the [Two Factor](https://wordpress.org/plugins/two-factor/) plugin: `/auth` returns a short-lived interim JWT for users with 2FA enabled, which is then exchanged for a full JWT via `/auth/2fa` together with the user's TOTP, email, or backup code
+- **WooCommerce** - Authenticate WooCommerce REST API requests (`/wc/v1`, `/wc/v2`, `/wc/v3`) and the Store API (cart & checkout) with a JWT instead of consumer key/secret, independent of the global protect-endpoints middleware
+- **Force Login compatibility** - Lets Simple JWT Login's own REST endpoints bypass the [Force Login](https://wordpress.org/plugins/force-login/) plugin's site-wide login requirement
 - **Headless WordPress** - Purpose-built for Next.js, React, React Native, Flutter, and other API-first consumers
 - **Mobile app support** - Designed for mobile clients that need stateless, token-based authentication with refresh token rotation
 - **Plugin integrations** - Works alongside other plugins that extend the WordPress REST API
@@ -206,7 +213,8 @@ Most WordPress JWT plugins lock advanced features behind paid plans. Simple JWT 
 | Auth0 Login                        | ✅ Free           | ❌ Premium only                        |
 | Generic OAuth / OIDC               | ❌ Not yet        | ⚠️ Limited or Premium                 |
 | WPGraphQL Support                  | ✅ Free           | ❌ Not available                       |
-| TWO Factor Support                 | ✅ Free           | ❌ Not available                       |
+| Two-Factor Authentication          | ✅ Free           | ❌ Not available                       |
+| WooCommerce REST/Store API Auth    | ✅ Free           | ❌ Not available                       |
 | User Auto-create                   | ✅ Free           | ⚠️ Basic or Premium                   |
 | JWT Refresh Endpoint               | ✅ Free           | ❌ Premium only                        |
 | Custom JWT Claims                  | ✅ Free           | ⚠️ Via hooks or Premium               |
@@ -220,6 +228,35 @@ Most WordPress JWT plugins lock advanced features behind paid plans. Simple JWT 
 | SAML Support                       | ❌ Not yet        | ✅ Premium only                        |
 | Free Version Useful Without Upsell | ✅ Very strong    | ⚠️ Minimal or limited                 |
 | Minimum PHP Version                | ✅ PHP 5.5+       | ⚠️ PHP 7.0+                           |
+
+## :link: Integrations
+
+Third-party integrations are configured from the **Integrations** tab in the plugin admin. Each one is disabled by default and shows a warning if the target plugin is not installed/activated.
+
+### Two-Factor Authentication
+
+Integrates with the [Two Factor](https://wordpress.org/plugins/two-factor/) plugin so JWT issuance also enforces any 2FA method the user has configured (TOTP, email code, or backup codes).
+
+**How it works:**
+
+1. Client POSTs credentials to `/auth`. If the user has 2FA configured, the plugin returns a short-lived **interim JWT** instead of a full JWT.
+2. Client submits the interim JWT plus the 2FA code to `POST /auth/2fa`.
+3. On success, a full JWT (and optional refresh token) is returned, identical to a normal `/auth` response.
+
+The interim JWT TTL is configurable (default: 5 minutes). Browser-based OAuth logins (Google, Facebook, GitHub, Auth0) that hit a 2FA-enabled account are redirected to an in-page 2FA code form before the WordPress session is created.
+
+[Read more](https://simplejwtlogin.com/docs/) on our website.
+
+### WooCommerce
+
+Authenticate [WooCommerce](https://woocommerce.com/) REST API (`/wc/v1`, `/wc/v2`, `/wc/v3`) and Store API (`/wc/store/v1`, including cart & checkout) requests using a JWT instead of consumer key/secret pairs.
+
+* Works independently of the global "Protect Endpoints" middleware - JWT authentication on WooCommerce routes is always active once the integration is enabled.
+* Optional **Store API cart & checkout** toggle lets header (`Authorization: Bearer`) JWT requests skip WooCommerce's Store API CSRF nonce check, enabling a fully headless cart and checkout flow. Cookie- and URL-based tokens always keep the nonce requirement, since only header tokens are immune to CSRF.
+
+### Force Login
+
+Lets Simple JWT Login's own REST endpoints bypass the [Force Login](https://wordpress.org/plugins/force-login/) plugin's site-wide "require login to view any page" restriction, so external clients can still reach `/auth`, `/autologin`, and other plugin routes without an existing WordPress session.
 
 ## :electric_plug: Integrate
 

@@ -2,7 +2,7 @@
 
 Contributors: nicu_m
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PK9BCD6AYF58Y&source=url
-Tags: jwt, authentication, refresh token, api keys, headless wordpress
+Tags: jwt, authentication, rest api, oauth, headless wordpress
 Requires at least: 4.4.0
 Tested up to: 7.0
 Requires PHP: 5.5
@@ -33,231 +33,133 @@ Full documentation is available at [https://simplejwtlogin.com](https://simplejw
 
 == Zero Code Required ==
 
-Everything in Simple JWT Login is configured through a clean, tab-based admin UI inside WordPress. There is nothing to hard-code, no configuration files to edit, and no PHP snippets required to get started.
+Everything is configured through a clean, tab-based admin UI - no PHP, config files, or code snippets required.
 
 * Enable or disable any feature with a single toggle
-* Copy auto-generated sample endpoint URLs directly from the admin to test in your browser or API client
-* Manage API keys, audit logs, auth codes, webhooks, and OAuth providers all from the same settings page
-* Live URL preview updates as you type your custom redirect or endpoint configuration
+* Copy auto-generated sample endpoint URLs to test in your browser or API client
+* Manage API keys, audit logs, auth codes, webhooks, and OAuth providers from the same settings page
 
-Whether you are a developer or a non-technical WordPress admin, you can have JWT authentication running in under five minutes.
+Have JWT authentication running in under five minutes, no coding required.
 
 == Features ==
 
 **Authentication & Tokens**
 
-* Generate, validate, and revoke JWTs via a dedicated REST endpoint
-* Refresh tokens - renew a JWT without asking for credentials again, with automatic rotation
-* Custom JWT claims - embed arbitrary payload data your app can read after decoding
-* Auth codes - add an extra protection layer to any endpoint, with optional expiration dates and per-code user roles
-* API Keys - issue per-client keys as an alternative credential for obtaining JWTs
-* Authenticate with WordPress email, username, or password hash
-* Token delivered via URL parameter, Authorization header, Cookie, or Session
-* Supports HS256, HS384, HS512, RS256, RS384, RS512 signing algorithms
-* Configurable JWT issuer (`iss` claim)
+* Generate, validate, and revoke JWTs via REST
+* Refresh tokens with automatic rotation
+* Custom JWT claims and configurable issuer (`iss`)
+* Auth codes - extra endpoint protection with optional expiry and per-code roles
+* API Keys as an alternative credential
+* Authenticate by email, username, or password hash
+* Token via URL parameter, header, cookie, or session
+* HS256/384/512 and RS256/384/512 signing algorithms
 
 **User Management**
 
-* Auto-login to WordPress with a valid JWT - redirect to dashboard, homepage, or any custom URL
-* Register new users via REST endpoint with optional auto-create on first OAuth login
-* Delete WordPress users based on JWT payload (by email or user ID)
-* Reset and change user passwords via REST endpoints with customizable email templates
-* Set custom `user_meta` fields during user registration
-* Limit all operations by IP address allowlist
-* Limit user registration by email domain allowlist
-* Auto-login redirect supports dynamic URL variables: `{{user_id}}`, `{{user_email}}`, `{{user_login}}`, `{{user_first_name}}`, `{{user_last_name}}`, `{{user_nicename}}`, `{{site_url}}`
+* Auto-login via JWT - redirect to dashboard, homepage, or a custom URL
+* Register users via REST, with optional auto-create on first OAuth login
+* Delete users by JWT payload (email or ID)
+* Reset/change passwords via REST with custom email templates
+* Custom `user_meta` on registration
+* IP allowlist and email-domain allowlist
+* Dynamic redirect variables: `{{user_id}}`, `{{user_email}}`, `{{user_login}}`, `{{site_url}}`, etc.
 
 **OAuth & Social Login**
 
-* **Google OAuth** - log in with a Google account via OAuth 2.0
-* **Google JWT** - accept a Google `id_token` directly on WordPress REST endpoints
-* **Facebook OAuth** - log in with a Facebook account via OAuth
-* **GitHub OAuth** - log in with a GitHub account via OAuth
-* **Auth0** - authenticate users through an Auth0 tenant
+* Google OAuth and Google JWT (`id_token`)
+* Facebook, GitHub, and Auth0 OAuth login
+
+**Third-Party Integrations**
+
+* **Two-Factor Authentication** - enforces the [Two Factor](https://wordpress.org/plugins/two-factor/) plugin's 2FA (TOTP, email code, backup codes) on `/auth`
+* **WooCommerce** - JWT authentication for the WooCommerce REST API and Store API (cart & checkout)
+* **Force Login** - lets plugin endpoints bypass the [Force Login](https://wordpress.org/plugins/force-login/) restriction
+* **WPGraphQL** - authenticate GraphQL queries for headless frontends
 
 **Visibility & Integrations**
 
-* Audit logs - detailed records of every login, registration, and authentication event for compliance and debugging
-* Webhooks - fire outbound HTTP callbacks on login, register, and authentication events to connect with external services
-* Protect endpoints - require a valid JWT to access any WordPress REST route, with per-endpoint or global configuration
-* HTTP method filtering on protected endpoints (GET, POST, PUT, DELETE, etc.)
-* External API authentication - act as an authenticated WordPress user on any REST endpoint by attaching a JWT
-* **WPGraphQL** - authenticate GraphQL queries so headless frontends powered by WPGraphQL work out of the box
+* Audit logs for login, registration, and authentication events
+* Webhooks on login, registration, and authentication events
+* Protect endpoints - gate any REST route behind a JWT, with per-method filtering
+* External API authentication as an authenticated WordPress user
 * CORS configuration for all plugin routes
-* Extensible hooks system for custom workflows
+* Extensible hooks system
 * Configurable REST API namespace
 
 == How Simple JWT Login Compares ==
 
 Most WordPress JWT plugins lock advanced features behind paid plans. Here is what you get for **free** with Simple JWT Login compared to the typical alternative:
 
-* JWT Authentication - free vs. free elsewhere
-* Refresh Tokens - FREE here vs. paid or unavailable elsewhere
-* API Keys - FREE here vs. premium only elsewhere
-* Audit Logs - FREE here vs. premium only elsewhere
-* Webhooks - FREE here vs. premium only elsewhere
-* Google OAuth Login - FREE here vs. premium only elsewhere
-* Facebook OAuth Login - FREE here vs. premium only elsewhere
-* GitHub OAuth Login - FREE here vs. premium only elsewhere
-* Auth0 Login - FREE here vs. premium only elsewhere
-* WPGraphQL Support - FREE here vs. not available elsewhere
-* Custom JWT Claims - FREE here vs. hooks or premium elsewhere
-* Headless WordPress - strong focus here vs. basic or SSO-focused elsewhere
-* PHP 5.5+ support - yes here vs. PHP 7.0+ required elsewhere
+* JWT Authentication - free everywhere
+* Refresh Tokens - free here, often paid or unavailable elsewhere
+* API Keys, Audit Logs, Webhooks - free here, premium only elsewhere
+* OAuth Login (Google, Facebook, GitHub, Auth0) - free here, premium only elsewhere
+* WPGraphQL, Two-Factor, WooCommerce Auth - free here, not available elsewhere
+* Custom JWT Claims - free here, hooks or premium elsewhere
+* Headless WordPress focus - strong here, basic or SSO-focused elsewhere
+* PHP 5.5+ support - yes here, PHP 7.0+ required elsewhere
 
 == Authentication ==
 
-The `/auth` endpoint is the entry point for generating JWTs from WordPress credentials.
+The `/auth` endpoint issues JWTs from WordPress credentials.
 
-**Generate a JWT:**
-
-Make a POST request to `{your-site}/wp-json/simple-jwt-login/v1/auth` with your WordPress email (or username) and password. The response includes both a short-lived JWT and a long-lived refresh token:
+**Generate:** POST to `{your-site}/wp-json/simple-jwt-login/v1/auth` with email (or username) and password. Returns a JWT and a refresh token:
 
 ``
-{
-    "success": true,
-    "data": {
-        "jwt": "GENERATED_JWT_HERE",
-        "refresh_token": "GENERATED_REFRESH_TOKEN_HERE"
-    }
-}
+{ "success": true, "data": { "jwt": "...", "refresh_token": "..." } }
 ``
 
-**Refresh a JWT without re-authentication:**
+**Refresh:** POST to `/auth/refresh` with `refresh_token` to get a new JWT and refresh token.
 
-POST to `{your-site}/wp-json/simple-jwt-login/v1/auth/refresh` with your `refresh_token`. A new JWT and a new refresh token are returned automatically.
+**Validate:** GET or POST to `/auth/validate` to check a JWT and retrieve the associated user.
 
-**Validate a JWT:**
+**Revoke:** POST to `/auth/revoke` with `jwt` to invalidate it immediately.
 
-GET or POST to `/auth/validate` to check whether a JWT is still valid and retrieve details about the associated WordPress user.
-
-**Revoke a JWT:**
-
-POST to `/auth/revoke` with the `jwt` parameter. The token is immediately invalidated.
-
-The plugin auto-generates sample URLs in the admin for each of these scenarios so you can test without writing code.
+Sample URLs for each scenario are auto-generated in the admin.
 
 [Read more](https://simplejwtlogin.com/docs/authentication/) on our website.
 
 == Auto-Login ==
 
-Auto-login lets any external app, website, or mobile client log in a WordPress user just by embedding a valid JWT in the request - no password exchange needed on the WordPress side.
+Auto-login lets any external client log in a WordPress user just by presenting a valid JWT - no password exchange needed.
 
-**How to send the JWT:**
+**JWT sources:** URL parameter (`?jwt=...`), `Authorization: Bearer` header, cookie (`simple-jwt-login-token`), or PHP session - all configurable, header takes precedence when several are present.
 
-1. URL parameter: `?jwt=YOUR_JWT_HERE` (the parameter name is configurable)
-2. Authorization header: `Authorization: Bearer YOUR_JWT_HERE`
-3. Cookie: `$_COOKIE['simple-jwt-login-token']`
-4. PHP Session: `$_SESSION['simple-jwt-login-token']`
+**Redirect after login:** dashboard, homepage, or a custom URL, optionally overridden per-request via `redirectUrl` when enabled. Redirect targets support dynamic variables replaced before the redirect fires: `{{site_url}}`, `{{user_id}}`, `{{user_email}}`, `{{user_login}}`, `{{user_first_name}}`, `{{user_last_name}}`, `{{user_nicename}}` - e.g. `?uid={{user_id}}&ref={{user_login}}`.
 
-If a JWT appears in multiple locations, the header takes precedence.
-
-**After login, redirect users to:**
-
-* The WordPress dashboard
-* The site homepage
-* Any custom URL you define
-
-You can also pass a `redirectUrl` query parameter at runtime to override the configured destination, if the "Allow redirect to a specific URL" option is enabled.
-
-**Dynamic URL variables for redirect targets:**
-
-Build personalized landing pages or dashboard links using these variables - they are replaced with real values before the redirect fires:
-
-* `{{site_url}}` - site base URL
-* `{{user_id}}` - logged-in user's WordPress ID
-* `{{user_email}}` - logged-in user's email address
-* `{{user_login}}` - logged-in username
-* `{{user_first_name}}` - user's first name
-* `{{user_last_name}}` - user's last name
-* `{{user_nicename}}` - URL-friendly user slug
-
-Example: `https://yourdomain.com/dashboard?uid={{user_id}}&ref={{user_login}}`
-
-**Security options:**
-
-* Restrict auto-login to specific client IP addresses
-* Require an Auth Code alongside the JWT
+**Security:** restrict to specific client IPs, or require an Auth Code alongside the JWT.
 
 [Read more](https://simplejwtlogin.com/docs/autologin/) on our website.
 
 == Register Users ==
 
-This feature is disabled by default. When enabled, external clients can create new WordPress users via the REST API without needing an admin session.
+Disabled by default. When enabled, external clients can create WordPress users via REST without an admin session.
 
-**Basic usage:**
+POST to `{your-site}/wp-json/simple-jwt-login/v1/users` with at least `email` and `password` (password is optional if "Generate random password" is enabled).
 
-POST to `{your-site}/wp-json/simple-jwt-login/v1/users` with at least `email` and `password`. The new user is created and a JSON response is returned.
+**Optional fields:** `user_login`, `user_nicename`, `user_url`, `display_name`, `nickname`, `first_name`, `last_name`, `description`, `locale`, `user_registered` (`Y-m-d H:i:s`).
 
-**Optional registration parameters:**
+**Custom user meta:** pass a `user_meta` JSON object - every key/value pair is saved as WordPress user meta for the new account.
 
-- **email** (required) - user email address
-- **password** (required) - plain-text password (omit if "Generate random password" is enabled)
-- **user_login** - username
-- **user_nicename** - URL-friendly username
-- **user_url** - user website URL
-- **display_name** - display name shown publicly
-- **nickname** - user nickname
-- **first_name** - first name
-- **last_name** - last name
-- **description** - biographical description
-- **locale** - user locale
-- **user_registered** - registration date in `Y-m-d H:i:s` format
-
-**Custom user meta on registration:**
-
-Pass a `user_meta` parameter with a JSON object. Every key-value pair is saved as WordPress user meta for the new account:
-
-``
-{
-    "meta_key": "meta_value",
-    "subscription_tier": "free"
-}
-``
-
-**Useful configuration options:**
-
-* Set the default WordPress role for newly registered users (subscriber, editor, author, contributor, etc.)
-* Generate a random password automatically - `password` parameter becomes optional
-* Trigger auto-login flow immediately after registration completes
-* Limit registrations to specific IP addresses
-* Limit registrations to specific email domains (e.g. allow only `@yourcompany.com`)
-* Override the default user role per Auth Code, allowing multiple registration tiers from one endpoint
+**Options:** default role for new users, auto-generated random password, trigger auto-login right after registration, IP and email-domain allowlists, and per-Auth-Code role overrides for multi-tier registration from a single endpoint.
 
 [Read more](https://simplejwtlogin.com/docs/register-user/) on our website.
 
 == API Keys ==
 
-API keys provide an alternative credential for clients that need to obtain JWTs without sending a WordPress password on every request.
+API keys are an alternative credential for obtaining JWTs without sending a WordPress password on every request. Each key is scoped to a client and can be revoked independently - useful for server-to-server integrations, CI pipelines, and long-lived credentials.
 
-Each key is scoped to a specific client and can be revoked independently without affecting other integrations. This is useful for server-to-server integrations, CI pipelines, and any scenario where long-lived credentials are needed but passwords are unsuitable.
-
-Manage your API keys from the **API Keys** tab in the plugin settings. The admin shows a paginated, searchable list of all issued keys along with their creation date and status.
+Manage keys from the **API Keys** tab: a paginated, searchable list with creation date and status.
 
 == Audit Logs ==
 
-The Audit Logs tab provides a complete, timestamped record of every login, registration, and authentication event handled by the plugin.
-
-Use audit logs to:
-
-* Debug failed authentication attempts
-* Monitor unusual login patterns
-* Satisfy compliance requirements that demand an access record
-* Trace which client or JWT triggered a specific event
-
-The logs view is paginated and filterable directly from the WordPress admin.
+The Audit Logs tab records every login, registration, and authentication event handled by the plugin - useful for debugging failed attempts, monitoring unusual patterns, compliance, and tracing which client or JWT triggered an event. The log view is paginated and filterable in the admin.
 
 == Delete User ==
 
-This feature is disabled by default.
+Disabled by default. When enabled, a DELETE request to the users endpoint with a valid JWT removes the associated WordPress account.
 
-When enabled, a DELETE request to the users endpoint with a valid JWT will remove the associated WordPress account.
-
-**Configuration:**
-
-* Choose whether to identify the user by **email address** or **WordPress user ID**
-* Set the JWT payload key where that identifier is stored
-* Restrict deletions to specific IP addresses for an extra layer of protection
+Identify the user by **email address** or **WordPress user ID** (configurable JWT payload key), and optionally restrict deletions to specific IPs.
 
 [Read more](https://simplejwtlogin.com/docs/delete-user/) on our website.
 
@@ -265,179 +167,97 @@ When enabled, a DELETE request to the users endpoint with a valid JWT will remov
 
 Both the reset password and change password endpoints are disabled by default.
 
-**Reset password flow:**
+**Flow:** POST to `/user/reset_password` with the user's email to send a reset code, then POST to `/user/change_password` with the code and new password to complete the change.
 
-1. POST to `/user/reset_password` with the user's email. The plugin sends a reset code to that address.
-2. POST to `/user/change_password` with the reset code and the new password to complete the change.
-
-**Customization options:**
-
-* Customize the reset email subject and body from the plugin settings
-* Override the email template entirely via the `simple_jwt_login_reset_password_custom_email_template` filter hook
-* Skip sending the email altogether and handle delivery yourself via the same hook
+Customize the reset email subject/body from settings, or fully override/skip it via the `simple_jwt_login_reset_password_custom_email_template` filter.
 
 [Read more](https://simplejwtlogin.com/docs/reset-password/) on our website.
 
 == Auth Codes ==
 
-Auth codes are optional access tokens that add a layer of protection to any plugin endpoint. They are independent of the JWT and are checked before the JWT is validated.
+Auth codes are optional shared secrets that add a layer of protection to any endpoint, checked independently of the JWT. Enable the requirement separately for auto-login, registration, and user deletion.
 
-Enable auth code requirements separately for: auto-login, user registration, and user deletion.
+Each code has an **Authentication Key**, an optional **WordPress User Role** override (falls back to the Register Settings default when blank), and an optional **Expiration Date** (`YYYY-MM-DD HH:mm:ss`, blank = never expires).
 
-Each auth code has three properties:
-
-1. **Authentication Key** - the value the client must include in the request
-2. **WordPress User Role** - optional override for the role assigned when creating users via this code. If blank, the default from Register Settings is used.
-3. **Expiration Date** - optional. Format: `YYYY-MM-DD HH:mm:ss`. Leave blank for a non-expiring code.
-
-Auth codes are also how you support multiple user tiers from a single registration endpoint: create one code per role, and the correct role is applied based on which code the client sends.
+Create one code per role to support multiple registration tiers from a single endpoint.
 
 [Read more](https://simplejwtlogin.com/docs/auth-codes/) on our website.
 
 == Protect Endpoints ==
 
-When enabled, this feature gates WordPress REST endpoints behind JWT authentication so only clients with a valid token can access them.
+Gates WordPress REST endpoints behind JWT authentication so only clients with a valid token can access them.
 
-**Two protection modes:**
+**Modes:** protect all endpoints (with a whitelist of exceptions, e.g. `wp/v2/posts` for public reads) or protect only the endpoints you list, each with optional per-method filtering (e.g. protect POST/DELETE but leave GET public) and exact or starts-with matching.
 
-* **Apply on All REST Endpoints** - protects every route and lets you whitelist exceptions (e.g. add `wp/v2/posts` to allow public read access to posts while protecting everything else)
-* **Apply on Specific Endpoints** - protects only the routes you explicitly list
-
-**Per-endpoint HTTP method filtering:**
-
-You can restrict protection to specific HTTP methods on each endpoint. For example, protect POST and DELETE on `wp/v2/posts` while leaving GET public.
-
-**Endpoint matching options:**
-
-* Exact match
-* Starts-with match (useful for protecting entire namespaces)
-
-When a request reaches a protected endpoint without a valid JWT, the plugin returns:
+Unauthorized requests receive:
 
 ``
-{
-    "success": false,
-    "data": {
-        "message": "Your are not authorized to access this endpoint.",
-        "error_code": 403,
-        "type": "simple-jwt-login-route-protect"
-    }
-}
+{ "success": false, "data": { "message": "...", "error_code": 403, "type": "simple-jwt-login-route-protect" } }
 ``
 
 [Read more](https://simplejwtlogin.com/docs/protect-endpoints/) on our website.
 
 == Webhooks ==
 
-Webhooks let you notify external services in real time when authentication events occur in WordPress.
+Fire outbound HTTP callbacks to external services on login, registration, and JWT authentication events - useful for syncing users to a CRM, triggering downstream workflows, or logging.
 
-Configure one or more webhook URLs for each of these events:
+The **Webhook Logs** tab shows the result of each call so you can verify delivery and debug failures.
 
-* User login
-* User registration
-* JWT authentication
+== Two-Factor Authentication ==
 
-The plugin fires an HTTP request to each configured URL with event data as the payload. Use webhooks to sync users to a CRM, trigger downstream workflows, or pipe events to a logging service.
+Disabled by default. Integrates with the free [Two Factor](https://wordpress.org/plugins/two-factor/) plugin so JWT issuance respects a user's configured 2FA method (TOTP, email code, or backup codes).
 
-The **Webhook Logs** tab in admin shows the result of each outbound call so you can verify delivery and debug failures.
+**Flow:** `/auth` returns a short-lived **interim JWT** instead of a full JWT when 2FA is required. Submit the interim JWT plus the 2FA code to `POST /auth/2fa` to receive the full JWT (and refresh token, if enabled). The interim JWT TTL is configurable (default: 5 minutes).
+
+Browser OAuth logins (Google, Facebook, GitHub, Auth0) redirect to an in-page 2FA form before the WordPress session starts. Use the Two Factor plugin's own `two_factor_user_api_login_enable` filter to bypass 2FA for specific API clients.
+
+Requires the Two Factor plugin installed and activated.
+
+== WooCommerce ==
+
+Disabled by default. Authenticates [WooCommerce](https://woocommerce.com/) REST API (`/wc/v1`-`/wc/v3`) and Store API (`/wc/store/v1`, including cart & checkout) requests with a JWT instead of consumer key/secret - independent of the global Protect Endpoints middleware.
+
+**Store API cart & checkout (optional):** lets header (`Authorization: Bearer`) JWT requests skip the Store API's CSRF nonce check, enabling headless cart/checkout with the token alone. Cookie and URL tokens always keep the nonce, since only header tokens are immune to CSRF. Off by default - enable only for headless storefronts, and always use HTTPS.
+
+Requires the WooCommerce plugin installed and activated.
+
+== Force Login ==
+
+Disabled by default. Lets Simple JWT Login's own REST endpoints (`/auth`, `/autologin`, etc.) bypass the [Force Login](https://wordpress.org/plugins/force-login/) plugin's site-wide login requirement, so external clients can authenticate without an existing WordPress session.
+
+Requires the Force Login plugin installed and activated.
 
 == Hooks ==
 
-The plugin exposes action and filter hooks so developers can extend or customize behavior without modifying plugin files.
+Action and filter hooks let developers extend or customize behavior without modifying plugin files.
 
-**Action hooks:**
+**Action hooks:** `simple_jwt_login_login_hook` (after JWT login), `simple_jwt_login_redirect_hook` (before post-login redirect), `simple_jwt_login_register_hook` (after registration), `simple_jwt_login_delete_user_hook` (after user deletion), `simple_jwt_login_before_endpoint` (before any plugin route).
 
-* `simple_jwt_login_login_hook(WP_User $user)` - fires after a user logs in via JWT
-* `simple_jwt_login_redirect_hook(string $url, array $request)` - fires before the post-login redirect, allowing URL modification
-* `simple_jwt_login_register_hook(WP_User $user, string $plain_text_password)` - fires after a new user is registered
-* `simple_jwt_login_delete_user_hook(WP_User $user)` - fires immediately after a user is deleted
-* `simple_jwt_login_before_endpoint` - fires before any plugin route is initialized
+**Filter hooks:** `simple_jwt_login_jwt_payload_auth` (modify the `/auth` JWT payload before signing), `simple_jwt_login_no_redirect_message` (customize the `/autologin` no-redirect JSON response), `simple_jwt_login_reset_password_custom_email_template` (customize/override the reset password email).
 
-**Filter hooks:**
-
-* `simple_jwt_login_jwt_payload_auth(array $payload, array $request)` - modify JWT payload on `/auth` endpoint before the token is signed
-* `simple_jwt_login_no_redirect_message(array $payload, array $request)` - customize the JSON response on `/autologin` when "No Redirect" mode is active
-* `simple_jwt_login_reset_password_custom_email_template(string $template, array $request)` - replace or modify the reset password email body
-
-**Example: Send a welcome email on registration**
+**Example - welcome email on registration:**
 
 ``
 add_action('simple_jwt_login_register_hook', function ($user, $password) {
-    wp_mail(
-        $user->user_email,
-        'Welcome',
-        'Your account is ready. Email: ' . $user->user_email . ' / Password: ' . $password
-    );
+    wp_mail($user->user_email, 'Welcome', 'Your account is ready.');
 }, 10, 2);
 ``
 
-**Example: Add user data to the no-redirect autologin response**
-
-``
-add_filter('simple_jwt_login_no_redirect_message', function ($response, $request) {
-    $response['userId']      = get_current_user_id();
-    $response['userDetails'] = wp_get_current_user();
-    return $response;
-}, 10, 2);
-``
-
-**Example: Modify the reset password email template**
-
-``
-add_filter('simple_jwt_login_reset_password_custom_email_template', function ($template, $request) {
-    return $template . ' - Sent by Acme Corp';
-}, 10, 2);
-``
-
-View the full list of hooks at [https://simplejwtlogin.com/docs/hooks](https://simplejwtlogin.com/docs/hooks).
+View the full list of hooks with parameters at [simplejwtlogin.com/docs/hooks](https://simplejwtlogin.com/docs/hooks).
 
 == CORS ==
 
-Configure Cross-Origin Resource Sharing (CORS) headers for all plugin REST routes from the CORS tab.
-
-This is essential when your headless frontend (Next.js, React, Vue, etc.) is hosted on a different domain than your WordPress backend. Without correct CORS headers, browser-based clients are blocked from calling the plugin's endpoints.
-
-The plugin lets you configure allowed origins, methods, and headers without touching server configuration files.
+Configure Cross-Origin Resource Sharing (CORS) headers for all plugin REST routes from the CORS tab - essential when your headless frontend runs on a different domain than WordPress. Set allowed origins, methods, and headers without touching server configuration.
 
 [Read more](https://simplejwtlogin.com/docs/cors/) on our website.
 
 == Integration ==
 
-**PHP SDK**
+**PHP SDK:** `composer require nicumicle/simple-jwt-login-client-php` - see the [package page](https://packagist.org/packages/nicumicle/simple-jwt-login-client-php) for examples.
 
-A Composer package is available for PHP applications:
+**JavaScript SDK:** `npm install simple-jwt-login` (or `yarn add simple-jwt-login`) - see the [JS SDK repository](https://github.com/simple-jwt-login/js-sdk).
 
-``
-composer require nicumicle/simple-jwt-login-client-php
-``
-
-See the [package page](https://packagist.org/packages/nicumicle/simple-jwt-login-client-php) for code examples.
-
-**JavaScript SDK**
-
-An npm/yarn package is available for JavaScript and TypeScript applications:
-
-``
-npm install "simple-jwt-login"
-``
-
-or
-
-``
-yarn add "simple-jwt-login"
-``
-
-See the [JavaScript SDK repository](https://github.com/simple-jwt-login/js-sdk) for full documentation.
-
-**CLI**
-
-A command-line tool is available for scripting, testing, and local development workflows:
-
-``
-# Install and use the CLI to interact with all plugin endpoints from your terminal
-``
-
-See the [CLI repository](https://github.com/simple-jwt-login/simple-jwt-login-cli) for installation instructions.
+**CLI:** a command-line tool for scripting, testing, and local development - see the [CLI repository](https://github.com/simple-jwt-login/simple-jwt-login-cli) for installation.
 
 == Screenshots ==
 
@@ -630,258 +450,14 @@ A complete changelog is available on the [GitHub repository](https://github.com/
 = 3.5.0 (04 Jan 2023) =
 - Fix unable to create post issue when protect endpoints is enabled for all endpoints
 - Search user by email on reset password
-- Switch `get_user_by_email` to `get_user_by()` due to [deprecation](https://developer.wordpress.org/reference/functions/get_user_by_email/)
-- Remove method `convertUserToArray` from WordPressData.
 - Drop support for PHP 5.3 and PHP 5.4
 
-= 3.4.10 (14 Dec 2022) =
-- Fix issue with rest routes
+For the full history back to 1.0.0 (2019), see the [Changelog on GitHub](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md).
 
-= 3.4.9 (04 Dec 2022) =
-- Add Strength indicator for JWT decryption key
-- Allow setting custom length for random password. The default is 10 characters.
-- Allow sending base_64 encoded `password` and `passhash` on the `/auth` endpoint
-- Fix issue with `includeRequestParameters` that has been building incorrect URLs
-- Add query parameters filter on autologin redirect
-- Add the `simple_jwt_login_before_endpoint` hook before all simple-jwt-login routes are initialized
+== Upgrade Notice ==
 
-= 3.4.8 (04 Nov 2022) =
-- Add filter to allow the change for authentication payload
-- Change how we log in the user on while using the "protect endpoint" feature
-- Refactor Route Service getUserFromJWT method
-- Sanitize data from request
-- Fix password issue when it contains special characters
-- `/auth/validate` endpoint supports both `GET` and `POST` methods
+= 4.0.0 =
+New UI plus API Keys, Audit Logs, Facebook/GitHub OAuth, and WPGraphQL integration. No breaking changes - review the new Integrations tab after updating.
 
-= 3.4.7 (02 Oct 2022) =
-- Remove unused code from the JWT library
-- Move JWT Library to a folder
-- Stay on current page after saving settings
-- Some small text sanitizations
-- Change how views are loaded in order to prevent "local file inclusion risk"
-
-= 3.4.6 (27 Apr 2022) =
-- Fix user_meta when passed as json in request body
-
-= 3.4.5 (11 Apr 2022) =
-- Add Redirect on Fail autologin
-- Add shortcodes for displaying autologin errors
-
-= 3.4.4 (03 Apr 2022) =
-- Add hooks for all success responses
-
-= 3.4.3 ( 30 Jan 2022) = 
-- Tested with WordPress 5.9
-- Do not add empty JWT to Authorization header
-
-= 3.4.2 (14 Dec 2021) =
-- Display user roles on auth/validate and on register user
-
-= 3.4.1 (05 Dec 2021) =
-- Fix protect endpoint conflict with wp-admin actions
-- Check if user role exists
-- Improve logic for protect endpoints
-- Allow Authentication with DB hashed password
-- Change user password with JWT
-
-= 3.4.0 (17 Oct 2021) =
-- Implement protected endpoints
-
-= 3.3.1 (13 Oct 2021) =
-- Sanitize load views
-
-= 3.3.0 (13 Oct 2021) =
-- Sanitize all displayed texts
-- Add missing translation texts
-- Update bootstrap libraries
-- Update all translations
-- Improve random password algorithm for better security
-
-= 3.2.1 (09 Oct 2021) =
-- Fix CSRF for admin settings
-
-= 3.2.0 (26 Sept 2021) =
-- Add user to simple_jwt_login_register_hook and simple_jwt_login_login_hook hooks
-- Add option to allow adding a JWT in the register user endpoint
-
-= 3.1.0 (31 July 2021) =
-- Add reset password and change password endpoints
-
-= 3.0.0 (11 July 2021) =
-- Plugin code refactor
-- Rewrite file autoloader
-- Improve parse request parameters
-- Add support for JSON body requests
-- Fix user_meta URL encoded
-- Add support for Force Login plugin
-- Add Auth codes to dashboard
-- Add IP limitation for Authentication
-- Add support for Delete user by username
-- Add support for `*` in IP restrictions
-- Fix user role `None` when empty role in Auth Codes
-- Add Auth code on Authentication endpoint
-
-= 2.6.2 (29 April 2021) =
-- Update documentation link with plugin website URL
-
-= 2.6.1 (10 April 2021) =
-- Add documentation link
-
-= 2.6.0 (08 December 2020) =
-- Add `No Redirect` option for autologin and respond with a json on this endpoint
-- Add Hook for `No redirect` in order to customize the autologin response
-
-= 2.5.2 (27 November 2020) =
-- Add permission callback to api routes
-- Use session start only when session token has been activated
-
-= 2.5.1 (16 November 2020) =
-- Fix Authorization header
-
-= 2.5.0 (15 November 2020) =
-- Add key change for URL, Session, Cookie and Header parameters
-
-= 2.4.1 (21 October 2020) =
-- Add more variables for `redirectUrl`
-
-= 2.4.0 (20 October 2020) =
-- Add `redirectUrl` parameter
-- Add variables for URLs
-- Fix session start warning
-
-= 2.3.1 (01 September 2020) =
-- Highlight Settings errors and display section
-- fix PHP warning for session_start()
-
-= 2.3.0 (25 August 2020) =
-- Add support for revoke token: /auth/revoke
-- Allow adding extra parameters in payload on /auth endpoint
-- Add filter on /auth in order to allow payload modification
-- Add support for user_meta on create user
-- Allow users to set decryption key in WordPress PHP code
-- Display number of active hooks on dashboard
-- Improve error system from plugin settings
-
-= 2.2.7 (05 August 2020) =
-- Fix warning for "register_rest_route was called incorrectly"
-- Fix getting JWT from header: ignore white spaces
-- Allow users to store base64 encoded decryption keys and use them as decoded when needed
-
-= 2.2.6 (20 July 2020) =
-* Fix issue with saving JWT algorithm
-* Allow usage of certificates in order to encode/decode JWT
-* Add option to add username in JWT payload
-* Users can authenticate with WordPress username for /auth endpoint
-
-= 2.2.5 (18 July 2020) =
-* Allow login by username ( user_login )
-* beta: Allow users to access private endpoints via API with JWT
-
-= 2.2.4 (13 July 2020) =
-* Fix tabs visibility issue on some WordPress versions
-
-= 2.2.3 (10 July 2020) =
-* Add a toggle for all hooks
-* Fix CORS issue
-
-= 2.2.2 (09 July 2020) =
-* Attach plugin version to js and css
-* Change the path for js and css files
-* Change the load order for the JS files
-
-= 2.2.1 (08 July 2020) =
-* Fix issue with bootstrap
-
-= 2.2.0 (29 June 2020) =
-* Add /auth/validate endpoint to validate tokens and get some details about the user that it is present in the JWT
-
-= 2.1.1 (26 June 2020) =
-* Fix error for auto-login after registering user
-
-= 2.1.0 (20 June 2020) =
-* Add support for CORS
-* Include request parameters used for login link in the REDIRECT URL
-* Add initial request data to the hook simple_jwt_login_redirect_hook call
-* Add expiration date and user role to AUTH Codes
-
-= 2.0.0 (14 June 2020) =
-* New UI for plugin configuration
-* Allow users to enable/disable specific hooks
-* Add route for JWT generator
-* Add route that refreshes an expired JWT
-* Allow custom user_login for new users.
-* Add WP_user in create user response
-
-= 1.6.4 (06 June 2020) =
-* Fix route PHP warning
-
-= 1.6.3 (26 May 2020) =
-* Add a hook that is called before the user it is redirected to the page he specified in the login section.
-
-= 1.6.2 (23 May 2020) =
-* Add plain text password to register user hook
-* Update documentation
-* Add option for a random password on new created users
-* Add option 'Initialize force login after register' - that allows users to continue on the auto-login flow after user registration
-* Add more options for create new user
-* Add more options when a new user is created
-
-= 1.6.1 (20 May 2020) =
-* Improve mechanism for detecting if plugin needs update/create for DB option
-* Add new option to get JWT from '$_COOKIE' and '$_SESSION'
-* Update readme
-
-= 1.6.0 (17 May 2020) =
-* Fix save settings with minimum number of parameters ( No auth codes if all options are disabled)
-* Add hooks for login, register and create User.
-* Ignore case for JWT parameter
-* JWT can be added in header
-* Update Readme
-
-= 1.5.0 (05 Feb 2020) =
-* Allow to delete users based on a JWT token
-* Refactor routes section
-* Allow users to set custom namespace for API route
-* Change create user route name and offer support for backward compatibility
-
-= 1.4.0 (29 Jan 2020) =
-* Add codes to errors
-* Code refactor
-* Allow save in settings with no AUTH_KEYS when they are not used
-* Improve sample URL generators
-* Small UI Changes
-* Fix validations
-* Keep settings values even if there is an error
-* Update readme
-
-= 1.3.1 (20 Dec 2019) =
-* Plugin can be configured only by administrators
-
-= 1.3.0 (28 Nov 2019) =
-* Add support for translations
-* Code refactor
-
-= 1.2.4 (26 Nov 2019) =
-* Improve UI for Auth codes
-* Update Readme
-
-= 1.2.3 (16 Nov 2019) =
-* Allow users to change Auth Key parameter
-
-= 1.2.2 (16 Nov 2019) =
-* Add support for getting key from jwt and array
-
-= 1.2.1 (23 June 2019) =
-* Add functionality for copy login and register example URL
-
-= 1.2.0 (21 June 2019) =
-* Allow login by email or WordPress user ID
-* UI / UX small improvements
-
-= 1.1.0 (15 June 2019) =
-* Add support for IP address limitation for login / register
-* Allow users to register only with emails from specific domains
-* Possibility to make requests without Auth Codes
-
-= 1.0.0 (14 June 2019) =
-* Initial release
+= 3.6.5 =
+Fixes CVE-2025-58648 (stored XSS). Update is strongly recommended for all sites.

@@ -1496,7 +1496,7 @@
     flex-direction: column;
     align-items: center;
     gap: 6px;
-    width: 80px;
+    width: 90px;
     padding: 12px 8px 10px;
     background: var(--sjl-bg-card);
     border: 2px solid var(--sjl-border);
@@ -1623,6 +1623,9 @@
 }
 #simple-jwt-login .logo.force-login {
     background-image: url("../images/integrations/force-login.svg");
+}
+#simple-jwt-login .logo.woocommerce {
+    background-image: url("../images/integrations/woocommerce.svg");
 }
 
 /* ============================================

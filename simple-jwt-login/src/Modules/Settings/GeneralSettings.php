@@ -135,7 +135,7 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
             && empty($this->post['request_jwt_session'])
         ) {
             throw new Exception(
-                esc_html__('You have to have at least one option enabled in \'Get JWT token From\'', 'simple-jwt-login'),
+                esc_html__('You have to have at least one option enabled in \'JWT Input Sources\'', 'simple-jwt-login'),
                 absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_GENERAL,
                     SettingsErrors::ERR_GENERAL_GET_JWT_FROM

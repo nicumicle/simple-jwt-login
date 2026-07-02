@@ -44,6 +44,9 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
 
     const DEFAULT_RETENTION_DAYS = 90;
 
+    /** Timeout in seconds for the outgoing HTTP call. 0 means no timeout. */
+    const DEFAULT_TIMEOUT = 0;
+
     protected function getSectionKey()
     {
         return 'webhooks';
@@ -69,7 +72,7 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
 
         $raw = $this->post['webhooks_json'];
         if (is_string($raw)) {
-            $decoded = json_decode(stripslashes($raw), true);
+            $decoded = json_decode($raw, true);
             $raw = is_array($decoded) ? $decoded : [];
         }
 
@@ -126,9 +129,9 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
                 }
             }
 
-            $payloadTemplate = $this->wordPressData->sanitizeTextField(
-                isset($entry['payload_template']) ? (string)$entry['payload_template'] : ''
-            );
+            $payloadTemplate = isset($entry['payload_template']) ? (string)$entry['payload_template'] : '';
+
+            $timeout = isset($entry['timeout']) ? max(0, (int)$entry['timeout']) : self::DEFAULT_TIMEOUT;
 
             $webhooks[] = [
                 'url'              => $url,
@@ -137,6 +140,7 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
                 'events'           => $events,
                 'headers'          => $headers,
                 'payload_template' => $payloadTemplate,
+                'timeout'          => $timeout,
             ];
         }
 
@@ -204,9 +208,17 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
      */
     public function getWebhooks()
     {
-        return isset($this->settings['items']) && is_array($this->settings['items'])
+        $items = isset($this->settings['items']) && is_array($this->settings['items'])
             ? $this->settings['items']
             : [];
+
+        foreach ($items as $i => $webhook) {
+            if (isset($webhook['payload_template'])) {
+                $items[$i]['payload_template'] = base64_decode($webhook['payload_template']);
+            }
+        }
+
+        return $items;
     }
 
     /**

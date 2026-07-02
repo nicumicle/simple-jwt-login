@@ -132,6 +132,7 @@ class TestBase extends TestCase
     protected static function updateSimpleJWTOption($newOption)
     {
         $table = self::getTablePrefix() . "options";
+        $escapedValue = self::$dbCon->real_escape_string(json_encode($newOption));
 
         if (self::$initialOption === null) {
             // INSERT
@@ -140,7 +141,7 @@ class TestBase extends TestCase
                     "INSERT IGNORE INTO %s (option_name, option_value) VALUES('%s', '%s');",
                     $table,
                     SimpleJWTLoginSettings::OPTIONS_KEY,
-                    json_encode($newOption)
+                    $escapedValue
                 )
             );
             return;
@@ -151,7 +152,7 @@ class TestBase extends TestCase
             sprintf(
                 "UPDATE %s SET option_value='%s' WHERE option_name='%s' LIMIT 1;",
                 $table,
-                json_encode($newOption),
+                $escapedValue,
                 SimpleJWTLoginSettings::OPTIONS_KEY
             )
         );
@@ -171,7 +172,7 @@ class TestBase extends TestCase
             sprintf(
                 "UPDATE %s SET option_value='%s' WHERE option_name='%s' LIMIT 1;",
                 $table,
-                $optionValue,
+                self::$dbCon->real_escape_string($optionValue),
                 $optionKey
             )
         );

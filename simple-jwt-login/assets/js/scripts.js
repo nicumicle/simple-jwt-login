@@ -470,14 +470,22 @@ jQuery(document).ready(
                         headers.push({ key: key, value: value });
                     }
                 });
-                var payloadTemplate = $row.find('.sjl-webhook-payload-template').val() || '';
+                // Base64-encoded (UTF-8 safe) so the JSON blob never carries raw quotes/
+                // backslashes for this field: WordPress's wp_magic_quotes() runs
+                // stripslashes_deep() before addslashes_deep() on $_POST, which eats one
+                // layer of any real backslash a payload_template contains (e.g. from
+                // JSON.stringify escaping an embedded ") before our code ever sees it.
+                var payloadRaw = $row.find('.sjl-webhook-payload-template').val() || '';
+                var payloadTemplate = btoa(unescape(encodeURIComponent(payloadRaw)));
+                var timeout = parseInt($row.find('.sjl-webhook-timeout').val(), 10) || 0;
                 webhooks.push({
                     url: url,
                     method: method,
                     enabled: enabled,
                     events: events,
                     headers: headers,
-                    payload_template: payloadTemplate
+                    payload_template: payloadTemplate,
+                    timeout: timeout
                 });
             });
             $('#webhooks_json').val(JSON.stringify(webhooks));

@@ -25,6 +25,7 @@ class ValidateTokenTest extends FeatureTestCase
             'auth_password_base64'    => false,
             'jwt_auth_iss'            => 'tests',
             'decryption_key'          => self::JWT_SECRET_KEY,
+            'allow_validate_token'    => true,
             'allow_register'          => true,
             'new_user_profile'        => 'subscriber',
             'register_ip'             => '',

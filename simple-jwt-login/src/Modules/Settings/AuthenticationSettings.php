@@ -348,9 +348,6 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
      */
     public function isValidateTokenEnabled()
     {
-        if (!isset($this->settings['validate_token_enabled'])) {
-            return true;
-        }
         return !empty($this->settings['validate_token_enabled']);
     }
 
@@ -359,9 +356,6 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
      */
     public function isRevokeTokenEnabled()
     {
-        if (!isset($this->settings['revoke_token_enabled'])) {
-            return true;
-        }
         return !empty($this->settings['revoke_token_enabled']);
     }
 

@@ -110,8 +110,8 @@ class Lifecycle
         if (!is_array($settings)) {
             $settings = array();
         }
-        if (empty($settings['refresh_token_key'])) {
-            $settings['refresh_token_key'] = bin2hex(openssl_random_pseudo_bytes(32));
+        if (empty($settings['authorization']['refresh_token_key'])) {
+            $settings['authorization']['refresh_token_key'] = bin2hex(openssl_random_pseudo_bytes(32));
             update_option(SimpleJWTLoginSettings::OPTIONS_KEY, json_encode($settings));
         }
     }

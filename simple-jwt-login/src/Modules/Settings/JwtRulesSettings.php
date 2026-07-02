@@ -20,7 +20,7 @@ class JwtRulesSettings extends BaseSettings implements SettingsInterface
 
         $raw = $this->post['jwt_rules'];
         if (is_string($raw)) {
-            $decoded = json_decode(stripslashes($raw), true);
+            $decoded = json_decode($raw, true);
             $raw = is_array($decoded) ? $decoded : [];
         }
 

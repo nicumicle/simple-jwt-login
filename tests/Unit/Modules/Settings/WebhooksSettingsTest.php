@@ -257,8 +257,10 @@ class WebhooksSettingsTest extends TestCase
 
     public function testPayloadTemplateIsStoredWhenProvided()
     {
+        // The browser base64-encodes payload_template before building webhooks_json
+        // (see scripts.js), so the post data here already carries the encoded form.
         $webhooksData = [
-            ['url' => 'https://valid.com', 'enabled' => true, 'events' => ['login'], 'payload_template' => 'id={{user_id}}'],
+            ['url' => 'https://valid.com', 'enabled' => true, 'events' => ['login'], 'payload_template' => base64_encode('id={{user_id}}')],
         ];
         $settings = (new WebhooksSettings())
             ->withSettings([])
@@ -268,6 +270,92 @@ class WebhooksSettingsTest extends TestCase
 
         $webhooks = $settings->getWebhooks();
         $this->assertCount(1, $webhooks);
+        $this->assertSame('id={{user_id}}', $webhooks[0]['payload_template']);
+    }
+
+    public function testPayloadTemplateWithQuotesIsPreserved()
+    {
+        // A payload_template containing quotes/backslashes must never appear as raw
+        // characters inside webhooks_json: WordPress's wp_magic_quotes() runs
+        // stripslashes_deep() before addslashes_deep() on $_POST, which eats one layer
+        // of any real backslash before our code ever sees it (e.g. a JSON.stringify()'d
+        // embedded quote). Base64-encoding the field client-side avoids that entirely.
+        $payloadTemplate = '{"user_id": "{{user_id}}"}';
+        $webhooksData = [
+            ['url' => 'https://valid.com', 'enabled' => true, 'events' => ['login'], 'payload_template' => base64_encode($payloadTemplate)],
+        ];
+        $settings = (new WebhooksSettings())
+            ->withSettings([])
+            ->withWordPressData($this->wordPressData)
+            ->withPost(['webhooks_json' => json_encode($webhooksData)]);
+        $settings->initSettingsFromPost();
+
+        $webhooks = $settings->getWebhooks();
+        $this->assertCount(1, $webhooks);
+        $this->assertSame($payloadTemplate, $webhooks[0]['payload_template']);
+    }
+
+    public function testPayloadTemplateSurvivesWordPressMagicQuotesRoundTrip()
+    {
+        // Reproduces the full request pipeline: WordPress's wp_magic_quotes() runs
+        // addslashes_deep(stripslashes_deep($_POST)) at boot, then
+        // SimpleJWTLoginSettings::watchForUpdates() calls wp_unslash() (stripslashes_deep)
+        // once more. For a raw payload_template containing a bare quote, that net
+        // sequence is stripslashes(addslashes(stripslashes($raw))) == stripslashes($raw),
+        // which eats the real backslash from a JSON.stringify()'d embedded quote and
+        // breaks the JSON structure entirely - wiping out every webhook, not just this
+        // field. Base64-encoding payload_template client-side means the wire value has
+        // no quotes/backslashes for that pipeline to corrupt, so it must survive intact.
+        $payloadTemplate = '"';
+        $webhooksData = [
+            ['url' => 'https://valid.com', 'enabled' => true, 'events' => ['login'], 'payload_template' => base64_encode($payloadTemplate)],
+        ];
+        $raw = json_encode($webhooksData);
+        $afterMagicQuotes = addslashes(stripslashes($raw));
+        $afterWpUnslash = stripslashes($afterMagicQuotes);
+
+        $settings = (new WebhooksSettings())
+            ->withSettings([])
+            ->withWordPressData($this->wordPressData)
+            ->withPost(['webhooks_json' => $afterWpUnslash]);
+        $settings->initSettingsFromPost();
+
+        $webhooks = $settings->getWebhooks();
+        $this->assertCount(1, $webhooks);
+        $this->assertSame($payloadTemplate, $webhooks[0]['payload_template']);
+    }
+
+    public function testPayloadTemplateWithTagsAndNewlinesIsPreserved()
+    {
+        // sanitize_text_field() would strip tags and collapse newlines/whitespace;
+        // the payload template must survive untouched since it's an arbitrary HTTP
+        // body (XML, form data, ...), not display text.
+        $payloadTemplate = "<user>\n  <id>{{user_id}}</id>\n</user>";
+        $webhooksData = [
+            ['url' => 'https://valid.com', 'enabled' => true, 'events' => ['login'], 'payload_template' => base64_encode($payloadTemplate)],
+        ];
+        $settings = (new WebhooksSettings())
+            ->withSettings([])
+            ->withWordPressData($this->wordPressData)
+            ->withPost(['webhooks_json' => json_encode($webhooksData)]);
+        $settings->initSettingsFromPost();
+
+        $webhooks = $settings->getWebhooks();
+        $this->assertCount(1, $webhooks);
+        $this->assertSame($payloadTemplate, $webhooks[0]['payload_template']);
+    }
+
+    public function testStoredPayloadTemplateIsBase64DecodedOnRead()
+    {
+        // base64-encoded, decoded unconditionally on read.
+        $settings = (new WebhooksSettings())
+            ->withSettings(['webhooks' => ['items' => [
+                ['url' => 'https://valid.com', 'enabled' => true, 'events' => ['login'], 'payload_template' => base64_encode('id={{user_id}}')],
+            ]]])
+            ->withWordPressData($this->wordPressData)
+            ->withPost(null);
+
+        $webhooks = $settings->getWebhooks();
         $this->assertSame('id={{user_id}}', $webhooks[0]['payload_template']);
     }
 
@@ -285,6 +373,54 @@ class WebhooksSettingsTest extends TestCase
         $webhooks = $settings->getWebhooks();
         $this->assertCount(1, $webhooks);
         $this->assertSame('', $webhooks[0]['payload_template']);
+    }
+
+    public function testTimeoutDefaultsToZeroWhenNotProvided()
+    {
+        $webhooksData = [
+            ['url' => 'https://valid.com', 'enabled' => true, 'events' => ['login']],
+        ];
+        $settings = (new WebhooksSettings())
+            ->withSettings([])
+            ->withWordPressData($this->wordPressData)
+            ->withPost(['webhooks_json' => json_encode($webhooksData)]);
+        $settings->initSettingsFromPost();
+
+        $webhooks = $settings->getWebhooks();
+        $this->assertCount(1, $webhooks);
+        $this->assertSame(WebhooksSettings::DEFAULT_TIMEOUT, $webhooks[0]['timeout']);
+    }
+
+    public function testTimeoutIsParsedFromPost()
+    {
+        $webhooksData = [
+            ['url' => 'https://valid.com', 'enabled' => true, 'events' => ['login'], 'timeout' => '30'],
+        ];
+        $settings = (new WebhooksSettings())
+            ->withSettings([])
+            ->withWordPressData($this->wordPressData)
+            ->withPost(['webhooks_json' => json_encode($webhooksData)]);
+        $settings->initSettingsFromPost();
+
+        $webhooks = $settings->getWebhooks();
+        $this->assertCount(1, $webhooks);
+        $this->assertSame(30, $webhooks[0]['timeout']);
+    }
+
+    public function testNegativeTimeoutClampsToZero()
+    {
+        $webhooksData = [
+            ['url' => 'https://valid.com', 'enabled' => true, 'events' => ['login'], 'timeout' => '-10'],
+        ];
+        $settings = (new WebhooksSettings())
+            ->withSettings([])
+            ->withWordPressData($this->wordPressData)
+            ->withPost(['webhooks_json' => json_encode($webhooksData)]);
+        $settings->initSettingsFromPost();
+
+        $webhooks = $settings->getWebhooks();
+        $this->assertCount(1, $webhooks);
+        $this->assertSame(0, $webhooks[0]['timeout']);
     }
 
     public function testRetentionDaysDefaultValue()

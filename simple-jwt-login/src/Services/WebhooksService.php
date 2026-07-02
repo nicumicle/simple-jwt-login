@@ -150,13 +150,15 @@ class WebhooksService
                 }
             }
 
+            $timeout = isset($webhook['timeout']) ? max(0, (int)$webhook['timeout']) : WebhooksSettings::DEFAULT_TIMEOUT;
+
             $blocking = $this->logRepository !== null;
 
             $response = wp_safe_remote_request($url, [
                 'method'   => $method,
                 'body'     => $this->buildBody($webhook, $event, $payload),
                 'headers'  => $headers,
-                'timeout'  => 5,
+                'timeout'  => $timeout,
                 'blocking' => $blocking,
             ]);
 

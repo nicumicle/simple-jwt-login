@@ -56,6 +56,7 @@ $allowedEvents   = WebhooksSettings::$allowedEvents;
                 $events          = isset($webhook['events']) && is_array($webhook['events']) ? $webhook['events'] : [];
                 $headers         = isset($webhook['headers']) && is_array($webhook['headers']) ? $webhook['headers'] : [];
                 $payloadTemplate = isset($webhook['payload_template']) ? $webhook['payload_template'] : '';
+                $timeout         = isset($webhook['timeout']) ? (int) $webhook['timeout'] : WebhooksSettings::DEFAULT_TIMEOUT;
                 ?>
 
             <div class="sjl-webhook-item" data-open="false">
@@ -102,6 +103,16 @@ $allowedEvents   = WebhooksSettings::$allowedEvents;
                                 </option>
                                 <?php endforeach; ?>
                             </select>
+                        </div>
+                        <div class="sjl-webhook-field sjl-webhook-field-timeout">
+                            <label><?php echo esc_html__('Timeout (seconds)', 'simple-jwt-login'); ?></label>
+                            <input type="number"
+                                   min="0"
+                                   step="1"
+                                   class="form-control sjl-webhook-timeout"
+                                   placeholder="0"
+                                   title="<?php echo esc_attr__('0 means no timeout.', 'simple-jwt-login'); ?>"
+                                   value="<?php echo esc_attr($timeout); ?>">
                         </div>
                     </div>
 
@@ -231,6 +242,16 @@ $allowedEvents   = WebhooksSettings::$allowedEvents;
                         </option>
                         <?php endforeach; ?>
                     </select>
+                </div>
+                <div class="sjl-webhook-field sjl-webhook-field-timeout">
+                    <label><?php echo esc_html__('Timeout (seconds)', 'simple-jwt-login'); ?></label>
+                    <input type="number"
+                           min="0"
+                           step="1"
+                           class="form-control sjl-webhook-timeout"
+                           placeholder="0"
+                           title="<?php echo esc_attr__('0 means no timeout.', 'simple-jwt-login'); ?>"
+                           value="<?php echo esc_attr(WebhooksSettings::DEFAULT_TIMEOUT); ?>">
                 </div>
             </div>
             <div class="sjl-webhook-field-row">

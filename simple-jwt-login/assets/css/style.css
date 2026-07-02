@@ -2014,6 +2014,10 @@
     flex: 0 0 130px;
     max-width: 130px;
 }
+#simple-jwt-login .sjl-webhook-field-timeout {
+    flex: 0 0 150px;
+    max-width: 150px;
+}
 #simple-jwt-login .sjl-webhook-field > label {
     display: block;
     font-size: 10px;

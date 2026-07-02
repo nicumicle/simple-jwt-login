@@ -266,7 +266,7 @@ class AuthenticationSettingsTest extends TestCase
     public static function validateTokenEnabledProvider(): array
     {
         return [
-            'not set defaults to true' => [[], true],
+            'not set defaults to false' => [[], false],
             'string 1 is enabled'      => [['validate_token_enabled' => '1'], true],
             'int 0 is disabled'        => [['validate_token_enabled' => 0], false],
             'empty string is disabled' => [['validate_token_enabled' => ''], false],
@@ -284,7 +284,7 @@ class AuthenticationSettingsTest extends TestCase
     public static function revokeTokenEnabledProvider(): array
     {
         return [
-            'not set defaults to true' => [[], true],
+            'not set defaults to false' => [[], false],
             'string 1 is enabled'      => [['revoke_token_enabled' => '1'], true],
             'int 0 is disabled'        => [['revoke_token_enabled' => 0], false],
             'empty string is disabled' => [['revoke_token_enabled' => ''], false],

@@ -59,19 +59,21 @@ class ValidateTokenServiceTest extends TestCase
             ],
             [
                 'settings' => [
-                    'allow_authentication' => '1',
-                    'request_jwt_header'   => '0',
-                    'request_jwt_url'      => '1',
+                    'allow_authentication'  => '1',
+                    'allow_validate_token'  => '1',
+                    'request_jwt_header'    => '0',
+                    'request_jwt_url'       => '1',
                 ],
                 'expectedMessage'  => 'The `jwt` parameter is missing.'
             ],
             [
                 'settings' => [
-                    'allow_authentication' => '1',
-                    'request_jwt_header'   => '0',
-                    'request_jwt_url'      => '1',
-                    'decryption_key'       => '123',
-                    'request_keys'         => [
+                    'allow_authentication'  => '1',
+                    'allow_validate_token'  => '1',
+                    'request_jwt_header'    => '0',
+                    'request_jwt_url'       => '1',
+                    'decryption_key'        => '123',
+                    'request_keys'          => [
                         'url' => 'JWT'
                     ]
                 ],
@@ -93,6 +95,7 @@ class ValidateTokenServiceTest extends TestCase
                 json_encode(
                     [
                         'allow_authentication' => '1',
+                        'allow_validate_token' => '1',
                         'request_jwt_header'   => '0',
                         'request_jwt_url'      => '1',
                         'decryption_key'       => '123',
@@ -121,6 +124,7 @@ class ValidateTokenServiceTest extends TestCase
                 json_encode(
                     [
                         'allow_authentication' => '1',
+                        'allow_validate_token' => '1',
                         'request_jwt_header'   => '0',
                         'request_jwt_url'      => '1',
                         'decryption_key'       => '123',

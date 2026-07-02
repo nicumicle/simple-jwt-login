@@ -41,6 +41,8 @@ class SuccessTest extends TestBase
             // Refresh token
             "allow_refresh_token" => 1,
             "refresh_token_key" => "test_refresh_secret_key",
+            // Validate token
+            "allow_validate_token" => true,
         ]);
     }
 

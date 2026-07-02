@@ -19,9 +19,10 @@ use SimpleJWTLogin\Modules\Settings\ThirdParty\WpGraphQLSettings;
  * Registry for OAuth / OIDC providers and 3rd-party integrations.
  *
  * Storage layout (under $settings['integrations']):
- *   ['oauth']['google']     => Google OAuth settings
- *   ['oauth']['auth0']      => Auth0 OAuth settings
- *   ['3rdparty']['wpgraphql'] => WPGraphQL integration settings
+ *   ['oauth']['google']                => Google OAuth settings
+ *   ['oauth']['auth0']                 => Auth0 OAuth settings
+ *   ['oauth']['login_button_layout']   => Login page button layout
+ *   ['3rdparty']['wpgraphql']          => WPGraphQL integration settings
  *
  * Adding a new OAuth provider requires only:
  *  1. Create a subclass of AbstractProviderSettings.
@@ -147,7 +148,7 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
         if (!in_array($layout, $allowedLayouts, true)) {
             $layout = self::LAYOUT_STACKED;
         }
-        $this->settings['login_button_layout'] = $layout;
+        $this->settings[self::OAUTH_KEY]['login_button_layout'] = $layout;
     }
 
     public function validateSettings()
@@ -162,8 +163,8 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
      */
     public function getLoginButtonLayout()
     {
-        $stored = isset($this->settings['login_button_layout'])
-            ? $this->settings['login_button_layout']
+        $stored = isset($this->settings[self::OAUTH_KEY]['login_button_layout'])
+            ? $this->settings[self::OAUTH_KEY]['login_button_layout']
             : self::LAYOUT_STACKED;
         // Migrate legacy value stored before the stacked/inline split was added.
         if ($stored === 'icon-only') {

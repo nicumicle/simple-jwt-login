@@ -69,6 +69,7 @@ class RevokeTokenServiceTest extends TestCase
 
         $settings = [
             'allow_authentication' => true,
+            'allow_revoke_token' => true,
             'auth_requires_auth_code' => false,
             'decryption_key' => 'test',
             'jwt_login_by' => LoginSettings::JWT_LOGIN_BY_WORDPRESS_USER_ID,
@@ -101,6 +102,7 @@ class RevokeTokenServiceTest extends TestCase
     {
         $settings = [
             'allow_authentication' => true,
+            'allow_revoke_token' => true,
             'auth_requires_auth_code' => false,
             'decryption_key' => 'test',
             'jwt_login_by' => LoginSettings::JWT_LOGIN_BY_WORDPRESS_USER_ID,
@@ -160,6 +162,7 @@ class RevokeTokenServiceTest extends TestCase
             'test_not_allowed_ip' => [
                 'settings' => [
                     'allow_authentication' => true,
+                    'allow_revoke_token' => true,
                     'auth_ip' => '127.1.1.1',
                 ],
                 'exceptionMessage' => 'You are not allowed to Authenticate from this IP',
@@ -167,6 +170,7 @@ class RevokeTokenServiceTest extends TestCase
             'test_invalid_auth_key' => [
                 'settings' => [
                     'allow_authentication'       => true,
+                    'allow_revoke_token'         => true,
                     'revoke_requires_auth_code'  => true,
                     'auth_codes'                 => [
                         [
@@ -181,6 +185,7 @@ class RevokeTokenServiceTest extends TestCase
             'test_missing_jwt' => [
                 'settings' => [
                     'allow_authentication' => true,
+                    'allow_revoke_token' => true,
                     'auth_requires_auth_code' => false,
                 ],
                 'exceptionMessage' => 'The `jwt` parameter is missing.',
@@ -193,6 +198,7 @@ class RevokeTokenServiceTest extends TestCase
     {
         $settings = [
             'allow_authentication' => true,
+            'allow_revoke_token' => true,
             'auth_requires_auth_code' => false,
             'decryption_key' => 'test',
             'jwt_login_by' => LoginSettings::JWT_LOGIN_BY_WORDPRESS_USER_ID,

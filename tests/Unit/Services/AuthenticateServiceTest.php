@@ -8,6 +8,7 @@ use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepositoryInterface;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Modules\Settings\HooksSettings;
+use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
@@ -325,6 +326,76 @@ class AuthenticateServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
+    public function testGeneratePayloadDoesNotLeakAttackerSuppliedEmailClaim()
+    {
+        $this->wordPressDataMock
+            ->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication' => 1,
+                // Admin only allows "exp" to be present in the JWT payload.
+                'jwt_payload' => [
+                    AuthenticationSettings::JWT_PAYLOAD_PARAM_EXP,
+                ],
+            ]));
+        $this->wordPressDataMock
+            ->method('getUserProperty')
+            ->willReturn('subscriber@test.com');
+
+        $jwtSettings = new SimpleJWTLoginSettings($this->wordPressDataMock);
+
+        // Attacker-controlled payload sent to /auth, impersonating an admin.
+        $attackerPayload = [
+            'email' => 'admin@test.com',
+        ];
+
+        $payload = AuthenticateService::generatePayload(
+            $attackerPayload,
+            $this->wordPressDataMock,
+            $jwtSettings,
+            'subscriber-user'
+        );
+
+        $this->assertArrayNotHasKey(
+            'email',
+            $payload
+        );
+    }
+
+    public function testGeneratePayloadDoesNotLeakAttackerSuppliedJwtLoginByParameterClaim()
+    {
+        $this->wordPressDataMock
+            ->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication' => 1,
+                'jwt_payload' => [
+                    AuthenticationSettings::JWT_PAYLOAD_PARAM_EXP,
+                ],
+                // Admin configured autologin to resolve users by a custom claim.
+                'jwt_login_by_parameter' => 'custom_uid',
+            ]));
+        $this->wordPressDataMock
+            ->method('getUserProperty')
+            ->willReturn('subscriber-uid');
+
+        $jwtSettings = new SimpleJWTLoginSettings($this->wordPressDataMock);
+
+        $attackerPayload = [
+            'custom_uid' => 'admin-uid',
+        ];
+
+        $payload = AuthenticateService::generatePayload(
+            $attackerPayload,
+            $this->wordPressDataMock,
+            $jwtSettings,
+            'subscriber-user'
+        );
+
+        $this->assertArrayNotHasKey(
+            'custom_uid',
+            $payload
+        );
+    }
+
     public function testSuccessFlowWithFullPayloadAndPasshash()
     {
         $this->wordPressDataMock
@@ -638,6 +709,161 @@ class AuthenticateServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
+    // ─── request['payload'] – string vs array input ─────────────────────────
+
+    private function decodeJwtPayload(string $jwt): array
+    {
+        $parts = explode('.', $jwt);
+        $payloadSegment = strtr($parts[1], '-_', '+/');
+        $decoded = json_decode(base64_decode($payloadSegment), true);
+
+        return is_array($decoded) ? $decoded : [];
+    }
+
+    public function testRequestPayloadAcceptsJsonEncodedString(): void
+    {
+        /** @var array|null $capturedResponse */
+        $capturedResponse = null;
+
+        $this->wordPressDataMock
+            ->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication' => 1,
+                'decryption_key'       => 'test-secret',
+            ]));
+        $this->wordPressDataMock->method('getUserByUserLogin')->willReturn('user');
+        $this->wordPressDataMock->method('getUserPassword')->willReturn('pass');
+        $this->wordPressDataMock->method('checkPassword')->willReturn(true);
+        $this->wordPressDataMock->method('sanitizeTextField')->willReturnArgument(0);
+        $this->wordPressDataMock->method('sanitizeArray')->willReturnArgument(0);
+        $this->wordPressDataMock->method('createResponse')
+            ->willReturnCallback(function ($response) use (&$capturedResponse) {
+                $capturedResponse = $response;
+                return true;
+            });
+
+        $authService = (new AuthenticateService())
+            ->withRequest([
+                'username' => 'test',
+                'password' => 'pass',
+                'payload'  => json_encode(['department' => 'engineering', 'region' => 'eu']),
+            ])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+        $authService->makeAction();
+
+        $payload = $this->decodeJwtPayload($capturedResponse['data']['jwt']);
+        $this->assertSame('engineering', $payload['department']);
+        $this->assertSame('eu', $payload['region']);
+    }
+
+    public function testRequestPayloadAcceptsNativeArray(): void
+    {
+        /** @var array|null $capturedResponse */
+        $capturedResponse = null;
+
+        $this->wordPressDataMock
+            ->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication' => 1,
+                'decryption_key'       => 'test-secret',
+            ]));
+        $this->wordPressDataMock->method('getUserByUserLogin')->willReturn('user');
+        $this->wordPressDataMock->method('getUserPassword')->willReturn('pass');
+        $this->wordPressDataMock->method('checkPassword')->willReturn(true);
+        $this->wordPressDataMock->method('sanitizeArray')->willReturnArgument(0);
+        $this->wordPressDataMock->method('createResponse')
+            ->willReturnCallback(function ($response) use (&$capturedResponse) {
+                $capturedResponse = $response;
+                return true;
+            });
+
+        $authService = (new AuthenticateService())
+            ->withRequest([
+                'username' => 'test',
+                'password' => 'pass',
+                'payload'  => ['department' => 'engineering', 'region' => 'eu'],
+            ])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+        $authService->makeAction();
+
+        $payload = $this->decodeJwtPayload($capturedResponse['data']['jwt']);
+        $this->assertSame('engineering', $payload['department']);
+        $this->assertSame('eu', $payload['region']);
+    }
+
+    public function testJwtPayloadActionHookCannotOverwriteReservedClaims(): void
+    {
+        /** @var array|null $capturedResponse */
+        $capturedResponse = null;
+
+        $this->wordPressDataMock
+            ->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication' => 1,
+                'decryption_key'       => 'test-secret',
+                'jwt_payload'          => [
+                    AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT,
+                    AuthenticationSettings::JWT_PAYLOAD_PARAM_EMAIL,
+                    AuthenticationSettings::JWT_PAYLOAD_PARAM_ID,
+                ],
+                'enabled_hooks'        => [
+                    SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME,
+                ],
+            ]));
+        $this->wordPressDataMock->method('getUserByUserLogin')->willReturn('subscriber-user');
+        $this->wordPressDataMock->method('getUserPassword')->willReturn('pass');
+        $this->wordPressDataMock->method('checkPassword')->willReturn(true);
+        $this->wordPressDataMock->method('getUserProperty')
+            ->willReturnCallback(function () {
+                $property = func_get_args()[1];
+                if ($property === 'user_email') {
+                    return 'subscriber@test.com';
+                }
+                if ($property === 'ID') {
+                    return 42;
+                }
+                return null;
+            });
+        // A malicious or misconfigured plugin hook tries to impersonate another
+        // account by overwriting the reserved email/id claims. It is still free
+        // to inject its own non-reserved claims.
+        $this->wordPressDataMock->method('applyFilters')
+            ->willReturnCallback(function () {
+                $hookName = func_get_args()[0];
+                $payload  = func_get_args()[1];
+                if ($hookName === SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME) {
+                    $payload['email'] = 'admin@test.com';
+                    $payload['id'] = 1;
+                    $payload['injected'] = 'evil';
+                }
+                return $payload;
+            });
+        $this->wordPressDataMock->method('createResponse')
+            ->willReturnCallback(function ($response) use (&$capturedResponse) {
+                $capturedResponse = $response;
+                return true;
+            });
+
+        $authService = (new AuthenticateService())
+            ->withRequest(['username' => 'test', 'password' => 'pass'])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+        $authService->makeAction();
+
+        $payload = $this->decodeJwtPayload($capturedResponse['data']['jwt']);
+        $this->assertSame('subscriber@test.com', $payload['email']);
+        $this->assertSame(42, $payload['id']);
+        $this->assertSame('evil', $payload['injected']);
+    }
+
     // ─── generatePayload – custom claims ────────────────────────────────────
 
     private function buildJwtSettingsMockWithCustomPayloadClaims(array $customClaims): SimpleJWTLoginSettings
@@ -652,9 +878,14 @@ class AuthenticateServiceTest extends TestCase
             ->withWordPressData($wordPressDataStub)
             ->withSettings([]);
 
+        $loginSettings = (new LoginSettings())
+            ->withWordPressData($wordPressDataStub)
+            ->withSettings([]);
+
         $jwtSettingsMock = $this->createStub(SimpleJWTLoginSettings::class);
         $jwtSettingsMock->method('getAuthenticationSettings')->willReturn($authSettings);
         $jwtSettingsMock->method('getHooksSettings')->willReturn($hooksSettings);
+        $jwtSettingsMock->method('getLoginSettings')->willReturn($loginSettings);
 
         return $jwtSettingsMock;
     }

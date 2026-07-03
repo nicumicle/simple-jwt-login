@@ -2,9 +2,9 @@ name: "Check plugin code"
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, v3, v4 ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, v3, v4 ]
 
 jobs:
   build:

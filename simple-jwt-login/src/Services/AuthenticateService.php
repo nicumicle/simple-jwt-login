@@ -60,9 +60,20 @@ class AuthenticateService extends BaseService implements ServiceInterface
         $jwtSettings,
         $user
     ) {
+        $authSettings = $jwtSettings->getAuthenticationSettings();
+
+        // Strip any attacker-supplied reserved identity claims (email, id, username, ...)
+        // from the incoming payload. These must only ever be set below from the
+        // authenticated $user, never from client input, otherwise a caller could
+        // impersonate another account by injecting e.g. payload={"email":"admin@site"}.
+        $reservedParameters = self::getReservedPayloadParameters($authSettings, $jwtSettings);
+
+        foreach ($reservedParameters as $reservedParameter) {
+            unset($payload[$reservedParameter]);
+        }
+
         $payload[AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT] = time();
 
-        $authSettings = $jwtSettings->getAuthenticationSettings();
         foreach ($authSettings->getJwtPayloadParameters() as $parameter) {
             if ($parameter === AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT
                 || !$authSettings->isPayloadDataEnabled($parameter)
@@ -106,6 +117,50 @@ class AuthenticateService extends BaseService implements ServiceInterface
         }
 
         return $payload;
+    }
+
+    /**
+     * The reserved identity claims (email, id, username, ...) plus the custom
+     * "Login by parameter" claim, if configured. These must only ever be set
+     * from the authenticated $user, never from client- or hook-supplied input.
+     *
+     * @param AuthenticationSettings $authSettings
+     * @param SimpleJWTLoginSettings $jwtSettings
+     *
+     * @return array
+     */
+    private static function getReservedPayloadParameters($authSettings, $jwtSettings)
+    {
+        $reservedParameters = $authSettings->getJwtPayloadParameters();
+
+        $jwtLoginByParameter = $jwtSettings->getLoginSettings()->getJwtLoginByParameter();
+        if (!empty($jwtLoginByParameter)) {
+            $reservedParameters[] = $jwtLoginByParameter;
+        }
+
+        return $reservedParameters;
+    }
+
+    /**
+     * The `payload` request parameter can arrive either as a JSON-encoded string
+     * (the typical form-encoded/query-string case) or already decoded into an
+     * array (e.g. when the client sends a native JSON body). Handle both.
+     *
+     * @param mixed $rawPayload
+     * @return array
+     */
+    protected function resolveRequestPayload($rawPayload)
+    {
+        if (is_array($rawPayload)) {
+            return $this->wordPressData->sanitizeArray($rawPayload);
+        }
+
+        $decodedPayload = json_decode(
+            stripslashes($this->wordPressData->sanitizeTextField($rawPayload)),
+            true
+        );
+
+        return is_array($decodedPayload) ? $this->wordPressData->sanitizeArray($decodedPayload) : [];
     }
 
     /**
@@ -234,19 +289,39 @@ class AuthenticateService extends BaseService implements ServiceInterface
             return $challengeResponse;
         }
 
+        $requestPayload = [];
+        if (!empty($this->request['payload'])) {
+            $requestPayload = $this->resolveRequestPayload($this->request['payload']);
+        }
+
         $payload = self::generatePayload(
-            [],
+            $requestPayload,
             $this->wordPressData,
             $this->jwtSettings,
             $user
         );
 
         if ($hooksSettings->isHookEnabled(SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME)) {
+            $trustedPayload = $payload;
+
             $payload = $this->wordPressData->applyFilters(
                 SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME,
                 $payload,
                 $this->request
             );
+
+            // The filter above receives $this->request (attacker-controlled), so a
+            // malicious or misconfigured hook could otherwise overwrite reserved
+            // identity claims (email, id, ...) to impersonate another account.
+            // Re-enforce the trusted values computed before the filter ran.
+            $reservedParameters = self::getReservedPayloadParameters($authSettings, $this->jwtSettings);
+            foreach ($reservedParameters as $reservedParameter) {
+                if (array_key_exists($reservedParameter, $trustedPayload)) {
+                    $payload[$reservedParameter] = $trustedPayload[$reservedParameter];
+                    continue;
+                }
+                unset($payload[$reservedParameter]);
+            }
         }
 
         $customHeaderClaims = $authSettings->getCustomHeaderClaims();

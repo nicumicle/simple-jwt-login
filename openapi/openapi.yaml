@@ -891,6 +891,11 @@ paths:
         - Authentication must be enabled in the plugin settings.
         - If "Authentication Requires Auth Code" is enabled, `AUTH_KEY` must be provided.
 
+        **Custom payload claims**
+        Optionally supply `payload` as a JSON-encoded object to add extra claims to the
+        issued JWT. Reserved identity claims are always derived from the authenticated
+        user and cannot be overridden this way.
+
         **Two-Factor Authentication**
         When the authenticated user has Two-Factor Authentication enabled and the 2FA
         integration is active, the endpoint returns HTTP 200 with a challenge response
@@ -2582,6 +2587,22 @@ components:
             Required when "Authentication Requires Auth Code" is enabled. The parameter
             name defaults to `AUTH_KEY` but is configurable in the plugin's Auth Codes
             settings.
+        payload:
+          nullable: true
+          oneOf:
+            - type: string
+              example: '{"department":"engineering","region":"eu"}'
+            - type: object
+              example: {"department": "engineering", "region": "eu"}
+          description: |
+            Optional extra claims merged into the JWT payload. Accepted either as a
+            JSON-encoded string (form-encoded/query-string requests) or as a native
+            JSON object (JSON body requests).
+            Reserved identity claims configured in the plugin's payload settings (e.g.
+            `email`, `id`, `username`, `site`, `iss`, `exp`, `iat`) and the custom
+            "Login by parameter" claim, if configured, are always stripped from this
+            value and set from the authenticated user instead — they cannot be
+            overridden by the caller.
     authRefreshBody:
       type: object
       required:

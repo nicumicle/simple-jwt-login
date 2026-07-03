@@ -2,9 +2,9 @@ name: "Plugin Compatibility Across Multiple PHP Versions"
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, v3 ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, v3 ]
 
 jobs:
   # Check there is no syntax errors in the project

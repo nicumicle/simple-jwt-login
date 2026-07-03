@@ -6,6 +6,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\ServerHelper;
+use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepositoryInterface;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
@@ -238,6 +239,159 @@ class RefreshTokenServiceTest extends TestCase
         $this->assertArrayHasKey('jwt', $capturedResponse['data']);
         $this->assertArrayHasKey('refresh_token', $capturedResponse['data']);
         $this->assertNotEmpty($capturedResponse['data']['refresh_token']);
+    }
+
+    private function decodeJwtPayload(string $jwt): array
+    {
+        $parts = explode('.', $jwt);
+        $payloadSegment = strtr($parts[1], '-_', '+/');
+        $decoded = json_decode(base64_decode($payloadSegment), true);
+
+        return is_array($decoded) ? $decoded : [];
+    }
+
+    public function testRequestPayloadAcceptsJsonEncodedString(): void
+    {
+        /** @var array|null $capturedResponse */
+        $capturedResponse = null;
+
+        $tokenData          = new stdClass();
+        $tokenData->user_id = 1;
+
+        $this->wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication'    => true,
+                'allow_refresh_token'     => true,
+                'auth_requires_auth_code' => false,
+                'decryption_key'          => 'test-secret',
+                'jwt_auth_refresh_ttl'    => 1440,
+            ]));
+        $this->refreshTokenRepoMock->method('getByToken')->willReturn($tokenData);
+        $this->wordPressDataMock->method('getUserDetailsById')->willReturn('user-object');
+        $this->wordPressDataMock->method('isInstanceOfuser')->willReturn(true);
+        $this->refreshTokenRepoMock->method('deleteByToken')->willReturn(true);
+        $this->refreshTokenRepoMock->method('insert')->willReturn(true);
+        $this->wordPressDataMock->method('sanitizeTextField')->willReturnArgument(0);
+        $this->wordPressDataMock->method('sanitizeArray')->willReturnArgument(0);
+        $this->wordPressDataMock->method('createResponse')
+            ->willReturnCallback(function ($response) use (&$capturedResponse) {
+                $capturedResponse = $response;
+                return true;
+            });
+
+        $refreshService = (new RefreshTokenService())
+            ->withRequest([
+                'refresh_token' => 'valid-token',
+                'payload'       => json_encode(['department' => 'engineering', 'region' => 'eu']),
+            ])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([
+                'REQUEST_METHOD' => 'POST',
+                'REMOTE_ADDR' => '127.0.0.1',
+            ]))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+        $refreshService->makeAction();
+
+        $payload = $this->decodeJwtPayload($capturedResponse['data']['jwt']);
+        $this->assertSame('engineering', $payload['department']);
+        $this->assertSame('eu', $payload['region']);
+    }
+
+    public function testRequestPayloadAcceptsNativeArray(): void
+    {
+        /** @var array|null $capturedResponse */
+        $capturedResponse = null;
+
+        $tokenData          = new stdClass();
+        $tokenData->user_id = 1;
+
+        $this->wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication'    => true,
+                'allow_refresh_token'     => true,
+                'auth_requires_auth_code' => false,
+                'decryption_key'          => 'test-secret',
+                'jwt_auth_refresh_ttl'    => 1440,
+            ]));
+        $this->refreshTokenRepoMock->method('getByToken')->willReturn($tokenData);
+        $this->wordPressDataMock->method('getUserDetailsById')->willReturn('user-object');
+        $this->wordPressDataMock->method('isInstanceOfuser')->willReturn(true);
+        $this->refreshTokenRepoMock->method('deleteByToken')->willReturn(true);
+        $this->refreshTokenRepoMock->method('insert')->willReturn(true);
+        $this->wordPressDataMock->method('sanitizeArray')->willReturnArgument(0);
+        $this->wordPressDataMock->method('createResponse')
+            ->willReturnCallback(function ($response) use (&$capturedResponse) {
+                $capturedResponse = $response;
+                return true;
+            });
+
+        $refreshService = (new RefreshTokenService())
+            ->withRequest([
+                'refresh_token' => 'valid-token',
+                'payload'       => ['department' => 'engineering', 'region' => 'eu'],
+            ])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([
+                'REQUEST_METHOD' => 'POST',
+                'REMOTE_ADDR' => '127.0.0.1',
+            ]))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+        $refreshService->makeAction();
+
+        $payload = $this->decodeJwtPayload($capturedResponse['data']['jwt']);
+        $this->assertSame('engineering', $payload['department']);
+        $this->assertSame('eu', $payload['region']);
+    }
+
+    public function testRequestPayloadCannotOverwriteReservedEmailClaim(): void
+    {
+        /** @var array|null $capturedResponse */
+        $capturedResponse = null;
+
+        $tokenData          = new stdClass();
+        $tokenData->user_id = 1;
+
+        $this->wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication'    => true,
+                'allow_refresh_token'     => true,
+                'auth_requires_auth_code' => false,
+                'decryption_key'          => 'test-secret',
+                'jwt_auth_refresh_ttl'    => 1440,
+                'jwt_payload'             => [AuthenticationSettings::JWT_PAYLOAD_PARAM_EMAIL],
+            ]));
+        $this->refreshTokenRepoMock->method('getByToken')->willReturn($tokenData);
+        $this->wordPressDataMock->method('getUserDetailsById')->willReturn('user-object');
+        $this->wordPressDataMock->method('isInstanceOfuser')->willReturn(true);
+        $this->wordPressDataMock->method('getUserProperty')->willReturn('real-user@test.com');
+        $this->refreshTokenRepoMock->method('deleteByToken')->willReturn(true);
+        $this->refreshTokenRepoMock->method('insert')->willReturn(true);
+        $this->wordPressDataMock->method('sanitizeArray')->willReturnArgument(0);
+        $this->wordPressDataMock->method('createResponse')
+            ->willReturnCallback(function ($response) use (&$capturedResponse) {
+                $capturedResponse = $response;
+                return true;
+            });
+
+        $refreshService = (new RefreshTokenService())
+            ->withRequest([
+                'refresh_token' => 'valid-token',
+                // Attempt to impersonate another account via the payload claim.
+                'payload'       => ['email' => 'admin@test.com'],
+            ])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([
+                'REQUEST_METHOD' => 'POST',
+                'REMOTE_ADDR' => '127.0.0.1',
+            ]))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+        $refreshService->makeAction();
+
+        $payload = $this->decodeJwtPayload($capturedResponse['data']['jwt']);
+        $this->assertSame('real-user@test.com', $payload['email']);
     }
 
     /**

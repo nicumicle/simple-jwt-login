@@ -233,7 +233,7 @@ class GeneralSettingsTest extends TestCase
     public function testValidationDecryptionKeysRSFromSettings()
     {
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('JWT Decryption public and private key are required.');
+        $this->expectExceptionMessage('Public Key and Private Key are required.');
         $generalSettings = (new GeneralSettings())
             ->withSettings([])
             ->withWordPressData($this->wordPressData)
@@ -260,7 +260,7 @@ class GeneralSettingsTest extends TestCase
     public function testValidationDecryptionKeysHSFromSettings()
     {
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('The JWT Verification key is required.');
+        $this->expectExceptionMessage('JWT Verification Key is required.');
         $generalSettings = (new GeneralSettings())
             ->withSettings([])
             ->withWordPressData($this->wordPressData)

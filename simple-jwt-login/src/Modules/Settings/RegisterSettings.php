@@ -34,7 +34,7 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
     {
         if (empty($this->post['new_user_profile'])) {
             throw new Exception(
-                esc_html__('New User profile slug can not be empty.', 'simple-jwt-login'),
+                esc_html__('Default User Roles can not be empty.', 'simple-jwt-login'),
                 absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_REGISTER,
                     SettingsErrors::ERR_REGISTER_MISSING_NEW_USER_PROFILE
@@ -45,7 +45,7 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
         $roles = array_filter(array_map('trim', explode(',', $this->post['new_user_profile'])));
         if (empty($roles)) {
             throw new Exception(
-                esc_html__('New User profile slug can not be empty.', 'simple-jwt-login'),
+                esc_html__('Default User Roles can not be empty.', 'simple-jwt-login'),
                 absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_REGISTER,
                     SettingsErrors::ERR_REGISTER_MISSING_NEW_USER_PROFILE

@@ -113,26 +113,48 @@ class RefreshTokenService extends AuthenticateService
             throw new Exception(esc_html(__('User not found.', 'simple-jwt-login')), absint(ErrorCodes::ERR_REVOKED_TOKEN));
         }
 
+        $authSettings = $this->jwtSettings->getAuthenticationSettings();
+
+        $requestPayload = [];
+        if (!empty($this->request['payload'])) {
+            $requestPayload = $this->resolveRequestPayload($this->request['payload']);
+        }
+
         // Generate new JWT payload for the user
         $newPayload = AuthenticateService::generatePayload(
-            [],
+            $requestPayload,
             $this->wordPressData,
             $this->jwtSettings,
             $user
         );
 
         if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME)) {
+            $trustedPayload = $newPayload;
+
             $newPayload = $this->wordPressData->applyFilters(
                 SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME,
                 $newPayload,
                 $this->request
             );
+
+            // The filter above receives $this->request (attacker-controlled), so a
+            // malicious or misconfigured hook could otherwise overwrite reserved
+            // identity claims (email, id, ...) to impersonate another account.
+            // Re-enforce the trusted values computed before the filter ran.
+            $reservedParameters = self::getReservedPayloadParameters($authSettings, $this->jwtSettings);
+            foreach ($reservedParameters as $reservedParameter) {
+                if (array_key_exists($reservedParameter, $trustedPayload)) {
+                    $newPayload[$reservedParameter] = $trustedPayload[$reservedParameter];
+                    continue;
+                }
+                unset($newPayload[$reservedParameter]);
+            }
         }
 
         // Generate new refresh token
         $newRefreshToken = $this->generateRefreshToken();
-        $newTokenExpiresAt = time() + ($this->jwtSettings->getAuthenticationSettings()->getAuthJwtRefreshTtl() * 60);
-        
+        $newTokenExpiresAt = time() + ($authSettings->getAuthJwtRefreshTtl() * 60);
+
         // Rotate: delete old token, persist new one
         $this->tokenRepository->deleteByToken($encryptedToken);
         $this->tokenRepository->insert(
@@ -152,7 +174,6 @@ class RefreshTokenService extends AuthenticateService
             );
         }
 
-        $authSettings = $this->jwtSettings->getAuthenticationSettings();
         $customHeaderClaims = $authSettings->getCustomHeaderClaims();
         $response = [
             'success' => true,

@@ -1040,6 +1040,11 @@ paths:
         - The refresh token must exist in the database and not have exceeded the maximum
           token age configured in the plugin settings.
         - If "Authentication Requires Auth Code" is enabled, `AUTH_KEY` must be provided.
+
+        **Custom payload claims**
+        Optionally supply `payload` as a JSON-encoded object to add extra claims to the
+        newly issued JWT. Reserved identity claims are always derived from the
+        authenticated user and cannot be overridden this way.
       operationId: refreshJWT
       requestBody:  
         description: Refresh token obtained from a prior `/auth` response.
@@ -2620,6 +2625,22 @@ components:
             Required when "Authentication Requires Auth Code" is enabled. The parameter
             name defaults to `AUTH_KEY` but is configurable in the plugin's Auth Codes
             settings.
+        payload:
+          nullable: true
+          oneOf:
+            - type: string
+              example: '{"department":"engineering","region":"eu"}'
+            - type: object
+              example: {"department": "engineering", "region": "eu"}
+          description: |
+            Optional extra claims merged into the newly issued JWT payload. Accepted
+            either as a JSON-encoded string (form-encoded/query-string requests) or as a
+            native JSON object (JSON body requests).
+            Reserved identity claims configured in the plugin's payload settings (e.g.
+            `email`, `id`, `username`, `site`, `iss`, `exp`, `iat`) and the custom
+            "Login by parameter" claim, if configured, are always stripped from this
+            value and set from the authenticated user instead — they cannot be
+            overridden by the caller.
     validateBody:
       type: object
       required:

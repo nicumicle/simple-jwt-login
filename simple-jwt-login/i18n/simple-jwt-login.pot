@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-02T04:40:21+00:00\n"
+"POT-Creation-Date: 2026-07-03T14:37:31+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -44,17 +44,17 @@ msgid "Key may not be empty"
 msgstr ""
 
 #: src/Libraries/JWT/JWT.php:79
-#: src/Libraries/JWT/JWT.php:463
+#: src/Libraries/JWT/JWT.php:472
 msgid "Wrong number of segments"
 msgstr ""
 
 #: src/Libraries/JWT/JWT.php:87
-#: src/Libraries/JWT/JWT.php:471
+#: src/Libraries/JWT/JWT.php:480
 msgid "Invalid header encoding"
 msgstr ""
 
 #: src/Libraries/JWT/JWT.php:94
-#: src/Libraries/JWT/JWT.php:478
+#: src/Libraries/JWT/JWT.php:487
 msgid "Invalid claims encoding"
 msgstr ""
 
@@ -67,8 +67,8 @@ msgid "Empty algorithm"
 msgstr ""
 
 #: src/Libraries/JWT/JWT.php:113
-#: src/Libraries/JWT/JWT.php:216
-#: src/Libraries/JWT/JWT.php:261
+#: src/Libraries/JWT/JWT.php:218
+#: src/Libraries/JWT/JWT.php:263
 msgid "Algorithm not supported"
 msgstr ""
 
@@ -80,55 +80,58 @@ msgstr ""
 msgid "Signature verification failed"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:135
-#: src/Libraries/JWT/JWT.php:147
+#. translators: %s: date the token becomes valid
+#: src/Libraries/JWT/JWT.php:136
+#: src/Libraries/JWT/JWT.php:149
 #, php-format
 msgid "Cannot handle token prior to %s"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:156
+#: src/Libraries/JWT/JWT.php:158
 msgid "Expired token"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:229
+#: src/Libraries/JWT/JWT.php:231
 msgid "OpenSSL unable to sign data"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:238
+#: src/Libraries/JWT/JWT.php:240
 msgid "Unsupported sign function"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:277
+#. translators: %s: OpenSSL error message
+#: src/Libraries/JWT/JWT.php:280
 #, php-format
 msgid "OpenSSL error: %s"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:319
-#: src/Libraries/JWT/JWT.php:369
+#: src/Libraries/JWT/JWT.php:322
+#: src/Libraries/JWT/JWT.php:372
 msgid "Null result with non-null input"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:421
+#: src/Libraries/JWT/JWT.php:424
 msgid "Maximum stack depth exceeded"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:422
+#: src/Libraries/JWT/JWT.php:425
 msgid "Invalid or malformed JSON"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:423
+#: src/Libraries/JWT/JWT.php:426
 msgid "Unexpected control character found"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:424
+#: src/Libraries/JWT/JWT.php:427
 msgid "Syntax error, malformed JSON"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:425
+#: src/Libraries/JWT/JWT.php:428
 msgid "Malformed UTF-8 characters"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:430
+#. translators: %s: JSON error code returned by json_last_error()
+#: src/Libraries/JWT/JWT.php:436
 #, php-format
 msgid "Unknown JSON error: %s"
 msgstr ""
@@ -280,7 +283,7 @@ msgid "Authentication JWT time to live should be greater than zero."
 msgstr ""
 
 #: src/Modules/Settings/AuthenticationSettings.php:127
-msgid "Authentication JWT Refresh time to live should be greater than zero."
+msgid "JWT Refresh Window should be greater than zero."
 msgstr ""
 
 #: src/Modules/Settings/AuthenticationSettings.php:142
@@ -317,16 +320,16 @@ msgstr ""
 msgid "Private key is not defined in code."
 msgstr ""
 
-#: src/Modules/Settings/GeneralSettings.php:111
-msgid "JWT Decryption public and private key are required."
+#: src/Modules/Settings/GeneralSettings.php:112
+msgid "Public Key and Private Key are required."
 msgstr ""
 
-#: src/Modules/Settings/GeneralSettings.php:123
-msgid "JWT Decryption key is required."
+#: src/Modules/Settings/GeneralSettings.php:124
+msgid "JWT Verification Key is required."
 msgstr ""
 
-#: src/Modules/Settings/GeneralSettings.php:138
-msgid "You have to have at least one option enabled in 'Get JWT token From'"
+#: src/Modules/Settings/GeneralSettings.php:140
+msgid "You have to have at least one option enabled in 'JWT Input Sources'"
 msgstr ""
 
 #. translators: %d = rule number
@@ -372,7 +375,7 @@ msgid "JWT Rule #%1$d (\"%2$s\"): decryption key is required."
 msgstr ""
 
 #: src/Modules/Settings/LoginSettings.php:59
-msgid "JWT Parameter key from LoginSettings Config is missing."
+msgid "JWT Payload key is missing."
 msgstr ""
 
 #: src/Modules/Settings/LoginSettings.php:75
@@ -405,14 +408,15 @@ msgstr ""
 msgid "A \"JWT + Roles\" rule must have at least one role specified."
 msgstr ""
 
-#: src/Modules/Settings/ProtectEndpointSettings.php:92
+#. translators: %s: WordPress role name/slug that was not found.
+#: src/Modules/Settings/ProtectEndpointSettings.php:93
 #, php-format
 msgid "Role \"%s\" does not exist in WordPress."
 msgstr ""
 
 #: src/Modules/Settings/RegisterSettings.php:37
 #: src/Modules/Settings/RegisterSettings.php:48
-msgid "New User profile slug can not be empty."
+msgid "Default User Roles can not be empty."
 msgstr ""
 
 #: src/Modules/Settings/RegisterSettings.php:59
@@ -436,7 +440,7 @@ msgid "You need to add the {{CODE}} variable in email body."
 msgstr ""
 
 #: src/Modules/Settings/ResetPasswordSettings.php:62
-msgid "The Reset Password custom email subject is empty."
+msgid "The Reset Password Email Subject is empty."
 msgstr ""
 
 #: src/Modules/Settings/ResetPasswordSettings.php:148
@@ -779,51 +783,51 @@ msgstr ""
 msgid "(string) The user's first name. For new users, will be used to build the first part of the user's display name if $display_name is not specified."
 msgstr ""
 
-#: src/Modules/UserProperties.php:75
+#: src/Modules/UserProperties.php:74
 msgid "(string) The user's last name. For new users, will be used to build the second part of the user's display name if $display_name is not specified."
 msgstr ""
 
-#: src/Modules/UserProperties.php:84
+#: src/Modules/UserProperties.php:82
 msgid "(string) The user's biographical description."
 msgstr ""
 
-#: src/Modules/UserProperties.php:89
+#: src/Modules/UserProperties.php:87
 msgid "(string) Whether to enable the rich-editor for the user. Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'."
 msgstr ""
 
-#: src/Modules/UserProperties.php:98
+#: src/Modules/UserProperties.php:95
 msgid "(string) Whether to enable the rich code editor for the user. Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'."
 msgstr ""
 
-#: src/Modules/UserProperties.php:107
+#: src/Modules/UserProperties.php:103
 msgid "(string) Whether to enable comment moderation keyboard shortcuts for the user. Accepts 'true' or 'false' as a string literal, not boolean. Default 'false'."
 msgstr ""
 
-#: src/Modules/UserProperties.php:116
+#: src/Modules/UserProperties.php:111
 msgid "(string) Admin color scheme for the user. Default 'fresh'."
 msgstr ""
 
-#: src/Modules/UserProperties.php:121
+#: src/Modules/UserProperties.php:116
 msgid "(bool) Whether the user should always access the admin over https. Default false."
 msgstr ""
 
-#: src/Modules/UserProperties.php:126
+#: src/Modules/UserProperties.php:121
 msgid "(string) Date the user registered. Format is 'Y-m-d H:m:s'."
 msgstr ""
 
-#: src/Modules/UserProperties.php:131
+#: src/Modules/UserProperties.php:126
 msgid "(string) Password reset key. Default empty."
 msgstr ""
 
-#: src/Modules/UserProperties.php:136
+#: src/Modules/UserProperties.php:131
 msgid "(bool) Multisite only. Whether the user is marked as spam. Default false."
 msgstr ""
 
-#: src/Modules/UserProperties.php:141
+#: src/Modules/UserProperties.php:136
 msgid "(string) Whether to display the Admin Bar for the user on the site's front end. Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'."
 msgstr ""
 
-#: src/Modules/UserProperties.php:150
+#: src/Modules/UserProperties.php:144
 msgid "(string) User's locale. Default empty."
 msgstr ""
 
@@ -962,40 +966,40 @@ msgstr ""
 msgid "API key updated successfully."
 msgstr ""
 
-#: src/Services/AuthenticateService.php:132
+#: src/Services/AuthenticateService.php:187
 msgid "The email, username, or login parameter is missing from the request."
 msgstr ""
 
-#: src/Services/AuthenticateService.php:138
+#: src/Services/AuthenticateService.php:193
 msgid "The password or password_hash parameter is missing from request."
 msgstr ""
 
-#: src/Services/AuthenticateService.php:148
+#: src/Services/AuthenticateService.php:203
 msgid "Authentication with password_hash is not enabled."
 msgstr ""
 
-#: src/Services/AuthenticateService.php:186
-#: src/Services/AuthenticateService.php:190
-#: src/Services/AuthenticateService.php:223
-#: src/Services/AuthenticateService.php:227
+#: src/Services/AuthenticateService.php:241
+#: src/Services/AuthenticateService.php:245
+#: src/Services/AuthenticateService.php:278
+#: src/Services/AuthenticateService.php:282
 #: src/Services/Oauth/AbstractOauth.php:352
 #: src/Services/Oauth/AbstractOauth.php:356
 msgid "Wrong user credentials."
 msgstr ""
 
-#: src/Services/AuthenticateService.php:349
+#: src/Services/AuthenticateService.php:424
 #: src/Services/Oauth/AbstractOauth.php:449
 #: src/Services/Oauth/AbstractOauth.php:510
 msgid "Unable to create two-factor nonce."
 msgstr ""
 
 #. translators: %s: client IP address
-#: src/Services/AuthenticateService.php:444
+#: src/Services/AuthenticateService.php:519
 #, php-format
 msgid "You are not allowed to Authenticate from this IP: %s"
 msgstr ""
 
-#: src/Services/AuthenticateService.php:460
+#: src/Services/AuthenticateService.php:535
 msgid "Authentication is not enabled."
 msgstr ""
 
@@ -2199,9 +2203,9 @@ msgstr ""
 #: views/integrations/oauth/facebook.php:106
 #: views/integrations/oauth/github.php:106
 #: views/integrations/oauth/google.php:108
-#: views/jwt-rules-view.php:181
-#: views/jwt-rules-view.php:354
-#: views/jwt-rules-view.php:556
+#: views/jwt-rules-view.php:182
+#: views/jwt-rules-view.php:349
+#: views/jwt-rules-view.php:551
 #: views/routes/refresh-token-view.php:164
 msgid "Toggle key visibility"
 msgstr ""
@@ -2672,214 +2676,214 @@ msgstr ""
 msgid "Payload"
 msgstr ""
 
-#: views/jwt-rules-view.php:50
+#: views/jwt-rules-view.php:51
 msgid "JWT Verification Rules"
 msgstr ""
 
-#: views/jwt-rules-view.php:53
+#: views/jwt-rules-view.php:54
 msgid "Define how incoming JWTs are verified. Each rule matches a specific claim in the token and applies its own algorithm and key. The ELSE row is the required fallback used when no rule matches."
 msgstr ""
 
-#: views/jwt-rules-view.php:86
-#: views/jwt-rules-view.php:472
+#: views/jwt-rules-view.php:87
+#: views/jwt-rules-view.php:467
 msgid "IF"
 msgstr ""
 
-#: views/jwt-rules-view.php:91
-#: views/jwt-rules-view.php:477
+#: views/jwt-rules-view.php:92
+#: views/jwt-rules-view.php:472
 msgid "JWT Part"
 msgstr ""
 
-#: views/jwt-rules-view.php:95
-#: views/jwt-rules-view.php:480
+#: views/jwt-rules-view.php:96
+#: views/jwt-rules-view.php:475
 msgid "Payload claim"
 msgstr ""
 
-#: views/jwt-rules-view.php:98
-#: views/jwt-rules-view.php:481
+#: views/jwt-rules-view.php:99
+#: views/jwt-rules-view.php:476
 msgid "Header claim"
 msgstr ""
 
-#: views/jwt-rules-view.php:104
-#: views/jwt-rules-view.php:486
+#: views/jwt-rules-view.php:105
+#: views/jwt-rules-view.php:481
 #: views/routes/auth-view.php:263
 #: views/routes/auth-view.php:444
 msgid "Claim Key"
 msgstr ""
 
-#: views/jwt-rules-view.php:110
-#: views/jwt-rules-view.php:492
+#: views/jwt-rules-view.php:111
+#: views/jwt-rules-view.php:487
 msgid "e.g. iss"
 msgstr ""
 
-#: views/jwt-rules-view.php:115
-#: views/jwt-rules-view.php:497
+#: views/jwt-rules-view.php:116
+#: views/jwt-rules-view.php:492
 msgid "Operator"
 msgstr ""
 
-#: views/jwt-rules-view.php:119
-#: views/jwt-rules-view.php:500
+#: views/jwt-rules-view.php:120
+#: views/jwt-rules-view.php:495
 msgid "equals"
 msgstr ""
 
-#: views/jwt-rules-view.php:122
-#: views/jwt-rules-view.php:501
+#: views/jwt-rules-view.php:123
+#: views/jwt-rules-view.php:496
 msgid "contains"
 msgstr ""
 
-#: views/jwt-rules-view.php:128
-#: views/jwt-rules-view.php:506
+#: views/jwt-rules-view.php:129
+#: views/jwt-rules-view.php:501
 msgid "Expected Value"
 msgstr ""
 
-#: views/jwt-rules-view.php:134
-#: views/jwt-rules-view.php:512
+#: views/jwt-rules-view.php:135
+#: views/jwt-rules-view.php:507
 msgid "e.g. https://auth0.example.com/"
 msgstr ""
 
-#: views/jwt-rules-view.php:139
 #: views/jwt-rules-view.php:140
-#: views/jwt-rules-view.php:517
-#: views/jwt-rules-view.php:518
+#: views/jwt-rules-view.php:141
+#: views/jwt-rules-view.php:512
+#: views/jwt-rules-view.php:513
 msgid "Remove rule"
 msgstr ""
 
-#: views/jwt-rules-view.php:146
-#: views/jwt-rules-view.php:524
+#: views/jwt-rules-view.php:147
+#: views/jwt-rules-view.php:519
 msgid "THEN USE"
 msgstr ""
 
-#: views/jwt-rules-view.php:151
-#: views/jwt-rules-view.php:529
+#: views/jwt-rules-view.php:152
+#: views/jwt-rules-view.php:524
 msgid "Algorithm"
 msgstr ""
 
-#: views/jwt-rules-view.php:168
-#: views/jwt-rules-view.php:543
+#: views/jwt-rules-view.php:169
+#: views/jwt-rules-view.php:538
 msgid "Secret Key"
 msgstr ""
 
-#: views/jwt-rules-view.php:175
-#: views/jwt-rules-view.php:550
+#: views/jwt-rules-view.php:176
+#: views/jwt-rules-view.php:545
 msgid "Enter the shared secret used to sign this token"
 msgstr ""
 
-#: views/jwt-rules-view.php:189
-#: views/jwt-rules-view.php:563
+#: views/jwt-rules-view.php:190
+#: views/jwt-rules-view.php:558
 msgid "Key is Base64 encoded"
 msgstr ""
 
-#: views/jwt-rules-view.php:199
-#: views/jwt-rules-view.php:380
-#: views/jwt-rules-view.php:572
+#: views/jwt-rules-view.php:200
+#: views/jwt-rules-view.php:375
+#: views/jwt-rules-view.php:567
 msgid "Public Key"
 msgstr ""
 
-#: views/jwt-rules-view.php:207
-#: views/jwt-rules-view.php:389
-#: views/jwt-rules-view.php:579
+#: views/jwt-rules-view.php:208
+#: views/jwt-rules-view.php:384
+#: views/jwt-rules-view.php:574
 msgid "Private Key"
 msgstr ""
 
-#: views/jwt-rules-view.php:225
-#: views/jwt-rules-view.php:592
+#: views/jwt-rules-view.php:226
+#: views/jwt-rules-view.php:587
 msgid "IDENTIFY"
 msgstr ""
 
-#: views/jwt-rules-view.php:230
-#: views/jwt-rules-view.php:428
-#: views/jwt-rules-view.php:597
+#: views/jwt-rules-view.php:231
+#: views/jwt-rules-view.php:423
+#: views/jwt-rules-view.php:592
 msgid "Identify user by"
 msgstr ""
 
-#: views/jwt-rules-view.php:234
-#: views/jwt-rules-view.php:433
-#: views/jwt-rules-view.php:600
+#: views/jwt-rules-view.php:235
+#: views/jwt-rules-view.php:428
+#: views/jwt-rules-view.php:595
 msgid "Email address"
 msgstr ""
 
-#: views/jwt-rules-view.php:237
-#: views/jwt-rules-view.php:436
-#: views/jwt-rules-view.php:601
+#: views/jwt-rules-view.php:238
+#: views/jwt-rules-view.php:431
+#: views/jwt-rules-view.php:596
 msgid "WordPress User ID"
 msgstr ""
 
-#: views/jwt-rules-view.php:240
-#: views/jwt-rules-view.php:439
-#: views/jwt-rules-view.php:602
+#: views/jwt-rules-view.php:241
+#: views/jwt-rules-view.php:434
+#: views/jwt-rules-view.php:597
 msgid "WordPress Username"
 msgstr ""
 
-#: views/jwt-rules-view.php:246
-#: views/jwt-rules-view.php:444
-#: views/jwt-rules-view.php:607
+#: views/jwt-rules-view.php:247
+#: views/jwt-rules-view.php:439
+#: views/jwt-rules-view.php:602
 msgid "JWT payload key"
 msgstr ""
 
-#: views/jwt-rules-view.php:253
-#: views/jwt-rules-view.php:450
-#: views/jwt-rules-view.php:614
+#: views/jwt-rules-view.php:254
+#: views/jwt-rules-view.php:445
+#: views/jwt-rules-view.php:609
 msgid "e.g. email"
 msgstr ""
 
-#: views/jwt-rules-view.php:270
+#: views/jwt-rules-view.php:271
 msgid "+ Add Rule"
 msgstr ""
 
-#: views/jwt-rules-view.php:281
+#: views/jwt-rules-view.php:282
 msgid "ELSE (default - used when no rule matches)"
 msgstr ""
 
-#: views/jwt-rules-view.php:284
+#: views/jwt-rules-view.php:285
 msgid "Required - cannot be removed"
 msgstr ""
 
-#: views/jwt-rules-view.php:292
+#: views/jwt-rules-view.php:293
 msgid "Where is your JWT secret stored?"
 msgstr ""
 
-#: views/jwt-rules-view.php:298
+#: views/jwt-rules-view.php:299
 msgid "Plugin Settings (recommended)"
 msgstr ""
 
-#: views/jwt-rules-view.php:302
+#: views/jwt-rules-view.php:303
 msgid "Code (wp-config.php or custom plugin)"
 msgstr ""
 
-#: views/jwt-rules-view.php:312
+#: views/jwt-rules-view.php:313
 msgid "JWT Algorithm"
 msgstr ""
 
-#: views/jwt-rules-view.php:338
+#: views/jwt-rules-view.php:333
 msgid "JWT Verification Key"
 msgstr ""
 
-#: views/jwt-rules-view.php:348
+#: views/jwt-rules-view.php:343
 msgid "Enter JWT secret key"
 msgstr ""
 
-#: views/jwt-rules-view.php:360
+#: views/jwt-rules-view.php:355
 #: views/routes/refresh-token-view.php:171
 msgid "Strength"
 msgstr ""
 
-#: views/jwt-rules-view.php:371
+#: views/jwt-rules-view.php:366
 msgid "JWT key is Base64 encoded"
 msgstr ""
 
-#: views/jwt-rules-view.php:401
+#: views/jwt-rules-view.php:396
 msgid "Define the following constants in your code (e.g. in"
 msgstr ""
 
-#: views/jwt-rules-view.php:420
+#: views/jwt-rules-view.php:415
 msgid "User Identification"
 msgstr ""
 
-#: views/jwt-rules-view.php:423
+#: views/jwt-rules-view.php:418
 msgid "Which JWT payload field identifies the WordPress user?"
 msgstr ""
 
-#: views/jwt-rules-view.php:453
+#: views/jwt-rules-view.php:448
 msgid "Use dot notation for nested values, e.g. <code>user.id</code>."
 msgstr ""
 

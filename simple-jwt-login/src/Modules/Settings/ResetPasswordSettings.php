@@ -59,7 +59,7 @@ class ResetPasswordSettings extends BaseSettings implements SettingsInterface
                 }
                 if ($this->getResetPasswordEmailSubject() === '') {
                     throw new Exception(
-                        esc_html__('The Reset Password custom email subject is empty.', 'simple-jwt-login'),
+                        esc_html__('The Reset Password Email Subject is empty.', 'simple-jwt-login'),
                         absint($this->settingsErrors->generateCode(
                             SettingsErrors::PREFIX_RESET_PASSWORD,
                             ErrorCodes::ERR_EMPTY_CUSTOM_EMAIL_SUBJECT

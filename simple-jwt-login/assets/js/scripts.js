@@ -693,26 +693,28 @@ jQuery(document).ready(
             var keys   = Object.keys(params);
             var isBody = (method === 'POST' || method === 'PUT');
 
-            var paramsHtml = '';
-            if (keys.length) {
-                paramsHtml += '<div class="sjl-try-params"><p class="sjl-try-section-label">Parameters</p>';
-                keys.forEach(function (key) {
-                    var safeKey  = jQuery('<span>').text(key).html();
-                    var safeHint = jQuery('<span>').text(params[key]).html();
-                    var autoVal  = '';
-                    if (key === 'rest_route') {
-                        autoVal = safeHint
-                    }
-                    var safeAutoVal = jQuery('<span>').text(autoVal).html();
-                    paramsHtml  += '<div class="sjl-try-param-row">'
-                        + '<label class="sjl-try-param-label">' + safeKey + '</label>'
-                        + '<input type="text" class="form-control sjl-try-param-input"'
-                        + ' data-param="' + safeKey + '" placeholder="' + safeHint + '"'
-                        + (autoVal ? ' value="' + safeAutoVal + '"' : '') + ' />'
-                        + '</div>';
-                });
-                paramsHtml += '</div>';
-            }
+            var paramsHtml = '<div class="sjl-try-params"><p class="sjl-try-section-label">Parameters</p>';
+            paramsHtml += '<div class="sjl-try-param-list">';
+            keys.forEach(function (key) {
+                var safeKey  = jQuery('<span>').text(key).html();
+                var safeHint = jQuery('<span>').text(params[key]).html();
+                var autoVal  = '';
+                if (key === 'rest_route') {
+                    autoVal = safeHint
+                }
+                var safeAutoVal = jQuery('<span>').text(autoVal).html();
+                paramsHtml  += '<div class="sjl-try-param-row">'
+                    + '<label class="sjl-try-param-label">' + safeKey + '</label>'
+                    + '<input type="text" class="form-control sjl-try-param-input"'
+                    + ' data-param="' + safeKey + '" placeholder="' + safeHint + '"'
+                    + (autoVal ? ' value="' + safeAutoVal + '"' : '') + ' />'
+                    + '</div>';
+            });
+            paramsHtml += '</div>';
+            paramsHtml += '<div class="sjl-try-custom-rows"></div>';
+            paramsHtml += '<button class="btn btn-outline-secondary sjl-try-add-param-btn"'
+                + ' type="button" style="margin-top:6px;">+ Add Parameter</button>';
+            paramsHtml += '</div>';
 
             var $panel = jQuery(
                 '<div class="sjl-try-panel">'
@@ -755,27 +757,29 @@ jQuery(document).ready(
             var initialParams = isBody ? params : sjlTryCollectParams($panel);
             $panel.find('.sjl-try-url-code').text(isBody ? base : sjlTryBuildUrl(base, initialParams));
 
-            $panel.on('input', '.sjl-try-param-input', function () {
-                if (!isBody) {
-                    var cur = sjlTryCollectParams($panel);
-                    $panel.find('.sjl-try-url-code').text(sjlTryBuildUrl(base, cur));
-                }
+            $panel.on('input', '.sjl-try-param-input, .sjl-try-custom-key, .sjl-try-custom-value', function () {
+                sjlTryRefreshPreview($panel, base, method, isBody);
+            });
 
-                var $activeBtn = $panel.find('.sjl-try-code-btn.active');
-                if ($activeBtn.length) {
-                    var activeLang = $activeBtn.data('lang');
-                    var codeCur    = sjlTryCollectParamsForCode($panel);
-                    var codeUrl    = isBody ? base : sjlTryBuildUrl(base, codeCur);
-                    var rerendered = '';
-                    if (activeLang === 'curl') {
-                        rerendered = sjlTryGenCurl(codeUrl, method, codeCur, isBody);
-                    } else if (activeLang === 'js') {
-                        rerendered = sjlTryGenJs(codeUrl, method, codeCur, isBody);
-                    } else if (activeLang === 'php') {
-                        rerendered = sjlTryGenPhp(codeUrl, method, codeCur, isBody);
-                    }
-                    $panel.find('.sjl-try-code-pre').text(rerendered);
-                }
+            $panel.on('click', '.sjl-try-add-param-btn', function () {
+                var $row = jQuery(
+                    '<div class="sjl-try-custom-row sjl-claims-row">'
+                    + '<input type="text" class="form-control sjl-auth-input sjl-try-custom-key"'
+                    + ' placeholder="Parameter name" />'
+                    + '<input type="text" class="form-control sjl-auth-input sjl-try-custom-value"'
+                    + ' placeholder="Value" />'
+                    + '<button type="button" class="sjl-endpoint-remove sjl-try-custom-remove" title="Remove">'
+                    + '<span class="dashicons dashicons-trash"></span></button>'
+                    + '</div>'
+                );
+                $panel.find('.sjl-try-custom-rows').append($row);
+                $row.find('.sjl-try-custom-key').trigger('focus');
+                sjlTryRefreshPreview($panel, base, method, isBody);
+            });
+
+            $panel.on('click', '.sjl-try-custom-remove', function () {
+                jQuery(this).closest('.sjl-try-custom-row').remove();
+                sjlTryRefreshPreview($panel, base, method, isBody);
             });
 
             $panel.on('click', '.sjl-try-close', function () {
@@ -936,6 +940,48 @@ function sjlTryGetMethod($block)
     return $block.find('.method').first().text().trim().toUpperCase();
 }
 
+function sjlTryRefreshPreview($panel, base, method, isBody)
+{
+    if (!isBody) {
+        var cur = sjlTryCollectParams($panel);
+        $panel.find('.sjl-try-url-code').text(sjlTryBuildUrl(base, cur));
+    }
+
+    var $activeBtn = $panel.find('.sjl-try-code-btn.active');
+    if (!$activeBtn.length) {
+        return;
+    }
+
+    var activeLang = $activeBtn.data('lang');
+    var codeCur    = sjlTryCollectParamsForCode($panel);
+    var codeUrl    = isBody ? base : sjlTryBuildUrl(base, codeCur);
+    var rerendered = '';
+    if (activeLang === 'curl') {
+        rerendered = sjlTryGenCurl(codeUrl, method, codeCur, isBody);
+    } else if (activeLang === 'js') {
+        rerendered = sjlTryGenJs(codeUrl, method, codeCur, isBody);
+    } else if (activeLang === 'php') {
+        rerendered = sjlTryGenPhp(codeUrl, method, codeCur, isBody);
+    }
+    $panel.find('.sjl-try-code-pre').text(rerendered);
+}
+
+function sjlTryCollectCustomParams($panel, useplaceholder)
+{
+    var out = {};
+    $panel.find('.sjl-try-custom-row').each(function () {
+        var $row = jQuery(this);
+        var key  = jQuery.trim($row.find('.sjl-try-custom-key').val());
+        if (key === '') {
+            return;
+        }
+        var $valueInput = $row.find('.sjl-try-custom-value');
+        var val         = $valueInput.val();
+        out[key] = (useplaceholder && val === '') ? ($valueInput.attr('placeholder') || '') : val;
+    });
+    return out;
+}
+
 function sjlTryCollectParams($panel)
 {
     var out = {};
@@ -944,6 +990,7 @@ function sjlTryCollectParams($panel)
         var val = jQuery(this).val();
         out[k]  = val;
     });
+    jQuery.extend(out, sjlTryCollectCustomParams($panel, false));
     return out;
 }
 
@@ -956,6 +1003,7 @@ function sjlTryCollectParamsForCode($panel)
         var val    = $input.val();
         out[k]     = val !== '' ? val : ($input.attr('placeholder') || '');
     });
+    jQuery.extend(out, sjlTryCollectCustomParams($panel, true));
     return out;
 }
 

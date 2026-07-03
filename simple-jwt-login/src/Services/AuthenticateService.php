@@ -129,7 +129,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
      *
      * @return array
      */
-    private static function getReservedPayloadParameters($authSettings, $jwtSettings)
+    protected static function getReservedPayloadParameters($authSettings, $jwtSettings)
     {
         $reservedParameters = $authSettings->getJwtPayloadParameters();
 

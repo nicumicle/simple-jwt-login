@@ -95,7 +95,7 @@ class RegisterSettingsTest extends TestCase
         $this->wordPressData->method('roleExists')
             ->willReturn(true);
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('New User profile slug can not be empty.');
+        $this->expectExceptionMessage('Default User Roles can not be empty.');
         $registerUser = (new RegisterSettings())
             ->withWordPressData($this->wordPressData)
             ->withSettings([])
@@ -202,7 +202,7 @@ class RegisterSettingsTest extends TestCase
         return [
             'empty_role' => [
                 'role' => '',
-                'exception' => 'New User profile slug can not be empty.',
+                'exception' => 'Default User Roles can not be empty.',
             ],
             'invalid_role' => [
                 'role' => 'test',

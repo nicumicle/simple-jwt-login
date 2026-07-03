@@ -372,7 +372,7 @@ class AuthenticationSettingsTest extends TestCase
                     'jwt_payload' => ['exp'], 'jwt_auth_ttl' => 60,
                     'allow_refresh_token' => 1, 'jwt_auth_refresh_ttl' => 0,
                 ],
-                'Authentication JWT Refresh time to live should be greater than zero.',
+                'JWT Refresh Window should be greater than zero.',
             ],
             'refresh enabled, negative refresh TTL' => [
                 [
@@ -380,7 +380,7 @@ class AuthenticationSettingsTest extends TestCase
                     'jwt_payload' => ['exp'], 'jwt_auth_ttl' => 60,
                     'allow_refresh_token' => 1, 'jwt_auth_refresh_ttl' => -1,
                 ],
-                'Authentication JWT Refresh time to live should be greater than zero.',
+                'JWT Refresh Window should be greater than zero.',
             ],
             'refresh enabled, missing refresh TTL' => [
                 [
@@ -388,7 +388,7 @@ class AuthenticationSettingsTest extends TestCase
                     'jwt_payload' => ['exp'], 'jwt_auth_ttl' => 60,
                     'allow_refresh_token' => 1,
                 ],
-                'Authentication JWT Refresh time to live should be greater than zero.',
+                'JWT Refresh Window should be greater than zero.',
             ],
             'refresh enabled, empty refresh key' => [
                 [

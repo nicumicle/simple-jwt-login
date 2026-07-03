@@ -125,7 +125,7 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             ) {
                 throw new Exception(
                     esc_html__(
-                        'Authentication JWT Refresh time to live should be greater than zero.',
+                        'JWT Refresh Window should be greater than zero.',
                         'simple-jwt-login'
                     ),
                     absint($this->settingsErrors->generateCode(

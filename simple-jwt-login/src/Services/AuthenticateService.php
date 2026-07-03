@@ -29,6 +29,24 @@ class AuthenticateService extends BaseService implements ServiceInterface
         $jwtSettings,
         $user
     ) {
+        // Strip any attacker-supplied reserved identity claims (email, id, username, ...)
+        // from the incoming payload. These must only ever be set below from the
+        // authenticated $user, never from client input, otherwise a caller could
+        // impersonate another account by injecting e.g. payload={"email":"admin@site"}.
+        $reservedParameters = $jwtSettings->getAuthenticationSettings()->getJwtPayloadParameters();
+
+        // The claim used by /autologin to resolve the target user can be a custom
+        // name (jwt_login_by_parameter) that isn't in the fixed list above. It must
+        // be stripped too, otherwise it can be injected the same way.
+        $jwtLoginByParameter = $jwtSettings->getLoginSettings()->getJwtLoginByParameter();
+        if (!empty($jwtLoginByParameter)) {
+            $reservedParameters[] = $jwtLoginByParameter;
+        }
+
+        foreach ($reservedParameters as $reservedParameter) {
+            unset($payload[$reservedParameter]);
+        }
+
         $payload[AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT] = time();
 
         foreach ($jwtSettings->getAuthenticationSettings()->getJwtPayloadParameters() as $parameter) {

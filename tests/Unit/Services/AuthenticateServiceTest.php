@@ -294,6 +294,76 @@ class AuthenticateServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
+    public function testGeneratePayloadDoesNotLeakAttackerSuppliedEmailClaim()
+    {
+        $this->wordPressDataMock
+            ->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication' => 1,
+                // Admin only allows "exp" to be present in the JWT payload.
+                'jwt_payload' => [
+                    AuthenticationSettings::JWT_PAYLOAD_PARAM_EXP,
+                ],
+            ]));
+        $this->wordPressDataMock
+            ->method('getUserProperty')
+            ->willReturn('subscriber@test.com');
+
+        $jwtSettings = new SimpleJWTLoginSettings($this->wordPressDataMock);
+
+        // Attacker-controlled payload sent to /auth, impersonating an admin.
+        $attackerPayload = [
+            'email' => 'admin@test.com',
+        ];
+
+        $payload = AuthenticateService::generatePayload(
+            $attackerPayload,
+            $this->wordPressDataMock,
+            $jwtSettings,
+            'subscriber-user'
+        );
+
+        $this->assertArrayNotHasKey(
+            'email',
+            $payload,
+        );
+    }
+
+    public function testGeneratePayloadDoesNotLeakAttackerSuppliedJwtLoginByParameterClaim()
+    {
+        $this->wordPressDataMock
+            ->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication' => 1,
+                'jwt_payload' => [
+                    AuthenticationSettings::JWT_PAYLOAD_PARAM_EXP,
+                ],
+                // Admin configured autologin to resolve users by a custom claim.
+                'jwt_login_by_parameter' => 'custom_uid',
+            ]));
+        $this->wordPressDataMock
+            ->method('getUserProperty')
+            ->willReturn('subscriber-uid');
+
+        $jwtSettings = new SimpleJWTLoginSettings($this->wordPressDataMock);
+
+        $attackerPayload = [
+            'custom_uid' => 'admin-uid',
+        ];
+
+        $payload = AuthenticateService::generatePayload(
+            $attackerPayload,
+            $this->wordPressDataMock,
+            $jwtSettings,
+            'subscriber-user'
+        );
+
+        $this->assertArrayNotHasKey(
+            'custom_uid',
+            $payload,
+        );
+    }
+
     public function testSuccessFlowWithFullPayloadAndPasshash()
     {
         $this->wordPressDataMock

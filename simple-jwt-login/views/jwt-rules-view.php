@@ -33,6 +33,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                     SettingsErrors::ERR_GENERAL_PRIVATE_KEY_NOT_PRESENT_IN_CODE_HS,
                     SettingsErrors::ERR_GENERAL_MISSING_PRIVATE_AND_PUBLIC_KEY,
                     SettingsErrors::ERR_GENERAL_DECRYPTION_KEY_REQUIRED,
+                    SettingsErrors::ERR_GENERAL_MISSING_JWT_PAYLOAD_KEY,
                 ];
                 $hasKeyError = false;
                 foreach ($keyErrors as $errConst) {
@@ -326,13 +327,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
 
             <!-- Verification key -->
             <div class="sjl-gen-step">
-                <div class="sjl-gen-step-number">
-                    <?php
-                    echo $hasKeyError
-                        ? '<span class="simple-jwt-error">!</span>'
-                        : '3';
-                    ?>
-                </div>
+                <div class="sjl-gen-step-number">3</div>
                 <div class="sjl-gen-step-content">
                     <label class="sjl-gen-step-label">
                         <?php echo esc_html__('JWT Verification Key', 'simple-jwt-login'); ?>

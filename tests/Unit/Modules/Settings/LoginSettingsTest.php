@@ -91,7 +91,7 @@ class LoginSettingsTest extends TestCase
     public function testValidationEmptyLoginBy()
     {
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('JWT Parameter key from LoginSettings Config is missing.');
+        $this->expectExceptionMessage('JWT Payload key is missing.');
         $loginSettings = (new LoginSettings())
             ->withWordPressData($this->wordPressData)
             ->withSettings([])

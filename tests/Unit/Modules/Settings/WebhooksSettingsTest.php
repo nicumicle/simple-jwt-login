@@ -23,6 +23,10 @@ class WebhooksSettingsTest extends TestCase
             ->willReturnCallback(function ($value) {
                 return $value;
             });
+        $this->wordPressData->method('parseUrl')
+            ->willReturnCallback(function ($url, $component = -1) {
+                return parse_url($url, $component);
+            });
     }
 
     public function testEmptyPostPreservesExistingWebhooks()

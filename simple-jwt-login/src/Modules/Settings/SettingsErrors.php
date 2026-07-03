@@ -47,14 +47,14 @@ class SettingsErrors extends \Exception
     const ERR_GENERAL_DECRYPTION_KEY_REQUIRED = 5;
     const ERR_GENERAL_GET_JWT_FROM = 7;
     const ERR_GENERAL_REQUEST_KEYS = 8;
+    const ERR_GENERAL_MISSING_JWT_PAYLOAD_KEY = 9;
 
     #auth-codes
     const ERR_EMPTY_AUTH_CODES = 1;
     const ERR_INVALID_ROLE = 2;
 
     #login
-    const ERR_LOGIN_MISSING_JWT_PARAMETER_KEY = 1;
-    const ERR_LOGIN_INVALID_CUSTOM_URL = 2;
+    const ERR_LOGIN_INVALID_CUSTOM_URL = 1;
 
     #cors
     const ERR_CORS_NO_OPTION = 1;

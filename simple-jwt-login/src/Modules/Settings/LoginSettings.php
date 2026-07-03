@@ -56,10 +56,10 @@ class LoginSettings extends BaseSettings implements SettingsInterface
             && (!isset($this->post['jwt_login_by_parameter']) || empty(trim($this->post['jwt_login_by_parameter'])))
         ) {
             throw new Exception(
-                esc_html__('JWT Parameter key from LoginSettings Config is missing.', 'simple-jwt-login'),
+                esc_html__('JWT Payload key is missing.', 'simple-jwt-login'),
                 absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_GENERAL,
-                    SettingsErrors::ERR_LOGIN_MISSING_JWT_PARAMETER_KEY
+                    SettingsErrors::ERR_GENERAL_MISSING_JWT_PAYLOAD_KEY
                 ))
             );
         }

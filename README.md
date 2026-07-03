@@ -79,6 +79,8 @@ Table of contents
   * [CLI](#cli)
 * [Documentation](#ledger-documentation)
 * [Roadmap](#rocket-roadmap)
+* [Version Support Policy](#calendar-version-support-policy)
+  * [Semantic Versioning](#semantic-versioning)
 * [Contribute](#scroll-contribute)
   * [How can you contribute](#how-can-you-contribute)
 * [Contributors](#trophy-contributors)
@@ -314,6 +316,25 @@ Check out the [roadmap](https://github.com/users/nicumicle/projects/1) to get in
 - [Top Feature Requests](https://github.com/nicumicle/simple-jwt-login/issues?q=label%3Afeature-request+is%3Aopen+sort%3Areactions-%2B1-desc) (Add your votes using the 👍 reaction)
 - [Top Bugs](https://github.com/nicumicle/simple-jwt-login/issues?q=is%3Aissue+is%3Aopen+label%3Abug+sort%3Areactions-%2B1-desc) (Add your votes using the 👍 reaction)
 - [Newest Bugs](https://github.com/nicumicle/simple-jwt-login/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
+
+## :calendar: Version Support Policy
+
+| Version | Status | End of Life | Supported fixes |
+|---------|--------|-------------|------------------|
+| v4.x | Active (LTS) | - | New features, bug fixes, security patches, WordPress compatibility fixes |
+| v3.x | Maintenance | 31.01.2027 | Security patches and WordPress compatibility fixes only - no new features, no bug fixes |
+
+We recommend upgrading to v4 as soon as possible. After 31.01.2027, v3.x will no longer receive any updates, including security patches.
+
+### Semantic Versioning
+
+Simple-JWT-Login follows [Semantic Versioning (SemVer)](https://semver.org/) - version numbers are structured as `MAJOR.MINOR.PATCH` (e.g. `4.2.1`):
+
+- **MAJOR** (`4.x.x`) - incremented for breaking/incompatible changes, such as removing a feature or changing default behavior. Upgrading a major version may require reviewing your settings or integration code.
+- **MINOR** (`x.2.x`) - incremented when new functionality is added in a backwards-compatible way.
+- **PATCH** (`x.x.1`) - incremented for backwards-compatible bug fixes and security patches.
+
+For v3.x, since it's now in maintenance mode, only PATCH releases will be published (security and WordPress compatibility fixes) - no new MINOR versions will be released.
 
 ## :scroll: Contribute
 

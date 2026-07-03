@@ -185,7 +185,7 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
                     ))
                 );
             }
-            if (parse_url($url, PHP_URL_SCHEME) !== 'https') {
+            if ($this->wordPressData->parseUrl($url, PHP_URL_SCHEME) !== 'https') {
                 throw new Exception(
                     esc_html(
                         sprintf(

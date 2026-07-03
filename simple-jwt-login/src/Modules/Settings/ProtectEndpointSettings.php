@@ -89,6 +89,7 @@ class ProtectEndpointSettings extends BaseSettings implements SettingsInterface
                 if (!$this->wordPressData->roleExists($role)) {
                     throw new Exception(
                         sprintf(
+                            /* translators: %s: WordPress role name/slug that was not found. */
                             esc_html__('Role "%s" does not exist in WordPress.', 'simple-jwt-login'),
                             esc_html($role)
                         ),

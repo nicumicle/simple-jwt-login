@@ -64,8 +64,7 @@ class UserProperties
             'first_name' => [
                 'type' => $typeString,
                 'description' => __(
-                    "(string) The user's first name. For new users, will be used to build the first"
-                    . " part of the user's display name if \$display_name is not specified.",
+                    "(string) The user's first name. For new users, will be used to build the first part of the user's display name if \$display_name is not specified.",
                     'simple-jwt-login'
                 ),
                 'updateable' => true,
@@ -73,8 +72,7 @@ class UserProperties
             'last_name' => [
                 'type' => $typeString,
                 'description' => __(
-                    "(string) The user's last name. For new users, will be used to build the second"
-                    . " part of the user's display name if \$display_name is not specified.",
+                    "(string) The user's last name. For new users, will be used to build the second part of the user's display name if \$display_name is not specified.",
                     'simple-jwt-login'
                 ),
                 'updateable' => true,
@@ -87,8 +85,7 @@ class UserProperties
             'rich_editing' => [
                 'type' => $typeBool,
                 'description' => __(
-                    "(string) Whether to enable the rich-editor for the user."
-                    . " Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'.",
+                    "(string) Whether to enable the rich-editor for the user. Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'.",
                     'simple-jwt-login'
                 ),
                 'updateable' => true,
@@ -96,8 +93,7 @@ class UserProperties
             'syntax_highlighting' => [
                 'type' => $typeBool,
                 'description' => __(
-                    "(string) Whether to enable the rich code editor for the user."
-                    . " Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'.",
+                    "(string) Whether to enable the rich code editor for the user. Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'.",
                     'simple-jwt-login'
                 ),
                 'updateable' => true,
@@ -105,8 +101,7 @@ class UserProperties
             'comment_shortcuts' => [
                 'type' => $typeString,
                 'description' => __(
-                    "(string) Whether to enable comment moderation keyboard shortcuts for the user."
-                    . " Accepts 'true' or 'false' as a string literal, not boolean. Default 'false'.",
+                    "(string) Whether to enable comment moderation keyboard shortcuts for the user. Accepts 'true' or 'false' as a string literal, not boolean. Default 'false'.",
                     'simple-jwt-login'
                 ),
                 'updateable' => true,
@@ -139,8 +134,7 @@ class UserProperties
             'show_admin_bar_front' => [
                 'type' => $typeString,
                 'description' => __(
-                    "(string) Whether to display the Admin Bar for the user on the site's front end."
-                    . " Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'.",
+                    "(string) Whether to display the Admin Bar for the user on the site's front end. Accepts 'true' or 'false' as a string literal, not boolean. Default 'true'.",
                     'simple-jwt-login'
                 ),
                 'updateable' => true,

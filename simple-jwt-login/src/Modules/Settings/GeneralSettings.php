@@ -101,31 +101,61 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
                     );
                 }
             }
-            if (strpos($this->post['jwt_algorithm'], 'RS') !== false
-                && (!isset($this->post['decryption_key_public'])
-                    || empty(trim($this->post['decryption_key_public']))
-                    || !isset($this->post['decryption_key_private'])
-                    || empty(trim($this->post['decryption_key_private'])))
-            ) {
-                throw new Exception(
-                    esc_html__('JWT Decryption public and private key are required.', 'simple-jwt-login'),
-                    absint($this->settingsErrors->generateCode(
-                        SettingsErrors::PREFIX_GENERAL,
-                        SettingsErrors::ERR_GENERAL_MISSING_PRIVATE_AND_PUBLIC_KEY
-                    ))
-                );
-            }
-            if (strpos($this->post['jwt_algorithm'], 'RS') === false
-                && (!isset($this->post['decryption_key'])
-                    || empty(trim($this->post['decryption_key'])))
-            ) {
-                throw new Exception(
-                    esc_html__('JWT Decryption key is required.', 'simple-jwt-login'),
-                    absint($this->settingsErrors->generateCode(
-                        SettingsErrors::PREFIX_GENERAL,
-                        SettingsErrors::ERR_GENERAL_DECRYPTION_KEY_REQUIRED
-                    ))
-                );
+            if (isset($this->post['decryption_source']) && $this->post['decryption_source'] === self::DECRYPTION_SOURCE_SETTINGS) {
+                if (strpos($this->post['jwt_algorithm'], 'RS') !== false
+                    && (!isset($this->post['decryption_key_public'])
+                        || empty(trim($this->post['decryption_key_public']))
+                        || !isset($this->post['decryption_key_private'])
+                        || empty(trim($this->post['decryption_key_private'])))
+                ) {
+                    throw new Exception(
+                        esc_html__('JWT Decryption public and private key are required.', 'simple-jwt-login'),
+                        absint($this->settingsErrors->generateCode(
+                            SettingsErrors::PREFIX_GENERAL,
+                            SettingsErrors::ERR_GENERAL_MISSING_PRIVATE_AND_PUBLIC_KEY
+                        ))
+                    );
+                }
+                if (strpos($this->post['jwt_algorithm'], 'RS') === false
+                    && (!isset($this->post['decryption_key'])
+                        || empty(trim($this->post['decryption_key'])))
+                ) {
+                    throw new Exception(
+                        esc_html__('The JWT Verification key is required.', 'simple-jwt-login'),
+                        absint($this->settingsErrors->generateCode(
+                            SettingsErrors::PREFIX_GENERAL,
+                            SettingsErrors::ERR_GENERAL_DECRYPTION_KEY_REQUIRED
+                        ))
+                    );
+                }
+            
+        
+                if (strpos($this->post['jwt_algorithm'], 'RS') !== false
+                    && (!isset($this->post['decryption_key_public'])
+                        || empty(trim($this->post['decryption_key_public']))
+                        || !isset($this->post['decryption_key_private'])
+                        || empty(trim($this->post['decryption_key_private'])))
+                ) {
+                    throw new Exception(
+                        esc_html__('JWT Decryption public and private key are required.', 'simple-jwt-login'),
+                        absint($this->settingsErrors->generateCode(
+                            SettingsErrors::PREFIX_GENERAL,
+                            SettingsErrors::ERR_GENERAL_MISSING_PRIVATE_AND_PUBLIC_KEY
+                        ))
+                    );
+                }
+                if (strpos($this->post['jwt_algorithm'], 'RS') === false
+                    && (!isset($this->post['decryption_key'])
+                        || empty(trim($this->post['decryption_key'])))
+                ) {
+                    throw new Exception(
+                        esc_html__('The JWT Verification key is required.', 'simple-jwt-login'),
+                        absint($this->settingsErrors->generateCode(
+                            SettingsErrors::PREFIX_GENERAL,
+                            SettingsErrors::ERR_GENERAL_DECRYPTION_KEY_REQUIRED
+                        ))
+                    );
+                }
             }
         }
 

@@ -8,6 +8,7 @@ use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Repositories\RevokedToken\RevokedTokenRepository;
 use SimpleJwtLoginTests\WP\WPTestCase;
 
 /**
@@ -264,7 +265,9 @@ class RefreshTokenTest extends WPTestCase
         $tokens = $this->authenticate($email, $password);
         $jwt    = $tokens['jwt'];
 
-        add_user_meta($userId, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY, $jwt);
+        global $wpdb;
+        $revokedTokenRepo = new RevokedTokenRepository($wpdb);
+        $revokedTokenRepo->insert($userId, hash('sha256', $jwt), null);
 
         try {
             static::configurePlugin(static::baseConfig());
@@ -278,7 +281,7 @@ class RefreshTokenTest extends WPTestCase
             $this->assertFalse($data['success']);
             $this->assertSame(ErrorCodes::ERR_REVOKED_TOKEN, $data['data']['error_code']);
         } finally {
-            delete_user_meta($userId, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY);
+            $revokedTokenRepo->deleteByUserId($userId);
         }
     }
 

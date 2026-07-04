@@ -118,6 +118,12 @@ if (!function_exists('get_user_by')) {
     {
     }
 }
+if (!function_exists('get_users')) {
+    function get_users($args)
+    {
+        return [];
+    }
+}
 if (!function_exists('wp_set_current_user')) {
     function wp_set_current_user($userId)
     {

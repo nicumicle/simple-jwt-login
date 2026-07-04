@@ -12,7 +12,7 @@ class AuditEventsTest extends TestCase
     {
         $events = AuditEvents::all();
 
-        $this->assertCount(30, $events);
+        $this->assertCount(32, $events);
     }
 
     #[DataProvider('allEventsProvider')]
@@ -57,6 +57,8 @@ class AuditEventsTest extends TestCase
             'api_key_delete_success'      => [AuditEvents::API_KEY_DELETE_SUCCESS],
             'api_key_delete_failed'       => [AuditEvents::API_KEY_DELETE_FAILED],
             'api_key_used'                => [AuditEvents::API_KEY_USED],
+            'revoked_token_delete_success' => [AuditEvents::REVOKED_TOKEN_DELETE_SUCCESS],
+            'revoked_token_delete_failed'  => [AuditEvents::REVOKED_TOKEN_DELETE_FAILED],
         ];
     }
 
@@ -102,6 +104,8 @@ class AuditEventsTest extends TestCase
             'API_KEY_DELETE_SUCCESS'      => ['api_key.delete.success',      AuditEvents::API_KEY_DELETE_SUCCESS],
             'API_KEY_DELETE_FAILED'       => ['api_key.delete.failed',       AuditEvents::API_KEY_DELETE_FAILED],
             'API_KEY_USED'                => ['api_key.used',                AuditEvents::API_KEY_USED],
+            'REVOKED_TOKEN_DELETE_SUCCESS' => ['revoked_token.delete.success', AuditEvents::REVOKED_TOKEN_DELETE_SUCCESS],
+            'REVOKED_TOKEN_DELETE_FAILED'  => ['revoked_token.delete.failed',  AuditEvents::REVOKED_TOKEN_DELETE_FAILED],
         ];
     }
 
@@ -109,7 +113,7 @@ class AuditEventsTest extends TestCase
     {
         $labels = AuditEvents::labels();
 
-        $this->assertCount(30, $labels);
+        $this->assertCount(32, $labels);
         $this->assertArrayHasKey(AuditEvents::AUTH_LOGIN_SUCCESS, $labels);
         $this->assertArrayHasKey(AuditEvents::AUTH_LOGIN_FAILED, $labels);
         $this->assertArrayHasKey(AuditEvents::AUTH_LOGOUT_FAILED, $labels);
@@ -136,5 +140,7 @@ class AuditEventsTest extends TestCase
         $this->assertArrayHasKey(AuditEvents::API_KEY_DELETE_SUCCESS, $labels);
         $this->assertArrayHasKey(AuditEvents::API_KEY_DELETE_FAILED, $labels);
         $this->assertArrayHasKey(AuditEvents::API_KEY_USED, $labels);
+        $this->assertArrayHasKey(AuditEvents::REVOKED_TOKEN_DELETE_SUCCESS, $labels);
+        $this->assertArrayHasKey(AuditEvents::REVOKED_TOKEN_DELETE_FAILED, $labels);
     }
 }

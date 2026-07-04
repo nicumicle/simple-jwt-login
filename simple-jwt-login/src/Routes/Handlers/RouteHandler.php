@@ -8,6 +8,7 @@ use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepositoryInterface;
 use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepositoryInterface;
+use SimpleJWTLogin\Repositories\RevokedToken\Repository as RevokedTokenRepositoryInterface;
 use SimpleJWTLogin\Repositories\WebhookLog\Repository as WebhookLogRepositoryInterface;
 use SimpleJWTLogin\Services\AuditLoggerService;
 use WP_Error;
@@ -39,6 +40,10 @@ class RouteHandler
      */
     protected $tokenRepository;
     /**
+     * @var RevokedTokenRepositoryInterface
+     */
+    protected $revokedTokenRepo;
+    /**
      * @var WebhookLogRepositoryInterface|null
      */
     protected $webhookLogRepo;
@@ -58,6 +63,7 @@ class RouteHandler
      * @param SimpleJWTLoginSettings $jwtSettings
      * @param ServerHelper $serverHelper
      * @param RefreshTokenRepositoryInterface $tokenRepository
+     * @param RevokedTokenRepositoryInterface $revokedTokenRepo
      * @param WebhookLogRepositoryInterface|null $webhookLogRepo
      */
     public function __construct(
@@ -67,6 +73,7 @@ class RouteHandler
         $jwtSettings,
         $serverHelper,
         $tokenRepository,
+        $revokedTokenRepo,
         $webhookLogRepo
     ) {
         $this->route = $route;
@@ -75,6 +82,7 @@ class RouteHandler
         $this->jwtSettings = $jwtSettings;
         $this->serverHelper = $serverHelper;
         $this->tokenRepository = $tokenRepository;
+        $this->revokedTokenRepo = $revokedTokenRepo;
         $this->webhookLogRepo = $webhookLogRepo;
     }
 
@@ -151,7 +159,8 @@ class RouteHandler
                 ->withCookies($this->cookies)
                 ->withServerHelper($this->serverHelper)
                 ->withSettings($this->jwtSettings)
-                ->withRefreshTokenRepository($this->tokenRepository);
+                ->withRefreshTokenRepository($this->tokenRepository)
+                ->withRevokedTokenRepository($this->revokedTokenRepo);
 
             if ($this->webhookLogRepo !== null) {
                 $service->withWebhookLogRepository($this->webhookLogRepo);

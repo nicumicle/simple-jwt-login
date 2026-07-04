@@ -10,6 +10,7 @@ use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepositoryInterface;
+use SimpleJWTLogin\Repositories\RevokedToken\Repository as RevokedTokenRepository;
 use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 use SimpleJWTLogin\Services\ProtectEndpointService;
 use SimpleJWTLogin\Services\RouteService;
@@ -22,6 +23,11 @@ class ProtectEndpointServiceTest extends TestCase
      */
     private $wordPressData;
 
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|RevokedTokenRepository
+     */
+    private $revokedTokenRepoMock;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -31,6 +37,7 @@ class ProtectEndpointServiceTest extends TestCase
             ->willReturn('http://test.com');
         $this->wordPressData->method('getAdminUrl')
             ->willReturn('http://test.com/wp-admin/');
+        $this->revokedTokenRepoMock = $this->createStub(RevokedTokenRepository::class);
     }
 
 
@@ -57,8 +64,10 @@ class ProtectEndpointServiceTest extends TestCase
             ->willThrowException(new Exception());
 
         $routeService = (new RouteService())
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressData));
         $service = (new ProtectEndpointService())
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
             ->withRequest($request)
             ->withRequestMethod($requestMethod)
             ->withCookies([])
@@ -316,12 +325,14 @@ class ProtectEndpointServiceTest extends TestCase
             ->willReturn(false);
 
         $routeService = (new RouteService())
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressData))
             ->withRequest($request)
             ->withSession([])
             ->withCookies([]);
 
         $service = (new ProtectEndpointService())
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
             ->withRequest($request)
             ->withCookies([])
             ->withRequestMethod('GET')
@@ -378,6 +389,7 @@ class ProtectEndpointServiceTest extends TestCase
             ->willReturn(null);
 
         $routeService = (new RouteService())
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressData))
             ->withRequest([])
             ->withSession([])
@@ -389,6 +401,7 @@ class ProtectEndpointServiceTest extends TestCase
         ]);
 
         $service = (new ProtectEndpointService())
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
             ->withRequest([])
             ->withCookies([])
             ->withRequestMethod('GET')
@@ -423,6 +436,7 @@ class ProtectEndpointServiceTest extends TestCase
             ->willReturn(false);
 
         $routeService = (new RouteService())
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressData))
             ->withRequest([])
             ->withSession([])
@@ -434,6 +448,7 @@ class ProtectEndpointServiceTest extends TestCase
         ]);
 
         $service = (new ProtectEndpointService())
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
             ->withRequest([])
             ->withCookies([])
             ->withRequestMethod('GET')
@@ -471,12 +486,14 @@ class ProtectEndpointServiceTest extends TestCase
             ->willReturn(true);
 
         $routeService = (new RouteService())
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressData))
             ->withRequest($request)
             ->withSession([])
             ->withCookies([]);
 
         $service = (new ProtectEndpointService())
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
             ->withRequest($request)
             ->withCookies([])
             ->withRequestMethod('GET')
@@ -523,6 +540,7 @@ class ProtectEndpointServiceTest extends TestCase
         $routeServiceMock->method('getUserFromJwt')->willReturn($user);
 
         $service = (new ProtectEndpointService())
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
             ->withRequest(['rest_route' => '/wp/v2/posts', 'JWT' => 'fake-jwt'])
             ->withCookies([])
             ->withRequestMethod('GET')
@@ -565,6 +583,7 @@ class ProtectEndpointServiceTest extends TestCase
         $routeServiceMock->method('getUserFromJwt')->willReturn($user);
 
         $service = (new ProtectEndpointService())
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
             ->withRequest(['rest_route' => '/wp/v2/posts', 'JWT' => 'fake-jwt'])
             ->withCookies([])
             ->withRequestMethod('GET')
@@ -608,6 +627,7 @@ class ProtectEndpointServiceTest extends TestCase
         $routeServiceMock->method('getUserFromJwt')->willReturn($user);
 
         $service = (new ProtectEndpointService())
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
             ->withRequest(['rest_route' => '/wp/v2/posts', 'JWT' => 'fake-jwt'])
             ->withCookies([])
             ->withRequestMethod('GET')
@@ -652,6 +672,7 @@ class ProtectEndpointServiceTest extends TestCase
         $routeServiceMock->method('getUserFromJwt')->willReturn($user);
 
         $service = (new ProtectEndpointService())
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
             ->withRequest(['rest_route' => '/wp/v2/posts', 'JWT' => 'fake-jwt'])
             ->withCookies([])
             ->withRequestMethod('GET')

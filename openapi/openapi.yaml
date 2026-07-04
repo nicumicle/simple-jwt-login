@@ -146,6 +146,12 @@ tags:
     externalDocs:
       description: Find out more
       url: https://simplejwtlogin.com/docs/api-keys
+  - name: revoked_tokens
+    description: |
+      List and delete revoked-JWT records. Tokens are revoked via `POST /auth/revoke` and
+      stored hashed in a dedicated table; these endpoints let an administrator review and
+      remove those records. All endpoints in this group require an active WordPress
+      session with the `manage_options` capability.
 x-tags:
   - name: login_user
     description: Login user in WordPress
@@ -182,6 +188,8 @@ x-tags:
     externalDocs:
       description: Find out more
       url: https://simplejwtlogin.com/docs/api-keys
+  - name: revoked_tokens
+    description: Revoked token management
 paths:
   /autologin:
     get:
@@ -2382,6 +2390,148 @@ paths:
                 data:
                   message: "Failed to revoke API key."
                   error_code: 91
+  /revoked-tokens:
+    get:
+      tags:
+        - revoked_tokens
+      summary: List revoked tokens
+      description: |
+        Returns a paginated list of revoked-token records across all users. Tokens are
+        stored hashed (SHA-256) — the raw JWT is never persisted or returned, only a
+        masked prefix/suffix of the hash for identification.
+
+        **Requirements**
+        - An active WordPress session is required.
+        - The authenticated user must have the `manage_options` capability (administrator).
+      operationId: listRevokedTokens
+      security:
+        - WordPressSession: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number (1-based). Defaults to 1.
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          example: 1
+        - name: per_page
+          in: query
+          description: Number of results per page (1–100). Defaults to 20.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          example: 20
+      responses:
+        '200':
+          description: Paginated list of revoked tokens.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/RevokedTokenItem'
+                      total:
+                        type: integer
+                        description: Total number of revoked-token records.
+                        example: 3
+                      page:
+                        type: integer
+                        example: 1
+                      per_page:
+                        type: integer
+                        example: 20
+        '401':
+          description: |
+            Unauthorized. No active WordPress session, or the authenticated user is not an
+            administrator.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "You must be an administrator to manage revoked tokens."
+                  error_code: 115
+  /revoked-tokens/{id}:
+    delete:
+      tags:
+        - revoked_tokens
+      summary: Delete a revoked-token entry
+      description: |
+        Removes a revoked-token record. This un-revokes the underlying JWT — if it has not
+        yet expired, it becomes valid again for authentication.
+      operationId: deleteRevokedToken
+      security:
+        - WordPressSession: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Numeric ID of the revoked-token record to delete.
+          schema:
+            type: integer
+          example: 7
+      responses:
+        '200':
+          description: Revoked-token entry deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Revoked token entry deleted. If the token has not expired, it is valid again."
+        '401':
+          description: Unauthorized. No active WordPress session or not an administrator.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "You must be an administrator to manage revoked tokens."
+                  error_code: 115
+        '404':
+          description: No revoked-token record with the provided ID was found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "Invalid revoked token ID."
+                  error_code: 116
+        '500':
+          description: |
+            Internal server error. The database delete operation failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+              example:
+                success: false
+                data:
+                  message: "Failed to delete revoked token entry."
+                  error_code: 117
 components:
   securitySchemes:
     BearerAuth:
@@ -2925,3 +3075,31 @@ components:
           nullable: true
           description: WordPress user ID who owns this key. Only present in admin responses.
           example: 3
+    RevokedTokenItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Database ID of the revoked-token record.
+          example: 7
+        user_id:
+          type: integer
+          description: WordPress user ID the revoked JWT belonged to.
+          example: 3
+        token_hash_masked:
+          type: string
+          description: |
+            First 8 and last 4 characters of the SHA-256 hash of the revoked JWT, separated
+            by `...`. The full hash and the raw JWT are never returned.
+          example: "a1b2c3d4...ef01"
+        expires_at:
+          type: string
+          nullable: true
+          description: |
+            Expiry timestamp (from the JWT's `exp` claim) in `Y-m-d H:i:s` format, or `null`
+            if the JWT had no expiry claim.
+          example: "2027-01-01 00:00:00"
+        revoked_at:
+          type: string
+          description: Timestamp when the token was revoked.
+          example: "2026-01-01 12:00:00"

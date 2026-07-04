@@ -6,11 +6,13 @@ use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Exceptions\ValidationException as ExceptionsValidationException;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
+use SimpleJWTLogin\Helpers\JwtPayloadHelper;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Modules\Jwt\JwtInterface;
 use SimpleJWTLogin\Modules\Jwt\JwtWrapper;
 use SimpleJWTLogin\Modules\AuthCodeBuilder;
 use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepositoryInterface;
+use SimpleJWTLogin\Repositories\RevokedToken\Repository as RevokedTokenRepositoryInterface;
 use SimpleJWTLogin\Repositories\WebhookLog\Repository as WebhookLogRepositoryInterface;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -68,6 +70,11 @@ abstract class BaseService
      * @var RefreshTokenRepositoryInterface
      */
     protected $tokenRepository;
+
+    /**
+     * @var RevokedTokenRepositoryInterface
+     */
+    protected $revokedTokenRepo;
 
     /**
      * @var WebhookLogRepositoryInterface|null
@@ -156,6 +163,17 @@ abstract class BaseService
     public function withRefreshTokenRepository(RefreshTokenRepositoryInterface $repository)
     {
         $this->tokenRepository = $repository;
+
+        return $this;
+    }
+
+    /**
+     * @param RevokedTokenRepositoryInterface $repository
+     * @return $this
+     */
+    public function withRevokedTokenRepository(RevokedTokenRepositoryInterface $repository)
+    {
+        $this->revokedTokenRepo = $repository;
 
         return $this;
     }
@@ -315,15 +333,8 @@ abstract class BaseService
      */
     protected function validateJwtRevoked($userId, $jwt)
     {
-        $revokedTokensArray = $this->wordPressData->getUserMeta(
-            $userId,
-            SimpleJWTLoginSettings::REVOKE_TOKEN_KEY
-        );
-
-        if (empty($revokedTokensArray)) {
-            return true;
-        }
-        if (in_array($jwt, $revokedTokensArray, true)) {
+        $tokenHash = hash('sha256', $jwt);
+        if ($this->revokedTokenRepo->existsForUser($userId, $tokenHash)) {
             throw new Exception(esc_html(__('This JWT is invalid.', 'simple-jwt-login')), absint(ErrorCodes::ERR_REVOKED_TOKEN));
         }
 
@@ -471,16 +482,7 @@ abstract class BaseService
      */
     protected function getPayloadFromJWT($jwt)
     {
-        $jwtParts = explode('.', $jwt);
-        if (!isset($jwtParts[1])) {
-            return null;
-        }
-        $segment = $jwtParts[1];
-        $remainder = strlen($segment) % 4;
-        if ($remainder !== 0) {
-            $segment .= str_repeat('=', 4 - $remainder);
-        }
-        return json_decode(base64_decode(strtr($segment, '-_', '+/')), true);
+        return JwtPayloadHelper::decode($jwt);
     }
 
     /**

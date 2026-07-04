@@ -1172,17 +1172,16 @@ function sjlCreateApiKey()
     });
 }
 
-function sjlApiKeyAction(url, method, confirmMsg, errorMsg)
+function sjlApiKeyAction(url, method, confirmMsg, errorMsg, nonce)
 {
     if (!window.confirm(confirmMsg)) {
         return;
     }
-    var cfg = window._sjlAkConfig;
     jQuery.ajax({
         url: url,
         method: method,
         beforeSend: function (xhr) {
-            xhr.setRequestHeader('X-WP-Nonce', cfg.nonce);
+            xhr.setRequestHeader('X-WP-Nonce', nonce);
         },
         success: function () {
             window.location.reload();
@@ -1199,7 +1198,8 @@ function sjlRevokeApiKey(id)
         window._sjlAkConfig.restBase + '/' + id + '/revoke',
         'POST',
         'Revoke this API key? This cannot be undone.',
-        'Failed to revoke API key.'
+        'Failed to revoke API key.',
+        window._sjlAkConfig.nonce
     );
 }
 
@@ -1209,7 +1209,21 @@ function sjlDeleteApiKey(id)
         window._sjlAkConfig.restBase + '/' + id,
         'DELETE',
         'Permanently delete this API key? This cannot be undone.',
-        'Failed to delete API key.'
+        'Failed to delete API key.',
+        window._sjlAkConfig.nonce
+    );
+}
+
+/* ── Revoked Token management ───────────────────────────────────────────── */
+
+function sjlDeleteRevokedToken(id)
+{
+    sjlApiKeyAction(
+        window._sjlRtConfig.restBase + '/' + id,
+        'DELETE',
+        'Delete this revoked-token entry? The original JWT will become valid again if it has not expired.',
+        'Failed to delete revoked token entry.',
+        window._sjlRtConfig.nonce
     );
 }
 

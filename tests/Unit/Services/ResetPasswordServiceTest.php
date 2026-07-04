@@ -10,6 +10,7 @@ use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\ResetPasswordSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Repositories\RevokedToken\Repository as RevokedTokenRepository;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\ResetPasswordService;
 
@@ -20,11 +21,18 @@ class ResetPasswordServiceTest extends TestCase
      */
     private $wordPressDataMock;
 
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|RevokedTokenRepository
+     */
+    private $revokedTokenRepoMock;
+
     public function setUp(): void
     {
         parent::setUp();
         $this->wordPressDataMock = $this
             ->createStub(WordPressDataInterface::class);
+        $this->revokedTokenRepoMock = $this
+            ->createStub(RevokedTokenRepository::class);
     }
 
     #[DataProvider('sendUserPasswordProvider')]
@@ -48,7 +56,8 @@ class ResetPasswordServiceTest extends TestCase
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'POST']))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $resetService->makeAction();
     }
 
@@ -161,7 +170,8 @@ class ResetPasswordServiceTest extends TestCase
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'POST']))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $result = $resetService->makeAction();
         $this->assertTrue($result);
     }
@@ -202,7 +212,8 @@ class ResetPasswordServiceTest extends TestCase
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'PUT']))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $resetService->makeAction();
     }
 
@@ -393,7 +404,8 @@ class ResetPasswordServiceTest extends TestCase
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'PUT']))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $result = $resetService->makeAction();
         $this->assertTrue($result);
     }
@@ -423,7 +435,8 @@ class ResetPasswordServiceTest extends TestCase
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'PUT']))
-            ->withSettings(new SimpleJWTLoginSettings($mock));
+            ->withSettings(new SimpleJWTLoginSettings($mock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $resetService->makeAction();
     }
 
@@ -454,7 +467,8 @@ class ResetPasswordServiceTest extends TestCase
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'PUT']))
-            ->withSettings(new SimpleJWTLoginSettings($mock));
+            ->withSettings(new SimpleJWTLoginSettings($mock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $resetService->makeAction();
     }
 
@@ -486,7 +500,8 @@ class ResetPasswordServiceTest extends TestCase
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'PUT']))
-            ->withSettings(new SimpleJWTLoginSettings($mock));
+            ->withSettings(new SimpleJWTLoginSettings($mock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $resetService->makeAction();
     }
@@ -526,7 +541,8 @@ class ResetPasswordServiceTest extends TestCase
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'PUT']))
-            ->withSettings(new SimpleJWTLoginSettings($mock));
+            ->withSettings(new SimpleJWTLoginSettings($mock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $resetService->makeAction();
     }
@@ -559,7 +575,8 @@ class ResetPasswordServiceTest extends TestCase
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'OPTIONS']))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $resetService->makeAction();
     }
 }

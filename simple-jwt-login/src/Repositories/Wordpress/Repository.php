@@ -219,6 +219,12 @@ interface Repository
     public function addUserMeta($userId, $metaKey, $value);
 
     /**
+     * @param string $metaKey
+     * @return int[] WordPress user IDs that have at least one row for the given usermeta key
+     */
+    public function getUserIdsWithMeta($metaKey);
+
+    /**
      * @param int $userId
      * @param string $metaKey
      * @param string $value

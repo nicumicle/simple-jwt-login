@@ -12,6 +12,7 @@ use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepository;
+use SimpleJWTLogin\Repositories\RevokedToken\Repository as RevokedTokenRepository;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\DeleteUserService;
 use WP_User;
@@ -28,6 +29,11 @@ class DeleteUserServiceTest extends TestCase
      */
     private $tokenRepositoryMock;
 
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|RevokedTokenRepository
+     */
+    private $revokedTokenRepoMock;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -35,6 +41,8 @@ class DeleteUserServiceTest extends TestCase
             ->createStub(WordPressDataInterface::class);
         $this->tokenRepositoryMock = $this
             ->createStub(RefreshTokenRepository::class);
+        $this->revokedTokenRepoMock = $this
+            ->createStub(RevokedTokenRepository::class);
     }
 
     #[DataProvider('validationProvider')]
@@ -57,7 +65,8 @@ class DeleteUserServiceTest extends TestCase
             ->withServerHelper(new ServerHelper([
                 'REMOTE_ADDR' => '127.0.0.1',
             ]))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $deleteUserService->makeAction();
     }
 
@@ -84,7 +93,8 @@ class DeleteUserServiceTest extends TestCase
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $deleteUserService->makeAction();
     }
 
@@ -115,7 +125,8 @@ class DeleteUserServiceTest extends TestCase
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
-            ->withRefreshTokenRepository($this->tokenRepositoryMock);
+            ->withRefreshTokenRepository($this->tokenRepositoryMock)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $deleteUserService->makeAction();
     }
 
@@ -166,7 +177,8 @@ class DeleteUserServiceTest extends TestCase
             ->withSession([])
             ->withServerHelper(new ServerHelper([]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
-            ->withRefreshTokenRepository($this->tokenRepositoryMock);
+            ->withRefreshTokenRepository($this->tokenRepositoryMock)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $response = $deleteUserService->makeAction();
         $this->assertSame($expectedResponse, $response);
@@ -199,7 +211,8 @@ class DeleteUserServiceTest extends TestCase
             ->withCookies([])
             ->withSession([])
             ->withServerHelper(new ServerHelper([]))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $deleteUserService->makeAction();
     }

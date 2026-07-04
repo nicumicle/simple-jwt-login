@@ -112,6 +112,7 @@ class DeleteUserService extends BaseService implements ServiceInterface
         $this->validateJwtRevoked($userId, $this->jwt);
 
         $this->tokenRepository->deleteByUserId($userId);
+        $this->revokedTokenRepo->deleteByUserId($userId);
 
         $result = $this->wordPressData->deleteUser($user);
 

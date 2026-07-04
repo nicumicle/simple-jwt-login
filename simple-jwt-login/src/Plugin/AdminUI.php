@@ -9,6 +9,7 @@ use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepository;
 use SimpleJWTLogin\Repositories\AuditLog\AuditLogRepository;
+use SimpleJWTLogin\Repositories\RevokedToken\RevokedTokenRepository;
 use SimpleJWTLogin\Repositories\WebhookLog\WebhookLogRepository;
 use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 use SimpleJWTLogin\Services\AuditLoggerService;
@@ -46,12 +47,18 @@ class AdminUI
     private $apiKeyRepository;
 
     /**
+     * @var RevokedTokenRepository
+     */
+    private $revokedTokenRepo;
+
+    /**
      * @param array                  $server      $_SERVER
      * @param array                  $post        $_POST
      * @param SimpleJWTLoginSettings $jwtSettings
      * @param AuditLogRepository     $auditLogRepository
      * @param WebhookLogRepository   $webhookLogRepository
      * @param ApiKeyRepository       $apiKeyRepository
+     * @param RevokedTokenRepository $revokedTokenRepo
      */
     public function __construct(
         array $server,
@@ -59,14 +66,16 @@ class AdminUI
         SimpleJWTLoginSettings $jwtSettings,
         AuditLogRepository $auditLogRepository,
         WebhookLogRepository $webhookLogRepository,
-        ApiKeyRepository $apiKeyRepository
+        ApiKeyRepository $apiKeyRepository,
+        RevokedTokenRepository $revokedTokenRepo
     ) {
-        $this->server               = $server;
-        $this->post                 = $post;
-        $this->jwtSettings          = $jwtSettings;
-        $this->auditLogRepository   = $auditLogRepository;
+        $this->server = $server;
+        $this->post = $post;
+        $this->jwtSettings = $jwtSettings;
+        $this->auditLogRepository = $auditLogRepository;
         $this->webhookLogRepository = $webhookLogRepository;
-        $this->apiKeyRepository     = $apiKeyRepository;
+        $this->apiKeyRepository = $apiKeyRepository;
+        $this->revokedTokenRepo = $revokedTokenRepo;
     }
 
     /**
@@ -169,9 +178,10 @@ class AdminUI
             'showStatusBar'        => $showStatusBar,
             'errorCode'            => $errorCode,
             'settingsErrors'       => new SettingsErrors(),
-            'auditLogRepository'   => $this->auditLogRepository,
-            'webhookLogRepository' => $this->webhookLogRepository,
-            'apiKeyRepository'     => $this->apiKeyRepository,
+            'auditLogRepository'     => $this->auditLogRepository,
+            'webhookLogRepository'   => $this->webhookLogRepository,
+            'apiKeyRepository'       => $this->apiKeyRepository,
+            'revokedTokenRepo' => $this->revokedTokenRepo,
         );
     }
 

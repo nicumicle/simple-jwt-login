@@ -11,6 +11,7 @@ use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Repositories\RevokedToken\Repository as RevokedTokenRepository;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\LoginService;
 
@@ -21,11 +22,18 @@ class LoginServiceTest extends TestCase
      */
     private $wordPressDataMock;
 
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|RevokedTokenRepository
+     */
+    private $revokedTokenRepoMock;
+
     public function setUp(): void
     {
         parent::setUp();
         $this->wordPressDataMock = $this
             ->createStub(WordPressDataInterface::class);
+        $this->revokedTokenRepoMock = $this
+            ->createStub(RevokedTokenRepository::class);
 
         $this->wordPressDataMock->method('sanitizeTextField')
             ->willReturnCallback(
@@ -59,7 +67,8 @@ class LoginServiceTest extends TestCase
                 'REMOTE_ADDR' => '127.0.0.1'
             ]))
             ->withSession([])
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $service->makeAction();
     }
@@ -219,7 +228,8 @@ class LoginServiceTest extends TestCase
                 'REMOTE_ADDR' => '127.0.0.1'
             ]))
             ->withSession([])
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $service->makeAction();
     }
@@ -249,10 +259,8 @@ class LoginServiceTest extends TestCase
             ->willReturn(true);
         $this->wordPressDataMock->method('getUserProperty')
             ->willReturn(1);
-        $this->wordPressDataMock->method('getUserMeta')
-            ->willReturn([
-                $jwt,
-            ]);
+        $this->revokedTokenRepoMock->method('existsForUser')
+            ->willReturn(true);
         $service = (new LoginService())
             ->withRequest([
                 'JWT' => $jwt
@@ -262,7 +270,8 @@ class LoginServiceTest extends TestCase
                 'REMOTE_ADDR' => '127.0.0.1'
             ]))
             ->withSession([])
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $service->makeAction();
     }
@@ -316,7 +325,8 @@ class LoginServiceTest extends TestCase
             ->withCookies($cookie)
             ->withServerHelper(new ServerHelper($headers))
             ->withSession($session)
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $result = $service->makeAction();
         $this->assertNull($result);
@@ -422,6 +432,7 @@ class LoginServiceTest extends TestCase
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
             ->withSession([])
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
             ->makeAction();
 
         $parsedUrl = parse_url($loginService);
@@ -526,7 +537,8 @@ class LoginServiceTest extends TestCase
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
             ->withSession([])
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
 
         if ($expectedError) {
@@ -598,7 +610,8 @@ class LoginServiceTest extends TestCase
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
             ->withSession([])
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $service->makeAction();
     }

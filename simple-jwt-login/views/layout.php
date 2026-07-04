@@ -6,6 +6,7 @@ use SimpleJWTLogin\Modules\Settings\SettingsTabRegistry;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepository;
 use SimpleJWTLogin\Repositories\AuditLog\AuditLogRepository;
+use SimpleJWTLogin\Repositories\RevokedToken\RevokedTokenRepository;
 use SimpleJWTLogin\Repositories\WebhookLog\WebhookLogRepository;
 use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 
@@ -27,6 +28,7 @@ if (! defined('ABSPATH')) {
  * @var AuditLogRepository     $auditLogRepository
  * @var WebhookLogRepository   $webhookLogRepository
  * @var ApiKeyRepository       $apiKeyRepository
+ * @var RevokedTokenRepository $revokedTokenRepo
  */
 
 $settingsPages = [];
@@ -217,6 +219,7 @@ $sidebarGroups = SettingsTabRegistry::sidebar();
                                     'auditLogRepository'   => $auditLogRepository,
                                     'webhookLogRepository' => $webhookLogRepository,
                                     'apiKeyRepository'     => $apiKeyRepository,
+                                    'revokedTokenRepo'     => $revokedTokenRepo,
                                 );
                                 if (array_key_exists($page['index'], $viewMap)) {
                                     $viewLoader->render($viewMap[$page['index']], $viewData);

@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Repositories\RevokedToken\Repository as RevokedTokenRepository;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\RouteService;
 
@@ -17,6 +18,11 @@ class RouteServiceTest extends TestCase
      * @var \PHPUnit\Framework\MockObject\MockObject|WordPressDataInterface
      */
     private $wordPressDataMock;
+
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|RevokedTokenRepository
+     */
+    private $revokedTokenRepoMock;
 
     public function testGetAllRoutes()
     {
@@ -34,6 +40,8 @@ class RouteServiceTest extends TestCase
     {
         $this->wordPressDataMock = $this
             ->createStub(WordPressDataInterface::class);
+        $this->revokedTokenRepoMock = $this
+            ->createStub(RevokedTokenRepository::class);
 
         $settings = [
             'decryption_key' => '123',
@@ -58,7 +66,8 @@ class RouteServiceTest extends TestCase
                 )
             )
             ->withRequest([])
-            ->withCookies([]);
+            ->withCookies([])
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('WordPress User not found.');
@@ -70,6 +79,8 @@ class RouteServiceTest extends TestCase
     {
         $this->wordPressDataMock = $this
             ->createStub(WordPressDataInterface::class);
+        $this->revokedTokenRepoMock = $this
+            ->createStub(RevokedTokenRepository::class);
 
         $settings = [
             'decryption_key' => '123',
@@ -97,7 +108,8 @@ class RouteServiceTest extends TestCase
                 )
             )
             ->withRequest([])
-            ->withCookies([]);
+            ->withCookies([])
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $jwt = JWT::encode(['user' => 'test'], '123');
         $userId = $routeService->getUserIdFromJWT($jwt);

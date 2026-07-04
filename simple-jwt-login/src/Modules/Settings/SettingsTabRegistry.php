@@ -167,6 +167,15 @@ class SettingsTabRegistry
                         'dashicons-admin-network',
                         __('API Keys', 'simple-jwt-login')
                     ),
+                    self::leaf(
+                        SettingsErrors::PREFIX_REVOKED_TOKENS,
+                        'simple-jwt-login-tab-revoked-tokens',
+                        __('Revoked Tokens', 'simple-jwt-login'),
+                        'security/revoked-tokens-view.php',
+                        false,
+                        'dashicons-dismiss',
+                        __('Revoked Tokens', 'simple-jwt-login')
+                    ),
                 ],
             ],
             [

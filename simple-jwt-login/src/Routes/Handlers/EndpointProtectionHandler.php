@@ -8,6 +8,7 @@ use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Helpers\StatusCodeHelper;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepositoryInterface;
+use SimpleJWTLogin\Repositories\RevokedToken\Repository as RevokedTokenRepositoryInterface;
 use SimpleJWTLogin\Services\ProtectEndpointService;
 use SimpleJWTLogin\Services\RouteService;
 
@@ -37,6 +38,10 @@ class EndpointProtectionHandler
      * @var ApiKeyRepositoryInterface|null
      */
     protected $apiKeyRepository;
+    /**
+     * @var RevokedTokenRepositoryInterface
+     */
+    protected $revokedTokenRepo;
 
     /**
      * @param RouteService $routeService
@@ -67,6 +72,18 @@ class EndpointProtectionHandler
     }
 
     /**
+     * @param RevokedTokenRepositoryInterface $repository
+     *
+     * @return $this
+     */
+    public function withRevokedTokenRepository($repository)
+    {
+        $this->revokedTokenRepo = $repository;
+
+        return $this;
+    }
+
+    /**
      * @param mixed $endpoint
      *
      * @return mixed
@@ -79,7 +96,8 @@ class EndpointProtectionHandler
             ->withRequestMethod($this->serverHelper->getRequestMethod())
             ->withSettings($this->jwtSettings)
             ->withServerHelper($this->serverHelper)
-            ->withRouteService($this->routeService);
+            ->withRouteService($this->routeService)
+            ->withRevokedTokenRepository($this->revokedTokenRepo);
         if ($this->jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
             $service->withSession(simple_jwt_login_init_session());
         }

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-03T14:37:31+00:00\n"
+"POT-Creation-Date: 2026-07-04T05:45:50+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -136,126 +136,134 @@ msgstr ""
 msgid "Unknown JSON error: %s"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:84
+#: src/Modules/AuditEvents.php:89
 msgid "Login Success"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:85
+#: src/Modules/AuditEvents.php:90
 msgid "Login Failed"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:86
+#: src/Modules/AuditEvents.php:91
 msgid "Logout (Token Revoked)"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:87
+#: src/Modules/AuditEvents.php:92
 msgid "Logout Failed"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:88
+#: src/Modules/AuditEvents.php:93
 msgid "Register Success"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:89
+#: src/Modules/AuditEvents.php:94
 msgid "Register Failed"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:90
+#: src/Modules/AuditEvents.php:95
 msgid "Password Reset Request"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:91
+#: src/Modules/AuditEvents.php:96
 msgid "Password Reset Success"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:92
+#: src/Modules/AuditEvents.php:97
 msgid "Password Reset Failed"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:93
+#: src/Modules/AuditEvents.php:98
 msgid "Delete User Success"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:94
+#: src/Modules/AuditEvents.php:99
 msgid "Delete User Failed"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:95
+#: src/Modules/AuditEvents.php:100
 msgid "Auto-Login Session Success"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:96
+#: src/Modules/AuditEvents.php:101
 msgid "Auto-Login Session Failed"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:97
+#: src/Modules/AuditEvents.php:102
 msgid "Refresh Token Success"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:98
+#: src/Modules/AuditEvents.php:103
 msgid "Refresh Token Failed"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:99
+#: src/Modules/AuditEvents.php:104
 msgid "OAuth Login Success"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:100
+#: src/Modules/AuditEvents.php:105
 msgid "OAuth Login Failed"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:101
+#: src/Modules/AuditEvents.php:106
 msgid "2FA Challenge Issued"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:102
+#: src/Modules/AuditEvents.php:107
 msgid "2FA Verification Success"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:103
+#: src/Modules/AuditEvents.php:108
 msgid "2FA Verification Failed"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:104
+#: src/Modules/AuditEvents.php:109
 msgid "Settings Saved"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:105
+#: src/Modules/AuditEvents.php:110
 #: views/security/api-keys-view.php:310
 #: views/user-api-keys.php:220
 msgid "API Key Created"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:106
+#: src/Modules/AuditEvents.php:111
 msgid "API Key Create Failed"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:107
+#: src/Modules/AuditEvents.php:112
 msgid "API Key Updated"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:108
+#: src/Modules/AuditEvents.php:113
 msgid "API Key Update Failed"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:109
+#: src/Modules/AuditEvents.php:114
 msgid "API Key Revoked"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:110
+#: src/Modules/AuditEvents.php:115
 msgid "API Key Revoke Failed"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:111
+#: src/Modules/AuditEvents.php:116
 msgid "API Key Deleted"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:112
+#: src/Modules/AuditEvents.php:117
 msgid "API Key Delete Failed"
 msgstr ""
 
-#: src/Modules/AuditEvents.php:113
+#: src/Modules/AuditEvents.php:118
 msgid "API Key Used"
+msgstr ""
+
+#: src/Modules/AuditEvents.php:119
+msgid "Revoked Token Entry Deleted"
+msgstr ""
+
+#: src/Modules/AuditEvents.php:120
+msgid "Revoked Token Entry Delete Failed"
 msgstr ""
 
 #: src/Modules/Settings/AuditLogSettings.php:51
@@ -520,6 +528,7 @@ msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:83
 #: views/security/api-keys-view.php:233
+#: views/security/revoked-tokens-view.php:73
 #: views/user-api-keys.php:144
 msgid "Delete"
 msgstr ""
@@ -590,63 +599,69 @@ msgstr ""
 msgid "API Keys"
 msgstr ""
 
-#: src/Modules/Settings/SettingsTabRegistry.php:174
-msgid "Integrations"
+#: src/Modules/Settings/SettingsTabRegistry.php:173
+#: src/Modules/Settings/SettingsTabRegistry.php:177
+#: views/security/revoked-tokens-view.php:37
+msgid "Revoked Tokens"
 msgstr ""
 
-#: src/Modules/Settings/SettingsTabRegistry.php:180
-#: src/Modules/Settings/SettingsTabRegistry.php:184
-#: views/dashboard-view.php:123
-msgid "OAuth"
+#: src/Modules/Settings/SettingsTabRegistry.php:183
+msgid "Integrations"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:189
 #: src/Modules/Settings/SettingsTabRegistry.php:193
+#: views/dashboard-view.php:123
+msgid "OAuth"
+msgstr ""
+
+#: src/Modules/Settings/SettingsTabRegistry.php:198
+#: src/Modules/Settings/SettingsTabRegistry.php:202
 #: views/dashboard-view.php:130
 msgid "Third Party Integrations"
 msgstr ""
 
-#: src/Modules/Settings/SettingsTabRegistry.php:199
-#: src/Modules/Settings/SettingsTabRegistry.php:205
+#: src/Modules/Settings/SettingsTabRegistry.php:208
+#: src/Modules/Settings/SettingsTabRegistry.php:214
 #: views/dashboard-view.php:147
 #: views/webhooks/config.php:25
 msgid "Webhooks"
 msgstr ""
 
-#: src/Modules/Settings/SettingsTabRegistry.php:209
-#: src/Modules/Settings/SettingsTabRegistry.php:234
+#: src/Modules/Settings/SettingsTabRegistry.php:218
+#: src/Modules/Settings/SettingsTabRegistry.php:243
 msgid "Config"
 msgstr ""
 
-#: src/Modules/Settings/SettingsTabRegistry.php:214
+#: src/Modules/Settings/SettingsTabRegistry.php:223
 #: views/dashboard-view.php:155
 msgid "Webhook Logs"
 msgstr ""
 
-#: src/Modules/Settings/SettingsTabRegistry.php:218
-#: src/Modules/Settings/SettingsTabRegistry.php:243
+#: src/Modules/Settings/SettingsTabRegistry.php:227
+#: src/Modules/Settings/SettingsTabRegistry.php:252
 msgid "Logs"
 msgstr ""
 
-#: src/Modules/Settings/SettingsTabRegistry.php:224
-#: src/Modules/Settings/SettingsTabRegistry.php:230
+#: src/Modules/Settings/SettingsTabRegistry.php:233
+#: src/Modules/Settings/SettingsTabRegistry.php:239
 #: views/dashboard-view.php:163
 msgid "Audit Logs"
 msgstr ""
 
-#: src/Modules/Settings/SettingsTabRegistry.php:239
+#: src/Modules/Settings/SettingsTabRegistry.php:248
 #: views/dashboard-view.php:170
 msgid "Audit Log Entries"
 msgstr ""
 
-#: src/Modules/Settings/SettingsTabRegistry.php:250
-#: src/Modules/Settings/SettingsTabRegistry.php:254
+#: src/Modules/Settings/SettingsTabRegistry.php:259
+#: src/Modules/Settings/SettingsTabRegistry.php:263
 #: views/dashboard-view.php:137
 msgid "Hooks"
 msgstr ""
 
-#: src/Modules/Settings/SettingsTabRegistry.php:259
-#: src/Modules/Settings/SettingsTabRegistry.php:263
+#: src/Modules/Settings/SettingsTabRegistry.php:268
+#: src/Modules/Settings/SettingsTabRegistry.php:272
 #: views/jwt-decoder-view.php:15
 msgid "JWT Decoder"
 msgstr ""
@@ -831,7 +846,7 @@ msgstr ""
 msgid "(string) User's locale. Default empty."
 msgstr ""
 
-#: src/Plugin/AdminUI.php:146
+#: src/Plugin/AdminUI.php:155
 msgid "Settings successfully saved"
 msgstr ""
 
@@ -841,13 +856,13 @@ msgstr ""
 
 #: src/Plugin/OAuthTwoFactorLoginHandler.php:110
 #: src/Services/DeleteUserService.php:104
-#: src/Services/DeleteUserService.php:120
+#: src/Services/DeleteUserService.php:121
 #: src/Services/Integrations/TwoFactor/TwoFactorVerifyService.php:68
 #: src/Services/LoginService.php:77
 #: src/Services/Oauth/AbstractOauth.php:295
 #: src/Services/Oauth/AbstractOauth.php:299
 #: src/Services/RefreshTokenService.php:113
-#: src/Services/RevokeTokenService.php:70
+#: src/Services/RevokeTokenService.php:69
 #: src/Services/ValidateTokenService.php:63
 msgid "User not found."
 msgstr ""
@@ -902,7 +917,7 @@ msgstr ""
 msgid "Invalid or unauthorized API key."
 msgstr ""
 
-#: src/Routes/Handlers/EndpointProtectionHandler.php:120
+#: src/Routes/Handlers/EndpointProtectionHandler.php:138
 msgid "You are not authorized to access this endpoint."
 msgstr ""
 
@@ -1004,31 +1019,31 @@ msgid "Authentication is not enabled."
 msgstr ""
 
 #. translators: 1: JWT property name, 2: settings parameter
-#: src/Services/BaseService.php:204
+#: src/Services/BaseService.php:222
 #, php-format
 msgid "Unable to find user %1$s property in JWT.( Settings: %2$s )"
 msgstr ""
 
-#: src/Services/BaseService.php:220
+#: src/Services/BaseService.php:238
 msgid "This JWT requires two-factor verification before it can be used."
 msgstr ""
 
 #. translators: %s: JWT property name
-#: src/Services/BaseService.php:230
+#: src/Services/BaseService.php:248
 #, php-format
 msgid "Unable to find user %s property in JWT."
 msgstr ""
 
-#: src/Services/BaseService.php:327
+#: src/Services/BaseService.php:338
 msgid "This JWT is invalid."
 msgstr ""
 
-#: src/Services/BaseService.php:418
+#: src/Services/BaseService.php:429
 msgid "Auth Code is required."
 msgstr ""
 
 #. translators: %s: auth code key name
-#: src/Services/BaseService.php:428
+#: src/Services/BaseService.php:439
 #, php-format
 msgid "Invalid Auth Code ( %s ) provided."
 msgstr ""
@@ -1039,7 +1054,7 @@ msgstr ""
 
 #: src/Services/DeleteUserService.php:53
 #: src/Services/ResetPasswordService.php:365
-#: src/Services/RevokeTokenService.php:59
+#: src/Services/RevokeTokenService.php:58
 #: src/Services/ValidateTokenService.php:51
 msgid "The `jwt` parameter is missing."
 msgstr ""
@@ -1050,7 +1065,7 @@ msgstr ""
 msgid "You are not allowed to delete users from this IP: %s"
 msgstr ""
 
-#: src/Services/DeleteUserService.php:150
+#: src/Services/DeleteUserService.php:151
 msgid "User was successfully deleted."
 msgstr ""
 
@@ -1327,19 +1342,36 @@ msgstr ""
 msgid "Invalid code provided."
 msgstr ""
 
-#: src/Services/RevokeTokenService.php:45
+#: src/Services/RevokedTokens/BaseRevokedTokenService.php:19
+msgid "You must be an administrator to manage revoked tokens."
+msgstr ""
+
+#: src/Services/RevokedTokens/BaseRevokedTokenService.php:34
+#: src/Services/RevokedTokens/DeleteRevokedTokenService.php:21
+msgid "Invalid revoked token ID."
+msgstr ""
+
+#: src/Services/RevokedTokens/DeleteRevokedTokenService.php:28
+msgid "Failed to delete revoked token entry."
+msgstr ""
+
+#: src/Services/RevokedTokens/DeleteRevokedTokenService.php:35
+msgid "Revoked token entry deleted. If the token has not expired, it is valid again."
+msgstr ""
+
+#: src/Services/RevokeTokenService.php:44
 msgid "Revoke Token endpoint is not enabled."
 msgstr ""
 
-#: src/Services/RevokeTokenService.php:100
-msgid "Token was revoked."
-msgstr ""
-
-#: src/Services/RevokeTokenService.php:157
+#: src/Services/RevokeTokenService.php:80
 msgid "Token was already revoked."
 msgstr ""
 
-#: src/Services/RouteService.php:165
+#: src/Services/RevokeTokenService.php:101
+msgid "Token was revoked."
+msgstr ""
+
+#: src/Services/RouteService.php:191
 msgid "WordPress User not found."
 msgstr ""
 
@@ -1491,6 +1523,7 @@ msgstr ""
 
 #: views/audit-logs/logs-view.php:244
 #: views/security/api-keys-view.php:251
+#: views/security/revoked-tokens-view.php:90
 #: views/user-api-keys.php:161
 #: views/webhooks/logs-view.php:283
 msgid "First"
@@ -1498,6 +1531,7 @@ msgstr ""
 
 #: views/audit-logs/logs-view.php:249
 #: views/security/api-keys-view.php:256
+#: views/security/revoked-tokens-view.php:95
 #: views/user-api-keys.php:166
 #: views/webhooks/logs-view.php:288
 msgid "Prev"
@@ -1505,6 +1539,7 @@ msgstr ""
 
 #: views/audit-logs/logs-view.php:270
 #: views/security/api-keys-view.php:277
+#: views/security/revoked-tokens-view.php:116
 #: views/user-api-keys.php:187
 #: views/webhooks/logs-view.php:309
 msgid "Next"
@@ -1512,6 +1547,7 @@ msgstr ""
 
 #: views/audit-logs/logs-view.php:275
 #: views/security/api-keys-view.php:282
+#: views/security/revoked-tokens-view.php:121
 #: views/user-api-keys.php:192
 #: views/webhooks/logs-view.php:314
 msgid "Last"
@@ -1520,6 +1556,7 @@ msgstr ""
 #. translators: %1$d current page, %2$d total pages, %3$d total entries
 #: views/audit-logs/logs-view.php:286
 #: views/security/api-keys-view.php:291
+#: views/security/revoked-tokens-view.php:130
 #: views/user-api-keys.php:201
 #: views/webhooks/logs-view.php:325
 #, php-format
@@ -2887,35 +2924,35 @@ msgstr ""
 msgid "Use dot notation for nested values, e.g. <code>user.id</code>."
 msgstr ""
 
-#: views/layout.php:105
+#: views/layout.php:107
 msgid "Simple JWT Login Settings"
 msgstr ""
 
-#: views/layout.php:111
+#: views/layout.php:113
 msgid "Dark mode"
 msgstr ""
 
-#: views/layout.php:113
+#: views/layout.php:115
 msgid "Save"
 msgstr ""
 
-#: views/layout.php:224
+#: views/layout.php:227
 msgid "View file does not exists."
 msgstr ""
 
-#: views/layout.php:253
+#: views/layout.php:256
 #: views/routes/auth-view.php:457
 msgid "e.g. department"
 msgstr ""
 
-#: views/layout.php:258
+#: views/layout.php:261
 #: views/routes/auth-view.php:463
 msgid "e.g. engineering"
 msgstr ""
 
-#: views/layout.php:263
-#: views/layout.php:284
-#: views/layout.php:316
+#: views/layout.php:266
+#: views/layout.php:287
+#: views/layout.php:319
 #: views/routes/auth-view.php:287
 #: views/routes/auth-view.php:468
 #: views/security/auth-codes-view.php:126
@@ -2923,29 +2960,29 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
-#: views/layout.php:274
+#: views/layout.php:277
 #: views/routes/auth-view.php:276
 msgid "e.g. x-app-id"
 msgstr ""
 
-#: views/layout.php:279
+#: views/layout.php:282
 #: views/routes/auth-view.php:282
 msgid "e.g. my-app"
 msgstr ""
 
-#: views/layout.php:295
+#: views/layout.php:298
 #: views/security/auth-codes-view.php:84
 #: views/security/auth-codes-view.php:109
 #: views/security/auth-codes-view.php:142
 msgid "Authentication Key"
 msgstr ""
 
-#: views/layout.php:300
+#: views/layout.php:303
 #: views/security/auth-codes-view.php:95
 msgid "WordPress new user Role ( when new users are created )"
 msgstr ""
 
-#: views/layout.php:308
+#: views/layout.php:311
 #: views/security/auth-codes-view.php:99
 msgid "Expiration date: YYYY-MM-DD HH:MM:SS ( Example: 2020-12-23 23:34:59)"
 msgstr ""
@@ -3758,6 +3795,7 @@ msgid "No API keys found."
 msgstr ""
 
 #: views/security/api-keys-view.php:189
+#: views/security/revoked-tokens-view.php:53
 msgid "User ID"
 msgstr ""
 
@@ -3777,6 +3815,7 @@ msgid "Last Used"
 msgstr ""
 
 #: views/security/api-keys-view.php:195
+#: views/security/revoked-tokens-view.php:57
 #: views/user-api-keys.php:109
 msgid "Action"
 msgstr ""
@@ -4019,6 +4058,30 @@ msgstr ""
 
 #: views/security/protect-endpoints-view.php:226
 msgid "Require a valid JWT - keep only the endpoints listed above public"
+msgstr ""
+
+#: views/security/revoked-tokens-view.php:39
+msgid "Tokens revoked through the auth/revoke endpoint are listed here. Deleting an entry removes its revocation - the original JWT becomes valid again if it has not expired."
+msgstr ""
+
+#: views/security/revoked-tokens-view.php:48
+msgid "No revoked tokens found."
+msgstr ""
+
+#: views/security/revoked-tokens-view.php:54
+msgid "Token"
+msgstr ""
+
+#: views/security/revoked-tokens-view.php:55
+msgid "Revoked At"
+msgstr ""
+
+#: views/security/revoked-tokens-view.php:56
+msgid "Expires At"
+msgstr ""
+
+#: views/security/revoked-tokens-view.php:68
+msgid "Never"
 msgstr ""
 
 #: views/webhooks/config.php:27

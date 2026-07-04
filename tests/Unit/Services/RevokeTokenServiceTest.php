@@ -10,6 +10,7 @@ use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepository;
+use SimpleJWTLogin\Repositories\RevokedToken\Repository as RevokedTokenRepository;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\RevokeTokenService;
 use WP_User;
@@ -26,6 +27,11 @@ class RevokeTokenServiceTest extends TestCase
      */
     private $tokenRepositoryMock;
 
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|RevokedTokenRepository
+     */
+    private $revokedTokenRepoMock;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -33,6 +39,8 @@ class RevokeTokenServiceTest extends TestCase
             ->createStub(WordPressDataInterface::class);
         $this->tokenRepositoryMock = $this
             ->createStub(RefreshTokenRepository::class);
+        $this->revokedTokenRepoMock = $this
+            ->createStub(RevokedTokenRepository::class);
     }
 
     #[DataProvider('validationProvider')]
@@ -124,13 +132,11 @@ class RevokeTokenServiceTest extends TestCase
         $this->wordPressDataMock->method('applyFilters')
             ->willReturn(true);
 
-        $this->wordPressDataMock->method('getUserMeta')
-            ->willReturn([
-                Jwt::encode(['exp' => 1000], 'test', 'HS256')
-            ]);
-
-        $this->wordPressDataMock->method('addUserMeta')
+        $this->revokedTokenRepoMock->method('existsForUser')
+            ->willReturn(false);
+        $this->revokedTokenRepoMock->method('insert')
             ->willReturn(true);
+
         $this->wordPressDataMock->method('createResponse')
             ->willReturn(true);
 
@@ -147,7 +153,8 @@ class RevokeTokenServiceTest extends TestCase
                 'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
-            ->withRefreshTokenRepository($this->tokenRepositoryMock);
+            ->withRefreshTokenRepository($this->tokenRepositoryMock)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $result = $revokeService->makeAction();
         $this->assertTrue($result);
     }
@@ -221,14 +228,10 @@ class RevokeTokenServiceTest extends TestCase
             ->willReturn(true);
 
         $revokedJwt = JWT::encode(['id' => 1], 'test', 'HS256');
-        $this->wordPressDataMock->method('getUserMeta')
-            ->willReturn([
-               $revokedJwt,
-            ]);
-
-        $this->wordPressDataMock->method('addUserMeta')
-            ->willReturn(true);
         $this->wordPressDataMock->method('createResponse')
+            ->willReturn(true);
+
+        $this->revokedTokenRepoMock->method('existsForUser')
             ->willReturn(true);
 
         $revokeService = (new RevokeTokenService())
@@ -241,7 +244,8 @@ class RevokeTokenServiceTest extends TestCase
                 'REQUEST_METHOD' => 'POST',
                 'REMOTE_ADDR' => '127.0.0.1',
             ]))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Token was already revoked.');

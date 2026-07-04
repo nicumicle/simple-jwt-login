@@ -36,6 +36,9 @@ class AuditEvents
     const API_KEY_DELETE_FAILED  = 'api_key.delete.failed';
     const API_KEY_USED           = 'api_key.used';
 
+    const REVOKED_TOKEN_DELETE_SUCCESS = 'revoked_token.delete.success';
+    const REVOKED_TOKEN_DELETE_FAILED  = 'revoked_token.delete.failed';
+
     /**
      * @return string[]
      */
@@ -72,6 +75,8 @@ class AuditEvents
             self::API_KEY_DELETE_SUCCESS,
             self::API_KEY_DELETE_FAILED,
             self::API_KEY_USED,
+            self::REVOKED_TOKEN_DELETE_SUCCESS,
+            self::REVOKED_TOKEN_DELETE_FAILED,
         ];
     }
 
@@ -111,6 +116,8 @@ class AuditEvents
             self::API_KEY_DELETE_SUCCESS      => __('API Key Deleted', 'simple-jwt-login'),
             self::API_KEY_DELETE_FAILED       => __('API Key Delete Failed', 'simple-jwt-login'),
             self::API_KEY_USED                => __('API Key Used', 'simple-jwt-login'),
+            self::REVOKED_TOKEN_DELETE_SUCCESS => __('Revoked Token Entry Deleted', 'simple-jwt-login'),
+            self::REVOKED_TOKEN_DELETE_FAILED  => __('Revoked Token Entry Delete Failed', 'simple-jwt-login'),
         ];
     }
 }

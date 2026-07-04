@@ -8,6 +8,7 @@ use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepository;
 use SimpleJWTLogin\Repositories\AuditLog\AuditLogRepository;
 use SimpleJWTLogin\Repositories\RefreshToken\RefreshTokenRepository;
+use SimpleJWTLogin\Repositories\RevokedToken\RevokedTokenRepository;
 use SimpleJWTLogin\Repositories\WebhookLog\WebhookLogRepository;
 use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 use SimpleJWTLogin\Routes\Handlers\AuthenticationHandler;
@@ -59,6 +60,11 @@ class RouteRegistrar
     protected $apiKeyRepo;
 
     /**
+     * @var RevokedTokenRepository
+     */
+    protected $revokedTokenRepo;
+
+    /**
      * @var WebhookLogRepository
      */
     protected $webhookLogRepo;
@@ -102,6 +108,16 @@ class RouteRegistrar
     public function withRefreshTokenRepo($refreshTokenRepo)
     {
         $this->refreshTokenRepo = $refreshTokenRepo;
+        return $this;
+    }
+
+    /**
+     * @param RevokedTokenRepository $revokedTokenRepo
+     * @return $this
+     */
+    public function withRevokedTokenRepo($revokedTokenRepo)
+    {
+        $this->revokedTokenRepo = $revokedTokenRepo;
         return $this;
     }
 
@@ -177,6 +193,7 @@ class RouteRegistrar
         $routeService->withRequest($request);
         $routeService->withCookies($this->cookies);
         $routeService->withServerHelper($serverHelper);
+        $routeService->withRevokedTokenRepository($this->revokedTokenRepo);
 
         if ($this->jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
             $routeService->withSession(SessionService::init());
@@ -219,6 +236,16 @@ class RouteRegistrar
             $serverHelper,
             $request,
             $this->apiKeyRepo,
+            $this->refreshTokenRepo,
+            $webhookLogRepo,
+            $auditLogger
+        );
+        $this->registerRevokedTokenRoutes(
+            $routeService,
+            $this->jwtSettings,
+            $this->wordPressRepo,
+            $serverHelper,
+            $request,
             $this->refreshTokenRepo,
             $webhookLogRepo,
             $auditLogger
@@ -301,6 +328,7 @@ class RouteRegistrar
             $request,
             $documentRoot
         );
+        $handler->withRevokedTokenRepository($this->revokedTokenRepo);
         if ($apiKeyRepository !== null) {
             $handler->withApiKeyRepository($apiKeyRepository);
         }
@@ -332,6 +360,7 @@ class RouteRegistrar
                 $jwtSettings,
                 $serverHelper,
                 $tokenRepository,
+                $this->revokedTokenRepo,
                 $webhookLogRepository
             );
             $handler->register($namespace, '__return_true');
@@ -348,6 +377,7 @@ class RouteRegistrar
      * @param SimpleJWTLoginSettings $jwtSettings
      * @param ServerHelper $serverHelper
      * @param RefreshTokenRepository $tokenRepository
+     * @param RevokedTokenRepository $revokedTokenRepo
      * @param WebhookLogRepository|null $webhookLogRepository
      * @return RouteHandler
      */
@@ -357,6 +387,7 @@ class RouteRegistrar
         $jwtSettings,
         $serverHelper,
         $tokenRepository,
+        $revokedTokenRepo,
         $webhookLogRepository
     ) {
         return new RouteHandler(
@@ -366,6 +397,7 @@ class RouteRegistrar
             $jwtSettings,
             $serverHelper,
             $tokenRepository,
+            $revokedTokenRepo,
             $webhookLogRepository
         );
     }
@@ -401,9 +433,47 @@ class RouteRegistrar
                 $jwtSettings,
                 $serverHelper,
                 $tokenRepository,
+                $this->revokedTokenRepo,
                 $webhookLogRepository
             );
             $handler->withApiKey($apiKeyRepository);
+            $handler->withAuditLogger($auditLogger);
+            $handler->register($namespace, $this->buildPermissionCallback($routeService, $wordPressData));
+        }
+    }
+
+    /**
+     * @param RouteService $routeService
+     * @param SimpleJWTLoginSettings $jwtSettings
+     * @param WordPressRepository $wordPressData
+     * @param ServerHelper $serverHelper
+     * @param array $request
+     * @param RefreshTokenRepository $tokenRepository
+     * @param WebhookLogRepository|null $webhookLogRepository
+     * @param AuditLoggerService $auditLogger
+     */
+    protected function registerRevokedTokenRoutes(
+        $routeService,
+        $jwtSettings,
+        $wordPressData,
+        $serverHelper,
+        $request,
+        $tokenRepository,
+        $webhookLogRepository,
+        $auditLogger
+    ) {
+        $namespace = rtrim($jwtSettings->getGeneralSettings()->getRouteNamespace(), '/\\');
+
+        foreach ($routeService->getRevokedTokenRoutes() as $route) {
+            $handler = $this->buildRouteHandler(
+                $route,
+                $request,
+                $jwtSettings,
+                $serverHelper,
+                $tokenRepository,
+                $this->revokedTokenRepo,
+                $webhookLogRepository
+            );
             $handler->withAuditLogger($auditLogger);
             $handler->register($namespace, $this->buildPermissionCallback($routeService, $wordPressData));
         }

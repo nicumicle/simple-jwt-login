@@ -467,6 +467,15 @@ class WordPressRepository implements Repository
     }
 
     /**
+     * @param string $metaKey
+     * @return int[]
+     */
+    public function getUserIdsWithMeta($metaKey)
+    {
+        return get_users(['meta_key' => $metaKey, 'fields' => 'ID']);
+    }
+
+    /**
      * @param string|null $password
      * @param string|null $passwordHash
      * @param string $dbPassword

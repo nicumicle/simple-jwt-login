@@ -23,6 +23,7 @@ use SimpleJWTLogin\Plugin\UserApiKeysPage;
 use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepository;
 use SimpleJWTLogin\Repositories\AuditLog\AuditLogRepository;
 use SimpleJWTLogin\Repositories\RefreshToken\RefreshTokenRepository;
+use SimpleJWTLogin\Repositories\RevokedToken\RevokedTokenRepository;
 use SimpleJWTLogin\Repositories\WebhookLog\WebhookLogRepository;
 use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 use SimpleJWTLogin\Routes\RouteRegistrar;
@@ -34,7 +35,7 @@ if (! defined('ABSPATH')) {
 } // Exit if accessed directly
 
 define('SIMPLE_JWT_LOGIN_VERSION', '4.0.0');
-define('SIMPLE_JWT_LOGIN_DB_VERSION', '1.8');
+define('SIMPLE_JWT_LOGIN_DB_VERSION', '1.10');
 define('SIMPLE_JWT_LOGIN_PLUGIN_FILE', __FILE__);
 
 include_once 'autoload.php';
@@ -79,6 +80,7 @@ $simpleJwtLoginRefreshTokenRepo = new RefreshTokenRepository($wpdb);
 $simpleJwtLoginAuditLogRepo = new AuditLogRepository($wpdb);
 $simpleJwtLoginWebhookLogRepo = new WebhookLogRepository($wpdb);
 $simpleJwtLoginApiKeyRepo = new ApiKeyRepository($wpdb);
+$simpleJwtLoginRevokedTokenRepo = new RevokedTokenRepository($wpdb);
 
 // Admin UI - only needed inside wp-admin, so skip building it on front-end/REST/cron requests.
 if (is_admin()) {
@@ -89,7 +91,8 @@ if (is_admin()) {
         $simpleJwtLoginJwtSettings,
         $simpleJwtLoginAuditLogRepo,
         $simpleJwtLoginWebhookLogRepo,
-        $simpleJwtLoginApiKeyRepo
+        $simpleJwtLoginApiKeyRepo,
+        $simpleJwtLoginRevokedTokenRepo
     );
     add_action('admin_menu', array($simpleJwtLoginAdminUI, 'registerMenuEntry'));
     add_filter(
@@ -103,7 +106,9 @@ $simpleJwtLoginLifecycle = new Lifecycle(
     $simpleJwtLoginRefreshTokenRepo,
     $simpleJwtLoginAuditLogRepo,
     $simpleJwtLoginWebhookLogRepo,
-    $simpleJwtLoginApiKeyRepo
+    $simpleJwtLoginApiKeyRepo,
+    $simpleJwtLoginRevokedTokenRepo,
+    $simpleJwtLoginWordPressRepository
 );
 register_activation_hook(__FILE__, array($simpleJwtLoginLifecycle, 'activate'));
 register_deactivation_hook(__FILE__, array($simpleJwtLoginLifecycle, 'deactivate'));
@@ -116,11 +121,13 @@ $simpleJwtLoginCron = new CronCleanup(
     $simpleJwtLoginJwtSettings,
     $simpleJwtLoginRefreshTokenRepo,
     $simpleJwtLoginAuditLogRepo,
-    $simpleJwtLoginWebhookLogRepo
+    $simpleJwtLoginWebhookLogRepo,
+    $simpleJwtLoginRevokedTokenRepo
 );
 add_action('simple_jwt_login_cleanup_refresh_tokens', array($simpleJwtLoginCron, 'cleanupRefreshTokens'));
 add_action('simple_jwt_login_cleanup_audit_logs', array($simpleJwtLoginCron, 'cleanupAuditLogs'));
 add_action('simple_jwt_login_cleanup_webhook_logs', array($simpleJwtLoginCron, 'cleanupWebhookLogs'));
+add_action('simple_jwt_login_cleanup_revoked_tokens', array($simpleJwtLoginCron, 'cleanupRevokedTokens'));
 
 // REGISTER REST Routes
 add_action(
@@ -131,7 +138,8 @@ add_action(
         $simpleJwtLoginRefreshTokenRepo,
         $simpleJwtLoginAuditLogRepo,
         $simpleJwtLoginApiKeyRepo,
-        $simpleJwtLoginWebhookLogRepo
+        $simpleJwtLoginWebhookLogRepo,
+        $simpleJwtLoginRevokedTokenRepo
     ) {
         //phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $registrar = new RouteRegistrar($_SERVER, $_REQUEST, $_COOKIE);
@@ -142,6 +150,7 @@ add_action(
             ->withAuditLogRepo($simpleJwtLoginAuditLogRepo)
             ->withApiKeyRepo($simpleJwtLoginApiKeyRepo)
             ->withWebhookLogRepo($simpleJwtLoginWebhookLogRepo)
+            ->withRevokedTokenRepo($simpleJwtLoginRevokedTokenRepo)
             ->register();
     }
 );

@@ -9,6 +9,7 @@ use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepositoryInterface;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Repositories\RevokedToken\Repository as RevokedTokenRepository;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\RefreshTokenService;
 use stdClass;
@@ -25,6 +26,11 @@ class RefreshTokenServiceTest extends TestCase
      */
     private $refreshTokenRepoMock;
 
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|RevokedTokenRepository
+     */
+    private $revokedTokenRepoMock;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -32,6 +38,7 @@ class RefreshTokenServiceTest extends TestCase
             ->createStub(WordPressDataInterface::class);
 
         $this->refreshTokenRepoMock = $this->createStub(RefreshTokenRepositoryInterface::class);
+        $this->revokedTokenRepoMock = $this->createStub(RevokedTokenRepository::class);
     }
 
     #[DataProvider('validationProvider')]
@@ -58,7 +65,8 @@ class RefreshTokenServiceTest extends TestCase
                 'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
-            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $refreshService->makeAction();
     }
 
@@ -85,7 +93,8 @@ class RefreshTokenServiceTest extends TestCase
                 'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
-            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $refreshService->makeAction();
     }
 
@@ -117,7 +126,8 @@ class RefreshTokenServiceTest extends TestCase
                 'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
-            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $refreshService->makeAction();
     }
 
@@ -149,7 +159,8 @@ class RefreshTokenServiceTest extends TestCase
                 'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
-            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $result = $refreshService->makeAction();
 
         $this->assertTrue($result);
@@ -193,7 +204,8 @@ class RefreshTokenServiceTest extends TestCase
                 'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
-            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $refreshService->makeAction();
     }
 
@@ -230,7 +242,8 @@ class RefreshTokenServiceTest extends TestCase
                 'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
-            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $refreshService->makeAction();
 
         $this->assertNotNull($capturedResponse);
@@ -290,7 +303,8 @@ class RefreshTokenServiceTest extends TestCase
                 'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
-            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $refreshService->makeAction();
 
         $payload = $this->decodeJwtPayload($capturedResponse['data']['jwt']);
@@ -337,7 +351,8 @@ class RefreshTokenServiceTest extends TestCase
                 'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
-            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $refreshService->makeAction();
 
         $payload = $this->decodeJwtPayload($capturedResponse['data']['jwt']);
@@ -387,7 +402,8 @@ class RefreshTokenServiceTest extends TestCase
                 'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
-            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $refreshService->makeAction();
 
         $payload = $this->decodeJwtPayload($capturedResponse['data']['jwt']);

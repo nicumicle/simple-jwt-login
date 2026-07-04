@@ -11,6 +11,8 @@ use SimpleJWTLogin\Services\ApiKeys\ListApiKeysService;
 use SimpleJWTLogin\Services\ApiKeys\RevokeApiKeyService;
 use SimpleJWTLogin\Services\ApiKeys\UpdateApiKeyService;
 use SimpleJWTLogin\Services\Integrations\TwoFactor\TwoFactorVerifyService;
+use SimpleJWTLogin\Services\RevokedTokens\DeleteRevokedTokenService;
+use SimpleJWTLogin\Services\RevokedTokens\ListRevokedTokensService;
 
 class RouteService extends BaseService
 {
@@ -27,6 +29,9 @@ class RouteService extends BaseService
     const API_KEYS_ROUTE         = 'api-keys';
     const API_KEYS_SINGLE_ROUTE  = 'api-keys/(?P<id>\d+)';
     const API_KEYS_REVOKE_ROUTE  = 'api-keys/(?P<id>\d+)/revoke';
+
+    const REVOKED_TOKENS_ROUTE        = 'revoked-tokens';
+    const REVOKED_TOKENS_SINGLE_ROUTE = 'revoked-tokens/(?P<id>\d+)';
 
     const METHOD_POST = 'POST';
     const METHOD_GET = 'GET';
@@ -130,6 +135,27 @@ class RouteService extends BaseService
                 'service'       => RevokeApiKeyService::class,
                 'audit_success' => AuditEvents::API_KEY_REVOKE_SUCCESS,
                 'audit_failure' => AuditEvents::API_KEY_REVOKE_FAILED,
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getRevokedTokenRoutes()
+    {
+        return [
+            [
+                'name'    => self::REVOKED_TOKENS_ROUTE,
+                'method'  => self::METHOD_GET,
+                'service' => ListRevokedTokensService::class,
+            ],
+            [
+                'name'          => self::REVOKED_TOKENS_SINGLE_ROUTE,
+                'method'        => self::METHOD_DELETE,
+                'service'       => DeleteRevokedTokenService::class,
+                'audit_success' => AuditEvents::REVOKED_TOKEN_DELETE_SUCCESS,
+                'audit_failure' => AuditEvents::REVOKED_TOKEN_DELETE_FAILED,
             ],
         ];
     }

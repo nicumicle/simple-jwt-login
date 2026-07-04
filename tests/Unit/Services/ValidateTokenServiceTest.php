@@ -9,6 +9,7 @@ use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Repositories\RevokedToken\Repository as RevokedTokenRepository;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\ValidateTokenService;
 
@@ -19,11 +20,18 @@ class ValidateTokenServiceTest extends TestCase
      */
     private $wordPressDataMock;
 
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|RevokedTokenRepository
+     */
+    private $revokedTokenRepoMock;
+
     public function setUp(): void
     {
         parent::setUp();
         $this->wordPressDataMock = $this
             ->createStub(WordPressDataInterface::class);
+        $this->revokedTokenRepoMock = $this
+            ->createStub(RevokedTokenRepository::class);
     }
 
     #[DataProvider('validationProvider')]
@@ -45,7 +53,8 @@ class ValidateTokenServiceTest extends TestCase
             ->withSession([])
             ->withCookies([])
             ->withRequest($request)
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $validateTokenService->makeAction();
     }
@@ -111,7 +120,8 @@ class ValidateTokenServiceTest extends TestCase
             ->withSession([])
             ->withCookies([])
             ->withRequest(['JWT' => JWT::encode(['id' => 123], '123', 'HS256')])
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $validateTokenService->makeAction();
     }
@@ -164,7 +174,8 @@ class ValidateTokenServiceTest extends TestCase
             ->withSession([])
             ->withCookies([])
             ->withRequest(['JWT' => JWT::encode(['id' => 123, 'exp' => strtotime('+1Year')], '123', 'HS256')])
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $result  = $validateTokenService->makeAction();
         $this->assertSame(['success' => true], $result);

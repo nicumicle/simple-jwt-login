@@ -8,6 +8,7 @@ use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Repositories\RevokedToken\RevokedTokenRepository;
 use SimpleJwtLoginTests\WP\WPTestCase;
 
 /**
@@ -22,7 +23,7 @@ use SimpleJwtLoginTests\WP\WPTestCase;
  *   2. checkRevokeTokenEnabled()
  *   3. checkAllowedIPAddress()
  *   4. validateAuthenticationAuthKey() with ERR_INVALID_AUTH_CODE_PROVIDED
- *   5. revokeToken() — JWT parsing, user lookup, duplicate-revoke check, meta write
+ *   5. revokeToken() — JWT parsing, user lookup, duplicate-revoke check, table insert
  */
 class RevokeTokenTest extends WPTestCase
 {
@@ -307,7 +308,9 @@ class RevokeTokenTest extends WPTestCase
         [$email, , $userId] = $this->createUser();
         $jwt = $this->jwtForEmail($email);
 
-        add_user_meta($userId, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY, $jwt);
+        global $wpdb;
+        $revokedTokenRepo = new RevokedTokenRepository($wpdb);
+        $revokedTokenRepo->insert($userId, hash('sha256', $jwt), null);
 
         try {
             $response = $this->request('POST', self::ROUTE, ['JWT' => $jwt]);
@@ -315,7 +318,7 @@ class RevokeTokenTest extends WPTestCase
             $data = $response->get_data();
             $this->assertFalse($data['success']);
         } finally {
-            delete_user_meta($userId, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY);
+            $revokedTokenRepo->deleteByUserId($userId);
         }
     }
 
@@ -397,7 +400,7 @@ class RevokeTokenTest extends WPTestCase
 
     // ─── Post-revoke side effects ─────────────────────────────────────────────
 
-    #[TestDox('Revoked token is stored in user meta so subsequent validation fails')]
+    #[TestDox('Revoked token is stored in the revoked tokens table so subsequent validation fails')]
     public function testRevokedTokenIsPersistedAndBlocksValidation(): void
     {
         static::configurePlugin(static::baseConfig([
@@ -412,16 +415,21 @@ class RevokeTokenTest extends WPTestCase
         $revokeResponse = $this->request('POST', self::ROUTE, ['JWT' => $jwt]);
         $this->assertSame(200, $revokeResponse->get_status());
 
+        global $wpdb;
+        $revokedTokenRepo = new RevokedTokenRepository($wpdb);
+
         try {
-            $revokedMeta = get_user_meta($userId, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY);
-            $this->assertContains($jwt, $revokedMeta, 'JWT must be stored in user meta after revocation');
+            $this->assertTrue(
+                $revokedTokenRepo->existsForUser($userId, hash('sha256', $jwt)),
+                'JWT must be stored in the revoked tokens table after revocation'
+            );
         } finally {
-            delete_user_meta($userId, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY);
+            $revokedTokenRepo->deleteByUserId($userId);
         }
     }
 
-    #[TestDox('Expired revoked tokens in meta are cleaned up when a new token is revoked')]
-    public function testExpiredRevokedTokensAreCleanedUp(): void
+    #[TestDox('deleteExpired() removes expired revoked-token rows and keeps non-expired ones')]
+    public function testDeleteExpiredRemovesOnlyExpiredRows(): void
     {
         static::configurePlugin(static::baseConfig());
 
@@ -432,19 +440,29 @@ class RevokeTokenTest extends WPTestCase
             self::JWT_SECRET,
             'HS256'
         );
-        add_user_meta($userId, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY, $expiredJwt);
+        $expiredHash = hash('sha256', $expiredJwt);
 
-        $newJwt = $this->jwtForEmail($email);
+        $newJwt  = $this->jwtForEmail($email);
+        $newHash = hash('sha256', $newJwt);
 
-        $response = $this->request('POST', self::ROUTE, ['JWT' => $newJwt]);
-        $this->assertSame(200, $response->get_status());
+        global $wpdb;
+        $revokedTokenRepo = new RevokedTokenRepository($wpdb);
+        $revokedTokenRepo->insert($userId, $expiredHash, gmdate('Y-m-d H:i:s', time() - 3600));
+        $revokedTokenRepo->insert($userId, $newHash, gmdate('Y-m-d H:i:s', time() + 3600));
 
         try {
-            $remaining = get_user_meta($userId, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY);
-            $this->assertNotContains($expiredJwt, $remaining, 'Expired revoked token must be removed from meta');
-            $this->assertContains($newJwt, $remaining, 'Newly revoked token must be present in meta');
+            $revokedTokenRepo->deleteExpired();
+
+            $this->assertFalse(
+                $revokedTokenRepo->existsForUser($userId, $expiredHash),
+                'Expired revoked token must be removed by deleteExpired()'
+            );
+            $this->assertTrue(
+                $revokedTokenRepo->existsForUser($userId, $newHash),
+                'Non-expired revoked token must remain after deleteExpired()'
+            );
         } finally {
-            delete_user_meta($userId, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY);
+            $revokedTokenRepo->deleteByUserId($userId);
         }
     }
 

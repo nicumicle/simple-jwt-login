@@ -460,7 +460,7 @@ After that, for the create user route, simply add the AUTH code in the request, 
 
 A complete Changelog is available on the [GitHub repository](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md).
 
-= 3.6.7 (03 Jul 2026) =
+= 3.6.7 (06 Jul 2026) =
 - Improve plugin security
 
 = 3.6.6 (22 May 2026) =

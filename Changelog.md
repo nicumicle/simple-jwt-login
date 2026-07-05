@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## 3.6.7 (03 July 2026)
+## 3.6.7 (06 July 2026)
 - Improve plugin security
 
 ## 3.6.6 (22 May 2026)

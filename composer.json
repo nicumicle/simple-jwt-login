@@ -35,7 +35,6 @@
   "scripts": {
     "tests": "vendor/bin/phpunit --testsuite 'Unit' --coverage-text",
     "tests-feature": "vendor/bin/phpunit --testsuite 'Feature' --coverage-text",
-    "tests-wp": "vendor/bin/phpunit --testsuite 'WP-Integration' --bootstrap bootstrap-wp.php --no-process-isolation --coverage-text",
     "phpcs": "vendor/bin/phpcs --no-cache simple-jwt-login/ tests/ --extensions=php",
     "phpmd": "vendor/bin/phpmd simple-jwt-login/,tests/ text phpmd.xml",
     "phpstan": "vendor/bin/phpstan analyse simple-jwt-login/ -c phpstan.neon --memory-limit=256M",

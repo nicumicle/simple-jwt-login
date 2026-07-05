@@ -43,7 +43,6 @@ Then run the suite you need:
 ```bash
 composer run tests            # Unit tests with coverage
 composer run tests-feature    # Feature/integration tests (requires wpdb on port 3308)
-composer run tests-wp         # WP integration tests (requires full WP test environment)
 ```
 
 Run a single test file or method:

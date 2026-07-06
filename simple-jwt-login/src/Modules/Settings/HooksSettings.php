@@ -4,15 +4,16 @@ namespace SimpleJWTLogin\Modules\Settings;
 
 class HooksSettings extends BaseSettings implements SettingsInterface
 {
-    public function initSettingsFromPost()
+    protected function getSectionKey()
     {
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'enabled_hooks',
-            null,
-            'enabled_hooks',
-            BaseSettings::SETTINGS_TYPE_ARRAY
-        );
+        return 'hooks';
+    }
+
+    protected function getFieldDefinitions()
+    {
+        return [
+            [null, 'enabled_hooks', null, 'enabled_hooks', self::SETTINGS_TYPE_ARRAY],
+        ];
     }
 
     public function validateSettings()
@@ -33,9 +34,9 @@ class HooksSettings extends BaseSettings implements SettingsInterface
      * @param string $hookName
      * @return bool
      */
-    public function isHookEnable($hookName)
+    public function isHookEnabled($hookName)
     {
         return !empty($this->settings['enabled_hooks'])
-            && in_array($hookName, $this->settings['enabled_hooks']);
+            && in_array($hookName, $this->settings['enabled_hooks'], true);
     }
 }

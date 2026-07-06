@@ -10,7 +10,7 @@ use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\RegisterUserService;
 
 class RegisterUserServiceTest extends TestCase
@@ -24,8 +24,7 @@ class RegisterUserServiceTest extends TestCase
     {
         parent::setUp();
         $this->wordPressDataMock = $this
-            ->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+            ->createStub(WordPressDataInterface::class);
         $this->wordPressDataMock->method('sanitizeTextField')
             ->willReturnCallback(
                 function ($parameter) {
@@ -57,7 +56,7 @@ class RegisterUserServiceTest extends TestCase
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
-                'HTTP_CLIENT_IP' => '127.0.0.1'
+                'REMOTE_ADDR' => '127.0.0.1'
             ]))
             ->withSession([])
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
@@ -85,7 +84,7 @@ class RegisterUserServiceTest extends TestCase
                 'settings' => [
                     'allow_register' => true,
                 ],
-                'exceptionMessage' => 'Invalid Auth Code ( AUTH_KEY ) provided.',
+                'exceptionMessage' => 'Auth Code is required.',
             ],
             'test_with_invalid_auth_code' => [
                 'request' => [
@@ -117,7 +116,7 @@ class RegisterUserServiceTest extends TestCase
                         ]
                     ]
                 ],
-                'exceptionMessage' => 'Missing email or password.',
+                'exceptionMessage' => 'Missing email.',
             ],
             'test_only_with_email' => [
                 'request' => [
@@ -134,7 +133,7 @@ class RegisterUserServiceTest extends TestCase
                         ]
                     ]
                 ],
-                'exceptionMessage' => 'Missing email or password.',
+                'exceptionMessage' => 'Missing password.',
             ],
             'test_only_with_password' => [
                 'request' => [
@@ -151,7 +150,30 @@ class RegisterUserServiceTest extends TestCase
                         ]
                     ]
                 ],
-                'exceptionMessage' => 'Missing email or password.',
+                'exceptionMessage' => 'Missing email.',
+            ],
+            'test_username_too_long' => [
+                'request' => [
+                    'email'      => 'test@test.com',
+                    'password'   => 'test',
+                    'user_login' => str_repeat('a', 61),
+                ],
+                'settings' => [
+                    'allow_register'        => true,
+                    'require_register_auth' => false,
+                ],
+                'exceptionMessage' => 'Username must be less than 60 characters.',
+            ],
+            'test_email_too_long' => [
+                'request' => [
+                    'email'    => str_repeat('a', 55) . '@t.com',
+                    'password' => 'test',
+                ],
+                'settings' => [
+                    'allow_register'        => true,
+                    'require_register_auth' => false,
+                ],
+                'exceptionMessage' => 'Email must be less than 60 characters.',
             ],
             'test_with_invalid_email' => [
                 'request' => [
@@ -238,7 +260,7 @@ class RegisterUserServiceTest extends TestCase
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
-                'HTTP_CLIENT_IP' => '127.0.0.1'
+                'REMOTE_ADDR' => '127.0.0.1'
             ]))
             ->withSession([])
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
@@ -290,13 +312,13 @@ class RegisterUserServiceTest extends TestCase
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
-                'HTTP_CLIENT_IP' => '127.0.0.1'
+                'REMOTE_ADDR' => '127.0.0.1'
             ]))
             ->withSession([])
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
 
         $result = $service->makeAction();
-        $this->assertSame(null, $result);
+        $this->assertNull($result);
     }
 
     public function testRegisterSuccessWithJwtFromAuth()
@@ -306,7 +328,7 @@ class RegisterUserServiceTest extends TestCase
         $this->wordPressDataMock->method('checkUserExistsByUsernameAndEmail')
             ->willReturn(false);
         $this->wordPressDataMock->method('getSiteUrl')
-            ->willReturn("http://test.com");
+            ->willReturn('http://test.com');
 
         $authSettings = new AuthenticationSettings();
         $authSettings->withWordPressData($this->wordPressDataMock);
@@ -344,7 +366,7 @@ class RegisterUserServiceTest extends TestCase
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
-                'HTTP_CLIENT_IP' => '127.0.0.1'
+                'REMOTE_ADDR' => '127.0.0.1'
             ]))
             ->withSession([])
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
@@ -354,10 +376,61 @@ class RegisterUserServiceTest extends TestCase
 
         $this->assertArrayHasKey('success', $result);
         $this->assertTrue($result['success']);
-        $this->assertArrayHasKey('id', $result);
-        $this->assertArrayHasKey('message', $result);
-        $this->assertArrayHasKey('user', $result);
-        $this->assertArrayHasKey('jwt', $result);
+        $this->assertArrayHasKey('data', $result);
+        $this->assertArrayHasKey('jwt', $result['data']);
+    }
+
+    #[DataProvider('specialCharsPasswordProvider')]
+    public function testSpecialCharsPasswordIsSlashedBeforeCreateUser(string $rawPassword): void
+    {
+        $expectedPassword = addslashes($rawPassword);
+
+        $wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $wordPressDataMock->method('sanitizeTextField')->willReturnArgument(0);
+        $wordPressDataMock->method('wpSlash')->willReturnCallback('addslashes');
+        $wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_register'        => true,
+                'require_register_auth' => false,
+                'random_password'       => false,
+            ]));
+        $wordPressDataMock->method('isEmail')->willReturn(true);
+        $wordPressDataMock->method('checkUserExistsByUsernameAndEmail')->willReturn(false);
+        $wordPressDataMock->method('getUserIdFromUser')->willReturn(1);
+        $wordPressDataMock->method('wordpressUserToArray')->willReturn(['email' => 'test@test.com']);
+        $wordPressDataMock->method('getUserRoles')->willReturn(['subscriber']);
+        $wordPressDataMock->method('getUserProperty')->willReturn('test@test.com');
+        $wordPressDataMock->method('createResponse')->willReturnArgument(0);
+        $wordPressDataMock->expects($this->once())
+            ->method('createUser')
+            ->with(
+                $this->anything(),
+                $this->anything(),
+                $this->identicalTo($expectedPassword),
+                $this->anything(),
+                $this->anything()
+            )
+            ->willReturn([]);
+
+        $service = (new RegisterUserService())
+            ->withRequest(['email' => 'test@test.com', 'password' => $rawPassword])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper(['REMOTE_ADDR' => '127.0.0.1']))
+            ->withSession([])
+            ->withSettings(new SimpleJWTLoginSettings($wordPressDataMock));
+
+        $service->makeAction();
+    }
+
+    public static function specialCharsPasswordProvider(): array
+    {
+        return [
+            'double_quote'   => ['"hello"'],
+            'single_quote'   => ["'hello'"],
+            'backslash'      => ['back\\slash'],
+            'null_byte'      => ["nul\x00byte"],
+            'mixed_special'  => ["!@#\$%^&*\"'\\"],
+        ];
     }
 
     public function testRegisterWithoutAuthPayload()
@@ -377,7 +450,7 @@ class RegisterUserServiceTest extends TestCase
         $this->wordPressDataMock->method('checkUserExistsByUsernameAndEmail')
             ->willReturn(false);
         $this->wordPressDataMock->method('getSiteUrl')
-            ->willReturn("http://test.com");
+            ->willReturn('http://test.com');
         $this->wordPressDataMock->method('createUser')
             ->willReturn([]);
         $this->wordPressDataMock->method('getUserIdFromUser')
@@ -402,7 +475,7 @@ class RegisterUserServiceTest extends TestCase
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
-                'HTTP_CLIENT_IP' => '127.0.0.1'
+                'REMOTE_ADDR' => '127.0.0.1'
             ]))
             ->withSession([])
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
@@ -412,9 +485,75 @@ class RegisterUserServiceTest extends TestCase
 
         $this->assertArrayHasKey('success', $result);
         $this->assertTrue($result['success']);
-        $this->assertArrayHasKey('id', $result);
-        $this->assertArrayHasKey('message', $result);
-        $this->assertArrayHasKey('user', $result);
-        $this->assertArrayHasKey('jwt', $result);
+        $this->assertArrayHasKey('data', $result);
+        $this->assertArrayHasKey('jwt', $result['data']);
+    }
+
+    public function testWelcomeEmailIsSentWhenEnabled()
+    {
+        $wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $wordPressDataMock->method('sanitizeTextField')->willReturnArgument(0);
+        $wordPressDataMock->method('wpSlash')->willReturnArgument(0);
+        $wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_register'              => true,
+                'require_register_auth'       => false,
+                'random_password'             => false,
+                'register_send_welcome_email' => true,
+            ]));
+        $wordPressDataMock->method('isEmail')->willReturn(true);
+        $wordPressDataMock->method('checkUserExistsByUsernameAndEmail')->willReturn(false);
+        $wordPressDataMock->method('createUser')->willReturn([]);
+        $wordPressDataMock->method('getUserIdFromUser')->willReturn(1);
+        $wordPressDataMock->method('getUserProperty')->willReturn('test@test.com');
+        $wordPressDataMock->method('wordpressUserToArray')->willReturn(['email' => 'test@test.com']);
+        $wordPressDataMock->method('getUserRoles')->willReturn(['subscriber']);
+        $wordPressDataMock->method('createResponse')->willReturnArgument(0);
+
+        $wordPressDataMock->expects($this->once())
+            ->method('sendNewUserNotification');
+
+        $service = (new RegisterUserService())
+            ->withRequest(['email' => 'test@test.com', 'password' => 'pass123'])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper(['REMOTE_ADDR' => '127.0.0.1']))
+            ->withSession([])
+            ->withSettings(new SimpleJWTLoginSettings($wordPressDataMock));
+
+        $service->makeAction();
+    }
+
+    public function testWelcomeEmailIsNotSentWhenDisabled()
+    {
+        $wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $wordPressDataMock->method('sanitizeTextField')->willReturnArgument(0);
+        $wordPressDataMock->method('wpSlash')->willReturnArgument(0);
+        $wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_register'             => true,
+                'require_register_auth'      => false,
+                'random_password'            => false,
+                'register_send_welcome_email' => false,
+            ]));
+        $wordPressDataMock->method('isEmail')->willReturn(true);
+        $wordPressDataMock->method('checkUserExistsByUsernameAndEmail')->willReturn(false);
+        $wordPressDataMock->method('createUser')->willReturn([]);
+        $wordPressDataMock->method('getUserIdFromUser')->willReturn(1);
+        $wordPressDataMock->method('getUserProperty')->willReturn('test@test.com');
+        $wordPressDataMock->method('wordpressUserToArray')->willReturn(['email' => 'test@test.com']);
+        $wordPressDataMock->method('getUserRoles')->willReturn(['subscriber']);
+        $wordPressDataMock->method('createResponse')->willReturnArgument(0);
+
+        $wordPressDataMock->expects($this->never())
+            ->method('sendNewUserNotification');
+
+        $service = (new RegisterUserService())
+            ->withRequest(['email' => 'test@test.com', 'password' => 'pass123'])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper(['REMOTE_ADDR' => '127.0.0.1']))
+            ->withSession([])
+            ->withSettings(new SimpleJWTLoginSettings($wordPressDataMock));
+
+        $service->makeAction();
     }
 }

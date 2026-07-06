@@ -1,16 +1,23 @@
 <?php
 
+if (! defined('ABSPATH')) {
+    /** @phpstan-ignore-next-line  */
+    exit;
+} // Exit if accessed directly
+
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Helpers\StatusCodeHelper;
 use SimpleJWTLogin\Libraries\ParseRequest;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Modules\WordPressData;
+use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
+use SimpleJWTLogin\Routes\SessionService;
 use SimpleJWTLogin\Services\RouteService;
 
 // This will allow to log in  a user to WPGraphQL is not authenticated
 add_action('init_graphql_request', function () {
-    $jwtSettings = new SimpleJWTLoginSettings(new WordPressData());
-    if (!$jwtSettings->getGeneralSettings()->isWpGraphqlAuthenticationEnabled()) {
+    $wordPressReo = WordPressRepository::getInstance();
+    $jwtSettings = new SimpleJWTLoginSettings($wordPressReo);
+    if (!$jwtSettings->getIntegrationsSettings()->wpgraphql()->isEnabled()) {
         return;
     }
     $parseRequest = ParseRequest::process($_SERVER);
@@ -21,15 +28,17 @@ add_action('init_graphql_request', function () {
 
     $routeService = (new RouteService())
         ->withSettings($jwtSettings)
+        //phpcs:ignore WordPress.Security.NonceVerification.Recommended
         ->withRequest(array_merge($_REQUEST, $parsedRequestVariables))
         ->withCookies($_COOKIE)
-        ->withServerHelper(new ServerHelper($_SERVER));
+        ->withServerHelper(
+            $jwtSettings->getGeneralSettings()->isTrustIpHeadersEnabled()
+                ? ServerHelper::withTrustedProxyHeaders($_SERVER)
+                : new ServerHelper($_SERVER)
+        );
 
     if ($jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
-        if (empty(session_id()) && !headers_sent()) {
-            @session_start();
-        }
-        $routeService->withSession($_SESSION);
+        $routeService->withSession(SessionService::init());
     }
     // Check if user is already authenticated
     if (is_user_logged_in()) {
@@ -42,19 +51,20 @@ add_action('init_graphql_request', function () {
     }
 
     try {
-        (new WordPressData())
+        $wordPressReo
             ->loginUser(
-                $routeService->getUserFromJwt($jwt)
+                $routeService->getUserFromJwt($jwt),
+                null
             );
         return true;
     } catch (\Exception $exception) {
         wp_send_json_error(
             [
-                'message'   => $exception->getMessage(),
-                'errorCode' => $exception->getCode(),
+                'message'    => $exception->getMessage(),
+                'error_code' => $exception->getCode(),
                 'type'      => 'simple-jwt-login-middleware'
             ],
-            StatusCodeHelper::getStatusCodeFromExeption($exception, 400)
+            StatusCodeHelper::getStatusCodeFromException($exception)
         );
 
         return;

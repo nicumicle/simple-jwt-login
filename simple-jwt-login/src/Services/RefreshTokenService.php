@@ -4,120 +4,201 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
-use SimpleJWTLogin\Libraries\JWT\JWT;
-use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
+use SimpleJWTLogin\Modules\AuditEvents;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
-use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use WP_REST_Response;
 
 class RefreshTokenService extends AuthenticateService
 {
     public function makeAction()
     {
-        $this->checkAuthenticationEnabled();
-        $this->checkAllowedIPAddress();
-        $this->validateAuthenticationAuthKey(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED);
+        try {
+            $this->checkAuthenticationEnabled();
+            $this->checkJwtNotRevoked();
+            $this->checkRefreshTokenEnabled();
+            $this->checkAllowedIPAddress();
+            $this->validateAuthenticationAuthKey(
+                $this->jwtSettings->getAuthenticationSettings()->isRefreshAuthKeyRequired()
+            );
 
-        return $this->refreshJwt();
+            return $this->refreshJwt();
+        } catch (Exception $exception) {
+            if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_REFRESH_TOKEN_FAILED)) {
+                $this->wordPressData->doAction(
+                    SimpleJWTLoginHooks::AUDIT_AUTH_REFRESH_TOKEN_FAILED,
+                    null,
+                    null,
+                    $exception->getMessage()
+                );
+            }
+            throw $exception;
+        }
     }
 
     /**
-     * @SuppressWarnings(StaticAccess)
+     * If a JWT is present in the request, validate it and throw if it has been revoked.
+     * This ensures revoked JWTs cannot be used to obtain new tokens even on the refresh endpoint.
+     *
+     * @throws Exception
+     */
+    private function checkJwtNotRevoked()
+    {
+        $jwt = $this->getJwtFromRequestHeaderOrCookie();
+        if (empty($jwt)) {
+            return;
+        }
+
+        try {
+            $this->jwt = $jwt;
+            $userValue = $this->validateJWTAndGetUserValueFromPayload(
+                $this->jwtSettings->getLoginSettings()->getJwtLoginByParameter()
+            );
+            $user = $this->getUserDetails($userValue);
+            if ($user !== null) {
+                $this->validateJwtRevoked(
+                    $this->wordPressData->getUserProperty($user, 'ID'),
+                    $jwt
+                );
+            }
+        } catch (Exception $exception) {
+            if ($exception->getCode() === ErrorCodes::ERR_REVOKED_TOKEN) {
+                throw $exception;
+            }
+            // Ignore other JWT errors - the refresh endpoint uses opaque tokens
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function checkRefreshTokenEnabled()
+    {
+        if (!$this->jwtSettings->getAuthenticationSettings()->isRefreshTokenEnabled()) {
+            throw new Exception(
+                esc_html(__('Refresh Token endpoint is not enabled.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_REFRESH_TOKEN_NOT_ENABLED)
+            );
+        }
+    }
+
+    /**
      * @return WP_REST_Response
      * @throws Exception
      */
     private function refreshJwt()
     {
-        $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
-        if (empty($this->jwt)) {
+        $refreshToken = isset($this->request['refresh_token']) ? $this->request['refresh_token'] : null;
+        if (empty($refreshToken)) {
+            throw new ValidationException(
+                esc_html(__('Refresh token is missing.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH)
+            );
+        }
+
+        // Validate refresh token against database
+        $encryptedToken = $this->encryptRefreshToken($refreshToken);
+        $tokenData = $this->tokenRepository->getByToken($encryptedToken);
+        
+        if ($tokenData === null) {
             throw new Exception(
-                __('JWT is missing.', 'simple-jwt-login'),
-                ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH
+                esc_html(__('Invalid refresh token.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH)
             );
         }
 
-        try {
-            JWT::$leeway = self::JWT_LEEVAY;
-            JWT::decode(
-                $this->jwt,
-                JwtKeyFactory::getFactory($this->jwtSettings)->getPublicKey(),
-                [$this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm()]
-            );
-        } catch (Exception $e) {
-            if ($e->getCode() !== ErrorCodes::ERR_TOKEN_EXPIRED) {
-                throw new Exception($e->getMessage(), $e->getCode());
-            }
+        $user = $this->wordPressData->getUserDetailsById($tokenData->user_id);
+        if (!$this->wordPressData->isInstanceOfuser($user)) {
+            throw new Exception(esc_html(__('User not found.', 'simple-jwt-login')), absint(ErrorCodes::ERR_REVOKED_TOKEN));
         }
 
-        $payload = $this->getPayloadFromJWT($this->jwt);
+        $authSettings = $this->jwtSettings->getAuthenticationSettings();
 
-        if ($payload === null) {
-            throw new Exception(
-                __('There was an error with your JWT and we can not refresh it.', 'simple-jwt-login'),
-                ErrorCodes::ERR_JWT_REFRESH_NULL_PAYLOAD
-            );
+        $requestPayload = [];
+        if (!empty($this->request['payload'])) {
+            $requestPayload = $this->resolveRequestPayload($this->request['payload']);
         }
 
-        $result = $this->getUserParameterValueFromPayload(
-            $payload,
-            $this->jwtSettings->getLoginSettings()->getJwtLoginByParameter()
+        // Generate new JWT payload for the user
+        $newPayload = AuthenticateService::generatePayload(
+            $requestPayload,
+            $this->wordPressData,
+            $this->jwtSettings,
+            $user
         );
 
+        if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME)) {
+            $trustedPayload = $newPayload;
 
-        $user = $this->getUserDetails($result);
-        if ($user !== null) {
-            $userMeta = $this->wordPressData
-                ->getUserMeta(
-                    $this->wordPressData->getUserProperty($user, 'ID'),
-                    SimpleJWTLoginSettings::REVOKE_TOKEN_KEY
-                );
-            foreach ($userMeta as $key) {
-                if ($key === $this->jwt) {
-                    throw new Exception(__('This JWT is invalid.', 'simple-jwt-login'), ErrorCodes::ERR_REVOKED_TOKEN);
+            $newPayload = $this->wordPressData->applyFilters(
+                SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME,
+                $newPayload,
+                $this->request
+            );
+
+            // The filter above receives $this->request (attacker-controlled), so a
+            // malicious or misconfigured hook could otherwise overwrite reserved
+            // identity claims (email, id, ...) to impersonate another account.
+            // Re-enforce the trusted values computed before the filter ran.
+            $reservedParameters = self::getReservedPayloadParameters($authSettings, $this->jwtSettings);
+            foreach ($reservedParameters as $reservedParameter) {
+                if (array_key_exists($reservedParameter, $trustedPayload)) {
+                    $newPayload[$reservedParameter] = $trustedPayload[$reservedParameter];
+                    continue;
                 }
+                unset($newPayload[$reservedParameter]);
             }
         }
 
-        if (isset($payload[AuthenticationSettings::JWT_PAYLOAD_PARAM_EXP])) {
-            $refreshTimeToLive =
-                $payload[AuthenticationSettings::JWT_PAYLOAD_PARAM_EXP]
-                + $this->jwtSettings->getAuthenticationSettings()->getAuthJwtRefreshTtl() * 60;
+        // Generate new refresh token
+        $newRefreshToken = $this->generateRefreshToken();
+        $newTokenExpiresAt = time() + ($authSettings->getAuthJwtRefreshTtl() * 60);
 
-            if (time() > $refreshTimeToLive) {
-                throw new Exception(
-                    __('JWT is too old to be refreshed.', 'simple-jwt-login'),
-                    ErrorCodes::ERR_JWT_REFRESH_JWT_TOO_OLD
-                );
-            }
+        // Rotate: delete old token, persist new one
+        $this->tokenRepository->deleteByToken($encryptedToken);
+        $this->tokenRepository->insert(
+            $tokenData->user_id,
+            $this->encryptRefreshToken($newRefreshToken),
+            $newTokenExpiresAt
+        );
 
-            $expValue = time() + ($this->jwtSettings->getAuthenticationSettings()->getAuthJwtTtl() * 60);
-            $payload[AuthenticationSettings::JWT_PAYLOAD_PARAM_EXP] = $expValue;
+        if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_REFRESH_TOKEN_SUCCESS)) {
+            $userId    = (int) $this->wordPressData->getUserProperty($user, 'ID');
+            $userEmail = (string) $this->wordPressData->getUserProperty($user, 'user_email');
+
+            $this->wordPressData->doAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_REFRESH_TOKEN_SUCCESS,
+                $userId,
+                $userEmail
+            );
         }
 
-        $response =  [
+        $customHeaderClaims = $authSettings->getCustomHeaderClaims();
+        $response = [
             'success' => true,
             'data'    => [
-                'jwt' => JWT::encode(
-                    $payload,
+                'jwt' => $this->getJwtWrapper()->encode(
+                    $newPayload,
                     JwtKeyFactory::getFactory($this->jwtSettings)->getPrivateKey(),
-                    $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm()
-                )
+                    $this->jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm(),
+                    empty($customHeaderClaims) ? null : $customHeaderClaims
+                ),
+                'refresh_token' => $newRefreshToken
             ]
         ];
 
         if ($this->jwtSettings->getHooksSettings()
-            ->isHookEnable(SimpleJWTLoginHooks::HOOK_RESPONSE_REFRESH_TOKEN)
+            ->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_REFRESH_TOKEN)
         ) {
             $response = $this->wordPressData
-                ->triggerFilter(
+                ->applyFilters(
                     SimpleJWTLoginHooks::HOOK_RESPONSE_REFRESH_TOKEN,
                     $response,
                     $user
                 );
         }
 
-        //Display result
         return $this->wordPressData->createResponse($response);
     }
 }

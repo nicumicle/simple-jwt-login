@@ -4,18 +4,47 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Exceptions\ValidationException;
+use SimpleJWTLogin\Modules\AuditEvents;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
-use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
 class RevokeTokenService extends AuthenticateService
 {
     public function makeAction()
     {
-        $this->checkAuthenticationEnabled();
-        $this->checkAllowedIPAddress();
-        $this->validateAuthenticationAuthKey(ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED);
+        try {
+            $this->checkAuthenticationEnabled();
+            $this->checkRevokeTokenEnabled();
+            $this->checkAllowedIPAddress();
+            $this->validateAuthenticationAuthKey(
+                $this->jwtSettings->getAuthenticationSettings()->isRevokeAuthKeyRequired()
+            );
 
-        return $this->revokeToken();
+            return $this->revokeToken();
+        } catch (Exception $exception) {
+            if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_LOGOUT_FAILED)) {
+                $this->wordPressData->doAction(
+                    SimpleJWTLoginHooks::AUDIT_AUTH_LOGOUT_FAILED,
+                    null,
+                    null,
+                    $exception->getMessage()
+                );
+            }
+            throw $exception;
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function checkRevokeTokenEnabled()
+    {
+        if (!$this->jwtSettings->getAuthenticationSettings()->isRevokeTokenEnabled()) {
+            throw new Exception(
+                esc_html(__('Revoke Token endpoint is not enabled.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_REVOKE_TOKEN_NOT_ENABLED)
+            );
+        }
     }
 
     /**
@@ -25,9 +54,9 @@ class RevokeTokenService extends AuthenticateService
     {
         $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
         if (empty($this->jwt)) {
-            throw new Exception(
-                __('The `jwt` parameter is missing.', 'simple-jwt-login'),
-                ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE
+            throw new ValidationException(
+                esc_html(__('The `jwt` parameter is missing.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE)
             );
         }
 
@@ -37,27 +66,37 @@ class RevokeTokenService extends AuthenticateService
         $user           = $this->getUserDetails($loginParameter);
         if ($user === null) {
             throw new Exception(
-                __('User not found.', 'simple-jwt-login'),
-                ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND
+                esc_html(__('User not found.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND)
             );
         }
 
-        $userRevokedTokens = $this->getUserRevokedTokensFromDatabase(
-            $this->wordPressData->getUserProperty($user, 'ID')
-        );
-        $this->cleanUpUserExpiredTokens(
-            $userRevokedTokens,
-            $this->wordPressData->getUserProperty($user, 'ID')
-        );
-        $this->checkIfTokenIsAlreadyRevoked($userRevokedTokens);
+        $userId    = (int) $this->wordPressData->getUserProperty($user, 'ID');
+        $userEmail = (string) $this->wordPressData->getUserProperty($user, 'user_email');
 
-        $this->wordPressData->addUserMeta(
-            $this->wordPressData->getUserProperty($user, 'ID'),
-            SimpleJWTLoginSettings::REVOKE_TOKEN_KEY,
-            $this->jwt
-        );
+        $tokenHash = hash('sha256', $this->jwt);
+        if ($this->revokedTokenRepo->existsForUser($userId, $tokenHash)) {
+            throw new Exception(
+                esc_html(__('Token was already revoked.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_REVOKED_TOKEN)
+            );
+        }
 
-        $response =  [
+        $payload   = $this->getPayloadFromJWT($this->jwt);
+        $expiresAt = isset($payload['exp']) ? gmdate('Y-m-d H:i:s', (int) $payload['exp']) : null;
+        $this->revokedTokenRepo->insert($userId, $tokenHash, $expiresAt);
+
+        $this->tokenRepository->deleteByUserId($userId);
+
+        if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_LOGOUT_SUCCESS)) {
+            $this->wordPressData->doAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_LOGOUT_SUCCESS,
+                $userId,
+                $userEmail
+            );
+        }
+
+        $response = [
             'success' => true,
             'message' => __('Token was revoked.', 'simple-jwt-login'),
             'data'    => [
@@ -67,12 +106,11 @@ class RevokeTokenService extends AuthenticateService
             ]
         ];
 
-
         if ($this->jwtSettings->getHooksSettings()
-            ->isHookEnable(SimpleJWTLoginHooks::HOOK_RESPONSE_REVOKE_TOKEN)
+            ->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_REVOKE_TOKEN)
         ) {
             $response = $this->wordPressData
-                ->triggerFilter(
+                ->applyFilters(
                     SimpleJWTLoginHooks::HOOK_RESPONSE_REVOKE_TOKEN,
                     $response,
                     $user
@@ -80,60 +118,5 @@ class RevokeTokenService extends AuthenticateService
         }
 
         return $this->wordPressData->createResponse($response);
-    }
-
-    /**
-     * @param array $revokedTokens
-     * @param int $userId
-     */
-    private function cleanUpUserExpiredTokens($revokedTokens, $userId)
-    {
-        if (empty($revokedTokens)) {
-            return;
-        }
-        $currentTime = time();
-        foreach ($revokedTokens as $token) {
-            $payload = $this->getPayloadFromJWT($token);
-            if (isset($payload['exp']) && $payload['exp'] < $currentTime) {
-                $this->wordPressData->deleteUserMeta(
-                    $userId,
-                    SimpleJWTLoginSettings::REVOKE_TOKEN_KEY,
-                    $this->wordPressData->sanitizeTextField($token)
-                );
-            }
-        }
-    }
-
-    /**
-     * @param array $userRevokedTokens
-     *
-     * @return bool
-     * @throws Exception
-     */
-    private function checkIfTokenIsAlreadyRevoked($userRevokedTokens)
-    {
-        if (empty($userRevokedTokens)) {
-            return false;
-        }
-        foreach ($userRevokedTokens as $token) {
-            if ($token === $this->jwt) {
-                throw new Exception('Token was already revoked.');
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @param int $userId
-     *
-     * @return mixed
-     */
-    private function getUserRevokedTokensFromDatabase($userId)
-    {
-        return $this->wordPressData->getUserMeta(
-            $userId,
-            SimpleJWTLoginSettings::REVOKE_TOKEN_KEY
-        );
     }
 }

@@ -4,6 +4,7 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use WP_REST_Response;
 
@@ -16,22 +17,39 @@ class ValidateTokenService extends AuthenticateService
     public function makeAction()
     {
         $this->checkAuthenticationEnabled();
+        $this->checkValidateTokenEnabled();
         $this->checkAllowedIPAddress();
+        $this->validateAuthenticationAuthKey(
+            $this->jwtSettings->getAuthenticationSettings()->isValidateAuthKeyRequired()
+        );
 
         return $this->validateAuth();
     }
 
     /**
-     * @return  WP_REST_Response
+     * @throws Exception
+     */
+    private function checkValidateTokenEnabled()
+    {
+        if (!$this->jwtSettings->getAuthenticationSettings()->isValidateTokenEnabled()) {
+            throw new Exception(
+                esc_html(__('Validate Token endpoint is not enabled.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_VALIDATE_TOKEN_NOT_ENABLED)
+            );
+        }
+    }
+
+    /**
+     * @return WP_REST_Response
      * @throws Exception
      */
     private function validateAuth()
     {
         $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
         if (empty($this->jwt)) {
-            throw new Exception(
-                __('The `jwt` parameter is missing.', 'simple-jwt-login'),
-                ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE
+            throw new ValidationException(
+                esc_html(__('The `jwt` parameter is missing.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE)
             );
         }
 
@@ -42,8 +60,8 @@ class ValidateTokenService extends AuthenticateService
         $user = $this->getUserDetails($loginParameter);
         if ($user === null) {
             throw new Exception(
-                __('User not found.', 'simple-jwt-login'),
-                ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND
+                esc_html(__('User not found.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND)
             );
         }
 
@@ -53,14 +71,12 @@ class ValidateTokenService extends AuthenticateService
         );
 
         $userArray = $this->wordPressData->wordpressUserToArray($user);
-        if (isset($userArray['user_pass'])) {
-            unset($userArray['user_pass']);
-        }
-        $jwtParameters          = [];
-        $jwtParameters['token'] = $this->jwt;
-        list($header, $payload) = explode('.', $this->jwt);
-        $jwtParameters['header']  = json_decode(base64_decode($header), true);
-        $jwtParameters['payload'] = json_decode(base64_decode($payload), true);
+        unset($userArray['user_pass']);
+        $jwtData                  = $this->extractJwtData($this->jwt);
+        $jwtParameters            = [];
+        $jwtParameters['token']   = $this->jwt;
+        $jwtParameters['header']  = $jwtData['header'];
+        $jwtParameters['payload'] = $jwtData['payload'];
         if (isset($jwtParameters['payload']['exp'])) {
             $jwtParameters['expire_in'] = $jwtParameters['payload']['exp'] - time();
         }
@@ -70,17 +86,15 @@ class ValidateTokenService extends AuthenticateService
             'data'    => [
                 'user' => $userArray,
                 'roles' => $this->wordPressData->getUserRoles($user),
-                'jwt'  => [
-                    $jwtParameters
-                ]
+                'jwt'  => $jwtParameters
             ]
         ];
 
         if ($this->jwtSettings->getHooksSettings()
-            ->isHookEnable(SimpleJWTLoginHooks::HOOK_RESPONSE_VALIDATE_TOKEN)
+            ->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_VALIDATE_TOKEN)
         ) {
             $response = $this->wordPressData
-                ->triggerFilter(
+                ->applyFilters(
                     SimpleJWTLoginHooks::HOOK_RESPONSE_VALIDATE_TOKEN,
                     $response,
                     $user

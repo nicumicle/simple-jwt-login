@@ -68,11 +68,19 @@ Table of contents
   * [Install from WordPress.org](#install-from-wordpressorg)
   * [Setup the Plugin](#setup-the-plugin)
 * [Features](#tada-features)
+* [Comparison](#bar_chart-how-simple-jwt-login-compares)
+* [Integrations](#link-integrations)
+  * [Two-Factor Authentication](#two-factor-authentication)
+  * [WooCommerce](#woocommerce)
+  * [Force Login](#force-login)
 * [Integrate](#electric_plug-integrate)
   * [PHP SDK](#php-sdk)
   * [JavaScript SDK](#javascript-sdk)
+  * [CLI](#cli)
 * [Documentation](#ledger-documentation)
 * [Roadmap](#rocket-roadmap)
+* [Version Support Policy](#calendar-version-support-policy)
+  * [Semantic Versioning](#semantic-versioning)
 * [Contribute](#scroll-contribute)
   * [How can you contribute](#how-can-you-contribute)
 * [Contributors](#trophy-contributors)
@@ -106,27 +114,151 @@ In order to install the latest stable version, from your WordPress admin:
 
 ### Set up the Plugin
 
-1. Go to "General" section
-2. Set a "JWT Decryption key". With this key the JWT will be validated.
-3. Choose "JWT Decryption algorithm".
-4. Go to "Login" section
-5. Set "JWT parameter key" with the payload key where user can be identified
-6. Save Changes.
+After activating the plugin, navigate to **Settings > Simple JWT Login** in your WordPress admin.
+
+#### 1. General (required)
+
+- **Route Namespace** - base URL prefix for all plugin REST endpoints. Default: `simple-jwt-login/v1/`. Change only if another plugin conflicts.
+- **JWT Verification Rules** - define how incoming JWTs are verified:
+  - For symmetric algorithms (HS256, HS384, HS512): enter a **Decryption Key** (any strong secret string).
+  - For asymmetric algorithms (RS256, RS384, RS512): enter a **Public Key** and a **Private Key** (PEM format).
+  - The **ELSE** row is the required fallback rule applied when no conditional rule matches.
+- **JWT Input Sources** - choose where the plugin looks for the JWT in each request. At least one source must be enabled:
+  - **Request (URL param)** - e.g. `?JWT=<token>` (parameter name is configurable, default: `JWT`)
+  - **Header** - e.g. `Authorization: Bearer <token>` (default header name: `Authorization`)
+  - **Cookie** - reads the JWT from a cookie (default cookie name: `simple-jwt-login-token`)
+  - **Session** - reads the JWT from a PHP session variable
+
+Click **Save Changes** before moving to the next section.
+
+#### 2. Authentication (optional - generate JWTs via REST)
+
+Go to the **Authentication** tab to enable the `/auth` endpoint that issues JWTs:
+
+- Toggle **Allow Authentication** to enable the endpoint.
+- Select the **JWT Payload** fields you want included in the token (e.g. `email`, `id`, `username`).
+- Set **JWT TTL** (token lifetime in minutes, default: 60) and **JWT Refresh TTL** (refresh window, default: 20160).
+- Optionally enable **Refresh Token**, **Validate Token**, and **Revoke Token** sub-endpoints.
+
+#### 3. Login / Autologin (optional - log users in via JWT)
+
+Go to the **Login** tab to enable browser-based autologin using a JWT:
+
+- Toggle **Allow Autologin** to enable the `/autologin` endpoint.
+- Set **Login By** to the user attribute the plugin should match (`email`, `WordPress User ID`, or `User Login`).
+- Set **JWT Parameter Key** to the JWT payload claim that holds the matching value (e.g. `email`).
+- Choose a **Redirect** destination after a successful login (Dashboard, Homepage, or a custom URL).
+
+#### 4. Auth Codes (optional - restrict API access)
+
+Go to the **Auth Codes** tab to add shared secrets that callers must supply alongside the JWT:
+
+- Enter one or more codes, each with an optional **Role** (limits which WordPress role the code grants access to) and an optional **Expiration Date**.
+- Back in the Login, Authentication, Register, or Delete User tabs, enable **Require Auth Code** to enforce it for that operation.
+
+#### Minimum viable setup
+
+For a headless or mobile app that needs to authenticate users and receive JWTs:
+
+1. **General**: set a Decryption Key and ensure at least one JWT Input Source is enabled.
+2. **Authentication**: enable **Allow Authentication** and select the payload fields you need.
+3. Click **Save Changes**.
+
+Your JWT endpoint will be available at:
+```
+POST /wp-json/simple-jwt-login/v1/auth
+```
 
 
-## :tada: Features 
+## :tada: Features
 
 - **100% Free** and **open-source** under [GPL 3.0](https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE) License
-- **Authenticate** : REST endpoint that will generate/validate/revoke a JWT
-- **Autologin**: Autologin to a WordPress website with JWT
-- **Register user**: Register users in WordPress by calling a REST endpoint
-- **Delete user**: You can delete a WordPress user by adding some details in the JWT payload.
-- **Reset password**: REST endpoint that allows you to reset WordPress User password. Also, it can send custom email if you want.
-- **Protect endpoints**: Protect WordPress endpoints with a JWT. This way, you can make some endpoints private, and the content can be viewed only if you provide a valid JWT.
-- **Allow JWT usage on other endpoints**: Add a JWT to requests for other API endpoints, and you will act as an authenticated user.
-- **Integrate with other plugins**: This plugin works well in combination with other plugins that extends the WordPress REST API.
-- **Google OAuth**(beta):  Login to your website with Google
-- **Google JWT**(beta): Use the Google `id_token` in order to access WordPress endpoints as an authenticated user.
+- **JWT Authentication** - REST endpoint that generates, validates, and revokes JWTs
+- **Refresh Tokens** - Issue and rotate JWT refresh tokens without re-authentication
+- **Autologin** - Autologin to a WordPress website using a JWT
+- **Register user** - Register new WordPress users via a REST endpoint, with optional auto-create on first login
+- **Delete user** - Delete a WordPress user by embedding details in the JWT payload
+- **Reset password** - REST endpoint for resetting WordPress user passwords, with customisable email support
+- **Protect endpoints** - Gate any WordPress REST endpoint behind a valid JWT so only authenticated clients can access it
+- **External API authentication** - Attach a JWT to requests for any REST endpoint and act as an authenticated user
+- **Custom JWT claims** - Define and read arbitrary payload claims to pass context between your app and WordPress
+- **API Keys** - Generate per-client API keys as an alternative credential for obtaining JWTs
+- **Audit Logs** - Detailed logs of every login, registration, and authentication event for visibility and compliance
+- **Webhooks** - Fire outbound HTTP callbacks on login, registration, and authentication events to integrate with external services
+- **Google OAuth** - Allow users to log in with their Google account via OAuth
+- **Google JWT** - Accept a Google `id_token` to authenticate against WordPress endpoints
+- **Facebook OAuth** - Allow users to log in with their Facebook account via OAuth
+- **GitHub OAuth** - Allow users to log in with their GitHub account via OAuth
+- **Auth0 Login** - Allow users to log in via Auth0
+- **WPGraphQL support** - Works with WPGraphQL so headless frontends using GraphQL can authenticate through the same plugin
+- **Two-Factor Authentication** - Integrates with the [Two Factor](https://wordpress.org/plugins/two-factor/) plugin: `/auth` returns a short-lived interim JWT for users with 2FA enabled, which is then exchanged for a full JWT via `/auth/2fa` together with the user's TOTP, email, or backup code
+- **WooCommerce** - Authenticate WooCommerce REST API requests (`/wc/v1`, `/wc/v2`, `/wc/v3`) and the Store API (cart & checkout) with a JWT instead of consumer key/secret, independent of the global protect-endpoints middleware
+- **Force Login compatibility** - Lets Simple JWT Login's own REST endpoints bypass the [Force Login](https://wordpress.org/plugins/force-login/) plugin's site-wide login requirement
+- **Headless WordPress** - Purpose-built for Next.js, React, React Native, Flutter, and other API-first consumers
+- **Mobile app support** - Designed for mobile clients that need stateless, token-based authentication with refresh token rotation
+- **Plugin integrations** - Works alongside other plugins that extend the WordPress REST API
+
+## :bar_chart: How Simple JWT Login Compares
+
+Most WordPress JWT plugins lock advanced features behind paid plans. Simple JWT Login ships everything below for **FREE**.
+
+| Feature                            | Simple JWT Login | Other Plugins                         |
+|------------------------------------|------------------|---------------------------------------|
+| JWT Authentication                 | ✅ Free           | ✅ Free                                |
+| Refresh Tokens                     | ✅ Free           | ❌ Paid or unavailable                 |
+| API Keys                           | ✅ Free           | ❌ Premium only                        |
+| Audit Logs                         | ✅ Free           | ❌ Premium only                        |
+| Webhooks                           | ✅ Free           | ❌ Premium only                        |
+| Google OAuth Login                 | ✅ Free           | ❌ Premium only                        |
+| Facebook OAuth Login               | ✅ Free           | ❌ Premium only                        |
+| GitHub OAuth Login                 | ✅ Free           | ❌ Premium only                        |
+| Auth0 Login                        | ✅ Free           | ❌ Premium only                        |
+| Generic OAuth / OIDC               | ❌ Not yet        | ⚠️ Limited or Premium                 |
+| WPGraphQL Support                  | ✅ Free           | ❌ Not available                       |
+| Two-Factor Authentication          | ✅ Free           | ❌ Not available                       |
+| WooCommerce REST/Store API Auth    | ✅ Free           | ❌ Not available                       |
+| User Auto-create                   | ✅ Free           | ⚠️ Basic or Premium                   |
+| JWT Refresh Endpoint               | ✅ Free           | ❌ Premium only                        |
+| Custom JWT Claims                  | ✅ Free           | ⚠️ Via hooks or Premium               |
+| Token Revocation                   | ✅ Free           | ❌ Premium only                        |
+| Headless WordPress Focus           | ✅ Strong         | ⚠️ Basic or SSO-focused               |
+| Mobile App Support                 | ✅ Excellent      | ⚠️ Basic or Good                      |
+| External API Authentication        | ✅ Free           | ⚠️ Limited or Premium                 |
+| Open Source Transparency           | ✅ Fully open     | ⚠️ Varies - some obfuscation reported |
+| Setup Simplicity                   | ✅ Easy           | ⚠️ Easy to Complex                    |
+| Enterprise SSO                     | ❌ Not yet        | ✅ Premium only                        |
+| SAML Support                       | ❌ Not yet        | ✅ Premium only                        |
+| Free Version Useful Without Upsell | ✅ Very strong    | ⚠️ Minimal or limited                 |
+| Minimum PHP Version                | ✅ PHP 5.5+       | ⚠️ PHP 7.0+                           |
+
+## :link: Integrations
+
+Third-party integrations are configured from the **Integrations** tab in the plugin admin. Each one is disabled by default and shows a warning if the target plugin is not installed/activated.
+
+### Two-Factor Authentication
+
+Integrates with the [Two Factor](https://wordpress.org/plugins/two-factor/) plugin so JWT issuance also enforces any 2FA method the user has configured (TOTP, email code, or backup codes).
+
+**How it works:**
+
+1. Client POSTs credentials to `/auth`. If the user has 2FA configured, the plugin returns a short-lived **interim JWT** instead of a full JWT.
+2. Client submits the interim JWT plus the 2FA code to `POST /auth/2fa`.
+3. On success, a full JWT (and optional refresh token) is returned, identical to a normal `/auth` response.
+
+The interim JWT TTL is configurable (default: 5 minutes). Browser-based OAuth logins (Google, Facebook, GitHub, Auth0) that hit a 2FA-enabled account are redirected to an in-page 2FA code form before the WordPress session is created.
+
+[Read more](https://simplejwtlogin.com/docs/) on our website.
+
+### WooCommerce
+
+Authenticate [WooCommerce](https://woocommerce.com/) REST API (`/wc/v1`, `/wc/v2`, `/wc/v3`) and Store API (`/wc/store/v1`, including cart & checkout) requests using a JWT instead of consumer key/secret pairs.
+
+* Works independently of the global "Protect Endpoints" middleware - JWT authentication on WooCommerce routes is always active once the integration is enabled.
+* Optional **Store API cart & checkout** toggle lets header (`Authorization: Bearer`) JWT requests skip WooCommerce's Store API CSRF nonce check, enabling a fully headless cart and checkout flow. Cookie- and URL-based tokens always keep the nonce requirement, since only header tokens are immune to CSRF.
+
+### Force Login
+
+Lets Simple JWT Login's own REST endpoints bypass the [Force Login](https://wordpress.org/plugins/force-login/) plugin's site-wide "require login to view any page" restriction, so external clients can still reach `/auth`, `/autologin`, and other plugin routes without an existing WordPress session.
 
 ## :electric_plug: Integrate
 
@@ -156,18 +288,24 @@ yarn add "simple-jwt-login"
 
 You can check this [GitHub repository](https://github.com/simple-jwt-login/js-sdk) for more details.
 
+### CLI
+
+The Simple JWT Login CLI lets you interact with the plugin from the command line - useful for scripting, testing, and local development workflows.
+
+You can check this [GitHub repository](https://github.com/simple-jwt-login/simple-jwt-login-cli) for installation instructions and usage examples.
+
 
 ## :ledger: Documentation
 
 Plugin documentation is available at [simplejwtlogin.com](https://simplejwtlogin.com).
 
-- [Introduction](https://simplejwtlogin.com/docs/)<br>
-- [Authentication](https://simplejwtlogin.com/docs/authentication)<br>
-- [Autologin](https://simplejwtlogin.com/docs/autologin)<br>
-- [Register User](https://simplejwtlogin.com/docs/register-user)<br>
-- [Reset Password](https://simplejwtlogin.com/docs/reset-password)<br>
-- [Delete User](https://simplejwtlogin.com/docs/delete-user)<br>
-- [Protect Endpoints](https://simplejwtlogin.com/docs/protect-endpoints)<br>
+- [Introduction](https://simplejwtlogin.com/docs/)
+- [Authentication](https://simplejwtlogin.com/docs/authentication)
+- [Autologin](https://simplejwtlogin.com/docs/autologin)
+- [Register User](https://simplejwtlogin.com/docs/register-user)
+- [Reset Password](https://simplejwtlogin.com/docs/reset-password)
+- [Delete User](https://simplejwtlogin.com/docs/delete-user)
+- [Protect Endpoints](https://simplejwtlogin.com/docs/protect-endpoints)
 - [Hooks](https://simplejwtlogin.com/docs/hooks)
 
 
@@ -178,6 +316,25 @@ Check out the [roadmap](https://github.com/users/nicumicle/projects/1) to get in
 - [Top Feature Requests](https://github.com/nicumicle/simple-jwt-login/issues?q=label%3Afeature-request+is%3Aopen+sort%3Areactions-%2B1-desc) (Add your votes using the 👍 reaction)
 - [Top Bugs](https://github.com/nicumicle/simple-jwt-login/issues?q=is%3Aissue+is%3Aopen+label%3Abug+sort%3Areactions-%2B1-desc) (Add your votes using the 👍 reaction)
 - [Newest Bugs](https://github.com/nicumicle/simple-jwt-login/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
+
+## :calendar: Version Support Policy
+
+| Version | Status | End of Life | Supported fixes |
+|---------|--------|-------------|------------------|
+| v4.x | Active (LTS) | - | New features, bug fixes, security patches, WordPress compatibility fixes |
+| v3.x | Maintenance | 31.01.2027 | Security patches and WordPress compatibility fixes only - no new features, no bug fixes |
+
+We recommend upgrading to v4 as soon as possible. After 31.01.2027, v3.x will no longer receive any updates, including security patches.
+
+### Semantic Versioning
+
+Simple-JWT-Login follows [Semantic Versioning (SemVer)](https://semver.org/) - version numbers are structured as `MAJOR.MINOR.PATCH` (e.g. `4.2.1`):
+
+- **MAJOR** (`4.x.x`) - incremented for breaking/incompatible changes, such as removing a feature or changing default behavior. Upgrading a major version may require reviewing your settings or integration code.
+- **MINOR** (`x.2.x`) - incremented when new functionality is added in a backwards-compatible way.
+- **PATCH** (`x.x.1`) - incremented for backwards-compatible bug fixes and security patches.
+
+For v3.x, since it's now in maintenance mode, only PATCH releases will be published (security and WordPress compatibility fixes) - no new MINOR versions will be released.
 
 ## :scroll: Contribute
 

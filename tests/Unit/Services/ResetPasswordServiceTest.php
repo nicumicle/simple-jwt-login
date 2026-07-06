@@ -10,7 +10,8 @@ use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\ResetPasswordSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\RevokedToken\Repository as RevokedTokenRepository;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\ResetPasswordService;
 
 class ResetPasswordServiceTest extends TestCase
@@ -20,12 +21,18 @@ class ResetPasswordServiceTest extends TestCase
      */
     private $wordPressDataMock;
 
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|RevokedTokenRepository
+     */
+    private $revokedTokenRepoMock;
+
     public function setUp(): void
     {
         parent::setUp();
         $this->wordPressDataMock = $this
-            ->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+            ->createStub(WordPressDataInterface::class);
+        $this->revokedTokenRepoMock = $this
+            ->createStub(RevokedTokenRepository::class);
     }
 
     #[DataProvider('sendUserPasswordProvider')]
@@ -43,11 +50,14 @@ class ResetPasswordServiceTest extends TestCase
         $this->wordPressDataMock
             ->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
+        $isEmail = isset($request['email']) && $request['email'] !== '---';
+        $this->wordPressDataMock->method('isEmail')->willReturn($isEmail);
         $resetService = (new ResetPasswordService())
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'POST']))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $resetService->makeAction();
     }
 
@@ -65,7 +75,7 @@ class ResetPasswordServiceTest extends TestCase
                     'reset_password_requires_auth_code' => 1,
                 ],
                 'request'   => [],
-                'exceptionMessage' => 'Invalid Auth Code ( AUTH_KEY ) provided.'
+                'exceptionMessage' => 'Auth Code is required.'
             ],
             [
                 'settings'  => [
@@ -102,6 +112,16 @@ class ResetPasswordServiceTest extends TestCase
                 ],
                 'exceptionMessage' => 'Wrong user.'
             ],
+            'invalid_email_for_reset_password' => [
+                'settings'  => [
+                    'allow_reset_password'              => 1,
+                    'reset_password_requires_auth_code' => 0,
+                ],
+                'request'   => [
+                    'email' => '---',
+                ],
+                'exceptionMessage' => 'Invalid email parameter.'
+            ],
         ];
     }
 
@@ -136,12 +156,12 @@ class ResetPasswordServiceTest extends TestCase
         $this->wordPressDataMock
             ->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
+        $this->wordPressDataMock->method('isEmail')->willReturn(true);
         $this->wordPressDataMock
             ->method('getUserDetailsByEmail')
             ->willReturn(['User']);
         $this->wordPressDataMock
-            ->method('triggerFilter')
-            ->withAnyParameters()
+            ->method('applyFilters')
             ->willReturn(true);
         $this->wordPressDataMock
             ->method('createResponse')
@@ -150,9 +170,10 @@ class ResetPasswordServiceTest extends TestCase
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'POST']))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $result = $resetService->makeAction();
-        $this->assertSame(true, $result);
+        $this->assertTrue($result);
     }
 
     public static function flowTypeProvider()
@@ -185,11 +206,14 @@ class ResetPasswordServiceTest extends TestCase
         $this->wordPressDataMock
             ->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
+        $isEmail = isset($request['email']) && $request['email'] !== '---';
+        $this->wordPressDataMock->method('isEmail')->willReturn($isEmail);
         $resetService = (new ResetPasswordService())
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'PUT']))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $resetService->makeAction();
     }
 
@@ -207,7 +231,7 @@ class ResetPasswordServiceTest extends TestCase
                     'reset_password_requires_auth_code' => 1,
                 ],
                 'request'   => [],
-                'exceptionMessage' => 'Invalid Auth Code ( AUTH_KEY ) provided.'
+                'exceptionMessage' => 'Auth Code is required.'
             ],
             'missing_email' => [
                 'settings'  => [
@@ -307,6 +331,43 @@ class ResetPasswordServiceTest extends TestCase
                 ],
                 'exceptionMessage' => 'This JWT can not change your password.'
             ],
+            'missing_code_or_jwt' => [
+                'settings'  => [
+                    'allow_reset_password'              => 1,
+                    'reset_password_requires_auth_code' => 0,
+                    'reset_password_jwt'                => 1,
+                ],
+                'request'   => [
+                    'email'        => 'email@email.com',
+                    'new_password' => 'abc',
+                ],
+                'exceptionMessage' => 'Missing code or jwt parameter.'
+            ],
+            'invalid_email_format_change_password' => [
+                'settings'  => [
+                    'allow_reset_password'              => 1,
+                    'reset_password_requires_auth_code' => 0,
+                ],
+                'request'   => [
+                    'email'        => '---',
+                    'code'         => '123',
+                    'new_password' => 'abc',
+                ],
+                'exceptionMessage' => 'Invalid email parameter.'
+            ],
+            'invalid_base64_new_password' => [
+                'settings'  => [
+                    'allow_reset_password'              => 1,
+                    'reset_password_requires_auth_code' => 0,
+                    'auth_password_base64'              => 1,
+                ],
+                'request'   => [
+                    'email'        => 'email@email.com',
+                    'code'         => '123',
+                    'new_password' => '!!!not-valid-base64===',
+                ],
+                'exceptionMessage' => 'Parameter new_password does not contain a valid base64 text.'
+            ],
         ];
     }
 
@@ -332,6 +393,7 @@ class ResetPasswordServiceTest extends TestCase
         $this->wordPressDataMock
             ->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
+        $this->wordPressDataMock->method('isEmail')->willReturn(true);
         $this->wordPressDataMock
             ->method('checkPasswordResetKeyByEmail')
             ->willReturn(['User']);
@@ -342,9 +404,155 @@ class ResetPasswordServiceTest extends TestCase
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'PUT']))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $result = $resetService->makeAction();
-        $this->assertSame(true, $result);
+        $this->assertTrue($result);
+    }
+
+    public function testChangePasswordWithSpecialCharacters()
+    {
+        $specialPassword = 'P@$$w0rd!#&*()';
+        $mock = $this->createMock(WordPressDataInterface::class);
+        $settings = [
+            'allow_reset_password'              => 1,
+            'reset_password_requires_auth_code' => 0,
+        ];
+        $request  = [
+            'email'        => 'email@email.com',
+            'code'         => '123',
+            'new_password' => $specialPassword,
+        ];
+        $mock->method('getOptionFromDatabase')->willReturn(json_encode($settings));
+        $mock->method('isEmail')->willReturn(true);
+        $mock->method('checkPasswordResetKeyByEmail')->willReturn(['User']);
+        $mock->method('createResponse')->willReturn(true);
+        $mock->method('wpSlash')->willReturnCallback('addslashes');
+        $mock->expects($this->once())
+            ->method('resetPassword')
+            ->with($this->anything(), addslashes($specialPassword));
+        $resetService = (new ResetPasswordService())
+            ->withRequest($request)
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'PUT']))
+            ->withSettings(new SimpleJWTLoginSettings($mock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
+        $resetService->makeAction();
+    }
+
+    public function testChangePasswordWithBase64Encoding()
+    {
+        $plainPassword   = 'P@$$w0rd!#&*()';
+        $encodedPassword = base64_encode($plainPassword);
+        $mock = $this->createMock(WordPressDataInterface::class);
+        $settings = [
+            'allow_reset_password'              => 1,
+            'reset_password_requires_auth_code' => 0,
+            'auth_password_base64'              => 1,
+        ];
+        $request  = [
+            'email'        => 'email@email.com',
+            'code'         => '123',
+            'new_password' => $encodedPassword,
+        ];
+        $mock->method('getOptionFromDatabase')->willReturn(json_encode($settings));
+        $mock->method('isEmail')->willReturn(true);
+        $mock->method('checkPasswordResetKeyByEmail')->willReturn(['User']);
+        $mock->method('createResponse')->willReturn(true);
+        $mock->method('wpSlash')->willReturnCallback('addslashes');
+        $mock->expects($this->once())
+            ->method('resetPassword')
+            ->with($this->anything(), addslashes($plainPassword));
+        $resetService = (new ResetPasswordService())
+            ->withRequest($request)
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'PUT']))
+            ->withSettings(new SimpleJWTLoginSettings($mock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
+        $resetService->makeAction();
+    }
+
+    #[DataProvider('specialCharsPasswordProvider')]
+    public function testSpecialCharsPasswordIsSlashedBeforeResetPassword(string $rawPassword): void
+    {
+        $mock = $this->createMock(WordPressDataInterface::class);
+        $mock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_reset_password'              => 1,
+                'reset_password_requires_auth_code' => 0,
+            ]));
+        $mock->method('isEmail')->willReturn(true);
+        $mock->method('checkPasswordResetKeyByEmail')->willReturn(['User']);
+        $mock->method('createResponse')->willReturn(true);
+        $mock->method('wpSlash')->willReturnCallback('addslashes');
+        $mock->expects($this->once())
+            ->method('resetPassword')
+            ->with(
+                $this->anything(),
+                $this->identicalTo(addslashes($rawPassword))
+            );
+
+        $resetService = (new ResetPasswordService())
+            ->withRequest([
+                'email'        => 'test@test.com',
+                'code'         => '123',
+                'new_password' => $rawPassword,
+            ])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'PUT']))
+            ->withSettings(new SimpleJWTLoginSettings($mock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
+
+        $resetService->makeAction();
+    }
+
+    public static function specialCharsPasswordProvider(): array
+    {
+        return [
+            'double_quote'  => ['"hello"'],
+            'single_quote'  => ["'hello'"],
+            'backslash'     => ['back\\slash'],
+            'null_byte'     => ["nul\x00byte"],
+            'mixed_special' => ["!@#\$%^&*\"'\\"],
+        ];
+    }
+
+    #[DataProvider('passwordChangedNotificationProvider')]
+    public function testChangePasswordSendsNotificationWhenEnabled(bool $notificationEnabled, int $expectedCalls): void
+    {
+        $mock = $this->createMock(WordPressDataInterface::class);
+        $mock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_reset_password'              => 1,
+                'reset_password_requires_auth_code' => 0,
+                'reset_password_send_changed_email' => $notificationEnabled ? 1 : 0,
+            ]));
+        $mock->method('isEmail')->willReturn(true);
+        $mock->method('checkPasswordResetKeyByEmail')->willReturn(['User']);
+        $mock->method('createResponse')->willReturn(true);
+        $mock->expects($this->exactly($expectedCalls))
+            ->method('sendPasswordChangedNotification');
+
+        $resetService = (new ResetPasswordService())
+            ->withRequest([
+                'email'        => 'test@test.com',
+                'code'         => '123',
+                'new_password' => 'newpass',
+            ])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'PUT']))
+            ->withSettings(new SimpleJWTLoginSettings($mock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
+
+        $resetService->makeAction();
+    }
+
+    public static function passwordChangedNotificationProvider(): array
+    {
+        return [
+            'notification_enabled'  => [true, 1],
+            'notification_disabled' => [false, 0],
+        ];
     }
 
     public function testInvalidRouteMethod()
@@ -367,7 +575,8 @@ class ResetPasswordServiceTest extends TestCase
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'OPTIONS']))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $resetService->makeAction();
     }
 }

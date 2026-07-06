@@ -27,6 +27,9 @@ class RevokedJWTTest extends TestBase
             "auth_password_base64" => false,
             "jwt_auth_iss" => "tests",
             "decryption_key" => self::$decryptionKey,
+            // Validate / revoke token
+            "allow_validate_token" => true,
+            "allow_revoke_token" => true,
             // Register user
             "allow_register" => true,
             "new_user_profile" => "subscriber",

@@ -18,7 +18,9 @@
     "phpunit/phpunit": "*",
     "roave/security-advisories": "dev-latest",
     "spaze/phpstan-disallowed-calls": "^2.5",
-    "squizlabs/php_codesniffer": "*"
+    "squizlabs/php_codesniffer": "*",
+    "wp-phpunit/wp-phpunit": "^6.9",
+    "yoast/phpunit-polyfills": "^4.0"
   },
   "autoload": {
     "psr-4": {
@@ -27,37 +29,21 @@
     }
   },
   "config": {
-    "sort-packages": true
+    "sort-packages": true,
+    "process-timeout": 900
   },
   "scripts": {
-    "tests": "vendor/bin/phpunit --testsuite 'Unit' --coverage-text ",
+    "tests": "vendor/bin/phpunit --testsuite 'Unit' --coverage-text",
     "tests-feature": "vendor/bin/phpunit --testsuite 'Feature' --coverage-text",
     "phpcs": "vendor/bin/phpcs --no-cache simple-jwt-login/ tests/ --extensions=php",
-    "phpmd-design": "vendor/bin/phpmd simple-jwt-login/ text design",
-    "phpmd-cleancode": "vendor/bin/phpmd simple-jwt-login/ text cleancode",
-    "phpmd-unusedcode": "vendor/bin/phpmd simple-jwt-login/ text unusedcode",
-    "phpmd-naming": "vendor/bin/phpmd simple-jwt-login/ text naming",
-    "phpmd-controversial": "vendor/bin/phpmd simple-jwt-login/ text controversial",
+    "phpmd": "vendor/bin/phpmd simple-jwt-login/,tests/ text phpmd.xml",
     "phpstan": "vendor/bin/phpstan analyse simple-jwt-login/ -c phpstan.neon --memory-limit=256M",
-    "phpmd-test-design" : "vendor/bin/phpmd tests/ text design",
-    "phpmd-test-cleancode" : "vendor/bin/phpmd tests/ text cleancode",
-    "phpmd-test-unusedcode" : "vendor/bin/phpmd tests/ text unusedcode",
-    "phpmd-test-naming" : "vendor/bin/phpmd tests/ text naming",
-    "phpmd-test-controversial" : "vendor/bin/phpmd tests/ text controversial",
     "check-plugin": [
         "@phpcs",
-        "@phpmd-design",
-        "@phpmd-cleancode",
-        "@phpmd-unusedcode",
-        "@phpmd-naming",
-        "@phpmd-controversial",
+        "@phpmd",
         "@phpstan",
-        "@phpmd-test-design",
-        "@phpmd-test-naming",
-        "@phpmd-test-unusedcode",
-        "@phpmd-test-controversial",
-        "@tests",
-        "@tests-feature"
+        "vendor/bin/phpunit --testsuite 'Unit' --no-coverage",
+        "vendor/bin/phpunit --testsuite 'Feature' --no-coverage"
     ],
     "gen-i18n": "wp i18n make-pot simple-jwt-login/ simple-jwt-login/i18n/simple-jwt-login.pot --allow-root",
     "lint": "vendor/bin/phpcbf --standard=.phpcs.xml.dist --severity=1 -p simple-jwt-login/ --extensions=.php"

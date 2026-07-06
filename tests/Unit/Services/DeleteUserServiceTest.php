@@ -8,10 +8,12 @@ use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Libraries\JWT\JWT;
-use SimpleJWTLogin\Modules\Settings\DeleteUserSettings;
+use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepository;
+use SimpleJWTLogin\Repositories\RevokedToken\Repository as RevokedTokenRepository;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\DeleteUserService;
 use WP_User;
 
@@ -22,12 +24,25 @@ class DeleteUserServiceTest extends TestCase
      */
     private $wordPressDataMock;
 
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|RefreshTokenRepository
+     */
+    private $tokenRepositoryMock;
+
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|RevokedTokenRepository
+     */
+    private $revokedTokenRepoMock;
+
     public function setUp(): void
     {
         parent::setUp();
         $this->wordPressDataMock = $this
-            ->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+            ->createStub(WordPressDataInterface::class);
+        $this->tokenRepositoryMock = $this
+            ->createStub(RefreshTokenRepository::class);
+        $this->revokedTokenRepoMock = $this
+            ->createStub(RevokedTokenRepository::class);
     }
 
     #[DataProvider('validationProvider')]
@@ -48,9 +63,10 @@ class DeleteUserServiceTest extends TestCase
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
-                'HTTP_CLIENT_IP' => '127.0.0.1',
+                'REMOTE_ADDR' => '127.0.0.1',
             ]))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $deleteUserService->makeAction();
     }
 
@@ -61,9 +77,9 @@ class DeleteUserServiceTest extends TestCase
         $settings = [
             'allow_delete' => true,
             'require_delete_auth' => false,
-            'delete_user_by' => DeleteUserSettings::DELETE_USER_BY_ID,
             'decryption_key' => 'test',
-            'jwt_delete_by_parameter' => 'id',
+            'jwt_login_by' => LoginSettings::JWT_LOGIN_BY_WORDPRESS_USER_ID,
+            'jwt_login_by_parameter' => 'id',
         ];
 
         $this->wordPressDataMock->method('getOptionFromDatabase')
@@ -77,7 +93,8 @@ class DeleteUserServiceTest extends TestCase
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $deleteUserService->makeAction();
     }
 
@@ -89,16 +106,14 @@ class DeleteUserServiceTest extends TestCase
         $settings = [
             'allow_delete' => true,
             'require_delete_auth' => false,
-            'delete_user_by' => DeleteUserSettings::DELETE_USER_BY_ID,
             'decryption_key' => 'test',
-            'jwt_delete_by_parameter' => 'id',
+            'jwt_login_by' => LoginSettings::JWT_LOGIN_BY_WORDPRESS_USER_ID,
+            'jwt_login_by_parameter' => 'id',
         ];
 
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
-        $useMock = $this->getMockBuilder(WP_User::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $useMock = $this->createStub(WP_User::class);
         $this->wordPressDataMock->method('getUserDetailsById')
             ->willReturn($useMock);
         $this->wordPressDataMock->method('deleteUser')
@@ -109,23 +124,25 @@ class DeleteUserServiceTest extends TestCase
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->tokenRepositoryMock)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $deleteUserService->makeAction();
     }
 
     #[DataProvider('deleteByProvider')]
     /**
-     * @param int $deleteBy
+     * @param int $loginBy
      * @throws Exception
      */
-    public function testSuccessResponse($deleteBy)
+    public function testSuccessResponse($loginBy)
     {
         $settings = [
             'allow_delete' => true,
             'require_delete_auth' => false,
-            'delete_user_by' => $deleteBy,
             'decryption_key' => 'test',
-            'jwt_delete_by_parameter' => 'id',
+            'jwt_login_by' => $loginBy,
+            'jwt_login_by_parameter' => 'id',
             'enabled_hooks' => [
                 SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME,
             ]
@@ -133,9 +150,7 @@ class DeleteUserServiceTest extends TestCase
 
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
-        $useMock = $this->getMockBuilder(WP_User::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $useMock = $this->createStub(WP_User::class);
         $this->wordPressDataMock->method('getUserDetailsById')
             ->willReturn($useMock);
         $this->wordPressDataMock->method('getUserDetailsByEmail')
@@ -144,10 +159,16 @@ class DeleteUserServiceTest extends TestCase
             ->willReturn($useMock);
         $this->wordPressDataMock->method('deleteUser')
             ->willReturn(true);
-        $this->wordPressDataMock->method('triggerAction')
+        $this->wordPressDataMock->method('doAction')
             ->willReturn(true);
+        $expectedResponse = [
+            'success' => true,
+            'data'    => [
+                'message' => 'User was successfully deleted.',
+            ],
+        ];
         $this->wordPressDataMock->method('createResponse')
-            ->willReturn(true);
+            ->willReturnArgument(0);
         $deleteUserService = (new DeleteUserService())
             ->withRequest([
                 'JWT' => JWT::encode(['id' => 1], $settings['decryption_key'], 'HS256')
@@ -155,10 +176,12 @@ class DeleteUserServiceTest extends TestCase
             ->withCookies([])
             ->withSession([])
             ->withServerHelper(new ServerHelper([]))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->tokenRepositoryMock)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $response = $deleteUserService->makeAction();
-        $this->assertTrue($response);
+        $this->assertSame($expectedResponse, $response);
     }
 
     public function testDeleteByInvalidAction()
@@ -170,9 +193,9 @@ class DeleteUserServiceTest extends TestCase
         $settings = [
             'allow_delete' => true,
             'require_delete_auth' => false,
-            'delete_user_by' => -1,
             'decryption_key' => 'test',
-            'jwt_delete_by_parameter' => 'id',
+            'jwt_login_by' => -1,
+            'jwt_login_by_parameter' => 'id',
             'enabled_hooks' => [
                 SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME,
             ]
@@ -188,7 +211,8 @@ class DeleteUserServiceTest extends TestCase
             ->withCookies([])
             ->withSession([])
             ->withServerHelper(new ServerHelper([]))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $deleteUserService->makeAction();
     }
@@ -200,15 +224,14 @@ class DeleteUserServiceTest extends TestCase
     {
         return [
             'delete-by-email' => [
-                DeleteUserSettings::DELETE_USER_BY_EMAIL,
+                LoginSettings::JWT_LOGIN_BY_EMAIL,
             ],
             'delete-by-id' => [
-                DeleteUserSettings::DELETE_USER_BY_ID,
+                LoginSettings::JWT_LOGIN_BY_WORDPRESS_USER_ID,
             ],
             'delete-by-username' => [
-                DeleteUserSettings::DELETE_USER_BY_USER_LOGIN
-            ]
-
+                LoginSettings::JWT_LOGIN_BY_USER_LOGIN,
+            ],
         ];
     }
 
@@ -254,7 +277,7 @@ class DeleteUserServiceTest extends TestCase
                 'settings' => [
                     'allow_delete' => true,
                 ],
-                'exceptionMessage' => 'Missing AUTH KEY ( AUTH_KEY ).',
+                'exceptionMessage' => 'Auth Code is required.',
             ],
             'test_empty_auth_code' => [
                 'request' => [
@@ -264,7 +287,7 @@ class DeleteUserServiceTest extends TestCase
                 'settings' => [
                     'allow_delete' => true,
                 ],
-                'exceptionMessage' => 'Missing AUTH KEY ( AUTH_KEY ).',
+                'exceptionMessage' => 'Invalid Auth Code ( AUTH_KEY ) provided.',
             ],
             'test_ip_not_allowed' => [
                 'request' => [

@@ -1,5 +1,5 @@
 version: "3.3"
-    
+
 services:
   wpdb:
     image: mysql:latest
@@ -13,10 +13,18 @@ services:
       MYSQL_PASSWORD: wordpress
       MYSQL_TCP_PORT: 3308
     ports:
-      - "3308:3308"  
+      - "3308:3308"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-P", "3308", "-u", "wordpress", "--password=wordpress"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
   wordpress:
     depends_on:
-      - wpdb
+      wpdb:
+        condition: service_healthy
     build:
       context: .
       dockerfile: Dockerfile
@@ -25,6 +33,7 @@ services:
       - wordpress_data:/var/www/html
       - ../:/var/www/dev
       - ../simple-jwt-login/:/var/www/html/wp-content/plugins/simple-jwt-login
+      - ./logs:/var/log/php
     ports:
       - "88:80"
     environment:
@@ -34,6 +43,8 @@ services:
       WORDPRESS_DB_NAME: wordpress
       WORDPRESS_TABLE_PREFIX: "wp_"
       WORDPRESS_DEBUG: 1
+      WORDPRESS_DEBUG_LOG: 1
+      WORDPRESS_DEBUG_DISPLAY: 1
 
 volumes:
   wpdb_data: {}

@@ -43,7 +43,7 @@ class SuccessTest extends TestBase
         $this->assertJson($contents);
         $json = json_decode($contents, true);
         $this->assertArrayHasKey('success', $json);
-        $this->assertSame(true, $json['success']);
+        $this->assertTrue($json['success']);
     }
 
     #[TestDox("User can register with form data")]
@@ -67,7 +67,7 @@ class SuccessTest extends TestBase
         $this->assertJson($contents);
         $json = json_decode($contents, true);
         $this->assertArrayHasKey('success', $json);
-        $this->assertSame(true, $json['success']);
+        $this->assertTrue($json['success']);
     }
 
     #[TestDox("User can register with JSON body")]
@@ -91,7 +91,7 @@ class SuccessTest extends TestBase
         $this->assertJson($contents);
         $json = json_decode($contents, true);
         $this->assertArrayHasKey('success', $json);
-        $this->assertSame(true, $json['success']);
+        $this->assertTrue($json['success']);
     }
 
     #[TestDox("User can register with custom user_meta")]
@@ -126,12 +126,12 @@ class SuccessTest extends TestBase
         $this->assertJson($contents);
         $json = json_decode($contents, true);
         $this->assertArrayHasKey('success', $json);
-        $this->assertSame(true, $json['success']);
-        $this->assertArrayHasKey('user', $json);
-        $this->assertArrayHasKey('ID', $json['user']);
+        $this->assertTrue($json['success']);
+        $this->assertArrayHasKey('data', $json);
+        $this->assertArrayHasKey('id', $json['data']);
 
         // Test user meta registered
-         $userMeta = $this->getUserMeta($json['user']['ID']);
+         $userMeta = $this->getUserMeta($json['data']['id']);
          $this->assertNotEmpty($userMeta);
          $this->assertSame($firstName, $userMeta['first_name']);
          $this->assertSame($lastName, $userMeta['last_name']);

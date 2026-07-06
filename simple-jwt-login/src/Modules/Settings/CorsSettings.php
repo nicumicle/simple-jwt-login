@@ -9,83 +9,42 @@ class CorsSettings extends BaseSettings implements SettingsInterface
     const DEFAULT_HEADER_PARAMETER = '*';
     const DEFAULT_METHODS = 'GET, POST, PUT, DELETE, OPTIONS, HEAD';
 
-    public function initSettingsFromPost()
+    protected function getSectionKey()
     {
-        $this->assignSettingsPropertyFromPost(
-            'cors',
-            'enabled',
-            'cors',
-            'enabled',
-            BaseSettings::SETTINGS_TYPE_INT
-        );
+        return 'cors';
+    }
 
-        $this->assignSettingsPropertyFromPost(
-            'cors',
-            'allow_origin_enabled',
-            'cors',
-            'allow_origin_enabled',
-            BaseSettings::SETTINGS_TYPE_BOL,
-            false
-        );
-        $this->assignSettingsPropertyFromPost(
-            'cors',
-            'allow_origin',
-            'cors',
-            'allow_origin',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            'cors',
-            'allow_methods_enabled',
-            'cors',
-            'allow_methods_enabled',
-            BaseSettings::SETTINGS_TYPE_BOL,
-            false
-        );
-        $this->assignSettingsPropertyFromPost(
-            'cors',
-            'allow_methods',
-            'cors',
-            'allow_methods',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            'cors',
-            'allow_headers_enabled',
-            'cors',
-            'allow_headers_enabled',
-            BaseSettings::SETTINGS_TYPE_BOL,
-            false
-        );
-        $this->assignSettingsPropertyFromPost(
-            'cors',
-            'allow_headers',
-            'cors',
-            'allow_headers',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
+    protected function getFieldDefinitions()
+    {
+        return [
+            [null, 'enabled',               'cors', 'enabled',               self::SETTINGS_TYPE_INT],
+            [null, 'allow_origin_enabled',  'cors', 'allow_origin_enabled',  self::SETTINGS_TYPE_BOL, false],
+            [null, 'allow_origin',          'cors', 'allow_origin',          self::SETTINGS_TYPE_STRING],
+            [null, 'allow_methods_enabled', 'cors', 'allow_methods_enabled', self::SETTINGS_TYPE_BOL, false],
+            [null, 'allow_methods',         'cors', 'allow_methods',         self::SETTINGS_TYPE_STRING],
+            [null, 'allow_headers_enabled', 'cors', 'allow_headers_enabled', self::SETTINGS_TYPE_BOL, false],
+            [null, 'allow_headers',         'cors', 'allow_headers',         self::SETTINGS_TYPE_STRING],
+        ];
     }
 
     public function validateSettings()
     {
-        if (!empty($this->settings['cors']['enabled'])
+        if (!empty($this->settings['enabled'])
             && (
-                empty($this->settings['cors']['allow_origin_enabled'])
-                && empty($this->settings['cors']['allow_methods_enabled'])
-                && empty($this->settings['cors']['allow_headers_enabled'])
+                empty($this->settings['allow_origin_enabled'])
+                && empty($this->settings['allow_methods_enabled'])
+                && empty($this->settings['allow_headers_enabled'])
             )
         ) {
             throw new Exception(
-                __(
+                esc_html__(
                     'Cors is enabled but no option is checked. Please check at least one option.',
                     'simple-jwt-login'
                 ),
-                $this->settingsErrors->generateCode(
+                absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_CORS,
                     SettingsErrors::ERR_CORS_NO_OPTION
-                )
+                ))
             );
         }
     }
@@ -95,7 +54,7 @@ class CorsSettings extends BaseSettings implements SettingsInterface
      */
     public function isCorsEnabled()
     {
-        return isset($this->settings['cors']) && ! empty($this->settings['cors']['enabled']);
+        return !empty($this->settings['enabled']);
     }
 
     /**
@@ -103,9 +62,8 @@ class CorsSettings extends BaseSettings implements SettingsInterface
      */
     public function isAllowOriginEnabled()
     {
-        return isset($this->settings['cors'])
-            && isset($this->settings['cors']['allow_origin_enabled'])
-            && filter_var($this->settings['cors']['allow_origin_enabled'], FILTER_VALIDATE_BOOLEAN);
+        return isset($this->settings['allow_origin_enabled'])
+            && filter_var($this->settings['allow_origin_enabled'], FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -113,9 +71,9 @@ class CorsSettings extends BaseSettings implements SettingsInterface
      */
     public function getAllowOrigin()
     {
-        return isset($this->settings['cors']) && isset($this->settings['cors']['allow_origin'])
-            ? $this->settings['cors']['allow_origin']
-            : self::DEFAULT_HEADER_PARAMETER;
+        return isset($this->settings['allow_origin'])
+            ? $this->settings['allow_origin']
+            : '';
     }
 
     /**
@@ -123,9 +81,8 @@ class CorsSettings extends BaseSettings implements SettingsInterface
      */
     public function isAllowHeadersEnabled()
     {
-        return isset($this->settings['cors'])
-            && isset($this->settings['cors']['allow_headers_enabled'])
-            && filter_var($this->settings['cors']['allow_headers_enabled'], FILTER_VALIDATE_BOOLEAN);
+        return isset($this->settings['allow_headers_enabled'])
+            && filter_var($this->settings['allow_headers_enabled'], FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -133,8 +90,8 @@ class CorsSettings extends BaseSettings implements SettingsInterface
      */
     public function getAllowHeaders()
     {
-        return isset($this->settings['cors']) && isset($this->settings['cors']['allow_headers'])
-            ? $this->settings['cors']['allow_headers']
+        return isset($this->settings['allow_headers'])
+            ? $this->settings['allow_headers']
             : self::DEFAULT_HEADER_PARAMETER;
     }
 
@@ -143,9 +100,8 @@ class CorsSettings extends BaseSettings implements SettingsInterface
      */
     public function isAllowMethodsEnabled()
     {
-        return isset($this->settings['cors'])
-            && isset($this->settings['cors']['allow_methods_enabled'])
-            && filter_var($this->settings['cors']['allow_methods_enabled'], FILTER_VALIDATE_BOOLEAN);
+        return isset($this->settings['allow_methods_enabled'])
+            && filter_var($this->settings['allow_methods_enabled'], FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -153,8 +109,8 @@ class CorsSettings extends BaseSettings implements SettingsInterface
      */
     public function getAllowMethods()
     {
-        return isset($this->settings['cors']) && isset($this->settings['cors']['allow_methods'])
-            ? $this->settings['cors']['allow_methods']
+        return isset($this->settings['allow_methods'])
+            ? $this->settings['allow_methods']
             : self::DEFAULT_METHODS;
     }
 }

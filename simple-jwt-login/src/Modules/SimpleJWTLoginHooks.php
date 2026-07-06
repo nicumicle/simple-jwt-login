@@ -26,6 +26,30 @@ class SimpleJWTLoginHooks
     const HOOK_GENERATE_PAYLOAD = 'simple_jwt_login_generate_payload';
     const HOOK_BEFORE_ENDPOINT = 'simple_jwt_login_before_endpoint';
 
+    const AUDIT_AUTH_LOGIN_SUCCESS          = 'simple_jwt_login_audit_auth_login_success';
+    const AUDIT_AUTH_LOGIN_FAILED           = 'simple_jwt_login_audit_auth_login_failed';
+    const AUDIT_AUTH_LOGOUT_SUCCESS         = 'simple_jwt_login_audit_auth_logout_success';
+    const AUDIT_AUTH_LOGOUT_FAILED          = 'simple_jwt_login_audit_auth_logout_failed';
+    const AUDIT_AUTH_REGISTER_SUCCESS       = 'simple_jwt_login_audit_auth_register_success';
+    const AUDIT_AUTH_REGISTER_FAILED        = 'simple_jwt_login_audit_auth_register_failed';
+    const AUDIT_AUTH_PASSWORD_RESET_REQUEST = 'simple_jwt_login_audit_password_reset_request';
+    const AUDIT_AUTH_PASSWORD_RESET_SUCCESS = 'simple_jwt_login_audit_password_reset_success';
+    const AUDIT_AUTH_PASSWORD_RESET_FAILED  = 'simple_jwt_login_audit_password_reset_failed';
+    const AUDIT_AUTH_DELETE_USER_SUCCESS    = 'simple_jwt_login_audit_delete_user_success';
+    const AUDIT_AUTH_DELETE_USER_FAILED     = 'simple_jwt_login_audit_delete_user_failed';
+    const AUDIT_AUTH_LOGIN_SESSION_SUCCESS  = 'simple_jwt_login_audit_login_session_success';
+    const AUDIT_AUTH_LOGIN_SESSION_FAILED   = 'simple_jwt_login_audit_login_session_failed';
+    const AUDIT_AUTH_REFRESH_TOKEN_SUCCESS  = 'simple_jwt_login_audit_refresh_token_success';
+    const AUDIT_AUTH_REFRESH_TOKEN_FAILED   = 'simple_jwt_login_audit_refresh_token_failed';
+    const AUDIT_AUTH_OAUTH_SUCCESS          = 'simple_jwt_login_audit_oauth_success';
+    const AUDIT_AUTH_OAUTH_FAILED           = 'simple_jwt_login_audit_oauth_failed';
+
+    const AUDIT_2FA_CHALLENGE_ISSUED  = 'simple_jwt_login_audit_2fa_challenge_issued';
+    const AUDIT_2FA_VERIFY_SUCCESS    = 'simple_jwt_login_audit_2fa_verify_success';
+    const AUDIT_2FA_VERIFY_FAILED     = 'simple_jwt_login_audit_2fa_verify_failed';
+    const HOOK_RESPONSE_2FA_CHALLENGE = 'simple_jwt_login_response_2fa_challenge';
+    const HOOK_RESPONSE_2FA_VERIFY    = 'simple_jwt_login_response_2fa_verify';
+
     /**
      * @return array[]
      */
@@ -247,6 +271,32 @@ class SimpleJWTLoginHooks
                 ],
                 'description' => __(
                     'Runs before any Simple JWT Login REST endpoint is processed.',
+                    'simple-jwt-login'
+                ),
+            ],
+            [
+                'name' => self::HOOK_RESPONSE_2FA_CHALLENGE,
+                'type' => self::HOOK_TYPE_FILTER,
+                'parameters' => [
+                    'array $response',
+                    'WP_User $user'
+                ],
+                'return' => 'array $response',
+                'description' => __(
+                    'Allows customization of the two-factor challenge response.',
+                    'simple-jwt-login'
+                ),
+            ],
+            [
+                'name' => self::HOOK_RESPONSE_2FA_VERIFY,
+                'type' => self::HOOK_TYPE_FILTER,
+                'parameters' => [
+                    'array $response',
+                    'WP_User $user'
+                ],
+                'return' => 'array $response',
+                'description' => __(
+                    'Allows customization of the two-factor verify endpoint response.',
                     'simple-jwt-login'
                 ),
             ],

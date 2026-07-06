@@ -4,7 +4,10 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Helpers\ApiKeyPermissions;
+use SimpleJWTLogin\Middleware\ApiKeyAuthMiddleware;
 use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
+use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepositoryInterface;
 
 class ProtectEndpointService extends BaseService
 {
@@ -12,6 +15,11 @@ class ProtectEndpointService extends BaseService
      * @var RouteService $routeService
      */
     private $routeService;
+
+    /**
+     * @var ApiKeyRepositoryInterface|null
+     */
+    private $apiKeyRepository;
 
     /**
      * @param RouteService $routeService
@@ -26,6 +34,18 @@ class ProtectEndpointService extends BaseService
     }
 
     /**
+     * @param ApiKeyRepositoryInterface $repository
+     *
+     * @return $this
+     */
+    public function withApiKeyRepository($repository)
+    {
+        $this->apiKeyRepository = $repository;
+
+        return $this;
+    }
+
+    /**
      * @param string $currentUrl
      * @param string $documentRoot
      *
@@ -34,68 +54,125 @@ class ProtectEndpointService extends BaseService
      */
     public function hasAccess($currentUrl, $documentRoot)
     {
-        if ($this->jwtSettings->getProtectEndpointsSettings()->isEnabled() === false) {
+        if (!$this->jwtSettings->getProtectEndpointsSettings()->isEnabled()) {
             return true;
         }
 
-        // WordPress Core or some other plugings uses the REST API to create pages/posts,etc.
-        // Need to skip the protect endpoint validation for these scenarios if user is already loggedin
+        // WordPress Core or some other plugins use the REST API to create pages/posts, etc.
+        // Skip protect endpoint validation for these scenarios if the user is already logged in.
         if ($this->wordPressData->isUserLoggedIn()) {
             return true;
         }
 
-        $parsed = parse_url($currentUrl);
+        $parsed = $this->wordPressData->parseUrl($currentUrl);
 
-        //Initialize $path safely, checking if 'path' is available in $parsed
-		$basePath  = rtrim(str_replace($documentRoot, '', ABSPATH), '/');
-		$path = isset($parsed['path']) ? str_replace($basePath . '/wp-json', '', $parsed['path']) : '';
+        // Initialize $path safely: parse_url() may not include 'path' for some URL forms.
+        $basePath  = rtrim(str_replace($documentRoot, '', ABSPATH), '/');
+        $path = isset($parsed['path']) ? str_replace($basePath . '/wp-json', '', $parsed['path']) : '';
 
         $isEndpointsProtected = true;
+        $requiredRoles = [];
         if (!empty(trim($path, '/'))) {
-            $isEndpointsProtected = $this->isEndpointProtected($path);
+            $endpointInfo = $this->isEndpointProtected($path);
+            $isEndpointsProtected = $endpointInfo['protected'];
+            $requiredRoles = $endpointInfo['roles'];
         }
         if (!empty($this->request['rest_route'])) {
-            $isEndpointsProtected = $this->isEndpointProtected($this->request['rest_route']);
+            $endpointInfo = $this->isEndpointProtected($this->request['rest_route']);
+            $isEndpointsProtected = $endpointInfo['protected'];
+            $requiredRoles = $endpointInfo['roles'];
         }
-        if ($isEndpointsProtected === false) {
+        if (!$isEndpointsProtected) {
             return true;
         }
 
         try {
             $jwt = $this->getJwtFromRequestHeaderOrCookie();
             if (empty($jwt)) {
-                throw new Exception('JWT is not present and we can not search for a user.', ErrorCodes::ERR_PROTECT_ENDPOINTS_MISSING_JWT);
+                throw new Exception(
+                    __('JWT is not present and we can not search for a user.', 'simple-jwt-login'),
+                    ErrorCodes::ERR_PROTECT_ENDPOINTS_MISSING_JWT
+                );
             }
-            
+
             $user = $this->routeService->getUserFromJwt($jwt);
             $this->validateJwtRevoked(
                 $this->wordPressData->getUserProperty($user, 'ID'),
                 $jwt
             );
-           
-            
-            if ($this->routeService->wordPressData->isUserLoggedIn()) {
-                return true;
+
+            $this->wordPressData->setCurrentUser($user);
+
+            if (!empty($requiredRoles)) {
+                $userRoles = $this->wordPressData->getUserRoles($user);
+                if (empty(array_intersect($userRoles, $requiredRoles))) {
+                    throw new Exception(
+                        __('You do not have the required role to access this endpoint.', 'simple-jwt-login'),
+                        ErrorCodes::ERR_PROTECT_ENDPOINTS_INSUFFICIENT_ROLE
+                    );
+                }
             }
-            $this->routeService->wordPressData->loginUser($user);
 
             return true;
-        } catch (Exception $e) {
-            return false;
+        } catch (Exception $exception) {
+            if ($exception->getCode() === ErrorCodes::ERR_REVOKED_TOKEN
+                || $exception->getCode() === ErrorCodes::ERR_PROTECT_ENDPOINTS_INSUFFICIENT_ROLE
+            ) {
+                throw $exception;
+            }
         }
+
+        return $this->tryApiKeyAuth();
     }
 
     /**
-     * @param string $endpoint
      * @return bool
+     */
+    private function tryApiKeyAuth()
+    {
+        if ($this->apiKeyRepository === null) {
+            return false;
+        }
+
+        if (!$this->jwtSettings->getApiKeysSettings()->isEnabled()) {
+            return false;
+        }
+
+        $requiredPermission = ApiKeyPermissions::httpMethodToPermission($this->requestMethod);
+        if ($requiredPermission === null) {
+            return false;
+        }
+
+        $headerName = $this->jwtSettings->getApiKeysSettings()->getHeaderName();
+        $keyData = (new ApiKeyAuthMiddleware($this->apiKeyRepository))
+            ->validate($this->serverHelper, $requiredPermission, $headerName);
+
+        if ($keyData === null) {
+            return false;
+        }
+
+        $user = $this->wordPressData->getUserDetailsById((int) $keyData['user_id']);
+        $this->wordPressData->setCurrentUser($user);
+
+        return true;
+    }
+
+    /**
+     * Evaluates endpoint rules in order; the first matching rule wins.
+     * Falls back to the configured default action when no rule matches.
+     *
+     * @param string $endpoint
+     * @return array{protected: bool, roles: array}
      */
     private function isEndpointProtected($endpoint)
     {
+        $notProtected = ['protected' => false, 'roles' => []];
+
         if (strpos($endpoint, '/') !== 0) {
             $endpoint = '/' . $endpoint;
         }
 
-        $action = $this->jwtSettings->getProtectEndpointsSettings()->getAction();
+        $protectSettings = $this->jwtSettings->getProtectEndpointsSettings();
         $skipNamespace = '/' . trim(
             $this->jwtSettings->getGeneralSettings()->getRouteNamespace(),
             '/'
@@ -107,71 +184,49 @@ class ProtectEndpointService extends BaseService
         );
         if (strpos($endpoint, $skipNamespace) === 0
             || strpos(trim($endpoint, '/'), $adminPath) === 0) {
-            //Skip simple jwt login endpoints and wp-admin
-            return false;
+            return $notProtected;
         }
 
-        $protectSettings = $this->jwtSettings->getProtectEndpointsSettings();
-        switch ($action) {
-            case ProtectEndpointSettings::ALL_ENDPOINTS:
-                return $this->parseDomainsAndGetResult(
-                    $endpoint,
-                    $protectSettings->getWhitelistedDomains(),
-                    true,
-                    false
-                );
-            case ProtectEndpointSettings::SPECIFIC_ENDPOINTS:
-                return $this->parseDomainsAndGetResult(
-                    $endpoint,
-                    $protectSettings->getProtectedEndpoints(),
-                    false,
-                    true
-                );
-        }
+        $defaultProtected = $protectSettings->getDefaultAction() === ProtectEndpointSettings::DEFAULT_PROTECT_ALL;
+        $cleanEndpoint = $this->removeWpJsonFromEndpoint($endpoint);
 
-        return true;
-    }
+        foreach ($protectSettings->getRules() as $rule) {
+            $ruleUrl = $this->removeWpJsonFromEndpoint($rule['url']);
 
-    /**
-     * @param string $endpoint
-     * @param array $domains
-     * @param bool $defaultValue
-     * @param bool $setValue
-     * @return bool
-     */
-    private function parseDomainsAndGetResult($endpoint, $domains, $defaultValue, $setValue)
-    {
-        $isEndpointProtected = $defaultValue;
-        foreach ($domains as $protectedEndpoint) {
-            $protectedURL = $this->removeWpJsonFromEndpoint($protectedEndpoint['url']);
-            $endpoint = $this->removeWpJsonFromEndpoint($endpoint);
-            if (empty(trim($protectedURL, '/'))) {
+            if (empty(trim($ruleUrl, '/'))) {
                 continue;
             }
-            // By default, start_with match
-            $match = strpos(strtolower($endpoint), strtolower($protectedURL)) === 0;
 
-            if ($protectedEndpoint['match']  === ProtectEndpointSettings::ENDPOINT_MATCH_EXACT) {
-                $match = strtolower($endpoint) == strtolower($protectedURL);
+            $matched = strpos(strtolower($cleanEndpoint), strtolower($ruleUrl)) === 0;
+            if ($rule['match'] === ProtectEndpointSettings::ENDPOINT_MATCH_EXACT) {
+                $matched = strtolower($cleanEndpoint) === strtolower($ruleUrl);
             }
 
-            if (!$match) {
+            if (!$matched) {
                 continue;
             }
-           
-            switch ($protectedEndpoint['method']) {
-                case ProtectEndpointSettings::REQUEST_METHOD_ALL:
-                    $isEndpointProtected = $setValue; // Same as before.
-                    break;
-                default:
-                    if ($protectedEndpoint['method'] === $this->requestMetod) {
-                        $isEndpointProtected = $setValue;
-                    }
-                    break;
+
+            $methodMatches = $rule['method'] === ProtectEndpointSettings::REQUEST_METHOD_ALL
+                || $rule['method'] === $this->requestMethod;
+
+            if (!$methodMatches) {
+                continue;
             }
+
+            if ($rule['type'] === ProtectEndpointSettings::RULE_TYPE_PUBLIC) {
+                return $notProtected;
+            }
+
+            // Only enforce roles for "JWT + Roles" rules. A "JWT required" rule
+            // must ignore any previously saved roles.
+            $roles = $rule['type'] === ProtectEndpointSettings::RULE_TYPE_PROTECTED_ROLES
+                && isset($rule['roles'])
+                ? $rule['roles']
+                : [];
+            return ['protected' => true, 'roles' => $roles];
         }
 
-        return $isEndpointProtected;
+        return ['protected' => $defaultProtected, 'roles' => []];
     }
 
     /**

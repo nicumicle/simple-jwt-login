@@ -2,10 +2,13 @@
 
 namespace SimpleJwtLoginTests\Feature;
 
+use Exception;
 use Faker\Factory;
 use GuzzleHttp\Client;
+use mysqli;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepository;
 
 class TestBase extends TestCase
 {
@@ -67,7 +70,7 @@ class TestBase extends TestCase
             'success' => false,
             'data' => [
                 'message' => $message,
-                'errorCode' => $code,
+                'error_code' => $code,
             ],
         ];
 
@@ -105,7 +108,7 @@ class TestBase extends TestCase
             return;
         }
 
-        $dbCon = new \mysqli(
+        $dbCon = new mysqli(
             $_ENV["WORDPRESS_DB_HOST"],
             $_ENV["WORDPRESS_DB_USER"],
             $_ENV["WORDPRESS_DB_PASSWORD"],
@@ -114,7 +117,7 @@ class TestBase extends TestCase
 
         // Check connection
         if ($dbCon->connect_error) {
-            throw new \Exception($dbCon->connect_error);
+            throw new Exception($dbCon->connect_error);
         }
 
         self::$dbCon = $dbCon;
@@ -129,6 +132,7 @@ class TestBase extends TestCase
     protected static function updateSimpleJWTOption($newOption)
     {
         $table = self::getTablePrefix() . "options";
+        $escapedValue = self::$dbCon->real_escape_string(json_encode($newOption));
 
         if (self::$initialOption === null) {
             // INSERT
@@ -137,20 +141,21 @@ class TestBase extends TestCase
                     "INSERT IGNORE INTO %s (option_name, option_value) VALUES('%s', '%s');",
                     $table,
                     SimpleJWTLoginSettings::OPTIONS_KEY,
-                    json_encode($newOption)
+                    $escapedValue
                 )
             );
-        } else {
-            // UPDATE
-            self::$dbCon->query(
-                sprintf(
-                    "UPDATE %s SET option_value='%s' WHERE option_name='%s' LIMIT 1;",
-                    $table,
-                    json_encode($newOption),
-                    SimpleJWTLoginSettings::OPTIONS_KEY
-                )
-            );
+            return;
         }
+
+        // UPDATE
+        self::$dbCon->query(
+            sprintf(
+                "UPDATE %s SET option_value='%s' WHERE option_name='%s' LIMIT 1;",
+                $table,
+                $escapedValue,
+                SimpleJWTLoginSettings::OPTIONS_KEY
+            )
+        );
     }
 
     /**
@@ -167,7 +172,7 @@ class TestBase extends TestCase
             sprintf(
                 "UPDATE %s SET option_value='%s' WHERE option_name='%s' LIMIT 1;",
                 $table,
-                $optionValue,
+                self::$dbCon->real_escape_string($optionValue),
                 $optionKey
             )
         );
@@ -194,10 +199,9 @@ class TestBase extends TestCase
             $option = $rows['option_value'];
         }
 
+        self::$initialOption = null;
         if ($option !== null) {
             self::$initialOption = json_decode($option, true);
-        } else {
-            self::$initialOption = null;
         }
     }
 
@@ -318,5 +322,16 @@ class TestBase extends TestCase
         }
 
         return null;
+    }
+
+    /**
+     * Create the API keys table using the plugin's own repository schema.
+     *
+     * @return void
+     */
+    protected static function ensureApiKeyTable()
+    {
+        $wpdb = new MysqliWpdb(self::$dbCon, self::getTablePrefix());
+        (new ApiKeyRepository($wpdb))->createTable();
     }
 }

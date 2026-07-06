@@ -1,4 +1,5 @@
 <?php
+
 /**
  * JSON Web Token implementation, based on this spec:
  * https://tools.ietf.org/html/rfc7519
@@ -68,74 +69,75 @@ class JWT
         $timestamp = is_null(static::$timestamp) ? time() : static::$timestamp;
         if (empty($key)) {
             throw new Exception(
-                __('Key may not be empty', 'simple-jwt-login'),
-                ErrorCodes::ERR_EMPTY_KEY
+                esc_html__('Key may not be empty', 'simple-jwt-login'),
+                absint(ErrorCodes::ERR_EMPTY_KEY)
             );
         }
         $tks = explode('.', $jwt);
 
         if (count($tks) != 3) {
             throw new Exception(
-                __('Wrong number of segments', 'simple-jwt-login'),
-                ErrorCodes::ERR_WRONG_NUMBER_OF_SEGMENTS
+                esc_html__('Wrong number of segments', 'simple-jwt-login'),
+                absint(ErrorCodes::ERR_WRONG_NUMBER_OF_SEGMENTS)
             );
         }
         list($headb64, $bodyb64, $cryptob64) = $tks;
         $header = static::jsonDecode(static::urlsafeB64Decode($headb64));
         if ($header === null) {
             throw new Exception(
-                __('Invalid header encoding', 'simple-jwt-login'),
-                ErrorCodes::ERR_INVALID_HEADER_ENCODING
+                esc_html__('Invalid header encoding', 'simple-jwt-login'),
+                absint(ErrorCodes::ERR_INVALID_HEADER_ENCODING)
             );
         }
         $payload = static::jsonDecode(static::urlsafeB64Decode($bodyb64));
         if ($payload === null) {
             throw new Exception(
-                __('Invalid claims encoding', 'simple-jwt-login'),
-                ErrorCodes::ERR_INVALID_CLAIMS_ENCODING
+                esc_html__('Invalid claims encoding', 'simple-jwt-login'),
+                absint(ErrorCodes::ERR_INVALID_CLAIMS_ENCODING)
             );
         }
         $sig = static::urlsafeB64Decode($cryptob64);
         if ($sig === false) {
             throw new Exception(
-                __('Invalid signature encoding', 'simple-jwt-login'),
-                ErrorCodes::ERR_INVALID_SIGNATURE_ENCODING
+                esc_html__('Invalid signature encoding', 'simple-jwt-login'),
+                absint(ErrorCodes::ERR_INVALID_SIGNATURE_ENCODING)
             );
         }
         if (empty($header->alg)) {
             throw new Exception(
-                __('Empty algorithm', 'simple-jwt-login'),
-                ErrorCodes::ERR_EMPTY_ALGORITHM
+                esc_html__('Empty algorithm', 'simple-jwt-login'),
+                absint(ErrorCodes::ERR_EMPTY_ALGORITHM)
             );
         }
         if (empty(static::$supportedAlgs[ $header->alg ])) {
             throw new Exception(
-                __('Algorithm not supported', 'simple-jwt-login'),
-                ErrorCodes::ERR_ALGORITHM_NOT_SUPPORTED
+                esc_html__('Algorithm not supported', 'simple-jwt-login'),
+                absint(ErrorCodes::ERR_ALGORITHM_NOT_SUPPORTED)
             );
         }
         if (! in_array($header->alg, $allowedAlgs)) {
             throw new Exception(
-                __('Algorithm not allowed', 'simple-jwt-login'),
-                ErrorCodes::ERR_ALGORITHM_NOT_ALLOWED
+                esc_html__('Algorithm not allowed', 'simple-jwt-login'),
+                absint(ErrorCodes::ERR_ALGORITHM_NOT_ALLOWED)
             );
         }
         // Check the signature
         if (! static::verify("$headb64.$bodyb64", $sig, $key, $header->alg)) {
             throw new Exception(
-                __('Signature verification failed', 'simple-jwt-login'),
-                ErrorCodes::ERR_SIGNATURE_VERIFICATION_FAILED
+                esc_html__('Signature verification failed', 'simple-jwt-login'),
+                absint(ErrorCodes::ERR_SIGNATURE_VERIFICATION_FAILED)
             );
         }
         // Check if the nbf if it is defined. This is the time that the
         // token can actually be used. If it's not yet that time, abort.
         if (isset($payload->nbf) && $payload->nbf > ($timestamp + static::$leeway)) {
             throw new Exception(
-                sprintf(
+                esc_html(sprintf(
+                    // translators: %s: date the token becomes valid
                     __('Cannot handle token prior to %s', 'simple-jwt-login'),
-                    date(DateTime::ISO8601, $payload->nbf)
-                ),
-                ErrorCodes::ERR_TOKEN_NBF
+                    gmdate(DateTime::ISO8601, $payload->nbf)
+                )),
+                absint(ErrorCodes::ERR_TOKEN_NBF)
             );
         }
         // Check that this token has been created before 'now'. This prevents
@@ -143,18 +145,19 @@ class JWT
         // correctly used the nbf claim).
         if (isset($payload->iat) && $payload->iat > ($timestamp + static::$leeway)) {
             throw new Exception(
-                sprintf(
+                esc_html(sprintf(
+                    // translators: %s: date the token becomes valid
                     __('Cannot handle token prior to %s', 'simple-jwt-login'),
-                    date(DateTime::ISO8601, $payload->iat)
-                ),
-                ErrorCodes::ERR_TOKEN_IAT
+                    gmdate(DateTime::ISO8601, $payload->iat)
+                )),
+                absint(ErrorCodes::ERR_TOKEN_IAT)
             );
         }
         // Check if this token has expired.
         if (isset($payload->exp) && ($timestamp - static::$leeway) >= $payload->exp) {
             throw new Exception(
-                __('Expired token', 'simple-jwt-login'),
-                ErrorCodes::ERR_TOKEN_EXPIRED
+                esc_html__('Expired token', 'simple-jwt-login'),
+                absint(ErrorCodes::ERR_TOKEN_EXPIRED)
             );
         }
 
@@ -213,8 +216,8 @@ class JWT
     {
         if (empty(static::$supportedAlgs[ $alg ])) {
             throw new Exception(
-                __('Algorithm not supported', 'simple-jwt-login'),
-                ErrorCodes::ERR_ALGORITHM_NOT_SUPPORTED_IN_SIGNATURE
+                esc_html__('Algorithm not supported', 'simple-jwt-login'),
+                absint(ErrorCodes::ERR_ALGORITHM_NOT_SUPPORTED_IN_SIGNATURE)
             );
         }
         list($function, $algorithm) = static::$supportedAlgs[ $alg ];
@@ -226,8 +229,8 @@ class JWT
                 $success   = openssl_sign($msg, $signature, $key, $algorithm);
                 if (! $success) {
                     throw new Exception(
-                        __("OpenSSL unable to sign data", 'simple-jwt-login'),
-                        ErrorCodes::ERR_OPENSSL_SIGN
+                        esc_html__('OpenSSL unable to sign data', 'simple-jwt-login'),
+                        absint(ErrorCodes::ERR_OPENSSL_SIGN)
                     );
                 }
 
@@ -235,8 +238,8 @@ class JWT
         }
 
         throw new Exception(
-            __("Unsupported sign function", 'simple-jwt-login'),
-            ErrorCodes::ERR_UNSUPPORTED_SIGN_FUNCTION
+            esc_html__('Unsupported sign function', 'simple-jwt-login'),
+            absint(ErrorCodes::ERR_UNSUPPORTED_SIGN_FUNCTION)
         );
     }
 
@@ -258,8 +261,8 @@ class JWT
     {
         if (empty(static::$supportedAlgs[ $alg ])) {
             throw new Exception(
-                __('Algorithm not supported', 'simple-jwt-login'),
-                ErrorCodes::ERR_ALGORITHM_NOT_SUPPORTED_VERIFY
+                esc_html__('Algorithm not supported', 'simple-jwt-login'),
+                absint(ErrorCodes::ERR_ALGORITHM_NOT_SUPPORTED_VERIFY)
             );
         }
         list($function, $algorithm) = static::$supportedAlgs[ $alg ];
@@ -273,11 +276,12 @@ class JWT
                 }
                 // returns 1 on success, 0 on failure, -1 on error.
                 throw new Exception(
-                    sprintf(
+                    esc_html(sprintf(
+                        // translators: %s: OpenSSL error message
                         __('OpenSSL error: %s', 'simple-jwt-login'),
                         openssl_error_string()
-                    ),
-                    ErrorCodes::ERR_OPEN_SSL_VERIFY
+                    )),
+                    absint(ErrorCodes::ERR_OPEN_SSL_VERIFY)
                 );
             case 'hash_hmac':
             default:
@@ -316,8 +320,8 @@ class JWT
             }
         } elseif ($obj === null && $input !== 'null') {
             throw new Exception(
-                __('Null result with non-null input', 'simple-jwt-login'),
-                ErrorCodes::ERR_JSON_DECODE_NON_NULL_INPUT
+                esc_html__('Null result with non-null input', 'simple-jwt-login'),
+                absint(ErrorCodes::ERR_JSON_DECODE_NON_NULL_INPUT)
             );
         }
 
@@ -366,8 +370,8 @@ class JWT
             }
         } elseif ($json === 'null' && $input !== null) {
             throw new Exception(
-                __('Null result with non-null input', 'simple-jwt-login'),
-                ErrorCodes::ERR_JSON_ENCODE_NON_NULL_INPUT
+                esc_html__('Null result with non-null input', 'simple-jwt-login'),
+                absint(ErrorCodes::ERR_JSON_ENCODE_NON_NULL_INPUT)
             );
         }
 
@@ -425,10 +429,16 @@ class JWT
             JSON_ERROR_UTF8           => __('Malformed UTF-8 characters', 'simple-jwt-login') //PHP >= 5.3.3
         ];
         throw new Exception(
-            isset($messages[ $errno ])
-                ? $messages[ $errno ]
-                : sprintf(__('Unknown JSON error: %s', 'simple-jwt-login'), $errno),
-            ErrorCodes::ERR_UNKNOWN_ERROR
+            esc_html(
+                isset($messages[ $errno ])
+                    ? $messages[ $errno ]
+                    : sprintf(
+                        // translators: %s: JSON error code returned by json_last_error()
+                        __('Unknown JSON error: %s', 'simple-jwt-login'),
+                        $errno
+                    )
+            ),
+            absint(ErrorCodes::ERR_UNKNOWN_ERROR)
         );
     }
 
@@ -449,6 +459,7 @@ class JWT
     }
 
     /**
+     * Extract the header and payload from a JWT string, without verifying the signature.
      * @param string $jwt
      * @throws Exception
      * @return array
@@ -459,23 +470,23 @@ class JWT
 
         if (count($tks) != 3) {
             throw new Exception(
-                __('Wrong number of segments', 'simple-jwt-login'),
-                ErrorCodes::ERR_WRONG_NUMBER_OF_SEGMENTS
+                esc_html__('Wrong number of segments', 'simple-jwt-login'),
+                absint(ErrorCodes::ERR_WRONG_NUMBER_OF_SEGMENTS)
             );
         }
         list($headb64, $bodyb64) = $tks;
         $header = static::jsonDecode(static::urlsafeB64Decode($headb64));
         if ($header === null) {
             throw new Exception(
-                __('Invalid header encoding', 'simple-jwt-login'),
-                ErrorCodes::ERR_INVALID_HEADER_ENCODING
+                esc_html__('Invalid header encoding', 'simple-jwt-login'),
+                absint(ErrorCodes::ERR_INVALID_HEADER_ENCODING)
             );
         }
         $payload = static::jsonDecode(static::urlsafeB64Decode($bodyb64));
         if ($payload === null) {
             throw new Exception(
-                __('Invalid claims encoding', 'simple-jwt-login'),
-                ErrorCodes::ERR_INVALID_CLAIMS_ENCODING
+                esc_html__('Invalid claims encoding', 'simple-jwt-login'),
+                absint(ErrorCodes::ERR_INVALID_CLAIMS_ENCODING)
             );
         }
 
@@ -483,5 +494,14 @@ class JWT
             'header' => (array)$header,
             'payload' => (array)$payload,
         ];
+    }
+
+    /**
+     * @param int $leeway
+     * @return void
+     */
+    public function applyLeeway($leeway)
+    {
+        static::$leeway = $leeway;
     }
 }

@@ -11,7 +11,8 @@ use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\RevokedToken\Repository as RevokedTokenRepository;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\LoginService;
 
 class LoginServiceTest extends TestCase
@@ -21,12 +22,18 @@ class LoginServiceTest extends TestCase
      */
     private $wordPressDataMock;
 
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|RevokedTokenRepository
+     */
+    private $revokedTokenRepoMock;
+
     public function setUp(): void
     {
         parent::setUp();
         $this->wordPressDataMock = $this
-            ->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+            ->createStub(WordPressDataInterface::class);
+        $this->revokedTokenRepoMock = $this
+            ->createStub(RevokedTokenRepository::class);
 
         $this->wordPressDataMock->method('sanitizeTextField')
             ->willReturnCallback(
@@ -57,10 +64,11 @@ class LoginServiceTest extends TestCase
             ->withRequest($request)
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
-                'HTTP_CLIENT_IP' => '127.0.0.1'
+                'REMOTE_ADDR' => '127.0.0.1'
             ]))
             ->withSession([])
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $service->makeAction();
     }
@@ -85,7 +93,7 @@ class LoginServiceTest extends TestCase
                     'allow_autologin' => 'true',
                 ],
                 'request' => [],
-                'exceptionMessage' => 'Wrong Request.',
+                'exceptionMessage' => 'JWT is missing.',
             ],
             'missing_auth_code' => [
                 'settings' => [
@@ -95,7 +103,7 @@ class LoginServiceTest extends TestCase
                 'request' => [
                     'JWT'  => 'test',
                 ],
-                'exceptionMessage' => 'Invalid Auth Code ( AUTH_KEY ) provided.',
+                'exceptionMessage' => 'Auth Code is required.',
             ],
             'invalid_auth_code' => [
                 'settings' => [
@@ -114,6 +122,32 @@ class LoginServiceTest extends TestCase
                     'AUTH_KEY' => 'test'
                 ],
                 'exceptionMessage' => 'Invalid Auth Code ( AUTH_KEY ) provided.',
+            ],
+            'expired_code_before_valid_code_still_passes_auth_check' => [
+                // Regression: expired codes must be skipped, not abort the whole loop.
+                // Auth key check should succeed when a valid code follows an expired one.
+                'settings' => [
+                    'allow_autologin' => true,
+                    'require_login_auth' => true,
+                    'auth_codes' => [
+                        [
+                            'code' => 'expired-code',
+                            'role' => '',
+                            'expiration_date' => '2000-01-01',
+                        ],
+                        [
+                            'code' => 'valid-code',
+                            'role' => '',
+                            'expiration_date' => '',
+                        ],
+                    ],
+                ],
+                'request' => [
+                    'JWT' => 'not.a.valid.jwt',
+                    'AUTH_KEY' => 'valid-code',
+                ],
+                // Auth key passes; failure is at JWT decode, not at auth code validation.
+                'exceptionMessage' => 'Wrong number of segments',
             ],
             'ip_not_allowed' => [
                 'settings' => [
@@ -191,10 +225,11 @@ class LoginServiceTest extends TestCase
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
-                'HTTP_CLIENT_IP' => '127.0.0.1'
+                'REMOTE_ADDR' => '127.0.0.1'
             ]))
             ->withSession([])
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $service->makeAction();
     }
@@ -224,20 +259,19 @@ class LoginServiceTest extends TestCase
             ->willReturn(true);
         $this->wordPressDataMock->method('getUserProperty')
             ->willReturn(1);
-        $this->wordPressDataMock->method('getUserMeta')
-            ->willReturn([
-                $jwt,
-            ]);
+        $this->revokedTokenRepoMock->method('existsForUser')
+            ->willReturn(true);
         $service = (new LoginService())
             ->withRequest([
                 'JWT' => $jwt
             ])
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
-                'HTTP_CLIENT_IP' => '127.0.0.1'
+                'REMOTE_ADDR' => '127.0.0.1'
             ]))
             ->withSession([])
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $service->makeAction();
     }
@@ -291,7 +325,8 @@ class LoginServiceTest extends TestCase
             ->withCookies($cookie)
             ->withServerHelper(new ServerHelper($headers))
             ->withSession($session)
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $result = $service->makeAction();
         $this->assertNull($result);
@@ -397,6 +432,7 @@ class LoginServiceTest extends TestCase
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
             ->withSession([])
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
             ->makeAction();
 
         $parsedUrl = parse_url($loginService);
@@ -413,8 +449,8 @@ class LoginServiceTest extends TestCase
                 $this->assertArrayHasKey($key, $params);
                 $this->assertSame($params[$key], $value);
             }
-            if ($includeParams === false) {
-                $this->assertFalse(isset($params[$key]));
+            if (!$includeParams) {
+                $this->assertArrayNotHasKey($key, $params);
             }
         }
     }
@@ -501,7 +537,8 @@ class LoginServiceTest extends TestCase
             ->withCookies([])
             ->withServerHelper(new ServerHelper([]))
             ->withSession([])
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
 
         if ($expectedError) {
@@ -543,5 +580,39 @@ class LoginServiceTest extends TestCase
                 'expectedError' => null,
             ],
         ];
+    }
+
+    public function testInterimJwtIsRejectedOnAutologin(): void
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionCode(ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REJECTED);
+        $this->expectExceptionMessage('This JWT requires two-factor verification before it can be used for login.');
+
+        $interimJwt = JWT::encode(
+            [
+                'iat'                                      => time(),
+                'exp'                                      => time() + 300,
+                \SimpleJWTLogin\Services\AuthenticateService::TFA_PENDING_CLAIM => 1,
+                'tfa_user_id'                              => 42,
+            ],
+            'test',
+            'HS256'
+        );
+
+        $this->wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_autologin'  => true,
+                'decryption_key'   => 'test',
+            ]));
+
+        $service = (new LoginService())
+            ->withRequest(['JWT' => $interimJwt])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSession([])
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
+
+        $service->makeAction();
     }
 }

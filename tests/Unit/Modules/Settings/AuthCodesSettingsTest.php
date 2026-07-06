@@ -1,10 +1,11 @@
 <?php
+
 namespace SimpleJwtLoginTests\Unit\Modules\Settings;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\AuthCodesSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 
 class AuthCodesSettingsTest extends TestCase
 {
@@ -16,8 +17,7 @@ class AuthCodesSettingsTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->wordPressData = $this->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+        $this->wordPressData = $this->createStub(WordPressDataInterface::class);
         $this->wordPressData->method('sanitizeTextField')
             ->willReturnCallback(
                 function ($parameter) {
@@ -78,12 +78,9 @@ class AuthCodesSettingsTest extends TestCase
             ->withWordPressData($this->wordPressData)
             ->withSettings(
                 [
-                    'require_login_auth'    => '1',
-                    'allow_autologin'       => '1',
-                    'require_register_auth' => '1',
-                    'allow_register'        => '1',
-                    'require_delete_auth'   => '1',
-                    'allow_delete'          => '1',
+                    'login'       => ['auth_code' => '1', 'enabled' => '1'],
+                    'register'    => ['auth_code' => '1', 'enabled' => '1'],
+                    'delete_user' => ['auth_code' => '1', 'enabled' => '1'],
                 ]
             )
             ->withPost([]);

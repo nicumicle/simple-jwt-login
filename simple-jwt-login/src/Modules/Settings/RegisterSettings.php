@@ -8,137 +8,89 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
 {
     const DEFAULT_USER_PROFILE = 'subscriber';
 
-    public function initSettingsFromPost()
+    protected function getSectionKey()
     {
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'allow_register',
-            null,
-            'allow_register',
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'new_user_profile',
-            null,
-            'new_user_profile',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
+        return 'register';
+    }
 
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'register_ip',
-            null,
-            'register_ip',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'register_domain',
-            null,
-            'register_domain',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'require_register_auth',
-            null,
-            'require_register_auth',
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'random_password',
-            null,
-            'random_password',
-            BaseSettings::SETTINGS_TYPE_BOL,
-            false
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'random_password_length',
-            null,
-            'random_password_length',
-            BaseSettings::SETTINGS_TYPE_INT,
-            10
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'register_force_login',
-            null,
-            'register_force_login',
-            BaseSettings::SETTINGS_TYPE_BOL,
-            false
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'register_jwt',
-            null,
-            'register_jwt',
-            BaseSettings::SETTINGS_TYPE_BOL,
-            false
-        );
-
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'allowed_user_meta',
-            null,
-            'allowed_user_meta',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
+    protected function getFieldDefinitions()
+    {
+        return [
+            [null, 'enabled',                null, 'allow_register',              self::SETTINGS_TYPE_BOL],
+            [null, 'new_user_profile',       null, 'new_user_profile',            self::SETTINGS_TYPE_STRING],
+            [null, 'ip_whitelist',           null, 'register_ip',                 self::SETTINGS_TYPE_STRING],
+            [null, 'domain_whitelist',       null, 'register_domain',             self::SETTINGS_TYPE_STRING],
+            [null, 'auth_code',              null, 'require_register_auth',       self::SETTINGS_TYPE_BOL],
+            [null, 'random_password',        null, 'random_password',             self::SETTINGS_TYPE_BOL, false],
+            [null, 'random_password_length', null, 'random_password_length',      self::SETTINGS_TYPE_INT, 10],
+            [null, 'force_login',            null, 'register_force_login',        self::SETTINGS_TYPE_BOL, false],
+            [null, 'return_jwt',             null, 'register_jwt',                self::SETTINGS_TYPE_BOL, false],
+            [null, 'allowed_user_meta',      null, 'allowed_user_meta',           self::SETTINGS_TYPE_STRING],
+            [null, 'send_welcome_email',     null, 'register_send_welcome_email', self::SETTINGS_TYPE_BOL, false],
+        ];
     }
 
     public function validateSettings()
     {
         if (empty($this->post['new_user_profile'])) {
             throw new Exception(
-                __('New User profile slug can not be empty.', 'simple-jwt-login'),
-                $this->settingsErrors->generateCode(
+                esc_html__('Default User Roles can not be empty.', 'simple-jwt-login'),
+                absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_REGISTER,
                     SettingsErrors::ERR_REGISTER_MISSING_NEW_USER_PROFILE
-                )
+                ))
             );
         }
 
-        if ($this->wordPressData->roleExists($this->post['new_user_profile']) === false) {
+        $roles = array_filter(array_map('trim', explode(',', $this->post['new_user_profile'])));
+        if (empty($roles)) {
             throw new Exception(
-                __('Invalid user role provided.', 'simple-jwt-login'),
-                $this->settingsErrors->generateCode(
+                esc_html__('Default User Roles can not be empty.', 'simple-jwt-login'),
+                absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_REGISTER,
-                    SettingsErrors::ERR_REGISTER_INVALID_ROLE
-                )
+                    SettingsErrors::ERR_REGISTER_MISSING_NEW_USER_PROFILE
+                ))
             );
+        }
+
+        foreach ($roles as $role) {
+            if (!$this->wordPressData->roleExists($role)) {
+                throw new Exception(
+                    esc_html__('Invalid user role provided.', 'simple-jwt-login'),
+                    absint($this->settingsErrors->generateCode(
+                        SettingsErrors::PREFIX_REGISTER,
+                        SettingsErrors::ERR_REGISTER_INVALID_ROLE
+                    ))
+                );
+            }
         }
 
         if (isset($this->post['random_password_length']) && !is_numeric($this->post['random_password_length'])) {
             throw new Exception(
-                __('Random password length should be an integer.', 'simple-jwt-login'),
-                $this->settingsErrors->generateCode(
+                esc_html__('Random password length should be an integer.', 'simple-jwt-login'),
+                absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_REGISTER,
                     SettingsErrors::ERR_REGISTER_RANDOM_PASS_LENGTH_NUMERIC
-                )
+                ))
             );
         }
 
         if (isset($this->post['random_password_length']) && ((int)$this->post['random_password_length'] < 6)) {
             throw new Exception(
-                __('Random password length should be at least 6 characters.', 'simple-jwt-login'),
-                $this->settingsErrors->generateCode(
+                esc_html__('Random password length should be at least 6 characters.', 'simple-jwt-login'),
+                absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_REGISTER,
                     SettingsErrors::ERR_REGISTER_RANDOM_PASS_LENGTH_MIN_LENGTH
-                )
+                ))
             );
         }
         if (isset($this->post['random_password_length']) && ((int)$this->post['random_password_length'] > 255)) {
             throw new Exception(
-                __('Random password length can be max 255.', 'simple-jwt-login'),
-                $this->settingsErrors->generateCode(
+                esc_html__('Random password length can be max 255.', 'simple-jwt-login'),
+                absint($this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_REGISTER,
                     SettingsErrors::ERR_REGISTER_RANDOM_PASS_LENGTH_MAX_LENGTH
-                )
+                ))
             );
         }
     }
@@ -148,17 +100,18 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
      */
     public function isRegisterAllowed()
     {
-        return !empty($this->settings['allow_register']);
+        return !empty($this->settings['enabled']);
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getNewUSerProfile()
+    public function getNewUserRoles()
     {
-        return isset($this->settings['new_user_profile'])
+        $raw = isset($this->settings['new_user_profile'])
             ? $this->settings['new_user_profile']
             : self::DEFAULT_USER_PROFILE;
+        return array_values(array_filter(array_map('trim', explode(',', $raw))));
     }
 
     /**
@@ -166,8 +119,8 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
      */
     public function getAllowedRegisterIps()
     {
-        return isset($this->settings['register_ip'])
-            ? $this->settings['register_ip']
+        return isset($this->settings['ip_whitelist'])
+            ? $this->settings['ip_whitelist']
             : '';
     }
 
@@ -176,8 +129,8 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
      */
     public function getAllowedRegisterDomain()
     {
-        return isset($this->settings['register_domain'])
-            ? $this->settings['register_domain']
+        return isset($this->settings['domain_whitelist'])
+            ? $this->settings['domain_whitelist']
             : '';
     }
 
@@ -186,8 +139,8 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
      */
     public function isAuthKeyRequiredOnRegister()
     {
-        return isset($this->settings['require_register_auth'])
-            ? (bool)$this->settings['require_register_auth']
+        return isset($this->settings['auth_code'])
+            ? (bool)$this->settings['auth_code']
             : true;
     }
 
@@ -196,9 +149,7 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
      */
     public function isRandomPasswordForCreateUserEnabled()
     {
-        return isset($this->settings['random_password'])
-            ? (bool)$this->settings['random_password']
-            : false;
+        return !empty($this->settings['random_password']);
     }
 
     /**
@@ -216,9 +167,7 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
      */
     public function isForceLoginAfterCreateUserEnabled()
     {
-        return isset($this->settings['register_force_login'])
-            ? (bool)$this->settings['register_force_login']
-            : false;
+        return !empty($this->settings['force_login']);
     }
 
     /**
@@ -236,8 +185,14 @@ class RegisterSettings extends BaseSettings implements SettingsInterface
      */
     public function isJwtEnabled()
     {
-        return isset($this->settings['register_jwt'])
-            ? (bool) $this->settings['register_jwt']
-            : false;
+        return !empty($this->settings['return_jwt']);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSendWelcomeEmailEnabled()
+    {
+        return !empty($this->settings['send_welcome_email']);
     }
 }

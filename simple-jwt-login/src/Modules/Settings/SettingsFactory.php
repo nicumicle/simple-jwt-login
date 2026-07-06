@@ -4,6 +4,9 @@ namespace SimpleJWTLogin\Modules\Settings;
 
 use Exception;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class SettingsFactory
 {
     const AUTH_CODES_SETTINGS = 0;
@@ -16,42 +19,53 @@ class SettingsFactory
     const REGISTER_SETTINGS = 7;
     const RESET_PASSWORD_SETTINGS = 8;
     const PROTECT_ENDPOINTS_SETTINGS = 9;
-    const APPLICATIONS_SETTINGS = 10;
+    const INTEGRATIONS_SETTINGS = 10;
+    const AUDIT_LOG_SETTINGS = 11;
+    const JWT_RULES_SETTINGS = 12;
+    const WEBHOOKS_SETTINGS  = 13;
+    const API_KEYS_SETTINGS  = 14;
+    const THEME_SETTINGS     = 15;
+
+    /**
+     * @return array
+     */
+    protected static function getClassMap()
+    {
+        return array(
+            self::AUTH_CODES_SETTINGS       => 'SimpleJWTLogin\Modules\Settings\AuthCodesSettings',
+            self::AUTHENTICATION_SETTINGS   => 'SimpleJWTLogin\Modules\Settings\AuthenticationSettings',
+            self::AUDIT_LOG_SETTINGS        => 'SimpleJWTLogin\Modules\Settings\AuditLogSettings',
+            self::CORS_SETTINGS             => 'SimpleJWTLogin\Modules\Settings\CorsSettings',
+            self::DELETE_USER_SETTINGS      => 'SimpleJWTLogin\Modules\Settings\DeleteUserSettings',
+            self::GENERAL_SETTINGS          => 'SimpleJWTLogin\Modules\Settings\GeneralSettings',
+            self::HOOKS_SETTINGS            => 'SimpleJWTLogin\Modules\Settings\HooksSettings',
+            self::JWT_RULES_SETTINGS        => 'SimpleJWTLogin\Modules\Settings\JwtRulesSettings',
+            self::LOGIN_SETTINGS            => 'SimpleJWTLogin\Modules\Settings\LoginSettings',
+            self::REGISTER_SETTINGS         => 'SimpleJWTLogin\Modules\Settings\RegisterSettings',
+            self::RESET_PASSWORD_SETTINGS   => 'SimpleJWTLogin\Modules\Settings\ResetPasswordSettings',
+            self::PROTECT_ENDPOINTS_SETTINGS => 'SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings',
+            self::INTEGRATIONS_SETTINGS     => 'SimpleJWTLogin\Modules\Settings\IntegrationsSettings',
+            self::WEBHOOKS_SETTINGS         => 'SimpleJWTLogin\Modules\Settings\WebhooksSettings',
+            self::API_KEYS_SETTINGS         => 'SimpleJWTLogin\Modules\Settings\ApiKeysSettings',
+            self::THEME_SETTINGS            => 'SimpleJWTLogin\Modules\Settings\ThemeSettings',
+        );
+    }
 
     /**
      * @param int $type
      *
-     * @return AuthCodesSettings|AuthenticationSettings|CorsSettings|DeleteUserSettings|GeneralSettings|HooksSettings|LoginSettings|RegisterSettings|ResetPasswordSettings|ProtectEndpointSettings|ApplicationsSettings
+     * @return AuthCodesSettings|AuthenticationSettings|AuditLogSettings|CorsSettings|DeleteUserSettings|GeneralSettings|HooksSettings|JwtRulesSettings|LoginSettings|RegisterSettings|ResetPasswordSettings|ProtectEndpointSettings|IntegrationsSettings|WebhooksSettings|ApiKeysSettings|ThemeSettings
      * @throws Exception
      */
     public static function getFactory($type)
     {
-        switch ($type) {
-            case self::AUTH_CODES_SETTINGS:
-                return new AuthCodesSettings();
-            case self::AUTHENTICATION_SETTINGS:
-                return new AuthenticationSettings();
-            case self::CORS_SETTINGS:
-                return new CorsSettings();
-            case self::DELETE_USER_SETTINGS:
-                return new DeleteUserSettings();
-            case self::GENERAL_SETTINGS:
-                return new GeneralSettings();
-            case self::HOOKS_SETTINGS:
-                return new HooksSettings();
-            case self::LOGIN_SETTINGS:
-                return new LoginSettings();
-            case self::REGISTER_SETTINGS:
-                return new RegisterSettings();
-            case self::RESET_PASSWORD_SETTINGS:
-                return new ResetPasswordSettings();
-            case self::PROTECT_ENDPOINTS_SETTINGS:
-                return new ProtectEndpointSettings();
-            case self::APPLICATIONS_SETTINGS:
-                return new ApplicationsSettings();
-            default:
-                throw new Exception('Settings implementation not found.');
+        $classMap = static::getClassMap();
+        if (!isset($classMap[$type])) {
+            throw new Exception(esc_html__('Settings implementation not found.', 'simple-jwt-login'));
         }
+        $className = $classMap[$type];
+
+        return new $className();
     }
 
     /**
@@ -59,20 +73,20 @@ class SettingsFactory
      */
     public function getAll()
     {
-        return [
-            self::AUTHENTICATION_SETTINGS => new AuthenticationSettings(),
-            self::CORS_SETTINGS => new CorsSettings(),
-            self::DELETE_USER_SETTINGS => new DeleteUserSettings(),
-            self::GENERAL_SETTINGS => new GeneralSettings(),
-            self::HOOKS_SETTINGS => new HooksSettings(),
-            self::LOGIN_SETTINGS => new LoginSettings(),
-            self::REGISTER_SETTINGS => new RegisterSettings(),
-            self::RESET_PASSWORD_SETTINGS => new ResetPasswordSettings(),
-            self::PROTECT_ENDPOINTS_SETTINGS => new ProtectEndpointSettings(),
-            self::APPLICATIONS_SETTINGS => new ApplicationsSettings(),
+        $classMap = static::getClassMap();
+        $result = array();
 
-            //auth codes needs to be the last one
-            self::AUTH_CODES_SETTINGS => new AuthCodesSettings(),
-        ];
+        foreach ($classMap as $type => $className) {
+            if ($type === self::AUTH_CODES_SETTINGS) {
+                continue;
+            }
+            $result[$type] = new $className();
+        }
+
+        // auth codes must be last - validation depends on all other settings being loaded first
+        $authCodesClass = $classMap[self::AUTH_CODES_SETTINGS];
+        $result[self::AUTH_CODES_SETTINGS] = new $authCodesClass();
+
+        return $result;
     }
 }

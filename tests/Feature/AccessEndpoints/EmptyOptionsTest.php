@@ -60,7 +60,7 @@ class EmptyOptionsTest extends TestBase
                 'endpoint' => '/auth',
                 'expectedError' =>  self::generateErrorJson(
                     "Authentication is not enabled.",
-                    ErrorCodes::AUTHENTICATION_IS_NOT_ENABLED
+                    ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED
                 ),
             ],
             'auth_refresh' => [
@@ -68,7 +68,7 @@ class EmptyOptionsTest extends TestBase
                 'endpoint' => '/auth/refresh',
                 'expectedError' =>  self::generateErrorJson(
                     "Authentication is not enabled.",
-                    ErrorCodes::AUTHENTICATION_IS_NOT_ENABLED
+                    ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED
                 ),
             ],
             'auth_validate' => [
@@ -76,7 +76,7 @@ class EmptyOptionsTest extends TestBase
                 'endpoint' => '/auth/validate',
                 'expectedError' =>  self::generateErrorJson(
                     "Authentication is not enabled.",
-                    ErrorCodes::AUTHENTICATION_IS_NOT_ENABLED
+                    ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED
                 ),
             ],
             'auth_validate_get' => [
@@ -84,7 +84,7 @@ class EmptyOptionsTest extends TestBase
                 'endpoint' => '/auth/validate',
                 'expectedError' =>  self::generateErrorJson(
                     "Authentication is not enabled.",
-                    ErrorCodes::AUTHENTICATION_IS_NOT_ENABLED
+                    ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED
                 ),
             ],
         ];
@@ -102,7 +102,7 @@ class EmptyOptionsTest extends TestBase
         $uri = self::API_URL . "?rest_route=/simple-jwt-login/v1" . $endpoint;
         $result = $this->client->request($method, $uri);
         $this->assertSame(
-            400,
+            403,
             $result->getStatusCode()
         );
 

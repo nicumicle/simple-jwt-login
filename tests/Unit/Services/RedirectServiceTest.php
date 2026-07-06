@@ -2,12 +2,13 @@
 
 namespace SimpleJwtLoginTests\Unit\Services;
 
+use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\RedirectService;
 use WP_User;
 
@@ -27,8 +28,7 @@ class RedirectServiceTest extends TestCase
     {
         parent::setUp();
         $this->wordPressDataMock = $this
-            ->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+            ->createStub(WordPressDataInterface::class);
         $this->wordPressDataMock->method('sanitizeTextField')
             ->willReturnCallback(
                 function ($parameter) {
@@ -36,9 +36,7 @@ class RedirectServiceTest extends TestCase
                 }
             );
 
-        $this->user = $this->getMockBuilder(WP_User::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->user = $this->createStub(WP_User::class);
     }
 
     public function testNoRedirect()
@@ -53,7 +51,7 @@ class RedirectServiceTest extends TestCase
             ->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
         $this->wordPressDataMock
-            ->method('triggerFilter')
+            ->method('applyFilters')
             ->willReturn(true);
         $this->wordPressDataMock
             ->method('createResponse')
@@ -84,6 +82,11 @@ class RedirectServiceTest extends TestCase
      */
     public function testRedirectCustomUrl($extraSettings, $request, $expectedUrl)
     {
+        $this->wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $this->wordPressDataMock->method('sanitizeTextField')
+            ->willReturnCallback(function ($p) {
+                return $p;
+            });
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Correct URL');
         $settings = [
@@ -100,15 +103,16 @@ class RedirectServiceTest extends TestCase
             ->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
         $this->wordPressDataMock
-            ->method('triggerFilter')
+            ->method('applyFilters')
             ->willReturn(true);
         $this->wordPressDataMock
             ->method('createResponse')
             ->willReturn(true);
 
-        $this->wordPressDataMock->method('redirect')
+        $this->wordPressDataMock->expects($this->once())
+            ->method('redirect')
             ->with($expectedUrl)
-            ->willThrowException(new \Exception('Correct URL'));
+            ->willThrowException(new Exception('Correct URL'));
 
         $response = (new RedirectService())
             ->withRequest($request)
@@ -122,7 +126,7 @@ class RedirectServiceTest extends TestCase
             ->withSession([])
             ->makeAction();
 
-        $this->assertSame(null, $response);
+        $this->assertNull($response);
     }
 
     public function testRedirectHomepage()
@@ -134,7 +138,7 @@ class RedirectServiceTest extends TestCase
             ->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
         $this->wordPressDataMock
-            ->method('triggerFilter')
+            ->method('applyFilters')
             ->willReturn(true);
         $this->wordPressDataMock
             ->method('createResponse')
@@ -153,7 +157,7 @@ class RedirectServiceTest extends TestCase
             ->withSession([])
             ->withUser($this->user)
             ->makeAction();
-        $this->assertSame(null, $response);
+        $this->assertNull($response);
     }
 
     public static function redirectCustomURLProvider()

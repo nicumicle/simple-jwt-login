@@ -9,21 +9,24 @@ parameters:
     - bootstrap.php
   ignoreErrors:
     -
-       message: '#Method SimpleJWTLogin\\Modules\\WordPressDataInterface::(triggerFilter|triggerAction)\(\) invoked with .* parameters, 0 required.#'
+       message: '#Method SimpleJWTLogin\\Repositories\\Wordpress\\Repository::(doAction|applyFilters)\(\) invoked with .* parameters, 0 required.#'
        path: simple-jwt-login/src
     -
        message : '#Unsafe call to private method SimpleJWTLogin\\Libraries\\JWT\\JWT::.*\(\) through static::.#'
        path: simple-jwt-login/src
     -
        message : '#Calling exit\(\) is forbidden.*#'
-       path: simple-jwt-login/src/Modules/WordPressData.php
+       paths:
+         - simple-jwt-login/src/Repositories/Wordpress/WordPressRepository.php
+         - simple-jwt-login/src/Plugin/OAuthTwoFactorLoginHandler.php
+         - simple-jwt-login/src/Services/Oauth/AbstractOauth.php
     -
        message : '#Using (\$_POST|\$_GET|\$_REQUEST|\$_SERVER) is forbidden.*#'
        paths:
          - simple-jwt-login/views/
-         - simple-jwt-login/routes/api.php
          - simple-jwt-login/3rd-party/force_login.php
          - simple-jwt-login/3rd-party/wp-graphql.php
+         - simple-jwt-login/3rd-party/woocommerce.php
          - simple-jwt-login/simple-jwt-login.php
   disallowedFunctionCalls:
     -

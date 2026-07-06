@@ -44,7 +44,7 @@ class AuthCodeBuilderTest extends TestCase
                     'expiration_date' => '',
                 ],
                 'expected' => [
-                    'code' => "123",
+                    'code' => '123',
                     'role' => '',
                     'expiration_date' => '',
                 ]
@@ -56,7 +56,7 @@ class AuthCodeBuilderTest extends TestCase
                     'expiration_date' => '2020-01-01 10:00:00',
                 ],
                 'expected' => [
-                    'code' => "123",
+                    'code' => '123',
                     'role' => 'administrator',
                     'expiration_date' => '2020-01-01 10:00:00',
                 ]

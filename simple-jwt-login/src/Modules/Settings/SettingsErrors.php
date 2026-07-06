@@ -18,11 +18,27 @@ class SettingsErrors extends \Exception
     const PREFIX_RESET_PASSWORD = 10;
     const PREFIX_PROTECT_ENDPOINTS = 11;
     const PREFIX_APPLICATIONS = 12;
+    const PREFIX_AUDIT_LOGS = 13;
+    const PREFIX_WEBHOOKS   = 14;
+    const PREFIX_REFRESH_TOKEN  = 15;
+    const PREFIX_VALIDATE_TOKEN = 16;
+    const PREFIX_REVOKE_TOKEN   = 17;
+    const PREFIX_WEBHOOK_LOGS   = 18;
+    const PREFIX_AUDIT_LOG_LOGS = 19;
+    const PREFIX_API_KEYS          = 20;
+    const PREFIX_3RD_PARTY_APPS    = 21;
+    const PREFIX_JWT_DECODER       = 22;
+    const PREFIX_REVOKED_TOKENS    = 23;
 
     #authentication
     const ERR_AUTHENTICATION_EMPTY_PAYLOAD = 1;
     const ERR_AUTHENTICATION_TTL = 2;
     const ERR_AUTHENTICATION_REFRESH_TTL_ZERO = 3;
+    const ERR_AUTHENTICATION_REFRESH_TOKEN_KEY_REQUIRED = 4;
+    const ERR_AUTHENTICATION_CUSTOM_CLAIM_PROTECTED_PAYLOAD = 5;
+    const ERR_AUTHENTICATION_CUSTOM_CLAIM_PROTECTED_HEADER  = 6;
+    const ERR_AUTHENTICATION_CUSTOM_CLAIM_EMPTY_KEY         = 7;
+    const ERR_AUTHENTICATION_EMPTY_ISS = 8;
 
     #general
     const ERR_GENERAL_EMPTY_NAMESPACE = 1;
@@ -32,17 +48,14 @@ class SettingsErrors extends \Exception
     const ERR_GENERAL_DECRYPTION_KEY_REQUIRED = 5;
     const ERR_GENERAL_GET_JWT_FROM = 7;
     const ERR_GENERAL_REQUEST_KEYS = 8;
+    const ERR_GENERAL_MISSING_JWT_PAYLOAD_KEY = 9;
 
     #auth-codes
     const ERR_EMPTY_AUTH_CODES = 1;
     const ERR_INVALID_ROLE = 2;
 
     #login
-    const ERR_LOGIN_MISSING_JWT_PARAMETER_KEY = 1;
-    const ERR_LOGIN_INVALID_CUSTOM_URL = 2;
-
-    #delete
-    const ERR_DELETE_MISSING_JWT_PARAM = 1;
+    const ERR_LOGIN_INVALID_CUSTOM_URL = 1;
 
     #cors
     const ERR_CORS_NO_OPTION = 1;
@@ -56,14 +69,35 @@ class SettingsErrors extends \Exception
 
     #protect endpoints
     const ERR_EMPTY_SPECIFIC_ENDPOINT = 1;
+    const ERR_PROTECTED_ROLES_RULE_MISSING_ROLES = 2;
 
-    # Applications
+    # Applications - Google
     const ERR_GOOGLE_AT_LEAST_ONE_OPTION_ENABLED = 1;
     const ERR_GOOGLE_CLIENT_ID_REQUIRED = 2;
     const ERR_GOOGLE_CLIENT_SECRET_REQUIRED = 3;
     const ERR_GOOGLE_REDIRECT_URI_REQUIRED_FOR_EXCHANGE_CODE = 4;
-    const ERR_GOOGLE_REDIRECT_URI_REQUIRED_FOR_EXCHANGE_ID_TOKEN = 5;
 
+    # Applications - Auth0
+    const ERR_AUTH0_AT_LEAST_ONE_OPTION_ENABLED = 6;
+    const ERR_AUTH0_DOMAIN_REQUIRED             = 7;
+    const ERR_AUTH0_CLIENT_ID_REQUIRED          = 8;
+    const ERR_AUTH0_CLIENT_SECRET_REQUIRED      = 9;
+    const ERR_AUTH0_REDIRECT_URI_REQUIRED       = 10;
+
+    # Applications - Facebook
+    const ERR_FACEBOOK_AT_LEAST_ONE_OPTION_ENABLED = 11;
+    const ERR_FACEBOOK_CLIENT_ID_REQUIRED          = 12;
+    const ERR_FACEBOOK_CLIENT_SECRET_REQUIRED      = 13;
+    const ERR_FACEBOOK_REDIRECT_URI_REQUIRED       = 14;
+
+    # Applications - GitHub
+    const ERR_GITHUB_AT_LEAST_ONE_OPTION_ENABLED = 15;
+    const ERR_GITHUB_CLIENT_ID_REQUIRED          = 16;
+    const ERR_GITHUB_CLIENT_SECRET_REQUIRED      = 17;
+    const ERR_GITHUB_REDIRECT_URI_REQUIRED       = 18;
+
+    # Webhooks
+    const ERR_WEBHOOKS_INVALID_URL = 1;
 
     /**
      * @param int $sectionPrefix
@@ -85,6 +119,6 @@ class SettingsErrors extends \Exception
             return 0;
         }
 
-        return intval($errorCode / self::PREFIX_LEEWAY);
+        return (int) ($errorCode / self::PREFIX_LEEWAY);
     }
 }

@@ -4,18 +4,34 @@ namespace SimpleJWTLogin\Services;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Modules\AuditEvents;
+use SimpleJWTLogin\Services\ApiKeys\CreateApiKeyService;
+use SimpleJWTLogin\Services\ApiKeys\DeleteApiKeyService;
+use SimpleJWTLogin\Services\ApiKeys\ListApiKeysService;
+use SimpleJWTLogin\Services\ApiKeys\RevokeApiKeyService;
+use SimpleJWTLogin\Services\ApiKeys\UpdateApiKeyService;
+use SimpleJWTLogin\Services\Integrations\TwoFactor\TwoFactorVerifyService;
+use SimpleJWTLogin\Services\RevokedTokens\DeleteRevokedTokenService;
+use SimpleJWTLogin\Services\RevokedTokens\ListRevokedTokensService;
 
 class RouteService extends BaseService
 {
     const LOGIN_ROUTE = 'autologin';
-    const REGISTER_ROUTE_OLD = 'register';
     const USER_ROUTE = 'users';
     const AUTHENTICATION_ROUTE = 'auth';
     const AUTHENTICATION_REFRESH_ROUTE = 'auth/refresh';
     const AUTHENTICATION_VALIDATE_ROUTE = 'auth/validate';
     const AUTHENTICATION_REVOKE = 'auth/revoke';
+    const AUTHENTICATION_2FA_ROUTE = 'auth/2fa';
     const RESET_PASSWORD_LINK = 'user/reset_password';
     const OAUTH_TOKEN = 'oauth/token';
+
+    const API_KEYS_ROUTE         = 'api-keys';
+    const API_KEYS_SINGLE_ROUTE  = 'api-keys/(?P<id>\d+)';
+    const API_KEYS_REVOKE_ROUTE  = 'api-keys/(?P<id>\d+)/revoke';
+
+    const REVOKED_TOKENS_ROUTE        = 'revoked-tokens';
+    const REVOKED_TOKENS_SINGLE_ROUTE = 'revoked-tokens/(?P<id>\d+)';
 
     const METHOD_POST = 'POST';
     const METHOD_GET = 'GET';
@@ -32,11 +48,6 @@ class RouteService extends BaseService
                 'name' => self::LOGIN_ROUTE,
                 'method' => self::METHOD_GET,
                 'service' => LoginService::class,
-            ],
-            [
-                'name' => self::REGISTER_ROUTE_OLD,
-                'method' => self::METHOD_POST,
-                'service' => RegisterUserService::class,
             ],
             [
                 'name' => self::USER_ROUTE,
@@ -60,12 +71,7 @@ class RouteService extends BaseService
             ],
             [
                 'name' => self::AUTHENTICATION_VALIDATE_ROUTE,
-                'method' => self::METHOD_GET,
-                'service' => ValidateTokenService::class,
-            ],
-            [
-                'name' => self::AUTHENTICATION_VALIDATE_ROUTE,
-                'method' => self::METHOD_POST,
+                'method' => self::METHOD_GET . ', ' . self::METHOD_POST,
                 'service' => ValidateTokenService::class,
             ],
             [
@@ -75,24 +81,82 @@ class RouteService extends BaseService
             ],
             [
                 'name' => self::RESET_PASSWORD_LINK,
-                'method' => self::METHOD_PUT,
-                'service' => ResetPasswordService::class
-            ],
-            [
-                'name' => self::RESET_PASSWORD_LINK,
-                'method' => self::METHOD_POST,
+                'method' => self::METHOD_PUT . ', ' . self::METHOD_POST,
                 'service' => ResetPasswordService::class
             ],
             [
                 'name' => self::OAUTH_TOKEN,
-                'method' => self::METHOD_GET,
+                'method' => self::METHOD_GET . ', ' . self::METHOD_POST,
                 'service' => OAuthService::class
             ],
             [
-                'name' => self::OAUTH_TOKEN,
-                'method' => self::METHOD_POST,
-                'service' => OAuthService::class
-            ]
+                'name'    => self::AUTHENTICATION_2FA_ROUTE,
+                'method'  => self::METHOD_POST,
+                'service' => TwoFactorVerifyService::class,
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getApiKeyRoutes()
+    {
+        return [
+            [
+                'name'    => self::API_KEYS_ROUTE,
+                'method'  => self::METHOD_GET,
+                'service' => ListApiKeysService::class,
+            ],
+            [
+                'name'          => self::API_KEYS_ROUTE,
+                'method'        => self::METHOD_POST,
+                'service'       => CreateApiKeyService::class,
+                'audit_success' => AuditEvents::API_KEY_CREATE_SUCCESS,
+                'audit_failure' => AuditEvents::API_KEY_CREATE_FAILED,
+            ],
+            [
+                'name'          => self::API_KEYS_SINGLE_ROUTE,
+                'method'        => self::METHOD_PUT,
+                'service'       => UpdateApiKeyService::class,
+                'audit_success' => AuditEvents::API_KEY_UPDATE_SUCCESS,
+                'audit_failure' => AuditEvents::API_KEY_UPDATE_FAILED,
+            ],
+            [
+                'name'          => self::API_KEYS_SINGLE_ROUTE,
+                'method'        => self::METHOD_DELETE,
+                'service'       => DeleteApiKeyService::class,
+                'audit_success' => AuditEvents::API_KEY_DELETE_SUCCESS,
+                'audit_failure' => AuditEvents::API_KEY_DELETE_FAILED,
+            ],
+            [
+                'name'          => self::API_KEYS_REVOKE_ROUTE,
+                'method'        => self::METHOD_POST,
+                'service'       => RevokeApiKeyService::class,
+                'audit_success' => AuditEvents::API_KEY_REVOKE_SUCCESS,
+                'audit_failure' => AuditEvents::API_KEY_REVOKE_FAILED,
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getRevokedTokenRoutes()
+    {
+        return [
+            [
+                'name'    => self::REVOKED_TOKENS_ROUTE,
+                'method'  => self::METHOD_GET,
+                'service' => ListRevokedTokensService::class,
+            ],
+            [
+                'name'          => self::REVOKED_TOKENS_SINGLE_ROUTE,
+                'method'        => self::METHOD_DELETE,
+                'service'       => DeleteRevokedTokenService::class,
+                'audit_success' => AuditEvents::REVOKED_TOKEN_DELETE_SUCCESS,
+                'audit_failure' => AuditEvents::REVOKED_TOKEN_DELETE_FAILED,
+            ],
         ];
     }
 
@@ -124,8 +188,8 @@ class RouteService extends BaseService
         $user = $this->getUserDetails($userValue);
         if ($user === null) {
             throw new Exception(
-                __('WordPress User not found.', 'simple-jwt-login'),
-                ErrorCodes::ERR_GET_USER_ID_FROM_JWT
+                esc_html(__('WordPress User not found.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_GET_USER_ID_FROM_JWT)
             );
         }
 

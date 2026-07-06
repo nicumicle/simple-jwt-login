@@ -22,7 +22,10 @@ class SuccessTest extends TestBase
             "decryption_key" => "test",
             // Register user
             "allow_register" => true,
-            "new_user_profile" => "subscriber",
+            // Administrator role: WooCommerce (active in the test env) redirects
+            // non-admin users away from /wp-admin/ to /my-account/, which would
+            // break the dashboard-redirect assertion below.
+            "new_user_profile" => "administrator",
             "register_ip" => "",
             "register_domain" => "",
             "require_register_auth" => false,

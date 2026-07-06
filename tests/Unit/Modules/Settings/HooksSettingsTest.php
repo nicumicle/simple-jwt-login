@@ -4,7 +4,7 @@ namespace SimpleJwtLoginTests\Unit\Modules\Settings;
 
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\HooksSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 
 class HooksSettingsTest extends TestCase
 {
@@ -16,8 +16,7 @@ class HooksSettingsTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->wordPressData = $this->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+        $this->wordPressData = $this->createStub(WordPressDataInterface::class);
         $this->wordPressData->method('sanitizeTextField')
             ->willReturnCallback(
                 function ($parameter) {
@@ -37,12 +36,8 @@ class HooksSettingsTest extends TestCase
             ->withPost($post);
         $hooksSettings->initSettingsFromPost();
         $hooksSettings->validateSettings();
-        $this->assertSame(true, true);
-        $this->assertSame(
-            false,
-            $hooksSettings->isHookEnable('my_hook')
-        );
-        $this->assertEquals([], $hooksSettings->getEnabledHooks());
-        $this->assertSame(false, $hooksSettings->isHookEnable('tests'));
+        $this->assertFalse($hooksSettings->isHookEnabled('my_hook'));
+        $this->assertSame([], $hooksSettings->getEnabledHooks());
+        $this->assertFalse($hooksSettings->isHookEnabled('tests'));
     }
 }

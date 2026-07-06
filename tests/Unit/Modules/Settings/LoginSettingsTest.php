@@ -1,11 +1,12 @@
 <?php
+
 namespace SimpleJwtLoginTests\Unit\Modules\Settings;
 
 use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 
 class LoginSettingsTest extends TestCase
 {
@@ -17,8 +18,7 @@ class LoginSettingsTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->wordPressData = $this->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+        $this->wordPressData = $this->createStub(WordPressDataInterface::class);
         $this->wordPressData->method('sanitizeTextField')
             ->willReturnCallback(
                 function ($parameter) {
@@ -48,7 +48,7 @@ class LoginSettingsTest extends TestCase
         $loginSettings->initSettingsFromPost();
         $loginSettings->validateSettings();
 
-        $this->assertSame(true, $loginSettings->isAutologinEnabled());
+        $this->assertTrue($loginSettings->isAutologinEnabled());
         $this->assertSame(
             LoginSettings::JWT_LOGIN_BY_EMAIL,
             $loginSettings->getJWTLoginBy()
@@ -63,7 +63,7 @@ class LoginSettingsTest extends TestCase
         );
         $this->assertSame(
             true,
-            $loginSettings->getShouldIncludeRequestParameters()
+            $loginSettings->isRequestParametersIncluded()
         );
 
         $this->assertSame(
@@ -89,25 +89,10 @@ class LoginSettingsTest extends TestCase
         );
     }
 
-    public function testJwtLoginByForOlderVersions()
-    {
-        $settings = [
-            'jwt_email_parameter' => 'email'
-        ];
-        $loginSettings = (new LoginSettings())
-            ->withWordPressData($this->wordPressData)
-            ->withSettings($settings)
-            ->withPost([]);
-        $this->assertSame(
-            'email',
-            $loginSettings->getJwtLoginByParameter()
-        );
-    }
-
     public function testValidationEmptyLoginBy()
     {
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('JWT Parameter key from LoginSettings Config is missing.');
+        $this->expectExceptionMessage('JWT Payload key is missing.');
         $loginSettings = (new LoginSettings())
             ->withWordPressData($this->wordPressData)
             ->withSettings([])
@@ -178,7 +163,7 @@ class LoginSettingsTest extends TestCase
             ],
             'not_set_with_auth_code_key' => [
                 'settings' => [
-                    'auth_code_key' => 'auth_code',
+                    'auth_codes' => ['key' => 'auth_code'],
                 ],
                 'expectedResult' => implode(
                     ', ',
@@ -195,8 +180,8 @@ class LoginSettingsTest extends TestCase
             ],
             'null_as_value' => [
                 'settings' => [
-                    'login_remove_request_parameters' => null,
-                    'auth_code_key' => 'auth_code',
+                    'login'      => ['remove_request_parameters' => null],
+                    'auth_codes' => ['key' => 'auth_code'],
                 ],
                 'expectedResult' => implode(
                     ', ',
@@ -213,15 +198,15 @@ class LoginSettingsTest extends TestCase
             ],
             'set_specific_value' => [
                 'settings' => [
-                    'login_remove_request_parameters' => implode(', ', ['test']),
-                    'auth_code_key' => 'auth_code',
+                    'login'      => ['remove_request_parameters' => implode(', ', ['test'])],
+                    'auth_codes' => ['key' => 'auth_code'],
                 ],
                 'expectedResult' => implode(', ', ['test']),
             ],
             'set_specific_values' => [
                 'settings' => [
-                    'login_remove_request_parameters' => implode(', ', ['test1', 'test2']),
-                    'auth_code_key' => 'auth_code',
+                    'login'      => ['remove_request_parameters' => implode(', ', ['test1', 'test2'])],
+                    'auth_codes' => ['key' => 'auth_code'],
                 ],
                 'expectedResult' => implode(', ', ['test1', 'test2']),
             ],

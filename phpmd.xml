@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<ruleset name="Simple JWT Login"
+         xmlns="http://pmd.sf.net/ruleset/1.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
+         xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
+
+    <description>
+        Full PHPMD ruleset for simple-jwt-login source and tests.
+    </description>
+
+    <!-- Design rules with raised thresholds for fluent-builder patterns -->
+    <rule ref="rulesets/design.xml">
+        <exclude name="CouplingBetweenObjects"/>
+        <exclude name="NumberOfChildren"/>
+    </rule>
+
+    <rule ref="rulesets/design.xml/CouplingBetweenObjects">
+        <properties>
+            <property name="maximum" value="22"/>
+        </properties>
+    </rule>
+
+    <!-- Clean code rules; StaticAccess excluded for genuinely stateless utility calls -->
+    <rule ref="rulesets/cleancode.xml">
+        <exclude name="StaticAccess"/>
+    </rule>
+
+    <!-- Unused code and naming rules -->
+    <rule ref="rulesets/unusedcode.xml"/>
+    <rule ref="rulesets/naming.xml"/>
+
+    <!-- Controversial rules; Superglobals excluded because SessionService legitimately needs
+         session_start() and tests must write to $_REQUEST/$_SERVER for WordPress HTTP simulation. -->
+    <rule ref="rulesets/controversial.xml">
+        <exclude name="Superglobals"/>
+    </rule>
+
+    <!-- Exclude WordPress wpdb adapter - intentionally uses snake_case to mirror the wpdb interface. -->
+    <exclude-pattern>tests/Feature/MysqliWpdb.php</exclude-pattern>
+
+    <!-- Exclude Two Factor plugin test doubles - intentionally mirror the external plugin's
+         snake_case static API. -->
+    <exclude-pattern>tests/Unit/Stubs/TwoFactorStubs.php</exclude-pattern>
+
+</ruleset>

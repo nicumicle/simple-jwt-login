@@ -4,18 +4,18 @@ namespace SimpleJwtLoginTests\Unit;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use SimpleJWTLogin\Plugin\Shortcodes;
 
 class SanitizeCssValueTest extends TestCase
 {
     #[DataProvider('validCssValuesProvider')]
     /**
-     * Test that valid CSS values pass through correctly
      * @param string $input
      * @param string $expected
      */
     public function testValidCssValues($input, $expected)
     {
-        $this->assertSame($expected, simple_jwt_login_sanitize_css_value($input));
+        $this->assertSame($expected, Shortcodes::sanitizeCssValue($input));
     }
 
     /**
@@ -38,13 +38,12 @@ class SanitizeCssValueTest extends TestCase
 
     #[DataProvider('xssAttackVectorsProvider')]
     /**
-     * Test that XSS attack vectors are sanitized
      * @param string $input
      * @param string $expected
      */
     public function testXssAttackVectorsAreSanitized($input, $expected)
     {
-        $result = simple_jwt_login_sanitize_css_value($input);
+        $result = Shortcodes::sanitizeCssValue($input);
         $this->assertSame($expected, $result);
         // Ensure no dangerous characters remain
         $this->assertStringNotContainsString('<', $result);
@@ -101,13 +100,12 @@ class SanitizeCssValueTest extends TestCase
 
     #[DataProvider('htmlTagRemovalProvider')]
     /**
-     * Test that HTML tags are stripped
      * @param string $input
      * @param string $expected
      */
     public function testHtmlTagsAreStripped($input, $expected)
     {
-        $this->assertSame($expected, simple_jwt_login_sanitize_css_value($input));
+        $this->assertSame($expected, Shortcodes::sanitizeCssValue($input));
     }
 
     /**
@@ -130,7 +128,7 @@ class SanitizeCssValueTest extends TestCase
     public function testLengthIsTruncated()
     {
         $longValue = str_repeat('a', 150);
-        $result = simple_jwt_login_sanitize_css_value($longValue);
+        $result = Shortcodes::sanitizeCssValue($longValue);
         $this->assertSame(100, strlen($result));
         $this->assertSame(str_repeat('a', 100), $result);
     }
@@ -140,7 +138,164 @@ class SanitizeCssValueTest extends TestCase
      */
     public function testHandlesEmptyInput()
     {
-        $this->assertSame('', simple_jwt_login_sanitize_css_value(''));
-        $this->assertSame('0', simple_jwt_login_sanitize_css_value('0'));
+        $this->assertSame('', Shortcodes::sanitizeCssValue(''));
+        $this->assertSame('0', Shortcodes::sanitizeCssValue('0'));
+    }
+
+    // --- sanitizeColor ---
+
+    #[DataProvider('validColorsProvider')]
+    /**
+     * @param string $input
+     * @param string $expected
+     */
+    public function testSanitizeColorAcceptsValidValues($input, $expected)
+    {
+        $this->assertSame($expected, Shortcodes::sanitizeColor($input));
+    }
+
+    /**
+     * @return array[]
+     */
+    public static function validColorsProvider()
+    {
+        return [
+            'hex short'          => ['#fff', '#fff'],
+            'hex long'           => ['#1a2b3c', '#1a2b3c'],
+            'hex uppercase'      => ['#FFFFFF', '#FFFFFF'],
+            'named black'        => ['black', 'black'],
+            'named red'          => ['red', 'red'],
+            'named transparent'  => ['transparent', 'transparent'],
+            'named with spaces'  => ['  white  ', 'white'],
+        ];
+    }
+
+    #[DataProvider('invalidColorsProvider')]
+    /**
+     * @param string $input
+     */
+    public function testSanitizeColorRejectsInvalidValues($input)
+    {
+        $this->assertSame('', Shortcodes::sanitizeColor($input));
+    }
+
+    /**
+     * @return array[]
+     */
+    public static function invalidColorsProvider()
+    {
+        return [
+            'rgb function'         => ['rgb(255,0,0)'],
+            'css variable'         => ['var(--primary)'],
+            'expression IE hack'   => ['expression(alert(1))'],
+            'property injection'   => ['red; color: blue'],
+            'newline injection'    => ["red\ncolor:blue"],
+            'comment injection'    => ['red /* comment */'],
+            'unknown named color'  => ['chartreuse'],
+            'empty string'         => [''],
+        ];
+    }
+
+    // --- sanitizeDimension ---
+
+    #[DataProvider('validDimensionsProvider')]
+    /**
+     * @param string $input
+     * @param string $expected
+     */
+    public function testSanitizeDimensionAcceptsValidValues($input, $expected)
+    {
+        $this->assertSame($expected, Shortcodes::sanitizeDimension($input));
+    }
+
+    /**
+     * @return array[]
+     */
+    public static function validDimensionsProvider()
+    {
+        return [
+            'pixels'      => ['30px', '30px'],
+            'em'          => ['1.5em', '1.5em'],
+            'rem'         => ['2rem', '2rem'],
+            'percentage'  => ['100%', '100%'],
+            'vh'          => ['50vh', '50vh'],
+            'vw'          => ['50vw', '50vw'],
+            'with spaces' => ['  20px  ', '20px'],
+        ];
+    }
+
+    #[DataProvider('invalidDimensionsProvider')]
+    /**
+     * @param string $input
+     */
+    public function testSanitizeDimensionRejectsInvalidValues($input)
+    {
+        $this->assertSame('', Shortcodes::sanitizeDimension($input));
+    }
+
+    /**
+     * @return array[]
+     */
+    public static function invalidDimensionsProvider()
+    {
+        return [
+            'no unit'          => ['30'],
+            'unsupported unit' => ['30pt'],
+            'negative value'   => ['-10px'],
+            'calc expression'  => ['calc(100% - 20px)'],
+            'extra content'    => ['30px solid'],
+            'empty string'     => [''],
+        ];
+    }
+
+    // --- sanitizeBorder ---
+
+    #[DataProvider('validBordersProvider')]
+    /**
+     * @param string $input
+     * @param string $expected
+     */
+    public function testSanitizeBorderAcceptsValidValues($input, $expected)
+    {
+        $this->assertSame($expected, Shortcodes::sanitizeBorder($input));
+    }
+
+    /**
+     * @return array[]
+     */
+    public static function validBordersProvider()
+    {
+        return [
+            'px solid hex'    => ['1px solid #ccc', '1px solid #ccc'],
+            'em dashed named' => ['2em dashed red', '2em dashed red'],
+            'keyword width'   => ['thin solid black', 'thin solid black'],
+            'medium dotted'   => ['medium dotted #000000', 'medium dotted #000000'],
+            'with spaces'     => ['  1px solid #fff  ', '1px solid #fff'],
+        ];
+    }
+
+    #[DataProvider('invalidBordersProvider')]
+    /**
+     * @param string $input
+     */
+    public function testSanitizeBorderFallsBackToDefaultForInvalidValues($input)
+    {
+        $this->assertSame('1px solid #ccc', Shortcodes::sanitizeBorder($input));
+    }
+
+    /**
+     * @return array[]
+     */
+    public static function invalidBordersProvider()
+    {
+        return [
+            'color only'             => ['red'],
+            'width only'             => ['1px'],
+            'property injection'     => ['1px solid red; color: blue'],
+            'block injection'        => ['1px solid red} body{'],
+            'expression hack'        => ['1px solid expression(alert(1))'],
+            'missing color'          => ['1px solid'],
+            'empty string'           => [''],
+        ];
     }
 }

@@ -1,11 +1,12 @@
 <?php
+
 namespace SimpleJwtLoginTests\Unit\Modules\Settings;
 
 use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\RegisterSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 
 class RegisterSettingsTest extends TestCase
 {
@@ -17,8 +18,7 @@ class RegisterSettingsTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->wordPressData = $this->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+        $this->wordPressData = $this->createStub(WordPressDataInterface::class);
         $this->wordPressData->method('sanitizeTextField')
             ->willReturnCallback(
                 function ($parameter) {
@@ -54,8 +54,8 @@ class RegisterSettingsTest extends TestCase
             $registerSettings->isRegisterAllowed()
         );
         $this->assertSame(
-            'subscriber',
-            $registerSettings->getNewUSerProfile()
+            ['subscriber'],
+            $registerSettings->getNewUserRoles()
         );
         $this->assertSame(
             '127.0.0.1',
@@ -96,13 +96,53 @@ class RegisterSettingsTest extends TestCase
         $this->wordPressData->method('roleExists')
             ->willReturn(true);
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('New User profile slug can not be empty.');
+        $this->expectExceptionMessage('Default User Roles can not be empty.');
         $registerUser = (new RegisterSettings())
             ->withWordPressData($this->wordPressData)
             ->withSettings([])
             ->withPost([]);
         $registerUser->initSettingsFromPost();
         $registerUser->validateSettings();
+    }
+
+    public function testMultipleRolesStoredAndRetrievedAsArray()
+    {
+        $this->wordPressData->method('roleExists')
+            ->willReturn(true);
+        $registerSettings = (new RegisterSettings())
+            ->withWordPressData($this->wordPressData)
+            ->withSettings([])
+            ->withPost([
+                'allow_register'   => '1',
+                'new_user_profile' => 'subscriber, editor',
+            ]);
+        $registerSettings->initSettingsFromPost();
+        $registerSettings->validateSettings();
+
+        $this->assertSame(
+            ['subscriber', 'editor'],
+            $registerSettings->getNewUserRoles()
+        );
+    }
+
+    public function testRolesAreTrimmed()
+    {
+        $this->wordPressData->method('roleExists')
+            ->willReturn(true);
+        $registerSettings = (new RegisterSettings())
+            ->withWordPressData($this->wordPressData)
+            ->withSettings([])
+            ->withPost([
+                'allow_register'   => '1',
+                'new_user_profile' => '  subscriber  ,  editor  ',
+            ]);
+        $registerSettings->initSettingsFromPost();
+        $registerSettings->validateSettings();
+
+        $this->assertSame(
+            ['subscriber', 'editor'],
+            $registerSettings->getNewUserRoles()
+        );
     }
 
     #[DataProvider('invalidRoleProvider')]
@@ -163,7 +203,7 @@ class RegisterSettingsTest extends TestCase
         return [
             'empty_role' => [
                 'role' => '',
-                'exception' => 'New User profile slug can not be empty.',
+                'exception' => 'Default User Roles can not be empty.',
             ],
             'invalid_role' => [
                 'role' => 'test',

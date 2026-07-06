@@ -3,8 +3,11 @@
 namespace SimpleJWTLogin\Services;
 
 use Exception;
+use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\ErrorCodes;
-use SimpleJWTLogin\Modules\Settings\DeleteUserSettings;
+use SimpleJWTLogin\Modules\AuditEvents;
+use SimpleJWTLogin\Modules\Settings\LoginSettings;
+use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 
 class DeleteUserService extends BaseService implements ServiceInterface
@@ -12,10 +15,23 @@ class DeleteUserService extends BaseService implements ServiceInterface
     /**
      * @return mixed|\WP_REST_Response
      * @throws Exception
+     * @throws \Throwable
      */
     public function makeAction()
     {
-        return $this->deleteUser();
+        try {
+            return $this->deleteUser();
+        } catch (\Throwable $exception) {
+            if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_DELETE_USER_FAILED)) {
+                $this->wordPressData->doAction(
+                    SimpleJWTLoginHooks::AUDIT_AUTH_DELETE_USER_FAILED,
+                    null,
+                    null,
+                    $exception->getMessage()
+                );
+            }
+            throw $exception;
+        }
     }
 
     /**
@@ -24,57 +40,59 @@ class DeleteUserService extends BaseService implements ServiceInterface
      */
     public function deleteUser()
     {
-        if ($this->jwtSettings->getDeleteUserSettings()->isDeleteAllowed() === false) {
-            throw  new Exception(
-                __('Delete is not enabled.', 'simple-jwt-login'),
-                ErrorCodes::ERR_DELETE_IS_NOT_ENABLED
+        if (!$this->jwtSettings->getDeleteUserSettings()->isDeleteAllowed()) {
+            throw new Exception(
+                esc_html(__('Delete is not enabled.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_DELETE_IS_NOT_ENABLED)
             );
         }
 
         $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
         if (empty($this->jwt)) {
-            throw new Exception(
-                __('The `jwt` parameter is missing.', 'simple-jwt-login'),
-                ErrorCodes::ERR_DELETE_MISSING_JWT
+            throw new ValidationException(
+                esc_html(__('The `jwt` parameter is missing.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_DELETE_MISSING_JWT)
             );
         }
 
-        if ($this->jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete()
-            && $this->validateAuthKey() === false
-        ) {
-            throw new Exception(
-                sprintf(
-                    __('Missing AUTH KEY ( %s ).', 'simple-jwt-login'),
-                    $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()
-                ),
-                ErrorCodes::ERR_DELETE_MISSING_AUTH_KEY
-            );
+        if ($this->jwtSettings->getDeleteUserSettings()->isAuthKeyRequiredOnDelete()) {
+            $this->validateAuthKey();
         }
 
         $allowedIpsString = trim($this->jwtSettings->getDeleteUserSettings()->getAllowedDeleteIps());
         if (!empty($allowedIpsString) && !$this->serverHelper->isClientIpInList($allowedIpsString)) {
             throw new Exception(
-                sprintf(
-                    __('You are not allowed to delete users from this IP: %s', 'simple-jwt-login'),
-                    $this->serverHelper->getClientIP()
+                esc_html(
+                    sprintf(
+                        /* translators: %s: client IP address */
+                        __('You are not allowed to delete users from this IP: %s', 'simple-jwt-login'),
+                        $this->serverHelper->getClientIP()
+                    )
                 ),
-                ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP
+                absint(ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP)
             );
         }
 
-        $getUserBy = $this->jwtSettings->getDeleteUserSettings()->getDeleteUserBy();
-        $registerParameter = $this->validateJWTAndGetUserValueFromPayload(
-            $this->jwtSettings->getDeleteUserSettings()->getJwtDeleteByParameter()
-        );
+        $jwtParts = $this->extractJwtData($this->jwt);
+        $ruleConfig = $this->jwtSettings->getJwtRulesSettings()->findMatchingRuleConfig($jwtParts);
+
+        $getUserBy = $this->jwtSettings->getLoginSettings()->getJWTLoginBy();
+        $loginByParameter = $this->jwtSettings->getLoginSettings()->getJwtLoginByParameter();
+        if ($ruleConfig !== null) {
+            $getUserBy = isset($ruleConfig['login_by']) ? (int)$ruleConfig['login_by'] : LoginSettings::JWT_LOGIN_BY_EMAIL;
+            $loginByParameter = isset($ruleConfig['login_by_parameter']) ? $ruleConfig['login_by_parameter'] : '';
+        }
+
+        $registerParameter = $this->validateJWTAndGetUserValueFromPayload($loginByParameter);
 
         switch ($getUserBy) {
-            case DeleteUserSettings::DELETE_USER_BY_EMAIL:
+            case LoginSettings::JWT_LOGIN_BY_EMAIL:
                 $user = $this->wordPressData->getUserDetailsByEmail($registerParameter);
                 break;
-            case DeleteUserSettings::DELETE_USER_BY_ID:
+            case LoginSettings::JWT_LOGIN_BY_WORDPRESS_USER_ID:
                 $user = $this->wordPressData->getUserDetailsById($registerParameter);
                 break;
-            case DeleteUserSettings::DELETE_USER_BY_USER_LOGIN:
+            case LoginSettings::JWT_LOGIN_BY_USER_LOGIN:
                 $user = $this->wordPressData->getUserByUserLogin($registerParameter);
                 break;
             default:
@@ -83,38 +101,61 @@ class DeleteUserService extends BaseService implements ServiceInterface
 
         if ($user === false) {
             throw new Exception(
-                __('User not found.', 'simple-jwt-login'),
-                ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND
+                esc_html(__('User not found.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND)
             );
         }
 
-        $this->validateJwtRevoked(
-            $this->wordPressData->getUserProperty($user, 'ID'),
-            $this->jwt
-        );
+        $userId    = $this->wordPressData->getUserProperty($user, 'ID');
+        $userEmail = (string) $this->wordPressData->getUserProperty($user, 'user_email');
+
+        $this->validateJwtRevoked($userId, $this->jwt);
+
+        $this->tokenRepository->deleteByUserId($userId);
+        $this->revokedTokenRepo->deleteByUserId($userId);
 
         $result = $this->wordPressData->deleteUser($user);
 
         if ($result === false) {
             throw new Exception(
-                __('User not found.', 'simple-jwt-login'),
-                ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND
+                esc_html(__('User not found.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND)
             );
         }
 
-        if ($this->jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME)) {
-            $this->wordPressData->triggerAction(SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME, $user);
+        if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_DELETE_USER_SUCCESS)) {
+            $this->wordPressData->doAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_DELETE_USER_SUCCESS,
+                $userId,
+                $userEmail
+            );
+        }
+
+        if ($this->jwtSettings->getWebhooksSettings()->isEnabled()) {
+            (new WebhooksService($this->jwtSettings, $this->webhookLogRepository))->dispatch(
+                WebhooksSettings::EVENT_DELETE_USER,
+                [
+                    'user_id'    => $userId,
+                    'user_email' => $userEmail,
+                ]
+            );
+        }
+
+        if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME)) {
+            $this->wordPressData->doAction(SimpleJWTLoginHooks::DELETE_USER_ACTION_NAME, $user);
         }
 
         $response = [
-            'message' => __('User was successfully deleted.', 'simple-jwt-login'),
-            'id' => $result
+            'success' => true,
+            'data'    => [
+                'message' => __('User was successfully deleted.', 'simple-jwt-login'),
+            ],
         ];
         if ($this->jwtSettings->getHooksSettings()
-            ->isHookEnable(SimpleJWTLoginHooks::HOOK_RESPONSE_DELETE_USER)
+            ->isHookEnabled(SimpleJWTLoginHooks::HOOK_RESPONSE_DELETE_USER)
         ) {
             $response = $this->wordPressData
-                ->triggerFilter(
+                ->applyFilters(
                     SimpleJWTLoginHooks::HOOK_RESPONSE_DELETE_USER,
                     $response,
                     $user

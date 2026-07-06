@@ -2,7 +2,7 @@
 
 namespace SimpleJWTLogin\Modules\Settings;
 
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 
 abstract class BaseSettings
 {
@@ -10,6 +10,7 @@ abstract class BaseSettings
     const SETTINGS_TYPE_BOL = 1;
     const SETTINGS_TYPE_STRING = 2;
     const SETTINGS_TYPE_ARRAY = 3;
+    const SETTINGS_TYPE_TEXTAREA = 4;
 
     /**
      * @var SettingsErrors $settingsErrors
@@ -25,6 +26,10 @@ abstract class BaseSettings
      */
     protected $settings;
     /**
+     * @var array
+     */
+    protected $fullSettings = [];
+    /**
      * @var array|null
      */
     protected $post;
@@ -34,11 +39,18 @@ abstract class BaseSettings
     protected $wordPressData;
 
     /**
+     * Returns the DB section key for this settings class (e.g. 'login', 'register').
+     *
+     * @return string
+     */
+    abstract protected function getSectionKey();
+
+    /**
      * @return array|null
      */
     public function getSettings()
     {
-        return $this->settings;
+        return [$this->getSectionKey() => $this->settings];
     }
 
     /**
@@ -58,7 +70,9 @@ abstract class BaseSettings
      */
     public function withSettings($settings)
     {
-        $this->settings = $settings;
+        $this->fullSettings = is_array($settings) ? $settings : [];
+        $key = $this->getSectionKey();
+        $this->settings = isset($settings[$key]) ? $settings[$key] : [];
 
         return $this;
     }
@@ -72,6 +86,36 @@ abstract class BaseSettings
         $this->wordPressData = $wordPressData;
 
         return $this;
+    }
+
+    /**
+     * Declarative field map for this settings class.
+     *
+     * Each row is the positional argument list for assignSettingsPropertyFromPost():
+     * array($propertyGroup, $propertyName, $postKeyGroup, $postKey, $type, $defaultValue, $base64Encode).
+     * Subclasses override this to declare their fields instead of hand-writing
+     * initSettingsFromPost(). Defaults to an empty list so nothing breaks.
+     *
+     * @return array<int, array>
+     */
+    protected function getFieldDefinitions()
+    {
+        return [];
+    }
+
+    /**
+     * Populate $this->settings from $this->post using the declarative field map.
+     *
+     * Subclasses with extra, non-declarative logic should override this, call
+     * parent::initSettingsFromPost() first, then run their bespoke handling.
+     *
+     * @return void
+     */
+    public function initSettingsFromPost()
+    {
+        foreach ($this->getFieldDefinitions() as $field) {
+            call_user_func_array([$this, 'assignSettingsPropertyFromPost'], $field);
+        }
     }
 
     /**
@@ -93,7 +137,7 @@ abstract class BaseSettings
         $base64Encode = null
     ) {
         $postKeyExists = $postKeyGroup !== null
-            ? isset($this->post[$postKeyGroup]) && isset($this->post[$postKeyGroup][$postKey])
+            ? isset($this->post[$postKeyGroup][$postKey])
             : isset($this->post[$postKey]);
 
         if (!$postKeyExists) {
@@ -101,12 +145,14 @@ abstract class BaseSettings
                 $defaultValue = $base64Encode
                     ? base64_encode($defaultValue)
                     : $defaultValue;
-
                 $this->assignProperty($defaultValue, $propertyName, $propertyGroup);
-            } elseif ($type === self::SETTINGS_TYPE_ARRAY) {
-                $defaultValue = [];
-                $this->assignProperty($defaultValue, $propertyName, $propertyGroup);
-            } elseif ($type == self::SETTINGS_TYPE_BOL) {
+                return;
+            }
+            if ($type === self::SETTINGS_TYPE_ARRAY) {
+                $this->assignProperty([], $propertyName, $propertyGroup);
+                return;
+            }
+            if ($type === self::SETTINGS_TYPE_BOL) {
                 $this->assignProperty(false, $propertyName, $propertyGroup);
             }
             return;
@@ -117,7 +163,7 @@ abstract class BaseSettings
             : $this->post[$postKey];
         switch ($type) {
             case self::SETTINGS_TYPE_INT:
-                $value = intval($postValue);
+                $value = (int) $postValue;
                 break;
             case self::SETTINGS_TYPE_BOL:
                 $value = (bool)$postValue;
@@ -156,18 +202,25 @@ abstract class BaseSettings
      */
     private function sanitizeArray($array)
     {
+        $result = [];
         foreach ($array as $key => $value) {
-            $key = $this->wordPressData->sanitizeTextField($key);
+            $sanitizedKey = $this->wordPressData->sanitizeTextField($key);
 
             if (is_array($value)) {
-                $array[$key] = $this->sanitizeArray($value);
-            } elseif (is_string($value) || is_int($value) || is_numeric($value)) {
-                $array[$key] = $this->wordPressData->sanitizeTextField($value);
-            } elseif (is_null($value)) {
-                $array[$key] = null;
+                $result[$sanitizedKey] = $this->sanitizeArray($value);
+                continue;
             }
+            if (is_string($value) || is_int($value) || is_numeric($value)) {
+                $result[$sanitizedKey] = $this->wordPressData->sanitizeTextField($value);
+                continue;
+            }
+            if (is_null($value)) {
+                $result[$sanitizedKey] = null;
+                continue;
+            }
+            $result[$sanitizedKey] = $value;
         }
 
-        return $array;
+        return $result;
     }
 }

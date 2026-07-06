@@ -1,0 +1,704 @@
+<?php
+
+namespace SimpleJWTLogin\Repositories\Wordpress;
+
+use Exception;
+use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Modules\UserProperties;
+use WP_REST_Response;
+use WP_User;
+
+class WordPressRepository implements Repository
+{
+    const NONCE_NAME = 'simple-jwt-login-nonce';
+
+    /** @var WordPressRepository|null */
+    private static $singletonInstance = null;
+
+    /** @var array<int,WP_User> */
+    protected static $userInstances = array();
+
+    /** @var array */
+    protected static $optionsInstances = array();
+
+    protected function __construct()
+    {
+    }
+
+    /**
+     * @return WordPressRepository
+     */
+    public static function getInstance()
+    {
+        if (self::$singletonInstance === null) {
+            self::$singletonInstance = new self();
+        }
+        return self::$singletonInstance;
+    }
+
+    /**
+     * @param WP_User $user
+     */
+    protected static function storeUserInCache($user)
+    {
+        if (!($user instanceof WP_User)) {
+            return;
+        }
+        $userId    = (int) $user->get('ID');
+        $userEmail = (string) $user->get('user_email');
+        $userLogin = (string) $user->get('user_login');
+        self::$userInstances['id_'    . $userId]    = $user;
+        self::$userInstances['email_' . $userEmail] = $user;
+        self::$userInstances['login_' . $userLogin] = $user;
+    }
+
+    /**
+     * @param int $userID
+     *
+     * @return bool|WP_User
+     */
+    public function getUserDetailsById($userID)
+    {
+        $cacheKey = 'id_' . (int) $userID;
+        if (isset(self::$userInstances[$cacheKey])) {
+            return self::$userInstances[$cacheKey];
+        }
+        $user = get_userdata((int) $userID);
+        self::storeUserInCache($user);
+        return $user;
+    }
+
+    /**
+     * @param string $emailAddress
+     *
+     * @return bool|WP_User
+     */
+    public function getUserDetailsByEmail($emailAddress)
+    {
+        $cacheKey = 'email_' . $emailAddress;
+        if (isset(self::$userInstances[$cacheKey])) {
+            return self::$userInstances[$cacheKey];
+        }
+        $user = get_user_by('email', $emailAddress);
+        self::storeUserInCache($user);
+        return $user;
+    }
+
+    /**
+     * @param string $username
+     *
+     * @return bool|WP_User
+     */
+    public function getUserByUserLogin($username)
+    {
+        $cacheKey = 'login_' . $username;
+        if (isset(self::$userInstances[$cacheKey])) {
+            return self::$userInstances[$cacheKey];
+        }
+        $user = get_user_by('login', $username);
+        self::storeUserInCache($user);
+        return $user;
+    }
+
+    /**
+     * @param WP_User $user
+     */
+    public function loginUser($user, $token = null)
+    {
+        wp_set_current_user($user->get('ID'));
+        wp_set_auth_cookie($user->get('ID'), false, is_ssl(), $token);
+
+        do_action('wp_login', $user->user_login, $user);
+    }
+
+    /**
+     * @param WP_User $user
+     */
+    public function setCurrentUser($user)
+    {
+        if ($this->getCurrentUserId() === (int) $user->get('ID')) {
+            return;
+        }
+        wp_set_current_user($user->get('ID'));
+    }
+
+    /**
+     * @SuppressWarnings(ExitExpression)
+     * @param string $url
+     */
+    public function redirect($url)
+    {
+        wp_redirect($url);
+        exit;
+    }
+
+    /**
+     * @SuppressWarnings(ExitExpression)
+     * @param string $url
+     */
+    public function redirectSafe($url)
+    {
+        wp_safe_redirect($url);
+        exit;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAdminUrl()
+    {
+        return admin_url();
+    }
+
+    /**
+     * @return string
+     */
+    public function getSiteUrl()
+    {
+        return site_url();
+    }
+
+    /**
+     * @param ?array $params
+     * @return string|null
+     */
+    public function getLoginURL($params)
+    {
+        $url = wp_login_url();
+        if (empty($url)) {
+            return null;
+        }
+        if (!empty($params) && is_array($params)) {
+            $separator = strpos($url, '?') === false ? '?' : '&';
+            foreach ($params as $key => $value) {
+                $url .= sprintf('%s%s=%s', $separator, urlencode($key), urlencode($value));
+                $separator = '&';
+            }
+        }
+
+        return $url;
+    }
+
+    /**
+     * @param string $username
+     * @param string $email
+     *
+     * @return bool
+     */
+    public function checkUserExistsByUsernameAndEmail($username, $email)
+    {
+        return username_exists($username) || email_exists($email);
+    }
+
+    /**
+     * @param string $username
+     * @param string $email
+     * @param string $password
+     * @param array  $roles
+     * @param array  $extraParameters
+     *
+     * @return WP_User
+     * @throws Exception
+     */
+    public function createUser($username, $email, $password, $roles, $extraParameters = [])
+    {
+        $userParameters = [
+            'user_pass'  => $password,
+            'user_login' => $username,
+            'user_email' => $email,
+        ];
+
+        $userParameters = (new UserProperties())->build($userParameters, $extraParameters);
+
+        $result = wp_insert_user($userParameters);
+        if ($result instanceof \WP_Error) {
+            throw new Exception(
+                esc_html($result->get_error_message(
+                    $result->get_error_code()
+                )),
+                absint(ErrorCodes::ERR_CREATE_USER_ERROR)
+            );
+        }
+
+        $user = new WP_User($result);
+        $primaryRole = array_shift($roles);
+        $user->set_role($primaryRole);
+        foreach ($roles as $additionalRole) {
+            $user->add_role($additionalRole);
+        }
+
+        return $user;
+    }
+
+    /**
+     * @param string $option
+     *
+     * @return mixed
+     */
+    public function getOptionFromDatabase($option)
+    {
+        if (array_key_exists($option, self::$optionsInstances)) {
+            return self::$optionsInstances[$option];
+        }
+        $value = get_option($option);
+        self::$optionsInstances[$option] = $value;
+        return $value;
+    }
+
+    /**
+     * @param string $email
+     *
+     * @return bool
+     */
+    //phpcs:ignore PSR1.Methods.CamelCapsMethodName
+    public function isEmail($email)
+    {
+        return (bool) is_email($email);
+    }
+
+    /**
+     * @param string $optionName
+     * @param string $value
+     */
+    //phpcs:ignore PSR1.Methods.CamelCapsMethodName
+    public function addOption($optionName, $value)
+    {
+        add_option($optionName, $value);
+        self::$optionsInstances[$optionName] = $value;
+    }
+
+    /**
+     * @param string $optionName
+     * @param string $value
+     */
+    //phpcs:ignore PSR1.Methods.CamelCapsMethodName
+    public function updateOption($optionName, $value)
+    {
+        update_option($optionName, $value);
+        unset(self::$optionsInstances[$optionName]);
+    }
+
+    /**
+     * @param array $responseJson
+     *
+     * @return WP_REST_Response
+     */
+    public function createResponse($responseJson)
+    {
+        $response = new WP_REST_Response($responseJson);
+        $response->set_status(200);
+
+        return $response;
+    }
+
+    /**
+     * @param string $text
+     *
+     * @return string
+     */
+    //phpcs:ignore PSR1.Methods.CamelCapsMethodName
+    public function sanitizeTextField($text)
+    {
+        return sanitize_text_field($text);
+    }
+
+    /**
+     * @param array $array
+     * @return array
+     */
+    public function sanitizeArray($array)
+    {
+        if (!is_array($array)) {
+            return $array;
+        }
+
+        $sanitized = [];
+        foreach ($array as $key => $value) {
+            $sanitizedKey = $this->sanitizeTextField((string) $key);
+            if (is_string($value)) {
+                $sanitized[$sanitizedKey] = $this->sanitizeTextField($value);
+                continue;
+            }
+            if (is_numeric($value)) {
+                $sanitized[$sanitizedKey] = $value;
+                continue;
+            }
+            if (is_array($value)) {
+                $sanitized[$sanitizedKey] = $this->sanitizeArray($value);
+            }
+        }
+
+        return $sanitized;
+    }
+
+    /**
+     * @param WP_User $user
+     *
+     * @return bool|int
+     */
+    public function deleteUser($user)
+    {
+        $userId = $user->get('ID');
+        $return = wp_delete_user($userId);
+
+        return $return === false
+            ? $return
+            : $userId;
+    }
+
+    /**
+     * Call do_action function from WordPress with arguments
+     */
+    public function doAction()
+    {
+        call_user_func_array('do_action', func_get_args());
+    }
+
+    /**
+     * Call do_action function from WordPress with arguments
+     */
+    public function applyFilters()
+    {
+        return call_user_func_array('apply_filters', func_get_args());
+    }
+
+    /**
+     * @param string   $hookName
+     * @param callable $callback
+     * @param int      $priority
+     * @param int      $acceptedArgs
+     *
+     * @return void
+     */
+    public function addAction($hookName, $callback, $priority = 10, $acceptedArgs = 1)
+    {
+        add_action($hookName, $callback, $priority, $acceptedArgs);
+    }
+
+    /**
+     * @return bool
+     */
+    public function canFinishRequest()
+    {
+        return function_exists('fastcgi_finish_request');
+    }
+
+    /**
+     * @return void
+     */
+    public function finishRequest()
+    {
+        if (function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request();
+        }
+    }
+
+    /**
+     * @param int $userID
+     *
+     * @return WP_User
+     */
+    public function buildUserFromId($userID)
+    {
+        return new WP_User($userID);
+    }
+
+    /**
+     * @param WP_User $user
+     *
+     * @return mixed
+     */
+    public function getUserIdFromUser($user)
+    {
+        return $user->get('ID');
+    }
+
+    /**
+     * @param WP_User $user
+     *
+     * @return mixed
+     */
+    public function wordpressUserToArray($user)
+    {
+        return $user->to_array();
+    }
+
+    /**
+     * @param int $userId
+     * @param string $metaKey
+     * @return mixed
+     */
+    public function getUserMeta($userId, $metaKey)
+    {
+        return get_user_meta($userId, $metaKey, false);
+    }
+
+    /**
+     * @param int $userId
+     * @param string $metaKey
+     * @param string $value
+     * @return false|int
+     */
+    public function addUserMeta($userId, $metaKey, $value)
+    {
+        return add_user_meta($userId, $metaKey, $value, false);
+    }
+
+    /**
+     * @param int $userId
+     * @param string $metaKey
+     * @param string $value
+     * @return bool|int
+     */
+    public function updateUserMeta($userId, $metaKey, $value)
+    {
+        return update_user_meta($userId, $metaKey, $value);
+    }
+
+    /**
+     * @param int $userId
+     * @param string $metaKey
+     * @param string $metaValue
+     * @return bool
+     */
+    public function deleteUserMeta($userId, $metaKey, $metaValue)
+    {
+        return delete_user_meta($userId, $metaKey, $metaValue);
+    }
+
+    /**
+     * @param string $metaKey
+     * @return int[]
+     */
+    public function getUserIdsWithMeta($metaKey)
+    {
+        return get_users(['meta_key' => $metaKey, 'fields' => 'ID']);
+    }
+
+    /**
+     * @param string|null $password
+     * @param string|null $passwordHash
+     * @param string $dbPassword
+     *
+     * @return bool
+     */
+    public function checkPassword($password, $passwordHash, $dbPassword)
+    {
+        if ($password !== null) {
+            return wp_check_password($password, $dbPassword);
+        }
+        if ($passwordHash !== null) {
+            return hash_equals($dbPassword, $passwordHash);
+        }
+
+        return false;
+    }
+
+    /**
+     * @param WP_User $user
+     *
+     * @return string
+     */
+    public function getUserPassword($user)
+    {
+        return $user->get('user_pass');
+    }
+
+    /**
+     * @param WP_User $user
+     * @param string $propertyName
+     *
+     * @return mixed
+     */
+    public function getUserProperty($user, $propertyName)
+    {
+        return $user->get($propertyName);
+    }
+
+    public function isInstanceOfuser($user)
+    {
+        return $user instanceof WP_User;
+    }
+
+    /**
+     * @param string $code
+     * @param string $email
+     *
+     * @return bool|WP_User
+     */
+    public function checkPasswordResetKeyByEmail($code, $email)
+    {
+        $user = $this->getUserDetailsByEmail($email);
+        if (!($user instanceof WP_User)) {
+            return false;
+        }
+
+        return $this->checkPasswordResetKeyByUserLogin($code, $user->user_login);
+    }
+
+    /**
+     * @param string $code
+     * @param string $userLogin
+     * @return false|WP_User
+     */
+    public function checkPasswordResetKeyByUserLogin($code, $userLogin)
+    {
+        $result = check_password_reset_key($code, $userLogin);
+        if ($result instanceof WP_User) {
+            return $result;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param WP_User $user
+     * @param string $newPassword
+     */
+    public function resetPassword($user, $newPassword)
+    {
+        reset_password($user, $newPassword);
+    }
+
+    /**
+     * @param WP_User $user
+     *
+     * @return string|bool
+     */
+    public function generateAndGetPasswordResetKey($user)
+    {
+        $result = get_password_reset_key($user);
+        if ($result instanceof \WP_Error) {
+            return false;
+        }
+
+        return $result;
+    }
+
+    public function sendDefaultWordPressResetPassword($username)
+    {
+        retrieve_password($username);
+    }
+
+    /**
+     * @param int $userId
+     * @param string $password
+     */
+    public function sendNewUserNotification($userId, $password)
+    {
+        wp_new_user_notification($userId, null, 'both', $password);
+    }
+
+    /**
+     * @param \WP_User $user
+     */
+    public function sendPasswordChangedNotification($user)
+    {
+        wp_password_change_notification($user);
+    }
+
+    /**
+     * @param string $sendTo
+     * @param string $emailSubject
+     * @param string $emailBody
+     * @param bool $sendAsHtml
+     */
+    public function sendEmail($sendTo, $emailSubject, $emailBody, $sendAsHtml)
+    {
+        $headers = $sendAsHtml
+            ? 'Content-type: text/html'
+            : [];
+        wp_mail($sendTo, $emailSubject, $emailBody, $headers);
+    }
+
+    /**
+     * @param string $name
+     */
+    public function insertNonce($name)
+    {
+        wp_nonce_field($name);
+    }
+
+    /**
+     * @param string|null $nonceValue
+     * @param string $nonceName
+     *
+     * @return false|int
+     */
+    public function checkNonce($nonceValue, $nonceName)
+    {
+        return wp_verify_nonce($nonceValue, $nonceName);
+    }
+
+    /**
+     * @param int $length
+     * @return string
+     */
+    public function generatePassword($length)
+    {
+        return wp_generate_password($length);
+    }
+
+    /**
+     * @param string $role
+     * @return bool
+     */
+    public function roleExists($role)
+    {
+        return wp_roles()->is_role($role);
+    }
+
+    /**
+     * @param WP_User $user
+     * @return array
+     */
+    public function getUserRoles($user)
+    {
+        if (isset($user->roles)) {
+            return $user->roles;
+        }
+
+        return [];
+    }
+
+    /**
+     * Check if User is already logged in
+     * @return bool
+     */
+    public function isUserLoggedIn()
+    {
+        return is_user_logged_in();
+    }
+
+    public function wpUnslash($value)
+    {
+        return wp_unslash($value);
+    }
+
+    public function wpSlash($value)
+    {
+        return wp_slash($value);
+    }
+
+    /**
+     * @param string $capability
+     * @return bool
+     */
+    public function currentUserCan($capability)
+    {
+        return current_user_can($capability);
+    }
+
+    /**
+     * @return int
+     */
+    public function getCurrentUserId()
+    {
+        return get_current_user_id();
+    }
+
+    public function parseUrl($url, $component = -1)
+    {
+        return wp_parse_url($url, $component);
+    }
+}

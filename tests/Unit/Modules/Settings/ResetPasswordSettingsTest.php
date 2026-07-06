@@ -5,7 +5,7 @@ namespace SimpleJwtLoginTests\Unit\Modules\Settings;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\ResetPasswordSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 
 class ResetPasswordSettingsTest extends TestCase
 {
@@ -17,8 +17,7 @@ class ResetPasswordSettingsTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->wordPressData = $this->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+        $this->wordPressData = $this->createStub(WordPressDataInterface::class);
         $this->wordPressData->method('sanitizeTextField')
             ->willReturnCallback(
                 function ($parameter) {

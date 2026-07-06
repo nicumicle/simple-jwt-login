@@ -4,19 +4,29 @@ namespace SimpleJWTLogin\Modules;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Modules\Settings\ApiKeysSettings;
+use SimpleJWTLogin\Modules\Settings\IntegrationsSettings;
+use SimpleJWTLogin\Modules\Settings\AuditLogSettings;
 use SimpleJWTLogin\Modules\Settings\AuthCodesSettings;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Modules\Settings\CorsSettings;
 use SimpleJWTLogin\Modules\Settings\DeleteUserSettings;
 use SimpleJWTLogin\Modules\Settings\GeneralSettings;
 use SimpleJWTLogin\Modules\Settings\HooksSettings;
+use SimpleJWTLogin\Modules\Settings\JwtRulesSettings;
+use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
 use SimpleJWTLogin\Modules\Settings\RegisterSettings;
 use SimpleJWTLogin\Modules\Settings\ResetPasswordSettings;
+use SimpleJWTLogin\Modules\Settings\ThemeSettings;
+use SimpleJWTLogin\Modules\Settings\Migrations\SettingsMigrationService;
+use SimpleJWTLogin\Modules\Settings\SettingsDiff;
 use SimpleJWTLogin\Modules\Settings\SettingsFactory;
 use SimpleJWTLogin\Modules\Settings\SettingsInterface;
-use SimpleJWTLogin\Modules\Settings\ApplicationsSettings;
+use SimpleJWTLogin\Repositories\Wordpress\Repository;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
+use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -25,6 +35,7 @@ class SimpleJWTLoginSettings
 {
     const REVOKE_TOKEN_KEY = 'simple_jwt_login_revoked_token';
     const OPTIONS_KEY = 'simple_jwt_login_settings';
+    const SCHEMA_VERSION = 2;
 
     /**
      * @var null|array
@@ -37,7 +48,7 @@ class SimpleJWTLoginSettings
     private $post;
 
     /**
-     * @var WordPressDataInterface
+     * @var Repository
      */
     private $wordPressData;
 
@@ -54,20 +65,28 @@ class SimpleJWTLoginSettings
     /**
      * @var array
      */
+    private $lastSettingsDiff = [];
+
+    /**
+     * @var array
+     */
     private static $settingsInstances = [];
 
     /**
      * SimpleJWTLoginSettings constructor.
      *
-     * @param WordPressDataInterface $wordPressData
+     * @param Repository $wordPressData
      */
-    public function __construct(WordPressDataInterface $wordPressData)
+    public function __construct($wordPressData)
     {
         $this->wordPressData = $wordPressData;
         $data = $this->wordPressData->getOptionFromDatabase(self::OPTIONS_KEY);
         $this->settings = [];
         if ($data !== null) {
-            $this->settings = json_decode($data, true);
+            $raw = json_decode($data, true);
+            $this->settings = SettingsMigrationService::migrate(
+                is_array($raw) ? $raw : []
+            );
         }
 
         $this->needUpdateOnOptions = $data !== false;
@@ -76,7 +95,7 @@ class SimpleJWTLoginSettings
     }
 
     /**
-     * @return WordPressDataInterface
+     * @return Repository
      */
     public function getWordPressData()
     {
@@ -176,11 +195,51 @@ class SimpleJWTLoginSettings
     }
 
     /**
-     * @return ApplicationsSettings
+     * @return IntegrationsSettings
      */
-    public function getApplicationsSettings()
+    public function getIntegrationsSettings()
     {
-        return $this->getSettingsClassByType(SettingsFactory::APPLICATIONS_SETTINGS);
+        return $this->getSettingsClassByType(SettingsFactory::INTEGRATIONS_SETTINGS);
+    }
+
+    /**
+     * @return JwtRulesSettings
+     */
+    public function getJwtRulesSettings()
+    {
+        return $this->getSettingsClassByType(SettingsFactory::JWT_RULES_SETTINGS);
+    }
+
+    /**
+     * @return WebhooksSettings
+     */
+    public function getWebhooksSettings()
+    {
+        return $this->getSettingsClassByType(SettingsFactory::WEBHOOKS_SETTINGS);
+    }
+
+    /**
+     * @return AuditLogSettings
+     */
+    public function getAuditLogSettings()
+    {
+        return $this->getSettingsClassByType(SettingsFactory::AUDIT_LOG_SETTINGS);
+    }
+
+    /**
+     * @return ApiKeysSettings
+     */
+    public function getApiKeysSettings()
+    {
+        return $this->getSettingsClassByType(SettingsFactory::API_KEYS_SETTINGS);
+    }
+
+    /**
+     * @return ThemeSettings
+     */
+    public function getThemeSettings()
+    {
+        return $this->getSettingsClassByType(SettingsFactory::THEME_SETTINGS);
     }
 
     /**
@@ -197,19 +256,24 @@ class SimpleJWTLoginSettings
             return false;
         }
         $result = $this->wordPressData
-            ->checkNonce($post['_wpnonce'], WordPressData::NONCE_NAME);
+            ->checkNonce($post['_wpnonce'], WordPressRepository::NONCE_NAME);
         if ($result === false) {
             throw new Exception(
-                'Something is wrong. We can not save the settings.',
-                ErrorCodes::ERR_INVALID_NONCE
+                esc_html__('Something is wrong. We can not save the settings.', 'simple-jwt-login'),
+                absint(ErrorCodes::ERR_INVALID_NONCE)
             );
         }
-        $this->post = $post;
+
+        $oldSettings = $this->settings !== null ? $this->settings : [];
+
+        // WordPress applies wp_magic_quotes() to $_POST at boot; strip those slashes
+        // before processing so values are stored clean and don't grow on each save.
+        $this->post = $this->wordPressData->wpUnslash($post);
         $this->settingsParsers = (new SettingsFactory())->getAll();
 
         foreach ($this->settingsParsers as $oneParser) {
             $oneParser
-                ->withPost($post)
+                ->withPost($this->post)
                 ->withSettings($this->settings)
                 ->withWordPressData($this->wordPressData)
                 ->initSettingsFromPost();
@@ -219,10 +283,35 @@ class SimpleJWTLoginSettings
             $this->settings = array_replace($this->settings, $oneParser->getSettings());
             self::$settingsInstances = [];
         }
+        $this->settings['_schema_version'] = self::SCHEMA_VERSION;
         self::$settingsInstances = [];
         $this->saveSettingsInDatabase();
 
+        $this->lastSettingsDiff = $this->buildSettingsDiff($oldSettings, $this->settings);
+
         return true;
+    }
+
+    /**
+     * Returns the diff computed during the last successful watchForUpdates call.
+     *
+     * @return array
+     */
+    public function getLastSettingsDiff()
+    {
+        return $this->lastSettingsDiff;
+    }
+
+    /**
+     * Compute a flat diff between two settings arrays.
+     *
+     * @param array $old
+     * @param array $new
+     * @return array
+     */
+    public function buildSettingsDiff($old, $new)
+    {
+        return (new SettingsDiff())->build($old, $new);
     }
 
     /**
@@ -246,7 +335,6 @@ class SimpleJWTLoginSettings
     }
 
     /**
-     * @SuppressWarnings(StaticAccess)
      * @param string $route
      * @param array $params
      *
@@ -254,10 +342,14 @@ class SimpleJWTLoginSettings
      */
     public function generateExampleLink($route, $params)
     {
+        $namespace = $this->getGeneralSettings()->getRouteNamespace();
+        $permalinkStructure = $this->wordPressData->getOptionFromDatabase('permalink_structure');
+
         $url = $this->wordPressData->getSiteUrl()
-            . '/?rest_route=/'
-            . $this->getGeneralSettings()->getRouteNamespace()
+            . ( !empty($permalinkStructure) ? '/wp-json/' : '/?rest_route=/')
+            . $namespace
             . $route;
+        $separator = !empty($permalinkStructure) ? '?' : '&';
 
         if (empty($params) || !is_array($params)) {
             return $url;
@@ -265,10 +357,12 @@ class SimpleJWTLoginSettings
 
         foreach ($params as $key => $value) {
             $url .= sprintf(
-                '&amp;%s=%s',
+                '%s%s=%s',
+                $separator,
                 $key,
                 $value
             );
+            $separator = '&';
         }
 
         return $url;

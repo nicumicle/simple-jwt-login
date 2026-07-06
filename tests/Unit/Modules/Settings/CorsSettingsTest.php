@@ -1,10 +1,11 @@
 <?php
+
 namespace SimpleJwtLoginTests\Unit\Modules\Settings;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\CorsSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 
 class CorsSettingsTest extends TestCase
 {
@@ -16,8 +17,7 @@ class CorsSettingsTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->wordPressData = $this->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+        $this->wordPressData = $this->createStub(WordPressDataInterface::class);
         $this->wordPressData->method('sanitizeTextField')
             ->willReturnCallback(
                 function ($parameter) {
@@ -74,6 +74,14 @@ class CorsSettingsTest extends TestCase
             'POST',
             $corsSettings->getAllowMethods()
         );
+    }
+
+    public function testGetAllowOriginDefaultsToEmptyString()
+    {
+        $corsSettings = (new CorsSettings())
+            ->withWordPressData($this->wordPressData)
+            ->withSettings([]);
+        $this->assertSame('', $corsSettings->getAllowOrigin());
     }
 
     public function testValidation()

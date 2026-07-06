@@ -9,7 +9,9 @@ use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepository;
+use SimpleJWTLogin\Repositories\RevokedToken\Repository as RevokedTokenRepository;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\RevokeTokenService;
 use WP_User;
 
@@ -20,12 +22,25 @@ class RevokeTokenServiceTest extends TestCase
      */
     private $wordPressDataMock;
 
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|RefreshTokenRepository
+     */
+    private $tokenRepositoryMock;
+
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|RevokedTokenRepository
+     */
+    private $revokedTokenRepoMock;
+
     public function setUp(): void
     {
         parent::setUp();
         $this->wordPressDataMock = $this
-            ->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+            ->createStub(WordPressDataInterface::class);
+        $this->tokenRepositoryMock = $this
+            ->createStub(RefreshTokenRepository::class);
+        $this->revokedTokenRepoMock = $this
+            ->createStub(RevokedTokenRepository::class);
     }
 
     #[DataProvider('validationProvider')]
@@ -49,7 +64,7 @@ class RevokeTokenServiceTest extends TestCase
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
                 'REQUEST_METHOD' => 'POST',
-                'HTTP_CLIENT_IP' => '127.0.0.1',
+                'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
         $revokeService->makeAction();
@@ -62,6 +77,7 @@ class RevokeTokenServiceTest extends TestCase
 
         $settings = [
             'allow_authentication' => true,
+            'allow_revoke_token' => true,
             'auth_requires_auth_code' => false,
             'decryption_key' => 'test',
             'jwt_login_by' => LoginSettings::JWT_LOGIN_BY_WORDPRESS_USER_ID,
@@ -84,7 +100,7 @@ class RevokeTokenServiceTest extends TestCase
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
                 'REQUEST_METHOD' => 'POST',
-                'HTTP_CLIENT_IP' => '127.0.0.1',
+                'REMOTE_ADDR' => '127.0.0.1',
             ]))
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
         $revokeService->makeAction();
@@ -94,6 +110,7 @@ class RevokeTokenServiceTest extends TestCase
     {
         $settings = [
             'allow_authentication' => true,
+            'allow_revoke_token' => true,
             'auth_requires_auth_code' => false,
             'decryption_key' => 'test',
             'jwt_login_by' => LoginSettings::JWT_LOGIN_BY_WORDPRESS_USER_ID,
@@ -103,9 +120,7 @@ class RevokeTokenServiceTest extends TestCase
             ],
         ];
 
-        $user = $this->getMockBuilder(WP_User::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $user = $this->createStub(WP_User::class);
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
         $this->wordPressDataMock->method('getUserDetailsById')
@@ -114,17 +129,14 @@ class RevokeTokenServiceTest extends TestCase
             ->willReturn(true);
         $this->wordPressDataMock->method('getUserProperty')
             ->willReturn(1);
-        $this->wordPressDataMock->method('triggerFilter')
+        $this->wordPressDataMock->method('applyFilters')
             ->willReturn(true);
 
-        $this->wordPressDataMock->method('getUserMeta')
-            ->with(1, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY)
-            ->willReturn([
-                Jwt::encode(['exp' => 1000], 'test', 'HS256')
-            ]);
-
-        $this->wordPressDataMock->method('addUserMeta')
+        $this->revokedTokenRepoMock->method('existsForUser')
+            ->willReturn(false);
+        $this->revokedTokenRepoMock->method('insert')
             ->willReturn(true);
+
         $this->wordPressDataMock->method('createResponse')
             ->willReturn(true);
 
@@ -138,9 +150,11 @@ class RevokeTokenServiceTest extends TestCase
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
                 'REQUEST_METHOD' => 'POST',
-                'HTTP_CLIENT_IP' => '127.0.0.1',
+                'REMOTE_ADDR' => '127.0.0.1',
             ]))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->tokenRepositoryMock)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $result = $revokeService->makeAction();
         $this->assertTrue($result);
     }
@@ -155,18 +169,20 @@ class RevokeTokenServiceTest extends TestCase
             'test_not_allowed_ip' => [
                 'settings' => [
                     'allow_authentication' => true,
+                    'allow_revoke_token' => true,
                     'auth_ip' => '127.1.1.1',
                 ],
                 'exceptionMessage' => 'You are not allowed to Authenticate from this IP',
             ],
             'test_invalid_auth_key' => [
                 'settings' => [
-                    'allow_authentication' => true,
-                    'auth_requires_auth_code' => true,
-                    'auth_codes' => [
+                    'allow_authentication'       => true,
+                    'allow_revoke_token'         => true,
+                    'revoke_requires_auth_code'  => true,
+                    'auth_codes'                 => [
                         [
-                            'code' => 'some-key',
-                            'role' => '',
+                            'code'            => 'some-key',
+                            'role'            => '',
                             'expiration_date' => '',
                         ],
                     ],
@@ -176,6 +192,7 @@ class RevokeTokenServiceTest extends TestCase
             'test_missing_jwt' => [
                 'settings' => [
                     'allow_authentication' => true,
+                    'allow_revoke_token' => true,
                     'auth_requires_auth_code' => false,
                 ],
                 'exceptionMessage' => 'The `jwt` parameter is missing.',
@@ -188,6 +205,7 @@ class RevokeTokenServiceTest extends TestCase
     {
         $settings = [
             'allow_authentication' => true,
+            'allow_revoke_token' => true,
             'auth_requires_auth_code' => false,
             'decryption_key' => 'test',
             'jwt_login_by' => LoginSettings::JWT_LOGIN_BY_WORDPRESS_USER_ID,
@@ -197,9 +215,7 @@ class RevokeTokenServiceTest extends TestCase
             ],
         ];
 
-        $user = $this->getMockBuilder(WP_User::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $user = $this->createStub(WP_User::class);
         $this->wordPressDataMock->method('getOptionFromDatabase')
             ->willReturn(json_encode($settings));
         $this->wordPressDataMock->method('getUserDetailsById')
@@ -208,19 +224,14 @@ class RevokeTokenServiceTest extends TestCase
             ->willReturn(true);
         $this->wordPressDataMock->method('getUserProperty')
             ->willReturn(1);
-        $this->wordPressDataMock->method('triggerFilter')
+        $this->wordPressDataMock->method('applyFilters')
             ->willReturn(true);
 
         $revokedJwt = JWT::encode(['id' => 1], 'test', 'HS256');
-        $this->wordPressDataMock->method('getUserMeta')
-            ->with(1, SimpleJWTLoginSettings::REVOKE_TOKEN_KEY)
-            ->willReturn([
-               $revokedJwt,
-            ]);
-
-        $this->wordPressDataMock->method('addUserMeta')
-            ->willReturn(true);
         $this->wordPressDataMock->method('createResponse')
+            ->willReturn(true);
+
+        $this->revokedTokenRepoMock->method('existsForUser')
             ->willReturn(true);
 
         $revokeService = (new RevokeTokenService())
@@ -231,9 +242,10 @@ class RevokeTokenServiceTest extends TestCase
             ->withCookies([])
             ->withServerHelper(new ServerHelper([
                 'REQUEST_METHOD' => 'POST',
-                'HTTP_CLIENT_IP' => '127.0.0.1',
+                'REMOTE_ADDR' => '127.0.0.1',
             ]))
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Token was already revoked.');

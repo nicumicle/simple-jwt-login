@@ -1,10 +1,11 @@
 <?php
+
 namespace SimpleJwtLoginTests\Unit\Modules\Settings;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\GeneralSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 
 class GeneralSettingsTest extends TestCase
 {
@@ -16,8 +17,7 @@ class GeneralSettingsTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->wordPressData = $this->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+        $this->wordPressData = $this->createStub(WordPressDataInterface::class);
         $this->wordPressData->method('sanitizeTextField')
             ->willReturnCallback(
                 function ($parameter) {
@@ -48,8 +48,11 @@ class GeneralSettingsTest extends TestCase
                 'session' => 'jwt2',
                 'cookie' => 'jwt3',
                 'header' => 'jwt4'
-            ]
-
+            ],
+            'security' => [
+                'safe_redirect' => '1',
+                'trust_ip_headers' => '1',
+            ],
         ];
         $generalSettings = (new GeneralSettings())
             ->withSettings([])
@@ -60,21 +63,63 @@ class GeneralSettingsTest extends TestCase
         $generalSettings->validateSettings();
 
         $this->assertSame('0', $generalSettings->getDecryptionSource());
-        $this->assertSame(false, $generalSettings->isDecryptionKeyBase64Encoded());
+        $this->assertFalse($generalSettings->isDecryptionKeyBase64Encoded());
         $this->assertSame('123', $generalSettings->getDecryptionKey());
         $this->assertSame('', $generalSettings->getDecryptionKeyPublic());
         $this->assertSame('', $generalSettings->getDecryptionKeyPrivate());
         $this->assertSame('HS256', $generalSettings->getJWTDecryptAlgorithm());
         $this->assertSame('jwt/', $generalSettings->getRouteNamespace());
-        $this->assertSame(true, $generalSettings->isJwtFromURLEnabled());
-        $this->assertSame(true, $generalSettings->isJwtFromCookieEnabled());
-        $this->assertSame(true, $generalSettings->isJwtFromHeaderEnabled());
-        $this->assertSame(true, $generalSettings->isJwtFromSessionEnabled());
+        $this->assertTrue($generalSettings->isJwtFromURLEnabled());
+        $this->assertTrue($generalSettings->isJwtFromCookieEnabled());
+        $this->assertTrue($generalSettings->isJwtFromHeaderEnabled());
+        $this->assertTrue($generalSettings->isJwtFromSessionEnabled());
         $this->assertSame('jwt1', $generalSettings->getRequestKeyUrl());
         $this->assertSame('jwt2', $generalSettings->getRequestKeySession());
         $this->assertSame('jwt3', $generalSettings->getRequestKeyCookie());
         $this->assertSame('jwt4', $generalSettings->getRequestKeyHeader());
-        $this->assertSame(true, $generalSettings->isMiddlewareEnabled());
+        $this->assertTrue($generalSettings->isMiddlewareEnabled());
+        $this->assertTrue($generalSettings->isSafeRedirectEnabled());
+        $this->assertTrue($generalSettings->isTrustIpHeadersEnabled());
+    }
+
+    public function testBearerRequiredDefaultsFalse()
+    {
+        $generalSettings = (new GeneralSettings())
+            ->withSettings([])
+            ->withWordPressData($this->wordPressData)
+            ->withPost([]);
+        $generalSettings->initSettingsFromPost();
+
+        $this->assertFalse($generalSettings->isJwtFromHeaderBearerRequired());
+    }
+
+    public function testBearerRequiredCanBeEnabled()
+    {
+        $post = [
+            'route_namespace'                   => 'jwt',
+            'request_jwt_url'                   => '1',
+            'request_keys'                      => ['url' => 'JWT', 'session' => 's', 'cookie' => 'c', 'header' => 'h'],
+            'request_jwt_header_require_bearer' => '1',
+        ];
+        $generalSettings = (new GeneralSettings())
+            ->withSettings([])
+            ->withWordPressData($this->wordPressData)
+            ->withPost($post);
+        $generalSettings->initSettingsFromPost();
+
+        $this->assertTrue($generalSettings->isJwtFromHeaderBearerRequired());
+    }
+
+    public function testSecurityTogglesDefaultToFalse()
+    {
+        $generalSettings = (new GeneralSettings())
+            ->withSettings([])
+            ->withWordPressData($this->wordPressData)
+            ->withPost([]);
+        $generalSettings->initSettingsFromPost();
+
+        $this->assertFalse($generalSettings->isSafeRedirectEnabled());
+        $this->assertFalse($generalSettings->isTrustIpHeadersEnabled());
     }
 
     public function testValidationFailsEmptyNamespace()
@@ -189,7 +234,7 @@ class GeneralSettingsTest extends TestCase
     public function testValidationDecryptionKeysRSFromSettings()
     {
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('JWT Decryption public and private key are required.');
+        $this->expectExceptionMessage('Public Key and Private Key are required.');
         $generalSettings = (new GeneralSettings())
             ->withSettings([])
             ->withWordPressData($this->wordPressData)
@@ -216,7 +261,7 @@ class GeneralSettingsTest extends TestCase
     public function testValidationDecryptionKeysHSFromSettings()
     {
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('JWT Decryption key is required.');
+        $this->expectExceptionMessage('JWT Verification Key is required.');
         $generalSettings = (new GeneralSettings())
             ->withSettings([])
             ->withWordPressData($this->wordPressData)
@@ -242,7 +287,7 @@ class GeneralSettingsTest extends TestCase
     public function testValidationGetJWTTokenFrom()
     {
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('You have to have at least on option enabled in \'Get JWT token From\'');
+        $this->expectExceptionMessage('You have to have at least one option enabled in \'JWT Input Sources\'');
         $generalSettings = (new GeneralSettings())
             ->withSettings([])
             ->withWordPressData($this->wordPressData)

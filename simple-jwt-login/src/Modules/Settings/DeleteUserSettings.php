@@ -2,70 +2,24 @@
 
 namespace SimpleJWTLogin\Modules\Settings;
 
-use Exception;
-
 class DeleteUserSettings extends BaseSettings implements SettingsInterface
 {
-    const DELETE_USER_BY_EMAIL = 0;
-    const DELETE_USER_BY_ID = 1;
-    const DELETE_USER_BY_USER_LOGIN = 2;
-
-    public function initSettingsFromPost()
+    protected function getSectionKey()
     {
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'allow_delete',
-            null,
-            'allow_delete',
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'require_delete_auth',
-            null,
-            'require_delete_auth',
-            BaseSettings::SETTINGS_TYPE_BOL
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'delete_ip',
-            null,
-            'delete_ip',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
+        return 'delete_user';
+    }
 
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'delete_user_by',
-            null,
-            'delete_user_by',
-            BaseSettings::SETTINGS_TYPE_INT
-        );
-        $this->assignSettingsPropertyFromPost(
-            null,
-            'jwt_delete_by_parameter',
-            null,
-            'jwt_delete_by_parameter',
-            BaseSettings::SETTINGS_TYPE_STRING
-        );
+    protected function getFieldDefinitions()
+    {
+        return [
+            [null, 'enabled',      null, 'allow_delete',        self::SETTINGS_TYPE_BOL],
+            [null, 'auth_code',    null, 'require_delete_auth', self::SETTINGS_TYPE_BOL],
+            [null, 'ip_whitelist', null, 'delete_ip',          self::SETTINGS_TYPE_STRING],
+        ];
     }
 
     public function validateSettings()
     {
-        if (!empty($this->settings['allow_delete'])
-            && (
-                !isset($this->settings['jwt_delete_by_parameter'])
-                || empty(trim($this->settings['jwt_delete_by_parameter']))
-            )
-        ) {
-            throw new Exception(
-                __('Missing JWT parameter for Delete User.', 'simple-jwt-login'),
-                $this->settingsErrors->generateCode(
-                    SettingsErrors::PREFIX_DELETE,
-                    SettingsErrors::ERR_DELETE_MISSING_JWT_PARAM
-                )
-            );
-        }
     }
 
     /**
@@ -73,9 +27,7 @@ class DeleteUserSettings extends BaseSettings implements SettingsInterface
      */
     public function isDeleteAllowed()
     {
-        return isset($this->settings['allow_delete'])
-            ? (bool)$this->settings['allow_delete']
-            : false;
+        return !empty($this->settings['enabled']);
     }
 
     /**
@@ -83,8 +35,8 @@ class DeleteUserSettings extends BaseSettings implements SettingsInterface
      */
     public function isAuthKeyRequiredOnDelete()
     {
-        return isset($this->settings['require_delete_auth'])
-            ? (bool)$this->settings['require_delete_auth']
+        return isset($this->settings['auth_code'])
+            ? (bool)$this->settings['auth_code']
             : true;
     }
 
@@ -93,28 +45,8 @@ class DeleteUserSettings extends BaseSettings implements SettingsInterface
      */
     public function getAllowedDeleteIps()
     {
-        return isset($this->settings['delete_ip'])
-            ? $this->settings['delete_ip']
-            : '';
-    }
-
-    /**
-     * @return int
-     */
-    public function getDeleteUserBy()
-    {
-        return isset($this->settings['delete_user_by'])
-            ? (int)$this->settings['delete_user_by']
-            : self::DELETE_USER_BY_EMAIL;
-    }
-
-    /**
-     * @return mixed|string
-     */
-    public function getJwtDeleteByParameter()
-    {
-        return isset($this->settings['jwt_delete_by_parameter'])
-            ? $this->settings['jwt_delete_by_parameter']
+        return isset($this->settings['ip_whitelist'])
+            ? $this->settings['ip_whitelist']
             : '';
     }
 }

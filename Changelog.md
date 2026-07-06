@@ -2,6 +2,38 @@
 
 ## Unreleased
 
+## 4.0.0 (06 July 2026)
+- Redesign Protect Endpoints: replace separate whitelist/protected lists with a unified ordered rules table where each rule explicitly sets access to Public, JWT required, or JWT + Roles; rules are evaluated top-to-bottom with first-match-wins; old settings auto-migrate;
+- Redesigned Plugin Settings interface 
+- Fix double encoding for Reset Password email body[#165](https://github.com/nicumicle/simple-jwt-login/issues/165)
+- New refresh token handling
+- Add Audit logs
+- Add support for multiple JWT Decryption keys based on JWT header or payload
+- Move User identification from Login to General
+- Add Webhooks
+- Enable/disable Revoke and Validate token 
+- Add support for API Keys (X-API-Key) to access WordPress endpoints as an authenticated user 
+- Allow JWT authentication on the API Keys endpoint (in addition to cookie-based login)
+- Improve HTTP Status Codes for errors
+- Add Auth0, Facebook and GitHub Oauth
+- **BREAKING CHANGE** Rename errorCode to error_code in error responses
+- **BREAKING CHANGE** Add 2FA support
+- **BREAKING CHANGE** Add refresh token to Authentication
+- **BREAKING CHANGE** Remove User Identification from Delete, and use the one from General 
+- **BREAKING CHANGE** Reorganize settings structure in DB
+- **BREAKING CHANGE** Change register user response ({"success":true, "ID": 1,...}) to {"success":true, "data":{"id":..}}
+- **BREAKING CHANGE** Remove old /register user endpoint (only POST /users route available for register) 
+- Fix register, authenticate, and reset password special characters for passwords
+- Replace variables in reset password email subject
+- Add option for sending default WordPress email on user registration
+- Add option for sending default password change WordPress email when change password endpoint is called
+- Improve plugin security and performance
+- Add Light/Dark mode UI
+- Allow non admin users to manage their own API keys
+- Add option for 'Require "Bearer" prefix' [#96](https://github.com/nicumicle/simple-jwt-login/issues/96)
+- Support multiple default user roles on registration
+- Add Full WooCommerce support
+
 ## 3.6.6 (22 May 2026)
 - Update WordPress 7.0 Compatibility
 

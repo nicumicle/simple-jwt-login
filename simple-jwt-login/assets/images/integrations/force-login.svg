@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Red background -->
+  <rect width="100" height="100" rx="10" fill="#D32F2F"/>
+  <!-- Shadow -->
+  <polygon points="58,42 95,79 95,100 74,100 37,63" fill="#B71C1C" opacity="0.5"/>
+  <!-- Key group rotated -45 degrees around center -->
+  <g transform="rotate(-45, 50, 50)">
+    <!-- Key bow (ring) -->
+    <circle cx="68" cy="40" r="18" fill="white"/>
+    <!-- Key hole -->
+    <circle cx="68" cy="40" r="8" fill="#D32F2F"/>
+    <!-- Key shaft -->
+    <rect x="15" y="34" width="53" height="12" rx="3" fill="white"/>
+    <!-- Tooth 1 -->
+    <rect x="20" y="46" width="8" height="10" rx="2" fill="white"/>
+    <!-- Tooth 2 -->
+    <rect x="34" y="46" width="8" height="7" rx="2" fill="white"/>
+  </g>
+</svg>

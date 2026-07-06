@@ -9,7 +9,8 @@ use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Modules\WordPressDataInterface;
+use SimpleJWTLogin\Repositories\RevokedToken\Repository as RevokedTokenRepository;
+use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
 use SimpleJWTLogin\Services\ValidateTokenService;
 
 class ValidateTokenServiceTest extends TestCase
@@ -19,12 +20,18 @@ class ValidateTokenServiceTest extends TestCase
      */
     private $wordPressDataMock;
 
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|RevokedTokenRepository
+     */
+    private $revokedTokenRepoMock;
+
     public function setUp(): void
     {
         parent::setUp();
         $this->wordPressDataMock = $this
-            ->getMockBuilder(WordPressDataInterface::class)
-            ->getMock();
+            ->createStub(WordPressDataInterface::class);
+        $this->revokedTokenRepoMock = $this
+            ->createStub(RevokedTokenRepository::class);
     }
 
     #[DataProvider('validationProvider')]
@@ -46,7 +53,8 @@ class ValidateTokenServiceTest extends TestCase
             ->withSession([])
             ->withCookies([])
             ->withRequest($request)
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $validateTokenService->makeAction();
     }
@@ -60,19 +68,21 @@ class ValidateTokenServiceTest extends TestCase
             ],
             [
                 'settings' => [
-                    'allow_authentication' => '1',
-                    'request_jwt_header'   => '0',
-                    'request_jwt_url'      => '1',
+                    'allow_authentication'  => '1',
+                    'allow_validate_token'  => '1',
+                    'request_jwt_header'    => '0',
+                    'request_jwt_url'       => '1',
                 ],
                 'expectedMessage'  => 'The `jwt` parameter is missing.'
             ],
             [
                 'settings' => [
-                    'allow_authentication' => '1',
-                    'request_jwt_header'   => '0',
-                    'request_jwt_url'      => '1',
-                    'decryption_key'       => '123',
-                    'request_keys'         => [
+                    'allow_authentication'  => '1',
+                    'allow_validate_token'  => '1',
+                    'request_jwt_header'    => '0',
+                    'request_jwt_url'       => '1',
+                    'decryption_key'        => '123',
+                    'request_keys'          => [
                         'url' => 'JWT'
                     ]
                 ],
@@ -94,6 +104,7 @@ class ValidateTokenServiceTest extends TestCase
                 json_encode(
                     [
                         'allow_authentication' => '1',
+                        'allow_validate_token' => '1',
                         'request_jwt_header'   => '0',
                         'request_jwt_url'      => '1',
                         'decryption_key'       => '123',
@@ -109,7 +120,8 @@ class ValidateTokenServiceTest extends TestCase
             ->withSession([])
             ->withCookies([])
             ->withRequest(['JWT' => JWT::encode(['id' => 123], '123', 'HS256')])
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $validateTokenService->makeAction();
     }
@@ -122,6 +134,7 @@ class ValidateTokenServiceTest extends TestCase
                 json_encode(
                     [
                         'allow_authentication' => '1',
+                        'allow_validate_token' => '1',
                         'request_jwt_header'   => '0',
                         'request_jwt_url'      => '1',
                         'decryption_key'       => '123',
@@ -139,11 +152,9 @@ class ValidateTokenServiceTest extends TestCase
 
         $this->wordPressDataMock
             ->method('getUserDetailsById')
-            ->withAnyParameters()
             ->willReturn([]);
         $this->wordPressDataMock
             ->method('isInstanceOfUser')
-            ->withAnyParameters()
             ->willReturn(true);
         $this->wordPressDataMock
             ->method('wordpressUserToArray')
@@ -157,13 +168,14 @@ class ValidateTokenServiceTest extends TestCase
             ->method('createResponse')
             ->willReturn(['success' => true]);
         $this->wordPressDataMock
-            ->method('triggerFilter')
+            ->method('applyFilters')
             ->willReturn([]);
         $validateTokenService = (new ValidateTokenService())
             ->withSession([])
             ->withCookies([])
             ->withRequest(['JWT' => JWT::encode(['id' => 123, 'exp' => strtotime('+1Year')], '123', 'HS256')])
-            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock));
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
 
         $result  = $validateTokenService->makeAction();
         $this->assertSame(['success' => true], $result);

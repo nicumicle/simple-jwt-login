@@ -10,11 +10,31 @@ class ServerHelper
     private $server;
 
     /**
+     * @var boolean
+     */
+    private $useProxyHeaders = false;
+
+    /**
      * @param array $server
      */
     public function __construct($server)
     {
         $this->server = $server;
+    }
+
+    /**
+     * Named constructor for sites behind a trusted reverse proxy:
+     * the Client-IP / X-Forwarded-For headers are used to detect the client IP.
+     *
+     * @param array $server
+     * @return ServerHelper
+     */
+    public static function withTrustedProxyHeaders($server)
+    {
+        $serverHelper = new self($server);
+        $serverHelper->useProxyHeaders = true;
+
+        return $serverHelper;
     }
 
     /**
@@ -29,7 +49,7 @@ class ServerHelper
 
         $headers = [];
         foreach ($this->server as $name => $value) {
-            if (substr($name, 0, 5) == 'HTTP_') {
+            if (substr($name, 0, 5) === 'HTTP_') {
                 $key = str_replace(
                     ' ',
                     '-',
@@ -43,20 +63,60 @@ class ServerHelper
     }
 
     /**
+     * Read a single request header by name (case-insensitive) without building
+     * the full header map. Used on the hot path where only one header matters.
+     *
+     * @param string $name
+     * @return string|null
+     */
+    public function getHeader($name)
+    {
+        $allHeaders = $this->getAllHeaders();
+        if (!empty($allHeaders)) {
+            $lowerName = strtolower($name);
+            foreach ($allHeaders as $key => $value) {
+                if (strtolower($key) === $lowerName) {
+                    return $value;
+                }
+            }
+            return null;
+        }
+
+        $serverKey = 'HTTP_' . strtoupper(str_replace('-', '_', $name));
+        return isset($this->server[$serverKey]) ? $this->server[$serverKey] : null;
+    }
+
+    /**
      * @return string|null
      */
     public function getClientIP()
     {
-        $clientIp = null;
-        if (!empty($this->server['HTTP_CLIENT_IP'])) {   //check ip from share internet
-            $clientIp = $this->server['HTTP_CLIENT_IP'];
-        } elseif (!empty($this->server['HTTP_X_FORWARDED_FOR'])) {   //to check ip is pass from proxy
-            $clientIp = $this->server['HTTP_X_FORWARDED_FOR'];
-        } elseif (!empty($this->server['REMOTE_ADDR'])) {
-            $clientIp = $this->server['REMOTE_ADDR'];
+        if ($this->useProxyHeaders) {
+            $proxyClientIp = $this->getClientIpFromProxyHeaders();
+            if ($proxyClientIp !== null) {
+                return $proxyClientIp;
+            }
         }
+        if (!empty($this->server['REMOTE_ADDR'])) {
+            return $this->server['REMOTE_ADDR'];
+        }
+        return null;
+    }
 
-        return $clientIp;
+    /**
+     * @return string|null
+     */
+    private function getClientIpFromProxyHeaders()
+    {
+        if (!empty($this->server['HTTP_CLIENT_IP'])) {
+            return trim($this->server['HTTP_CLIENT_IP']);
+        }
+        if (!empty($this->server['HTTP_X_FORWARDED_FOR'])) {
+            // The right-most entry is the hop appended by the trusted proxy
+            $forwardedIps = explode(',', $this->server['HTTP_X_FORWARDED_FOR']);
+            return trim(end($forwardedIps));
+        }
+        return null;
     }
 
     /**
@@ -71,15 +131,23 @@ class ServerHelper
                 return true;
             }
             if (strpos($ip, '*') !== false) {
+                if ($clientIp === null) {
+                    continue;
+                }
                 $clientIpParts = explode('.', $clientIp);
                 $ipParts = explode('.', trim($ip));
                 $equalParts = 0;
                 foreach ($clientIpParts as $key => $ipPart) {
+                    if (!isset($ipParts[$key])) {
+                        break;
+                    }
                     if ($ipPart === $ipParts[$key] || $ipParts[$key] === '*') {
                         $equalParts++;
                     }
                 }
-                return $equalParts === 4;
+                if ($equalParts === 4) {
+                    return true;
+                }
             }
         }
 
@@ -109,13 +177,12 @@ class ServerHelper
     }
 
     /**
-     * @SuppressWarnings(PHPMD.Superglobals)
      * @return string
      */
     public function getCurrentURL()
     {
-        return "http" . (isset($this->server['HTTPS']) && $this->server['HTTPS'] === 'on' ? "s" : "")
-            . "://" . $this->server['HTTP_HOST']
+        return 'http' . (isset($this->server['HTTPS']) && $this->server['HTTPS'] === 'on' ? 's' : '')
+            . '://' . $this->server['HTTP_HOST']
             . $this->server['REQUEST_URI'];
     }
 }

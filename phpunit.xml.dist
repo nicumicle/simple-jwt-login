@@ -7,7 +7,8 @@
         testdox="true"
         processIsolation="true"
         stopOnFailure="false"
-        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd"
+        failOnPhpunitNotice="true"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/12.5/phpunit.xsd"
         cacheDirectory=".phpunit.cache"
         backupStaticProperties="false"
 >
@@ -23,6 +24,7 @@
         <env name="WORDPRESS_DB_NAME" value="wordpress" force="true" />
         <env name="WORDPRESS_DB_HOST" value="wpdb:3308" force="true" />
         <env name="WORDPRESS_TABLE_PREFIX" value="wp_" force="true" />
+        <env name="WP_PHPUNIT__TESTS_CONFIG" value="./wp-tests-config.php" force="true"/>
     </php>
     <testsuites>
         <testsuite name="Unit">
@@ -31,6 +33,9 @@
         <testsuite name="Feature">
             <directory suffix='Test.php'>./tests/Feature</directory>
         </testsuite>
+        <testsuite name="WP-Integration">
+            <directory suffix="Test.php">./tests/WP</directory>
+        </testsuite>
     </testsuites>
     <logging/>
     <source>
@@ -38,7 +43,7 @@
             <directory suffix=".php">./simple-jwt-login/src</directory>
         </include>
         <exclude>
-            <file>./simple-jwt-login/src/Modules/WordPressData.php</file>
+            <file>./simple-jwt-login/src/Repositories/WordPress/WordPressRepository.php</file>
             <directory suffix=".php">./simple-jwt-login/src/Libraries/</directory>
         </exclude>
     </source>

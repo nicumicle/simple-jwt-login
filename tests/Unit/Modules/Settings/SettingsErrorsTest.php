@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJwtLoginTests\Unit\Modules\Settings;
 
 use PHPUnit\Framework\TestCase;
@@ -16,7 +17,7 @@ class SettingsErrorsTest extends TestCase
     public function testGetSectionFromErrorCode()
     {
         $settingsErrors = new SettingsErrors();
-        $errorCode = ErrorCodes::AUTHENTICATION_IS_NOT_ENABLED;
+        $errorCode = ErrorCodes::ERR_AUTHENTICATION_IS_NOT_ENABLED;
         $section = SettingsErrors::PREFIX_AUTHENTICATION;
         $generatedCode = $settingsErrors->generateCode($section, $errorCode);
         $this->assertSame(

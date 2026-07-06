@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJwtLoginTests\Unit\Routes\Handlers;
 
 use PHPUnit\Framework\Attributes\PreserveGlobalState;

@@ -1,4 +1,5 @@
 <?php
+
 /*
     Plugin Name: Simple JWT Login
     Plugin URI: https://simplejwtlogin.com

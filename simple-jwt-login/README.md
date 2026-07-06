@@ -784,3 +784,8 @@ A complete Changelog is available on the [GitHub repository](https://github.com/
 
 = 1.0.0 (14 June 2019) =
 * Initial release
+
+== Upgrade Notice ==
+
+= 3.6.7 =
+Fixes security. Update is strongly recommended for all sites.

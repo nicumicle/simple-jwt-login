@@ -28,7 +28,7 @@ jobs:
       run: composer install --prefer-dist --no-progress
 
     - name: Run PHPCS
-      run: vendor/bin/phpcs --no-cache simple-jwt-login/ tests/ --extensions=php
+      run: vendor/bin/phpcs --no-cache --standard=.phpcs.xml.dist simple-jwt-login/ tests/ --extensions=php
 
     - name: Run PHPMD
       run: vendor/bin/phpmd simple-jwt-login/ text phpmd.xml

@@ -378,7 +378,7 @@ Make sure you are passing a valid, non-expired JWT either as a Bearer token in t
 
 A complete changelog is available on the [GitHub repository](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md).
 
-= 4.0.0 =
+= 4.0.0 (06 July 2026) =
 - Redesign Protect Endpoints: replace separate whitelist/protected lists with a unified ordered rules table where each rule explicitly sets access to Public, JWT required, or JWT + Roles; rules are evaluated top-to-bottom with first-match-wins; old settings auto-migrate;
 - Redesigned Plugin Settings interface 
 - Fix double encoding for Reset Password email body[#165](https://github.com/nicumicle/simple-jwt-login/issues/165)
@@ -485,8 +485,8 @@ For the full history back to 1.0.0 (2019), see the [Changelog on GitHub](https:/
 
 == Upgrade Notice ==
 
-= 4.0.0 =
-New UI plus API Keys, Audit Logs, Facebook/GitHub OAuth, and WPGraphQL integration. No breaking changes - review the new Integrations tab after updating.
+= 4.0.0 (06 July 2026) =
+New UI plus API Keys, Audit Logs, Facebook/GitHub OAuth, and WPGraphQL integration. Includes breaking changes - review the Settings after updating.
 
-= 3.6.5 =
-Fixes CVE-2025-58648 (stored XSS). Update is strongly recommended for all sites.
+= 3.6.7 (06 July 2026) =
+Fixes security. Update is strongly recommended for all sites.

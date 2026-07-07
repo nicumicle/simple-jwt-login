@@ -15,7 +15,7 @@ env:
 
 jobs:
   run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     name: Simple-JWT-Login Feature tests
     strategy:
       matrix:
@@ -39,8 +39,9 @@ jobs:
             mysql --user="root" --password="root" --execute="ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASSWORD';"
       -   name: "🚧 Apache Setup"
           run: |
-            sudo apt-get update 
-            sudo apt-get install libapache2-mod-php${{ matrix.php_version }}
+            sudo add-apt-repository -y ppa:ondrej/php
+            sudo apt-get update
+            sudo apt-get install -y libapache2-mod-php${{ matrix.php_version }}
             sudo a2enmod php${{ matrix.php_version }}
             sudo /etc/init.d/apache2 start
       -   name: "🚧 Install WordPress"

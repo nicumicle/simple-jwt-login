@@ -1,0 +1,19 @@
+name: Plugin Check
+
+on:
+  push:
+    branches: [ master, v3, v4 ]
+  pull_request:
+    branches: [ master, v3, v4 ]
+
+jobs:
+  plugin-check:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Plugin Check
+        uses: wordpress/plugin-check-action@v1
+        with:
+          build-dir: './simple-jwt-login'

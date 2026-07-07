@@ -20,9 +20,95 @@ if (! defined('ABSPATH')) {
 
 include_once 'autoload.php';
 
+const SIMPLE_JWT_LOGIN_V3_EOL_NOTICE_ACTION = 'simple_jwt_login_dismiss_v3_eol_notice';
+const SIMPLE_JWT_LOGIN_V3_EOL_NOTICE_OPTION = 'simple_jwt_login_v3_eol_notice_dismissed';
+
 // it inserts the entry in the admin menu
 add_action('admin_menu', 'simple_jwt_login_plugin_create_menu_entry');
 add_action('plugins_loaded', 'simple_jwt_login_plugin_load_translations');
+add_action('admin_notices', 'simple_jwt_login_v3_eol_notice');
+add_action('admin_enqueue_scripts', 'simple_jwt_login_enqueue_eol_notice_assets');
+add_action('wp_ajax_' . SIMPLE_JWT_LOGIN_V3_EOL_NOTICE_ACTION, 'simple_jwt_login_dismiss_v3_eol_notice');
+
+/**
+ * Displays a global admin notice announcing v3 end-of-life and linking to the v4 migration guide.
+ */
+function simple_jwt_login_v3_eol_notice()
+{
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    if (get_option(SIMPLE_JWT_LOGIN_V3_EOL_NOTICE_OPTION)) {
+        return;
+    }
+    ?>
+    <div class="notice notice-info is-dismissible simple-jwt-login-eol-notice"
+         data-nonce="<?php echo esc_attr(wp_create_nonce(SIMPLE_JWT_LOGIN_V3_EOL_NOTICE_ACTION)); ?>">
+        <p>
+            <strong><?php echo esc_html__('Simple-JWT-Login v4 is here', 'simple-jwt-login'); ?></strong>
+            <?php echo esc_html__('with new features, performance improvements, and stronger security. We recommend upgrading when you\'re ready.', 'simple-jwt-login'); ?>
+            <a href="https://simplejwtlogin.com/v4?utm_source=plugin&amp;utm_medium=admin_notice&amp;utm_campaign=v4_upgrade" target="_blank" rel="noopener noreferrer">
+                <?php echo esc_html__('See what\'s new in v4', 'simple-jwt-login'); ?>
+            </a>
+        </p>
+    </div>
+    <?php
+}
+
+/**
+ * Loads the EOL notice dismiss script/style on admin pages where the notice is visible.
+ */
+function simple_jwt_login_enqueue_eol_notice_assets()
+{
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    if (get_option(SIMPLE_JWT_LOGIN_V3_EOL_NOTICE_OPTION)) {
+        return;
+    }
+
+    $pluginDirUrl = plugin_dir_url(__FILE__);
+
+    wp_enqueue_style(
+        'simple-jwt-login-eol-notice',
+        $pluginDirUrl . 'css/eol-notice.css'
+    );
+
+    wp_enqueue_script(
+        'simple-jwt-login-eol-notice',
+        $pluginDirUrl . 'js/eol-notice.js',
+        [ 'jquery' ],
+        false,
+        true
+    );
+
+    wp_localize_script(
+        'simple-jwt-login-eol-notice',
+        'simpleJwtLoginEol',
+        [
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'action'  => SIMPLE_JWT_LOGIN_V3_EOL_NOTICE_ACTION,
+        ]
+    );
+}
+
+/**
+ * Persists the EOL notice dismissal via AJAX so it does not show again for any admin.
+ */
+function simple_jwt_login_dismiss_v3_eol_notice()
+{
+    if (!current_user_can('manage_options')) {
+        wp_die('', '', [ 'response' => 403 ]);
+    }
+
+    check_ajax_referer(SIMPLE_JWT_LOGIN_V3_EOL_NOTICE_ACTION, 'nonce');
+
+    update_option(SIMPLE_JWT_LOGIN_V3_EOL_NOTICE_OPTION, 1);
+
+    wp_die();
+}
 
 // creating the menu entries
 function simple_jwt_login_plugin_create_menu_entry()
@@ -135,6 +221,12 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'simple_jwt_login
 
 function simple_jwt_login_add_plugin_action_links($links)
 {
+    $links['get_v4'] = sprintf(
+        '<a href="%1$s" target="_blank" style="color: #d63638; font-weight: bold;">%2$s</a>',
+        'https://simplejwtlogin.com/v4?utm_source=plugin&utm_medium=action_links&utm_campaign=v4_upgrade',
+        'Get v4'
+    );
+
     $links['donate'] = sprintf(
         '<a href="%1$s" target="_blank" style="color: rgb(166, 146, 25); font-weight: bold;">%2$s</a>',
         'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PK9BCD6AYF58Y&source=url',

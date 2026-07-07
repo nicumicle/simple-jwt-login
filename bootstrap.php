@@ -125,8 +125,13 @@ if (!function_exists('wp_safe_redirect')) {
 }
 
 if (!function_exists('admin_url')) {
-    function admin_url()
+    /**
+     * @param string $path
+     * @return string
+     */
+    function admin_url($path = '')
     {
+        return '';
     }
 }
 if (!function_exists('site_url')) {
@@ -241,6 +246,17 @@ if (!function_exists('wp_verify_nonce')) {
     function wp_verify_nonce($nonceValue, $nonceName)
     {
         return true;
+    }
+}
+
+if (!function_exists('wp_create_nonce')) {
+    /**
+     * @param string $action
+     * @return string
+     */
+    function wp_create_nonce($action = -1)
+    {
+        return '';
     }
 }
 
@@ -415,6 +431,55 @@ if (!function_exists('plugin_basename')) {
     function plugin_basename($file)
     {
         return '';
+    }
+}
+
+if (!function_exists('wp_localize_script')) {
+    /**
+     * @param string $handle
+     * @param string $objectName
+     * @param array $data
+     * @return bool
+     */
+    function wp_localize_script($handle, $objectName, $data)
+    {
+        return true;
+    }
+}
+
+if (!function_exists('current_user_can')) {
+    /**
+     * @param string $capability
+     * @return bool
+     */
+    function current_user_can($capability)
+    {
+        return true;
+    }
+}
+
+if (!function_exists('check_ajax_referer')) {
+    /**
+     * @param string $action
+     * @param string|false $queryArg
+     * @param bool $die
+     * @return int|false
+     */
+    function check_ajax_referer($action = -1, $queryArg = false, $die = true)
+    {
+        return 1;
+    }
+}
+
+if (!function_exists('wp_die')) {
+    /**
+     * @param string $message
+     * @param string $title
+     * @param array $args
+     * @return void
+     */
+    function wp_die($message = '', $title = '', $args = array())
+    {
     }
 }
 

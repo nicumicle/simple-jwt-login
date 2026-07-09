@@ -3,7 +3,7 @@ name: "Publish Code Coverage"
 on:
   push:
     tags:
-      - '*'
+      - '4.*.*'
 
 permissions:
   contents: read

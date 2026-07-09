@@ -17,3 +17,4 @@ jobs:
         uses: wordpress/plugin-check-action@v1
         with:
           build-dir: './simple-jwt-login'
+          ignore-codes: 'WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound'

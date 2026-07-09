@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ master, v3, v4 ]
 
+permissions:
+  contents: read
+
 jobs:
   # Check there is no syntax errors in the project
   php-linter:

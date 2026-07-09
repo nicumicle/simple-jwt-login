@@ -13,6 +13,9 @@ env:
   WP_PASSWORD: admin
   WP_EMAIL: contact@simplejwtlogin.com
 
+permissions:
+  contents: read
+
 jobs:
   run:
     runs-on: ubuntu-latest

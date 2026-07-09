@@ -180,7 +180,7 @@ $monitoringCards = [
 /**
  * @param array{title: string, tooltip: string, icon: string, tab: int, enabled?: bool, count?: int, count_label?: string, link?: string} $card
  */
-function sjl_render_dash_card(array $card)
+function simple_jwt_login_render_dash_card(array $card)
 {
     $link       = isset($card['link']) ? $card['link'] : __('Configure', 'simple-jwt-login');
     $hasCount   = array_key_exists('count', $card);
@@ -233,7 +233,7 @@ function sjl_render_dash_card(array $card)
         </p>
         <div class="row">
             <?php foreach ($routes as $card) : ?>
-                <?php sjl_render_dash_card($card); ?>
+                <?php simple_jwt_login_render_dash_card($card); ?>
             <?php endforeach; ?>
         </div>
     </div>
@@ -248,7 +248,7 @@ function sjl_render_dash_card(array $card)
         </p>
         <div class="row">
             <?php foreach ($securityCards as $card) : ?>
-                <?php sjl_render_dash_card($card); ?>
+                <?php simple_jwt_login_render_dash_card($card); ?>
             <?php endforeach; ?>
         </div>
     </div>
@@ -263,7 +263,7 @@ function sjl_render_dash_card(array $card)
         </p>
         <div class="row">
             <?php foreach ($configCards as $card) : ?>
-                <?php sjl_render_dash_card($card); ?>
+                <?php simple_jwt_login_render_dash_card($card); ?>
             <?php endforeach; ?>
         </div>
     </div>
@@ -278,7 +278,7 @@ function sjl_render_dash_card(array $card)
         </p>
         <div class="row">
             <?php foreach ($monitoringCards as $card) : ?>
-                <?php sjl_render_dash_card($card); ?>
+                <?php simple_jwt_login_render_dash_card($card); ?>
             <?php endforeach; ?>
         </div>
     </div>

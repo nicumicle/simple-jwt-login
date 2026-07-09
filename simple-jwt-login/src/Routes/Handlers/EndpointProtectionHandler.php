@@ -90,6 +90,15 @@ class EndpointProtectionHandler
      */
     public function __invoke($endpoint)
     {
+        // The "rest_endpoints" filter also fires whenever any code calls
+        // rest_get_server()->get_routes() outside of an actual REST request
+        // (e.g. WooCommerce does this during WP-CLI bootstrap). REST_REQUEST
+        // is only defined once WP_REST_Server::serve_request() starts
+        // handling a genuine REST HTTP request, so skip protection otherwise.
+        if (!defined('REST_REQUEST') || !REST_REQUEST) {
+            return $endpoint;
+        }
+
         $service = new ProtectEndpointService();
         $service
             ->withRequest($this->request)

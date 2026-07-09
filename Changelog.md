@@ -1,6 +1,7 @@
 # Changelog - Releases
 
 ## Unreleased
+- Apply protect endpoints rules only on REST endpoints
 
 ## 4.0.0 (06 July 2026)
 - Redesign Protect Endpoints: replace separate whitelist/protected lists with a unified ordered rules table where each rule explicitly sets access to Public, JWT required, or JWT + Roles; rules are evaluated top-to-bottom with first-match-wins; old settings auto-migrate;

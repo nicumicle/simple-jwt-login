@@ -2,9 +2,9 @@ name: Feature Tests
 
 on:
   push:
-    branches: [ master, v3, v4 ]
+    branches: [ master, v3 ]
   pull_request:
-    branches: [ master, v3, v4 ]
+    branches: [ master, v3 ]
 
 env:
   SITE_URL: simplejwtlogin.local
@@ -12,6 +12,9 @@ env:
   WP_USER: admin
   WP_PASSWORD: admin
   WP_EMAIL: contact@simplejwtlogin.com
+
+permissions:
+  contents: read
 
 jobs:
   run:

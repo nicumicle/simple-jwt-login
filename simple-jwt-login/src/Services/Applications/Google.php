@@ -27,16 +27,19 @@ class Google extends BaseApplication implements ApplicationInterface
     }
 
     /**
+     * Verifies that the id_token was signed by Google AND that it was issued for this website.
+     *
      * @SuppressWarnings(StaticAccess)
      * @param string $idToken
-     * @return void
+     * @param string $clientId
+     * @return array The claims returned by Google, already validated.
      * @throws Exception
      */
-    public static function validateIdToken($idToken)
+    public static function validateIdToken($idToken, $clientId)
     {
         $statusCode = 400;
         $plainResult = '';
-        ServerCall::get(
+        $tokenInfo = ServerCall::get(
             sprintf(self::CHECK_TOKEN_URL, $idToken),
             [],
             $statusCode,
@@ -48,6 +51,54 @@ class Google extends BaseApplication implements ApplicationInterface
                 ErrorCodes::ERR_GOOGLE_INVALID_ID_TOKEN
             );
         }
+
+        return self::validateTokenInfoClaims($tokenInfo, $clientId);
+    }
+
+    /**
+     * A Google signature alone proves nothing: any Google OAuth client can mint a valid id_token
+     * for any Google account. The 'aud' claim is what binds the token to this website.
+     *
+     * @param array|null $tokenInfo Claims returned by the Google tokeninfo endpoint.
+     * @param string $clientId
+     * @return array
+     * @throws Exception
+     */
+    public static function validateTokenInfoClaims($tokenInfo, $clientId)
+    {
+        if (empty($tokenInfo) || !is_array($tokenInfo) || empty($tokenInfo['email'])) {
+            throw new Exception(
+                __("The provided id_token is invalid", 'simple-jwt-login'),
+                ErrorCodes::ERR_GOOGLE_INVALID_ID_TOKEN
+            );
+        }
+
+        $issuer = isset($tokenInfo['iss']) ? $tokenInfo['iss'] : '';
+        if (!in_array($issuer, ['accounts.google.com', 'https://accounts.google.com'], true)) {
+            throw new Exception(
+                __("The provided id_token is invalid", 'simple-jwt-login'),
+                ErrorCodes::ERR_GOOGLE_INVALID_ID_TOKEN
+            );
+        }
+
+        $audience = isset($tokenInfo['aud']) ? $tokenInfo['aud'] : '';
+        if ($clientId === '' || $audience === '' || (string)$audience !== (string)$clientId) {
+            throw new Exception(
+                __('The provided id_token was not issued for this website.', 'simple-jwt-login'),
+                ErrorCodes::ERR_GOOGLE_ID_TOKEN_INVALID_AUDIENCE
+            );
+        }
+
+        // The tokeninfo endpoint returns every claim as a string, so 'true' is the expected value.
+        $emailVerified = isset($tokenInfo['email_verified']) ? $tokenInfo['email_verified'] : false;
+        if ($emailVerified !== true && $emailVerified !== 'true' && $emailVerified !== '1') {
+            throw new Exception(
+                __('The email address of this Google account is not verified.', 'simple-jwt-login'),
+                ErrorCodes::ERR_GOOGLE_ID_TOKEN_EMAIL_NOT_VERIFIED
+            );
+        }
+
+        return $tokenInfo;
     }
 
     /**
@@ -56,6 +107,8 @@ class Google extends BaseApplication implements ApplicationInterface
      */
     public function call()
     {
+        $applicationsSettings = $this->settings->getApplicationsSettings();
+
         switch (true) {
             case $this->requestMethod == ServerCall::REQUEST_METHOD_GET:
                 // This will generate the oauth Link
@@ -64,7 +117,7 @@ class Google extends BaseApplication implements ApplicationInterface
             case !empty($this->request['code']):
                 $result = $this->exchangeCode(
                     $this->request['code'],
-                    $this->settings->getApplicationsSettings()->getGoogleExchangeCodeRedirectUri()
+                    $applicationsSettings->getGoogleExchangeCodeRedirectUri()
                 );
 
                 $responseStatusCode = $result['status_code'];
@@ -84,13 +137,14 @@ class Google extends BaseApplication implements ApplicationInterface
                     ErrorCodes::ERR_GOOGLE_INVALID_CODE
                 );
             case !empty($this->request['id_token']):
-                $jwt = $this->request['id_token'];
-                self::validateIdToken($jwt);
-
-                $decoded = JWT::extractDataFromJwt($jwt);
+                // Use the claims validated by Google, never the ones decoded from the raw token.
+                $tokenInfo = self::validateIdToken(
+                    $this->request['id_token'],
+                    $applicationsSettings->getGoogleClientID()
+                );
 
                 $user = $this->wordPressData->getUserDetailsByEmail(
-                    $this->wordPressData->sanitizeTextField($decoded['payload']['email'])
+                    $this->wordPressData->sanitizeTextField($tokenInfo['email'])
                 );
                 if (empty($user)) {
                     throw new Exception(

@@ -245,15 +245,19 @@ abstract class BaseService
      */
     protected function validateJWTAndGetUserValueFromPayload($parameter)
     {
+        $applicationsSettings = $this->jwtSettings->getApplicationsSettings();
         $jwtParts = JWT::extractDataFromJwt($this->jwt);
         if (isset($jwtParts['payload']['iss'])) {
             switch ($jwtParts['payload']['iss']) {
                 case Google::IIS:
-                    if ($this->jwtSettings->getApplicationsSettings()->isGoogleEnabled()
-                        && $this->jwtSettings->getApplicationsSettings()->isGoogleJwtAllowedOnAllEndpoints()) {
-                        Google::validateIdToken($this->jwt);
+                    if ($applicationsSettings->isGoogleEnabled()
+                        && $applicationsSettings->isGoogleJwtAllowedOnAllEndpoints()) {
+                        $tokenInfo = Google::validateIdToken(
+                            $this->jwt,
+                            $applicationsSettings->getGoogleClientID()
+                        );
 
-                        return $jwtParts['payload']['email'];
+                        return $tokenInfo['email'];
                     }
                     break;
             }

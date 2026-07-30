@@ -329,8 +329,17 @@ class AuthenticateServiceTest extends TestCase
         );
     }
 
-    public function testGeneratePayloadDoesNotLeakAttackerSuppliedJwtLoginByParameterClaim()
-    {
+    /**
+     * @param string $loginByParameter The admin-configured jwt_login_by_parameter.
+     * @param array $attackerPayload The claims an attacker POSTs to /auth.
+     * @param array $leafPath Dot-exploded path whose leaf must be absent after stripping.
+     */
+    #[DataProvider('jwtLoginByParameterLeakProvider')]
+    public function testGeneratePayloadDoesNotLeakAttackerSuppliedJwtLoginByParameterClaim(
+        $loginByParameter,
+        $attackerPayload,
+        $leafPath
+    ) {
         $this->wordPressDataMock
             ->method('getOptionFromDatabase')
             ->willReturn(json_encode([
@@ -338,18 +347,14 @@ class AuthenticateServiceTest extends TestCase
                 'jwt_payload' => [
                     AuthenticationSettings::JWT_PAYLOAD_PARAM_EXP,
                 ],
-                // Admin configured autologin to resolve users by a custom claim.
-                'jwt_login_by_parameter' => 'custom_uid',
+                // Admin configured autologin to resolve users by this claim.
+                'jwt_login_by_parameter' => $loginByParameter,
             ]));
         $this->wordPressDataMock
             ->method('getUserProperty')
             ->willReturn('subscriber-uid');
 
         $jwtSettings = new SimpleJWTLoginSettings($this->wordPressDataMock);
-
-        $attackerPayload = [
-            'custom_uid' => 'admin-uid',
-        ];
 
         $payload = AuthenticateService::generatePayload(
             $attackerPayload,
@@ -358,10 +363,68 @@ class AuthenticateServiceTest extends TestCase
             'subscriber-user'
         );
 
+        // Walk to the parent of the leaf; the leaf key must have been stripped.
+        $leaf = array_pop($leafPath);
+        $container = $payload;
+        foreach ($leafPath as $key) {
+            $container = isset($container[$key]) ? $container[$key] : [];
+        }
+
         $this->assertArrayNotHasKey(
-            'custom_uid',
-            $payload,
+            $leaf,
+            (array)$container,
+            'The login-by claim must be stripped so it cannot survive into the signed JWT.'
         );
+    }
+
+    /**
+     * @return array<string, array>
+     */
+    public static function jwtLoginByParameterLeakProvider()
+    {
+        return [
+            'flat claim' => [
+                'custom_uid',
+                ['custom_uid' => 'admin-uid'],
+                ['custom_uid'],
+            ],
+            'nested claim (2 levels)' => [
+                'data.id',
+                ['data' => ['id' => 1]],
+                ['data', 'id'],
+            ],
+            'deeply nested claim (3 levels)' => [
+                'data.something.id',
+                ['data' => ['something' => ['id' => 1]]],
+                ['data', 'something', 'id'],
+            ],
+            // The strip must not fail (no warning/exception) when the claim is absent.
+            'flat claim absent from payload' => [
+                'custom_uid',
+                ['unrelated' => 'value'],
+                ['custom_uid'],
+            ],
+            'nested claim entirely absent' => [
+                'data.id',
+                ['unrelated' => 'value'],
+                ['data', 'id'],
+            ],
+            'nested leaf absent but parent present' => [
+                'data.id',
+                ['data' => ['other' => 'value']],
+                ['data', 'id'],
+            ],
+            'nested intermediate is a scalar not array' => [
+                'data.id',
+                ['data' => 'scalar'],
+                ['data', 'id'],
+            ],
+            'deep path missing intermediate level' => [
+                'data.something.id',
+                ['data' => ['other' => 'value']],
+                ['data', 'something', 'id'],
+            ],
+        ];
     }
 
     public function testSuccessFlowWithFullPayloadAndPasshash()

@@ -39,7 +39,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
         }
 
         foreach ($reservedParameters as $reservedParameter) {
-            unset($payload[$reservedParameter]);
+            $payload = self::unsetPayloadParameter($payload, $reservedParameter);
         }
 
         $payload[AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT] = time();
@@ -78,6 +78,43 @@ class AuthenticateService extends BaseService implements ServiceInterface
         if ($jwtSettings->getHooksSettings()->isHookEnable(SimpleJWTLoginHooks::HOOK_GENERATE_PAYLOAD)) {
             $payload = $wordPressData->triggerFilter(SimpleJWTLoginHooks::HOOK_GENERATE_PAYLOAD, $payload, $user);
         }
+
+        return $payload;
+    }
+
+    /**
+     * Remove a reserved parameter from the payload, supporting nested dot-notation
+     * paths (e.g. "data.id"). A flat unset() cannot reach a nested claim, yet
+     * /autologin resolves the login-by parameter by traversing the dotted path
+     * (see BaseService::getUserParameterValueFromPayload). The strip must match
+     * that traversal so an attacker cannot smuggle a nested claim into the JWT.
+     *
+     * @param array $payload
+     * @param string $parameter
+     *
+     * @return array
+     */
+    protected static function unsetPayloadParameter($payload, $parameter)
+    {
+        if (strpos($parameter, '.') === false) {
+            unset($payload[$parameter]);
+
+            return $payload;
+        }
+
+        $keys = explode('.', $parameter);
+        $leaf = array_pop($keys);
+
+        $pointer = &$payload;
+        foreach ($keys as $key) {
+            if (!is_array($pointer) || !isset($pointer[$key]) || !is_array($pointer[$key])) {
+                // The nested path does not exist in the payload; nothing to strip.
+                return $payload;
+            }
+            $pointer = &$pointer[$key];
+        }
+        unset($pointer[$leaf]);
+        unset($pointer);
 
         return $payload;
     }

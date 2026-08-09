@@ -54,14 +54,26 @@ class GoogleOauth extends AbstractOauth
     }
 
     /**
+     * The id_token returned by the token endpoint is only trustworthy once Google
+     * itself has confirmed its signature, audience and email_verified claim. Never
+     * trust the email decoded locally from the raw token.
+     *
      * @param array $tokenResponse
      * @return string
+     * @throws Exception
      */
     protected function getEmailFromTokenResponse($tokenResponse)
     {
-        $jwt = $this->getJwtWrapper()->extractDataFromJwt($tokenResponse['id_token']);
+        if (empty($tokenResponse['id_token'])) {
+            throw new Exception(
+                esc_html(__('The provided id_token is invalid', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_GOOGLE_INVALID_ID_TOKEN)
+            );
+        }
 
-        return isset($jwt['payload']['email']) ? $jwt['payload']['email'] : '';
+        $tokenInfo = self::validateIdToken($tokenResponse['id_token'], $this->getClientId());
+
+        return $tokenInfo['email'];
     }
 
     /**
@@ -100,14 +112,18 @@ class GoogleOauth extends AbstractOauth
     }
 
     /**
+     * The email must come from the claims Google validated, never from the raw
+     * token decoded locally (which carries no signature guarantee).
+     *
      * @param string $token
      * @return string
+     * @throws Exception
      */
     protected function getEmailFromDirectToken($token)
     {
-        $decoded = $this->getJwtWrapper()->extractDataFromJwt($token);
+        $tokenInfo = self::validateIdToken($token, $this->getClientId());
 
-        return isset($decoded['payload']['email']) ? $decoded['payload']['email'] : '';
+        return $tokenInfo['email'];
     }
 
     // -------------------------------------------------------------------------
@@ -115,12 +131,17 @@ class GoogleOauth extends AbstractOauth
     // -------------------------------------------------------------------------
 
     /**
-     * Validate a Google id_token against Google's tokeninfo endpoint.
-     * Verifies HTTP 200, iss (must be accounts.google.com), and aud (must match $clientId).
+     * Validate a Google id_token against Google's tokeninfo endpoint, then verify
+     * the returned claims bind the token to this website. Returns the validated
+     * claims so callers use Google-confirmed values instead of decoding the raw token.
+     *
+     * A Google signature alone proves nothing: any Google OAuth client can mint a
+     * valid id_token for any Google account. The 'aud' claim is what binds the token
+     * to this website.
      *
      * @param string $idToken
      * @param string $clientId Configured Google OAuth client ID to assert against the token's aud claim.
-     * @return void
+     * @return array The claims returned by Google, already validated.
      * @throws Exception
      */
     public static function validateIdToken($idToken, $clientId)
@@ -141,6 +162,27 @@ class GoogleOauth extends AbstractOauth
             );
         }
 
+        return self::validateTokenInfoClaims($tokenInfo, $clientId);
+    }
+
+    /**
+     * Assert that the claims Google returned come from Google, were issued for this
+     * website, carry an email and mark that email as verified.
+     *
+     * @param array|null $tokenInfo Claims returned by the Google tokeninfo endpoint.
+     * @param string $clientId
+     * @return array
+     * @throws Exception
+     */
+    public static function validateTokenInfoClaims($tokenInfo, $clientId)
+    {
+        if (empty($tokenInfo) || !is_array($tokenInfo) || empty($tokenInfo['email'])) {
+            throw new Exception(
+                esc_html(__('The provided id_token is invalid', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_GOOGLE_INVALID_ID_TOKEN)
+            );
+        }
+
         $validIssuers = [self::IIS, 'https://' . self::IIS];
         $tokenIss     = isset($tokenInfo['iss']) ? $tokenInfo['iss'] : '';
         if (!in_array($tokenIss, $validIssuers, true)) {
@@ -151,11 +193,22 @@ class GoogleOauth extends AbstractOauth
         }
 
         $tokenAud = isset($tokenInfo['aud']) ? $tokenInfo['aud'] : '';
-        if ($tokenAud !== $clientId) {
+        if ($clientId === '' || $tokenAud === '' || (string)$tokenAud !== (string)$clientId) {
             throw new Exception(
-                esc_html(__('The provided id_token was not issued for this application', 'simple-jwt-login')),
-                absint(ErrorCodes::ERR_GOOGLE_INVALID_ID_TOKEN)
+                esc_html(__('The provided id_token was not issued for this website.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_GOOGLE_ID_TOKEN_INVALID_AUDIENCE)
             );
         }
+
+        // The tokeninfo endpoint returns every claim as a string, so 'true' is the expected value.
+        $emailVerified = isset($tokenInfo['email_verified']) ? $tokenInfo['email_verified'] : false;
+        if ($emailVerified !== true && $emailVerified !== 'true' && $emailVerified !== '1') {
+            throw new Exception(
+                esc_html(__('The email address of this Google account is not verified.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_GOOGLE_ID_TOKEN_EMAIL_NOT_VERIFIED)
+            );
+        }
+
+        return $tokenInfo;
     }
 }

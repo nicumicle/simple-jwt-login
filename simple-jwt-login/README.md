@@ -460,7 +460,7 @@ After that, for the create user route, simply add the AUTH code in the request, 
 
 A complete Changelog is available on the [GitHub repository](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md).
 
-= 3.6.8 (30 July 2026) =
+= 3.6.8 (09 Aug 2026) =
 - Improve Google Oauth Security (Reported by [@FaridNarimanov](https://github.com/FaridNarimanov))[#174](https://github.com/nicumicle/simple-jwt-login/issues/174)
 - JWT Payload: strip reserved claims improvement
 

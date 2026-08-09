@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 3.6.8 (08 Aug 2026)
+- Improve Google Oauth Security (Reported by [@FaridNarimanov](https://github.com/FaridNarimanov))[#174](https://github.com/nicumicle/simple-jwt-login/issues/174)
+- JWT Payload: strip reserved claims improvement
+
 ## 3.6.7 (06 July 2026)
 - Improve plugin security
 

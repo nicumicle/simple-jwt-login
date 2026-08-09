@@ -355,9 +355,10 @@ abstract class BaseService
         if ($iss === GoogleOauth::IIS) {
             $googleSettings = $this->jwtSettings->getIntegrationsSettings()->google();
             if ($googleSettings->isEnabled() && $googleSettings->isAllowedOnAllEndpoints()) {
-                GoogleOauth::validateIdToken($this->jwt, $googleSettings->getClientId());
+                // Use the claims Google validated, never the ones decoded from the raw token.
+                $tokenInfo = GoogleOauth::validateIdToken($this->jwt, $googleSettings->getClientId());
 
-                return $jwtParts['payload']['email'];
+                return $tokenInfo['email'];
             }
         }
         $auth0Settings = $this->jwtSettings->getIntegrationsSettings()->auth0();

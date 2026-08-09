@@ -1,7 +1,11 @@
 # Changelog - Releases
 
 ## Unreleased
+
+## 4.0.1 (09 August 2026)
 - Apply protect endpoints rules only on REST endpoints
+- Improve Google Oauth Security (Reported by [@FaridNarimanov](https://github.com/FaridNarimanov)) [#174](https://github.com/nicumicle/simple-jwt-login/issues/174)
+- JWT Payload: strip reserved claims improvement
 
 ## 4.0.0 (06 July 2026)
 - Redesign Protect Endpoints: replace separate whitelist/protected lists with a unified ordered rules table where each rule explicitly sets access to Public, JWT required, or JWT + Roles; rules are evaluated top-to-bottom with first-match-wins; old settings auto-migrate;

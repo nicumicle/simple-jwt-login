@@ -1868,6 +1868,10 @@ paths:
               (`error_code` 72 Google code, 79 Auth0 code, 98 Facebook code, 102 GitHub
               code; or 73 Google id_token, 80 Auth0 token, 99 Facebook token, 103 GitHub
               token).
+            - The Google `id_token` was not issued for this website — its `aud` claim
+              does not match the configured Google client ID (`error_code` 118).
+            - The Google account behind the `id_token` has an unverified email address
+              (`error_code` 119).
             - The OAuth identity email did not match any WordPress user and auto-register
               is disabled — Facebook (`error_code` 100) or GitHub (`error_code` 104).
           content:

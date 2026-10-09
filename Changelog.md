@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 4.0.2 (09 October 2026)
+- Fix WooCommerce integration [#177](https://github.com/nicumicle/simple-jwt-login/issues/177)
+- Update WordPress 7.1 compatibility
+
 ## 4.0.1 (09 August 2026)
 - Apply protect endpoints rules only on REST endpoints
 - Improve Google Oauth Security (Reported by [@FaridNarimanov](https://github.com/FaridNarimanov)) [#174](https://github.com/nicumicle/simple-jwt-login/issues/174)

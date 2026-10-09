@@ -4,7 +4,7 @@ Contributors: nicu_m
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PK9BCD6AYF58Y&source=url
 Tags: jwt, authentication, rest api, oauth, headless wordpress
 Requires at least: 4.4.0
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 5.5
 Stable tag: 3.6.7
 License: GPLv3

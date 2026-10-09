@@ -9,12 +9,15 @@ use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Helpers\StatusCodeHelper;
 use SimpleJWTLogin\Libraries\ParseRequest;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Repositories\RevokedToken\RevokedTokenRepository;
 use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 use SimpleJWTLogin\Routes\SessionService;
 use SimpleJWTLogin\Services\RouteService;
 
 // This will allow to log in  a user to WPGraphQL is not authenticated
 add_action('init_graphql_request', function () {
+    global $wpdb;
+
     $wordPressReo = WordPressRepository::getInstance();
     $jwtSettings = new SimpleJWTLoginSettings($wordPressReo);
     if (!$jwtSettings->getIntegrationsSettings()->wpgraphql()->isEnabled()) {
@@ -35,7 +38,8 @@ add_action('init_graphql_request', function () {
             $jwtSettings->getGeneralSettings()->isTrustIpHeadersEnabled()
                 ? ServerHelper::withTrustedProxyHeaders($_SERVER)
                 : new ServerHelper($_SERVER)
-        );
+        )
+        ->withRevokedTokenRepository(new RevokedTokenRepository($wpdb));
 
     if ($jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
         $routeService->withSession(SessionService::init());

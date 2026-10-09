@@ -8,6 +8,7 @@ if (! defined('ABSPATH')) {
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Helpers\StatusCodeHelper;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Repositories\RevokedToken\RevokedTokenRepository;
 use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 use SimpleJWTLogin\Routes\SessionService;
 use SimpleJWTLogin\Services\Integrations\WooCommerce\WooCommerceBridge;
@@ -21,6 +22,8 @@ use SimpleJWTLogin\Services\RouteService;
  */
 function simpleJwtLoginWooCommerceRouteService($jwtSettings)
 {
+    global $wpdb;
+
     $serverHelper = $jwtSettings->getGeneralSettings()->isTrustIpHeadersEnabled()
         ? ServerHelper::withTrustedProxyHeaders($_SERVER)
         : new ServerHelper($_SERVER);
@@ -30,7 +33,8 @@ function simpleJwtLoginWooCommerceRouteService($jwtSettings)
         //phpcs:ignore WordPress.Security.NonceVerification.Recommended
         ->withRequest($_REQUEST)
         ->withCookies($_COOKIE)
-        ->withServerHelper($serverHelper);
+        ->withServerHelper($serverHelper)
+        ->withRevokedTokenRepository(new RevokedTokenRepository($wpdb));
 
     if ($jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
         $routeService->withSession(SessionService::init());

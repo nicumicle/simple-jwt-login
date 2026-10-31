@@ -65,7 +65,13 @@ if (!defined('ABSPATH')) {
                     <code class="sjl-gen-var-chip">Access-Control-Allow-Origin</code>
                 </label>
                 <p class="sjl-gen-feature-desc sjl-cors-header-desc">
-                    <?php echo esc_html__('Specifies which origins are permitted to access the resource. Use <code>*</code> to allow any origin, or list specific domains.', 'simple-jwt-login'); ?>
+                    <?php echo wp_kses(
+                        __(
+                            'Specifies which origins are permitted to access the resource. Use <code>*</code> to allow any origin, or list specific origins separated by commas (e.g. <code>https://example.com, capacitor://localhost</code>). Requests from other origins are rejected by the browser.',
+                            'simple-jwt-login'
+                        ),
+                        ['code' => []]
+                    ); ?>
                 </p>
                 <input type="text" class="form-control sjl-gen-input-medium sjl-cors-header-input" name="cors[allow_origin]"
                        value="<?php echo esc_attr($jwtSettings->getCorsSettings()->getAllowOrigin()); ?>"

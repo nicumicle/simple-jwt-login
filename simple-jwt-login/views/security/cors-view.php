@@ -67,7 +67,7 @@ if (!defined('ABSPATH')) {
                 <p class="sjl-gen-feature-desc sjl-cors-header-desc">
                     <?php echo wp_kses(
                         __(
-                            'Specifies which origins are permitted to access the resource. Use <code>*</code> to allow any origin, or list specific origins separated by commas (e.g. <code>https://example.com, capacitor://localhost</code>). Requests from other origins are rejected by the browser.',
+                            'Specifies which origins are permitted to access the resource. Use `*` to allow any origin, or list specific origins separated by commas (e.g. <code>https://example.com, capacitor://localhost</code>). Requests from other origins are rejected by the browser.',
                             'simple-jwt-login'
                         ),
                         ['code' => []]

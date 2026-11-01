@@ -224,12 +224,15 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
      */
     public function touchLastUsed($keyId, $lastUsedAt)
     {
-        $result = $this->wpdb->update(
-            $this->tableName(),
-            ['last_used_at' => $lastUsedAt],
-            ['id' => $keyId],
-            ['%s'],
-            ['%d']
+        // A prepared query instead of $wpdb->update(), which runs an extra
+        // SHOW FULL COLUMNS query on every call to check the column charsets.
+        $result = $this->wpdb->query(
+            $this->wpdb->prepare(
+                'UPDATE %i SET last_used_at = %s WHERE id = %d',
+                $this->tableName(),
+                $lastUsedAt,
+                $keyId
+            )
         );
 
         return $result !== false;

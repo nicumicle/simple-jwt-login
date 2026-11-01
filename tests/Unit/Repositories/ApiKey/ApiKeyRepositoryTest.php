@@ -141,21 +141,47 @@ class ApiKeyRepositoryTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testTouchLastUsedReturnsFalseWhenWpdbUpdateFails()
+    /**
+     * @return array<string,array{0:int|false,1:bool}>
+     */
+    public static function touchLastUsedProvider()
     {
-        $this->wpdbMock->method('update')->willReturn(false);
-
-        $result = $this->repository->touchLastUsed(1, '2026-01-01 00:00:00');
-
-        $this->assertFalse($result);
+        return [
+            'query fails'       => [false, false],
+            'row updated'       => [1, true],
+            'no row changed'    => [0, true],
+        ];
     }
 
-    public function testTouchLastUsedReturnsTrueOnSuccess()
+    /**
+     * touchLastUsed() must use a prepared query instead of $wpdb->update(),
+     * which runs an extra SHOW FULL COLUMNS query on every call.
+     *
+     * @param int|false $queryResult
+     * @param bool $expected
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('touchLastUsedProvider')]
+    public function testTouchLastUsedUsesPreparedQuery($queryResult, $expected)
     {
-        $this->wpdbMock->method('update')->willReturn(1);
+        $wpdbMock         = $this->createMock(\wpdb::class);
+        $wpdbMock->prefix = 'wp_';
+        $wpdbMock->expects($this->never())->method('update');
+        $wpdbMock->expects($this->once())
+            ->method('prepare')
+            ->with(
+                'UPDATE %i SET last_used_at = %s WHERE id = %d',
+                'wp_simple_jwt_login_api_keys',
+                '2026-01-01 00:00:00',
+                1
+            )
+            ->willReturn('prepared-sql');
+        $wpdbMock->expects($this->once())
+            ->method('query')
+            ->with('prepared-sql')
+            ->willReturn($queryResult);
 
-        $result = $this->repository->touchLastUsed(1, '2026-01-01 00:00:00');
+        $result = (new ApiKeyRepository($wpdbMock))->touchLastUsed(1, '2026-01-01 00:00:00');
 
-        $this->assertTrue($result);
+        $this->assertSame($expected, $result);
     }
 }

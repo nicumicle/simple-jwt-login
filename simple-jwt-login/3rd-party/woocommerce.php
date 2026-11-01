@@ -82,8 +82,10 @@ add_filter('rest_authentication_errors', function ($errors) {
         );
     }
 
+    // Only set the user for this request. A full login would create a new
+    // WordPress session, send auth cookies and fire wp_login on every API call.
     if (!is_user_logged_in()) {
-        $wordPressRepo->loginUser($user, null);
+        $wordPressRepo->setCurrentUser($user);
     }
 
     return $errors;

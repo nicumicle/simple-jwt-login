@@ -1,6 +1,11 @@
 # Changelog - Releases
 
 ## Unreleased
+- Fix login creating two WordPress sessions instead of one (autologin, register with auto-login, OAuth), reducing DB writes per login
+- Performance: API key "last used" timestamp is now updated at most once per minute per key, instead of on every request. A new "Update Last used" setting (API Keys) lets you switch back to updating it on every request
+- Performance: remove an extra database query on every API key request
+- WooCommerce integration: authenticate JWT requests without a full login, so API calls no longer create a new WordPress session, set auth cookies or fire `wp_login` on every request
+- Performance: load the WordPress admin user functions only when deleting a user, instead of on every request
 
 ## 4.0.2 (09 October 2026)
 - Fix WooCommerce integration [#177](https://github.com/nicumicle/simple-jwt-login/issues/177)

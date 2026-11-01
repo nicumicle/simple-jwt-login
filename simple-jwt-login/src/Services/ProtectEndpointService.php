@@ -143,9 +143,9 @@ class ProtectEndpointService extends BaseService
             return false;
         }
 
-        $headerName = $this->jwtSettings->getApiKeysSettings()->getHeaderName();
-        $keyData = (new ApiKeyAuthMiddleware($this->apiKeyRepository))
-            ->validate($this->serverHelper, $requiredPermission, $headerName);
+        $apiKeysSettings = $this->jwtSettings->getApiKeysSettings();
+        $keyData = (new ApiKeyAuthMiddleware($this->apiKeyRepository, $apiKeysSettings))
+            ->validate($this->serverHelper, $requiredPermission, $apiKeysSettings->getHeaderName());
 
         if ($keyData === null) {
             return false;

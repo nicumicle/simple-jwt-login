@@ -42,6 +42,13 @@ class EndpointProtectionHandler
      * @var RevokedTokenRepositoryInterface
      */
     protected $revokedTokenRepo;
+    /**
+     * Set once access is granted for the current request, so the check is not
+     * repeated each time WordPress applies the "rest_endpoints" filter.
+     *
+     * @var boolean
+     */
+    protected $accessGranted = false;
 
     /**
      * @param RouteService $routeService
@@ -95,7 +102,7 @@ class EndpointProtectionHandler
         // (e.g. WooCommerce does this during WP-CLI bootstrap). REST_REQUEST
         // is only defined once WP_REST_Server::serve_request() starts
         // handling a genuine REST HTTP request, so skip protection otherwise.
-        if (!defined('REST_REQUEST') || !REST_REQUEST) {
+        if (!defined('REST_REQUEST') || !REST_REQUEST || $this->accessGranted) {
             return $endpoint;
         }
 
@@ -136,6 +143,8 @@ class EndpointProtectionHandler
         }
 
         if ($hasAccess) {
+            $this->accessGranted = true;
+
             return $endpoint;
         }
 

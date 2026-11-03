@@ -8,18 +8,19 @@ if (! defined('ABSPATH')) {
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Helpers\StatusCodeHelper;
 use SimpleJWTLogin\Libraries\ParseRequest;
-use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\RevokedToken\RevokedTokenRepository;
 use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 use SimpleJWTLogin\Routes\SessionService;
 use SimpleJWTLogin\Services\RouteService;
 
+/** @var \SimpleJWTLogin\Modules\SimpleJWTLoginSettings $simpleJwtLoginJwtSettings Built in simple-jwt-login.php */
+
 // This will allow to log in  a user to WPGraphQL is not authenticated
-add_action('init_graphql_request', function () {
+add_action('init_graphql_request', function () use ($simpleJwtLoginJwtSettings) {
     global $wpdb;
 
     $wordPressReo = WordPressRepository::getInstance();
-    $jwtSettings = new SimpleJWTLoginSettings($wordPressReo);
+    $jwtSettings = $simpleJwtLoginJwtSettings;
     if (!$jwtSettings->getIntegrationsSettings()->wpgraphql()->isEnabled()) {
         return;
     }

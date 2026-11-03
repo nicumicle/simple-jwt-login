@@ -6,6 +6,9 @@
 - Performance: remove an extra database query on every API key request
 - WooCommerce integration: authenticate JWT requests without a full login, so API calls no longer create a new WordPress session, set auth cookies or fire `wp_login` on every request
 - Performance: load the WordPress admin user functions only when deleting a user, instead of on every request
+- Performance: Protect Endpoints no longer checks the revoked-token table twice for every JWT-authenticated request
+- Performance: the Force Login, WooCommerce and WPGraphQL integrations reuse the plugin settings instead of re-reading and decoding them on every REST request
+- Performance: Protect Endpoints checks access once per REST request instead of every time WordPress reads the route list
 
 ## 4.0.2 (09 October 2026)
 - Fix WooCommerce integration [#177](https://github.com/nicumicle/simple-jwt-login/issues/177)

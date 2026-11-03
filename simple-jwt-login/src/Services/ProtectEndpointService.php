@@ -95,11 +95,8 @@ class ProtectEndpointService extends BaseService
                 );
             }
 
+            // getUserFromJwt() already rejects revoked tokens.
             $user = $this->routeService->getUserFromJwt($jwt);
-            $this->validateJwtRevoked(
-                $this->wordPressData->getUserProperty($user, 'ID'),
-                $jwt
-            );
 
             $this->wordPressData->setCurrentUser($user);
 

@@ -47,14 +47,15 @@ function simpleJwtLoginWooCommerceRouteService($jwtSettings)
 // cart & checkout, even when the global middleware is disabled. Runs on
 // rest_authentication_errors at an early priority so the user is set before
 // WooCommerce's own Store API authentication (nonce / cart-token) runs.
-add_filter('rest_authentication_errors', function ($errors) {
+/** @var \SimpleJWTLogin\Modules\SimpleJWTLoginSettings $simpleJwtLoginJwtSettings Built in simple-jwt-login.php */
+add_filter('rest_authentication_errors', function ($errors) use ($simpleJwtLoginJwtSettings) {
     // Respect a result already produced by another authentication handler.
     if (!empty($errors)) {
         return $errors;
     }
 
     $wordPressRepo = WordPressRepository::getInstance();
-    $jwtSettings   = new SimpleJWTLoginSettings($wordPressRepo);
+    $jwtSettings   = $simpleJwtLoginJwtSettings;
     if (!$jwtSettings->getIntegrationsSettings()->woocommerce()->isEnabled()) {
         return $errors;
     }
@@ -99,8 +100,8 @@ add_filter('rest_authentication_errors', function ($errors) {
 // This is self-contained (evaluates the request directly) so it does not depend
 // on the order in which authentication filters run. Cookie/URL tokens always
 // keep their nonce protection.
-add_filter('woocommerce_store_api_disable_nonce_check', function ($disabled) {
-    $jwtSettings = new SimpleJWTLoginSettings(WordPressRepository::getInstance());
+add_filter('woocommerce_store_api_disable_nonce_check', function ($disabled) use ($simpleJwtLoginJwtSettings) {
+    $jwtSettings = $simpleJwtLoginJwtSettings;
     $wooSettings = $jwtSettings->getIntegrationsSettings()->woocommerce();
     if (!$wooSettings->isEnabled() || !$wooSettings->isStoreApiNonceDisabled()) {
         return $disabled;

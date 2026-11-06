@@ -9,6 +9,8 @@
 - Performance: Protect Endpoints no longer checks the revoked-token table twice for every JWT-authenticated request
 - Performance: the Force Login, WooCommerce and WPGraphQL integrations reuse the plugin settings instead of re-reading and decoding them on every REST request
 - Performance: Protect Endpoints checks access once per REST request instead of every time WordPress reads the route list
+- Fix CORS headers missing on REST error responses (401/403 from JWT auth and protected endpoints)[#179](https://github.com/nicumicle/simple-jwt-login/issues/179)
+- CORS: support multiple allowed origins (comma-separated); the matching request origin is echoed back, and `*` echoes the request origin so credentialed requests work[#179](https://github.com/nicumicle/simple-jwt-login/issues/179)
 
 ## 4.0.2 (09 October 2026)
 - Fix WooCommerce integration [#177](https://github.com/nicumicle/simple-jwt-login/issues/177)

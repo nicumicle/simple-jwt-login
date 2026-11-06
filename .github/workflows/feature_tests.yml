@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: Simple-JWT-Login Feature tests
     strategy:
       matrix:
@@ -34,6 +34,8 @@ jobs:
           extension: mbstring, intl #setup extensions
           ini-values: post_max_size=256M, short_open_tag=Off, error_reporting=E_ALL, display_errors=On, display_startup_errors=On  #setup php.ini configuration
           coverage: xdebug #setup coverage driver
+        env:
+          update: true #install the latest patch release, older ones are rejected by roave/security-advisories
           pecl: false
 
       -   name: "🚧 MySQL Setup"

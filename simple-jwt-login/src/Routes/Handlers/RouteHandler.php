@@ -2,6 +2,7 @@
 
 namespace SimpleJWTLogin\Routes\Handlers;
 
+use SimpleJWTLogin\Helpers\RestErrorResponse;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Helpers\StatusCodeHelper;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
@@ -195,19 +196,9 @@ class RouteHandler
                 );
             }
 
-            if (!headers_sent()) {
-                header('Content-Type: application/json; charset=UTF-8');
-            }
-
-            wp_send_json_error(
-                [
-                    'message'    => $exception->getMessage(),
-                    'error_code' => $exception->getCode(),
-                ],
-                StatusCodeHelper::getStatusCodeFromException($exception)
-            );
-
-            return false;
+            // Returned (not sent with wp_send_json_error) so WordPress serves it
+            // through the REST pipeline, including its CORS headers.
+            return RestErrorResponse::fromException($exception);
         }
     }
 

@@ -14,9 +14,9 @@ use SimpleJWTLogin\Services\RouteService;
 class EndpointProtectionHandlerTest extends TestCase
 {
     /**
-     * WordPress applies the "rest_endpoints" filter several times per REST
-     * request (route matching, Allow header, ...). Once access is granted for
-     * the current request, later calls must not re-run the access check.
+     * "rest_pre_dispatch" can fire several times per REST request (e.g. _embed
+     * sub-requests). Once access is granted for the current request, later
+     * calls must not re-run the access check.
      */
     public function testAccessIsCheckedOncePerRequest()
     {
@@ -55,8 +55,7 @@ class EndpointProtectionHandlerTest extends TestCase
         $handler = (new EndpointProtectionHandler($routeService, $jwtSettings, $serverHelper, [], '/var/www/html'))
             ->withRevokedTokenRepository($this->createStub(RevokedTokenRepository::class));
 
-        $endpoints = ['/wp/v2/posts' => []];
-        $this->assertSame($endpoints, $handler($endpoints));
-        $this->assertSame($endpoints, $handler($endpoints));
+        $this->assertNull($handler(null));
+        $this->assertNull($handler(null));
     }
 }

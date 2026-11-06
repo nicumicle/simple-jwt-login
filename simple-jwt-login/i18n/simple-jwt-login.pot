@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv3.
 msgid ""
 msgstr ""
-"Project-Id-Version: Simple JWT Login 4.0.2\n"
+"Project-Id-Version: Simple JWT Login 4.0.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/simple-jwt-login\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-01T05:40:08+00:00\n"
+"POT-Creation-Date: 2026-11-06T07:00:48+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -913,11 +913,11 @@ msgstr ""
 msgid "My API Keys"
 msgstr ""
 
-#: src/Routes/Handlers/AuthenticationHandler.php:126
+#: src/Routes/Handlers/AuthenticationHandler.php:123
 msgid "Invalid or unauthorized API key."
 msgstr ""
 
-#: src/Routes/Handlers/EndpointProtectionHandler.php:147
+#: src/Routes/Handlers/EndpointProtectionHandler.php:144
 msgid "You are not authorized to access this endpoint."
 msgstr ""
 
@@ -1226,7 +1226,7 @@ msgstr ""
 msgid "JWT is not present and we can not search for a user."
 msgstr ""
 
-#: src/Services/ProtectEndpointService.php:110
+#: src/Services/ProtectEndpointService.php:107
 msgid "You do not have the required role to access this endpoint."
 msgstr ""
 
@@ -3945,21 +3945,21 @@ msgstr ""
 msgid "Configure which CORS headers to include in API responses. Enable a header and set its value."
 msgstr ""
 
-#: views/security/cors-view.php:68
-msgid "Specifies which origins are permitted to access the resource. Use <code>*</code> to allow any origin, or list specific domains."
+#: views/security/cors-view.php:69
+msgid "Specifies which origins are permitted to access the resource. Use `*` to allow any origin, or list specific origins separated by commas (e.g. <code>https://example.com, capacitor://localhost</code>). Requests from other origins are rejected by the browser."
 msgstr ""
 
-#: views/security/cors-view.php:76
-#: views/security/cors-view.php:101
-#: views/security/cors-view.php:126
+#: views/security/cors-view.php:82
+#: views/security/cors-view.php:107
+#: views/security/cors-view.php:132
 msgid "MDN Reference &nearr;"
 msgstr ""
 
-#: views/security/cors-view.php:93
+#: views/security/cors-view.php:99
 msgid "Specifies the HTTP methods permitted when accessing the resource in response to a preflight request."
 msgstr ""
 
-#: views/security/cors-view.php:118
+#: views/security/cors-view.php:124
 msgid "Indicates which HTTP headers can be used during the actual request following a preflight."
 msgstr ""
 

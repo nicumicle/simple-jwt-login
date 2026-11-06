@@ -200,7 +200,7 @@ class RouteRegistrar
         }
 
         if ($this->jwtSettings->getCorsSettings()->isCorsEnabled()) {
-            $corsHandler = new CorsHandler($this->jwtSettings->getCorsSettings());
+            $corsHandler = new CorsHandler($this->jwtSettings->getCorsSettings(), $serverHelper);
             $corsHandler->register();
         }
 
@@ -332,7 +332,7 @@ class RouteRegistrar
         if ($apiKeyRepository !== null) {
             $handler->withApiKeyRepository($apiKeyRepository);
         }
-        add_action('rest_endpoints', $handler, 0);
+        add_filter('rest_pre_dispatch', $handler, 0);
     }
 
     /**

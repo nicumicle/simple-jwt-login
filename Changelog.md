@@ -1,6 +1,8 @@
 # Changelog - Releases
 
 ## Unreleased
+- Fix CORS headers missing on REST error responses (401/403 from JWT auth and protected endpoints)[#179](https://github.com/nicumicle/simple-jwt-login/issues/179)
+- CORS: support multiple allowed origins (comma-separated); the matching request origin is echoed back, and `*` echoes the request origin so credentialed requests work[#179](https://github.com/nicumicle/simple-jwt-login/issues/179)
 
 ## 4.0.2 (09 October 2026)
 - Fix WooCommerce integration [#177](https://github.com/nicumicle/simple-jwt-login/issues/177)

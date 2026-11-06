@@ -4,8 +4,8 @@ namespace SimpleJWTLogin\Routes\Handlers;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Helpers\RestErrorResponse;
 use SimpleJWTLogin\Helpers\ServerHelper;
-use SimpleJWTLogin\Helpers\StatusCodeHelper;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepositoryInterface;
 use SimpleJWTLogin\Repositories\RevokedToken\Repository as RevokedTokenRepositoryInterface;
@@ -84,19 +84,22 @@ class EndpointProtectionHandler
     }
 
     /**
-     * @param mixed $endpoint
+     * Hooked on "rest_pre_dispatch": returning a response short-circuits the
+     * dispatch, while WordPress still serves it through the regular REST
+     * pipeline (rest_post_dispatch, rest_pre_serve_request, CORS headers).
+     *
+     * @param mixed $result Response from an earlier filter, or null.
      *
      * @return mixed
      */
-    public function __invoke($endpoint)
+    public function __invoke($result)
     {
-        // The "rest_endpoints" filter also fires whenever any code calls
-        // rest_get_server()->get_routes() outside of an actual REST request
-        // (e.g. WooCommerce does this during WP-CLI bootstrap). REST_REQUEST
-        // is only defined once WP_REST_Server::serve_request() starts
-        // handling a genuine REST HTTP request, so skip protection otherwise.
-        if (!defined('REST_REQUEST') || !REST_REQUEST) {
-            return $endpoint;
+        // rest_pre_dispatch also fires for internal rest_do_request() calls made
+        // outside a REST HTTP request (e.g. block editor preloading). REST_REQUEST
+        // is only defined once WP_REST_Server::serve_request() starts handling a
+        // genuine REST HTTP request, so skip protection otherwise.
+        if ($result !== null || !defined('REST_REQUEST') || !REST_REQUEST) {
+            return $result;
         }
 
         $service = new ProtectEndpointService();
@@ -121,35 +124,17 @@ class EndpointProtectionHandler
         try {
             $hasAccess = $service->hasAccess($currentURL, $documentRoot);
         } catch (Exception $exception) {
-            if (!headers_sent()) {
-                header('Content-Type: application/json; charset=UTF-8');
-            }
-            wp_send_json_error(
-                [
-                    'message'    => $exception->getMessage(),
-                    'error_code' => $exception->getCode(),
-                ],
-                StatusCodeHelper::getStatusCodeFromException($exception)
-            );
-
-            return false;
+            return RestErrorResponse::fromException($exception);
         }
 
         if ($hasAccess) {
-            return $endpoint;
+            return $result;
         }
 
-        if (!headers_sent()) {
-            header('Content-Type: application/json; charset=UTF-8');
-        }
-        wp_send_json_error(
-            [
-                'message'    => __('You are not authorized to access this endpoint.', 'simple-jwt-login'),
-                'error_code' => ErrorCodes::ERR_PROTECT_ENDPOINTS_MISSING_JWT,
-            ],
+        return RestErrorResponse::create(
+            __('You are not authorized to access this endpoint.', 'simple-jwt-login'),
+            ErrorCodes::ERR_PROTECT_ENDPOINTS_MISSING_JWT,
             401
         );
-
-        return false;
     }
 }

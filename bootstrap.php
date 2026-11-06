@@ -900,12 +900,35 @@ if (!function_exists('wp_roles')) {
 if (!class_exists('WP_REST_Response')) {
     class WP_REST_Response
     {
-        public function __construct($parameter)
+        /** @var mixed */
+        private $data;
+        /** @var int */
+        private $status = 200;
+
+        public function __construct($parameter = null)
         {
+            $this->data = $parameter;
         }
 
         public function set_status($status)
         {
+            $this->status = $status;
+        }
+
+        /**
+         * @return int
+         */
+        public function get_status()
+        {
+            return $this->status;
+        }
+
+        /**
+         * @return mixed
+         */
+        public function get_data()
+        {
+            return $this->data;
         }
     }
 }

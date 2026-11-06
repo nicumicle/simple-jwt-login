@@ -684,4 +684,154 @@ class ProtectEndpointServiceTest extends TestCase
         $result = $service->hasAccess('/wp-json/wp/v2/posts', '/var/www/html');
         $this->assertTrue($result);
     }
+
+    public static function cookieAuthenticatedUserProvider()
+    {
+        return [
+            'subscriber cookie, administrator-only rule' => [
+                ProtectEndpointSettings::RULE_TYPE_PROTECTED_ROLES,
+                'administrator',
+                ['subscriber'],
+                false,
+            ],
+            'administrator cookie, administrator-only rule' => [
+                ProtectEndpointSettings::RULE_TYPE_PROTECTED_ROLES,
+                'administrator',
+                ['administrator'],
+                true,
+            ],
+            'subscriber cookie, jwt required rule without roles' => [
+                ProtectEndpointSettings::RULE_TYPE_PROTECTED,
+                '',
+                ['subscriber'],
+                true,
+            ],
+            'subscriber cookie, public rule' => [
+                ProtectEndpointSettings::RULE_TYPE_PUBLIC,
+                '',
+                ['subscriber'],
+                true,
+            ],
+        ];
+    }
+
+    /**
+     * @param string $ruleType
+     * @param string $ruleRoles
+     * @param array $userRoles
+     * @param bool $expectedResult
+     */
+    #[DataProvider('cookieAuthenticatedUserProvider')]
+    public function testCookieAuthenticatedUserIsSubjectToEndpointRules(
+        $ruleType,
+        $ruleRoles,
+        $userRoles,
+        $expectedResult
+    ) {
+        $user = new stdClass();
+        $user->ID = 3;
+        $user->roles = $userRoles;
+
+        $settings = [
+            ProtectEndpointSettings::PROPERTY_GROUP => [
+                'enabled'        => true,
+                'default_action' => ProtectEndpointSettings::DEFAULT_ALLOW_ALL,
+                'rules_url'      => ['/example/v1/admin-only'],
+                'rules_type'     => [$ruleType],
+                'rules_roles'    => [$ruleRoles],
+            ],
+        ];
+
+        $this->wordPressData->method('getOptionFromDatabase')
+            ->willReturn(json_encode($settings));
+        $this->wordPressData->method('isUserLoggedIn')->willReturn(true);
+        $this->wordPressData->method('getCurrentUserId')->willReturn(3);
+        $this->wordPressData->method('getUserDetailsById')->willReturn($user);
+        $this->wordPressData->method('getUserRoles')->willReturn($userRoles);
+
+        $routeServiceMock = $this->createStub(RouteService::class);
+        $routeServiceMock->method('getUserFromJwt')->willThrowException(new Exception());
+
+        $service = (new ProtectEndpointService())
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
+            ->withRequest(['rest_route' => '/example/v1/admin-only'])
+            ->withCookies([])
+            ->withRequestMethod('GET')
+            ->withServerHelper(new ServerHelper([]))
+            ->withRouteService($routeServiceMock)
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressData))
+            ->withSession([]);
+
+        $result = $service->hasAccess('/wp-json/example/v1/admin-only', '/var/www/html');
+        $this->assertSame($expectedResult, $result);
+    }
+
+    public static function apiKeyOwnerRoleProvider()
+    {
+        return [
+            'subscriber key owner, administrator-only rule' => [['subscriber'], false],
+            'administrator key owner, administrator-only rule' => [['administrator'], true],
+        ];
+    }
+
+    /**
+     * @param array $ownerRoles
+     * @param bool $expectedResult
+     */
+    #[DataProvider('apiKeyOwnerRoleProvider')]
+    public function testApiKeyOwnerIsSubjectToRequiredRoles($ownerRoles, $expectedResult)
+    {
+        $rawKey = 'test-api-key-value';
+        $keyRow = (object) [
+            'id'          => 1,
+            'user_id'     => 42,
+            'permissions' => json_encode(['read']),
+            'key_hash'    => hash('sha256', $rawKey),
+        ];
+
+        $apiKeyRepo = $this->createStub(ApiKeyRepositoryInterface::class);
+        $apiKeyRepo->method('getByKeyHash')->willReturn($keyRow);
+
+        $settings = [
+            'decryption_key' => 'test',
+            ProtectEndpointSettings::PROPERTY_GROUP => [
+                'enabled'        => true,
+                'default_action' => ProtectEndpointSettings::DEFAULT_ALLOW_ALL,
+                'rules_url'      => ['/example/v1/admin-only'],
+                'rules_type'     => [ProtectEndpointSettings::RULE_TYPE_PROTECTED_ROLES],
+                'rules_roles'    => ['administrator'],
+            ],
+            'api_keys' => [
+                'enabled'     => true,
+                'header_name' => 'x-api-key',
+            ],
+        ];
+
+        $owner = new stdClass();
+        $owner->ID = 42;
+        $owner->roles = $ownerRoles;
+
+        $this->wordPressData->method('getOptionFromDatabase')
+            ->willReturn(json_encode($settings));
+        $this->wordPressData->method('isUserLoggedIn')->willReturn(false);
+        $this->wordPressData->method('getUserDetailsById')->willReturn($owner);
+        $this->wordPressData->method('getUserRoles')->willReturn($ownerRoles);
+
+        $routeServiceMock = $this->createStub(RouteService::class);
+        $routeServiceMock->method('getUserFromJwt')->willThrowException(new Exception());
+
+        $service = (new ProtectEndpointService())
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
+            ->withRequest(['rest_route' => '/example/v1/admin-only'])
+            ->withCookies([])
+            ->withRequestMethod('GET')
+            ->withServerHelper(new ServerHelper(['HTTP_X_API_KEY' => $rawKey, 'REQUEST_METHOD' => 'GET']))
+            ->withRouteService($routeServiceMock)
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressData))
+            ->withSession([])
+            ->withApiKeyRepository($apiKeyRepo);
+
+        $result = $service->hasAccess('/wp-json/example/v1/admin-only', '/var/www/html');
+        $this->assertSame($expectedResult, $result);
+    }
 }

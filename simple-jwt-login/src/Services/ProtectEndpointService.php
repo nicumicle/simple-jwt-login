@@ -58,12 +58,6 @@ class ProtectEndpointService extends BaseService
             return true;
         }
 
-        // WordPress Core or some other plugins use the REST API to create pages/posts, etc.
-        // Skip protect endpoint validation for these scenarios if the user is already logged in.
-        if ($this->wordPressData->isUserLoggedIn()) {
-            return true;
-        }
-
         $parsed = $this->wordPressData->parseUrl($currentUrl);
 
         // Initialize $path safely: parse_url() may not include 'path' for some URL forms.
@@ -86,6 +80,18 @@ class ProtectEndpointService extends BaseService
             return true;
         }
 
+        // WordPress Core (block editor) and other plugins call the REST API with
+        // cookie + nonce authentication. Accept the logged-in user, but only after
+        // the endpoint rule has been resolved, so "JWT + Roles" rules are still enforced.
+        if ($this->wordPressData->isUserLoggedIn()
+            && $this->userHasRequiredRole(
+                $this->wordPressData->getUserDetailsById($this->wordPressData->getCurrentUserId()),
+                $requiredRoles
+            )
+        ) {
+            return true;
+        }
+
         try {
             $jwt = $this->getJwtFromRequestHeaderOrCookie();
             if (empty($jwt)) {
@@ -103,14 +109,11 @@ class ProtectEndpointService extends BaseService
 
             $this->wordPressData->setCurrentUser($user);
 
-            if (!empty($requiredRoles)) {
-                $userRoles = $this->wordPressData->getUserRoles($user);
-                if (empty(array_intersect($userRoles, $requiredRoles))) {
-                    throw new Exception(
-                        __('You do not have the required role to access this endpoint.', 'simple-jwt-login'),
-                        ErrorCodes::ERR_PROTECT_ENDPOINTS_INSUFFICIENT_ROLE
-                    );
-                }
+            if (!$this->userHasRequiredRole($user, $requiredRoles)) {
+                throw new Exception(
+                    __('You do not have the required role to access this endpoint.', 'simple-jwt-login'),
+                    ErrorCodes::ERR_PROTECT_ENDPOINTS_INSUFFICIENT_ROLE
+                );
             }
 
             return true;
@@ -122,13 +125,35 @@ class ProtectEndpointService extends BaseService
             }
         }
 
-        return $this->tryApiKeyAuth();
+        return $this->tryApiKeyAuth($requiredRoles);
     }
 
     /**
+     * @param \WP_User|false|null $user
+     * @param array $requiredRoles
+     *
      * @return bool
      */
-    private function tryApiKeyAuth()
+    protected function userHasRequiredRole($user, $requiredRoles)
+    {
+        if (empty($requiredRoles)) {
+            return true;
+        }
+        if (empty($user)) {
+            return false;
+        }
+
+        $userRoles = $this->wordPressData->getUserRoles($user);
+
+        return !empty(array_intersect($userRoles, $requiredRoles));
+    }
+
+    /**
+     * @param array $requiredRoles
+     *
+     * @return bool
+     */
+    private function tryApiKeyAuth($requiredRoles)
     {
         if ($this->apiKeyRepository === null) {
             return false;
@@ -152,6 +177,9 @@ class ProtectEndpointService extends BaseService
         }
 
         $user = $this->wordPressData->getUserDetailsById((int) $keyData['user_id']);
+        if (!$this->userHasRequiredRole($user, $requiredRoles)) {
+            return false;
+        }
         $this->wordPressData->setCurrentUser($user);
 
         return true;

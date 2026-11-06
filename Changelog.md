@@ -1,6 +1,7 @@
 # Changelog - Releases
 
 ## Unreleased
+- Security: Protect Endpoints now enforces "JWT + Roles" rules for logged-in (cookie-authenticated) users and API key owners
 
 ## 4.0.2 (09 October 2026)
 - Fix WooCommerce integration [#177](https://github.com/nicumicle/simple-jwt-login/issues/177)

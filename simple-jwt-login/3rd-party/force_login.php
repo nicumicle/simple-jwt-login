@@ -5,14 +5,13 @@ if (! defined('ABSPATH')) {
     exit;
 } // Exit if accessed directly
 
-use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
+/** @var \SimpleJWTLogin\Modules\SimpleJWTLoginSettings $simpleJwtLoginJwtSettings Built in simple-jwt-login.php */
 
 ## Force Login
 add_filter(
     'rest_authentication_errors',
-    function ($bypass) {
-        $jwtSettings = new SimpleJWTLoginSettings(WordPressRepository::getInstance());
+    function ($bypass) use ($simpleJwtLoginJwtSettings) {
+        $jwtSettings = $simpleJwtLoginJwtSettings;
         if (!$jwtSettings->getIntegrationsSettings()->forceLogin()->isEnabled()) {
             return $bypass;
         }

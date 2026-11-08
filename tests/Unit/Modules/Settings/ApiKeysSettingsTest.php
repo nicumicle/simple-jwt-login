@@ -122,6 +122,60 @@ class ApiKeysSettingsTest extends TestCase
         $this->assertTrue((bool) $result['api_keys']['allow_user_api_keys']);
     }
 
+    /**
+     * @return array<string,array{0:array,1:bool}>
+     */
+    public static function lastUsedEveryRequestProvider()
+    {
+        return [
+            'not set defaults to every minute' => [[], false],
+            'explicitly every minute'          => [['last_used_every_request' => false], false],
+            'every request'                    => [['last_used_every_request' => true], true],
+        ];
+    }
+
+    /**
+     * @param array $apiKeySettings
+     * @param bool $expected
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('lastUsedEveryRequestProvider')]
+    public function testIsLastUsedUpdatedOnEveryRequest($apiKeySettings, $expected)
+    {
+        $settings = $this->buildSettings(['api_keys' => $apiKeySettings]);
+
+        $this->assertSame($expected, $settings->isLastUsedUpdatedOnEveryRequest());
+    }
+
+    /**
+     * @return array<string,array{0:array,1:bool}>
+     */
+    public static function lastUsedEveryRequestPostProvider()
+    {
+        return [
+            'missing from post' => [['enabled' => '1'], false],
+            'every minute'      => [['last_used_every_request' => '0'], false],
+            'every request'     => [['last_used_every_request' => '1'], true],
+        ];
+    }
+
+    /**
+     * @param array $postedApiKeys
+     * @param bool $expected
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('lastUsedEveryRequestPostProvider')]
+    public function testInitSettingsFromPostSetsLastUsedEveryRequest($postedApiKeys, $expected)
+    {
+        $settings = (new ApiKeysSettings())
+            ->withWordPressData($this->wordPressDataMock)
+            ->withSettings([])
+            ->withPost(['api_keys' => $postedApiKeys]);
+
+        $settings->initSettingsFromPost();
+        $result = $settings->getSettings();
+
+        $this->assertSame($expected, (bool) $result['api_keys']['last_used_every_request']);
+    }
+
     public function testInitSettingsFromPostDefaultsUserApiKeysToFalseWhenMissing()
     {
         $post = [

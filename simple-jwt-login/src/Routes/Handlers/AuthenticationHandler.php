@@ -103,8 +103,9 @@ class AuthenticationHandler
             }
         }
 
-        if ($this->jwtSettings->getApiKeysSettings()->isEnabled()) {
-            $configuredHeader = strtolower($this->jwtSettings->getApiKeysSettings()->getHeaderName());
+        $apiKeysSettings = $this->jwtSettings->getApiKeysSettings();
+        if ($apiKeysSettings->isEnabled()) {
+            $configuredHeader = strtolower($apiKeysSettings->getHeaderName());
             $apiKeyHeader     = trim((string) $this->serverHelper->getHeader($configuredHeader));
 
             if ($apiKeyHeader !== '') {
@@ -113,7 +114,7 @@ class AuthenticationHandler
                 );
                 $keyData = null;
                 if ($requiredPermission !== null) {
-                    $keyData = (new ApiKeyAuthMiddleware($this->apiKeyRepository))
+                    $keyData = (new ApiKeyAuthMiddleware($this->apiKeyRepository, $apiKeysSettings))
                         ->validate($this->serverHelper, $requiredPermission, $configuredHeader);
                 }
                 if ($keyData === null) {

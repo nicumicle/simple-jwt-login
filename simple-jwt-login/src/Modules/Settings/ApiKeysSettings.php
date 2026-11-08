@@ -7,6 +7,7 @@ class ApiKeysSettings extends BaseSettings implements SettingsInterface
     const SETTING_ENABLED            = 'enabled';
     const SETTING_HEADER_NAME        = 'header_name';
     const SETTING_ALLOW_USER_API_KEYS = 'allow_user_api_keys';
+    const SETTING_LAST_USED_EVERY_REQUEST = 'last_used_every_request';
     const DEFAULT_HEADER_NAME        = 'X-API-Key';
 
     protected function getSectionKey()
@@ -20,6 +21,13 @@ class ApiKeysSettings extends BaseSettings implements SettingsInterface
             [null, self::SETTING_ENABLED,             'api_keys', self::SETTING_ENABLED,             self::SETTINGS_TYPE_BOL],
             [null, self::SETTING_HEADER_NAME,         'api_keys', self::SETTING_HEADER_NAME,         self::SETTINGS_TYPE_STRING],
             [null, self::SETTING_ALLOW_USER_API_KEYS, 'api_keys', self::SETTING_ALLOW_USER_API_KEYS, self::SETTINGS_TYPE_BOL],
+            [
+                null,
+                self::SETTING_LAST_USED_EVERY_REQUEST,
+                'api_keys',
+                self::SETTING_LAST_USED_EVERY_REQUEST,
+                self::SETTINGS_TYPE_BOL,
+            ],
         ];
     }
 
@@ -41,6 +49,16 @@ class ApiKeysSettings extends BaseSettings implements SettingsInterface
     public function isUserApiKeysEnabled()
     {
         return !empty($this->settings[self::SETTING_ALLOW_USER_API_KEYS]);
+    }
+
+    /**
+     * When false (default), the key's "last used" time is updated at most once per minute.
+     *
+     * @return bool
+     */
+    public function isLastUsedUpdatedOnEveryRequest()
+    {
+        return !empty($this->settings[self::SETTING_LAST_USED_EVERY_REQUEST]);
     }
 
     /**

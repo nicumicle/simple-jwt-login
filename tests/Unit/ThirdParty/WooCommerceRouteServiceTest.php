@@ -18,6 +18,8 @@ class WooCommerceRouteServiceTest extends TestCase
         $wpdb = new wpdb();
         $_REQUEST = [];
         $_COOKIE = [];
+        // simple-jwt-login.php defines this variable before including the integration file.
+        extract(['simpleJwtLoginJwtSettings' => null]);
 
         require_once __DIR__ . '/../../../simple-jwt-login/3rd-party/woocommerce.php';
     }

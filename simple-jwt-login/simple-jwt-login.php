@@ -10,7 +10,7 @@
     Domain Path: /i18n
     License: GPLv3
     License URI: https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE
-    Version: 4.0.2
+    Version: 4.0.3
 */
 
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -35,12 +35,11 @@ if (! defined('ABSPATH')) {
     exit;
 } // Exit if accessed directly
 
-define('SIMPLE_JWT_LOGIN_VERSION', '4.0.2');
+define('SIMPLE_JWT_LOGIN_VERSION', '4.0.3');
 define('SIMPLE_JWT_LOGIN_DB_VERSION', '1.10');
 define('SIMPLE_JWT_LOGIN_PLUGIN_FILE', __FILE__);
 
 include_once 'autoload.php';
-require_once(ABSPATH . 'wp-admin/includes/user.php');
 
 global $wpdb;
 

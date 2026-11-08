@@ -35,6 +35,8 @@ jobs:
           php-version: '8.3'
           extensions: xdebug
           tools: composer
+        env:
+          update: true
 
       - name: Check PHP Version
         run: php --version

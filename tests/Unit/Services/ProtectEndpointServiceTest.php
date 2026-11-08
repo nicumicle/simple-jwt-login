@@ -7,6 +7,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Libraries\JWT\JWT;
+use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepositoryInterface;
@@ -833,5 +834,60 @@ class ProtectEndpointServiceTest extends TestCase
 
         $result = $service->hasAccess('/wp-json/example/v1/admin-only', '/var/www/html');
         $this->assertSame($expectedResult, $result);
+    }
+
+    public function testRevokedTokenIsCheckedOnlyOncePerRequest()
+    {
+        $user = new stdClass();
+        $user->ID = 13;
+
+        $settings = [
+            'decryption_key'         => '123',
+            'jwt_login_by'           => LoginSettings::JWT_LOGIN_BY_WORDPRESS_USER_ID,
+            'jwt_login_by_parameter' => 'id',
+            ProtectEndpointSettings::PROPERTY_GROUP => [
+                'enabled'        => true,
+                'default_action' => ProtectEndpointSettings::DEFAULT_ALLOW_ALL,
+                'rules_url'      => ['/wp/v2/posts'],
+                'rules_type'     => [ProtectEndpointSettings::RULE_TYPE_PROTECTED],
+                'rules_roles'    => [''],
+            ],
+        ];
+
+        $this->wordPressData->method('getOptionFromDatabase')
+            ->willReturn(json_encode($settings));
+        $this->wordPressData->method('isUserLoggedIn')->willReturn(false);
+        $this->wordPressData->method('getUserDetailsById')->willReturn($user);
+        $this->wordPressData->method('isInstanceOfuser')->willReturn(true);
+        $this->wordPressData->method('getUserProperty')->willReturn(13);
+
+        $revokedTokenRepo = $this->createMock(RevokedTokenRepository::class);
+        $revokedTokenRepo->expects($this->once())
+            ->method('existsForUser')
+            ->willReturn(false);
+
+        $jwt = JWT::encode(['id' => 13], '123');
+        $jwtSettings = new SimpleJWTLoginSettings($this->wordPressData);
+        $serverHelper = new ServerHelper(['HTTP_AUTHORIZATION' => 'Bearer ' . $jwt]);
+
+        $routeService = (new RouteService())
+            ->withSession([])
+            ->withRequest([])
+            ->withCookies([])
+            ->withServerHelper($serverHelper)
+            ->withSettings($jwtSettings)
+            ->withRevokedTokenRepository($revokedTokenRepo);
+
+        $service = (new ProtectEndpointService())
+            ->withRevokedTokenRepository($revokedTokenRepo)
+            ->withRequest(['rest_route' => '/wp/v2/posts'])
+            ->withCookies([])
+            ->withRequestMethod('GET')
+            ->withServerHelper($serverHelper)
+            ->withRouteService($routeService)
+            ->withSettings($jwtSettings)
+            ->withSession([]);
+
+        $this->assertTrue($service->hasAccess('/wp-json/wp/v2/posts', '/var/www/html'));
     }
 }

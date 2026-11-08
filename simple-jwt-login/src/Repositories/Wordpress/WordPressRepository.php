@@ -106,7 +106,9 @@ class WordPressRepository implements Repository
     public function loginUser($user, $token = null)
     {
         wp_set_current_user($user->get('ID'));
-        wp_set_auth_cookie($user->get('ID'), false, is_ssl(), $token);
+        // WP only creates one shared session when $token === ''. Any other falsy
+        // value (e.g. null) makes it create a separate session per cookie.
+        wp_set_auth_cookie($user->get('ID'), false, is_ssl(), $token === null ? '' : $token);
 
         do_action('wp_login', $user->user_login, $user);
     }
@@ -339,6 +341,9 @@ class WordPressRepository implements Repository
     public function deleteUser($user)
     {
         $userId = $user->get('ID');
+        if (!function_exists('wp_delete_user')) {
+            require_once ABSPATH . 'wp-admin/includes/user.php';
+        }
         $return = wp_delete_user($userId);
 
         return $return === false

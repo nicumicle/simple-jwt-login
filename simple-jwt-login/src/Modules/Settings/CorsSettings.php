@@ -77,6 +77,51 @@ class CorsSettings extends BaseSettings implements SettingsInterface
     }
 
     /**
+     * The configured origins, split on commas and whitespace.
+     *
+     * @return array
+     */
+    public function getAllowedOrigins()
+    {
+        $origins = preg_split('/[\s,]+/', (string) $this->getAllowOrigin(), -1, PREG_SPLIT_NO_EMPTY);
+
+        return array_values(array_map(function ($origin) {
+            return $origin === '*' ? $origin : rtrim($origin, '/');
+        }, $origins));
+    }
+
+    /**
+     * The Access-Control-Allow-Origin value for a request origin, or null when
+     * that origin is not allowed. A listed origin is echoed back, since the
+     * header accepts a single origin only. A "*" entry allows every origin and
+     * echoes it too, so credentialed requests keep working.
+     *
+     * @param string|null $requestOrigin
+     *
+     * @return string|null
+     */
+    public function resolveAllowOrigin($requestOrigin)
+    {
+        $allowedOrigins = $this->getAllowedOrigins();
+        $requestOrigin = trim((string) $requestOrigin);
+
+        if (in_array('*', $allowedOrigins, true)) {
+            return $requestOrigin !== '' ? $requestOrigin : '*';
+        }
+        if ($requestOrigin === '') {
+            return null;
+        }
+
+        foreach ($allowedOrigins as $allowedOrigin) {
+            if (strcasecmp($allowedOrigin, rtrim($requestOrigin, '/')) === 0) {
+                return $requestOrigin;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @return bool
      */
     public function isAllowHeadersEnabled()

@@ -1,6 +1,14 @@
 # Changelog - Releases
 
 ## Unreleased
+- Fix login creating two WordPress sessions instead of one (autologin, register with auto-login, OAuth), reducing DB writes per login
+- Performance: API key "last used" timestamp is now updated at most once per minute per key, instead of on every request. A new "Update Last used" setting (API Keys) lets you switch back to updating it on every request
+- Performance: remove an extra database query on every API key request
+- WooCommerce integration: authenticate JWT requests without a full login, so API calls no longer create a new WordPress session, set auth cookies or fire `wp_login` on every request
+- Performance: load the WordPress admin user functions only when deleting a user, instead of on every request
+- Performance: Protect Endpoints no longer checks the revoked-token table twice for every JWT-authenticated request
+- Performance: the Force Login, WooCommerce and WPGraphQL integrations reuse the plugin settings instead of re-reading and decoding them on every REST request
+- Performance: Protect Endpoints checks access once per REST request instead of every time WordPress reads the route list
 - Fix CORS headers missing on REST error responses (401/403 from JWT auth and protected endpoints)[#179](https://github.com/nicumicle/simple-jwt-login/issues/179)
 - CORS: support multiple allowed origins (comma-separated); the matching request origin is echoed back, and `*` echoes the request origin so credentialed requests work[#179](https://github.com/nicumicle/simple-jwt-login/issues/179)
 

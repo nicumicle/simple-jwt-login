@@ -117,6 +117,34 @@ $akPages  = $akTotal > 0 ? (int) ceil($akTotal / $akPerPage) : 1;
                 </small>
             </div>
         </div>
+
+        <div class="form-group row mt-3">
+            <label class="col-sm-2 col-form-label">
+                <?php echo esc_html__('Update "Last used"', 'simple-jwt-login'); ?>
+            </label>
+            <div class="col-sm-10">
+                <div class="sjl-gen-radio-group">
+                    <label class="sjl-gen-radio-option">
+                        <input type="radio" name="api_keys[last_used_every_request]" value="0"
+                            <?php echo !$jwtSettings->getApiKeysSettings()->isLastUsedUpdatedOnEveryRequest() ? 'checked' : ''; ?>
+                        />
+                        <span class="sjl-gen-radio-label"><?php echo esc_html__('Every minute', 'simple-jwt-login'); ?></span>
+                    </label>
+                    <label class="sjl-gen-radio-option">
+                        <input type="radio" name="api_keys[last_used_every_request]" value="1"
+                            <?php echo $jwtSettings->getApiKeysSettings()->isLastUsedUpdatedOnEveryRequest() ? 'checked' : ''; ?>
+                        />
+                        <span class="sjl-gen-radio-label"><?php echo esc_html__('Every request', 'simple-jwt-login'); ?></span>
+                    </label>
+                </div>
+                <small class="form-text text-muted mt-1">
+                    <?php echo esc_html__(
+                        'How often a key\'s "Last used" time is saved. "Every minute" avoids a database write on each API request; "Every request" keeps it exact to the second.',
+                        'simple-jwt-login'
+                    ); ?>
+                </small>
+            </div>
+        </div>
     </div>
 </div>
 

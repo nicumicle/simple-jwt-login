@@ -110,4 +110,24 @@ class SuccessTest extends TestBase
         $this->assertSame(self::API_URL, $finalURL->getScheme() . "://" . $finalURL->getHost());
         $this->assertSame('/wp-admin/', $finalURL->getPath());
     }
+
+    public function testAutologinCreatesASingleSession()
+    {
+        $this->initClient(['http_errors' => false, 'allow_redirects' => false]);
+
+        list ($email, $password, $statusCode, $registerResponse) = $this->registerRandomUser();
+        $this->assertSame(200, $statusCode, 'Unable to register user');
+        $userId = (int) json_decode($registerResponse, true)['data']['id'];
+
+        $jwt = $this->getJWTForUser($email, $password);
+
+        $response = $this->client->get(
+            self::API_URL . '?rest_route=/simple-jwt-login/v1/autologin&JWT=' . $jwt
+        );
+        $this->assertSame(302, $response->getStatusCode());
+
+        $userMeta = $this->getUserMeta($userId);
+        $this->assertArrayHasKey('session_tokens', $userMeta);
+        $this->assertCount(1, unserialize($userMeta['session_tokens']));
+    }
 }

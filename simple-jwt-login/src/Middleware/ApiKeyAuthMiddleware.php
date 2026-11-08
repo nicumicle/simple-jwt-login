@@ -4,21 +4,34 @@ namespace SimpleJWTLogin\Middleware;
 
 use SimpleJWTLogin\Helpers\ApiKeyPermissions;
 use SimpleJWTLogin\Helpers\ServerHelper;
+use SimpleJWTLogin\Modules\Settings\ApiKeysSettings;
 use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepositoryInterface;
 
 class ApiKeyAuthMiddleware
 {
+    /**
+     * Minimum number of seconds between two last_used_at updates of the same key.
+     */
+    const LAST_USED_THROTTLE_SECONDS = 60;
+
     /**
      * @var ApiKeyRepositoryInterface
      */
     private $repository;
 
     /**
-     * @param ApiKeyRepositoryInterface $repository
+     * @var ApiKeysSettings|null
      */
-    public function __construct(ApiKeyRepositoryInterface $repository)
+    private $apiKeysSettings;
+
+    /**
+     * @param ApiKeyRepositoryInterface $repository
+     * @param ApiKeysSettings|null      $apiKeysSettings Null keeps the default (update at most once per minute)
+     */
+    public function __construct(ApiKeyRepositoryInterface $repository, $apiKeysSettings = null)
     {
         $this->repository = $repository;
+        $this->apiKeysSettings = $apiKeysSettings;
     }
 
     /**
@@ -57,8 +70,33 @@ class ApiKeyAuthMiddleware
             return null;
         }
 
-        $this->repository->touchLastUsed((int) $key->id, gmdate('Y-m-d H:i:s'));
+        if ($this->shouldTouchLastUsed($key)) {
+            $this->repository->touchLastUsed((int) $key->id, gmdate('Y-m-d H:i:s'));
+        }
 
         return (array) $key;
+    }
+
+    /**
+     * Skip the DB write when the key was already marked as used recently,
+     * so busy keys don't write to the database on every request.
+     *
+     * @param object $key
+     * @return bool
+     */
+    protected function shouldTouchLastUsed($key)
+    {
+        $everyRequest = $this->apiKeysSettings !== null
+            && $this->apiKeysSettings->isLastUsedUpdatedOnEveryRequest();
+        if ($everyRequest || empty($key->last_used_at)) {
+            return true;
+        }
+
+        $lastUsedAt = strtotime($key->last_used_at . ' UTC');
+        if ($lastUsedAt === false) {
+            return true;
+        }
+
+        return time() - $lastUsedAt >= self::LAST_USED_THROTTLE_SECONDS;
     }
 }

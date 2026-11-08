@@ -42,6 +42,13 @@ class EndpointProtectionHandler
      * @var RevokedTokenRepositoryInterface
      */
     protected $revokedTokenRepo;
+    /**
+     * Set once access is granted for the current request, so the check is not
+     * repeated for every dispatch of the same request (e.g. _embed sub-requests).
+     *
+     * @var boolean
+     */
+    protected $accessGranted = false;
 
     /**
      * @param RouteService $routeService
@@ -98,7 +105,7 @@ class EndpointProtectionHandler
         // outside a REST HTTP request (e.g. block editor preloading). REST_REQUEST
         // is only defined once WP_REST_Server::serve_request() starts handling a
         // genuine REST HTTP request, so skip protection otherwise.
-        if ($result !== null || !defined('REST_REQUEST') || !REST_REQUEST) {
+        if ($result !== null || !defined('REST_REQUEST') || !REST_REQUEST || $this->accessGranted) {
             return $result;
         }
 
@@ -128,6 +135,8 @@ class EndpointProtectionHandler
         }
 
         if ($hasAccess) {
+            $this->accessGranted = true;
+
             return $result;
         }
 

@@ -40,7 +40,6 @@ define('SIMPLE_JWT_LOGIN_DB_VERSION', '1.10');
 define('SIMPLE_JWT_LOGIN_PLUGIN_FILE', __FILE__);
 
 include_once 'autoload.php';
-require_once(ABSPATH . 'wp-admin/includes/user.php');
 
 global $wpdb;
 

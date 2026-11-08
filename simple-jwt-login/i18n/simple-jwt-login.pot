@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-01T06:55:32+00:00\n"
+"POT-Creation-Date: 2026-11-08T06:13:49+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -221,7 +221,7 @@ msgid "Settings Saved"
 msgstr ""
 
 #: src/Modules/AuditEvents.php:110
-#: views/security/api-keys-view.php:310
+#: views/security/api-keys-view.php:338
 #: views/user-api-keys.php:220
 msgid "API Key Created"
 msgstr ""
@@ -527,7 +527,7 @@ msgid "Delete User"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:83
-#: views/security/api-keys-view.php:233
+#: views/security/api-keys-view.php:261
 #: views/security/revoked-tokens-view.php:73
 #: views/user-api-keys.php:144
 msgid "Delete"
@@ -913,11 +913,11 @@ msgstr ""
 msgid "My API Keys"
 msgstr ""
 
-#: src/Routes/Handlers/AuthenticationHandler.php:122
+#: src/Routes/Handlers/AuthenticationHandler.php:123
 msgid "Invalid or unauthorized API key."
 msgstr ""
 
-#: src/Routes/Handlers/EndpointProtectionHandler.php:135
+#: src/Routes/Handlers/EndpointProtectionHandler.php:144
 msgid "You are not authorized to access this endpoint."
 msgstr ""
 
@@ -1226,7 +1226,7 @@ msgstr ""
 msgid "JWT is not present and we can not search for a user."
 msgstr ""
 
-#: src/Services/ProtectEndpointService.php:110
+#: src/Services/ProtectEndpointService.php:107
 msgid "You do not have the required role to access this endpoint."
 msgstr ""
 
@@ -1528,7 +1528,7 @@ msgid "No log entries found."
 msgstr ""
 
 #: views/audit-logs/logs-view.php:244
-#: views/security/api-keys-view.php:251
+#: views/security/api-keys-view.php:279
 #: views/security/revoked-tokens-view.php:90
 #: views/user-api-keys.php:161
 #: views/webhooks/logs-view.php:283
@@ -1536,7 +1536,7 @@ msgid "First"
 msgstr ""
 
 #: views/audit-logs/logs-view.php:249
-#: views/security/api-keys-view.php:256
+#: views/security/api-keys-view.php:284
 #: views/security/revoked-tokens-view.php:95
 #: views/user-api-keys.php:166
 #: views/webhooks/logs-view.php:288
@@ -1544,7 +1544,7 @@ msgid "Prev"
 msgstr ""
 
 #: views/audit-logs/logs-view.php:270
-#: views/security/api-keys-view.php:277
+#: views/security/api-keys-view.php:305
 #: views/security/revoked-tokens-view.php:116
 #: views/user-api-keys.php:187
 #: views/webhooks/logs-view.php:309
@@ -1552,7 +1552,7 @@ msgid "Next"
 msgstr ""
 
 #: views/audit-logs/logs-view.php:275
-#: views/security/api-keys-view.php:282
+#: views/security/api-keys-view.php:310
 #: views/security/revoked-tokens-view.php:121
 #: views/user-api-keys.php:192
 #: views/webhooks/logs-view.php:314
@@ -1561,7 +1561,7 @@ msgstr ""
 
 #. translators: %1$d current page, %2$d total pages, %3$d total entries
 #: views/audit-logs/logs-view.php:286
-#: views/security/api-keys-view.php:291
+#: views/security/api-keys-view.php:319
 #: views/security/revoked-tokens-view.php:130
 #: views/user-api-keys.php:201
 #: views/webhooks/logs-view.php:325
@@ -2067,7 +2067,7 @@ msgstr ""
 #: views/routes/reset-password-view.php:328
 #: views/routes/revoke-token-view.php:62
 #: views/routes/validate-token-view.php:63
-#: views/security/api-keys-view.php:323
+#: views/security/api-keys-view.php:351
 #: views/user-api-keys.php:233
 msgid "Copy"
 msgstr ""
@@ -3750,103 +3750,119 @@ msgstr ""
 msgid "When enabled, non-admin users see a \"My API Keys\" menu entry where they can create and manage their own keys."
 msgstr ""
 
-#: views/security/api-keys-view.php:127
-#: views/security/api-keys-view.php:167
+#: views/security/api-keys-view.php:123
+msgid "Update \"Last used\""
+msgstr ""
+
+#: views/security/api-keys-view.php:131
+msgid "Every minute"
+msgstr ""
+
+#: views/security/api-keys-view.php:137
+msgid "Every request"
+msgstr ""
+
+#: views/security/api-keys-view.php:141
+msgid "How often a key's \"Last used\" time is saved. \"Every minute\" avoids a database write on each API request; \"Every request\" keeps it exact to the second."
+msgstr ""
+
+#: views/security/api-keys-view.php:155
+#: views/security/api-keys-view.php:195
 #: views/user-api-keys.php:46
 #: views/user-api-keys.php:84
 msgid "Create API Key"
 msgstr ""
 
-#: views/security/api-keys-view.php:129
+#: views/security/api-keys-view.php:157
 #: views/user-api-keys.php:48
 msgid "The raw key is shown only once at creation - store it securely."
 msgstr ""
 
-#: views/security/api-keys-view.php:135
-#: views/security/api-keys-view.php:187
+#: views/security/api-keys-view.php:163
+#: views/security/api-keys-view.php:215
 #: views/user-api-keys.php:54
 #: views/user-api-keys.php:104
 msgid "Name"
 msgstr ""
 
-#: views/security/api-keys-view.php:138
+#: views/security/api-keys-view.php:166
 #: views/user-api-keys.php:57
 msgid "e.g. Mobile App"
 msgstr ""
 
-#: views/security/api-keys-view.php:143
+#: views/security/api-keys-view.php:171
 #: views/user-api-keys.php:62
 msgid "Expires at"
 msgstr ""
 
-#: views/security/api-keys-view.php:146
+#: views/security/api-keys-view.php:174
 #: views/user-api-keys.php:65
 msgid "Leave blank for no expiration."
 msgstr ""
 
-#: views/security/api-keys-view.php:151
-#: views/security/api-keys-view.php:192
+#: views/security/api-keys-view.php:179
+#: views/security/api-keys-view.php:220
 #: views/user-api-keys.php:70
 #: views/user-api-keys.php:106
 msgid "Permissions"
 msgstr ""
 
-#: views/security/api-keys-view.php:177
+#: views/security/api-keys-view.php:205
 msgid "Existing API Keys"
 msgstr ""
 
-#: views/security/api-keys-view.php:182
+#: views/security/api-keys-view.php:210
 #: views/user-api-keys.php:99
 msgid "No API keys found."
 msgstr ""
 
-#: views/security/api-keys-view.php:189
+#: views/security/api-keys-view.php:217
 #: views/security/revoked-tokens-view.php:53
 msgid "User ID"
 msgstr ""
 
-#: views/security/api-keys-view.php:191
+#: views/security/api-keys-view.php:219
 #: views/user-api-keys.php:105
 msgid "Prefix"
 msgstr ""
 
-#: views/security/api-keys-view.php:193
+#: views/security/api-keys-view.php:221
 #: views/user-api-keys.php:107
 msgid "Expires"
 msgstr ""
 
-#: views/security/api-keys-view.php:194
+#: views/security/api-keys-view.php:222
 #: views/user-api-keys.php:108
 msgid "Last Used"
 msgstr ""
 
-#: views/security/api-keys-view.php:195
+#: views/security/api-keys-view.php:223
 #: views/security/revoked-tokens-view.php:57
 #: views/user-api-keys.php:109
 msgid "Action"
 msgstr ""
 
-#: views/security/api-keys-view.php:222
+#: views/security/api-keys-view.php:250
 #: views/user-api-keys.php:133
 msgid "Revoked"
 msgstr ""
 
-#: views/security/api-keys-view.php:227
+#: views/security/api-keys-view.php:255
 #: views/user-api-keys.php:138
 msgid "Revoke"
 msgstr ""
 
-#: views/security/api-keys-view.php:311
+#: views/security/api-keys-view.php:339
 #: views/user-api-keys.php:221
 msgid "Copy the key below - it will not be shown again."
 msgstr ""
 
-#: views/security/api-keys-view.php:317
+#: views/security/api-keys-view.php:345
 #: views/user-api-keys.php:227
 msgid "Store this key securely. It cannot be recovered after closing this dialog."
 msgstr ""
 
-#: views/security/api-keys-view.php:329
+#: views/security/api-keys-view.php:357
 #: views/user-api-keys.php:239
 msgid "Done"
 msgstr ""

@@ -124,6 +124,35 @@ interface Repository
     public function sanitizeTextField($text);
 
     /**
+     * Strip HTML that is not allowed in post content (wp_kses_post).
+     *
+     * @param string $html
+     *
+     * @return string
+     */
+    public function ksesPost($html);
+
+    /**
+     * Role slug => display name for every registered WordPress role.
+     *
+     * @return array<string, string>
+     */
+    public function getRoleNames();
+
+    /**
+     * Capability => granted flag for a role; empty when the role does not exist.
+     *
+     * @param string $role
+     * @return array<string, bool>
+     */
+    public function getRoleCapabilities($role);
+
+    /**
+     * @return string
+     */
+    public function getWordPressVersion();
+
+    /**
      * @param array $array
      * @return array
      */
@@ -387,4 +416,78 @@ interface Repository
      * @return array|string|int|false|null
      */
     public function parseUrl($url, $component = -1);
+
+    /**
+     * Register a WordPress ability (Abilities API, WP 6.9+).
+     *
+     * @param string $name
+     * @param array  $args
+     * @return mixed The WP_Ability instance, or null on failure / when the API is unavailable.
+     */
+    public function registerAbility($name, $args);
+
+    /**
+     * Register a WordPress ability category (Abilities API, WP 6.9+).
+     *
+     * @param string $slug
+     * @param array  $args
+     * @return mixed The WP_Ability_Category instance, or null on failure / when the API is unavailable.
+     */
+    public function registerAbilityCategory($slug, $args);
+
+    /**
+     * Unregister a WordPress ability if it is registered (Abilities API, WP 6.9+).
+     * Only affects the current request: the registry lives in memory.
+     *
+     * @param string $name
+     * @return void
+     */
+    public function unregisterAbility($name);
+
+    /**
+     * Unregister a WordPress ability category if it is registered (Abilities API, WP 6.9+).
+     *
+     * @param string $slug
+     * @return void
+     */
+    public function unregisterAbilityCategory($slug);
+
+    /**
+     * Whether a WordPress action has fired (did_action()).
+     *
+     * @param string $hookName
+     * @return bool
+     */
+    public function didAction($hookName);
+
+    /**
+     * Whether a WordPress action is currently running (doing_action()).
+     *
+     * @param string $hookName
+     * @return bool
+     */
+    public function doingAction($hookName);
+
+    /**
+     * Whether the code runs inside WP-CLI.
+     *
+     * @return bool
+     */
+    public function isCli();
+
+    /**
+     * Whether the WordPress Abilities API (WordPress 6.9+) is available.
+     *
+     * @return bool
+     */
+    public function isAbilitiesApiAvailable();
+
+    /**
+     * Read an option straight from the database, bypassing the in-request and
+     * WordPress object caches (for long-running processes such as MCP stdio).
+     *
+     * @param string $optionName
+     * @return mixed
+     */
+    public function getFreshOption($optionName);
 }

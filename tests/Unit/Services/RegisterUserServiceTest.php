@@ -321,6 +321,45 @@ class RegisterUserServiceTest extends TestCase
         $this->assertNull($result);
     }
 
+    public function testPrivilegeUserMetaKeysAreNeverSetEvenWhenAllowed()
+    {
+        $this->wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $this->wordPressDataMock->method('sanitizeTextField')->willReturnArgument(0);
+        $this->wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_register'        => true,
+                'require_register_auth' => false,
+                'random_password'       => true,
+                'allowed_user_meta'     => 'nickname,wp_capabilities,wp_user_level,session_tokens,WP_2_CAPABILITIES',
+            ]));
+        $this->wordPressDataMock->method('isEmail')->willReturn(true);
+        $this->wordPressDataMock->method('checkUserExistsByUsernameAndEmail')->willReturn(false);
+        $this->wordPressDataMock->method('createUser')->willReturn(true);
+        $this->wordPressDataMock->method('getUserIdFromUser')->willReturn(7);
+        $this->wordPressDataMock->method('wordpressUserToArray')->willReturn([]);
+        $this->wordPressDataMock->expects($this->once())
+            ->method('updateUserMeta')
+            ->with(7, 'nickname', 'neo');
+
+        (new RegisterUserService())
+            ->withRequest([
+                'email'     => 'test@test.com',
+                'password'  => 123,
+                'user_meta' => json_encode([
+                    'nickname'          => 'neo',
+                    'wp_capabilities'   => 'a:1:{s:13:"administrator";b:1;}',
+                    'wp_user_level'     => '10',
+                    'session_tokens'    => 'x',
+                    'WP_2_CAPABILITIES' => 'x',
+                ]),
+            ])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper(['REMOTE_ADDR' => '127.0.0.1']))
+            ->withSession([])
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->makeAction();
+    }
+
     public function testRegisterSuccessWithJwtFromAuth()
     {
         $this->wordPressDataMock->method('isEmail')

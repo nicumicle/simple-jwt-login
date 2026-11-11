@@ -150,7 +150,10 @@ class WebhooksService
                 }
             }
 
-            $timeout = isset($webhook['timeout']) ? max(0, (int)$webhook['timeout']) : WebhooksSettings::DEFAULT_TIMEOUT;
+            $timeout = isset($webhook['timeout']) ? (int)$webhook['timeout'] : WebhooksSettings::DEFAULT_TIMEOUT;
+            if ($timeout <= 0 || $timeout > WebhooksSettings::MAX_TIMEOUT) {
+                $timeout = WebhooksSettings::MAX_TIMEOUT;
+            }
 
             $blocking = $this->logRepository !== null;
 

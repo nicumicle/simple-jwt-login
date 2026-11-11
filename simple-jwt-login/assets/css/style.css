@@ -404,6 +404,80 @@
     word-break: break-word;
 }
 
+#simple-jwt-login .generated-code.sjl-code-file {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.5;
+    padding: 10px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+#simple-jwt-login .generated-code.sjl-code-file .code {
+    flex: 1;
+    white-space: pre;
+    overflow-x: auto;
+    font-family: monospace;
+}
+
+#simple-jwt-login .sjl-client-tabs {
+    margin: 12px 0;
+    border: 1px solid var(--sjl-border);
+    border-radius: var(--sjl-radius-md);
+    background: #fff;
+}
+
+#simple-jwt-login .sjl-client-tablist {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding: 6px 6px 0;
+    border-bottom: 1px solid var(--sjl-border);
+    background: var(--sjl-bg-muted);
+    border-radius: var(--sjl-radius-md) var(--sjl-radius-md) 0 0;
+}
+
+#simple-jwt-login .sjl-client-tab {
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 0 0 -1px;
+    padding: 8px 14px;
+    border: 1px solid transparent;
+    border-radius: var(--sjl-radius-sm) var(--sjl-radius-sm) 0 0;
+    background: transparent;
+    color: var(--sjl-text-meta);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+    cursor: pointer;
+}
+
+#simple-jwt-login .sjl-client-tab:hover {
+    color: var(--sjl-primary);
+}
+
+#simple-jwt-login .sjl-client-tab:focus-visible {
+    outline: 2px solid var(--sjl-primary);
+    outline-offset: -2px;
+}
+
+#simple-jwt-login .sjl-client-tab.active {
+    background: #fff;
+    border-color: var(--sjl-border);
+    border-bottom-color: #fff;
+    color: var(--sjl-primary);
+    font-weight: 600;
+}
+
+#simple-jwt-login .sjl-client-panel {
+    padding: 4px 14px 12px;
+}
+
+#simple-jwt-login .sjl-client-panel[hidden] {
+    display: none;
+}
+
 #simple-jwt-login .generated-code .method {
     font-weight: bold;
     display: inline;
@@ -1626,6 +1700,9 @@
 }
 #simple-jwt-login .logo.woocommerce {
     background-image: url("../images/integrations/woocommerce.svg");
+}
+#simple-jwt-login .logo.ai-abilities {
+    background-image: url("../images/integrations/ai-abilities.svg");
 }
 
 /* ============================================

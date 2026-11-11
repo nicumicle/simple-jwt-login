@@ -131,6 +131,24 @@ class AuditLoggerService
         }
     }
 
+    /**
+     * Copy of this logger that uses other audit settings (e.g. reloaded from the
+     * database in a long-running MCP process). The copy starts with an empty
+     * queue, so pending entries are written only once, by this logger.
+     *
+     * @param AuditLogSettings $settings
+     * @return static
+     */
+    public function withSettings(AuditLogSettings $settings)
+    {
+        $logger                     = clone $this;
+        $logger->settings           = $settings;
+        $logger->pendingEntries     = [];
+        $logger->deferralRegistered = false;
+
+        return $logger;
+    }
+
     public function log($eventType, $userId, $userEmail, $status, $message = null, $apiKeyId = null)
     {
         if (!$this->settings->isEnabled()) {

@@ -29,6 +29,20 @@ interface Repository
     public function findPaginated($filters, $page, $perPage);
 
     /**
+     * Counts the entries of the last $hours hours, grouped by a fixed dimension.
+     *
+     * Dimensions: event, hour, day (all rows, grouped by status too) and
+     * failure_ip, failure_user, failure_api_key, failure_message (failure rows only).
+     * Each row has: bucket, status, total, users (distinct user ids), last_seen, user_email.
+     *
+     * @param string $dimension
+     * @param int    $hours
+     * @param int    $limit
+     * @return object[]
+     */
+    public function aggregate($dimension, $hours, $limit);
+
+    /**
      * Delete all entries older than the given datetime string (Y-m-d H:i:s).
      *
      * @param string $beforeDatetime

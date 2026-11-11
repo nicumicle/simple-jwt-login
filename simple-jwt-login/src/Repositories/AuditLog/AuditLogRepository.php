@@ -11,6 +11,21 @@ class AuditLogRepository implements Repository
     const TABLE_SUFFIX = 'simple_jwt_login_audit_logs';
 
     /**
+     * Group-by expression, failure rows only, order clause. Never built from input.
+     *
+     * @var array<string, array{0: string, 1: bool, 2: string}>
+     */
+    private static $dimensions = array(
+        'event'           => array('logs.event_type', false, 'total DESC'),
+        'hour'            => array('LEFT(logs.created_at, 13)', false, 'bucket ASC'),
+        'day'             => array('LEFT(logs.created_at, 10)', false, 'bucket ASC'),
+        'failure_ip'      => array('logs.ip_address', true, 'total DESC'),
+        'failure_user'    => array('logs.user_id', true, 'total DESC'),
+        'failure_api_key' => array('logs.api_key_id', true, 'total DESC'),
+        'failure_message' => array('LEFT(logs.message, 200)', true, 'total DESC'),
+    );
+
+    /**
      * @var \wpdb
      */
     private $wpdb;
@@ -121,6 +136,38 @@ class AuditLogRepository implements Repository
             'items' => $items !== null ? $items : [],
             'total' => $total,
         ];
+    }
+
+    /**
+     * @param string $dimension
+     * @param int    $hours
+     * @param int    $limit
+     * @return object[]
+     */
+    public function aggregate($dimension, $hours, $limit)
+    {
+        if (!isset(self::$dimensions[$dimension])) {
+            return [];
+        }
+        list($expression, $failureOnly, $orderBy) = self::$dimensions[$dimension];
+
+        $where = 'logs.created_at >= DATE_SUB(NOW(), INTERVAL %d HOUR) AND ' . $expression . ' IS NOT NULL';
+        if ($failureOnly) {
+            $where .= " AND logs.status = 'failure'";
+        }
+
+        $sql = 'SELECT ' . $expression . ' AS bucket, logs.status AS status, COUNT(*) AS total,'
+            . ' COUNT(DISTINCT logs.user_id) AS users, MAX(logs.created_at) AS last_seen,'
+            . ' MAX(users.user_email) AS user_email'
+            . ' FROM %i logs LEFT JOIN %i users ON logs.user_id = users.ID'
+            . ' WHERE ' . $where
+            . ' GROUP BY bucket, logs.status ORDER BY ' . $orderBy . ' LIMIT %d';
+        $params = [$this->tableName(), $this->wpdb->users, (int) $hours, (int) $limit];
+
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
+        $rows = $this->wpdb->get_results($this->wpdb->prepare($sql, $params));
+
+        return is_array($rows) ? $rows : [];
     }
 
     /**

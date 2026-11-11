@@ -305,6 +305,42 @@ class WordPressRepository implements Repository
     }
 
     /**
+     * @param string $html
+     * @return string
+     */
+    public function ksesPost($html)
+    {
+        return wp_kses_post($html);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getRoleNames()
+    {
+        return wp_roles()->get_names();
+    }
+
+    /**
+     * @param string $role
+     * @return array<string, bool>
+     */
+    public function getRoleCapabilities($role)
+    {
+        $roleObject = get_role((string) $role);
+
+        return $roleObject !== null ? (array) $roleObject->capabilities : [];
+    }
+
+    /**
+     * @return string
+     */
+    public function getWordPressVersion()
+    {
+        return (string) get_bloginfo('version');
+    }
+
+    /**
      * @param array $array
      * @return array
      */
@@ -705,5 +741,121 @@ class WordPressRepository implements Repository
     public function parseUrl($url, $component = -1)
     {
         return wp_parse_url($url, $component);
+    }
+
+    /**
+     * @param string $name
+     * @param array  $args
+     * @return mixed
+     */
+    public function registerAbility($name, $args)
+    {
+        if (!function_exists('wp_register_ability')) {
+            return null;
+        }
+
+        return wp_register_ability($name, $args);
+    }
+
+    /**
+     * @param string $slug
+     * @param array  $args
+     * @return mixed
+     */
+    public function registerAbilityCategory($slug, $args)
+    {
+        if (!function_exists('wp_register_ability_category')) {
+            return null;
+        }
+
+        return wp_register_ability_category($slug, $args);
+    }
+
+    /**
+     * @param string $name
+     * @return void
+     */
+    public function unregisterAbility($name)
+    {
+        if (!function_exists('wp_has_ability') || !wp_has_ability($name)) {
+            return;
+        }
+
+        wp_unregister_ability($name);
+    }
+
+    /**
+     * @param string $slug
+     * @return void
+     */
+    public function unregisterAbilityCategory($slug)
+    {
+        if (!function_exists('wp_has_ability_category') || !wp_has_ability_category($slug)) {
+            return;
+        }
+
+        wp_unregister_ability_category($slug);
+    }
+
+    /**
+     * @param string $hookName
+     * @return bool
+     */
+    public function didAction($hookName)
+    {
+        return did_action($hookName) > 0;
+    }
+
+    /**
+     * @param string $hookName
+     * @return bool
+     */
+    public function doingAction($hookName)
+    {
+        return (bool) doing_action($hookName);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCli()
+    {
+        return defined('WP_CLI') && WP_CLI;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAbilitiesApiAvailable()
+    {
+        return function_exists('wp_register_ability');
+    }
+
+    /**
+     * @param string $optionName
+     * @return mixed
+     */
+    public function getFreshOption($optionName)
+    {
+        global $wpdb;
+
+        //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+        $raw = $wpdb->get_var($wpdb->prepare(
+            'SELECT option_value FROM %i WHERE option_name = %s LIMIT 1',
+            $wpdb->options,
+            $optionName
+        ));
+        $value = $raw === null ? false : maybe_unserialize($raw);
+
+        // Clear the object cache only when it is stale: deleting "alloptions"
+        // on every call would force a reload of every autoloaded option (and,
+        // with a persistent object cache, for every visitor of the site).
+        if (get_option($optionName) !== $value) {
+            wp_cache_delete($optionName, 'options');
+            wp_cache_delete('alloptions', 'options');
+        }
+        self::$optionsInstances[$optionName] = $value;
+
+        return $value;
     }
 }

@@ -58,6 +58,18 @@ $sjl3rdPartyApps = [
         'view'               => plugin_dir_path(__FILE__) . 'woocommerce.php',
         'beta'               => true,
     ],
+    [
+        'id'                 => 'ai_abilities',
+        'name'               => __('AI Abilities (MCP)', 'simple-jwt-login'),
+        'desc'               => __('Let AI agents manage and troubleshoot the plugin', 'simple-jwt-login'),
+        'logo_class'         => 'ai-abilities',
+        'enabled'            => $jwtSettings->getIntegrationsSettings()->aiAbilities()->isEnabled(),
+        // The Abilities API ships with WordPress 6.9; the MCP Adapter is optional.
+        'plugin_installed'   => true,
+        'plugin_activated'   => $jwtSettings->getWordPressData()->isAbilitiesApiAvailable(),
+        'view'               => plugin_dir_path(__FILE__) . 'ai-abilities.php',
+        'beta'               => true,
+    ],
 ];
 
 $active3rdPartyApp = $sjl3rdPartyApps[0]['id'];

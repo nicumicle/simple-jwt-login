@@ -44,8 +44,14 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
 
     const DEFAULT_RETENTION_DAYS = 90;
 
-    /** Timeout in seconds for the outgoing HTTP call. 0 means no timeout. */
+    /** Timeout in seconds for the outgoing HTTP call. 0 means MAX_TIMEOUT. */
     const DEFAULT_TIMEOUT = 0;
+
+    /**
+     * Upper bound (seconds) for a webhook call; 0 ("no timeout") also uses it,
+     * so a slow endpoint can never hang the request that fired the event.
+     */
+    const MAX_TIMEOUT = 30;
 
     protected function getSectionKey()
     {
@@ -83,68 +89,106 @@ class WebhooksSettings extends BaseSettings implements SettingsInterface
 
         $webhooks = [];
         foreach ($raw as $entry) {
-            if (!is_array($entry)) {
-                continue;
+            $webhook = $this->normalizeWebhookEntry($entry);
+            if ($webhook !== null) {
+                $webhooks[] = $webhook;
             }
-
-            $url = $this->wordPressData->sanitizeTextField(
-                isset($entry['url']) ? (string)$entry['url'] : ''
-            );
-
-            if (empty($url)) {
-                continue;
-            }
-
-            $enabled = !empty($entry['enabled']);
-
-            $events = [];
-            if (isset($entry['events']) && is_array($entry['events'])) {
-                foreach ($entry['events'] as $event) {
-                    $sanitized = $this->wordPressData->sanitizeTextField((string)$event);
-                    if (in_array($sanitized, self::$allowedEvents, true)) {
-                        $events[] = $sanitized;
-                    }
-                }
-            }
-
-            $rawMethod = $this->wordPressData->sanitizeTextField(
-                isset($entry['method']) ? strtoupper((string)$entry['method']) : ''
-            );
-            $method = in_array($rawMethod, self::$allowedMethods, true)
-                ? $rawMethod
-                : self::DEFAULT_METHOD;
-
-            $headers = [];
-            if (isset($entry['headers']) && is_array($entry['headers'])) {
-                foreach ($entry['headers'] as $header) {
-                    if (!is_array($header)) {
-                        continue;
-                    }
-                    $key   = $this->wordPressData->sanitizeTextField(isset($header['key']) ? (string)$header['key'] : '');
-                    $value = $this->wordPressData->sanitizeTextField(isset($header['value']) ? (string)$header['value'] : '');
-                    if (empty($key)) {
-                        continue;
-                    }
-                    $headers[] = ['key' => $key, 'value' => $value];
-                }
-            }
-
-            $payloadTemplate = isset($entry['payload_template']) ? (string)$entry['payload_template'] : '';
-
-            $timeout = isset($entry['timeout']) ? max(0, (int)$entry['timeout']) : self::DEFAULT_TIMEOUT;
-
-            $webhooks[] = [
-                'url'              => $url,
-                'enabled'          => $enabled,
-                'method'           => $method,
-                'events'           => $events,
-                'headers'          => $headers,
-                'payload_template' => $payloadTemplate,
-                'timeout'          => $timeout,
-            ];
         }
 
         $this->settings['items'] = $webhooks;
+    }
+
+    /**
+     * Sanitize one webhook definition into its stored shape.
+     * The payload template is returned as given (callers store it base64-encoded).
+     *
+     * @param mixed $entry
+     * @return array|null Null when the entry is not an array or has no URL.
+     */
+    public function normalizeWebhookEntry($entry)
+    {
+        if (!is_array($entry)) {
+            return null;
+        }
+
+        $url = $this->wordPressData->sanitizeTextField(
+            isset($entry['url']) ? (string)$entry['url'] : ''
+        );
+        if (empty($url)) {
+            return null;
+        }
+
+        $rawMethod = $this->wordPressData->sanitizeTextField(
+            isset($entry['method']) ? strtoupper((string)$entry['method']) : ''
+        );
+
+        return [
+            'url'              => $url,
+            'enabled'          => !empty($entry['enabled']),
+            'method'           => in_array($rawMethod, self::$allowedMethods, true) ? $rawMethod : self::DEFAULT_METHOD,
+            'events'           => $this->normalizeEvents($entry),
+            'headers'          => $this->normalizeHeaders($entry),
+            'payload_template' => isset($entry['payload_template']) ? (string)$entry['payload_template'] : '',
+            'timeout'          => isset($entry['timeout']) ? max(0, (int)$entry['timeout']) : self::DEFAULT_TIMEOUT,
+        ];
+    }
+
+    /**
+     * @param array $entry
+     * @return string[]
+     */
+    private function normalizeEvents(array $entry)
+    {
+        $events = [];
+        if (!isset($entry['events']) || !is_array($entry['events'])) {
+            return $events;
+        }
+        foreach ($entry['events'] as $event) {
+            $sanitized = $this->wordPressData->sanitizeTextField((string)$event);
+            if (in_array($sanitized, self::$allowedEvents, true)) {
+                $events[] = $sanitized;
+            }
+        }
+
+        return $events;
+    }
+
+    /**
+     * @param array $entry
+     * @return array<int, array{key: string, value: string}>
+     */
+    private function normalizeHeaders(array $entry)
+    {
+        $headers = [];
+        if (!isset($entry['headers']) || !is_array($entry['headers'])) {
+            return $headers;
+        }
+        foreach ($entry['headers'] as $header) {
+            if (!is_array($header)) {
+                continue;
+            }
+            $key   = $this->wordPressData->sanitizeTextField(isset($header['key']) ? (string)$header['key'] : '');
+            $value = $this->wordPressData->sanitizeTextField(isset($header['value']) ? (string)$header['value'] : '');
+            if (empty($key)) {
+                continue;
+            }
+            $headers[] = ['key' => $key, 'value' => $value];
+        }
+
+        return $headers;
+    }
+
+    /**
+     * @return array
+     */
+    public function buildPostFromSettings()
+    {
+        $post = parent::buildPostFromSettings();
+        if (isset($this->settings['logs']['retention'])) {
+            $post[self::SETTING_RETENTION_DAYS] = $this->settings['logs']['retention'];
+        }
+
+        return $post;
     }
 
     /**

@@ -2,6 +2,9 @@
 
 namespace SimpleJWTLogin\Modules\Settings;
 
+use SimpleJWTLogin\Modules\Abilities\AbilitySettingsPolicy;
+use SimpleJWTLogin\Modules\Abilities\SettingsRedactor;
+
 /**
  * Computes a human-readable diff between two settings arrays.
  *
@@ -30,6 +33,13 @@ class SettingsDiff
         $flatOld = $this->flatten($old);
         $flatNew = $this->flatten($new);
 
+        // Changes are detected on the raw values but reported from redacted
+        // copies: lists (auth codes, JWT rules, webhooks) are serialised as JSON
+        // and would otherwise put the secrets inside them in the audit log.
+        $redactor  = new SettingsRedactor(new AbilitySettingsPolicy());
+        $shownOld  = $this->flatten($redactor->redact($old));
+        $shownNew  = $this->flatten($redactor->redact($new));
+
         $changed = [];
         $added   = [];
         $removed = [];
@@ -41,8 +51,8 @@ class SettingsDiff
             }
             if ($flatOld[$key] !== $value) {
                 $changed[$key] = [
-                    'from' => $this->redactIfSensitive($key, $flatOld[$key]),
-                    'to'   => $this->redactIfSensitive($key, $value),
+                    'from' => $this->redactIfSensitive($key, isset($shownOld[$key]) ? $shownOld[$key] : ''),
+                    'to'   => $this->redactIfSensitive($key, isset($shownNew[$key]) ? $shownNew[$key] : ''),
                 ];
             }
         }

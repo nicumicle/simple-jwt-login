@@ -1,0 +1,238 @@
+{
+    "_schema_version": 2,
+    "general": {
+        "decryption_key": "fixture-secret",
+        "route_namespace": "simple-jwt-login/v1/",
+        "jwt_algorithm": "HS256",
+        "decryption_source": "0",
+        "decryption_key_base64": false,
+        "decryption_key_public": "",
+        "decryption_key_private": "",
+        "request_jwt_url": 1,
+        "request_jwt_cookie": 0,
+        "request_jwt_header": 1,
+        "request_jwt_session": 0,
+        "api_middleware": {
+            "enabled": false
+        },
+        "request_keys": {
+            "url": "JWT",
+            "session": "simple-jwt-login-token",
+            "cookie": "simple-jwt-login-token",
+            "header": "Authorization"
+        },
+        "request_jwt_header_require_bearer": false,
+        "security": {
+            "safe_redirect": false,
+            "trust_ip_headers": false
+        }
+    },
+    "login": {
+        "login_by": 0,
+        "login_by_parameter": "email",
+        "enabled": false,
+        "fail_redirect": "",
+        "auth_code": false,
+        "include_request_parameters": false,
+        "allow_redirect_parameter": false,
+        "remove_request_parameters": "rest_route, jwt, JWT, email, password, redirectUrl",
+        "ip_whitelist": "",
+        "iss_whitelist": "",
+        "redirect": 0,
+        "redirect_url": ""
+    },
+    "register": {
+        "enabled": true,
+        "auth_code": false,
+        "new_user_profile": "subscriber",
+        "ip_whitelist": "",
+        "domain_whitelist": "",
+        "random_password": false,
+        "random_password_length": 10,
+        "force_login": false,
+        "return_jwt": false,
+        "allowed_user_meta": "",
+        "send_welcome_email": false
+    },
+    "authorization": {
+        "enabled": "1",
+        "auth_code": false,
+        "jwt_payload": [
+            "email",
+            "exp",
+            "id",
+            "iss",
+            "site",
+            "username"
+        ],
+        "ttl": "60",
+        "refresh_ttl": "20160",
+        "ip_whitelist": "",
+        "password_base64": false,
+        "iss": "tests",
+        "password_hash_enabled": false,
+        "refresh_token_enabled": "0",
+        "refresh_token_key": "",
+        "validate_token_enabled": "1",
+        "revoke_token_enabled": "0",
+        "refresh_auth_code": false,
+        "validate_auth_code": false,
+        "revoke_auth_code": false,
+        "custom_claims": {
+            "payload": [],
+            "header": []
+        }
+    },
+    "cors": {
+        "enabled": 1,
+        "allow_origin_enabled": true,
+        "allow_origin": "*",
+        "allow_methods_enabled": true,
+        "allow_methods": "GET, POST, PUT, DELETE, OPTIONS, HEAD",
+        "allow_headers_enabled": true,
+        "allow_headers": "*"
+    },
+    "delete_user": {
+        "enabled": true,
+        "auth_code": false,
+        "ip_whitelist": ""
+    },
+    "hooks": {
+        "enabled_hooks": []
+    },
+    "reset_password": {
+        "enabled": false,
+        "auth_code": false,
+        "flow": 0,
+        "email_subject": "",
+        "email_body": "",
+        "email_type": 0,
+        "return_jwt": false,
+        "send_password_changed_email": false
+    },
+    "protect_endpoint": {
+        "enabled": 0,
+        "default_action": "allow_all",
+        "rules_url": [
+            ""
+        ],
+        "rules_method": [
+            "ALL"
+        ],
+        "rules_match": [
+            "STARTS_WITH"
+        ],
+        "rules_type": [
+            "protected"
+        ],
+        "rules_roles": [
+            ""
+        ]
+    },
+    "auth_codes": {
+        "codes": [],
+        "key": "AUTH_KEY"
+    },
+    "integrations": {
+        "oauth": {
+            "google": {
+                "enabled": 0,
+                "client_id": "",
+                "client_secret": "",
+                "allow_on_all_endpoints": false,
+                "create_user_if_not_exists": false,
+                "enable_oauth": false,
+                "enable_exchange_code": false,
+                "redirect_uri_exchange_code": "",
+                "enable_exchange_id_token": false
+            },
+            "auth0": {
+                "enabled": 0,
+                "client_id": "",
+                "client_secret": "",
+                "allow_on_all_endpoints": false,
+                "create_user_if_not_exists": false,
+                "enable_oauth": false,
+                "enable_exchange_code": false,
+                "redirect_uri_exchange_code": "",
+                "domain": "",
+                "enable_exchange_token": false,
+                "allow_unverified_email": false
+            },
+            "facebook": {
+                "enabled": 0,
+                "client_id": "",
+                "client_secret": "",
+                "allow_on_all_endpoints": false,
+                "create_user_if_not_exists": false,
+                "enable_oauth": false,
+                "enable_exchange_code": false,
+                "redirect_uri_exchange_code": "",
+                "enable_exchange_token": false
+            },
+            "github": {
+                "enabled": 0,
+                "client_id": "",
+                "client_secret": "",
+                "allow_on_all_endpoints": false,
+                "create_user_if_not_exists": false,
+                "enable_oauth": false,
+                "enable_exchange_code": false,
+                "redirect_uri_exchange_code": "",
+                "enable_exchange_token": false,
+                "allow_unverified_email": false
+            },
+            "login_button_layout": "stacked"
+        },
+        "3rdparty": {
+            "wpgraphql": {
+                "enabled": false
+            },
+            "two_factor": {
+                "enabled": false,
+                "interim_ttl": 5
+            },
+            "force_login": {
+                "enabled": false
+            },
+            "woocommerce": {
+                "enabled": true,
+                "store_api_disable_nonce": true
+            },
+            "ai_abilities": {
+                "enabled": false,
+                "access": "read",
+                "allow_view_secrets": false,
+                "allow_change_roles": false,
+                "allow_change_auth_providers": false,
+                "allow_create_api_keys": false,
+                "allow_add_webhooks": false
+            }
+        }
+    },
+    "audit_log": {
+        "enabled": false,
+        "enabled_events": [],
+        "retention_days": 90
+    },
+    "jwt_rules": {
+        "rules": []
+    },
+    "webhooks": {
+        "enabled": true,
+        "items": [],
+        "logs": {
+            "enabled": true,
+            "retention": 90
+        }
+    },
+    "api_keys": {
+        "enabled": false,
+        "header_name": "X-API-Key",
+        "allow_user_api_keys": false,
+        "last_used_every_request": false
+    },
+    "theme": {
+        "mode": ""
+    }
+}

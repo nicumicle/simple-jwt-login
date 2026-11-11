@@ -119,6 +119,42 @@ abstract class BaseSettings
     }
 
     /**
+     * Rebuild the admin-form POST shape from the stored settings, using the
+     * declarative field map in reverse. Lets validators that read form keys
+     * validate settings that were changed programmatically.
+     *
+     * @return array
+     */
+    public function buildPostFromSettings()
+    {
+        $post     = [];
+        $settings = is_array($this->settings) ? $this->settings : [];
+
+        foreach ($this->getFieldDefinitions() as $field) {
+            list($propertyGroup, $propertyName, $postKeyGroup, $postKey) = $field;
+            $source = $settings;
+            if ($propertyGroup !== null) {
+                $source = isset($settings[$propertyGroup]) ? $settings[$propertyGroup] : [];
+            }
+            if (!is_array($source) || !array_key_exists($propertyName, $source)) {
+                continue;
+            }
+
+            $value = $source[$propertyName];
+            if (!empty($field[6]) && is_string($value)) {
+                $value = base64_decode($value);
+            }
+            if ($postKeyGroup !== null) {
+                $post[$postKeyGroup][$postKey] = $value;
+                continue;
+            }
+            $post[$postKey] = $value;
+        }
+
+        return $post;
+    }
+
+    /**
      * @param null|string $propertyGroup
      * @param string $propertyName
      * @param null|string $postKeyGroup

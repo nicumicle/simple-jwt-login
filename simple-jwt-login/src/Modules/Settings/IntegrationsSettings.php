@@ -11,6 +11,7 @@ use SimpleJWTLogin\Modules\Settings\Oauth\GoogleOauthSettings;
 use SimpleJWTLogin\Modules\Settings\Oauth\OauthProviderRegistry;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\AbstractThirdPartySettings;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\ForceLoginSettings;
+use SimpleJWTLogin\Modules\Settings\ThirdParty\AiAbilitiesSettings;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\TwoFactorSettings;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\WooCommerceSettings;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\WpGraphQLSettings;
@@ -113,6 +114,7 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
             'two_factor'  => new TwoFactorSettings(),
             'force_login' => new ForceLoginSettings(),
             'woocommerce' => new WooCommerceSettings(),
+            'ai_abilities' => new AiAbilitiesSettings(),
         ];
     }
 
@@ -149,6 +151,24 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
             $layout = self::LAYOUT_STACKED;
         }
         $this->settings[self::OAUTH_KEY]['login_button_layout'] = $layout;
+    }
+
+    /**
+     * OAuth validators read the provider slice from POST[group]; the stored
+     * provider array uses the same field names.
+     *
+     * @return array
+     */
+    public function buildPostFromSettings()
+    {
+        $post = parent::buildPostFromSettings();
+        foreach ($this->ensureProviders() as $slug => $provider) {
+            if (isset($this->settings[self::OAUTH_KEY][$slug]) && is_array($this->settings[self::OAUTH_KEY][$slug])) {
+                $post[$provider->getGroup()] = $this->settings[self::OAUTH_KEY][$slug];
+            }
+        }
+
+        return $post;
     }
 
     public function validateSettings()
@@ -297,5 +317,14 @@ class IntegrationsSettings extends BaseSettings implements SettingsInterface
     {
         /** @var WooCommerceSettings */
         return $this->getThirdParty('woocommerce');
+    }
+
+    /**
+     * @return AiAbilitiesSettings
+     */
+    public function aiAbilities()
+    {
+        /** @var AiAbilitiesSettings */
+        return $this->getThirdParty('ai_abilities');
     }
 }

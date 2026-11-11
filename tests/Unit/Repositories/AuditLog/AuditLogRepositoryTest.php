@@ -164,6 +164,47 @@ class AuditLogRepositoryTest extends TestCase
         $this->assertCount(1, $result['items']);
     }
 
+    public function testAggregateIgnoresUnknownDimensions()
+    {
+        $wpdbMock = $this->createMock(\wpdb::class);
+        $wpdbMock->prefix = 'wp_';
+        $wpdbMock->expects($this->never())->method('get_results');
+
+        $this->assertSame([], (new AuditLogRepository($wpdbMock))->aggregate('user_email; DROP TABLE x', 24, 10));
+    }
+
+    /**
+     * @return array<string, array{0: string, 1: string, 2: bool}>
+     */
+    public static function aggregateDimensionProvider()
+    {
+        return [
+            'events'      => ['event', 'logs.event_type AS bucket', false],
+            'hourly'      => ['hour', 'LEFT(logs.created_at, 13) AS bucket', false],
+            'failing ips' => ['failure_ip', 'logs.ip_address AS bucket', true],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('aggregateDimensionProvider')]
+    public function testAggregateBuildsAFixedGroupByQuery($dimension, $selectFragment, $failureOnly)
+    {
+        $wpdbMock = $this->createMock(\wpdb::class);
+        $wpdbMock->prefix = 'wp_';
+        $wpdbMock->users  = 'wp_users';
+        $wpdbMock->expects($this->once())
+            ->method('prepare')
+            ->willReturnCallback(function ($sql, $params) use ($selectFragment, $failureOnly) {
+                $this->assertStringContainsString($selectFragment, $sql);
+                $this->assertSame($failureOnly, strpos($sql, "logs.status = 'failure'") !== false);
+                $this->assertSame(['wp_simple_jwt_login_audit_logs', 'wp_users', 48, 5], $params);
+
+                return $sql;
+            });
+        $wpdbMock->method('get_results')->willReturn([(object) ['bucket' => 'x']]);
+
+        $this->assertCount(1, (new AuditLogRepository($wpdbMock))->aggregate($dimension, '48', '5'));
+    }
+
     public function testDropTableReturnsTrue()
     {
         $this->wpdbMock->method('query')->willReturn(0);

@@ -111,7 +111,7 @@ $allowedEvents   = WebhooksSettings::$allowedEvents;
                                    step="1"
                                    class="form-control sjl-webhook-timeout"
                                    placeholder="0"
-                                   title="<?php echo esc_attr__('0 means no timeout.', 'simple-jwt-login'); ?>"
+                                   title="<?php echo esc_attr__('In seconds. 0 or values above 30 use the 30 second maximum.', 'simple-jwt-login'); ?>"
                                    value="<?php echo esc_attr($timeout); ?>">
                         </div>
                     </div>
@@ -250,7 +250,7 @@ $allowedEvents   = WebhooksSettings::$allowedEvents;
                            step="1"
                            class="form-control sjl-webhook-timeout"
                            placeholder="0"
-                           title="<?php echo esc_attr__('0 means no timeout.', 'simple-jwt-login'); ?>"
+                           title="<?php echo esc_attr__('In seconds. 0 or values above 30 use the 30 second maximum.', 'simple-jwt-login'); ?>"
                            value="<?php echo esc_attr(WebhooksSettings::DEFAULT_TIMEOUT); ?>">
                 </div>
             </div>

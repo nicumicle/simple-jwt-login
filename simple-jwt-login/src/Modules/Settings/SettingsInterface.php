@@ -27,6 +27,13 @@ interface SettingsInterface
     public function getSettings();
 
     /**
+     * Rebuild the admin-form POST shape from the current settings.
+     *
+     * @return array
+     */
+    public function buildPostFromSettings();
+
+    /**
      * @param WordPressDataInterface $wordPressData
      * @return $this
      */

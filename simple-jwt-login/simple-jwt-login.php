@@ -13,6 +13,9 @@
     Version: 4.0.3
 */
 
+use SimpleJWTLogin\Helpers\ServerHelper;
+use SimpleJWTLogin\Modules\Abilities\AbilitiesRegistrar;
+use SimpleJWTLogin\Modules\Abilities\AbilityCatalog;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Plugin\AdminUI;
 use SimpleJWTLogin\Plugin\CronCleanup;
@@ -28,6 +31,7 @@ use SimpleJWTLogin\Repositories\RevokedToken\RevokedTokenRepository;
 use SimpleJWTLogin\Repositories\WebhookLog\WebhookLogRepository;
 use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
 use SimpleJWTLogin\Routes\RouteRegistrar;
+use SimpleJWTLogin\Services\AuditLoggerService;
 use SimpleJWTLogin\Services\Oauth\AbstractOauth;
 
 if (! defined('ABSPATH')) {
@@ -154,6 +158,32 @@ add_action(
             ->register();
     }
 );
+
+// WordPress Abilities API (AI agents / MCP). Requires WordPress 6.9+: on older
+// versions these hooks never fire, so nothing is registered.
+$simpleJwtLoginServerHelper = $simpleJwtLoginJwtSettings->getGeneralSettings()->isTrustIpHeadersEnabled()
+    ? ServerHelper::withTrustedProxyHeaders($_SERVER)
+    : new ServerHelper($_SERVER);
+$simpleJwtLoginAbilities = new AbilitiesRegistrar(
+    $simpleJwtLoginJwtSettings,
+    new AbilityCatalog(
+        $simpleJwtLoginJwtSettings,
+        $simpleJwtLoginApiKeyRepo,
+        $simpleJwtLoginAuditLogRepo,
+        $simpleJwtLoginWebhookLogRepo,
+        $simpleJwtLoginRevokedTokenRepo
+    ),
+    new AuditLoggerService(
+        $simpleJwtLoginAuditLogRepo,
+        $simpleJwtLoginJwtSettings->getAuditLogSettings(),
+        $simpleJwtLoginServerHelper,
+        $simpleJwtLoginWordPressRepository
+    )
+);
+add_action('wp_abilities_api_categories_init', array($simpleJwtLoginAbilities, 'registerCategory'));
+add_action('wp_abilities_api_init', array($simpleJwtLoginAbilities, 'registerAbilities'));
+// Non-administrators must not see (list, describe or probe) abilities they cannot run.
+add_filter('rest_pre_dispatch', array($simpleJwtLoginAbilities, 'filterRestPreDispatch'));
 
 // 3rd-party integrations
 include_once '3rd-party/force_login.php';

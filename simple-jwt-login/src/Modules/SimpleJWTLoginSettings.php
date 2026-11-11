@@ -80,18 +80,39 @@ class SimpleJWTLoginSettings
     public function __construct($wordPressData)
     {
         $this->wordPressData = $wordPressData;
-        $data = $this->wordPressData->getOptionFromDatabase(self::OPTIONS_KEY);
+        $this->loadSettings($this->wordPressData->getOptionFromDatabase(self::OPTIONS_KEY));
+
+        $this->post = [];
+    }
+
+    /**
+     * Re-read the settings from the database, bypassing every cache.
+     * Long-running processes (e.g. an MCP stdio session) call this so changes
+     * made elsewhere (wp-admin) are seen and not overwritten.
+     *
+     * @return void
+     */
+    public function reload()
+    {
+        $this->loadSettings($this->wordPressData->getFreshOption(self::OPTIONS_KEY));
+        self::$settingsInstances = [];
+    }
+
+    /**
+     * @param mixed $data Raw option value.
+     * @return void
+     */
+    private function loadSettings($data)
+    {
         $this->settings = [];
         if ($data !== null) {
-            $raw = json_decode($data, true);
+            $raw = json_decode((string) $data, true);
             $this->settings = SettingsMigrationService::migrate(
                 is_array($raw) ? $raw : []
             );
         }
 
         $this->needUpdateOnOptions = $data !== false;
-
-        $this->post = [];
     }
 
     /**
@@ -293,6 +314,57 @@ class SimpleJWTLoginSettings
     }
 
     /**
+     * Returns the full settings array as it is stored (after migrations).
+     *
+     * @return array
+     */
+    public function getStoredSettings()
+    {
+        return $this->settings !== null ? $this->settings : [];
+    }
+
+    /**
+     * Validate and persist a complete settings array, bypassing the admin form.
+     *
+     * Used by programmatic callers (e.g. the WordPress Abilities API) that edit
+     * the stored array directly. The admin-form POST is rebuilt from the new
+     * array so every settings class runs exactly the validation it runs on a
+     * form save. Nothing changes (in memory or in the database) when
+     * validation fails.
+     *
+     * @param array $newSettings Complete settings array to store.
+     * @return array Diff between the old and the new settings.
+     * @throws Exception
+     */
+    public function saveSettingsArray(array $newSettings)
+    {
+        $oldSettings = $this->getStoredSettings();
+        $newSettings['_schema_version'] = self::SCHEMA_VERSION;
+
+        $parsers = (new SettingsFactory())->getAll();
+        $post    = [];
+        foreach ($parsers as $oneParser) {
+            $oneParser
+                ->withSettings($newSettings)
+                ->withWordPressData($this->wordPressData);
+            $post = array_replace_recursive($post, $oneParser->buildPostFromSettings());
+        }
+
+        foreach ($parsers as $oneParser) {
+            $oneParser->withPost($post)->validateSettings();
+        }
+
+        $this->settings = $newSettings;
+        self::$settingsInstances = [];
+        $this->persistSettings();
+        $this->needUpdateOnOptions = true;
+
+        $this->lastSettingsDiff = $this->buildSettingsDiff($oldSettings, $this->settings);
+
+        return $this->lastSettingsDiff;
+    }
+
+    /**
      * Returns the diff computed during the last successful watchForUpdates call.
      *
      * @return array
@@ -327,6 +399,14 @@ class SimpleJWTLoginSettings
                 ->validateSettings();
         }
 
+        return $this->persistSettings();
+    }
+
+    /**
+     * @return bool
+     */
+    private function persistSettings()
+    {
         if ($this->needUpdateOnOptions) {
             return $this->wordPressData->updateOption(self::OPTIONS_KEY, json_encode($this->settings));
         }

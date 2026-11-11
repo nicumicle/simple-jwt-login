@@ -104,7 +104,9 @@ class RegisterUserService extends BaseService implements ServiceInterface
                 }, explode(',', $registerSettings->getAllowedUserMeta()));
 
                 foreach ($userMeta as $metaKey => $metaValue) {
-                    if (!in_array($metaKey, $allowedUserMetaKeys, true)) {
+                    if (!in_array($metaKey, $allowedUserMetaKeys, true)
+                        || $this->isProtectedUserMetaKey((string) $metaKey)
+                    ) {
                         continue;
                     }
                     $this->wordPressData->updateUserMeta(
@@ -215,6 +217,19 @@ class RegisterUserService extends BaseService implements ServiceInterface
         }
 
         return $decoded;
+    }
+
+    /**
+     * Meta keys that grant privileges or hold sessions ({prefix}capabilities,
+     * {prefix}user_level, session_tokens) are never set from a registration
+     * request, even when an administrator allowed them by mistake.
+     *
+     * @param string $metaKey
+     * @return bool
+     */
+    private function isProtectedUserMetaKey($metaKey)
+    {
+        return preg_match('/(capabilities|user_level|session_tokens)$/i', trim($metaKey)) === 1;
     }
 
     /**

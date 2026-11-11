@@ -282,6 +282,39 @@
     color:  var(--sjl-text);
 }
 
+/* ── Inline WP notices (e.g. AI Abilities HTTPS / Application Passwords warnings) ── */
+#simple-jwt-login[data-sjl-theme="dark"] .notice.inline.notice-warning {
+    background-color: #2a1f00;
+    border-left-color: #7a5800;
+}
+
+#simple-jwt-login[data-sjl-theme="dark"] .notice.inline.notice-error {
+    background-color: #2a1215;
+    border-left-color: #8a2a32;
+}
+
+#simple-jwt-login[data-sjl-theme="dark"] .notice.inline,
+#simple-jwt-login[data-sjl-theme="dark"] .notice.inline p {
+    color: var(--sjl-text);
+}
+
+/* ── AI client tabs (MCP connection examples) ── */
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-client-tabs {
+    background: #1e2330;
+    border-color: var(--sjl-border);
+}
+
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-client-tablist {
+    background: var(--sjl-bg-muted);
+    border-bottom-color: var(--sjl-border);
+}
+
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-client-tab.active {
+    background: #1e2330;
+    border-color: var(--sjl-border);
+    border-bottom-color: #1e2330;
+}
+
 /* ── Webhook logs disabled notice ── */
 #simple-jwt-login[data-sjl-theme="dark"] .sjl-logs-disabled-notice {
     background: var(--sjl-bg-card);
@@ -575,6 +608,32 @@
     background: #252b3a;
     border-color: #252b3a;
     color: var(--sjl-text);
+}
+
+/* ── AI client tabs (AI Abilities) ── */
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-client-tabs {
+    background: #161b25;
+    border-color: var(--sjl-border);
+}
+
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-client-tablist {
+    background: #1a1f2b;
+    border-bottom-color: var(--sjl-border);
+}
+
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-client-tab {
+    color: var(--sjl-text-meta);
+}
+
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-client-tab:hover,
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-client-tab.active {
+    color: var(--sjl-text);
+}
+
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-client-tab.active {
+    background: #161b25;
+    border-color: var(--sjl-border);
+    border-bottom-color: #161b25;
 }
 
 /* ── Step number ── */

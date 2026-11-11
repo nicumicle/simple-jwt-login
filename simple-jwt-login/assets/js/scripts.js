@@ -156,9 +156,24 @@ jQuery(document).ready(
             'click',
             function (e) {
                 e.preventDefault();
-                var simpleJWTCopyText     = $(this).closest('.generated-code').find('.code').html();
+                var $simpleJWTCopyBlock   = $(this).closest('.generated-code');
+                var simpleJWTCopyText     = $simpleJWTCopyBlock.find('.code').html();
                 simpleJWTCopyText         = simpleJWTCopyText.trim().replace(/&amp;/gmi, '&');
-                simpleJWTCopyText         = simpleJWTCopyText.replace(/<b>|<\/b>| /gmi, '');
+                if ($simpleJWTCopyBlock.hasClass('sjl-code-file')) {
+                    // Config files (JSON, TOML) keep their line breaks: copy through a textarea.
+                    var tempJWTLoginCopyArea = $('<textarea>');
+                    $('body').append(tempJWTLoginCopyArea);
+                    tempJWTLoginCopyArea.val($simpleJWTCopyBlock.find('.code').text().trim()).select();
+                    document.execCommand('copy');
+                    tempJWTLoginCopyArea.remove();
+                    return;
+                }
+                if ($simpleJWTCopyBlock.hasClass('sjl-code-command')) {
+                    // Shell commands need their spaces: only collapse the template indentation.
+                    simpleJWTCopyText = $('<span>').html(simpleJWTCopyText).text().replace(/\s+/g, ' ');
+                } else {
+                    simpleJWTCopyText = simpleJWTCopyText.replace(/<b>|<\/b>| /gmi, '');
+                }
                 var tempJWTLoginCopyInput = $("<input >");
                 $("body").append(tempJWTLoginCopyInput);
                 tempJWTLoginCopyInput.val(simpleJWTCopyText, '&').select();
@@ -601,6 +616,54 @@ jQuery(document).ready(
             el.focus();
         });
 
+        // AI Abilities: one tab per AI client. Picking a client selects it in every
+        // connection option, and is remembered for the next visit.
+        function sjlSelectClientTab(client)
+		{
+            var $tabs = $('#simple-jwt-login .sjl-client-tab[data-sjl-client="' + client + '"]');
+            if (!$tabs.length) {
+                return;
+            }
+            $tabs.each(function () {
+                var $group = $(this).closest('.sjl-client-tabs');
+                $group.find('.sjl-client-tab').removeClass('active').attr({'aria-selected': 'false', tabindex: '-1'});
+                $group.find('.sjl-client-panel').attr('hidden', true);
+                $(this).addClass('active').attr({'aria-selected': 'true', tabindex: '0'});
+                $('#' + $(this).attr('aria-controls')).removeAttr('hidden');
+            });
+            try {
+                localStorage.setItem('sjl_mcp_client', client);
+            } catch (e) {
+                // Storage unavailable: the choice is just not remembered.
+            }
+        }
+
+        $('#simple-jwt-login .sjl-client-tab').on('click', function () {
+            sjlSelectClientTab($(this).data('sjl-client'));
+        });
+
+        $('#simple-jwt-login .sjl-client-tab').on('keydown', function (e) {
+            var $groupTabs = $(this).closest('.sjl-client-tablist').find('.sjl-client-tab');
+            var index      = $groupTabs.index(this);
+            var keyMoves   = {ArrowRight: index + 1, ArrowLeft: index - 1, Home: 0, End: $groupTabs.length - 1};
+            if (!Object.prototype.hasOwnProperty.call(keyMoves, e.key)) {
+                return;
+            }
+            e.preventDefault();
+            var $next = $groupTabs.eq((keyMoves[e.key] + $groupTabs.length) % $groupTabs.length);
+            sjlSelectClientTab($next.data('sjl-client'));
+            $next.trigger('focus');
+        });
+
+        try {
+            var sjlSavedClient = localStorage.getItem('sjl_mcp_client');
+            if (sjlSavedClient) {
+                sjlSelectClientTab(sjlSavedClient);
+            }
+        } catch (e) {
+            // Storage unavailable: keep the first tab.
+        }
+
         // Dashboard cards — clicking navigates to the corresponding settings tab
         $('#simple-jwt-login [data-sjl-tab]').on('click', function () {
             var tabIndex = $(this).data('sjl-tab');
@@ -669,6 +732,10 @@ jQuery(document).ready(
         // -----------------------------------------------------------------------
 
         $('#simple-jwt-login .generated-code').each(function () {
+            // Only REST requests can be tried: skip shell commands and blocks without an HTTP method.
+            if (jQuery(this).hasClass('sjl-code-command') || sjlTryGetMethod(jQuery(this)) === '') {
+                return;
+            }
             jQuery(this).find('.copy-button').after(
                 '<span class="sjl-try-btn-wrap">'
                 + '<button class="btn sjl-btn-plugin sjl-try-btn" type="button">Try</button>'

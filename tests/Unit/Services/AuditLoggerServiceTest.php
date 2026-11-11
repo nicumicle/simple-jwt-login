@@ -51,6 +51,40 @@ class AuditLoggerServiceTest extends TestCase
         );
     }
 
+    public function testWithSettingsUsesTheNewSettingsAndLeavesTheOriginalUnchanged()
+    {
+        $this->settingsMock->method('isEnabled')->willReturn(false);
+        $enabledSettings = $this->createStub(AuditLogSettings::class);
+        $enabledSettings->method('isEnabled')->willReturn(true);
+        $enabledSettings->method('isEventEnabled')->willReturn(true);
+        $this->wordPressDataMock->method('canFinishRequest')->willReturn(false);
+
+        $this->repositoryMock->expects($this->once())->method('insert');
+
+        $original = $this->makeLogger();
+        $copy     = $original->withSettings($enabledSettings);
+
+        $this->assertNotSame($original, $copy);
+        $copy->log(AuditEvents::AUTH_LOGIN_SUCCESS, 1, 'test@example.com', 'success');
+        $original->log(AuditEvents::AUTH_LOGIN_SUCCESS, 1, 'test@example.com', 'success');
+    }
+
+    public function testWithSettingsDoesNotCopyPendingEntries()
+    {
+        $this->settingsMock->method('isEnabled')->willReturn(true);
+        $this->settingsMock->method('isEventEnabled')->willReturn(true);
+        $this->wordPressDataMock->method('canFinishRequest')->willReturn(true);
+
+        $this->repositoryMock->expects($this->once())->method('insert');
+
+        $original = $this->makeLogger();
+        $original->log(AuditEvents::AUTH_LOGIN_SUCCESS, 1, 'test@example.com', 'success');
+        $copy = $original->withSettings($this->settingsMock);
+
+        $copy->runPendingJobs();
+        $original->runPendingJobs();
+    }
+
     public function testLogSkipsWhenAuditDisabled()
     {
         $this->settingsMock->method('isEnabled')->willReturn(false);

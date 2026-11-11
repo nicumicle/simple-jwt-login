@@ -226,14 +226,14 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
     {
         // A prepared query instead of $wpdb->update(), which runs an extra
         // SHOW FULL COLUMNS query on every call to check the column charsets.
-        $result = $this->wpdb->query(
-            $this->wpdb->prepare(
-                'UPDATE %i SET last_used_at = %s WHERE id = %d',
-                $this->tableName(),
-                $lastUsedAt,
-                $keyId
-            )
+        $sql = $this->wpdb->prepare(
+            'UPDATE %i SET last_used_at = %s WHERE id = %d',
+            $this->tableName(),
+            $lastUsedAt,
+            $keyId
         );
+        //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared
+        $result = $this->wpdb->query($sql);
 
         return $result !== false;
     }

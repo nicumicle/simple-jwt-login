@@ -47,6 +47,13 @@ class AbilitiesRegistrar
     private $auditLogger;
 
     /**
+     * True once the category was hidden from the current user (this request).
+     *
+     * @var boolean
+     */
+    private $categoryHidden = false;
+
+    /**
      * @param SimpleJWTLoginSettings $jwtSettings
      * @param AbilityCatalog         $catalog
      * @param AuditLoggerService     $auditLogger
@@ -81,7 +88,7 @@ class AbilitiesRegistrar
      */
     public function registerAbilities()
     {
-        if (!$this->isAnyAccessAllowed()) {
+        if ($this->categoryHidden || !$this->isAnyAccessAllowed()) {
             return;
         }
 
@@ -167,40 +174,69 @@ class AbilitiesRegistrar
             return $result;
         }
 
-        if ($wordPressData->didAction('wp_abilities_api_init')) {
-            $this->hideFromCurrentUser();
-            return $result;
-        }
-        // The registry is built lazily: hide right after our abilities are registered.
-        $wordPressData->addAction('wp_abilities_api_init', [$this, 'hideFromCurrentUser'], PHP_INT_MAX);
+        // Both registries are built lazily, and independently: the categories
+        // endpoint builds only the categories one. The abilities registry
+        // builds the categories one first, so the category is hidden first.
+        $this->runWhenBuilt('wp_abilities_api_init', 'hideFromCurrentUser');
+        $this->runWhenBuilt('wp_abilities_api_categories_init', 'hideCategoryFromCurrentUser');
 
         return $result;
     }
 
     /**
+     * @param string $initAction
+     * @param string $method
+     * @return void
+     */
+    private function runWhenBuilt($initAction, $method)
+    {
+        $wordPressData = $this->jwtSettings->getWordPressData();
+        if ($wordPressData->didAction($initAction)) {
+            $this->$method();
+            return;
+        }
+        $wordPressData->addAction($initAction, [$this, $method], PHP_INT_MAX);
+    }
+
+    /**
      * Unregisters (for this request only) every ability the current user
-     * cannot execute, and the category when none is left. Runs in web
-     * requests only (see filterRestPreDispatch()), where the settings loaded
-     * at boot are current: no reload, to keep REST requests cheap.
+     * cannot execute. Runs in web requests only (see filterRestPreDispatch()),
+     * where the settings loaded at boot are current: no reload, to keep REST
+     * requests cheap.
      *
      * @return void
      */
     public function hideFromCurrentUser()
     {
-        $wordPressData = $this->jwtSettings->getWordPressData();
+        if ($this->categoryHidden) {
+            return;
+        }
 
-        $visible = 0;
+        $wordPressData = $this->jwtSettings->getWordPressData();
+        foreach ($this->catalog->all() as $ability) {
+            if (!$this->isExecutableByCurrentUser($ability)) {
+                $wordPressData->unregisterAbility($ability->getName());
+            }
+        }
+    }
+
+    /**
+     * Unregisters (for this request only) the category when the current user
+     * cannot execute any ability. Abilities are then no longer registered in
+     * this request (core would reject them without their category).
+     *
+     * @return void
+     */
+    public function hideCategoryFromCurrentUser()
+    {
         foreach ($this->catalog->all() as $ability) {
             if ($this->isExecutableByCurrentUser($ability)) {
-                $visible++;
-                continue;
+                return;
             }
-            $wordPressData->unregisterAbility($ability->getName());
         }
 
-        if ($visible === 0) {
-            $wordPressData->unregisterAbilityCategory(self::CATEGORY);
-        }
+        $this->jwtSettings->getWordPressData()->unregisterAbilityCategory(self::CATEGORY);
+        $this->categoryHidden = true;
     }
 
     /**

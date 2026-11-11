@@ -207,9 +207,7 @@ class NonAdministratorAccessTest extends AbilityTestCase
             $hidden[] = $name;
         });
         $explainVisible = $access !== 'write' && !empty($capabilities['read']);
-        $wordPressData->expects($this->exactly($explainVisible ? 0 : 1))
-            ->method('unregisterAbilityCategory')
-            ->with(AbilitiesRegistrar::CATEGORY);
+        $wordPressData->expects($this->never())->method('unregisterAbilityCategory');
 
         $registrar->hideFromCurrentUser();
 
@@ -221,6 +219,44 @@ class NonAdministratorAccessTest extends AbilityTestCase
             $expected[] = $ability->getName();
         }
         $this->assertSame($expected, $hidden);
+    }
+
+    /**
+     * The category is hidden when the user cannot run any ability; abilities
+     * are then neither registered nor unregistered in that request (core
+     * rejects abilities whose category is missing).
+     *
+     * @param string $access
+     * @param array  $capabilities
+     */
+    #[DataProvider('nonAdministratorProvider')]
+    public function testHideCategoryFromCurrentUserWhenNothingIsVisible($access, array $capabilities)
+    {
+        list($registrar, , $wordPressData) = $this->mockedRegistrarForUser($access, $capabilities);
+        $explainVisible = $access !== 'write' && !empty($capabilities['read']);
+        $wordPressData->expects($this->exactly($explainVisible ? 0 : 1))
+            ->method('unregisterAbilityCategory')
+            ->with(AbilitiesRegistrar::CATEGORY);
+        $wordPressData->expects($explainVisible ? $this->atLeastOnce() : $this->never())
+            ->method('registerAbility');
+        $wordPressData->expects($explainVisible ? $this->atLeastOnce() : $this->never())
+            ->method('unregisterAbility');
+
+        $registrar->hideCategoryFromCurrentUser();
+        $registrar->registerAbilities();
+        $registrar->hideFromCurrentUser();
+    }
+
+    /**
+     * @param string $access
+     */
+    #[DataProvider('accessProvider')]
+    public function testHideCategoryFromCurrentUserKeepsItForAnAdministrator($access)
+    {
+        list($registrar, , $wordPressData) = $this->mockedRegistrarForUser($access, null);
+        $wordPressData->expects($this->never())->method('unregisterAbilityCategory');
+
+        $registrar->hideCategoryFromCurrentUser();
     }
 
     /**
@@ -271,7 +307,7 @@ class NonAdministratorAccessTest extends AbilityTestCase
      * @param bool       $registryBuilt
      * @param string     $access
      * @param int        $hideNow       Expected unregisterAbility() batches run immediately.
-     * @param int        $deferred      Expected deferred hooks on wp_abilities_api_init.
+     * @param int        $deferred      Expected deferred hook pairs (abilities + categories init).
      * @param bool       $cli
      * @param bool       $registeringRoutes True while rest_api_init runs.
      */
@@ -290,13 +326,22 @@ class NonAdministratorAccessTest extends AbilityTestCase
         $wordPressData->method('isCli')->willReturn($cli);
         $wordPressData->method('doingAction')->willReturn($registeringRoutes);
         $wordPressData->expects($hideNow > 0 ? $this->atLeastOnce() : $this->never())->method('unregisterAbility');
-        $wordPressData->expects($this->exactly($deferred))
+        $deferredHooks = [];
+        $wordPressData->expects($this->exactly($deferred * 2))
             ->method('addAction')
-            ->with('wp_abilities_api_init', [$registrar, 'hideFromCurrentUser'], PHP_INT_MAX);
+            ->willReturnCallback(function ($hook, $callback, $priority) use (&$deferredHooks) {
+                $deferredHooks[$hook] = [$callback, $priority];
+            });
 
         $result = new stdClass();
 
         $this->assertSame($result, $registrar->filterRestPreDispatch($result));
+        if ($deferred > 0) {
+            $this->assertSame([
+                'wp_abilities_api_init'            => [[$registrar, 'hideFromCurrentUser'], PHP_INT_MAX],
+                'wp_abilities_api_categories_init' => [[$registrar, 'hideCategoryFromCurrentUser'], PHP_INT_MAX],
+            ], $deferredHooks);
+        }
     }
 
     /**

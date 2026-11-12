@@ -1,6 +1,8 @@
 # Changelog - Releases
 
 ## Unreleased
+
+## 4.1.0 (11 November 2026)
 - Security: Protect Endpoints now enforces "JWT + Roles" rules for logged-in (cookie-authenticated) users and API key owners
 - New integration: AI Abilities (MCP) - let AI agents manage and troubleshoot the plugin through the WordPress Abilities API (WordPress 6.9+)
 - Fix secrets (auth codes, JWT rule keys, webhook header values) being written in plain text to the "Settings Saved" audit log entry

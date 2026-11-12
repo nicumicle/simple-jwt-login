@@ -4,9 +4,9 @@ Contributors: nicu_m
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PK9BCD6AYF58Y&source=url
 Tags: jwt, API, auto login, register, tokens
 Requires at least: 4.4.0
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 5.5
-Stable tag: 3.6.8
+Stable tag: 3.6.9
 License: GPLv3
 License URI: https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE
 
@@ -460,6 +460,10 @@ After that, for the create user route, simply add the AUTH code in the request, 
 
 A complete Changelog is available on the [GitHub repository](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md).
 
+= 3.6.9 (12 November 2026) =
+- Security: fix CSRF in the Force Login compatibility filter on cookie-authenticated REST requests (Reported via Patchstack)
+- Security: JWT middleware now checks the resolved REST route instead of searching the URL
+
 = 3.6.8 (09 Aug 2026) =
 - Improve Google Oauth Security (Reported by [@FaridNarimanov](https://github.com/FaridNarimanov))[#174](https://github.com/nicumicle/simple-jwt-login/issues/174)
 - JWT Payload: strip reserved claims improvement
@@ -790,6 +794,9 @@ A complete Changelog is available on the [GitHub repository](https://github.com/
 * Initial release
 
 == Upgrade Notice ==
+
+= 3.6.9 =
+Fixes a CSRF vulnerability. Update is strongly recommended for all sites.
 
 = 3.6.7 =
 Fixes security. Update is strongly recommended for all sites.

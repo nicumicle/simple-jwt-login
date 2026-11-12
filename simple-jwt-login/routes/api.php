@@ -1,6 +1,7 @@
 <?php
 
 use SimpleJWTLogin\Helpers\CorsHelper;
+use SimpleJWTLogin\Helpers\RestRouteHelper;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Helpers\StatusCodeHelper;
 use SimpleJWTLogin\Libraries\ParseRequest;
@@ -62,13 +63,16 @@ add_action('rest_api_init', function () {
     }
 
     if ($jwtSettings->getGeneralSettings()->isMiddlewareEnabled()) {
-        add_filter('rest_authentication_errors', function ($errors) use ($routeService, $jwtSettings, $wordPressData, $serverHelper) {
+        add_filter('rest_authentication_errors', function ($errors) use ($routeService, $jwtSettings, $wordPressData) {
 	        if (!empty($errors)) {
 		        return $errors;
 	        }
 
-            $currentURL = $serverHelper->getCurrentURL();
-            if (strpos($currentURL, $jwtSettings->getGeneralSettings()->getRouteNamespace()) !== false) {
+            $restRoute = isset($GLOBALS['wp']->query_vars['rest_route'])
+                ? $GLOBALS['wp']->query_vars['rest_route']
+                : null;
+            $namespace = $jwtSettings->getGeneralSettings()->getRouteNamespace();
+            if (RestRouteHelper::isNamespaceRoute($restRoute, $namespace)) {
                 //Skip middleware for simple-jwt-plugin
                 return $errors;
             }

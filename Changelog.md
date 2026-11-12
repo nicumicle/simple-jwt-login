@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 3.6.9 (12 November 2026)
+- Security: fix CSRF in the Force Login compatibility filter on cookie-authenticated REST requests (Reported via Patchstack)
+- Security: JWT middleware now checks the resolved REST route instead of searching the URL
+
 ## 3.6.8 (08 Aug 2026)
 - Improve Google Oauth Security (Reported by [@FaridNarimanov](https://github.com/FaridNarimanov))[#174](https://github.com/nicumicle/simple-jwt-login/issues/174)
 - JWT Payload: strip reserved claims improvement

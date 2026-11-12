@@ -561,6 +561,17 @@ if (!function_exists('is_user_logged_in')) {
     }
 }
 
+if (!function_exists('is_wp_error')) {
+    /**
+     * @param mixed $thing
+     * @return bool
+     */
+    function is_wp_error($thing)
+    {
+        return $thing instanceof WP_Error;
+    }
+}
+
 if (!function_exists('wp_remote_request')) {
     function wp_remote_request($url, $args)
     {
@@ -595,8 +606,22 @@ if (!class_exists('WP_REST_Response')) {
 if (!class_exists('WP_Error')) {
     class WP_Error
     {
+        /**
+         * @var string|int
+         */
+        private $code;
+
         public function __construct($code = '', $message = '', $data = '')
         {
+            $this->code = $code;
+        }
+
+        /**
+         * @return string|int
+         */
+        public function get_error_code()
+        {
+            return $this->code;
         }
     }
 }

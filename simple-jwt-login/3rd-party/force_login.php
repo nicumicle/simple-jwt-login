@@ -1,28 +1,37 @@
 <?php
 
+use SimpleJWTLogin\Helpers\RestRouteHelper;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Modules\WordPressData;
 
 ## Force Login
+## Lets anonymous requests reach the plugin's own endpoints when the Force Login
+## plugin blocks the REST API for logged-out users (error code `rest_unauthorized`).
+## Security: never return `true` here, never touch errors for logged-in users
+## (e.g. core's `rest_cookie_invalid_nonce`) and never clear errors raised by other
+## plugins, otherwise cookie-authenticated requests skip WordPress' nonce check (CSRF).
 add_filter(
     'rest_authentication_errors',
-    function ($bypass) {
-        $currentURL  =
-            "http"
-            . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "s" : "")
-            . "://" . sanitize_text_field(wp_unslash($_SERVER['HTTP_HOST']))
-            . sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']));
-
-        $jwtSettings = new SimpleJWTLoginSettings(new WordPressData());
-
-        $simpleJwtLoginUrl = $jwtSettings->getWordPressData()->getSiteUrl()
-               . '/?rest_route=/'
-               . $jwtSettings->getGeneralSettings()->getRouteNamespace();
-        if (strpos($currentURL, $simpleJwtLoginUrl) === 0) {
-            return true;
+    function ($result) {
+        if (!is_wp_error($result)
+            || $result->get_error_code() !== 'rest_unauthorized'
+            || is_user_logged_in()
+        ) {
+            return $result;
         }
 
-        return $bypass;
+        $restRoute = isset($GLOBALS['wp']->query_vars['rest_route'])
+            ? $GLOBALS['wp']->query_vars['rest_route']
+            : null;
+
+        $jwtSettings = new SimpleJWTLoginSettings(new WordPressData());
+        $namespace   = $jwtSettings->getGeneralSettings()->getRouteNamespace();
+        if (RestRouteHelper::isNamespaceRoute($restRoute, $namespace)) {
+            // No authentication decision: the route's permission_callback applies.
+            return null;
+        }
+
+        return $result;
     },
     100
 );

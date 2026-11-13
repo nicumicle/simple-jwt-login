@@ -60,10 +60,7 @@ add_filter('rest_authentication_errors', function ($errors) use ($simpleJwtLogin
         return $errors;
     }
 
-    $serverHelper = $jwtSettings->getGeneralSettings()->isTrustIpHeadersEnabled()
-        ? ServerHelper::withTrustedProxyHeaders($_SERVER)
-        : new ServerHelper($_SERVER);
-    if (!(new WooCommerceBridge())->isWooCommerceRequest($serverHelper->getCurrentURL())) {
+    if (!(new WooCommerceBridge())->isWooCommerceRoute($wordPressRepo->getResolvedRestRoute())) {
         return $errors;
     }
 

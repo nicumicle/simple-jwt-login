@@ -8,28 +8,33 @@ use SimpleJWTLogin\Services\Integrations\WooCommerce\WooCommerceBridge;
 
 class WooCommerceBridgeTest extends TestCase
 {
-    #[DataProvider('requestProvider')]
-    public function testIsWooCommerceRequest(string $url, bool $expected): void
+    #[DataProvider('routeProvider')]
+    public function testIsWooCommerceRoute(?string $restRoute, bool $expected): void
     {
-        $this->assertSame($expected, (new WooCommerceBridge())->isWooCommerceRequest($url));
+        $this->assertSame($expected, (new WooCommerceBridge())->isWooCommerceRoute($restRoute));
     }
 
-    public static function requestProvider(): array
+    /**
+     * Routes as WordPress resolves them (the `rest_route` query var), for both
+     * pretty (/wp-json/...) and plain (?rest_route=...) permalinks.
+     */
+    public static function routeProvider(): array
     {
         return [
-            'pretty wc v3 orders'   => ['https://site.test/wp-json/wc/v3/orders', true],
-            'pretty wc v3 products' => ['https://site.test/wp-json/wc/v3/products', true],
-            'pretty wc v2 orders'   => ['https://site.test/wp-json/wc/v2/orders', true],
-            'pretty wc v1 orders'   => ['https://site.test/wp-json/wc/v1/orders', true],
-            'pretty store cart'     => ['https://site.test/wp-json/wc/store/v1/cart', true],
-            'pretty store checkout' => ['https://site.test/wp-json/wc/store/v1/checkout', true],
-            'plain rest_route'      => ['https://site.test/?rest_route=/wc/v3/orders', true],
-            'plain encoded'         => ['https://site.test/?rest_route=%2Fwc%2Fv3%2Forders', true],
-            'wp core users'         => ['https://site.test/wp-json/wp/v2/users', false],
-            'wc analytics'          => ['https://site.test/wp-json/wc-analytics/reports', false],
-            'sjl namespace'         => ['https://site.test/wp-json/simple-jwt-login/v1/auth', false],
-            'root'                  => ['https://site.test/', false],
+            'wc v3 orders'          => ['/wc/v3/orders', true],
+            'wc v3 products'        => ['/wc/v3/products', true],
+            'wc v2 orders'          => ['/wc/v2/orders', true],
+            'wc v1 orders'          => ['/wc/v1/orders', true],
+            'store cart'            => ['/wc/store/v1/cart', true],
+            'store checkout'        => ['/wc/store/v1/checkout', true],
+            'wc namespace index'    => ['/wc', true],
+            'wp core users'         => ['/wp/v2/users', false],
+            'wc analytics'          => ['/wc-analytics/reports', false],
+            'sjl namespace'         => ['/simple-jwt-login/v1/auth', false],
+            'wc inside another route' => ['/wp/v2/users/wc/v3', false],
+            'root'                  => ['/', false],
             'empty'                 => ['', false],
+            'not a REST request'    => [null, false],
         ];
     }
 

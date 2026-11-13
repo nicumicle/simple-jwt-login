@@ -4,6 +4,7 @@ namespace SimpleJWTLogin\Routes\Handlers;
 
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\ApiKeyPermissions;
+use SimpleJWTLogin\Helpers\RestRouteHelper;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Helpers\StatusCodeHelper;
 use SimpleJWTLogin\Middleware\ApiKeyAuthMiddleware;
@@ -78,7 +79,10 @@ class AuthenticationHandler
         }
 
         $currentURL = $this->serverHelper->getCurrentURL();
-        if (strpos($currentURL, $this->jwtSettings->getGeneralSettings()->getRouteNamespace()) !== false) {
+        if (RestRouteHelper::isNamespaceRoute(
+            $this->wordPressData->getResolvedRestRoute(),
+            $this->jwtSettings->getGeneralSettings()->getRouteNamespace()
+        )) {
             return $errors;
         }
 

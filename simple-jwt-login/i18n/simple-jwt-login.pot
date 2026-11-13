@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv3.
 msgid ""
 msgstr ""
-"Project-Id-Version: Simple JWT Login 4.0.3\n"
+"Project-Id-Version: Simple JWT Login 4.1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/simple-jwt-login\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-11T05:44:24+00:00\n"
+"POT-Creation-Date: 2026-11-13T05:21:36+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -1304,7 +1304,7 @@ msgstr ""
 msgid "My API Keys"
 msgstr ""
 
-#: src/Routes/Handlers/AuthenticationHandler.php:123
+#: src/Routes/Handlers/AuthenticationHandler.php:127
 msgid "Invalid or unauthorized API key."
 msgstr ""
 
@@ -1613,11 +1613,11 @@ msgstr ""
 msgid "This Oauth provider is not available."
 msgstr ""
 
-#: src/Services/ProtectEndpointService.php:93
+#: src/Services/ProtectEndpointService.php:99
 msgid "JWT is not present and we can not search for a user."
 msgstr ""
 
-#: src/Services/ProtectEndpointService.php:107
+#: src/Services/ProtectEndpointService.php:111
 msgid "You do not have the required role to access this endpoint."
 msgstr ""
 

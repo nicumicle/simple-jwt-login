@@ -2,6 +2,8 @@
 
 namespace SimpleJWTLogin\Services\Integrations\WooCommerce;
 
+use SimpleJWTLogin\Helpers\RestRouteHelper;
+
 class WooCommerceBridge
 {
     /**
@@ -15,27 +17,19 @@ class WooCommerceBridge
     }
 
     /**
-     * True when the request URL targets a WooCommerce REST route.
+     * True when the REST route resolved by WordPress is a WooCommerce route.
      * Covers classic CRUD (/wc/v3, /wc/v2, /wc/v1) and the Store API
-     * (/wc/store/v1), for both pretty (/wp-json/wc/...) and plain
-     * (?rest_route=/wc/...) permalinks.
+     * (/wc/store/v1). WordPress sets the route for both pretty (/wp-json/wc/...)
+     * and plain (?rest_route=/wc/...) permalinks.
      *
-     * @param string $url Full request URL or REQUEST_URI.
+     * Never decide this from the raw URL: a duplicated `rest_route` key or a
+     * "/wc/" string in the query makes the URL and the dispatched route disagree.
+     *
+     * @param string|null $restRoute Route from Repository::getResolvedRestRoute().
      * @return bool
      */
-    public function isWooCommerceRequest($url)
+    public function isWooCommerceRoute($restRoute)
     {
-        if (!is_string($url) || $url === '') {
-            return false;
-        }
-
-        $needles = array('/wp-json/wc/', 'rest_route=/wc/', 'rest_route=%2Fwc%2F');
-        foreach ($needles as $needle) {
-            if (strpos($url, $needle) !== false) {
-                return true;
-            }
-        }
-
-        return false;
+        return RestRouteHelper::isNamespaceRoute($restRoute, 'wc');
     }
 }

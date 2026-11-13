@@ -44,7 +44,7 @@ class ProtectEndpointService extends BaseService
             return true;
         }
 
-        $parsed = parse_url($currentUrl);
+        $parsed = wp_parse_url($currentUrl);
 
         //Initialize $path safely, checking if 'path' is available in $parsed
 		$basePath  = rtrim(str_replace($documentRoot, '', ABSPATH), '/');
@@ -64,7 +64,7 @@ class ProtectEndpointService extends BaseService
         try {
             $jwt = $this->getJwtFromRequestHeaderOrCookie();
             if (empty($jwt)) {
-                throw new Exception('JWT is not present and we can not search for a user.', ErrorCodes::ERR_PROTECT_ENDPOINTS_MISSING_JWT);
+                throw new Exception('JWT is not present and we can not search for a user.', (int) ErrorCodes::ERR_PROTECT_ENDPOINTS_MISSING_JWT);
             }
             
             $user = $this->routeService->getUserFromJwt($jwt);

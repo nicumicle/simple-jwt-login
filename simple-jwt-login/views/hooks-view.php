@@ -17,15 +17,14 @@ $hooks = SimpleJWTLoginHooks::getHooksDetails();
 ?>
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('WordPress Hooks Integration', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo esc_html__('WordPress Hooks Integration', 'simple-jwt-login'); ?></h3>
         <p class="text-muted">
-            <?php echo __('Enable specific WordPress hooks to extend JWT functionality. Only enabled hooks will be triggered.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Enable specific WordPress hooks to extend JWT functionality. Only enabled hooks will be triggered.', 'simple-jwt-login'); ?>
         </p>
         <p>
             <?php
-            echo __(
-                'Make sure that the hook you are trying to use is enabled.'
-                . ' Otherwise, the hook will not be called.',
+            echo esc_html__(
+                'Make sure that the hook you are trying to use is enabled. Otherwise, the hook will not be called.',
                 'simple-jwt-login'
             );
             ?>
@@ -36,14 +35,14 @@ $hooks = SimpleJWTLoginHooks::getHooksDetails();
                 <th scope="col">
                     <input type="checkbox" id="toggleHooks" />
                     <label for="toggleHooks">
-                        <?php echo __('Enabled', 'simple-jwt-login'); ?>
+                        <?php echo esc_html__('Enabled', 'simple-jwt-login'); ?>
                     </label>
                 </th>
-                <th scope="col"><?php echo __('Hook Name', 'simple-jwt-login'); ?></th>
-                <th scope="col"><?php echo __('Hook Type', 'simple-jwt-login'); ?></th>
-                <th scope="col"><?php echo __('Parameters', 'simple-jwt-login'); ?></th>
-                <th scope="col"><?php echo __('Return', 'simple-jwt-login'); ?></th>
-                <th scope="col"><?php echo __('Description', 'simple-jwt-login'); ?></th>
+                <th scope="col"><?php echo esc_html__('Hook Name', 'simple-jwt-login'); ?></th>
+                <th scope="col"><?php echo esc_html__('Hook Type', 'simple-jwt-login'); ?></th>
+                <th scope="col"><?php echo esc_html__('Parameters', 'simple-jwt-login'); ?></th>
+                <th scope="col"><?php echo esc_html__('Return', 'simple-jwt-login'); ?></th>
+                <th scope="col"><?php echo esc_html__('Description', 'simple-jwt-login'); ?></th>
             </tr>
             </thead>
 			<?php
@@ -83,7 +82,7 @@ $hooks = SimpleJWTLoginHooks::getHooksDetails();
                             } ?>
                         </td>
                         <td>
-                            <p><?php echo str_replace("\n", "<br />", esc_html($singleHook['description'])); ?></p>
+                            <p><?php echo nl2br(esc_html($singleHook['description']), false); ?></p>
                         </td>
                     </tr>
 					<?php

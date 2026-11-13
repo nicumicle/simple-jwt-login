@@ -59,8 +59,8 @@ class DeleteUserSettings extends BaseSettings implements SettingsInterface
             )
         ) {
             throw new Exception(
-                __('Missing JWT parameter for Delete User.', 'simple-jwt-login'),
-                $this->settingsErrors->generateCode(
+                esc_html__('Missing JWT parameter for Delete User.', 'simple-jwt-login'),
+                (int) $this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_DELETE,
                     SettingsErrors::ERR_DELETE_MISSING_JWT_PARAM
                 )

@@ -561,6 +561,17 @@ if (!function_exists('is_user_logged_in')) {
     }
 }
 
+if (!function_exists('is_wp_error')) {
+    /**
+     * @param mixed $thing
+     * @return bool
+     */
+    function is_wp_error($thing)
+    {
+        return $thing instanceof WP_Error;
+    }
+}
+
 if (!function_exists('wp_remote_request')) {
     function wp_remote_request($url, $args)
     {
@@ -595,8 +606,22 @@ if (!class_exists('WP_REST_Response')) {
 if (!class_exists('WP_Error')) {
     class WP_Error
     {
+        /**
+         * @var string|int
+         */
+        private $code;
+
         public function __construct($code = '', $message = '', $data = '')
         {
+            $this->code = $code;
+        }
+
+        /**
+         * @return string|int
+         */
+        public function get_error_code()
+        {
+            return $this->code;
         }
     }
 }
@@ -630,6 +655,48 @@ if (!function_exists('esc_html__')) {
      */
     function esc_html__($text, $domain = 'default') {
         return $text;
+    }
+}
+
+if (!function_exists('wp_rand')) {
+    /**
+     * @param int $min
+     * @param int $max
+     * @return int
+     */
+    function wp_rand($min = 0, $max = 0) {
+        return mt_rand($min, $max);
+    }
+}
+
+if (!function_exists('wp_kses_post')) {
+    /**
+     * @param string $data
+     * @return string
+     */
+    function wp_kses_post($data) {
+        return $data;
+    }
+}
+
+if (!function_exists('absint')) {
+    /**
+     * @param mixed $maybeint
+     * @return int
+     */
+    function absint($maybeint) {
+        return abs((int) $maybeint);
+    }
+}
+
+if (!function_exists('wp_parse_url')) {
+    /**
+     * @param string $url
+     * @param int $component
+     * @return mixed
+     */
+    function wp_parse_url($url, $component = -1) {
+        return parse_url($url, $component);
     }
 }
 

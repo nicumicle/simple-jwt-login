@@ -17,9 +17,9 @@ if (!defined('ABSPATH')) {
 ?>
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Allow User Registration', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo esc_html__('Allow User Registration', 'simple-jwt-login'); ?></h3>
         <p class="text-muted">
-            <?php echo __('Allow new users to register via JWT API endpoints.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Allow new users to register via JWT API endpoints.', 'simple-jwt-login'); ?>
         </p>
         <div class="form-group">
             <input type="radio" id="allow_register_no" name="allow_register" class="form-control"
@@ -30,7 +30,7 @@ if (!defined('ABSPATH')) {
                 ?>
             />
             <label for="allow_register_no">
-                <?php echo __('No', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('No', 'simple-jwt-login'); ?>
             </label>
 
             <input type="radio" id="allow_register_yes" name="allow_register" class="form-control"
@@ -42,7 +42,7 @@ if (!defined('ABSPATH')) {
                 ?>
             />
             <label for="allow_register_yes">
-                <?php echo __('Yes', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Yes', 'simple-jwt-login'); ?>
             </label>
             <br/>
         </div>
@@ -52,7 +52,7 @@ if (!defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('URL Example', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo esc_html__('URL Example', 'simple-jwt-login'); ?></h3>
         <div class="generated-code">
             <span class="method">POST</span>
             <span class="code">
@@ -70,7 +70,7 @@ if (!defined('ABSPATH')) {
             </span>
             <span class="copy-button">
                 <button class="btn btn-secondary btn-xs">
-                    <?php echo __('Copy', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('Copy', 'simple-jwt-login'); ?>
                 </button>
             </span>
         </div>
@@ -80,9 +80,9 @@ if (!defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Require Authentication Code for Registration', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo esc_html__('Require Authentication Code for Registration', 'simple-jwt-login'); ?></h3>
         <p class="text-muted">
-            <?php echo __('If enabled, an additional authentication code must be provided for user registration.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('If enabled, an additional authentication code must be provided for user registration.', 'simple-jwt-login'); ?>
         </p>
         <div class="form-group">
             <input type="radio" id="require_register_auth_no" name="require_register_auth" class="form-control"
@@ -93,7 +93,7 @@ if (!defined('ABSPATH')) {
                 ?>
             />
             <label for="require_register_auth_no">
-                <?php echo __('No', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('No', 'simple-jwt-login'); ?>
             </label>
             <input type="radio" id="require_register_auth_yes" name="require_register_auth" class="form-control"
                    value="1"
@@ -103,7 +103,7 @@ if (!defined('ABSPATH')) {
                 ?>
             />
             <label for="require_register_auth_yes">
-                <?php echo __('Yes', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Yes', 'simple-jwt-login'); ?>
             </label>
             <div id="require_register_auth_alert" class="alert alert-warning" role="alert"
                  style="<?php
@@ -111,7 +111,7 @@ if (!defined('ABSPATH')) {
                          ? 'display:none;'
                          : '';
                     ?>">
-                <?php echo __(
+                <?php echo esc_html__(
                     " Warning! It's not recommended to allow register without Auth Codes",
                     'simple-jwt-login'
                 ); ?>.
@@ -138,22 +138,22 @@ if (!defined('ABSPATH')) {
                 ? '<span class="simple-jwt-error">!</span>'
                 : ''
             ?>
-            <?php echo __('Default User Role', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Default User Role', 'simple-jwt-login'); ?>
         </h3>
         <p class="text-muted">
-            <?php echo __('Specify the WordPress role assigned to newly registered users.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Specify the WordPress role assigned to newly registered users.', 'simple-jwt-login'); ?>
         </p>
         <p class="text-muted">
-            <?php echo __('Example', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Example', 'simple-jwt-login'); ?>
             : `administrator`, `editor`, `author`, `contributor`, `subscriber`
         </p>
         <a href="https://wordpress.org/support/article/roles-and-capabilities/" target="_blank">
-            <?php echo __('More details', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('More details', 'simple-jwt-login'); ?>
         </a>
         <div class="form-group">
             <input type="text" name="new_user_profile" class="form-control"
                    value="<?php echo esc_attr($jwtSettings->getRegisterSettings()->getNewUSerProfile()); ?>"
-                   placeholder="<?php echo __('New user profile name', 'simple-jwt-login'); ?>"
+                   placeholder="<?php echo esc_attr__('New user profile name', 'simple-jwt-login'); ?>"
             />
         </div>
     </div>
@@ -184,22 +184,22 @@ if (!defined('ABSPATH')) {
                 ? '<span class="simple-jwt-error">!</span>'
                 : ''
             ?>
-            <?php echo __('User Creation Settings', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('User Creation Settings', 'simple-jwt-login'); ?>
         </h3>
         <p class="text-muted">
-            <?php echo __('Configure how new user accounts are created during registration.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Configure how new user accounts are created during registration.', 'simple-jwt-login'); ?>
         </p>
         <input type="checkbox" name="random_password"
                id="random_password"
             <?php echo($jwtSettings->getRegisterSettings()->isRandomPasswordForCreateUserEnabled() ? 'checked' : ''); ?>
                value="1"/>
         <label for="random_password">
-            <?php echo __('Generate a random password when a new user is created', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Generate a random password when a new user is created', 'simple-jwt-login'); ?>
         </label>
         <br/>
         <p class="text-muted">
             <?php
-            echo __(
+            echo esc_html__(
                 'If this option is selected, the password is no more required when a new user is created.',
                 'simple-jwt-login'
             );
@@ -211,12 +211,12 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <label for="random_password_length">
-            <?php echo __('Random password length', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Random password length', 'simple-jwt-login'); ?>
         </label>
         <br />
         <div class="text-muted">
             <?php
-            echo __(
+            echo esc_html__(
                 'The number of characters for the random generated password',
                 'simple-jwt-login'
             );
@@ -240,12 +240,12 @@ if (!defined('ABSPATH')) {
             <?php echo($jwtSettings->getRegisterSettings()->isForceLoginAfterCreateUserEnabled() ? 'checked' : ''); ?>
         />
         <label for="register_force_login">
-            <?php echo __('Initialize force login after register', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Initialize force login after register', 'simple-jwt-login'); ?>
         </label>
         <br/>
         <p class="text-muted">
             <?php
-            echo __(
+            echo esc_html__(
                 'Automatically log in the user after successful registration, following the login configuration settings. Requires auto-login to be enabled.',
                 'simple-jwt-login'
             );
@@ -260,15 +260,13 @@ if (!defined('ABSPATH')) {
         <input type="checkbox" name="register_jwt" id="register_jwt"
                value="1" <?php echo($jwtSettings->getRegisterSettings()->isJwtEnabled() ? 'checked' : ''); ?>>
         <label for="register_jwt">
-            <?php echo __('Return JWT on Registration', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Return JWT on Registration', 'simple-jwt-login'); ?>
         </label>
         <br/>
         <p class="text-muted">
             <?php
-            echo __(
-                'If this option is selected, a JWT will be added in the response.'
-                . ' By default, it will contain email, id and username in the payload.'
-                . ' If the Authentication is enabled, payload will be generated using authentication configuration.',
+            echo esc_html__(
+                'If this option is selected, a JWT will be added in the response. By default, it will contain email, id and username in the payload. If the Authentication is enabled, payload will be generated using authentication configuration.',
                 'simple-jwt-login'
             );
             ?>
@@ -280,22 +278,22 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title">
-            <?php echo __(
+            <?php echo esc_html__(
                 'Restrict Registration to Specific IP Addresses',
                 'simple-jwt-login'
             ); ?>:
         </h3>
         <p class="text-muted">
-            <?php echo __('Only allow user registration from these IP addresses. Leave blank to allow from any IP.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Only allow user registration from these IP addresses. Leave blank to allow from any IP.', 'simple-jwt-login'); ?>
         </p>
         <div class="form-group">
             <input type="text" id="register_ip" name="register_ip" class="form-control"
                    value="<?php echo esc_attr($jwtSettings->getRegisterSettings()->getAllowedRegisterIps()); ?>"
-                   placeholder="<?php echo __('Enter IP here', 'simple-jwt-login'); ?>"/>
+                   placeholder="<?php echo esc_attr__('Enter IP here', 'simple-jwt-login'); ?>"/>
             <p class="text-muted">
-                <?php echo __("If you want to add more IP's, separate them by comma", 'simple-jwt-login'); ?>.
+                <?php echo esc_html__("If you want to add more IP's, separate them by comma", 'simple-jwt-login'); ?>.
                 <br/>
-                <?php echo __('Leave blank to allow all IP addresses', 'simple-jwt-login'); ?>.
+                <?php echo esc_html__('Leave blank to allow all IP addresses', 'simple-jwt-login'); ?>.
             </p>
         </div>
     </div>
@@ -305,7 +303,7 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title">
-            <?php echo __(
+            <?php echo esc_html__(
                 'Restrict Registration to Specific Email Domains',
                 'simple-jwt-login'
             ); ?>
@@ -314,18 +312,17 @@ if (!defined('ABSPATH')) {
         <div class="form-group">
             <input type="text" id="register_domain" name="register_domain" class="form-control"
                    value="<?php echo esc_attr($jwtSettings->getRegisterSettings()->getAllowedRegisterDomain()); ?>"
-                   placeholder="<?php echo __('', 'simple-jwt-login'); ?>Email domain"/>
+                   placeholder="<?php echo esc_attr__('Email domain', 'simple-jwt-login'); ?>"/>
             <p class="text-muted">
                 <?php
-                echo __(
-                    'For example, if you want to allow registration only for users that use their gmail account,'
-                    . ' add `gmail.com`',
+                echo esc_html__(
+                    'For example, if you want to allow registration only for users that use their gmail account, add `gmail.com`',
                     'simple-jwt-login'
                 );
                 ?>.
-                <?php echo __('For multiple domains, separate them by comma', 'simple-jwt-login'); ?>.
+                <?php echo esc_html__('For multiple domains, separate them by comma', 'simple-jwt-login'); ?>.
                 <br/>
-                <?php echo __('Leave blank to allow all domains', 'simple-jwt-login'); ?>.
+                <?php echo esc_html__('Leave blank to allow all domains', 'simple-jwt-login'); ?>.
             </p>
         </div>
     </div>
@@ -333,9 +330,9 @@ if (!defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Allowed User Meta Keys', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo esc_html__('Allowed User Meta Keys', 'simple-jwt-login'); ?></h3>
         <p class="text-muted">
-            <?php echo __('Specify which user meta keys can be set during registration. Leave blank to disallow all.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Specify which user meta keys can be set during registration. Leave blank to disallow all.', 'simple-jwt-login'); ?>
         </p>
         <p>
             <input
@@ -345,29 +342,27 @@ if (!defined('ABSPATH')) {
                     value="<?php echo esc_attr($jwtSettings->getRegisterSettings()->getAllowedUserMeta()); ?>"
             />
             <span class="text-muted">
-                <?php echo __(
-                    'Separate user_meta keys by comma.'
-                    . ' If no user_meta is specified, then users will not be able to'
-                    . ' add user_meta via register user.',
+                <?php echo esc_html__(
+                    'Separate user_meta keys by comma. If no user_meta is specified, then users will not be able to add user_meta via register user.',
                     'simple-jwt-login'
                 );
                             ?></span>
             <br/>
-            <span class="text-muted"><?php echo __('Example', 'simple-jwt-login'); ?>: my_meta1,my_meta2</span>
+            <span class="text-muted"><?php echo esc_html__('Example', 'simple-jwt-login'); ?>: my_meta1,my_meta2</span>
         </p>
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Available User Properties', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo esc_html__('Available User Properties', 'simple-jwt-login'); ?></h3>
         <p class="text-muted">
-            <?php echo __('These properties can be included in the registration request to set user details.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('These properties can be included in the registration request to set user details.', 'simple-jwt-login'); ?>
         </p>
         <div class="form-group">
             <p>
                 <?php
-                echo __(
+                echo esc_html__(
                     'This properties can be passed in the request when the new user is created.',
                     'simple-jwt-login'
                 );

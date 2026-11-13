@@ -40,9 +40,9 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
                     value="<?php echo esc_attr(ProtectEndpointSettings::REQUEST_METHOD_ALL);?>"
                     <?php echo (!empty($endpoint) && $endpoint['method'] == ProtectEndpointSettings::REQUEST_METHOD_ALL ? 'selected' : '');?>
                 >
-                    <?php echo __("ALL", "simple-jwt-login");?>
+                    <?php echo esc_html__("ALL", "simple-jwt-login");?>
                 </option>
-                <optgroup label="<?php echo __('HTTP Methods', 'simple-jwt-login');?>">
+                <optgroup label="<?php echo esc_attr__('HTTP Methods', 'simple-jwt-login');?>">
                     <!-- request methods options-->
                     <?php foreach ($requestMethodsOpts as $method => $translation) {?>
                         <option
@@ -71,12 +71,12 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
                    name="<?php echo esc_attr(ProtectEndpointSettings::PROPERTY_GROUP . "[" . $type . "][]");?>"
                    class="form-control"
                    value="<?php echo !empty($endpoint) ? esc_attr($endpoint['url']) : ""; ?>"
-                   placeholder="<?php echo __('Endpoint path', 'simple-jwt-login'); ?>"
+                   placeholder="<?php echo esc_attr__('Endpoint path', 'simple-jwt-login'); ?>"
             />
             <div class="input-group-addon auth-code-delete-container">
                 <a href="javascript:void(0)"
                    onclick="jwt_login_remove_endpoint_row(jQuery(this));"
-                   title="<?php echo __('delete', 'simple-jwt-login'); ?>"
+                   title="<?php echo esc_attr__('delete', 'simple-jwt-login'); ?>"
                 >
                     <i class="delete-auth-code" aria-hidden="true"></i>
                 </a>
@@ -93,7 +93,7 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
 ?>
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Protect endpoints enabled', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo esc_html__('Protect endpoints enabled', 'simple-jwt-login'); ?></h3>
         <div class="form-group">
             <input type="radio"
                    id="protect_endpoints_enabled_no"
@@ -106,7 +106,7 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
                 ?>
             />
             <label for="protect_endpoints_enabled_no">
-                <?php echo __('No', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('No', 'simple-jwt-login'); ?>
             </label>
 
             <input
@@ -122,15 +122,14 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
                 ?>
             />
             <label for="protect_endpoints_enabled_yes">
-                <?php echo __('Yes', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Yes', 'simple-jwt-login'); ?>
             </label>
             <br/>
             <br />
             <p>
                 <?php
-                echo __(
-                    'The endpoints will require a JWT in order to be accessed.'
-                    . ' If no JWT is provided, rest endpoints will provide an error instead of the actual content.',
+                echo esc_html__(
+                    'The endpoints will require a JWT in order to be accessed. If no JWT is provided, rest endpoints will provide an error instead of the actual content.',
                     'simple-jwt-login'
                 );
                 ?>
@@ -158,7 +157,7 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
                         : esc_html('')
                     ?>
                 >
-                    <?php echo __('Apply on All REST Endpoints', 'simple-jwt-login');?>
+                    <?php echo esc_html__('Apply on All REST Endpoints', 'simple-jwt-login');?>
                 </option>
                 <option
                         value="<?php echo esc_attr(ProtectEndpointSettings::SPECIFIC_ENDPOINTS);?>"
@@ -168,7 +167,7 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
                         : esc_html('')
                     ?>
                 >
-                    <?php echo __('Apply only on Specific REST endpoints', 'simple-jwt-login');?>
+                    <?php echo esc_html__('Apply only on Specific REST endpoints', 'simple-jwt-login');?>
                 </option>
             </select>
         </div>
@@ -179,17 +178,17 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
 <div class="row" id="protected_endpoints_whitelisted">
     <div class="col-md-12">
         <h2 class="section-title">
-            <?php echo __('Whitelisted endpoints', 'simple-jwt-login');?>
+            <?php echo esc_html__('Whitelisted endpoints', 'simple-jwt-login');?>
         </h2>
         <p class="text-muted">
-            <?php echo __('These endpoints will skip the check for the JWT.', 'simple-jwt-login');?>
+            <?php echo esc_html__('These endpoints will skip the check for the JWT.', 'simple-jwt-login');?>
         </p>
     </div>
     <div class="col-md-12">
         <input
                 type="button"
                 class="btn btn-dark"
-                value="<?php echo __('Add Endpoint', 'simple-jwt-login');?> +"
+                value="<?php echo esc_attr__('Add Endpoint', 'simple-jwt-login');?> +"
                 id="add_whitelist_endpoint"
         />
     </div>
@@ -206,17 +205,17 @@ function simple_jwt_login_draw_endpoin_row($type, $endpoint)
 <div class="row" id="protected_endpoints_protected">
     <div class="col-md-12">
         <h2 class="section-title">
-            <?php echo __('Protected endpoints', 'simple-jwt-login');?>
+            <?php echo esc_html__('Protected endpoints', 'simple-jwt-login');?>
         </h2>
         <p class="text-muted">
-            <?php echo __('The JWT will be required on the following endpoints.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('The JWT will be required on the following endpoints.', 'simple-jwt-login'); ?>
         </p>
     </div>
     <div class="col-md-12">
         <input
                 type="button"
                 class="btn btn-dark"
-                value="<?php echo __('Add Endpoint', 'simple-jwt-login');?> +"
+                value="<?php echo esc_attr__('Add Endpoint', 'simple-jwt-login');?> +"
                 id="add_protect_endpoint"
         />
     </div>

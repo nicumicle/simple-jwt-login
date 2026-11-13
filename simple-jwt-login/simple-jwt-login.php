@@ -1,13 +1,16 @@
 <?php
+
 /*
-    Plugin Name: Simple-JWT-Login
+    Plugin Name: Simple JWT Login
     Plugin URI: https://simplejwtlogin.com
     Description: Simple-JWT-Login REST API Plugin. Allows you to login / register to WordPress using JWT.
     Author: Nicu Micle
     Author URI: https://profiles.wordpress.org/nicu_m/
     Text Domain: simple-jwt-login
     Domain Path: /i18n
-    Version: 3.6.8
+    License: GPLv3
+    License URI: https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE
+    Version: 3.6.9
 */
 
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -19,6 +22,8 @@ if (! defined('ABSPATH')) {
 } // Exit if accessed directly
 
 include_once 'autoload.php';
+
+define('SIMPLE_JWT_LOGIN_VERSION', '3.6.9');
 
 const SIMPLE_JWT_LOGIN_V3_EOL_NOTICE_ACTION = 'simple_jwt_login_dismiss_v3_eol_notice';
 const SIMPLE_JWT_LOGIN_V3_EOL_NOTICE_OPTION = 'simple_jwt_login_v3_eol_notice_dismissed';
@@ -73,14 +78,16 @@ function simple_jwt_login_enqueue_eol_notice_assets()
 
     wp_enqueue_style(
         'simple-jwt-login-eol-notice',
-        $pluginDirUrl . 'css/eol-notice.css'
+        $pluginDirUrl . 'css/eol-notice.css',
+        [],
+        SIMPLE_JWT_LOGIN_VERSION
     );
 
     wp_enqueue_script(
         'simple-jwt-login-eol-notice',
         $pluginDirUrl . 'js/eol-notice.js',
         [ 'jquery' ],
-        false,
+        SIMPLE_JWT_LOGIN_VERSION,
         true
     );
 
@@ -161,7 +168,7 @@ function simple_jwt_login_request_shortcode($parameter = null)
         return '';
     }
 
-    return esc_html($_REQUEST[$parameter]);
+    return esc_html(sanitize_text_field(wp_unslash($_REQUEST[$parameter])));
 }
 
 // function triggered in add_menu_page
@@ -253,7 +260,9 @@ function simple_jwt_login_assets()
     $pluginDirUrl = plugin_dir_url(__FILE__);
     wp_enqueue_style(
         'simple-jwt-login-login_header_css',
-        $pluginDirUrl . 'css/login.css'
+        $pluginDirUrl . 'css/login.css',
+        [],
+        SIMPLE_JWT_LOGIN_VERSION
     );
 }
 
@@ -279,7 +288,7 @@ function simple_jwt_login_login_message()
     if ($hasError) {
         ?>
         <div class="notice notice-error">
-            <?php echo esc_html(__("OAuth Error: ", 'simple-jwt-login') . $_REQUEST['error']);?>
+            <?php echo esc_html(__('OAuth Error: ', 'simple-jwt-login') . sanitize_text_field(wp_unslash($_REQUEST['error'])));?>
         </div>
         <?php
     }

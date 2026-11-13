@@ -140,10 +140,10 @@ class WordPressData implements WordPressDataInterface
         $result = wp_insert_user($userParameters);
         if (!is_int($result)) {
             throw new Exception(
-                $result->get_error_message(
+                esc_html($result->get_error_message(
                     $result->get_error_code()
-                ),
-                ErrorCodes::ERR_CREATE_USER_ERROR
+                )),
+                (int) ErrorCodes::ERR_CREATE_USER_ERROR
             );
         }
 

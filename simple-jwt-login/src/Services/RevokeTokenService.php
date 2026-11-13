@@ -26,8 +26,8 @@ class RevokeTokenService extends AuthenticateService
         $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
         if (empty($this->jwt)) {
             throw new Exception(
-                __('The `jwt` parameter is missing.', 'simple-jwt-login'),
-                ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE
+                esc_html__('The `jwt` parameter is missing.', 'simple-jwt-login'),
+                (int) ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE
             );
         }
 
@@ -37,8 +37,8 @@ class RevokeTokenService extends AuthenticateService
         $user           = $this->getUserDetails($loginParameter);
         if ($user === null) {
             throw new Exception(
-                __('User not found.', 'simple-jwt-login'),
-                ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND
+                esc_html__('User not found.', 'simple-jwt-login'),
+                (int) ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND
             );
         }
 

@@ -12,9 +12,9 @@ if (!defined('ABSPATH')) {
 ?>
 <div class="row">
 	<div class="col-md-12">
-		<h3 class="section-title"><?php echo __('Allow CORS Support', 'simple-jwt-login'); ?></h3>
+		<h3 class="section-title"><?php echo esc_html__('Allow CORS Support', 'simple-jwt-login'); ?></h3>
 		<p class="text-muted">
-			<?php echo __('Allow cross-origin requests to JWT API endpoints.', 'simple-jwt-login'); ?>
+			<?php echo esc_html__('Allow cross-origin requests to JWT API endpoints.', 'simple-jwt-login'); ?>
 		</p>
 		<div class="form-group">
 			<input type="radio" id="allow_cors_no" name="cors[enabled]" class="form-control"
@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 				<?php echo $jwtSettings->getCorsSettings()->isCorsEnabled() === false ? 'checked' : ''; ?>
 			/>
 			<label for="allow_cors_no">
-				<?php echo __('No', 'simple-jwt-login'); ?>
+				<?php echo esc_html__('No', 'simple-jwt-login'); ?>
 			</label>
 
             <input type="radio" id="allow_cors_yes" name="cors[enabled]" class="form-control"
@@ -33,7 +33,7 @@ if (!defined('ABSPATH')) {
                 ?>
             />
             <label for="allow_cors_yes">
-                <?php echo __('Yes', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Yes', 'simple-jwt-login'); ?>
             </label>
         </div>
     </div>
@@ -42,9 +42,9 @@ if (!defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('CORS Headers Configuration', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo esc_html__('CORS Headers Configuration', 'simple-jwt-login'); ?></h3>
         <p class="text-muted">
-            <?php echo __('Configure which CORS headers to include in API responses.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Configure which CORS headers to include in API responses.', 'simple-jwt-login'); ?>
         </p>
     </div>
 </div>
@@ -61,7 +61,7 @@ if (!defined('ABSPATH')) {
         <input type="text" class="form-control" name="cors[allow_origin]"
                value="<?php echo esc_attr($jwtSettings->getCorsSettings()->getAllowOrigin()); ?>"/>
         <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin" target="_blank">
-            <?php echo __('Read more', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Read more', 'simple-jwt-login'); ?>
         </a>
 
     </div>
@@ -80,7 +80,7 @@ if (!defined('ABSPATH')) {
                value="<?php echo esc_attr($jwtSettings->getCorsSettings()->getAllowMethods()); ?>"/>
         <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Methods"
            target="_blank">
-            <?php echo __('Read more', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Read more', 'simple-jwt-login'); ?>
         </a>
     </div>
 </div>
@@ -98,7 +98,7 @@ if (!defined('ABSPATH')) {
                value="<?php echo esc_attr($jwtSettings->getCorsSettings()->getAllowHeaders()); ?>"/>
         <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Headers"
            target="_blank">
-            <?php echo __('Read more', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Read more', 'simple-jwt-login'); ?>
         </a>
     </div>
 </div>

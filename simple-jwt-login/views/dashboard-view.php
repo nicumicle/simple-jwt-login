@@ -1,4 +1,5 @@
 <?php
+
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
@@ -15,7 +16,7 @@ if (! defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title">
-			<?php echo __('Routes Status', 'simple-jwt-login'); ?>
+			<?php echo esc_html__('Routes Status', 'simple-jwt-login'); ?>
         </h3>
     </div>
 </div>
@@ -25,7 +26,7 @@ if (! defined('ABSPATH')) {
         <div class="card card-shadow">
             <div class="card-body text-center">
                 <h5 class="card-title">
-					<?php echo __('Login status', 'simple-jwt-login'); ?>
+					<?php echo esc_html__('Login status', 'simple-jwt-login'); ?>
                      <span
                         class="dashicons dashicons-info-outline sjl-tooltip"
                         data-bs-toggle="tooltip"
@@ -43,9 +44,9 @@ if (! defined('ABSPATH')) {
                 </div>
                 <div class="text-center">
 					<?php
-                    echo $jwtSettings->getLoginSettings()->isAutologinEnabled()
+                    echo esc_html($jwtSettings->getLoginSettings()->isAutologinEnabled()
                         ? __('On', 'simple-jwt-login')
-                        : __('Off', 'simple-jwt-login');
+                        : __('Off', 'simple-jwt-login'));
                     ?>
                 </div>
             </div>
@@ -55,7 +56,7 @@ if (! defined('ABSPATH')) {
         <div class="card card-shadow">
             <div class="card-body text-center">
                 <h5 class="card-title">
-					<?php echo __('Register Status', 'simple-jwt-login'); ?>
+					<?php echo esc_html__('Register Status', 'simple-jwt-login'); ?>
                      <span
                         class="dashicons dashicons-info-outline sjl-tooltip"
                         data-bs-toggle="tooltip"
@@ -74,9 +75,9 @@ if (! defined('ABSPATH')) {
                 </div>
                 <div class="text-center">
 					<?php
-                    echo $jwtSettings->getRegisterSettings()->isRegisterAllowed()
+                    echo esc_html($jwtSettings->getRegisterSettings()->isRegisterAllowed()
                         ? __('On', 'simple-jwt-login')
-                        : __('Off', 'simple-jwt-login');
+                        : __('Off', 'simple-jwt-login'));
                     ?>
                 </div>
             </div>
@@ -86,7 +87,7 @@ if (! defined('ABSPATH')) {
         <div class="card card-shadow">
             <div class="card-body text-center">
                 <h5 class="card-title">
-					<?php echo __('Delete Status', 'simple-jwt-login'); ?>
+					<?php echo esc_html__('Delete Status', 'simple-jwt-login'); ?>
                     <span
                         class="dashicons dashicons-info-outline sjl-tooltip"
                         data-bs-toggle="tooltip"
@@ -105,9 +106,9 @@ if (! defined('ABSPATH')) {
                 </div>
                 <div class="text-center">
 					<?php
-                    echo $jwtSettings->getDeleteUserSettings()->isDeleteAllowed()
+                    echo esc_html($jwtSettings->getDeleteUserSettings()->isDeleteAllowed()
                         ? __('On', 'simple-jwt-login')
-                        : __('Off', 'simple-jwt-login');
+                        : __('Off', 'simple-jwt-login'));
                     ?>
                 </div>
             </div>
@@ -117,7 +118,7 @@ if (! defined('ABSPATH')) {
         <div class="card card-shadow">
             <div class="card-body text-center">
                 <h5 class="card-title">
-					<?php echo __('Authentication Status', 'simple-jwt-login'); ?>
+					<?php echo esc_html__('Authentication Status', 'simple-jwt-login'); ?>
                     <span
                         class="dashicons dashicons-info-outline sjl-tooltip"
                         data-bs-toggle="tooltip"
@@ -135,9 +136,9 @@ if (! defined('ABSPATH')) {
                 </div>
                 <div class="text-center">
 					<?php
-                    echo $jwtSettings->getAuthenticationSettings()->isAuthenticationEnabled()
+                    echo esc_html($jwtSettings->getAuthenticationSettings()->isAuthenticationEnabled()
                         ? __('On', 'simple-jwt-login')
-                        : __('Off', 'simple-jwt-login');
+                        : __('Off', 'simple-jwt-login'));
                     ?>
                 </div>
             </div>
@@ -149,7 +150,7 @@ if (! defined('ABSPATH')) {
         <div class="card card-shadow">
             <div class="card-body text-center">
                 <h5 class="card-title">
-					<?php echo __('CORS Status', 'simple-jwt-login'); ?>
+					<?php echo esc_html__('CORS Status', 'simple-jwt-login'); ?>
                     <span
                         class="dashicons dashicons-info-outline sjl-tooltip"
                         data-bs-toggle="tooltip"
@@ -170,9 +171,9 @@ if (! defined('ABSPATH')) {
                 </div>
                 <div class="text-center">
 					<?php
-                    echo $jwtSettings->getCorsSettings()->isCorsEnabled()
+                    echo esc_html($jwtSettings->getCorsSettings()->isCorsEnabled()
                         ? __('On', 'simple-jwt-login')
-                        : __('Off', 'simple-jwt-login');
+                        : __('Off', 'simple-jwt-login'));
                     ?>
                 </div>
             </div>
@@ -182,7 +183,7 @@ if (! defined('ABSPATH')) {
         <div class="card card-shadow">
             <div class="card-body text-center">
                 <h5 class="card-title">
-                    <?php echo __('Reset Password Status', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('Reset Password Status', 'simple-jwt-login'); ?>
                     <span
                         class="dashicons dashicons-info-outline sjl-tooltip"
                         data-bs-toggle="tooltip"
@@ -203,9 +204,9 @@ if (! defined('ABSPATH')) {
                 </div>
                 <div class="text-center">
                     <?php
-                    echo $jwtSettings->getResetPasswordSettings()->isResetPasswordEnabled()
+                    echo esc_html($jwtSettings->getResetPasswordSettings()->isResetPasswordEnabled()
                         ? __('On', 'simple-jwt-login')
-                        : __('Off', 'simple-jwt-login');
+                        : __('Off', 'simple-jwt-login'));
                     ?>
                 </div>
             </div>
@@ -216,7 +217,7 @@ if (! defined('ABSPATH')) {
         <div class="card card-shadow">
             <div class="card-body text-center">
                 <h5 class="card-title">
-                    <?php echo __('Number of active hooks', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('Number of active hooks', 'simple-jwt-login'); ?>
                     <span
                         class="dashicons dashicons-info-outline sjl-tooltip"
                         data-bs-toggle="tooltip"
@@ -245,7 +246,7 @@ if (! defined('ABSPATH')) {
         <div class="card card-shadow">
             <div class="card-body text-center">
                 <h5 class="card-title">
-                    <?php echo __('Number of Auth Codes', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('Number of Auth Codes', 'simple-jwt-login'); ?>
                     <span
                         class="dashicons dashicons-info-outline sjl-tooltip"
                         data-bs-toggle="tooltip"
@@ -276,7 +277,7 @@ if (! defined('ABSPATH')) {
         <div class="card card-shadow">
             <div class="card-body text-center">
                 <h5 class="card-title">
-					<?php echo __('Protect endpoints', 'simple-jwt-login'); ?>
+					<?php echo esc_html__('Protect endpoints', 'simple-jwt-login'); ?>
                     <span
                         class="dashicons dashicons-info-outline sjl-tooltip"
                         data-bs-toggle="tooltip"
@@ -297,9 +298,9 @@ if (! defined('ABSPATH')) {
                 </div>
                 <div class="text-center">
 					<?php
-                    echo $jwtSettings->getProtectEndpointsSettings()->isEnabled()
+                    echo esc_html($jwtSettings->getProtectEndpointsSettings()->isEnabled()
                         ? __('On', 'simple-jwt-login')
-                        : __('Off', 'simple-jwt-login');
+                        : __('Off', 'simple-jwt-login'));
                     ?>
                 </div>
             </div>

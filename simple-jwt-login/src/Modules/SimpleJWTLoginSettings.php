@@ -201,7 +201,7 @@ class SimpleJWTLoginSettings
         if ($result === false) {
             throw new Exception(
                 'Something is wrong. We can not save the settings.',
-                ErrorCodes::ERR_INVALID_NONCE
+                (int) ErrorCodes::ERR_INVALID_NONCE
             );
         }
         $this->post = $post;

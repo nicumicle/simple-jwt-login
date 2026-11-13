@@ -7,6 +7,11 @@ use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Modules\WordPressData;
 use SimpleJWTLogin\Services\RouteService;
 
+if (! defined('ABSPATH')) {
+    /** @phpstan-ignore-next-line  */
+    exit;
+} // Exit if accessed directly
+
 // This will allow to log in  a user to WPGraphQL is not authenticated
 add_action('init_graphql_request', function () {
     $jwtSettings = new SimpleJWTLoginSettings(new WordPressData());

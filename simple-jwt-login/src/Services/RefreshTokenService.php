@@ -32,8 +32,8 @@ class RefreshTokenService extends AuthenticateService
         $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
         if (empty($this->jwt)) {
             throw new Exception(
-                __('JWT is missing.', 'simple-jwt-login'),
-                ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH
+                esc_html__('JWT is missing.', 'simple-jwt-login'),
+                (int) ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH
             );
         }
 
@@ -46,7 +46,7 @@ class RefreshTokenService extends AuthenticateService
             );
         } catch (Exception $e) {
             if ($e->getCode() !== ErrorCodes::ERR_TOKEN_EXPIRED) {
-                throw new Exception($e->getMessage(), $e->getCode());
+                throw $e;
             }
         }
 
@@ -54,8 +54,8 @@ class RefreshTokenService extends AuthenticateService
 
         if ($payload === null) {
             throw new Exception(
-                __('There was an error with your JWT and we can not refresh it.', 'simple-jwt-login'),
-                ErrorCodes::ERR_JWT_REFRESH_NULL_PAYLOAD
+                esc_html__('There was an error with your JWT and we can not refresh it.', 'simple-jwt-login'),
+                (int) ErrorCodes::ERR_JWT_REFRESH_NULL_PAYLOAD
             );
         }
 
@@ -74,7 +74,7 @@ class RefreshTokenService extends AuthenticateService
                 );
             foreach ($userMeta as $key) {
                 if ($key === $this->jwt) {
-                    throw new Exception(__('This JWT is invalid.', 'simple-jwt-login'), ErrorCodes::ERR_REVOKED_TOKEN);
+                    throw new Exception(esc_html__('This JWT is invalid.', 'simple-jwt-login'), (int) ErrorCodes::ERR_REVOKED_TOKEN);
                 }
             }
         }
@@ -86,8 +86,8 @@ class RefreshTokenService extends AuthenticateService
 
             if (time() > $refreshTimeToLive) {
                 throw new Exception(
-                    __('JWT is too old to be refreshed.', 'simple-jwt-login'),
-                    ErrorCodes::ERR_JWT_REFRESH_JWT_TOO_OLD
+                    esc_html__('JWT is too old to be refreshed.', 'simple-jwt-login'),
+                    (int) ErrorCodes::ERR_JWT_REFRESH_JWT_TOO_OLD
                 );
             }
 

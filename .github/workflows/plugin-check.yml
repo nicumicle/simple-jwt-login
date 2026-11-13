@@ -1,0 +1,23 @@
+name: Plugin Check
+
+on:
+  push:
+    branches: [ master, v3 ]
+  pull_request:
+    branches: [ master, v3 ]
+
+permissions:
+  contents: read
+
+jobs:
+  plugin-check:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Plugin Check
+        uses: wordpress/plugin-check-action@v1
+        with:
+          build-dir: './simple-jwt-login'
+          ignore-codes: 'WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound,PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound'

@@ -379,6 +379,8 @@ Make sure you are passing a valid, non-expired JWT either as a Bearer token in t
 A complete changelog is available on the [GitHub repository](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md).
 
 = 4.1.0 (11 November 2026) =
+- Security: fix CSRF in the Force Login integration on cookie-authenticated REST requests (Reported via Patchstack)
+- Security: JWT middleware and the WooCommerce integration now check the resolved REST route instead of searching the URL
 - Security: Protect Endpoints now enforces "JWT + Roles" rules for logged-in (cookie-authenticated) users and API key owners
 - New integration: AI Abilities (MCP) - let AI agents manage and troubleshoot the plugin through the WordPress Abilities API (WordPress 6.9+)
 - Fix secrets (auth codes, JWT rule keys, webhook header values) being written in plain text to the "Settings Saved" audit log entry

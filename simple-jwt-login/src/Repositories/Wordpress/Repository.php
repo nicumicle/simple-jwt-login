@@ -388,6 +388,14 @@ interface Repository
     public function isUserLoggedIn();
 
     /**
+     * REST route resolved by WordPress for the current request (`rest_route` query var,
+     * also set for /wp-json/ URLs by the rewrite rules).
+     *
+     * @return string|null
+     */
+    public function getResolvedRestRoute();
+
+    /**
      * @param string|array $value
      * @return string|array
      */

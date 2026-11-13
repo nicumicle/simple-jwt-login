@@ -1,5 +1,8 @@
 <?php
 
+use SimpleJWTLogin\Helpers\RestRouteHelper;
+use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
+
 if (! defined('ABSPATH')) {
     /** @phpstan-ignore-next-line  */
     exit;
@@ -8,42 +11,36 @@ if (! defined('ABSPATH')) {
 /** @var \SimpleJWTLogin\Modules\SimpleJWTLoginSettings $simpleJwtLoginJwtSettings Built in simple-jwt-login.php */
 
 ## Force Login
+## Lets anonymous requests reach the plugin's own endpoints when the Force Login
+## plugin blocks the REST API for logged-out users (error code `rest_unauthorized`).
+## Security: never return `true` here, never touch errors for logged-in users
+## (e.g. core's `rest_cookie_invalid_nonce`) and never clear errors raised by other
+## plugins, otherwise cookie-authenticated requests skip WordPress' nonce check (CSRF).
 add_filter(
     'rest_authentication_errors',
-    function ($bypass) use ($simpleJwtLoginJwtSettings) {
+    function ($result) use ($simpleJwtLoginJwtSettings) {
         $jwtSettings = $simpleJwtLoginJwtSettings;
-        if (!$jwtSettings->getIntegrationsSettings()->forceLogin()->isEnabled()) {
-            return $bypass;
+        if (!$jwtSettings->getIntegrationsSettings()->forceLogin()->isEnabled()
+            || !is_wp_error($result)
+            || $result->get_error_code() !== 'rest_unauthorized'
+        ) {
+            return $result;
         }
 
-        $host       = isset($_SERVER['HTTP_HOST']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_HOST'])) : '';
-        $requestUri = isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '';
-        if (empty($host) || empty($requestUri)) {
-            return $bypass;
+        $wordPressRepo = WordPressRepository::getInstance();
+        if ($wordPressRepo->isUserLoggedIn()) {
+            return $result;
         }
 
-        $currentURL =
-            "http"
-            . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "s" : "")
-            . "://" . $host
-            . $requestUri;
-
-        $simpleJWTLoginURLS = array(
-            "%s/?rest_route=/%s",
-            "%s/wp-json/%s",
-        );
-        foreach ($simpleJWTLoginURLS as $url) {
-            $check = sprintf(
-                $url,
-                $jwtSettings->getWordPressData()->getSiteUrl(),
-                $jwtSettings->getGeneralSettings()->getRouteNamespace()
-            );
-            if (strpos($currentURL, $check) === 0) {
-                return true;
-            }
+        if (RestRouteHelper::isNamespaceRoute(
+            $wordPressRepo->getResolvedRestRoute(),
+            $jwtSettings->getGeneralSettings()->getRouteNamespace()
+        )) {
+            // No authentication decision: the route's permission_callback applies.
+            return null;
         }
 
-        return $bypass;
+        return $result;
     },
     100
 );

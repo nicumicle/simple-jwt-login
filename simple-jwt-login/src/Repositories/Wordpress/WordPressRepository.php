@@ -711,6 +711,18 @@ class WordPressRepository implements Repository
         return is_user_logged_in();
     }
 
+    /**
+     * @return string|null
+     */
+    public function getResolvedRestRoute()
+    {
+        $restRoute = isset($GLOBALS['wp']->query_vars['rest_route'])
+            ? $GLOBALS['wp']->query_vars['rest_route']
+            : null;
+
+        return is_string($restRoute) ? $restRoute : null;
+    }
+
     public function wpUnslash($value)
     {
         return wp_unslash($value);

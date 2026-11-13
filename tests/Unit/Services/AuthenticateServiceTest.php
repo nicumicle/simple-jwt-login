@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleJwtLoginTests\Unit\Services;
 
 use Exception;

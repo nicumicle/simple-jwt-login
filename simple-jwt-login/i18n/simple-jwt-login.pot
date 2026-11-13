@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-12T05:48:41+00:00\n"
+"POT-Creation-Date: 2026-11-13T06:12:23+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -39,112 +39,112 @@ msgstr ""
 msgid "https://profiles.wordpress.org/nicu_m/"
 msgstr ""
 
-#: simple-jwt-login.php:49
+#: simple-jwt-login.php:50
 msgid "Simple-JWT-Login v4 is here"
 msgstr ""
 
-#: simple-jwt-login.php:50
+#: simple-jwt-login.php:51
 msgid "with new features, performance improvements, and stronger security. We recommend upgrading when you're ready."
 msgstr ""
 
-#: simple-jwt-login.php:52
+#: simple-jwt-login.php:53
 msgid "See what's new in v4"
 msgstr ""
 
-#: simple-jwt-login.php:282
+#: simple-jwt-login.php:283
 msgid "OAuth Error: "
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:71
+#: src/Libraries/JWT/JWT.php:72
 msgid "Key may not be empty"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:79
-#: src/Libraries/JWT/JWT.php:462
+#: src/Libraries/JWT/JWT.php:80
+#: src/Libraries/JWT/JWT.php:463
 msgid "Wrong number of segments"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:87
-#: src/Libraries/JWT/JWT.php:470
+#: src/Libraries/JWT/JWT.php:88
+#: src/Libraries/JWT/JWT.php:471
 msgid "Invalid header encoding"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:94
-#: src/Libraries/JWT/JWT.php:477
+#: src/Libraries/JWT/JWT.php:95
+#: src/Libraries/JWT/JWT.php:478
 msgid "Invalid claims encoding"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:101
+#: src/Libraries/JWT/JWT.php:102
 msgid "Invalid signature encoding"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:107
+#: src/Libraries/JWT/JWT.php:108
 msgid "Empty algorithm"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:113
-#: src/Libraries/JWT/JWT.php:216
-#: src/Libraries/JWT/JWT.php:261
+#: src/Libraries/JWT/JWT.php:114
+#: src/Libraries/JWT/JWT.php:217
+#: src/Libraries/JWT/JWT.php:262
 msgid "Algorithm not supported"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:119
+#: src/Libraries/JWT/JWT.php:120
 msgid "Algorithm not allowed"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:126
+#: src/Libraries/JWT/JWT.php:127
 msgid "Signature verification failed"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:135
-#: src/Libraries/JWT/JWT.php:147
+#: src/Libraries/JWT/JWT.php:136
+#: src/Libraries/JWT/JWT.php:148
 #, php-format
 msgid "Cannot handle token prior to %s"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:156
+#: src/Libraries/JWT/JWT.php:157
 msgid "Expired token"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:229
+#: src/Libraries/JWT/JWT.php:230
 msgid "OpenSSL unable to sign data"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:238
+#: src/Libraries/JWT/JWT.php:239
 msgid "Unsupported sign function"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:277
+#: src/Libraries/JWT/JWT.php:278
 #, php-format
 msgid "OpenSSL error: %s"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:319
-#: src/Libraries/JWT/JWT.php:369
+#: src/Libraries/JWT/JWT.php:320
+#: src/Libraries/JWT/JWT.php:370
 msgid "Null result with non-null input"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:421
+#: src/Libraries/JWT/JWT.php:422
 msgid "Maximum stack depth exceeded"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:422
+#: src/Libraries/JWT/JWT.php:423
 msgid "Invalid or malformed JSON"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:423
+#: src/Libraries/JWT/JWT.php:424
 msgid "Unexpected control character found"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:424
+#: src/Libraries/JWT/JWT.php:425
 msgid "Syntax error, malformed JSON"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:425
+#: src/Libraries/JWT/JWT.php:426
 msgid "Malformed UTF-8 characters"
 msgstr ""
 
-#: src/Libraries/JWT/JWT.php:430
+#: src/Libraries/JWT/JWT.php:431
 #, php-format
 msgid "Unknown JSON error: %s"
 msgstr ""
@@ -459,12 +459,12 @@ msgstr ""
 msgid "The JWT issuer(iss) is not allowed to auto-login."
 msgstr ""
 
-#: src/Services/OAuthService.php:23
-#: src/Services/OAuthService.php:42
+#: src/Services/OAuthService.php:24
+#: src/Services/OAuthService.php:43
 msgid "The Oauth provider is invalid."
 msgstr ""
 
-#: src/Services/OAuthService.php:32
+#: src/Services/OAuthService.php:33
 msgid "This Oauth provider is not available."
 msgstr ""
 
@@ -1059,30 +1059,16 @@ msgstr ""
 msgid "Read more"
 msgstr ""
 
-#: views/dashboard-view.php:18
+#: views/dashboard-view.php:19
 msgid "Routes Status"
 msgstr ""
 
-#: views/dashboard-view.php:28
+#: views/dashboard-view.php:29
 msgid "Login status"
 msgstr ""
 
-#: views/dashboard-view.php:33
+#: views/dashboard-view.php:34
 msgid "Allows users to authenticate automatically using a valid JWT token."
-msgstr ""
-
-#: views/dashboard-view.php:47
-#: views/dashboard-view.php:78
-#: views/dashboard-view.php:109
-#: views/dashboard-view.php:139
-#: views/dashboard-view.php:174
-#: views/dashboard-view.php:207
-#: views/dashboard-view.php:301
-#: views/general-view.php:294
-#: views/general-view.php:334
-#: views/general-view.php:375
-#: views/general-view.php:416
-msgid "On"
 msgstr ""
 
 #: views/dashboard-view.php:48
@@ -1092,6 +1078,20 @@ msgstr ""
 #: views/dashboard-view.php:175
 #: views/dashboard-view.php:208
 #: views/dashboard-view.php:302
+#: views/general-view.php:294
+#: views/general-view.php:334
+#: views/general-view.php:375
+#: views/general-view.php:416
+msgid "On"
+msgstr ""
+
+#: views/dashboard-view.php:49
+#: views/dashboard-view.php:80
+#: views/dashboard-view.php:111
+#: views/dashboard-view.php:141
+#: views/dashboard-view.php:176
+#: views/dashboard-view.php:209
+#: views/dashboard-view.php:303
 #: views/general-view.php:287
 #: views/general-view.php:325
 #: views/general-view.php:366
@@ -1099,68 +1099,68 @@ msgstr ""
 msgid "Off"
 msgstr ""
 
-#: views/dashboard-view.php:58
+#: views/dashboard-view.php:59
 msgid "Register Status"
 msgstr ""
 
-#: views/dashboard-view.php:63
+#: views/dashboard-view.php:64
 msgid "Enables user registration through the JWT register endpoint."
 msgstr ""
 
-#: views/dashboard-view.php:89
+#: views/dashboard-view.php:90
 msgid "Delete Status"
 msgstr ""
 
-#: views/dashboard-view.php:94
+#: views/dashboard-view.php:95
 msgid "Allows users to delete their account using a JWT-authenticated request."
 msgstr ""
 
-#: views/dashboard-view.php:120
+#: views/dashboard-view.php:121
 msgid "Authentication Status"
 msgstr ""
 
-#: views/dashboard-view.php:125
+#: views/dashboard-view.php:126
 msgid "Enables JWT authentication for protected REST API endpoints."
 msgstr ""
 
-#: views/dashboard-view.php:152
+#: views/dashboard-view.php:153
 msgid "CORS Status"
 msgstr ""
 
-#: views/dashboard-view.php:157
+#: views/dashboard-view.php:158
 msgid "Controls whether cross-origin requests are allowed for JWT endpoints."
 msgstr ""
 
-#: views/dashboard-view.php:185
+#: views/dashboard-view.php:186
 msgid "Reset Password Status"
 msgstr ""
 
-#: views/dashboard-view.php:190
+#: views/dashboard-view.php:191
 msgid "Allows users to reset their password using a secure JWT endpoint."
 msgstr ""
 
-#: views/dashboard-view.php:219
+#: views/dashboard-view.php:220
 msgid "Number of active hooks"
 msgstr ""
 
-#: views/dashboard-view.php:224
+#: views/dashboard-view.php:225
 msgid "Shows how many Simple-JWT-Login hooks are currently enabled."
 msgstr ""
 
-#: views/dashboard-view.php:248
+#: views/dashboard-view.php:249
 msgid "Number of Auth Codes"
 msgstr ""
 
-#: views/dashboard-view.php:253
+#: views/dashboard-view.php:254
 msgid "Displays the total number of active authentication codes."
 msgstr ""
 
-#: views/dashboard-view.php:279
+#: views/dashboard-view.php:280
 #: views/layout.php:91
 msgid "Protect endpoints"
 msgstr ""
 
-#: views/dashboard-view.php:284
+#: views/dashboard-view.php:285
 msgid "Restricts selected REST API endpoints to authenticated JWT requests only."
 msgstr ""
 

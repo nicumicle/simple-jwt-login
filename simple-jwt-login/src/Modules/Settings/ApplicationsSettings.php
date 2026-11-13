@@ -87,11 +87,11 @@ class ApplicationsSettings extends BaseSettings implements SettingsInterface
             && empty($this->post[self::GOOGLE_GROUP]['enable_oauth'])
         ) {
             throw new Exception(
-                __(
+                esc_html__(
                     'You need to enable at least one Google Oauth option in order to enable the Google App.',
                     'simple-jwt-login'
                 ),
-                $this->settingsErrors->generateCode(
+                (int) $this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_APPLICATIONS,
                     SettingsErrors::ERR_GOOGLE_CLIENT_ID_REQUIRED
                 )
@@ -99,11 +99,11 @@ class ApplicationsSettings extends BaseSettings implements SettingsInterface
         }
         if (empty($this->post[self::GOOGLE_GROUP]['client_id'])) {
             throw new Exception(
-                __(
+                esc_html__(
                     'Google Client ID is required.',
                     'simple-jwt-login'
                 ),
-                $this->settingsErrors->generateCode(
+                (int) $this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_APPLICATIONS,
                     SettingsErrors::ERR_GOOGLE_CLIENT_ID_REQUIRED
                 )
@@ -112,11 +112,11 @@ class ApplicationsSettings extends BaseSettings implements SettingsInterface
 
         if (empty($this->post[self::GOOGLE_GROUP]['client_secret'])) {
             throw new Exception(
-                __(
+                esc_html__(
                     'Google Client Secret is required.',
                     'simple-jwt-login'
                 ),
-                $this->settingsErrors->generateCode(
+                (int) $this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_APPLICATIONS,
                     SettingsErrors::ERR_GOOGLE_CLIENT_SECRET_REQUIRED
                 )
@@ -127,11 +127,11 @@ class ApplicationsSettings extends BaseSettings implements SettingsInterface
             && empty($this->post[self::GOOGLE_GROUP]['redirect_uri_exchange_code'])
         ) {
             throw new Exception(
-                __(
+                esc_html__(
                     'Google Redirect URI is required when exchange code is enabled.',
                     'simple-jwt-login'
                 ),
-                $this->settingsErrors->generateCode(
+                (int) $this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_APPLICATIONS,
                     SettingsErrors::ERR_GOOGLE_REDIRECT_URI_REQUIRED_FOR_EXCHANGE_CODE
                 )

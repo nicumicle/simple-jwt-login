@@ -108,11 +108,10 @@ $settingsPages = [
 <form method="post">
     <?php
     $activeTab = $settingsPages[0]['index'];
-    if (isset($_POST['active_tab'])) {
-        foreach ($settingsPages as $item) {
-            if ($item['index'] === (int)esc_attr($_POST['active_tab'])) {
-                $activeTab = (int)esc_attr($_POST['active_tab']);
-            }
+    $postedTab = isset($_POST['active_tab']) ? absint(wp_unslash($_POST['active_tab'])) : null;
+    foreach ($settingsPages as $item) {
+        if ($item['index'] === $postedTab) {
+            $activeTab = $postedTab;
         }
     }
     ?>
@@ -147,10 +146,10 @@ $settingsPages = [
         <div class="">
             <div class="row main-title-container">
                 <div class="col-md-10">
-                    <h1 class="main-title"><?php echo __('Simple JWT Login Settings', 'simple-jwt-login');?></h1>
+                    <h1 class="main-title"><?php echo esc_html__('Simple JWT Login Settings', 'simple-jwt-login');?></h1>
                 </div>
                 <div class="col-md-2 text-right">
-                    <input type="submit" class="btn btn-dark" value="<?php echo __('Save', 'simple-jwt-login');?>">
+                    <input type="submit" class="btn btn-dark" value="<?php echo esc_attr__('Save', 'simple-jwt-login');?>">
                 </div>
             </div>
             <hr/>
@@ -242,7 +241,7 @@ $settingsPages = [
                                         include_once plugin_dir_path(__FILE__) . "applications.php";
                                         break;
                                     default:
-                                        echo __("View file does not exists.", 'simple-jwt-login');
+                                        echo esc_html__("View file does not exists.", 'simple-jwt-login');
                                 }
                                 ?>
                             </div>
@@ -265,13 +264,13 @@ $settingsPages = [
             <input type="text"
                    name="auth_codes[code][]"
                    class="form-control"
-                   placeholder="<?php  echo __('Authentication Key', 'simple-jwt-login') ;?>"
+                   placeholder="<?php  echo esc_attr__('Authentication Key', 'simple-jwt-login') ;?>"
             />
             <input type="text"
                    name="auth_codes[role][]"
                    class="form-control"
                    placeholder="<?php
-                       echo __(
+                       echo esc_attr__(
                            'WordPress new user Role ( when new users are created )',
                            'simple-jwt-login'
                        );
@@ -280,7 +279,7 @@ $settingsPages = [
             <input type="text"
                    name="auth_codes[expiration_date][]"
                    class="form-control"
-                   placeholder="<?php  echo __(
+                   placeholder="<?php  echo esc_attr__(
                        'Expiration date: YYYY-MM-DD HH:MM:SS ( Example: 2020-12-23 23:34:59)',
                        'simple-jwt-login'
                    ) ;?>"
@@ -288,7 +287,7 @@ $settingsPages = [
             <div class="input-group-addon auth-code-delete-container">
                 <a href="javascript:void(0)"
                    onclick="jwt_login_remove_auth_line(jQuery(this));"
-                   title="<?php  echo __('delete', 'simple-jwt-login') ;?>"
+                   title="<?php  echo esc_attr__('delete', 'simple-jwt-login') ;?>"
                 >
                     <i class="delete-auth-code" aria-hidden="true"></i>
                 </a>

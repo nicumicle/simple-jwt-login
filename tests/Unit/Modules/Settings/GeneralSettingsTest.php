@@ -243,7 +243,7 @@ class GeneralSettingsTest extends TestCase
     public function testValidationGetJWTTokenFrom()
     {
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('You have to have at least on option enabled in \'Get JWT token From\'');
+        $this->expectExceptionMessage('You have to have at least on option enabled in “Get JWT token From”');
         $generalSettings = (new GeneralSettings())
             ->withSettings([])
             ->withWordPressData($this->wordPressData)

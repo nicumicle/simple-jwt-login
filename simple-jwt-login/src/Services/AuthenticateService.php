@@ -141,14 +141,14 @@ class AuthenticateService extends BaseService implements ServiceInterface
     {
         if (!isset($this->request['email']) && !isset($this->request['username']) && !isset($this->request['login'])) {
             throw new Exception(
-                __('The email, username, or login parameter is missing from the request.', 'simple-jwt-login'),
-                ErrorCodes::AUTHENTICATION_MISSING_EMAIL
+                esc_html__('The email, username, or login parameter is missing from the request.', 'simple-jwt-login'),
+                (int) ErrorCodes::AUTHENTICATION_MISSING_EMAIL
             );
         }
         if (!isset($this->request['password']) && !isset($this->request['password_hash'])) {
             throw new Exception(
-                __('The password or password_hash parameter is missing from request.', 'simple-jwt-login'),
-                ErrorCodes::AUTHENTICATION_MISSING_PASSWORD
+                esc_html__('The password or password_hash parameter is missing from request.', 'simple-jwt-login'),
+                (int) ErrorCodes::AUTHENTICATION_MISSING_PASSWORD
             );
         }
 
@@ -178,8 +178,8 @@ class AuthenticateService extends BaseService implements ServiceInterface
 
         if (empty($user)) {
             throw new Exception(
-                __('Wrong user credentials.', 'simple-jwt-login'),
-                ErrorCodes::AUTHENTICATION_WRONG_CREDENTIALS
+                esc_html__('Wrong user credentials.', 'simple-jwt-login'),
+                (int) ErrorCodes::AUTHENTICATION_WRONG_CREDENTIALS
             );
         }
 
@@ -204,8 +204,8 @@ class AuthenticateService extends BaseService implements ServiceInterface
 
         if ($passwordMatch === false) {
             throw new Exception(
-                __('Wrong user credentials.', 'simple-jwt-login'),
-                ErrorCodes::AUTHENTICATION_WRONG_CREDENTIALS
+                esc_html__('Wrong user credentials.', 'simple-jwt-login'),
+                (int) ErrorCodes::AUTHENTICATION_WRONG_CREDENTIALS
             );
         }
 
@@ -263,11 +263,12 @@ class AuthenticateService extends BaseService implements ServiceInterface
         $allowedIpsString = trim($this->jwtSettings->getAuthenticationSettings()->getAllowedIps());
         if (!empty($allowedIpsString) && !$this->serverHelper->isClientIpInList($allowedIpsString)) {
             throw new Exception(
-                sprintf(
+                esc_html(sprintf(
+                    /* translators: %s: client IP address */
                     __('You are not allowed to Authenticate from this IP: %s', 'simple-jwt-login'),
                     $this->serverHelper->getClientIP()
-                ),
-                ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP
+                )),
+                (int) ErrorCodes::ERR_DELETE_INVALID_CLIENT_IP
             );
         }
     }
@@ -279,8 +280,8 @@ class AuthenticateService extends BaseService implements ServiceInterface
     {
         if ($this->jwtSettings->getAuthenticationSettings()->isAuthenticationEnabled() === false) {
             throw new Exception(
-                __('Authentication is not enabled.', 'simple-jwt-login'),
-                ErrorCodes::AUTHENTICATION_IS_NOT_ENABLED
+                esc_html__('Authentication is not enabled.', 'simple-jwt-login'),
+                (int) ErrorCodes::AUTHENTICATION_IS_NOT_ENABLED
             );
         }
     }
@@ -296,11 +297,12 @@ class AuthenticateService extends BaseService implements ServiceInterface
             && $this->validateAuthKey() === false
         ) {
             throw  new Exception(
-                sprintf(
+                esc_html(sprintf(
+                    /* translators: %s: auth code parameter name */
                     __('Invalid Auth Code ( %s ) provided.', 'simple-jwt-login'),
                     $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()
-                ),
-                $errrCode
+                )),
+                (int) $errrCode
             );
         }
     }

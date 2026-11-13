@@ -143,12 +143,13 @@ abstract class BaseService
                 $payload = (array)$payload;
                 if (!isset($payload[$value])) {
                     throw new Exception(
-                        sprintf(
-                            __('Unable to find user %s property in JWT.( Settings: %s )', 'simple-jwt-login'),
+                        esc_html(sprintf(
+                            /* translators: 1: JWT payload value, 2: settings key */
+                            __('Unable to find user %1$s property in JWT.( Settings: %2$s )', 'simple-jwt-login'),
                             $value,
                             $parameter
-                        ),
-                        ErrorCodes::ERR_UNABLE_TO_FIND_PROPERTY_FOR_USER_IN_JWT
+                        )),
+                        (int) ErrorCodes::ERR_UNABLE_TO_FIND_PROPERTY_FOR_USER_IN_JWT
                     );
                 }
                 $payload = $payload[$value];
@@ -159,11 +160,12 @@ abstract class BaseService
 
         if (!isset($payload[$parameter])) {
             throw new Exception(
-                sprintf(
+                esc_html(sprintf(
+                    /* translators: %s: JWT parameter name */
                     __('Unable to find user %s property in JWT.', 'simple-jwt-login'),
                     $parameter
-                ),
-                ErrorCodes::ERR_JWT_PARAMETER_FOR_USER_NOT_FOUND
+                )),
+                (int) ErrorCodes::ERR_JWT_PARAMETER_FOR_USER_NOT_FOUND
             );
         }
 
@@ -229,7 +231,7 @@ abstract class BaseService
         }
         foreach ($revokedTokensArray as $token) {
             if ($token === $jwt) {
-                throw new Exception(__('This JWT is invalid.', 'simple-jwt-login'), ErrorCodes::ERR_REVOKED_TOKEN);
+                throw new Exception(esc_html__('This JWT is invalid.', 'simple-jwt-login'), (int) ErrorCodes::ERR_REVOKED_TOKEN);
             }
         }
 

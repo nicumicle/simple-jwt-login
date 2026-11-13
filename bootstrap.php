@@ -658,6 +658,48 @@ if (!function_exists('esc_html__')) {
     }
 }
 
+if (!function_exists('wp_rand')) {
+    /**
+     * @param int $min
+     * @param int $max
+     * @return int
+     */
+    function wp_rand($min = 0, $max = 0) {
+        return mt_rand($min, $max);
+    }
+}
+
+if (!function_exists('wp_kses_post')) {
+    /**
+     * @param string $data
+     * @return string
+     */
+    function wp_kses_post($data) {
+        return $data;
+    }
+}
+
+if (!function_exists('absint')) {
+    /**
+     * @param mixed $maybeint
+     * @return int
+     */
+    function absint($maybeint) {
+        return abs((int) $maybeint);
+    }
+}
+
+if (!function_exists('wp_parse_url')) {
+    /**
+     * @param string $url
+     * @param int $component
+     * @return mixed
+     */
+    function wp_parse_url($url, $component = -1) {
+        return parse_url($url, $component);
+    }
+}
+
 if (!function_exists('simple_jwt_login_sanitize_css_value')) {
     /**
      * Sanitize CSS property values to prevent XSS attacks.

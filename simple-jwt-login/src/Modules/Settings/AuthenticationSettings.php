@@ -87,12 +87,11 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             && empty($this->post['jwt_payload'])
         ) {
             throw new Exception(
-                __(
-                    'Authentication payload data can not be empty.'
-                    . ' Please choose the ones you want to be added in the JWT.',
+                esc_html__(
+                    'Authentication payload data can not be empty. Please choose the ones you want to be added in the JWT.',
                     'simple-jwt-login'
                 ),
-                $this->settingsErrors->generateCode(
+                (int) $this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_AUTHENTICATION,
                     SettingsErrors::ERR_AUTHENTICATION_EMPTY_PAYLOAD
                 )
@@ -104,11 +103,11 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             || (int)$this->post['jwt_auth_ttl'] < 0
         ) {
             throw new Exception(
-                __(
+                esc_html__(
                     'Authentication JWT time to live should be greater than zero.',
                     'simple-jwt-login'
                 ),
-                $this->settingsErrors->generateCode(
+                (int) $this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_AUTHENTICATION,
                     SettingsErrors::ERR_AUTHENTICATION_TTL
                 )
@@ -119,11 +118,11 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             || empty((int)$this->post['jwt_auth_refresh_ttl'])
             || (int)$this->post['jwt_auth_refresh_ttl'] < 0) {
             throw new Exception(
-                __(
+                esc_html__(
                     'Authentication JWT Refresh time to live should be greater than zero.',
                     'simple-jwt-login'
                 ),
-                $this->settingsErrors->generateCode(
+                (int) $this->settingsErrors->generateCode(
                     SettingsErrors::PREFIX_AUTHENTICATION,
                     SettingsErrors::ERR_AUTHENTICATION_REFRESH_TTL_ZERO
                 )

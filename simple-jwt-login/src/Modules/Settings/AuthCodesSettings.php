@@ -55,11 +55,11 @@ class AuthCodesSettings extends BaseSettings implements SettingsInterface
         ) {
             if (empty($this->settings['auth_codes'])) {
                 throw new Exception(
-                    __(
+                    esc_html__(
                         'Missing Auth Codes. Please add at least one Auth Code.',
                         'simple-jwt-login'
                     ),
-                    $this->settingsErrors->generateCode(
+                    (int) $this->settingsErrors->generateCode(
                         SettingsErrors::PREFIX_AUTH_CODES,
                         SettingsErrors::ERR_EMPTY_AUTH_CODES
                     )
@@ -70,11 +70,11 @@ class AuthCodesSettings extends BaseSettings implements SettingsInterface
         foreach ($this->settings['auth_codes'] as $code) {
             if (!empty($code['role']) && !$this->wordPressData->roleExists($code['role'])) {
                 throw new Exception(
-                    __(
+                    esc_html__(
                         'Invalid role provided.',
                         'simple-jwt-login'
                     ),
-                    $this->settingsErrors->generateCode(
+                    (int) $this->settingsErrors->generateCode(
                         SettingsErrors::PREFIX_AUTH_CODES,
                         SettingsErrors::ERR_INVALID_ROLE
                     )

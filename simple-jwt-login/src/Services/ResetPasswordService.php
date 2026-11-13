@@ -14,8 +14,8 @@ class ResetPasswordService extends BaseService implements ServiceInterface
     {
         if ($this->jwtSettings->getResetPasswordSettings()->isResetPasswordEnabled() === false) {
             throw  new Exception(
-                __('Reset Password is not allowed.', 'simple-jwt-login'),
-                ErrorCodes::ERR_RESET_PASSWORD_IS_NOT_ALLOWED
+                esc_html__('Reset Password is not allowed.', 'simple-jwt-login'),
+                (int) ErrorCodes::ERR_RESET_PASSWORD_IS_NOT_ALLOWED
             );
         }
 
@@ -23,11 +23,12 @@ class ResetPasswordService extends BaseService implements ServiceInterface
             && $this->validateAuthKey() === false
         ) {
             throw  new Exception(
-                sprintf(
+                esc_html(sprintf(
+                    /* translators: %s: auth code parameter name */
                     __('Invalid Auth Code ( %s ) provided.', 'simple-jwt-login'),
                     $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()
-                ),
-                ErrorCodes::ERR_RESET_PASSWORD_INVALID_AUTH_KEY
+                )),
+                (int) ErrorCodes::ERR_RESET_PASSWORD_INVALID_AUTH_KEY
             );
         }
 
@@ -38,8 +39,8 @@ class ResetPasswordService extends BaseService implements ServiceInterface
                 return $this->sendResetPassword();
             default:
                 throw new Exception(
-                    __('Route called with invalid request method.', 'simple-jwt-login'),
-                    ErrorCodes::ERR_ROUTE_CALLED_WITH_INVALID_METHOD
+                    esc_html__('Route called with invalid request method.', 'simple-jwt-login'),
+                    (int) ErrorCodes::ERR_ROUTE_CALLED_WITH_INVALID_METHOD
                 );
         }
     }
@@ -58,8 +59,8 @@ class ResetPasswordService extends BaseService implements ServiceInterface
         $jwtAllowed = $this->jwtSettings->getResetPasswordSettings()->isJwtAllowed();
         if ($jwtAllowed === false && empty($this->request['code'])) {
             throw new Exception(
-                __('Missing code parameter.', 'simple-jwt-login'),
-                ErrorCodes::ERR_MISSING_CODE_FOR_CHANGE_PASSWORD
+                esc_html__('Missing code parameter.', 'simple-jwt-login'),
+                (int) ErrorCodes::ERR_MISSING_CODE_FOR_CHANGE_PASSWORD
             );
         }
 
@@ -88,15 +89,15 @@ class ResetPasswordService extends BaseService implements ServiceInterface
     {
         if (empty($this->request['email'])) {
             throw new Exception(
-                __('Missing email parameter.', 'simple-jwt-login'),
-                ErrorCodes::ERR_MISSING_EMAIL_FOR_CHANGE_PASSWORD
+                esc_html__('Missing email parameter.', 'simple-jwt-login'),
+                (int) ErrorCodes::ERR_MISSING_EMAIL_FOR_CHANGE_PASSWORD
             );
         }
 
         if (empty($this->request['new_password'])) {
             throw new Exception(
-                __('Missing new_password parameter.', 'simple-jwt-login'),
-                ErrorCodes::ERR_MISSING_NEW_PASSWORD_FOR_CHANGE_PASSWORD
+                esc_html__('Missing new_password parameter.', 'simple-jwt-login'),
+                (int) ErrorCodes::ERR_MISSING_NEW_PASSWORD_FOR_CHANGE_PASSWORD
             );
         }
     }
@@ -113,8 +114,8 @@ class ResetPasswordService extends BaseService implements ServiceInterface
         $user = $this->wordPressData->getUserDetailsByEmail($email);
         if (empty($user)) {
             throw new Exception(
-                __('Wrong user.', 'simple-jwt-login'),
-                ErrorCodes::ERR_USER_NOT_FOUND_FOR_RESET_PASSWORD
+                esc_html__('Wrong user.', 'simple-jwt-login'),
+                (int) ErrorCodes::ERR_USER_NOT_FOUND_FOR_RESET_PASSWORD
             );
         }
         switch ($this->jwtSettings->getResetPasswordSettings()->getFlowType()) {
@@ -157,8 +158,8 @@ class ResetPasswordService extends BaseService implements ServiceInterface
                 break;
             default:
                 throw new Exception(
-                    __('Invalid flow type.', 'simple-jwt-login'),
-                    ErrorCodes::ERR_RESET_PASSWORD_INVALID_FLOW
+                    esc_html__('Invalid flow type.', 'simple-jwt-login'),
+                    (int) ErrorCodes::ERR_RESET_PASSWORD_INVALID_FLOW
                 );
         }
 
@@ -187,8 +188,8 @@ class ResetPasswordService extends BaseService implements ServiceInterface
     {
         if (empty($this->request['email'])) {
             throw new Exception(
-                __('Missing email parameter.', 'simple-jwt-login'),
-                ErrorCodes::ERR_MISSING_NEW_PASSWORD_FOR_RESET_PASSWORD
+                esc_html__('Missing email parameter.', 'simple-jwt-login'),
+                (int) ErrorCodes::ERR_MISSING_NEW_PASSWORD_FOR_RESET_PASSWORD
             );
         }
     }
@@ -259,8 +260,8 @@ class ResetPasswordService extends BaseService implements ServiceInterface
             $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
             if (empty($this->jwt)) {
                 throw new Exception(
-                    __('The `jwt` parameter is missing.', 'simple-jwt-login'),
-                    ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE
+                    esc_html__('The `jwt` parameter is missing.', 'simple-jwt-login'),
+                    (int) ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE
                 );
             }
             $loginParameter = $this->validateJWTAndGetUserValueFromPayload(
@@ -271,7 +272,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
                 || $this->wordPressData->getUserProperty($user, 'user_email') !== $this->request['email']
             ) {
                 throw new Exception(
-                    __('This JWT can not change your password.', 'simple-jwt-login')
+                    esc_html__('This JWT can not change your password.', 'simple-jwt-login')
                 );
             }
 
@@ -290,8 +291,8 @@ class ResetPasswordService extends BaseService implements ServiceInterface
         );
         if (empty($user)) {
             throw new Exception(
-                __('Invalid code provided.', 'simple-jwt-login'),
-                ErrorCodes::ERR_INVALID_RESET_PASSWORD_CODE
+                esc_html__('Invalid code provided.', 'simple-jwt-login'),
+                (int) ErrorCodes::ERR_INVALID_RESET_PASSWORD_CODE
             );
         }
 

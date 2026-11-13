@@ -16,9 +16,9 @@ if (! defined('ABSPATH')) {
 ?>
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Allow JWT Authentication', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo esc_html__('Allow JWT Authentication', 'simple-jwt-login'); ?></h3>
         <p class="text-muted">
-            <?php echo __('Allow users to authenticate and receive JWT tokens via API endpoints.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Allow users to authenticate and receive JWT tokens via API endpoints.', 'simple-jwt-login'); ?>
         </p>
         <div class="form-group">
             <input type="radio" id="allow_authentication_no" name="allow_authentication" class="form-control"
@@ -30,7 +30,7 @@ if (! defined('ABSPATH')) {
                 ?>
             />
             <label for="allow_authentication_no">
-				<?php echo __('No', 'simple-jwt-login'); ?>
+				<?php echo esc_html__('No', 'simple-jwt-login'); ?>
             </label>
 
             <input type="radio" id="allow_authentication_yes" name="allow_authentication" class="form-control"
@@ -42,7 +42,7 @@ if (! defined('ABSPATH')) {
                 ?>
             />
             <label for="allow_authentication_yes">
-				<?php echo __('Yes', 'simple-jwt-login'); ?>
+				<?php echo esc_html__('Yes', 'simple-jwt-login'); ?>
             </label>
         </div>
     </div>
@@ -51,9 +51,9 @@ if (! defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Require Authentication Code for JWT Generation', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo esc_html__('Require Authentication Code for JWT Generation', 'simple-jwt-login'); ?></h3>
         <p class="text-muted">
-            <?php echo __('If enabled, an additional authentication code must be provided to generate JWT tokens.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('If enabled, an additional authentication code must be provided to generate JWT tokens.', 'simple-jwt-login'); ?>
         </p>
         <div class="form-group">
             <input type="radio" id="require_auth_code_no" name="auth_requires_auth_code" class="form-control"
@@ -61,14 +61,14 @@ if (! defined('ABSPATH')) {
                 <?php echo $jwtSettings->getAuthenticationSettings()->isAuthKeyRequired() === false ? 'checked' : '' ?>
             />
             <label for="require_auth_code_no">
-                <?php echo __('No', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('No', 'simple-jwt-login'); ?>
             </label>
             <input type="radio" id="require_auth_code_yes" name="auth_requires_auth_code" class="form-control"
                    value="1"
                 <?php echo $jwtSettings->getAuthenticationSettings()->isAuthKeyRequired() === true ? 'checked' : '' ?>
             />
             <label for="require_auth_code_yes">
-                <?php echo __('Yes', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Yes', 'simple-jwt-login'); ?>
             </label>
         </div>
     </div>
@@ -77,26 +77,25 @@ if (! defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('JWT Generation Endpoint', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo esc_html__('JWT Generation Endpoint', 'simple-jwt-login'); ?></h3>
         <p class="text-muted">
-            <?php echo __('Configure the endpoint for generating JWT tokens using user credentials.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Configure the endpoint for generating JWT tokens using user credentials.', 'simple-jwt-login'); ?>
         </p>
         <p>
 			<?php
-            echo __(
-                'This route allows you to generate a JWT based on your WordPress email'
-                . ' ( or WordPress username ) and Password.',
+            echo esc_html__(
+                'This route allows you to generate a JWT based on your WordPress email ( or WordPress username ) and Password.',
                 'simple-jwt-login'
             );
             ?>
         </p>
         <p class="text-muted">
             Parameters:<br />
-            <b>email</b> -> <?php echo __('to login with email', 'simple-jwt-login');?><br />
-            <b>username</b> -> <?php echo __('to login with username', 'simple-jwt-login');?><br />
-            <b>login</b> -> <?php echo __('to login with username or email', 'simple-jwt-login');?><br />
-            <b>password</b> -> <?php echo __('your password', 'simple-jwt-login');?><br />
-            <b>password_hash</b> -> <?php echo __('your hashed password from the database', 'simple-jwt-login');?><br />
+            <b>email</b> -> <?php echo esc_html__('to login with email', 'simple-jwt-login');?><br />
+            <b>username</b> -> <?php echo esc_html__('to login with username', 'simple-jwt-login');?><br />
+            <b>login</b> -> <?php echo esc_html__('to login with username or email', 'simple-jwt-login');?><br />
+            <b>password</b> -> <?php echo esc_html__('your password', 'simple-jwt-login');?><br />
+            <b>password_hash</b> -> <?php echo esc_html__('your hashed password from the database', 'simple-jwt-login');?><br />
         </p>
         <div class="generated-code">
             <span class="method">POST</span>
@@ -112,13 +111,13 @@ if (! defined('ABSPATH')) {
             </span>
             <span class="copy-button">
                 <button class="btn btn-secondary btn-xs">
-                    <?php echo __('Copy', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('Copy', 'simple-jwt-login'); ?>
                 </button>
             </span>
         </div>
         
         <div>
-            <b><?php echo __('OR', 'simple-jwt-login');?></b>: 
+            <b><?php echo esc_html__('OR', 'simple-jwt-login');?></b>: 
         </div>
         
         <div class="generated-code">
@@ -135,13 +134,13 @@ if (! defined('ABSPATH')) {
             </span>
             <span class="copy-button">
                 <button class="btn btn-secondary btn-xs">
-                    <?php echo __('Copy', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('Copy', 'simple-jwt-login'); ?>
                 </button>
             </span>
         </div>
 
         <div>
-            <b><?php echo __('OR', 'simple-jwt-login');?></b>: 
+            <b><?php echo esc_html__('OR', 'simple-jwt-login');?></b>: 
         </div>
         <div class="generated-code">
             <span class="method">POST</span>
@@ -157,7 +156,7 @@ if (! defined('ABSPATH')) {
             </span>
             <span class="copy-button">
                 <button class="btn btn-secondary btn-xs">
-                    <?php echo __('Copy', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('Copy', 'simple-jwt-login'); ?>
                 </button>
             </span>
         </div>
@@ -167,9 +166,9 @@ if (! defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('Authentication Options', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo esc_html__('Authentication Options', 'simple-jwt-login'); ?></h3>
         <p class="text-muted">
-            <?php echo __('Additional settings for the authentication process.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Additional settings for the authentication process.', 'simple-jwt-login'); ?>
         </p>
         <div class="form-group">
             <div class="input-group" style="margin-top:10px">
@@ -186,7 +185,7 @@ if (! defined('ABSPATH')) {
 
                 />
                 <label for="auth_password_base64">
-                    <?php echo __('Authentication password/passhash is base64 encoded', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('Authentication password/passhash is base64 encoded', 'simple-jwt-login'); ?>
                 </label>
             </div>
         </div>
@@ -197,9 +196,9 @@ if (! defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('JWT Header Configuration', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo esc_html__('JWT Header Configuration', 'simple-jwt-login'); ?></h3>
         <p class="text-muted">
-            <?php echo __('The standard header included in generated JWT tokens.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('The standard header included in generated JWT tokens.', 'simple-jwt-login'); ?>
         </p>
         <div id="authentication_header_data" class="authentication_jwt_container">
             <ul>
@@ -243,10 +242,10 @@ if (! defined('ABSPATH')) {
                 ? '<span class="simple-jwt-error">!</span>'
                 : ''
             ?>
-            <?php echo __('JWT Payload Configuration', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('JWT Payload Configuration', 'simple-jwt-login'); ?>
         </h3>
         <p class="text-muted">
-            <?php echo __('Select which user data to include in the JWT payload.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Select which user data to include in the JWT payload.', 'simple-jwt-login'); ?>
         </p>
         <div id="authentication_payload_data" class="authentication_jwt_container">
             <ul>
@@ -332,10 +331,10 @@ if (! defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title">
-			<?php echo __('JWT Signature Verification', 'simple-jwt-login'); ?>
+			<?php echo esc_html__('JWT Signature Verification', 'simple-jwt-login'); ?>
         </h3>
         <p class="text-muted">
-            <?php echo __('How the JWT signature is verified for authenticity.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('How the JWT signature is verified for authenticity.', 'simple-jwt-login'); ?>
         </p>
         <div id="authentication_signature" class="authentication_jwt_container">
             <ul>
@@ -366,13 +365,13 @@ if (! defined('ABSPATH')) {
                 ? '<span class="simple-jwt-error">!</span>'
                 : ''
             ?>
-			<?php echo __('JWT Expiration Time', 'simple-jwt-login') ?>
+			<?php echo esc_html__('JWT Expiration Time', 'simple-jwt-login') ?>
         </h3>
         <p class="text-muted">
-            <?php echo __('Set how long generated JWT tokens remain valid.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Set how long generated JWT tokens remain valid.', 'simple-jwt-login'); ?>
         </p>
         <label for="jwt_auth_ttl">
-			<?php echo __(
+			<?php echo esc_html__(
                 'Specify the length of time (in minutes) that the token will be valid for.',
                 'simple-jwt-login'
             ); ?>
@@ -382,7 +381,7 @@ if (! defined('ABSPATH')) {
                 name="jwt_auth_ttl"
                 class="form-control" id="jwt_auth_ttl"
                 value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAuthJwtTtl()); ?>"
-                placeholder="<?php echo __('Number of minutes', 'simple-jwt-login') ?>"
+                placeholder="<?php echo esc_attr__('Number of minutes', 'simple-jwt-login') ?>"
         />
     </div>
 </div>
@@ -400,16 +399,14 @@ if (! defined('ABSPATH')) {
                 ? '<span class="simple-jwt-error">!</span>'
                 : ''
             ?>
-			<?php echo __('JWT Refresh Window', 'simple-jwt-login') ?>
+			<?php echo esc_html__('JWT Refresh Window', 'simple-jwt-login') ?>
         </h3>
         <p class="text-muted">
-            <?php echo __('Set the time window during which expired tokens can be refreshed.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Set the time window during which expired tokens can be refreshed.', 'simple-jwt-login'); ?>
         </p>
         <label for="jwt_auth_refresh_ttl">
-			<?php echo __(
-                'Specify the length of time (in minutes) that the token can be refreshed within.'
-                . ' I.E. The user can refresh their token within a 2 week window of the original token'
-                . ' being created until they must re-authenticate.Defaults to 2 weeks',
+			<?php echo esc_html__(
+                'Specify the length of time (in minutes) that the token can be refreshed within. I.E. The user can refresh their token within a 2 week window of the original token being created until they must re-authenticate.Defaults to 2 weeks',
                 'simple-jwt-login'
             ); ?>
         </label>
@@ -419,7 +416,7 @@ if (! defined('ABSPATH')) {
                 class="form-control"
                 id="jwt_auth_refresh_ttl"
                 value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAuthJwtRefreshTtl()); ?>"
-                placeholder="<?php echo __('Number of minutes', 'simple-jwt-login') ?>"
+                placeholder="<?php echo esc_attr__('Number of minutes', 'simple-jwt-login') ?>"
         />
     </div>
 </div>
@@ -428,13 +425,13 @@ if (! defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title">
-            <?php echo __('JWT Issuer (iss)', 'simple-jwt-login') ?>
+            <?php echo esc_html__('JWT Issuer (iss)', 'simple-jwt-login') ?>
         </h3>
         <p class="text-muted">
-            <?php echo __('Specify the issuer claim for generated JWT tokens.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Specify the issuer claim for generated JWT tokens.', 'simple-jwt-login'); ?>
         </p>
         <label for="jwt_auth_ttl">
-            <?php echo __(
+            <?php echo esc_html__(
                 'The payload issuer when a new JWT is generated',
                 'simple-jwt-login'
             ); ?>
@@ -445,7 +442,7 @@ if (! defined('ABSPATH')) {
             class="form-control"
             id="jwt_auth_iss"
             value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAuthIss()); ?>"
-            placeholder="<?php echo __('Default issuer', 'simple-jwt-login') ?>"
+            placeholder="<?php echo esc_attr__('Default issuer', 'simple-jwt-login') ?>"
         />
     </div>
 </div>
@@ -453,15 +450,14 @@ if (! defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('JWT Refresh Endpoint', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo esc_html__('JWT Refresh Endpoint', 'simple-jwt-login'); ?></h3>
         <p class="text-muted">
-            <?php echo __('Endpoint for refreshing expired JWT tokens.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Endpoint for refreshing expired JWT tokens.', 'simple-jwt-login'); ?>
         </p>
         <p>
 			<?php
-            echo __(
-                'This route is for refreshing expired tokens.'
-                . ' It accept as a parameter an expired token, and returns a new valid JWT.',
+            echo esc_html__(
+                'This route is for refreshing expired tokens. It accept as a parameter an expired token, and returns a new valid JWT.',
                 'simple-jwt-login'
             );
             ?>
@@ -483,15 +479,14 @@ if (! defined('ABSPATH')) {
             </span>
             <span class="copy-button">
                 <button class="btn btn-secondary btn-xs">
-                    <?php echo __('Copy', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('Copy', 'simple-jwt-login'); ?>
                 </button>
             </span>
         </div>
         <p class="text-muted">
             * <?php
-            echo __(
-                'JWT can be sent via URL, SESSION, COOKIE or HEADER.'
-                . ' Please enable the ones you want in the \'General\' section.',
+            echo esc_html__(
+                'JWT can be sent via URL, SESSION, COOKIE or HEADER. Please enable the ones you want in the \'General\' section.',
                 'simple-jwt-login'
             );
             ?>
@@ -503,15 +498,14 @@ if (! defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('JWT Validation Endpoint', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo esc_html__('JWT Validation Endpoint', 'simple-jwt-login'); ?></h3>
         <p class="text-muted">
-            <?php echo __('Endpoint for validating JWT tokens and retrieving user details.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Endpoint for validating JWT tokens and retrieving user details.', 'simple-jwt-login'); ?>
         </p>
         <p>
 			<?php
-            echo __(
-                'This endpoint validates a JWT.'
-                . ' If it is valid,it will return the WordPress user details and some JWT details.',
+            echo esc_html__(
+                'This endpoint validates a JWT. If it is valid,it will return the WordPress user details and some JWT details.',
                 'simple-jwt-login'
             );
             ?>
@@ -534,15 +528,14 @@ if (! defined('ABSPATH')) {
             </span>
             <span class="copy-button">
                 <button class="btn btn-secondary btn-xs">
-                    <?php echo __('Copy', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('Copy', 'simple-jwt-login'); ?>
                 </button>
             </span>
         </div>
         <p class="text-muted">
             * <?php
-            echo __(
-                'JWT can be sent via URL, SESSION, COOKIE or HEADER.'
-                . ' Please enable the ones you want in the \'General\' section.',
+            echo esc_html__(
+                'JWT can be sent via URL, SESSION, COOKIE or HEADER. Please enable the ones you want in the \'General\' section.',
                 'simple-jwt-login'
             );
             ?>
@@ -553,13 +546,13 @@ if (! defined('ABSPATH')) {
 
 <div class="row">
     <div class="col-md-12">
-        <h3 class="section-title"><?php echo __('JWT Revocation Endpoint', 'simple-jwt-login'); ?></h3>
+        <h3 class="section-title"><?php echo esc_html__('JWT Revocation Endpoint', 'simple-jwt-login'); ?></h3>
         <p class="text-muted">
-            <?php echo __('Endpoint for revoking valid JWT tokens.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Endpoint for revoking valid JWT tokens.', 'simple-jwt-login'); ?>
         </p>
         <p>
             <?php
-            echo __(
+            echo esc_html__(
                 'This endpoint revokes a JWT. If it is valid, it will be marked as invalid.',
                 'simple-jwt-login'
             );
@@ -577,15 +570,14 @@ if (! defined('ABSPATH')) {
             </span>
             <span class="copy-button">
                 <button class="btn btn-secondary btn-xs">
-                    <?php echo __('Copy', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('Copy', 'simple-jwt-login'); ?>
                 </button>
             </span>
         </div>
         <p class="text-muted">
             * <?php
-            echo __(
-                'JWT can be sent via URL, SESSION, COOKIE or HEADER.'
-                . ' Please enable the ones you want in the \'General\' section.',
+            echo esc_html__(
+                'JWT can be sent via URL, SESSION, COOKIE or HEADER. Please enable the ones you want in the \'General\' section.',
                 'simple-jwt-login'
             );
             ?>
@@ -598,23 +590,23 @@ if (! defined('ABSPATH')) {
     <div class="col-md-12">
         <h3 class="section-title">
             <?php
-            echo __(
+            echo esc_html__(
                 'Restrict Authentication to Specific IP Addresses',
                 'simple-jwt-login'
             );
             ?>:
         </h3>
         <p class="text-muted">
-            <?php echo __('Only allow JWT authentication from these IP addresses. Leave blank to allow from any IP.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Only allow JWT authentication from these IP addresses. Leave blank to allow from any IP.', 'simple-jwt-login'); ?>
         </p>
         <div class="form-group">
             <input type="text" id="auth_ip" name="auth_ip" class="form-control"
                    value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getAllowedIps()); ?>"
-                   placeholder="<?php echo __('Enter IP here', 'simple-jwt-login'); ?>"/>
+                   placeholder="<?php echo esc_attr__('Enter IP here', 'simple-jwt-login'); ?>"/>
             <p class="text-muted">
-                <?php echo __("If you want to add more IP's, separate them by comma", 'simple-jwt-login'); ?>.
+                <?php echo esc_html__("If you want to add more IP's, separate them by comma", 'simple-jwt-login'); ?>.
                 <br/>
-                <?php echo __('Leave blank to allow all IP addresses', 'simple-jwt-login'); ?>.
+                <?php echo esc_html__('Leave blank to allow all IP addresses', 'simple-jwt-login'); ?>.
             </p>
         </div>
     </div>

@@ -21,8 +21,8 @@ class OAuthService extends BaseService implements ServiceInterface
         if (!isset($this->request['provider'])
             || !in_array(strtolower($this->request['provider']), $this->providers)) {
             throw new Exception(
-                __('The Oauth provider is invalid.', 'simple-jwt-login'),
-                ErrorCodes::ERR_OAUTH_INVALID_PROVIDER
+                esc_html__('The Oauth provider is invalid.', 'simple-jwt-login'),
+                (int) ErrorCodes::ERR_OAUTH_INVALID_PROVIDER
             );
         }
 
@@ -30,8 +30,8 @@ class OAuthService extends BaseService implements ServiceInterface
             case self::GOOGLE_PROVIDER:
                 if (!$this->jwtSettings->getApplicationsSettings()->isGoogleEnabled()) {
                     throw new Exception(
-                        __('This Oauth provider is not available.', 'simple-jwt-login'),
-                        ErrorCodes::ERR_OAUTH_PROVIDER_NOT_ACTIVE
+                        esc_html__('This Oauth provider is not available.', 'simple-jwt-login'),
+                        (int) ErrorCodes::ERR_OAUTH_PROVIDER_NOT_ACTIVE
                     );
                 }
                 $provider = new Google($this->request, $this->requestMetod, $this->jwtSettings, $this->wordPressData);
@@ -40,8 +40,8 @@ class OAuthService extends BaseService implements ServiceInterface
                 return $this->wordPressData->createResponse($provider->call());
             default:
                 throw new Exception(
-                    __('The Oauth provider is invalid.', 'simple-jwt-login'),
-                    ErrorCodes::ERR_OAUTH_INVALID_PROVIDER
+                    esc_html__('The Oauth provider is invalid.', 'simple-jwt-login'),
+                    (int) ErrorCodes::ERR_OAUTH_INVALID_PROVIDER
                 );
         }
     }

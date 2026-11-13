@@ -20,8 +20,8 @@ class Google extends BaseApplication implements ApplicationInterface
     {
         if (!isset($this->request['code']) && !isset($this->request['id_token'])) {
             throw new Exception(
-                __('The code or id_token parameter is missing from request.', 'simple-jwt-login'),
-                ErrorCodes::ERR_MISSING_GOOGLE_PARAM
+                esc_html__('The code or id_token parameter is missing from request.', 'simple-jwt-login'),
+                (int) ErrorCodes::ERR_MISSING_GOOGLE_PARAM
             );
         }
     }
@@ -47,8 +47,8 @@ class Google extends BaseApplication implements ApplicationInterface
         );
         if ($statusCode != 200) {
             throw new Exception(
-                __("The provided id_token is invalid", 'simple-jwt-login'),
-                ErrorCodes::ERR_GOOGLE_INVALID_ID_TOKEN
+                esc_html__("The provided id_token is invalid", 'simple-jwt-login'),
+                (int) ErrorCodes::ERR_GOOGLE_INVALID_ID_TOKEN
             );
         }
 
@@ -68,24 +68,24 @@ class Google extends BaseApplication implements ApplicationInterface
     {
         if (empty($tokenInfo) || !is_array($tokenInfo) || empty($tokenInfo['email'])) {
             throw new Exception(
-                __("The provided id_token is invalid", 'simple-jwt-login'),
-                ErrorCodes::ERR_GOOGLE_INVALID_ID_TOKEN
+                esc_html__("The provided id_token is invalid", 'simple-jwt-login'),
+                (int) ErrorCodes::ERR_GOOGLE_INVALID_ID_TOKEN
             );
         }
 
         $issuer = isset($tokenInfo['iss']) ? $tokenInfo['iss'] : '';
         if (!in_array($issuer, ['accounts.google.com', 'https://accounts.google.com'], true)) {
             throw new Exception(
-                __("The provided id_token is invalid", 'simple-jwt-login'),
-                ErrorCodes::ERR_GOOGLE_INVALID_ID_TOKEN
+                esc_html__("The provided id_token is invalid", 'simple-jwt-login'),
+                (int) ErrorCodes::ERR_GOOGLE_INVALID_ID_TOKEN
             );
         }
 
         $audience = isset($tokenInfo['aud']) ? $tokenInfo['aud'] : '';
         if ($clientId === '' || $audience === '' || (string)$audience !== (string)$clientId) {
             throw new Exception(
-                __('The provided id_token was not issued for this website.', 'simple-jwt-login'),
-                ErrorCodes::ERR_GOOGLE_ID_TOKEN_INVALID_AUDIENCE
+                esc_html__('The provided id_token was not issued for this website.', 'simple-jwt-login'),
+                (int) ErrorCodes::ERR_GOOGLE_ID_TOKEN_INVALID_AUDIENCE
             );
         }
 
@@ -93,8 +93,8 @@ class Google extends BaseApplication implements ApplicationInterface
         $emailVerified = isset($tokenInfo['email_verified']) ? $tokenInfo['email_verified'] : false;
         if ($emailVerified !== true && $emailVerified !== 'true' && $emailVerified !== '1') {
             throw new Exception(
-                __('The email address of this Google account is not verified.', 'simple-jwt-login'),
-                ErrorCodes::ERR_GOOGLE_ID_TOKEN_EMAIL_NOT_VERIFIED
+                esc_html__('The email address of this Google account is not verified.', 'simple-jwt-login'),
+                (int) ErrorCodes::ERR_GOOGLE_ID_TOKEN_EMAIL_NOT_VERIFIED
             );
         }
 
@@ -130,11 +130,9 @@ class Google extends BaseApplication implements ApplicationInterface
                     ];
                 }
                 throw new Exception(
-                    __(
-                        'The code you provided is invalid.' . $this->handleErrorMessage($jsonResult),
-                        'simple-jwt-login'
-                    ),
-                    ErrorCodes::ERR_GOOGLE_INVALID_CODE
+                    esc_html(esc_html__('The code you provided is invalid.', 'simple-jwt-login')
+                        . esc_html($this->handleErrorMessage($jsonResult))),
+                    (int) ErrorCodes::ERR_GOOGLE_INVALID_CODE
                 );
             case !empty($this->request['id_token']):
                 // Use the claims validated by Google, never the ones decoded from the raw token.
@@ -148,8 +146,8 @@ class Google extends BaseApplication implements ApplicationInterface
                 );
                 if (empty($user)) {
                     throw new Exception(
-                        __('Wrong user credentials.', 'simple-jwt-login'),
-                        ErrorCodes::ERR_GOOGLE_USER_NOT_FOUND
+                        esc_html__('Wrong user credentials.', 'simple-jwt-login'),
+                        (int) ErrorCodes::ERR_GOOGLE_USER_NOT_FOUND
                     );
                 }
 

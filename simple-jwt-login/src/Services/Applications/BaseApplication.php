@@ -76,7 +76,7 @@ class BaseApplication
         $charLength = strlen($chars);
         $result = '';
         for ($i = 0; $i < $length; $i++) {
-            $result .= $chars[rand(0, $charLength - 1)];
+            $result .= $chars[wp_rand(0, $charLength - 1)];
         }
 
         return $result;

@@ -18,10 +18,10 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title"><?php
-            echo __('Allow Password Reset', 'simple-jwt-login'); ?></h3>
+            echo esc_html__('Allow Password Reset', 'simple-jwt-login'); ?></h3>
 
         <p class="text-muted">
-            <?php echo __('Allow users to reset their passwords via JWT API endpoints.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Allow users to reset their passwords via JWT API endpoints.', 'simple-jwt-login'); ?>
         </p>
         <div class="form-group">
             <input type="radio" id="allow_reset_password_no" name="allow_reset_password" class="form-control"
@@ -34,7 +34,7 @@ if (!defined('ABSPATH')) {
             />
             <label for="allow_reset_password_no">
                 <?php
-                echo __('No', 'simple-jwt-login'); ?>
+                echo esc_html__('No', 'simple-jwt-login'); ?>
             </label>
 
             <input type="radio" id="allow_reset_password_yes" name="allow_reset_password" class="form-control"
@@ -48,7 +48,7 @@ if (!defined('ABSPATH')) {
             />
             <label for="allow_reset_password_yes">
                 <?php
-                echo __('Yes', 'simple-jwt-login'); ?>
+                echo esc_html__('Yes', 'simple-jwt-login'); ?>
             </label>
             <br/>
         </div>
@@ -59,10 +59,10 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title"><?php
-            echo __('Require Authentication Code for Password Reset', 'simple-jwt-login'); ?>
+            echo esc_html__('Require Authentication Code for Password Reset', 'simple-jwt-login'); ?>
         </h3>
         <p class="text-muted">
-            <?php echo __('If enabled, an additional authentication code must be provided for password reset requests.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('If enabled, an additional authentication code must be provided for password reset requests.', 'simple-jwt-login'); ?>
         </p>
         <div class="form-group">
             <input type="radio" id="reset_password_auth_code_no" name="reset_password_requires_auth_code"
@@ -73,7 +73,7 @@ if (!defined('ABSPATH')) {
             />
             <label for="reset_password_auth_code_no">
                 <?php
-                echo __('No', 'simple-jwt-login'); ?>
+                echo esc_html__('No', 'simple-jwt-login'); ?>
             </label>
             <input type="radio" id="reset_password_auth_code_yes" name="reset_password_requires_auth_code"
                    class="form-control"
@@ -83,7 +83,7 @@ if (!defined('ABSPATH')) {
             />
             <label for="reset_password_auth_code_yes">
                 <?php
-                echo __('Yes', 'simple-jwt-login'); ?>
+                echo esc_html__('Yes', 'simple-jwt-login'); ?>
             </label>
         </div>
     </div>
@@ -94,27 +94,27 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title"><?php
-            echo __('Password Reset Request', 'simple-jwt-login'); ?></h3>
+            echo esc_html__('Password Reset Request', 'simple-jwt-login'); ?></h3>
         <p class="text-muted">
-            <?php echo __('Configure how password reset requests are handled and sent.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Configure how password reset requests are handled and sent.', 'simple-jwt-login'); ?>
         </p>
         <p>
             <?php
-            echo __(
+            echo esc_html__(
                 'This route sends an email to a specific email address in order to reset the password.',
                 'simple-jwt-login'
             );
             ?>
         </p>
         <p class="text-muted">
-            <?php echo __('Parameters', 'simple-jwt-login'); ?>:
+            <?php echo esc_html__('Parameters', 'simple-jwt-login'); ?>:
             <Br/>
             <b>email</b><span class="required">*</span> :
-            <?php echo __('The email address that needs reset password', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('The email address that needs reset password', 'simple-jwt-login'); ?>
             <Br/>
             <br/>
             <?php
-            echo __(
+            echo esc_html__(
                 'An email with the reset password link will be sent to this email address.',
                 'simple-jwt-login'
             );
@@ -140,7 +140,7 @@ if (!defined('ABSPATH')) {
             <span class="copy-button">
                 <button class="btn btn-secondary btn-xs">
                     <?php
-                    echo __('Copy', 'simple-jwt-login'); ?>
+                    echo esc_html__('Copy', 'simple-jwt-login'); ?>
                 </button>
             </span>
         </div>
@@ -150,10 +150,10 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title"><?php
-            echo __('Password Reset Flow', 'simple-jwt-login'); ?>
+            echo esc_html__('Password Reset Flow', 'simple-jwt-login'); ?>
         </h3>
         <p class="text-muted">
-            <?php echo __('Choose how the password reset process is handled.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Choose how the password reset process is handled.', 'simple-jwt-login'); ?>
         </p>
         <ul>
             <li>
@@ -173,7 +173,7 @@ if (!defined('ABSPATH')) {
                 />
                 <label for="jwt_reset_password_flow_db">
                     <?php
-                    echo __(
+                    echo esc_html__(
                         'Do not send any email, just save reset code in the database',
                         'simple-jwt-login'
                     );
@@ -197,7 +197,7 @@ if (!defined('ABSPATH')) {
                 />
                 <label for="jwt_reset_password_flow_wordpress">
                     <?php
-                    echo __(
+                    echo esc_html__(
                         'Send the default WordPress reset password email',
                         'simple-jwt-login'
                     );
@@ -221,7 +221,7 @@ if (!defined('ABSPATH')) {
                     class="jwt_reset_password_flow">
                 <label for="jwt_reset_password_flow_custom">
                     <?php
-                    echo __(
+                    echo esc_html__(
                         'Send custom email',
                         'simple-jwt-login'
                     );
@@ -235,12 +235,12 @@ if (!defined('ABSPATH')) {
     <div class="col-md-12">
         <div class="jwt_sub_container">
             <h4 class="sub-section-title">
-                <?php echo __('Email Subject', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Email Subject', 'simple-jwt-login'); ?>
             </h4>
             <input type="text"
                    name="jwt_email_subject"
                    class="form-control"
-                   placeholder="<?php echo __('Email Subject', 'simple-jwt-login'); ?>"
+                   placeholder="<?php echo esc_attr__('Email Subject', 'simple-jwt-login'); ?>"
                    value="<?php
                     echo esc_attr($jwtSettings->getResetPasswordSettings()->getResetPasswordEmailSubject()); ?>"
             />
@@ -266,7 +266,7 @@ if (!defined('ABSPATH')) {
                             : ''; ?>
                     />
                     <label for="jwt_email_type_plain_text">
-                        <?php echo __('Plain text', 'simple-jwt-login'); ?>
+                        <?php echo esc_html__('Plain text', 'simple-jwt-login'); ?>
                     </label>
                 </li>
                 <li>
@@ -286,14 +286,15 @@ if (!defined('ABSPATH')) {
             </ul>
             <br/>
             <?php
-            echo sprintf(
+            echo wp_kses_post(sprintf(
+                /* translators: %s: the {{CODE}} email variable */
                 __('For the email content, you need to add %s as a variable', 'simple-jwt-login'),
                 '<code class="code">{{CODE}}</code>'
-            );
+            ));
             ?>
             <br/>
             <br/>
-            <b><?php echo __('Available variables', 'simple-jwt-login'); ?></b>:
+            <b><?php echo esc_html__('Available variables', 'simple-jwt-login'); ?></b>:
             <ul>
                 <?php
                 foreach ($jwtSettings->getResetPasswordSettings()->getEmailContentVariables() as $variable => $text) {
@@ -315,36 +316,35 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title"><?php
-            echo __('Password Change Endpoint', 'simple-jwt-login'); ?></h3>
+            echo esc_html__('Password Change Endpoint', 'simple-jwt-login'); ?></h3>
         <p class="text-muted">
-            <?php echo __('Configure the endpoint for actually changing the user password using the reset code.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Configure the endpoint for actually changing the user password using the reset code.', 'simple-jwt-login'); ?>
         </p>
         <p>
             <?php
-            echo __(
-                'This route changes the user password.'
-                . ' It requires the reset password code that it was received on email and the new password.',
+            echo esc_html__(
+                'This route changes the user password. It requires the reset password code that it was received on email and the new password.',
                 'simple-jwt-login'
             );
             ?>
         </p>
         <p class="text-muted">
-            <?php echo __('Parameters', 'simple-jwt-login'); ?>:
+            <?php echo esc_html__('Parameters', 'simple-jwt-login'); ?>:
             <br/>
             <b>email</b><span class="required">*</span> :
-            <?php echo __('The email address that needs reset password', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('The email address that needs reset password', 'simple-jwt-login'); ?>
             <br/>
 
             <b>code</b><span class="required">*</span> :
-            <?php echo __('The code received on email', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('The code received on email', 'simple-jwt-login'); ?>
             <br/>
 
             <b>new_password</b><span class="required">*</span> :
-            <?php echo __('New password for the user', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('New password for the user', 'simple-jwt-login'); ?>
             <br/>
             <br/>
             <?php
-            echo __(
+            echo esc_html__(
                 'An email with the reset password link will be sent to this email address.',
                 'simple-jwt-login'
             );
@@ -372,7 +372,7 @@ if (!defined('ABSPATH')) {
             <span class="copy-button">
                 <button class="btn btn-secondary btn-xs">
                     <?php
-                    echo __('Copy', 'simple-jwt-login'); ?>
+                    echo esc_html__('Copy', 'simple-jwt-login'); ?>
                 </button>
             </span>
         </div>
@@ -382,7 +382,7 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h4 class="sub-section-title">
-            <?php echo __('JWT-Based Password Reset', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('JWT-Based Password Reset', 'simple-jwt-login'); ?>
         </h4>
 
         <input type="checkbox" name="reset_password_jwt"
@@ -390,15 +390,14 @@ if (!defined('ABSPATH')) {
             <?php echo($jwtSettings->getResetPasswordSettings()->isJwtAllowed() ? 'checked' : ''); ?>
                value="1"/>
         <label for="reset_password_jwt">
-            <?php echo __('Allow Reset password with JWT', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Allow Reset password with JWT', 'simple-jwt-login'); ?>
         </label>
         <p class="text-muted">
             <?php
-            echo __(
-                'If this option is selected, the <b>code</b> parameter is no longer required.'
-                . ' The plugin will search for the USER that is present in the JWT. Also, the JWT should be valid.',
+            echo wp_kses_post(__(
+                'If this option is selected, the <b>code</b> parameter is no longer required. The plugin will search for the USER that is present in the JWT. Also, the JWT should be valid.',
                 'simple-jwt-login'
-            );
+            ));
             ?>
         </p>
     </div>

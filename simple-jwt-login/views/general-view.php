@@ -28,10 +28,10 @@ if (!defined('ABSPATH')) {
                 ? '<span class="simple-jwt-error">!</span>'
                 : ''
             ?>
-            <?php echo __('Route Namespace', 'simple-jwt-login'); ?> <span class="required">*</span>
+            <?php echo esc_html__('Route Namespace', 'simple-jwt-login'); ?> <span class="required">*</span>
         </h3>
          <p class="text-muted">
-            <?php echo __('Base URL used for all Simple JWT Login endpoints. Change only if you need to avoid conflicts.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Base URL used for all Simple JWT Login endpoints. Change only if you need to avoid conflicts.', 'simple-jwt-login'); ?>
         </p>
         <div class="form-group">
             <input
@@ -39,7 +39,7 @@ if (!defined('ABSPATH')) {
                     name="route_namespace"
                     value="<?php echo esc_attr($jwtSettings->getGeneralSettings()->getRouteNamespace()); ?>"
                     class="form-control"
-                    placeholder="<?php echo __('Default route namespace', 'simple-jwt-login'); ?>"
+                    placeholder="<?php echo esc_attr__('Default route namespace', 'simple-jwt-login'); ?>"
             />
         </div>
     </div>
@@ -49,7 +49,7 @@ if (!defined('ABSPATH')) {
     <div class="col-md-12">
         <h2 class="section-title">JWT Verification Settings</h2>
          <p class="text-muted">
-            <?php echo __('Configure how incoming JWTs are verified.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Configure how incoming JWTs are verified.', 'simple-jwt-login'); ?>
         </p>
     </div>
 </div>
@@ -60,15 +60,15 @@ if (!defined('ABSPATH')) {
             <h2 class="section-title" >
                 <span class="step-number">1</span>&nbsp;
                 <?php
-                    echo __('Where is your JWT secret stored?', 'simple-jwt-login');
+                    echo esc_html__('Where is your JWT secret stored?', 'simple-jwt-login');
                 ?>
             </h2>
              <p class="text-muted">
-                <?php echo __('Choose where the plugin should read the JWT verification key from.', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Choose where the plugin should read the JWT verification key from.', 'simple-jwt-login'); ?>
             </p>
             <select id="decryption_source" name="decryption_source" class="form-control">
                 <option
-                    value="<?php echo GeneralSettings::DECRYPTION_SOURCE_SETTINGS;?>"
+                    value="<?php echo esc_attr(GeneralSettings::DECRYPTION_SOURCE_SETTINGS);?>"
                     <?php
                     echo ($jwtSettings->getGeneralSettings()->getDecryptionSource()
                             === GeneralSettings::DECRYPTION_SOURCE_SETTINGS
@@ -78,11 +78,11 @@ if (!defined('ABSPATH')) {
                     ?>
                 >
                     <?php
-                    echo __('Plugin Settings (recommended)', 'simple-jwt-login');
+                    echo esc_html__('Plugin Settings (recommended)', 'simple-jwt-login');
                     ?>
                 </option>
                 <option
-                    value="<?php echo GeneralSettings::DECRYPTION_SOURCE_CODE;?>"
+                    value="<?php echo esc_attr(GeneralSettings::DECRYPTION_SOURCE_CODE);?>"
                     <?php
                     echo ($jwtSettings->getGeneralSettings()->getDecryptionSource()
                     === GeneralSettings::DECRYPTION_SOURCE_CODE
@@ -92,7 +92,7 @@ if (!defined('ABSPATH')) {
                     ?>
                 >
                     <?php
-                    echo __('Code (wp-config.php or custom plugin)', 'simple-jwt-login');
+                    echo esc_html__('Code (wp-config.php or custom plugin)', 'simple-jwt-login');
                     ?>
                 </option>
             </select>
@@ -105,10 +105,10 @@ if (!defined('ABSPATH')) {
         <h3 class="section-title">
             <span class="step-number">2</span>
             <spam> </spam>
-            <?php echo __('JWT Algorithm', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('JWT Algorithm', 'simple-jwt-login'); ?>
         </h3>
          <p class="text-muted">
-            <?php echo __('Must match the algorithm used to sign the JWT (check the "alg" value in the token header).', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Must match the algorithm used to sign the JWT (check the "alg" value in the token header).', 'simple-jwt-login'); ?>
         </p>
         <div class="form-group">
             <select name="jwt_algorithm" class="form-control" id="simple-jwt-login-jwt-algorithm">
@@ -117,7 +117,7 @@ if (!defined('ABSPATH')) {
                     $selected = $jwtSettings->getGeneralSettings()->getJWTDecryptAlgorithm() === $alg
                         ? 'selected'
                         : '';
-                    echo "<option value=\"" . esc_attr($alg) . "\" " . $selected . ">" . esc_html($alg) . "</option>\n";
+                    echo "<option value=\"" . esc_attr($alg) . "\" " . esc_attr($selected) . ">" . esc_html($alg) . "</option>\n";
                 }
                 ?>
             </select>
@@ -152,24 +152,24 @@ if (!defined('ABSPATH')) {
                 ? '<span class="simple-jwt-error">!</span>'
                 : '';
             ?>
-            <?php echo __('JWT Verification Key', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('JWT Verification Key', 'simple-jwt-login'); ?>
         </h3>
          <p class="text-muted">
-            <?php echo __('Secret or key used to verify incoming JWTs.', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Secret or key used to verify incoming JWTs.', 'simple-jwt-login'); ?>
         </p>
         <div class="form-group decryption-input-group">
             <div class="input-group" id="decryption_key_container">
                 <input type="password" name="decryption_key" class="form-control"
                        id="decryption_key"
                        value="<?php echo esc_attr($jwtSettings->getGeneralSettings()->getDecryptionKey()); ?>"
-                       placeholder="<?php echo __('JWT decryption key here', 'simple-jwt-login'); ?>"
+                       placeholder="<?php echo esc_attr__('JWT decryption key here', 'simple-jwt-login'); ?>"
                 />
                 <div class="input-group-addon">
                     <a href="javascript:void(0)"
                        onclick="showDecryptionKey()"
                        class="toggle_key_button"
                        title="<?php
-                        echo __('Toggle decryption key', 'simple-jwt-login');
+                        echo esc_attr__('Toggle decryption key', 'simple-jwt-login');
                         ?>"
                     >
                         <i class="toggle-image" aria-hidden="true"></i>
@@ -178,7 +178,7 @@ if (!defined('ABSPATH')) {
             </div>
             <div class="input-group">
                 <?php
-                echo __('Strength', 'simple-jwt-login');
+                echo esc_html__('Strength', 'simple-jwt-login');
                 ?>:
                 <progress id="decryption_progress" value="0" max="100">10</progress>
                 <span id="decryption_progress_label"></span>
@@ -197,7 +197,7 @@ if (!defined('ABSPATH')) {
 
                 />
                 <label for="decryption_key_base64">
-                    <?php echo __('JWT Decryption Key is base64 encoded', 'simple-jwt-login'); ?>
+                    <?php echo esc_html__('JWT Decryption Key is base64 encoded', 'simple-jwt-login'); ?>
                 </label>
             </div>
         </div>
@@ -222,14 +222,14 @@ if (!defined('ABSPATH')) {
         </div>
 
         <div class="decryption-code-info">
-            <?php echo __('You have to defined in your code the following constants', 'simple-jwt-login'); ?>
-            ( <?php echo __('for example in wp-config.php', 'simple-jwt-login'); ?> ) :
+            <?php echo esc_html__('You have to defined in your code the following constants', 'simple-jwt-login'); ?>
+            ( <?php echo esc_html__('for example in wp-config.php', 'simple-jwt-login'); ?> ) :
             <br />
             <code class="define_private_key" style="display: block">
-                define('<b><?php echo JwtKeyWpConfig::SIMPLE_JWT_PRIVATE_KEY;?></b>','MY_SECRET_KEY');<br />
+                define('<b><?php echo esc_html(JwtKeyWpConfig::SIMPLE_JWT_PRIVATE_KEY);?></b>','MY_SECRET_KEY');<br />
             </code>
             <code class="define_public_key" style="display: block">
-                define('<b><?php echo JwtKeyWpConfig::SIMPLE_JWT_PUBLIC_KEY;?></b>','MY_SECRET_KEY_2');<br />
+                define('<b><?php echo esc_html(JwtKeyWpConfig::SIMPLE_JWT_PUBLIC_KEY);?></b>','MY_SECRET_KEY_2');<br />
             </code>
         </div>
     </div>
@@ -254,10 +254,10 @@ if (!defined('ABSPATH')) {
                 ? '<span class="simple-jwt-error">!</span>'
                 : ''
             ?>
-            <?php echo __('Where should the plugin look for the JWT?', 'simple-jwt-login'); ?>
+            <?php echo esc_html__('Where should the plugin look for the JWT?', 'simple-jwt-login'); ?>
         </h3>
         <p class="text-muted">
-            <?php echo __(
+            <?php echo esc_html__(
                 'Enable one or more locations where the JWT may be provided with the request.',
                 'simple-jwt-login'
             ); ?>
@@ -273,7 +273,7 @@ if (!defined('ABSPATH')) {
                 name="request_keys[url]"
                 required="required"
                 style="display: inline-block"
-                placeholder="<?php echo __('Parameter name', 'simple-jwt-login');?>"
+                placeholder="<?php echo esc_attr__('Parameter name', 'simple-jwt-login');?>"
                 value="<?php echo esc_attr($jwtSettings->getGeneralSettings()->getRequestKeyUrl());?>"
         />
     </div>
@@ -284,20 +284,20 @@ if (!defined('ABSPATH')) {
                 ? "selected"
                 : "";
             ?> >
-                <?php echo __('Off', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Off', 'simple-jwt-login'); ?>
             </option>
             <option value="1" <?php
             echo $jwtSettings->getGeneralSettings()->isJwtFromURLEnabled() === true
                 ? "selected"
                 : "";
             ?>>
-                <?php echo __('On', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('On', 'simple-jwt-login'); ?>
             </option>
         </select>
     </div>
     <div class="col-md-5">
         <?php $requestKeyUrl = esc_html($jwtSettings->getGeneralSettings()->getRequestKeyUrl());?>
-        <div class="code">&<?php echo $requestKeyUrl; ?>=<b>YOUR JWT HERE</b></div>
+        <div class="code">&<?php echo esc_html($requestKeyUrl); ?>=<b>YOUR JWT HERE</b></div>
     </div>
 </div>
 
@@ -322,7 +322,7 @@ if (!defined('ABSPATH')) {
                     : "";
                 ?>
             >
-                <?php echo __('Off', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Off', 'simple-jwt-login'); ?>
             </option>
             <option value="1"
                 <?php
@@ -331,7 +331,7 @@ if (!defined('ABSPATH')) {
                     : "";
                 ?>
             >
-                <?php echo __('On', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('On', 'simple-jwt-login'); ?>
             </option>
         </select>
     </div>
@@ -363,7 +363,7 @@ if (!defined('ABSPATH')) {
                     : "";
                 ?>
             >
-                <?php echo __('Off', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Off', 'simple-jwt-login'); ?>
             </option>
             <option value="1"
                 <?php
@@ -372,7 +372,7 @@ if (!defined('ABSPATH')) {
                     : "";
                 ?>
             >
-                <?php echo __('On', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('On', 'simple-jwt-login'); ?>
             </option>
         </select>
     </div>
@@ -390,7 +390,7 @@ if (!defined('ABSPATH')) {
                 type="text"
                 name="request_keys[header]"
                 required="required"
-                placeholder="<?php echo __('Parameter name', 'simple-jwt-login');?>"
+                placeholder="<?php echo esc_attr__('Parameter name', 'simple-jwt-login');?>"
                 style="display: inline-block"
                 value="<?php echo esc_attr($jwtSettings->getGeneralSettings()->getRequestKeyHeader());?>"
         />
@@ -404,7 +404,7 @@ if (!defined('ABSPATH')) {
                     : "";
                 ?>
             >
-                <?php echo __('Off', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('Off', 'simple-jwt-login'); ?>
             </option>
             <option value="1"
                 <?php
@@ -413,22 +413,21 @@ if (!defined('ABSPATH')) {
                     : "";
                 ?>
             >
-                <?php echo __('On', 'simple-jwt-login'); ?>
+                <?php echo esc_html__('On', 'simple-jwt-login'); ?>
             </option>
         </select>
     </div>
     <div class="col-md-5">
         <?php  $simplejwtloginRequestHeaderKey = esc_html($jwtSettings->getGeneralSettings()->getRequestKeyHeader()); ?>
-        <div class="code"><?php echo $simplejwtloginRequestHeaderKey?>: Bearer <b>YOUR_JWT_HERE</b></div>
+        <div class="code"><?php echo esc_html($simplejwtloginRequestHeaderKey)?>: Bearer <b>YOUR_JWT_HERE</b></div>
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-12">
         <p class="text-muted">
-            * <?php echo __(
-                'If the JWT is present in multiple places,'
-                . ' the higher number of the option overwrites the smaller number.',
+            * <?php echo esc_html__(
+                'If the JWT is present in multiple places, the higher number of the option overwrites the smaller number.',
                 'simple-jwt-login'
             ); ?>
         </p>
@@ -447,13 +446,12 @@ if (!defined('ABSPATH')) {
             ?>
         />
         <label for="api_middleware_enabled">
-        <?php echo __('All WordPress endpoints checks for JWT authentication', 'simple-jwt-login');?>
+        <?php echo esc_html__('All WordPress endpoints checks for JWT authentication', 'simple-jwt-login');?>
         </label><br/>
         <p class="text-muted">
             * <?php
-            echo __(
-                'If the JWT is provided on other endpoints, the plugin will try to authenticate'
-                . ' the user from the JWT in order to perform that API call.',
+            echo esc_html__(
+                'If the JWT is provided on other endpoints, the plugin will try to authenticate the user from the JWT in order to perform that API call.',
                 'simple-jwt-login'
             );
             ?>
@@ -472,16 +470,17 @@ if (!defined('ABSPATH')) {
         />
         <label for="wp_graphql_enabled">
             <span class="beta">beta</span>
-            <?php echo __(
-                sprintf('Authenticate user to %sWPGraphQL%s', '<a href="https://www.wpgraphql.com/" target="_blank">', "</a>"),
-                'simple-jwt-login'
-            );?>
+            <?php echo wp_kses_post(sprintf(
+                /* translators: 1: opening link tag, 2: closing link tag */
+                __('Authenticate user to %1$sWPGraphQL%2$s', 'simple-jwt-login'),
+                '<a href="https://www.wpgraphql.com/" target="_blank">',
+                '</a>'
+            ));?>
         </label><br/>
         <p class="text-muted">
             * <?php
-            echo __(
-                'If the JWT is provided on WPGraphQL queries, the plugin will try to authenticate'
-                . ' the user from the JWT before performing the query.',
+            echo esc_html__(
+                'If the JWT is provided on WPGraphQL queries, the plugin will try to authenticate the user from the JWT before performing the query.',
                 'simple-jwt-login'
             );
             ?>
@@ -493,7 +492,7 @@ if (!defined('ABSPATH')) {
 <div class="row">
     <div class="col-md-12">
         <h3 class="section-title">
-          <?php echo __('Security', 'simple-jwt-login');?>
+          <?php echo esc_html__('Security', 'simple-jwt-login');?>
         </h3>
     </div>
     <div class="col-md-12">
@@ -506,11 +505,11 @@ if (!defined('ABSPATH')) {
             ?>
         />
         <label for="security_safe_redirect">
-            <?php echo __('Enable safe redirects', 'simple-jwt-login');?>
+            <?php echo esc_html__('Enable safe redirects', 'simple-jwt-login');?>
         </label><br/>
         <p class="text-muted">
             * <?php
-            echo __(
+            echo esc_html__(
                 'Use wp_safe_redirect for all the redirects',
                 'simple-jwt-login'
             );

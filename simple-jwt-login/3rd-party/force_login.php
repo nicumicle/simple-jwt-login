@@ -4,6 +4,11 @@ use SimpleJWTLogin\Helpers\RestRouteHelper;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Modules\WordPressData;
 
+if (! defined('ABSPATH')) {
+    /** @phpstan-ignore-next-line  */
+    exit;
+} // Exit if accessed directly
+
 ## Force Login
 ## Lets anonymous requests reach the plugin's own endpoints when the Force Login
 ## plugin blocks the REST API for logged-out users (error code `rest_unauthorized`).

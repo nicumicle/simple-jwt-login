@@ -31,7 +31,7 @@ class LoginService extends BaseService implements ServiceInterface
 
                 return $this->wordPressData->redirect($redirectOnFail);
             }
-            throw new Exception($e->getMessage(), $e->getCode(), $e);
+            throw $e;
         }
     }
 
@@ -50,8 +50,8 @@ class LoginService extends BaseService implements ServiceInterface
         $user = $this->getUserDetails($loginParameter);
         if ($user === null) {
             throw new Exception(
-                __('User not found.', 'simple-jwt-login'),
-                ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND
+                esc_html__('User not found.', 'simple-jwt-login'),
+                (int) ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND
             );
         }
 
@@ -84,27 +84,28 @@ class LoginService extends BaseService implements ServiceInterface
         $this->jwt = $this->getJwtFromRequestHeaderOrCookie();
         if ($this->jwtSettings->getLoginSettings()->isAutologinEnabled() === false) {
             throw new Exception(
-                __('Auto-login is not enabled on this website.', 'simple-jwt-login'),
-                ErrorCodes::ERR_AUTO_LOGIN_NOT_ENABLED
+                esc_html__('Auto-login is not enabled on this website.', 'simple-jwt-login'),
+                (int) ErrorCodes::ERR_AUTO_LOGIN_NOT_ENABLED
             );
         }
 
         // Check if JWT is present
         if (empty($this->jwt)) {
             throw new Exception(
-                __('Wrong Request.', 'simple-jwt-login'),
-                ErrorCodes::ERR_VALIDATE_LOGIN_WRONG_REQUEST
+                esc_html__('Wrong Request.', 'simple-jwt-login'),
+                (int) ErrorCodes::ERR_VALIDATE_LOGIN_WRONG_REQUEST
             );
         }
 
         // Validate AUTH KEY
         if ($this->jwtSettings->getLoginSettings()->isAuthKeyRequiredOnLogin() && $this->validateAuthKey() === false) {
             throw  new Exception(
-                sprintf(
+                esc_html(sprintf(
+                    /* translators: %s: auth code parameter name */
                     __('Invalid Auth Code ( %s ) provided.', 'simple-jwt-login'),
                     $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey()
-                ),
-                ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED
+                )),
+                (int) ErrorCodes::ERR_INVALID_AUTH_CODE_PROVIDED
             );
         }
 
@@ -112,11 +113,12 @@ class LoginService extends BaseService implements ServiceInterface
         $allowedIPs = $this->jwtSettings->getLoginSettings()->getAllowedLoginIps();
         if (!empty($allowedIPs) && !$this->serverHelper->isClientIpInList($allowedIPs)) {
             throw new Exception(
-                sprintf(
+                esc_html(sprintf(
+                    /* translators: %s: client IP address */
                     __('This IP[ %s ] is not allowed to auto-login.', 'simple-jwt-login'),
                     $this->serverHelper->getClientIP()
-                ),
-                ErrorCodes::ERR_IP_IS_NOT_ALLOWED_TO_LOGIN
+                )),
+                (int) ErrorCodes::ERR_IP_IS_NOT_ALLOWED_TO_LOGIN
             );
         }
 
@@ -128,8 +130,8 @@ class LoginService extends BaseService implements ServiceInterface
                 !isset($payload['iss']) ||
                 !in_array($payload['iss'], ArrayHelper::convertStringToArray($allowedIss))) {
                 throw new Exception(
-                    __('The JWT issuer(iss) is not allowed to auto-login.', 'simple-jwt-login'),
-                    ErrorCodes::ERR_INVALID_IIS_LOGIN
+                    esc_html__('The JWT issuer(iss) is not allowed to auto-login.', 'simple-jwt-login'),
+                    (int) ErrorCodes::ERR_INVALID_IIS_LOGIN
                 );
             }
         }

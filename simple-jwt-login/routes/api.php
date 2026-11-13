@@ -122,7 +122,9 @@ add_action('rest_api_init', function () {
                 
             $currentURL = esc_url($serverHelper->getCurrentURL());
             $currentURL = str_replace(home_url(), "", $currentURL);
-            $documentRoot = esc_html($_SERVER['DOCUMENT_ROOT']);
+            $documentRoot = isset($_SERVER['DOCUMENT_ROOT'])
+                ? esc_html(sanitize_text_field(wp_unslash($_SERVER['DOCUMENT_ROOT'])))
+                : '';
 
             $hasAccess = $service->hasAccess($currentURL, $documentRoot);
             if ($hasAccess) {

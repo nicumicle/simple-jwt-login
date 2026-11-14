@@ -1,0 +1,27 @@
+name: Tests
+
+# Unit and feature tests run in parallel; the cross-site tests (Playwright, slowest)
+# run last, only when both passed.
+
+on:
+  push:
+    branches: [ master, v3 ]
+  pull_request:
+    branches: [ master, v3 ]
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    name: Unit Tests
+    uses: ./.github/workflows/unit_tests.yml
+
+  feature:
+    name: Feature Tests
+    uses: ./.github/workflows/feature_tests.yml
+
+  cross-site:
+    name: Cross-site Tests
+    needs: [ unit, feature ]
+    uses: ./.github/workflows/cross_site_tests.yml

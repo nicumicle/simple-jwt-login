@@ -1,0 +1,13 @@
+{
+  "name": "simple-jwt-login-cross-site-tests",
+  "private": true,
+  "description": "Calls from another site to the WordPress site (CSRF + CORS), with Playwright Test",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1"
+  }
+}

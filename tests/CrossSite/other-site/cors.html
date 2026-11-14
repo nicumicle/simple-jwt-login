@@ -1,0 +1,27 @@
+<!doctype html>
+<html><head><title>pending</title><script src="common.js"></script></head>
+<body>
+<!--
+  A cross-origin app calling the REST API with CORS (preflight + readable response).
+  cred=header: JWT in the Authorization header (from the URL fragment).
+  cred=cookie: the browser's JWT cookie (credentials: include).
+  The outcome goes to document.title: "readable HTTP <status>" or "not readable: <error>".
+-->
+<script>
+  const credential = params.get('cred') || 'header';
+  const jwt = new URLSearchParams(location.hash.slice(1)).get('jwt') || '';
+  const options = {
+    method: 'POST',
+    mode: 'cors',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(newAdmin),
+    credentials: credential === 'cookie' ? 'include' : 'omit',
+  };
+  if (credential === 'header') {
+    options.headers.Authorization = 'Bearer ' + jwt;
+  }
+  fetch(target + '/?rest_route=/wp/v2/users', options)
+    .then((response) => { document.title = 'readable HTTP ' + response.status; })
+    .catch((error) => { document.title = 'not readable: ' + error.message; });
+</script>
+</body></html>

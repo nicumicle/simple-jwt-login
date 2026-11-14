@@ -5,6 +5,7 @@ namespace SimpleJWTLogin\Services;
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Exceptions\ValidationException as ExceptionsValidationException;
+use SimpleJWTLogin\Helpers\CrossSiteRequestHelper;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
 use SimpleJWTLogin\Helpers\JwtPayloadHelper;
 use SimpleJWTLogin\Helpers\ServerHelper;
@@ -297,11 +298,41 @@ abstract class BaseService
      */
     public function getJwtFromRequestHeaderOrCookie()
     {
-        $headerJwt = $this->getJwtFromHeader();
+        // Cookie and session JWTs are sent by the browser on its own: a CORS "*"
+        // entry must never trust them, or any site could use them (CSRF).
+        $ambientAllowed = $this->isTrustedRequest(false);
+        $headerJwt = $ambientAllowed || $this->isTrustedRequest(true) ? $this->getJwtFromHeader() : null;
         if (!empty($headerJwt)) {
             return $headerJwt;
         }
 
+        $ambientJwt = $ambientAllowed ? $this->getAmbientJwt() : null;
+        if ($ambientJwt !== null) {
+            return $ambientJwt;
+        }
+
+        $generalSettings = $this->jwtSettings->getGeneralSettings();
+        $requestUrlKey = strtolower($generalSettings->getRequestKeyUrl());
+        $request = array_change_key_case($this->request, CASE_LOWER);
+        if (!$generalSettings->isJwtFromURLEnabled() || !isset($request[$requestUrlKey])) {
+            return null;
+        }
+
+        // $_REQUEST may include cookies (request_order / variables_order): a cookie
+        // named like the URL key is still an ambient credential.
+        $cookies = array_change_key_case((array) $this->cookie, CASE_LOWER);
+        if (!$ambientAllowed && isset($cookies[$requestUrlKey])) {
+            return null;
+        }
+
+        return $request[$requestUrlKey];
+    }
+
+    /**
+     * @return string|null
+     */
+    protected function getAmbientJwt()
+    {
         $generalSettings = $this->jwtSettings->getGeneralSettings();
         if ($generalSettings->isJwtFromCookieEnabled()) {
             $cookieKey = $generalSettings->getRequestKeyCookie();
@@ -317,12 +348,48 @@ abstract class BaseService
             }
         }
 
-        $requestUrlKey = strtolower($generalSettings->getRequestKeyUrl());
-        $request = array_change_key_case($this->request, CASE_LOWER);
+        return null;
+    }
 
-        return $generalSettings->isJwtFromURLEnabled() && isset($request[$requestUrlKey])
-            ? $request[$requestUrlKey]
-            : null;
+    /**
+     * CSRF protection for every route that reads a JWT (plugin routes, the API
+     * middleware on all endpoints, Protect Endpoints): a header, cookie or session
+     * JWT only authenticates requests coming from this site or from an origin
+     * listed in the CORS settings.
+     * Without a ServerHelper the origin cannot be checked: fail closed.
+     *
+     * @param bool $allowWildcard Whether a CORS "*" entry trusts every origin.
+     * @return bool
+     */
+    protected function isTrustedRequest($allowWildcard)
+    {
+        if ($this->serverHelper === null) {
+            return false;
+        }
+        $trustedUrls = $this->wordPressData !== null ? [$this->wordPressData->getSiteUrl()] : [];
+
+        return !CrossSiteRequestHelper::isCrossSite(
+            $this->serverHelper,
+            $trustedUrls,
+            $this->corsTrustedOrigins($allowWildcard)
+        );
+    }
+
+    /**
+     * @param bool $allowWildcard
+     * @return string[]
+     */
+    protected function corsTrustedOrigins($allowWildcard)
+    {
+        $corsSettings = $this->jwtSettings->getCorsSettings();
+        if (!$corsSettings->isCorsEnabled() || !$corsSettings->isAllowOriginEnabled()) {
+            return [];
+        }
+        if ($allowWildcard) {
+            return $corsSettings->getAllowedOrigins();
+        }
+
+        return array_values(array_diff($corsSettings->getAllowedOrigins(), ['*']));
     }
 
     /**

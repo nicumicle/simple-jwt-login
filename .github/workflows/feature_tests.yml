@@ -1,10 +1,8 @@
 name: Feature Tests
 
 on:
-  push:
-    branches: [ master, v3 ]
-  pull_request:
-    branches: [ master, v3 ]
+  # Called by tests.yml (unit + feature, then cross-site).
+  workflow_call:
 
 env:
   SITE_URL: simplejwtlogin.local

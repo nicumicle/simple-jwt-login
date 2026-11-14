@@ -46,6 +46,18 @@ services:
       WORDPRESS_DEBUG_LOG: 1
       WORDPRESS_DEBUG_DISPLAY: 1
 
+  # Another site calling WordPress, for the Playwright suite in tests/CrossSite (CSRF + CORS).
+  # From the browser: http://127.0.0.1:8090 is cross-site to http://localhost:88,
+  # http://localhost:8090 is same-site (same host, other port).
+  other-site:
+    image: nginx:alpine
+    container_name: sjl-other-site
+    volumes:
+      - ../tests/CrossSite/other-site:/usr/share/nginx/html:ro
+    ports:
+      - "8090:80"
+      - "8091:80" # a second origin of the other site (CORS with several allowed origins)
+
 volumes:
   wpdb_data: {}
   wordpress_data: {}

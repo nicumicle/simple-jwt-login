@@ -177,6 +177,19 @@ class ServerHelper
     }
 
     /**
+     * @return bool
+     */
+    public function isHttps()
+    {
+        $https = isset($this->server['HTTPS']) ? strtolower((string) $this->server['HTTPS']) : '';
+        if ($https === 'on' || $https === '1') {
+            return true;
+        }
+
+        return isset($this->server['SERVER_PORT']) && (string) $this->server['SERVER_PORT'] === '443';
+    }
+
+    /**
      * @return string
      */
     public function getCurrentURL()

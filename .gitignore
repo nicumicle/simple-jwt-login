@@ -17,3 +17,7 @@ mailpoet/*
 simple-jwt-login-mailpoet/*
 wp-graphql/*
 tmp/*
+# cross-site tests (Playwright)
+tests/CrossSite/node_modules/
+tests/CrossSite/test-results/
+tests/CrossSite/playwright-report/

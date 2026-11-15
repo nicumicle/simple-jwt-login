@@ -77,7 +77,9 @@ jobs:
             wp option get siteurl --path=/var/www/html
             wp config set --raw WP_DEBUG true --path=/var/www/html
             wp config set --raw WP_DEBUG_LOG true --path=/var/www/html
-            wp config set --raw WP_DEBUG_DISPLAY true --path=/var/www/html
+            # Errors go to wp-content/debug.log (shown by "Server logs" on failure). Displaying them
+            # would prepend HTML notices (e.g. WooCommerce's early textdomain notice) to JSON responses.
+            wp config set --raw WP_DEBUG_DISPLAY false --path=/var/www/html
             
             echo "127.0.0.1 $SITE_URL" | sudo tee -a /etc/hosts
       -   name: "🚧 Init the plugin"

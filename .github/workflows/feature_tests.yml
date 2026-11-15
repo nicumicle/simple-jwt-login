@@ -20,7 +20,7 @@ jobs:
     name: Simple-JWT-Login Feature tests
     strategy:
       matrix:
-        php_version: [ 8.2, 8.3, 8.4 ]
+        php_version: [ 8.2, 8.3, 8.4, 8.5 ]
     steps:
       - name: "Checkout"
         uses: actions/checkout@v4
@@ -48,8 +48,9 @@ jobs:
             sudo a2enmod php${{ matrix.php_version }}
             # The session JWT tests write sess_* files that Apache must read. Debian's default
             # (/var/lib/php/sessions) is root only and apache2.service uses PrivateTmp, so /tmp
-            # is not shared either. SJL_SESSION_DIR in the test step must match.
-            sudo mkdir -p /var/lib/sjl-sessions && sudo chmod 1777 /var/lib/sjl-sessions
+            # is not shared either. No sticky bit: fs.protected_regular blocks www-data from
+            # opening the runner's sess_* files in a sticky dir. SJL_SESSION_DIR in the test step must match.
+            sudo mkdir -p /var/lib/sjl-sessions && sudo chmod 0777 /var/lib/sjl-sessions
             echo "session.save_path = /var/lib/sjl-sessions" | sudo tee /etc/php/${{ matrix.php_version }}/apache2/conf.d/99-sjl-tests.ini
             sudo /etc/init.d/apache2 start
       -   name: "🚧 Install WordPress"
@@ -115,3 +116,8 @@ jobs:
             cd /var/www/html/wp-content/plugins/
             echo "🧪 Running the tests..."
             SJL_SESSION_DIR=/var/lib/sjl-sessions vendor/bin/phpunit --testsuite "Feature" --testdox --no-coverage
+      -   name: "🩻 Server logs"
+          if: failure()
+          run: |
+            sudo tail -n 200 /var/log/apache2/error.log || true
+            sudo tail -n 200 /var/www/html/wp-content/debug.log || true

@@ -27,7 +27,7 @@ class PatchstackCsrfPocTest extends FeatureTestCase
     {
         $protectAll = [
             'enabled'        => 1,
-            'default_action' => (string) ProtectEndpointSettings::ALL_ENDPOINTS,
+            'default_action' => ProtectEndpointSettings::DEFAULT_PROTECT_ALL,
             'rules_url'      => [],
             'rules_method'   => [],
             'rules_match'    => [],

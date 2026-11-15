@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-15T06:55:04+00:00\n"
+"POT-Creation-Date: 2026-11-15T08:25:24+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -2215,7 +2215,7 @@ msgid "Trust reverse proxy IP headers"
 msgstr ""
 
 #: views/general-view.php:306
-msgid "Detect the client IP from the Client-IP / X-Forwarded-For headers. Enable this only when the site runs behind a trusted reverse proxy or load balancer. When disabled, IP restrictions use the connection address (REMOTE_ADDR), which cannot be spoofed."
+msgid "Detect the client IP from the Client-IP / X-Forwarded-For headers, and the scheme (http / https) from X-Forwarded-Proto. Enable this only when the site runs behind a trusted reverse proxy or load balancer. When disabled, IP restrictions use the connection address (REMOTE_ADDR), which cannot be spoofed."
 msgstr ""
 
 #: views/hooks-view.php:32

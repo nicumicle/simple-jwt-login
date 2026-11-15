@@ -114,21 +114,27 @@ class CrossSiteRequestHelper
     }
 
     /**
-     * Scheme the client used. `X-Forwarded-Proto` (TLS-terminating proxy) cannot
-     * be set by a cross-site form or navigation, so it is safe for this check.
+     * Scheme the client used. `X-Forwarded-Proto` is sent by the client too, so it
+     * is only read behind a trusted proxy. Without one, a TLS-terminating proxy is
+     * still covered by the https site URL in $trustedUrls.
      *
      * @param ServerHelper $serverHelper
      * @return string
      */
     protected static function requestScheme($serverHelper)
     {
+        $connectionScheme = $serverHelper->isHttps() ? 'https' : 'http';
+        if (!$serverHelper->usesTrustedProxyHeaders()) {
+            return $connectionScheme;
+        }
+
         $forwarded = explode(',', (string) $serverHelper->getHeader('X-Forwarded-Proto'));
         $forwardedScheme = strtolower(trim($forwarded[0]));
         if ($forwardedScheme === 'https' || $forwardedScheme === 'http') {
             return $forwardedScheme;
         }
 
-        return $serverHelper->isHttps() ? 'https' : 'http';
+        return $connectionScheme;
     }
 
     /**

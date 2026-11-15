@@ -25,6 +25,43 @@ class CrossSiteRequestHelperTest extends TestCase
     }
 
     /**
+     * X-Forwarded-Proto is only read behind a trusted proxy.
+     *
+     * @param array<string,string> $server
+     */
+    #[DataProvider('trustedProxyProvider')]
+    public function testIsCrossSiteBehindTrustedProxy(array $server, bool $expected): void
+    {
+        $server = array_merge(['HTTP_HOST' => 'site.test'], $server);
+
+        $this->assertSame(
+            $expected,
+            CrossSiteRequestHelper::isCrossSite(ServerHelper::withTrustedProxyHeaders($server), [])
+        );
+    }
+
+    /**
+     * @return array<string,array{array<string,string>, bool}>
+     */
+    public static function trustedProxyProvider(): array
+    {
+        return [
+            'Origin https behind a TLS proxy' => [
+                ['HTTP_X_FORWARDED_PROTO' => 'https, http', 'HTTP_ORIGIN' => 'https://site.test'],
+                false,
+            ],
+            'Origin http when the proxy forwards https' => [
+                ['HTTP_X_FORWARDED_PROTO' => 'https', 'HTTP_ORIGIN' => 'http://site.test'],
+                true,
+            ],
+            'unknown forwarded scheme falls back to the connection' => [
+                ['HTTPS' => 'on', 'HTTP_X_FORWARDED_PROTO' => 'ftp', 'HTTP_ORIGIN' => 'https://site.test'],
+                false,
+            ],
+        ];
+    }
+
+    /**
      * @return array<string,array{array<string,string>, string[], bool}>
      */
     public static function requestProvider(): array
@@ -65,10 +102,15 @@ class CrossSiteRequestHelperTest extends TestCase
                 true,
             ],
             'Origin https on port 443' => [['SERVER_PORT' => '443', 'HTTP_ORIGIN' => 'https://site.test'], [], false],
-            'Origin https behind a TLS proxy (X-Forwarded-Proto)' => [
-                ['HTTP_X_FORWARDED_PROTO' => 'https, http', 'HTTP_ORIGIN' => 'https://site.test'],
+            'X-Forwarded-Proto ignored without a trusted proxy' => [
+                ['HTTP_X_FORWARDED_PROTO' => 'https', 'HTTP_ORIGIN' => 'https://site.test'],
                 [],
-                false,
+                true,
+            ],
+            'X-Forwarded-Proto cannot downgrade an https site without a trusted proxy' => [
+                ['HTTPS' => 'on', 'HTTP_X_FORWARDED_PROTO' => 'http', 'HTTP_ORIGIN' => 'http://site.test'],
+                [],
+                true,
             ],
             'Origin https behind a TLS proxy (site URL)' => [
                 ['HTTP_ORIGIN' => 'https://site.test'],

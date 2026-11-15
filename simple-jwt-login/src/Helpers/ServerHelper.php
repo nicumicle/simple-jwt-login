@@ -87,6 +87,17 @@ class ServerHelper
     }
 
     /**
+     * Whether the site runs behind a trusted reverse proxy, so proxy headers
+     * (X-Forwarded-For, X-Forwarded-Proto, ...) may be used.
+     *
+     * @return bool
+     */
+    public function usesTrustedProxyHeaders()
+    {
+        return $this->useProxyHeaders;
+    }
+
+    /**
      * @return string|null
      */
     public function getClientIP()

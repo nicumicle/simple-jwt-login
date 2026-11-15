@@ -4,6 +4,7 @@ namespace SimpleJwtLoginTests\Unit\Services;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use ReflectionProperty;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
@@ -17,6 +18,13 @@ use SimpleJWTLogin\Services\RouteService;
 class AmbientJwtCsrfTest extends TestCase
 {
     private const COOKIE_KEY = 'simple-jwt-login-token';
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Settings parsers are cached statically: each case must read its own CORS settings.
+        (new ReflectionProperty(SimpleJWTLoginSettings::class, 'settingsInstances'))->setValue(null, []);
+    }
 
     /**
      * @param array<string,string> $server

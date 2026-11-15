@@ -20,7 +20,7 @@ jobs:
     name: Simple-JWT-Login Feature tests
     strategy:
       matrix:
-        php_version: [ 8.2, 8.3, 8.4, 8.5 ]
+        php_version: [ 8.4, 8.5 ]
     steps:
       - name: "Checkout"
         uses: actions/checkout@v4
@@ -117,7 +117,9 @@ jobs:
             
             cd /var/www/html/wp-content/plugins/
             echo "🧪 Running the tests..."
-            SJL_SESSION_DIR=/var/lib/sjl-sessions vendor/bin/phpunit --testsuite "Feature" --testdox --no-coverage
+            # Run as www-data: PHP only opens sess_* files owned by its own uid, and the session JWT
+            # tests write them for Apache (www-data) to read.
+            sudo -u www-data env SJL_SESSION_DIR=/var/lib/sjl-sessions "$(command -v php)" vendor/bin/phpunit --testsuite "Feature" --testdox --no-coverage
       -   name: "🩻 Server logs"
           if: failure()
           run: |

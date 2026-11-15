@@ -378,7 +378,7 @@ Make sure you are passing a valid, non-expired JWT either as a Bearer token in t
 
 A complete changelog is available on the [GitHub repository](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md).
 
-= 4.1.1 (14 November 2026) =
+= 4.1.1 (15 November 2026) =
 - Security: a JWT read from a cookie, the session or the Authorization header no longer authenticates cross-site requests (including sibling subdomains and other ports), fixing CSRF on cookie-authenticated REST requests when the API middleware is enabled (Reported via Patchstack)
 - Breaking: cross-origin browser apps that send the JWT must have their origin listed in the CORS "Allow origin" setting. A "*" entry trusts the Authorization header only, never the cookie or session
 - Breaking: with CORS disabled (or "Allow origin" off), a JWT sent by a browser page on another site, even in the Authorization header, is ignored. Requests from the site itself, server-to-server calls, mobile apps and JWTs passed in the URL (e.g. autologin links) are not affected
@@ -519,7 +519,7 @@ For the full history back to 1.0.0 (2019), see the [Changelog on GitHub](https:/
 
 == Upgrade Notice ==
 
-= 4.1.1 (14 November 2026) =
+= 4.1.1 (15 November 2026) =
 Security fix (CSRF): a JWT no longer authenticates requests from other sites. Cross-origin browser apps must be listed in the CORS "Allow origin" setting - update recommended.
 
 = 4.1.0 (11 November 2026) =

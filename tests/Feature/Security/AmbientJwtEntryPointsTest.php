@@ -19,7 +19,10 @@ use Psr\Http\Message\ResponseInterface;
  */
 class AmbientJwtEntryPointsTest extends AmbientCredentialTestCase
 {
-    private const SESSION_DIR = '/tmp';
+    /**
+     * Web server session.save_path, overridden by SJL_SESSION_DIR (CI).
+     */
+    private const DEFAULT_SESSION_DIR = '/tmp';
 
     /**
      * Entry points (keys of scenario()).
@@ -193,7 +196,7 @@ class AmbientJwtEntryPointsTest extends AmbientCredentialTestCase
 
         if ($credential === 'session') {
             $sessionId = bin2hex(random_bytes(16));
-            $file      = self::SESSION_DIR . '/sess_' . $sessionId;
+            $file      = (getenv('SJL_SESSION_DIR') ?: self::DEFAULT_SESSION_DIR) . '/sess_' . $sessionId;
             file_put_contents($file, 'simple-jwt-login-token|' . serialize($jwt));
             chmod($file, 0666);
 

@@ -31,7 +31,7 @@ jobs:
           php-version: ${{ matrix.php_version }}
           extension: mbstring, intl #setup extensions
           ini-values: post_max_size=256M, short_open_tag=Off, error_reporting=E_ALL, display_errors=On, display_startup_errors=On  #setup php.ini configuration
-          coverage: xdebug #setup coverage driver
+          coverage: none # feature tests run against Apache, CLI coverage is meaningless
         env:
           update: true #install the latest patch release, older ones are rejected by roave/security-advisories
           pecl: false
@@ -46,6 +46,11 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y libapache2-mod-php${{ matrix.php_version }}
             sudo a2enmod php${{ matrix.php_version }}
+            # The session JWT tests write sess_* files that Apache must read. Debian's default
+            # (/var/lib/php/sessions) is root only and apache2.service uses PrivateTmp, so /tmp
+            # is not shared either. SJL_SESSION_DIR in the test step must match.
+            sudo mkdir -p /var/lib/sjl-sessions && sudo chmod 1777 /var/lib/sjl-sessions
+            echo "session.save_path = /var/lib/sjl-sessions" | sudo tee /etc/php/${{ matrix.php_version }}/apache2/conf.d/99-sjl-tests.ini
             sudo /etc/init.d/apache2 start
       -   name: "🚧 Install WordPress"
           run: |
@@ -78,6 +83,8 @@ jobs:
           run: |
             cp -R simple-jwt-login /var/www/html/wp-content/plugins
             wp plugin activate simple-jwt-login --path=/var/www/html
+            # Bridges covered by tests/Feature/Security/AmbientJwtEntryPointsTest.
+            wp plugin install woocommerce wp-graphql --activate --path=/var/www/html
       -   name: "🚧 Prepare Feature tests"
           run: |
             cp phpunit.xml.actions.dist /var/www/html/wp-content/plugins/phpunit.xml
@@ -87,9 +94,8 @@ jobs:
             cd /var/www/html/wp-content/plugins
             composer install --prefer-dist --no-progress
 
-            mkdir -p /var/www/html/wp-content/plugins/.phpunit.cache/code-coverage
+            mkdir -p /var/www/html/wp-content/plugins/.phpunit.cache
             sudo chmod -R 777 /var/www/html/wp-content/plugins/.phpunit.cache/
-            touch clover.xml
       -   name: "🚧 Change /var/www/html owner"
           run: |
             sudo chown -R www-data:www-data /var/www/html
@@ -108,4 +114,4 @@ jobs:
             
             cd /var/www/html/wp-content/plugins/
             echo "🧪 Running the tests..."
-            vendor/bin/phpunit --testsuite "Feature" --testdox
+            SJL_SESSION_DIR=/var/lib/sjl-sessions vendor/bin/phpunit --testsuite "Feature" --testdox --no-coverage

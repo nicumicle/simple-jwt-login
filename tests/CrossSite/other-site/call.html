@@ -1,0 +1,66 @@
+<!doctype html>
+<html><head><title>pending</title><script src="common.js"></script></head>
+<body>
+<!--
+  Makes one REST call to WordPress, described in the URL fragment (never sent to a server):
+    #call={"route": "/simple-jwt-login/v1/auth", "method": "POST", "data": {...},
+           "mode": "cors" | "form" | "navigate", "cred": "none" | "header" | "cookie",
+           "jwt": "...", "headers": {...}}
+  cors:     fetch() with CORS, the page reads the answer when WordPress allows its origin.
+            cred=header sends "Authorization: Bearer <jwt>", cred=cookie sends the browser's cookies.
+  form:     an auto-submitted form (POST, other methods via _method), the browser adds its cookies.
+  navigate: a top-level GET navigation (data in the query, other methods via _method).
+  CORS outcome: document.title = "readable HTTP <status>" or "not readable: <error>",
+  window.callResult = {status, body}.
+-->
+<script>
+  const call = JSON.parse(new URLSearchParams(location.hash.slice(1)).get('call') || '{}');
+  const method = (call.method || 'GET').toUpperCase();
+  const data = call.data || {};
+  const url = new URL(target + '/');
+  url.searchParams.set('rest_route', call.route || '/');
+
+  const addQuery = () => Object.entries(data).forEach(([name, value]) => url.searchParams.set(name, value));
+
+  if (call.mode === 'form') {
+    if (method !== 'GET' && method !== 'POST') {
+      url.searchParams.set('_method', method);
+    }
+    const form = document.createElement('form');
+    form.method = method === 'GET' ? 'GET' : 'POST';
+    form.action = url.toString();
+    for (const [name, value] of Object.entries(method === 'GET' ? {...Object.fromEntries(url.searchParams), ...data} : data)) {
+      const input = document.createElement('input');
+      input.name = name;
+      input.value = value;
+      form.appendChild(input);
+    }
+    document.body.appendChild(form);
+    form.submit();
+  } else if (call.mode === 'navigate') {
+    addQuery();
+    if (method !== 'GET') {
+      url.searchParams.set('_method', method);
+    }
+    location.href = url.toString();
+  } else {
+    const headers = {...(call.headers || {})};
+    const options = {method, mode: 'cors', credentials: call.cred === 'cookie' ? 'include' : 'omit', headers};
+    if (call.cred === 'header') {
+      headers.Authorization = 'Bearer ' + call.jwt;
+    }
+    if (method === 'GET') {
+      addQuery();
+    } else {
+      headers['Content-Type'] = 'application/json';
+      options.body = JSON.stringify(data);
+    }
+    fetch(url.toString(), options)
+      .then(async (response) => {
+        window.callResult = {status: response.status, body: await response.text()};
+        document.title = 'readable HTTP ' + response.status;
+      })
+      .catch((error) => { document.title = 'not readable: ' + error.message; });
+  }
+</script>
+</body></html>

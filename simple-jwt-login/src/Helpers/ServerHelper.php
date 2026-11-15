@@ -87,6 +87,17 @@ class ServerHelper
     }
 
     /**
+     * Whether the site runs behind a trusted reverse proxy, so proxy headers
+     * (X-Forwarded-For, X-Forwarded-Proto, ...) may be used.
+     *
+     * @return bool
+     */
+    public function usesTrustedProxyHeaders()
+    {
+        return $this->useProxyHeaders;
+    }
+
+    /**
      * @return string|null
      */
     public function getClientIP()
@@ -174,6 +185,19 @@ class ServerHelper
         return isset($this->server['REQUEST_METHOD'])
             ? $this->server['REQUEST_METHOD']
             : null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHttps()
+    {
+        $https = isset($this->server['HTTPS']) ? strtolower((string) $this->server['HTTPS']) : '';
+        if ($https === 'on' || $https === '1') {
+            return true;
+        }
+
+        return isset($this->server['SERVER_PORT']) && (string) $this->server['SERVER_PORT'] === '443';
     }
 
     /**

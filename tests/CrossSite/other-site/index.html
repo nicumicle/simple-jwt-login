@@ -1,0 +1,14 @@
+<!doctype html>
+<html><head><title>Simple JWT Login - other site</title></head>
+<body>
+<h1>Another site calling the WordPress site (local testing only)</h1>
+<p>Used by the Playwright suite in <code>tests/CrossSite</code>. Each page tries to create an administrator on the
+WordPress site. Add <code>?target=http://localhost:88&amp;m=some_username</code>.</p>
+<ul>
+  <li><a href="form.html">form.html</a> - auto-submitting form POST with the JWT cookie (the reported PoC)</li>
+  <li><a href="navigate.html">navigate.html</a> - GET navigation with _method=POST, no Referer</li>
+  <li><a href="fetch.html">fetch.html</a> - background no-cors fetch with the JWT cookie</li>
+  <li><a href="call.html">call.html</a> - any REST call, described in the fragment (<code>#call={...}</code>, see the page)</li>
+  <li><a href="cors.html">cors.html</a> - CORS call (<code>&amp;cred=header#jwt=...</code> or <code>&amp;cred=cookie</code>)</li>
+</ul>
+</body></html>

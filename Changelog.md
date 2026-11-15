@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 4.1.1 (15 November 2026)
+- Security: a JWT read from a cookie, the session or the Authorization header no longer authenticates cross-site requests (including sibling subdomains and other ports), fixing CSRF on cookie-authenticated REST requests when the API middleware is enabled (Reported via Patchstack)
+- Breaking: cross-origin browser apps that send the JWT must have their origin listed in the CORS "Allow origin" setting. A "*" entry trusts the Authorization header only, never the cookie or session
+- Breaking: with CORS disabled (or "Allow origin" off), a JWT sent by a browser page on another site, even in the Authorization header, is ignored. Requests from the site itself, server-to-server calls, mobile apps and JWTs passed in the URL (e.g. autologin links) are not affected
+- Fix "JWT from session" making every plugin endpoint and Protect Endpoints fail with a 500 error (call to an undefined session function)
+
 ## 4.1.0 (11 November 2026)
 - Security: fix CSRF in the Force Login integration on cookie-authenticated REST requests (Reported via Patchstack)
 - Security: JWT middleware and the WooCommerce integration now check the resolved REST route instead of searching the URL

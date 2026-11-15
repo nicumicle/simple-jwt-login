@@ -1,0 +1,114 @@
+name: Cross-site Tests
+
+# Calls from another site to the WordPress site (CSRF + CORS), with Playwright Test:
+# curl from a separate container and a real headless Chrome. Runs on its own runner
+# (it rewrites the plugin settings, like the feature tests), and only after the unit and
+# feature tests passed - see tests.yml.
+
+on:
+  # Called by tests.yml (unit + feature, then cross-site).
+  workflow_call:
+
+env:
+  SITE_URL: simplejwtlogin.local
+  DB_PASSWORD: root
+  WP_USER: admin
+  WP_PASSWORD: admin
+  WP_EMAIL: contact@simplejwtlogin.com
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    runs-on: ubuntu-24.04
+    name: Simple-JWT-Login Cross-site tests
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+
+      - name: "🔧 Setup PHP"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extension: mbstring, intl
+          coverage: none
+
+      - name: "🔧 Setup Node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: "🚧 MySQL Setup"
+        run: |
+          sudo /etc/init.d/mysql start
+          mysql --user="root" --password="root" --execute="ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASSWORD';"
+
+      - name: "🚧 Apache Setup"
+        run: |
+          sudo add-apt-repository -y ppa:ondrej/php
+          sudo apt-get update
+          sudo apt-get install -y libapache2-mod-php8.3
+          sudo a2enmod php8.3
+          sudo /etc/init.d/apache2 start
+
+      - name: "🚧 Install WordPress"
+        run: |
+          sudo chmod -R 777 /var/www/html
+          sudo rm -rf /var/www/html/*
+          curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+          sudo mv wp-cli.phar /usr/local/bin/wp
+          sudo chmod +x /usr/local/bin/wp
+          wp core download --path=/var/www/html/
+          wp config create --dbname=wordpress --dbuser=root --dbpass=$DB_PASSWORD --dbhost=localhost --dbprefix=wp_ --path=/var/www/html
+          wp db create --path=/var/www/html
+          wp core install --url="$SITE_URL" --title="Test WP" --admin_user="$WP_USER" --admin_password="$WP_PASSWORD" --admin_email="$WP_EMAIL" --path=/var/www/html
+          echo "127.0.0.1 $SITE_URL" | sudo tee -a /etc/hosts
+
+      - name: "🚧 Init the plugin"
+        run: |
+          cp -R simple-jwt-login /var/www/html/wp-content/plugins
+          wp plugin activate simple-jwt-login --path=/var/www/html
+          sudo chown -R www-data:www-data /var/www/html
+
+      - name: "🚧 Start the other site (port 8090)"
+        run: |
+          docker run -d --name sjl-other-site -p 8090:80 -p 8091:80 \
+            --add-host=host.docker.internal:host-gateway \
+            -v "$GITHUB_WORKSPACE/tests/CrossSite/other-site:/usr/share/nginx/html:ro" \
+            nginx:alpine
+
+      - name: "🚑️ Healthcheck"
+        run: |
+          curl -sf -o /dev/null "http://localhost/index.php?rest_route=/" && echo "WordPress OK"
+          curl -sf -o /dev/null "http://127.0.0.1:8090/index.html" && echo "Other site OK"
+          docker exec sjl-other-site curl -s -o /dev/null -w "Other site -> WordPress: %{http_code}\n" \
+            "http://host.docker.internal/index.php?rest_route=/"
+          google-chrome --version
+          node --version
+
+      - name: "📦 Install Playwright"
+        working-directory: tests/CrossSite
+        run: npm ci
+
+      - name: "🧪 Run the cross-site tests"
+        working-directory: tests/CrossSite
+        env:
+          WP_EXEC: sudo -u www-data env HOME=/tmp
+          WP_PATH: /var/www/html
+          # Chrome keeps SameSite=None (Secure) cookies only for https or localhost.
+          TARGET: http://localhost
+          TARGET_INTERNAL: http://host.docker.internal
+          OTHER_SITE: http://127.0.0.1:8090
+          OTHER_SITE_SAME_HOST: http://localhost:8090
+          SECOND_SITE: http://127.0.0.1:8091
+        run: npx playwright test
+
+      - name: "📎 Upload the report"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cross-site-tests-report
+          path: |
+            tests/CrossSite/playwright-report/
+            tests/CrossSite/test-results/

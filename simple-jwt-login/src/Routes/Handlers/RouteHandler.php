@@ -2,6 +2,7 @@
 
 namespace SimpleJWTLogin\Routes\Handlers;
 
+use SimpleJWTLogin\Routes\SessionService;
 use SimpleJWTLogin\Helpers\RestErrorResponse;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Helpers\StatusCodeHelper;
@@ -174,7 +175,7 @@ class RouteHandler
             if ($this->apiKeyRepository === null
                 && $this->jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()
             ) {
-                $service->withSession(simple_jwt_login_init_session());
+                $service->withSession(SessionService::init());
             }
 
             $result = $service->makeAction();

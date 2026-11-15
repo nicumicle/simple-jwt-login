@@ -2,6 +2,7 @@
 
 namespace SimpleJWTLogin\Routes\Handlers;
 
+use SimpleJWTLogin\Routes\SessionService;
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\RestErrorResponse;
@@ -118,7 +119,7 @@ class EndpointProtectionHandler
             ->withRouteService($this->routeService)
             ->withRevokedTokenRepository($this->revokedTokenRepo);
         if ($this->jwtSettings->getGeneralSettings()->isJwtFromSessionEnabled()) {
-            $service->withSession(simple_jwt_login_init_session());
+            $service->withSession(SessionService::init());
         }
         if ($this->apiKeyRepository !== null) {
             $service->withApiKeyRepository($this->apiKeyRepository);

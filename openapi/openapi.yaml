@@ -80,7 +80,7 @@ info:
   license:
     name: GPL 3.0
     url: https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE
-  version: 4.1.0
+  version: 4.1.1
   x-logo:
     url: 'https://redocly.github.io/redoc/petstore-logo.png'
     altText: Simple-Jwt-Login Logo
@@ -212,6 +212,11 @@ paths:
         - `JWT` in request body
         - `Authorization: Bearer <token>` header (when enabled in plugin General Settings)
         - Cookie or session (when enabled in plugin General Settings)
+
+        A header, cookie or session JWT is ignored on cross-site requests (`Sec-Fetch-Site: cross-site`,
+        or an `Origin` / `Referer` naming another site) to prevent CSRF. Cross-origin browser apps must be
+        listed in the CORS "Allow origin" setting; a `*` entry trusts the header JWT only, never the
+        cookie or session JWT. Requests without these headers (mobile apps, servers) are not affected.
 
         **Success behaviour**
         The response is an HTTP redirect (302) to the WordPress home URL or the custom
@@ -1163,6 +1168,11 @@ paths:
         - `JWT` query parameter
         - `Authorization: Bearer <token>` header (when enabled in plugin General Settings)
         - Cookie or session (when enabled in plugin General Settings)
+
+        A header, cookie or session JWT is ignored on cross-site requests (`Sec-Fetch-Site: cross-site`,
+        or an `Origin` / `Referer` naming another site) to prevent CSRF. Cross-origin browser apps must be
+        listed in the CORS "Allow origin" setting; a `*` entry trusts the header JWT only, never the
+        cookie or session JWT. Requests without these headers (mobile apps, servers) are not affected.
 
         **Requirements**
         - Token validation must be enabled in the plugin settings.

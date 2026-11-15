@@ -27,8 +27,7 @@
     <a href="https://github.com/nicumicle/simple-jwt-login/tags"><img src="https://img.shields.io/github/v/tag/nicumicle/simple-jwt-login" alt="Current Tag" /></a>
     <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/php.yml"><img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/php.yml/badge.svg" alt="Check plugin" /></a>
     <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/multiple-php.yml"><img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/multiple-php.yml/badge.svg" alt="Multiple PHP Versions check"/></a>
-    <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/feature_tests.yml"><img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/feature_tests.yml/badge.svg" alt="Feature Tests" /></a>
-    <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/unit_tests.yml"><img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/unit_tests.yml/badge.svg" alt="Unit Tests" /></a>
+    <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/tests.yml"><img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/tests.yml/badge.svg" alt="Tests" /></a>
     <a href="https://app.codecov.io/gh/nicumicle/simple-jwt-login"><img src="https://codecov.io/gh/nicumicle/simple-jwt-login/branch/master/graph/badge.svg?token=dVOwuGQoY3" alt="Coverage"/></a>
     <a href="https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE"><img src="https://img.shields.io/github/license/nicumicle/simple-jwt-login" alt="License" /></a>
 </p>

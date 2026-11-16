@@ -16,6 +16,29 @@ jQuery(document).ready(
             $('#sjl-theme-label').text('Light mode');
         }
 
+        // Support banner: hidden for 6 months after the user dismisses it.
+        var sjlSupportKey      = 'sjl_support_dismissed_until';
+        var sjlSupportDuration = 1000 * 60 * 60 * 24 * 182;
+        var sjlSupportUntil    = 0;
+        try {
+            sjlSupportUntil = parseInt(localStorage.getItem(sjlSupportKey), 10) || 0;
+        } catch (storageError) {
+            sjlSupportUntil = 0;
+        }
+        if (sjlSupportUntil > Date.now()) {
+            $('#sjl-support-banner').remove();
+        }
+        $('#sjl-support-dismiss').on('click', function () {
+            try {
+                localStorage.setItem(sjlSupportKey, String(Date.now() + sjlSupportDuration));
+            } catch (storageError) {
+                // Storage unavailable: the banner is only hidden for this page view.
+            }
+            $('#sjl-support-banner').slideUp(150, function () {
+                $(this).remove();
+            });
+        });
+
         $('#simple-jwt-login').css('visibility', 'visible');
         $('#sjl-page-loader').addClass('sjl-loader-hidden');
         setTimeout(function () {
@@ -462,6 +485,7 @@ jQuery(document).ready(
                 }
                 rule.login_by           = parseInt($row.find('.sjl-rule-login-by').val(), 10) || 0;
                 rule.login_by_parameter = $row.find('.sjl-rule-login-by-param').val() || '';
+                rule.audience           = $row.find('.sjl-rule-audience').val() || '';
                 rules.push(rule);
             });
             $('#jwt_rules_json').val(JSON.stringify(rules));
@@ -1222,7 +1246,8 @@ function sjlCreateApiKey()
         contentType: 'application/json',
         beforeSend: function (xhr) {
 			xhr.setRequestHeader('X-WP-Nonce', cfg.nonce); },
-        data: JSON.stringify({ name: name, permissions: perms, expires_at: expires || null }),
+        // datetime-local is the browser's local time: send it as UTC, the zone the server stores.
+        data: JSON.stringify({ name: name, permissions: perms, expires_at: expires ? new Date(expires).toISOString() : null }),
         success: function (res) {
             if (res.data && res.data.key) {
                 jQuery('#sjl-ak-raw-key').text(res.data.key);

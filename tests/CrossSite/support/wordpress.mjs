@@ -80,6 +80,15 @@ export const createUser = (login, password, role) =>
 
 export const createAdministrator = (login, password) => createUser(login, password, 'administrator');
 
+/** One user meta value (e.g. first_name), read with WP-CLI. '' when not set (WP-CLI then fails). */
+export const userMeta = (login, key) => {
+  try {
+    return wpCli('user', 'meta', 'get', login, key);
+  } catch {
+    return '';
+  }
+};
+
 export const passwordMatches = (login, password) => {
   try {
     wpCli('user', 'check-password', login, password);

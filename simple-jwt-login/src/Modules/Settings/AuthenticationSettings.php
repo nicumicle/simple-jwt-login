@@ -41,10 +41,12 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             [null, 'password_base64',        null, 'auth_password_base64',        self::SETTINGS_TYPE_BOL, false],
             [null, 'password_hash_enabled',  null, 'auth_password_hash_enabled',  self::SETTINGS_TYPE_BOL, false],
             [null, 'iss',                    null, 'jwt_auth_iss',                self::SETTINGS_TYPE_STRING],
+            [null, 'aud',                    null, 'jwt_auth_aud',                self::SETTINGS_TYPE_STRING],
             [null, 'refresh_token_enabled',  null, 'allow_refresh_token',         self::SETTINGS_TYPE_STRING],
             [null, 'refresh_token_key',      null, 'refresh_token_key',           self::SETTINGS_TYPE_STRING],
             [null, 'validate_token_enabled', null, 'allow_validate_token',        self::SETTINGS_TYPE_STRING],
             [null, 'revoke_token_enabled',   null, 'allow_revoke_token',          self::SETTINGS_TYPE_STRING],
+            [null, 'revoke_on_password_change', null, 'jwt_revoke_on_password_change', self::SETTINGS_TYPE_BOL],
             [null, 'refresh_auth_code',      null, 'refresh_requires_auth_code',  self::SETTINGS_TYPE_BOL],
             [null, 'validate_auth_code',     null, 'validate_requires_auth_code', self::SETTINGS_TYPE_BOL],
             [null, 'revoke_auth_code',       null, 'revoke_requires_auth_code',   self::SETTINGS_TYPE_BOL],
@@ -253,6 +255,27 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
         return isset($this->settings['iss'])
             ? (string)$this->settings['iss']
             : $this->wordPressData->getSiteUrl();
+    }
+
+    /**
+     * Expected "aud" of the plugin's own JWTs; empty = no audience is issued or checked.
+     *
+     * @return string
+     */
+    public function getJwtAudience()
+    {
+        return isset($this->settings['aud']) ? trim((string) $this->settings['aud']) : '';
+    }
+
+    /**
+     * Whether a password change deletes the user's refresh tokens and rejects the JWTs issued before it.
+     * Off by default: it also rejects JWTs without an "iat" claim once the password changed.
+     *
+     * @return bool
+     */
+    public function isRevokeOnPasswordChangeEnabled()
+    {
+        return !empty($this->settings['revoke_on_password_change']);
     }
 
     /**

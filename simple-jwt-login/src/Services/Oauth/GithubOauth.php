@@ -13,6 +13,7 @@ use SimpleJWTLogin\Libraries\ServerCall;
  *  1. Browser OAuth redirect - exchange authorization code via the WP login page button.
  *  2. Code exchange (API)   - POST ?provider=github&code={code} -> returns raw token response.
  *  3. Token exchange (API)  - POST ?provider=github&access_token={token} -> returns a WP JWT.
+ *     The token must have been issued for the configured GitHub OAuth app.
  *
  * GitHub's token endpoint returns JSON only when Accept: application/json is sent,
  * so exchangeCode is overridden to include that header.
@@ -25,6 +26,7 @@ class GithubOauth extends AbstractOauth
     const TOKEN_ENDPOINT     = 'https://github.com/login/oauth/access_token';
     const USERINFO_ENDPOINT  = 'https://api.github.com/user/emails';
     const USER_AGENT         = 'simple-jwt-login';
+    const CHECK_TOKEN_ENDPOINT_TPL = 'https://api.github.com/applications/%s/token';
 
     // -------------------------------------------------------------------------
     // AbstractOauth hooks
@@ -38,6 +40,11 @@ class GithubOauth extends AbstractOauth
     public function getAuthUrl()
     {
         return self::AUTH_URL;
+    }
+
+    protected function getAuthScope()
+    {
+        return 'user:email';
     }
 
     protected function getClientId()
@@ -115,7 +122,9 @@ class GithubOauth extends AbstractOauth
     }
 
     /**
-     * Validate a GitHub access_token by calling the /user/emails endpoint.
+     * Validate a GitHub access_token with the "check a token" endpoint of the
+     * configured OAuth app. It only answers 200 for tokens issued for that app,
+     * so tokens of other apps (and personal access tokens) are rejected.
      *
      * @param string $token
      * @return void
@@ -123,22 +132,7 @@ class GithubOauth extends AbstractOauth
      */
     protected function validateProviderToken($token)
     {
-        $statusCode  = 400;
-        $plainResult = '';
-        ServerCall::get(
-            self::USERINFO_ENDPOINT,
-            [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $token,
-                    'User-Agent'    => self::USER_AGENT,
-                    'Accept'        => 'application/vnd.github+json',
-                ],
-            ],
-            $statusCode,
-            $plainResult
-        );
-
-        if ($statusCode !== 200) {
+        if (!$this->hasAppCredentials() || !$this->isTokenIssuedForThisApp($token)) {
             throw new Exception(
                 esc_html(__('The provided GitHub access_token is invalid.', 'simple-jwt-login')),
                 absint(ErrorCodes::ERR_GITHUB_INVALID_TOKEN)
@@ -184,6 +178,35 @@ class GithubOauth extends AbstractOauth
     // -------------------------------------------------------------------------
     // GitHub-specific helpers
     // -------------------------------------------------------------------------
+
+    /**
+     * @param string $token
+     * @return bool
+     */
+    private function isTokenIssuedForThisApp($token)
+    {
+        $clientId    = (string) $this->getClientId();
+        $statusCode  = 400;
+        $plainResult = '';
+        $check = ServerCall::post(
+            sprintf(self::CHECK_TOKEN_ENDPOINT_TPL, rawurlencode($clientId)),
+            [
+                'headers' => [
+                    'Authorization' => 'Basic ' . base64_encode($clientId . ':' . $this->getClientSecret()),
+                    'User-Agent'    => self::USER_AGENT,
+                    'Accept'        => 'application/vnd.github+json',
+                    'Content-Type'  => 'application/json',
+                ],
+                'body' => wp_json_encode(['access_token' => $token]),
+            ],
+            $statusCode,
+            $plainResult
+        );
+
+        return $statusCode === 200
+            && isset($check['app']['client_id'])
+            && (string) $check['app']['client_id'] === $clientId;
+    }
 
     /**
      * Retrieve the user's primary verified email from GitHub's /user/emails endpoint.

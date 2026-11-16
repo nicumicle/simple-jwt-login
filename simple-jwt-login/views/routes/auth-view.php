@@ -431,6 +431,52 @@ if (! defined('ABSPATH')) {
 
         <div class="sjl-webhook-subsection">
             <div class="sjl-webhook-subsection-header">
+                <?php echo esc_html__('Audience (aud)', 'simple-jwt-login'); ?>
+            </div>
+            <label class="sjl-gen-field-label" for="jwt_auth_aud">
+                <?php echo esc_html__('Expected audience', 'simple-jwt-login'); ?>
+            </label>
+            <input type="text" name="jwt_auth_aud" id="jwt_auth_aud"
+                   class="form-control sjl-gen-input-medium"
+                   value="<?php echo esc_attr($jwtSettings->getAuthenticationSettings()->getJwtAudience()); ?>"
+                   placeholder="<?php echo esc_attr__('Recommended, e.g. this site URL', 'simple-jwt-login'); ?>"
+            />
+            <p class="sjl-gen-feature-desc">
+                <?php echo esc_html__(
+                    'Optional. When set, new JWTs get this "aud" claim and only JWTs signed with the plugin key that carry it are accepted, so another site or app sharing the same key can not use its JWTs here. JWTs issued before you set it have no "aud" and stop working: users must log in again (a refresh token still gets a new JWT). For JWTs matched by a JWT Rule, set the audience on the rule.',
+                    'simple-jwt-login'
+                ); ?>
+            </p>
+        </div>
+
+        <div class="sjl-webhook-subsection">
+            <div class="sjl-webhook-subsection-header">
+                <?php echo esc_html__('Revoke sessions on password change', 'simple-jwt-login'); ?>
+            </div>
+            <div class="sjl-gen-radio-group">
+                <label class="sjl-gen-radio-option">
+                    <input type="radio" name="jwt_revoke_on_password_change" value="0"
+                        <?php echo !$jwtSettings->getAuthenticationSettings()->isRevokeOnPasswordChangeEnabled() ? 'checked' : ''; ?>
+                    />
+                    <span class="sjl-gen-radio-label"><?php echo esc_html__('Off', 'simple-jwt-login'); ?></span>
+                </label>
+                <label class="sjl-gen-radio-option">
+                    <input type="radio" name="jwt_revoke_on_password_change" value="1"
+                        <?php echo $jwtSettings->getAuthenticationSettings()->isRevokeOnPasswordChangeEnabled() ? 'checked' : ''; ?>
+                    />
+                    <span class="sjl-gen-radio-label"><?php echo esc_html__('On (recommended)', 'simple-jwt-login'); ?></span>
+                </label>
+            </div>
+            <p class="sjl-gen-feature-desc">
+                <?php echo esc_html__(
+                    'When on, changing a user\'s password (reset password endpoint, wp-login.php lost password, profile or admin edit) deletes the user\'s refresh tokens and rejects every JWT issued before the change, so a stolen token stops working. JWTs without an "iat" claim (e.g. from an external service through JWT Rules) are then also rejected for that user.',
+                    'simple-jwt-login'
+                ); ?>
+            </p>
+        </div>
+
+        <div class="sjl-webhook-subsection">
+            <div class="sjl-webhook-subsection-header">
                 <?php echo esc_html__('Custom Payload Claims', 'simple-jwt-login'); ?>
             </div>
             <p class="sjl-gen-card-desc" style="margin-bottom: 10px;">

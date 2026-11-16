@@ -5,6 +5,7 @@ namespace SimpleJwtLoginTests\Unit\Services;
 use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepositoryInterface;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
@@ -166,6 +167,7 @@ class AuthenticateServiceTest extends TestCase
 
     public function testUserNotFoundWithEmail()
     {
+        $this->wordPressDataMock = $this->createMock(WordPressDataInterface::class);
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Wrong user credentials.');
         $this->wordPressDataMock->method('getOptionFromDatabase')
@@ -174,6 +176,10 @@ class AuthenticateServiceTest extends TestCase
             ]));
         $this->wordPressDataMock->method('getUserDetailsByEmail')
             ->willReturn(null);
+        // An unknown user must cost the same password hashing time as a wrong password.
+        $this->wordPressDataMock->expects($this->once())
+            ->method('simulatePasswordCheck')
+            ->with('123');
         $authService = (new AuthenticateService())
             ->withRequest([
                 'email' => 'test@test.com',
@@ -576,7 +582,8 @@ class AuthenticateServiceTest extends TestCase
                 $this->anything(),
                 $this->isString(),
                 $this->isInt()
-            );
+            )
+            ->willReturn(true);
 
         $authService = (new AuthenticateService())
             ->withRequest(['username' => 'test', 'password' => 'pass'])
@@ -585,6 +592,35 @@ class AuthenticateServiceTest extends TestCase
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
             ->withRefreshTokenRepository($this->refreshTokenRepoMock);
         $authService->makeAction();
+    }
+
+    /**
+     * A refresh token that could not be saved must never be handed to the client.
+     */
+    public function testRefreshTokenThatCouldNotBeSavedIsNotReturned()
+    {
+        $this->wordPressDataMock
+            ->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication' => 1,
+                'allow_refresh_token'  => 1,
+                'decryption_key'       => 'test-secret',
+                'jwt_auth_refresh_ttl' => 60,
+            ]));
+        $this->wordPressDataMock->method('getUserByUserLogin')->willReturn('user');
+        $this->wordPressDataMock->method('checkPassword')->willReturn(true);
+        $this->wordPressDataMock->method('createResponse')->willReturn(true);
+        $this->refreshTokenRepoMock->method('insert')->willReturn(false);
+
+        $this->expectExceptionCode(ErrorCodes::ERR_REFRESH_TOKEN_STORE_FAILED);
+
+        (new AuthenticateService())
+            ->withRequest(['username' => 'test', 'password' => 'pass'])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+            ->makeAction();
     }
 
     #[DataProvider('specialCharsPasswordProvider')]
@@ -615,6 +651,52 @@ class AuthenticateServiceTest extends TestCase
             ->withSettings(new SimpleJWTLoginSettings($wordPressDataMock))
             ->withRefreshTokenRepository($this->refreshTokenRepoMock);
 
+        $authService->makeAction();
+    }
+
+    /**
+     * Base64 text never holds quotes or backslashes: the decoded password is what WordPress
+     * must receive slashed, the same as the reset password endpoint does.
+     *
+     * @return array<string, array{string, string|null}>
+     */
+    public static function base64PasswordProvider(): array
+    {
+        return [
+            'single quote'   => [base64_encode("it's"), addslashes("it's")],
+            'backslash'      => [base64_encode('back\\slash'), addslashes('back\\slash')],
+            'invalid base64' => ['not*base64!', null],
+        ];
+    }
+
+    #[DataProvider('base64PasswordProvider')]
+    public function testBase64PasswordIsDecodedBeforeItIsSlashed(string $sentPassword, ?string $expected): void
+    {
+        $wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $wordPressDataMock->method('wpSlash')->willReturnCallback('addslashes');
+        $wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication' => 1,
+                'auth_password_base64' => 1,
+            ]));
+        $wordPressDataMock->method('getUserByUserLogin')->willReturn('user');
+        $wordPressDataMock->method('createResponse')->willReturn(true);
+        // Invalid base64 goes down the normal wrong-credentials path (checkPassword fires wp_login_failed).
+        $wordPressDataMock->expects($this->once())
+            ->method('checkPassword')
+            ->with($this->identicalTo($expected), $this->isNull(), $this->anything())
+            ->willReturn($expected !== null);
+
+        $authService = (new AuthenticateService())
+            ->withRequest(['username' => 'testuser', 'password' => $sentPassword])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSettings(new SimpleJWTLoginSettings($wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock);
+
+        if ($expected === null) {
+            $this->expectExceptionCode(ErrorCodes::ERR_AUTHENTICATION_WRONG_CREDENTIALS);
+        }
         $authService->makeAction();
     }
 
@@ -739,21 +821,13 @@ class AuthenticateServiceTest extends TestCase
     {
         $this->wordPressDataMock
             ->method('getOptionFromDatabase')
-            ->willReturn(json_encode([
-                'allow_authentication' => 1,
-                'decryption_key'       => 'test-secret',
-                'integrations'         => [
-                    '3rdparty' => [
-                        'two_factor' => ['enabled' => true, 'interim_ttl' => 5],
-                    ],
-                ],
-            ]));
+            ->willReturn(self::settingsWithTwoFactorEnabled());
         $this->wordPressDataMock->method('getUserByUserLogin')->willReturn('user');
         $this->wordPressDataMock->method('getUserPassword')->willReturn('pass');
         $this->wordPressDataMock->method('checkPassword')->willReturn(true);
         $this->wordPressDataMock->method('getUserProperty')->willReturn(1);
         $this->wordPressDataMock->method('applyFilters')->willReturnArgument(1);
-        $this->wordPressDataMock->method('createResponse')->willReturn(true);
+        $this->wordPressDataMock->method('createResponse')->willReturnArgument(0);
 
         $bridge = $this->createStub(\SimpleJWTLogin\Services\Integrations\TwoFactor\TwoFactorBridge::class);
         $bridge->method('isAvailable')->willReturn(true);
@@ -770,7 +844,103 @@ class AuthenticateServiceTest extends TestCase
             ->withTwoFactorBridge($bridge);
 
         $result = $authService->makeAction();
-        $this->assertTrue($result);
+        $this->assertTrue($result['data']['two_factor_required']);
+    }
+
+    public function testTwoFactorNonceCreateFailureIsAServerError(): void
+    {
+        $this->wordPressDataMock
+            ->method('getOptionFromDatabase')
+            ->willReturn(self::settingsWithTwoFactorEnabled());
+        $this->wordPressDataMock->method('getUserByUserLogin')->willReturn('user');
+        $this->wordPressDataMock->method('getUserPassword')->willReturn('pass');
+        $this->wordPressDataMock->method('checkPassword')->willReturn(true);
+        $this->wordPressDataMock->method('getUserProperty')->willReturn(1);
+        $this->wordPressDataMock->method('applyFilters')->willReturnArgument(1);
+
+        $bridge = $this->createStub(\SimpleJWTLogin\Services\Integrations\TwoFactor\TwoFactorBridge::class);
+        $bridge->method('isAvailable')->willReturn(true);
+        $bridge->method('isUserUsing2FA')->willReturn(true);
+        $bridge->method('createNonce')->willReturn(false);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionCode(ErrorCodes::ERR_TWO_FACTOR_NONCE_CREATE_FAILED);
+
+        (new AuthenticateService())
+            ->withRequest(['username' => 'test', 'password' => 'pass'])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+            ->withTwoFactorBridge($bridge)
+            ->makeAction();
+    }
+
+    /**
+     * The flat legacy format drops `integrations`, so 2FA needs the nested format.
+     */
+    private static function settingsWithTwoFactorEnabled(): string
+    {
+        $settings = json_decode(
+            (string) file_get_contents(__DIR__ . '/../Modules/Settings/fixtures/stored-settings.json'),
+            true
+        );
+        $settings['integrations']['3rdparty']['two_factor']['enabled'] = true;
+
+        return (string) json_encode($settings);
+    }
+
+    /**
+     * @return array<string, array{bool}>
+     */
+    public static function twoFactorIntegrationProvider(): array
+    {
+        return [
+            'integration enabled'  => [true],
+            'integration disabled' => [false],
+        ];
+    }
+
+    /**
+     * The Two Factor plugin blocks API logins of its users. /auth follows this plugin's
+     * settings instead: with the integration on it runs the 2FA challenge itself,
+     * with the integration off the user logs in without 2FA.
+     */
+    #[DataProvider('twoFactorIntegrationProvider')]
+    public function testTwoFactorPluginApiLoginBlockIsAlwaysLifted(bool $integrationEnabled): void
+    {
+        $wordPressData = $this->createMock(WordPressDataInterface::class);
+        $fixture = json_decode(
+            (string) file_get_contents(__DIR__ . '/../Modules/Settings/fixtures/stored-settings.json'),
+            true
+        );
+        $wordPressData->method('getOptionFromDatabase')->willReturn(json_encode(array_replace_recursive($fixture, [
+            'integrations' => [
+                '3rdparty' => ['two_factor' => ['enabled' => $integrationEnabled]],
+            ],
+        ])));
+        $wordPressData->method('getUserByUserLogin')->willReturn('user');
+        $wordPressData->method('isInstanceOfuser')->willReturn(true);
+        $wordPressData->method('getUserProperty')->willReturn(1);
+        $wordPressData->method('applyFilters')->willReturnArgument(1);
+        $wordPressData->method('createResponse')->willReturn(true);
+        $wordPressData->expects($this->once())
+            ->method('checkPassword')
+            ->with(
+                $this->anything(),
+                $this->anything(),
+                $this->anything(),
+                ['two_factor_user_api_login_enable' => '__return_true']
+            )
+            ->willReturn(true);
+
+        (new AuthenticateService())
+            ->withRequest(['username' => 'test', 'password' => 'pass'])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSettings(new SimpleJWTLoginSettings($wordPressData))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+            ->makeAction();
     }
 
     // ─── request['payload'] – string vs array input ─────────────────────────

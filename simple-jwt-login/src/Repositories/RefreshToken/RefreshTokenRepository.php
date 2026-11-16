@@ -55,7 +55,8 @@ class RefreshTokenRepository implements Repository
     public function getByToken($refreshToken)
     {
         $sql = $this->wpdb->prepare(
-            'SELECT * FROM %i WHERE refresh_token = %s AND expires_at > NOW()',
+            // expires_at is stored in UTC; NOW() would use the database session time zone.
+            'SELECT * FROM %i WHERE refresh_token = %s AND expires_at > UTC_TIMESTAMP()',
             $this->tableName(),
             $refreshToken
         );
@@ -75,7 +76,8 @@ class RefreshTokenRepository implements Repository
             ['%s']
         );
 
-        return $result !== false;
+        // Only one of several parallel requests can delete the row: that one owns the token.
+        return $result !== false && $result > 0;
     }
 
     /**
@@ -100,7 +102,7 @@ class RefreshTokenRepository implements Repository
     {
         $escapedTable = esc_sql($this->tableName());
         //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-        $result = $this->wpdb->query('DELETE FROM `' . $escapedTable . '` WHERE expires_at <= NOW()');
+        $result = $this->wpdb->query('DELETE FROM `' . $escapedTable . '` WHERE expires_at <= UTC_TIMESTAMP()');
 
         return $result !== false;
     }

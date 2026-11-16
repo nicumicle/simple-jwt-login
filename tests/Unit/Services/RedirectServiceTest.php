@@ -198,7 +198,42 @@ class RedirectServiceTest extends TestCase
                 ],
                 'expectedUrl' => 'http://www.test.com?test=1&redirectUrl='
                     . urlencode('http://www.test.com?test=1&email=test@test.com'),
-            ]
+            ],
+            // The JWT URL key is read case-insensitively, so it must be stripped the same way.
+            'jwt in another letter case is never copied' => [
+                'extraSettings' => [
+                    'redirect_url' => 'https://www.google.com',
+                    'login_remove_request_parameters' => 'jwt, JWT',
+                ],
+                'request' => [
+                    'Jwt'  => 'secret-token',
+                    'page' => '1',
+                ],
+                'expectedUrl' => 'https://www.google.com?page=1',
+            ],
+            'custom jwt url key is never copied' => [
+                'extraSettings' => [
+                    'redirect_url' => 'https://www.google.com',
+                    'login_remove_request_parameters' => 'jwt',
+                    'request_keys' => ['url' => 'token'],
+                ],
+                'request' => [
+                    'TOKEN' => 'secret-token',
+                    'page'  => '1',
+                ],
+                'expectedUrl' => 'https://www.google.com?page=1',
+            ],
+            'other removed keys ignore letter case' => [
+                'extraSettings' => [
+                    'redirect_url' => 'https://www.google.com',
+                    'login_remove_request_parameters' => 'password',
+                ],
+                'request' => [
+                    'Password' => 'my-super-secret-password',
+                    'page'     => '1',
+                ],
+                'expectedUrl' => 'https://www.google.com?page=1',
+            ],
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace SimpleJwtLoginTests\Unit\Services\Integrations\TwoFactor;
 
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\ServerHelper;
@@ -257,5 +258,147 @@ class TwoFactorVerifyServiceTest extends TestCase
             ->makeAction();
 
         $this->assertTrue($result);
+    }
+
+    /**
+     * @param bool $codeIsValid
+     * @return TwoFactorVerifyService
+     */
+    private function makeServiceWithCodeResult($codeIsValid)
+    {
+        return new class ($codeIsValid) extends TwoFactorVerifyService {
+            /** @var boolean */
+            private $codeIsValid;
+
+            public function __construct($codeIsValid)
+            {
+                $this->codeIsValid = $codeIsValid;
+            }
+
+            protected function verifyCodeForProvider($providerClass, $user, $code, $userId)
+            {
+                unset($providerClass, $user, $code, $userId);
+                return $this->codeIsValid;
+            }
+        };
+    }
+
+    #[DataProvider('invalidCodeProvider')]
+    public function testInvalidCodeRecordsFailedAttempt(bool $passwordWasReset, string $expectedMessage): void
+    {
+        $bridge = $this->createMock(TwoFactorBridge::class);
+        $bridge->method('isAvailable')->willReturn(true);
+        $bridge->method('isRateLimited')->willReturn(false);
+        $bridge->method('verifyNonce')->willReturn(true);
+        $bridge->expects($this->once())->method('recordFailedAttempt')->with('user', 42)
+            ->willReturn($passwordWasReset);
+        $bridge->expects($this->never())->method('resetFailedAttempts');
+        $bridge->expects($this->never())->method('deleteNonce');
+
+        $this->wordPressDataMock->method('getUserDetailsById')->willReturn('user');
+        $this->wordPressDataMock->method('isInstanceOfuser')->willReturn(true);
+        $this->wordPressDataMock->method('getUserProperty')->willReturn('test@test.com');
+
+        try {
+            $this->makeServiceWithCodeResult(false)
+                ->withRequest(['JWT' => $this->makeInterimJwt(), 'code' => '000000'])
+                ->withCookies([])
+                ->withServerHelper(new ServerHelper([]))
+                ->withSettings($this->makeSettings())
+                ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+                ->withTwoFactorBridge($bridge)
+                ->makeAction();
+            $this->fail('An invalid code must be rejected.');
+        } catch (Exception $exception) {
+            $this->assertSame(ErrorCodes::ERR_TWO_FACTOR_INVALID_CODE, $exception->getCode());
+            $this->assertSame($expectedMessage, $exception->getMessage());
+        }
+    }
+
+    /**
+     * @return array[]
+     */
+    public static function invalidCodeProvider(): array
+    {
+        return [
+            'below the failed attempt limit' => [false, 'Invalid two-factor code.'],
+            'password reset after too many failures' => [
+                true,
+                'Too many invalid two-factor codes. Your password was reset, check your email to set a new one.',
+            ],
+        ];
+    }
+
+    public function testValidCodeResetsFailedAttempts(): void
+    {
+        $bridge = $this->createMock(TwoFactorBridge::class);
+        $bridge->method('isAvailable')->willReturn(true);
+        $bridge->method('isRateLimited')->willReturn(false);
+        $bridge->method('verifyNonce')->willReturn(true);
+        $bridge->expects($this->never())->method('recordFailedAttempt');
+        $bridge->expects($this->once())->method('resetFailedAttempts')->with(42);
+        $bridge->expects($this->once())->method('deleteNonce')->with(42);
+
+        $this->wordPressDataMock->method('getUserDetailsById')->willReturn('user');
+        $this->wordPressDataMock->method('isInstanceOfuser')->willReturn(true);
+        $this->wordPressDataMock->method('getUserProperty')->willReturn('test@test.com');
+        $this->wordPressDataMock->method('createResponse')->willReturn(true);
+
+        $result = $this->makeServiceWithCodeResult(true)
+            ->withRequest(['JWT' => $this->makeInterimJwt(), 'code' => '123456'])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSettings($this->makeSettings())
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+            ->withTwoFactorBridge($bridge)
+            ->makeAction();
+
+        $this->assertTrue($result);
+    }
+
+    #[DataProvider('rejectedBeforeCodeCheckProvider')]
+    public function testRequestsRejectedBeforeTheCodeCheckDoNotTouchTheCounter(
+        bool $rateLimited,
+        bool $nonceIsValid,
+        array $extraRequest,
+        int $expectedCode
+    ): void {
+        $bridge = $this->createMock(TwoFactorBridge::class);
+        $bridge->method('isAvailable')->willReturn(true);
+        $bridge->method('isRateLimited')->willReturn($rateLimited);
+        $bridge->method('getTimeDelay')->willReturn(30);
+        $bridge->method('verifyNonce')->willReturn($nonceIsValid);
+        $bridge->expects($this->never())->method('recordFailedAttempt');
+        $bridge->expects($this->never())->method('resetFailedAttempts');
+
+        $this->wordPressDataMock->method('getUserDetailsById')->willReturn('user');
+        $this->wordPressDataMock->method('isInstanceOfuser')->willReturn(true);
+        $this->wordPressDataMock->method('getUserProperty')->willReturn('test@test.com');
+
+        try {
+            $this->makeServiceWithCodeResult(false)
+                ->withRequest(array_merge(['JWT' => $this->makeInterimJwt()], $extraRequest))
+                ->withCookies([])
+                ->withServerHelper(new ServerHelper([]))
+                ->withSettings($this->makeSettings())
+                ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+                ->withTwoFactorBridge($bridge)
+                ->makeAction();
+            $this->fail('The request must be rejected.');
+        } catch (Exception $exception) {
+            $this->assertSame($expectedCode, $exception->getCode());
+        }
+    }
+
+    /**
+     * @return array[]
+     */
+    public static function rejectedBeforeCodeCheckProvider(): array
+    {
+        return [
+            'rate limited' => [true, true, ['code' => '000000'], ErrorCodes::ERR_TWO_FACTOR_RATE_LIMITED],
+            'invalid nonce' => [false, false, ['code' => '000000'], ErrorCodes::ERR_TWO_FACTOR_INVALID_NONCE],
+            'missing code' => [false, true, [], ErrorCodes::ERR_TWO_FACTOR_INVALID_CODE],
+        ];
     }
 }

@@ -212,13 +212,11 @@ class RouteRegistrar
             $this->apiKeyRepo,
             $auditLogger
         );
-        $documentRoot = isset($this->server['DOCUMENT_ROOT']) ? $this->server['DOCUMENT_ROOT'] : '';
         $this->registerEndpointProtection(
             $routeService,
             $this->jwtSettings,
             $serverHelper,
             $request,
-            $documentRoot,
             $this->apiKeyRepo
         );
         $this->registerRoutes(
@@ -306,7 +304,6 @@ class RouteRegistrar
      * @param SimpleJWTLoginSettings $jwtSettings
      * @param ServerHelper $serverHelper
      * @param array $request
-     * @param string $documentRoot
      * @param ApiKeyRepository|null $apiKeyRepository
      */
     protected function registerEndpointProtection(
@@ -314,7 +311,6 @@ class RouteRegistrar
         $jwtSettings,
         $serverHelper,
         $request,
-        $documentRoot,
         $apiKeyRepository = null
     ) {
         if (!$jwtSettings->getProtectEndpointsSettings()->isEnabled()) {
@@ -325,14 +321,13 @@ class RouteRegistrar
             $routeService,
             $jwtSettings,
             $serverHelper,
-            $request,
-            $documentRoot
+            $request
         );
         $handler->withRevokedTokenRepository($this->revokedTokenRepo);
         if ($apiKeyRepository !== null) {
             $handler->withApiKeyRepository($apiKeyRepository);
         }
-        add_filter('rest_pre_dispatch', $handler, 0);
+        add_filter('rest_pre_dispatch', $handler, 0, 3);
     }
 
     /**

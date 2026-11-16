@@ -60,10 +60,7 @@ class RevokeTokenService extends AuthenticateService
             );
         }
 
-        $loginParameter = $this->validateJWTAndGetUserValueFromPayload(
-            $this->jwtSettings->getLoginSettings()->getJwtLoginByParameter()
-        );
-        $user           = $this->getUserDetails($loginParameter);
+        $user = $this->getUserFromCurrentJwt();
         if ($user === null) {
             throw new Exception(
                 esc_html(__('User not found.', 'simple-jwt-login')),

@@ -295,6 +295,37 @@ class JwtRulesSettingsTest extends TestCase
         $this->assertNotEmpty($found['decryption_key_private']);
     }
 
+    /**
+     * @return array<string, array{array<string, mixed>, string}>
+     */
+    public static function audienceProvider(): array
+    {
+        return [
+            'audience set'     => [['audience' => 'app-1'], 'app-1'],
+            'audience missing' => [[], ''],
+        ];
+    }
+
+    /**
+     * The admin save rebuilds every rule from a fixed list of keys: the audience must survive it.
+     *
+     * @param array<string, mixed> $extra
+     */
+    #[DataProvider('audienceProvider')]
+    public function testInitSettingsFromPostKeepsTheAudience(array $extra, string $expectedAudience): void
+    {
+        $sut = (new JwtRulesSettings())
+            ->withSettings([])
+            ->withWordPressData($this->wordPressData)
+            ->withPost(['jwt_rules' => json_encode([
+                ['iss' => 'my-app', 'algorithm' => 'HS256', 'decryption_key' => 'secret123'] + $extra,
+            ])]);
+
+        $sut->initSettingsFromPost();
+
+        $this->assertSame($expectedAudience, $sut->findByIss('my-app')['audience']);
+    }
+
     public static function providerValidationFailures(): array
     {
         return [

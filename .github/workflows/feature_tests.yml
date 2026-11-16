@@ -102,6 +102,9 @@ jobs:
       -   name: "🚧 Change /var/www/html owner"
           run: |
             sudo chown -R www-data:www-data /var/www/html
+            # Feature tests copy fixture mu-plugins (tests/Feature/fixtures) here.
+            sudo mkdir -p /var/www/html/wp-content/mu-plugins
+            sudo chmod 777 /var/www/html/wp-content/mu-plugins
       -   name: "🚑️ Site healthcheck"
           run: |
             echo "🩺 Healthcheck WordPress endpoint"

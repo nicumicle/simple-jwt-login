@@ -22,7 +22,7 @@ interface Repository
 
     /**
      * @param string $refreshToken
-     * @return bool
+     * @return bool True only when this call deleted the token.
      */
     public function deleteByToken($refreshToken);
 

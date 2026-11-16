@@ -73,7 +73,16 @@ class RefreshTokenRepositoryTest extends TestCase
         ];
     }
 
-    #[DataProvider('deleteProvider')]
+    public static function deleteByTokenProvider()
+    {
+        return [
+            'row deleted'                       => [1, true],
+            'zero rows (another request won)'   => [0, false],
+            'db error'                          => [false, false],
+        ];
+    }
+
+    #[DataProvider('deleteByTokenProvider')]
     public function testDeleteByToken($dbResult, $expected)
     {
         $this->wpdbMock->method('delete')->willReturn($dbResult);

@@ -2,6 +2,7 @@
 
 namespace SimpleJWTLogin\Plugin;
 
+use SimpleJWTLogin\Helpers\Jwt\PasswordChangeCutoff;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\RefreshToken\RefreshTokenRepository;
 use SimpleJWTLogin\Repositories\AuditLog\AuditLogRepository;
@@ -97,6 +98,7 @@ class Lifecycle
         (new WebhookLogRepository($wpdb))->dropTable();
         (new ApiKeyRepository($wpdb))->dropTable();
         (new RevokedTokenRepository($wpdb))->dropTable();
+        delete_metadata('user', 0, PasswordChangeCutoff::META_KEY, '', true);
     }
 
     public function checkDbVersion()

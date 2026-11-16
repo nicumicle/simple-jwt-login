@@ -8,6 +8,7 @@ use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
 use SimpleJWTLogin\Libraries\ServerCall;
 use SimpleJWTLogin\Modules\AuditEvents;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
+use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Services\AuthenticateService;
 use SimpleJWTLogin\Services\Integrations\TwoFactor\TwoFactorBridge;
 use SimpleJWTLogin\Services\RouteService;
@@ -26,6 +27,15 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
      * Handled by OAuthTwoFactorLoginHandler hooked into login_form_{action}.
      */
     const BROWSER_2FA_ACTION = 'sjl-oauth-2fa';
+
+    /**
+     * The browser flow keeps its OAuth "state" in this cookie (suffixed with the provider slug),
+     * so a callback can only finish in the browser that started the login (login CSRF).
+     */
+    const STATE_COOKIE_PREFIX = 'sjl_oauth_state_';
+    const STATE_TTL           = 600;
+    const STATE_LENGTH        = 32;
+
     // -------------------------------------------------------------------------
     // Template-method hooks - implement in each concrete provider
     // -------------------------------------------------------------------------
@@ -43,6 +53,13 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
      * @return string
      */
     abstract public function getAuthUrl();
+
+    /**
+     * Scope requested by the browser login flow (e.g. 'email').
+     *
+     * @return string
+     */
+    abstract protected function getAuthScope();
 
     /**
      * Provider client ID from settings.
@@ -142,6 +159,17 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
      */
     abstract protected function getEmailFromDirectToken($token);
 
+    /**
+     * A direct provider token can only be bound to this website's app when the
+     * app credentials are configured. Without them, every token is rejected.
+     *
+     * @return bool
+     */
+    protected function hasAppCredentials()
+    {
+        return (string) $this->getClientId() !== '' && (string) $this->getClientSecret() !== '';
+    }
+
     // -------------------------------------------------------------------------
     // OauthInterface - validate() and call()
     // -------------------------------------------------------------------------
@@ -152,7 +180,10 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
     public function validate()
     {
         $tokenParam = $this->getTokenParamName();
-        if (!isset($this->request['code']) && !isset($this->request[$tokenParam])) {
+        if (!isset($this->request['code'])
+            && !isset($this->request[$tokenParam])
+            && !$this->isLoginStartRequest()
+        ) {
             throw new Exception(
                 esc_html(sprintf(
                     // translators: %s = token parameter name
@@ -173,6 +204,9 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
         $tokenParam = $this->getTokenParamName();
 
         switch (true) {
+            case $this->isLoginStartRequest():
+                $this->startOauth();
+                break;
             case $this->requestMethod === ServerCall::REQUEST_METHOD_GET:
                 $this->handleOauth($this->request['code']);
                 break;
@@ -242,11 +276,8 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
     public function handleOauth($code)
     {
         try {
-            $redirectUri = $this->settings->generateExampleLink(
-                RouteService::OAUTH_TOKEN,
-                ['provider' => $this->getProviderSlug()]
-            );
-            $result = $this->exchangeCode($code, str_replace('&amp;', '&', $redirectUri));
+            $this->assertValidState();
+            $result = $this->exchangeCode($code, $this->getBrowserRedirectUri());
 
             if ($result['status_code'] !== 200 || !empty($result['response']['error'])) {
                 $errorMessage = $this->handleErrorMessage($result['response']);
@@ -327,6 +358,116 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
             }
             $this->doRedirect($this->wordPressData->getLoginURL(['error' => $exception->getMessage()]));
         }
+    }
+
+    /**
+     * Where the login button form submits: the browser flow start URL, split into the form
+     * action and hidden fields (a GET form drops the query string of its action).
+     *
+     * @param SimpleJWTLoginSettings $settings
+     * @param string $providerSlug
+     * @return array{action: string, fields: array}
+     */
+    public static function getLoginFormTarget(SimpleJWTLoginSettings $settings, $providerSlug)
+    {
+        $url = self::buildBrowserRedirectUri($settings, $providerSlug);
+        $fields = [];
+        wp_parse_str((string) wp_parse_url($url, PHP_URL_QUERY), $fields);
+        $parts = explode('?', $url, 2);
+
+        return ['action' => $parts[0], 'fields' => $fields];
+    }
+
+    /**
+     * Browser flow start: keep a random state in a short-lived cookie of this browser
+     * and send the visitor to the provider with the same state.
+     *
+     * @return void
+     */
+    protected function startOauth()
+    {
+        $state = $this->wordPressData->generatePassword(self::STATE_LENGTH);
+        $this->wordPressData->setCookie($this->getStateCookieName(), $state, time() + self::STATE_TTL);
+
+        $params = [
+            'client_id'     => $this->getClientId(),
+            'redirect_uri'  => $this->getBrowserRedirectUri(),
+            'response_type' => 'code',
+            'scope'         => $this->getAuthScope(),
+            'state'         => $state,
+        ];
+        // The provider is an external host, so this redirect cannot go through wp_safe_redirect().
+        $this->wordPressData->redirect(add_query_arg(array_map('rawurlencode', $params), $this->getAuthUrl()));
+    }
+
+    /**
+     * Check the callback state against the state cookie. The cookie is single use, so it is
+     * cleared whatever the outcome.
+     *
+     * @return void
+     * @throws Exception
+     */
+    protected function assertValidState()
+    {
+        $cookieName = $this->getStateCookieName();
+        $expected = isset($this->cookies[$cookieName]) ? (string) $this->cookies[$cookieName] : '';
+        $received = isset($this->request['state']) ? (string) $this->request['state'] : '';
+        if ($expected !== '') {
+            $this->wordPressData->setCookie($cookieName, '', time() - self::STATE_TTL);
+        }
+
+        if ($expected === '' || !hash_equals($expected, $received)) {
+            throw new Exception(
+                esc_html(__('The OAuth state is invalid. Please start the login again.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_OAUTH_INVALID_STATE)
+            );
+        }
+    }
+
+    /**
+     * A browser hitting the callback URL with nothing from the provider: the login button.
+     * A provider error callback (e.g. ?error=access_denied) is not a start request.
+     *
+     * @return bool
+     */
+    protected function isLoginStartRequest()
+    {
+        return $this->requestMethod === ServerCall::REQUEST_METHOD_GET
+            && empty($this->request['code'])
+            && empty($this->request['error'])
+            && empty($this->request[$this->getTokenParamName()]);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getStateCookieName()
+    {
+        return self::STATE_COOKIE_PREFIX . $this->getProviderSlug();
+    }
+
+    /**
+     * The redirect URI of the browser flow (the GET callback of this route).
+     *
+     * @return string
+     */
+    protected function getBrowserRedirectUri()
+    {
+        return self::buildBrowserRedirectUri($this->settings, $this->getProviderSlug());
+    }
+
+    /**
+     * @param SimpleJWTLoginSettings $settings
+     * @param string $providerSlug
+     * @return string
+     */
+    private static function buildBrowserRedirectUri(SimpleJWTLoginSettings $settings, $providerSlug)
+    {
+        return str_replace(
+            '&amp;',
+            '&',
+            $settings->generateExampleLink(RouteService::OAUTH_TOKEN, ['provider' => $providerSlug])
+        );
     }
 
     /**
@@ -447,7 +588,7 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
         if ($nonce === false) {
             throw new Exception(
                 esc_html(__('Unable to create two-factor nonce.', 'simple-jwt-login')),
-                absint(ErrorCodes::ERR_TWO_FACTOR_INVALID_NONCE)
+                absint(ErrorCodes::ERR_TWO_FACTOR_NONCE_CREATE_FAILED)
             );
         }
 
@@ -508,7 +649,7 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
         if ($nonce === false) {
             throw new Exception(
                 esc_html(__('Unable to create two-factor nonce.', 'simple-jwt-login')),
-                absint(ErrorCodes::ERR_TWO_FACTOR_INVALID_NONCE)
+                absint(ErrorCodes::ERR_TWO_FACTOR_NONCE_CREATE_FAILED)
             );
         }
 
@@ -568,11 +709,16 @@ abstract class AbstractOauth extends BaseOauth implements OauthInterface
     {
         $error = '';
 
-        if (isset($jsonResult['error_description'])) {
+        if (isset($jsonResult['error_description']) && is_string($jsonResult['error_description'])) {
             $error = ucfirst($jsonResult['error_description']) . '.';
         }
-        if (isset($jsonResult['error'])) {
-            $error .= ($error !== '' ? ' ' : '') . ucfirst($jsonResult['error']);
+        // Facebook (Graph API) returns the error as an object: {"error": {"message": "..."}}.
+        $providerError = isset($jsonResult['error']['message']) ? $jsonResult['error']['message'] : null;
+        if (isset($jsonResult['error']) && is_string($jsonResult['error'])) {
+            $providerError = $jsonResult['error'];
+        }
+        if (is_string($providerError)) {
+            $error .= ($error !== '' ? ' ' : '') . ucfirst($providerError);
         }
 
         return $error;

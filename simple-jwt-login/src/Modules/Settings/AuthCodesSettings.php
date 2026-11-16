@@ -3,6 +3,7 @@
 namespace SimpleJWTLogin\Modules\Settings;
 
 use Exception;
+use SimpleJWTLogin\Modules\AuthCodeBuilder;
 
 class AuthCodesSettings extends BaseSettings implements SettingsInterface
 {
@@ -102,6 +103,32 @@ class AuthCodesSettings extends BaseSettings implements SettingsInterface
         return isset($this->settings['codes'])
             ? $this->settings['codes']
             : [];
+    }
+
+    /**
+     * The first configured, non-expired auth code equal to the given value (constant-time compare).
+     *
+     * @param mixed $providedCode
+     * @return AuthCodeBuilder|null
+     */
+    public function findValidAuthCode($providedCode)
+    {
+        // Arrays (e.g. JSON {"AUTH_KEY": ["x"]}) would make hash_equals() throw a TypeError.
+        if (!is_scalar($providedCode) || (string) $providedCode === '') {
+            return null;
+        }
+        foreach ($this->getAuthCodes() as $code) {
+            $authCode   = new AuthCodeBuilder($code);
+            $expiration = $authCode->getExpirationDate();
+            if (!empty($expiration) && strtotime($expiration) < time()) {
+                continue;
+            }
+            if (hash_equals((string) $authCode->getCode(), (string) $providedCode)) {
+                return $authCode;
+            }
+        }
+
+        return null;
     }
 
     /**

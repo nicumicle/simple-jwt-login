@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
+use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepositoryInterface;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\RevokedToken\Repository as RevokedTokenRepository;
@@ -187,14 +188,16 @@ class RefreshTokenServiceTest extends TestCase
 
         // The old token must be deleted and a new one stored — exactly once each
         $this->refreshTokenRepoMock->expects($this->once())
-            ->method('deleteByToken');
+            ->method('deleteByToken')
+            ->willReturn(true);
         $this->refreshTokenRepoMock->expects($this->once())
             ->method('insert')
             ->with(
                 $this->equalTo(42),
                 $this->isString(),
                 $this->isInt()
-            );
+            )
+            ->willReturn(true);
 
         $refreshService = (new RefreshTokenService())
             ->withRequest(['refresh_token' => 'valid-token'])
@@ -207,6 +210,74 @@ class RefreshTokenServiceTest extends TestCase
             ->withRefreshTokenRepository($this->refreshTokenRepoMock)
             ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $refreshService->makeAction();
+    }
+
+    /**
+     * When a parallel request already claimed (deleted) the token, nothing is issued.
+     */
+    public function testTokenClaimedByAnotherRequestIssuesNothing()
+    {
+        $this->refreshTokenRepoMock = $this->createMock(RefreshTokenRepositoryInterface::class);
+        $tokenData          = new stdClass();
+        $tokenData->user_id = 42;
+
+        $this->wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication'    => true,
+                'allow_refresh_token'     => true,
+                'auth_requires_auth_code' => false,
+                'decryption_key'          => 'test-secret',
+            ]));
+        $this->refreshTokenRepoMock->method('getByToken')->willReturn($tokenData);
+        $this->wordPressDataMock->method('getUserDetailsById')->willReturn('user-object');
+        $this->wordPressDataMock->method('isInstanceOfuser')->willReturn(true);
+        $this->refreshTokenRepoMock->method('deleteByToken')->willReturn(false);
+        $this->refreshTokenRepoMock->expects($this->never())->method('insert');
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionCode(ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH);
+
+        (new RefreshTokenService())
+            ->withRequest(['refresh_token' => 'valid-token'])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'POST', 'REMOTE_ADDR' => '127.0.0.1']))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
+            ->makeAction();
+    }
+
+    /**
+     * A refresh token that could not be saved must never be handed to the client.
+     */
+    public function testNewTokenThatCouldNotBeSavedIsNotReturned()
+    {
+        $tokenData          = new stdClass();
+        $tokenData->user_id = 42;
+
+        $this->wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication'    => true,
+                'allow_refresh_token'     => true,
+                'auth_requires_auth_code' => false,
+                'decryption_key'          => 'test-secret',
+            ]));
+        $this->refreshTokenRepoMock->method('getByToken')->willReturn($tokenData);
+        $this->wordPressDataMock->method('getUserDetailsById')->willReturn('user-object');
+        $this->wordPressDataMock->method('isInstanceOfuser')->willReturn(true);
+        $this->refreshTokenRepoMock->method('deleteByToken')->willReturn(true);
+        $this->refreshTokenRepoMock->method('insert')->willReturn(false);
+
+        $this->expectExceptionCode(ErrorCodes::ERR_REFRESH_TOKEN_STORE_FAILED);
+
+        (new RefreshTokenService())
+            ->withRequest(['refresh_token' => 'valid-token'])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'POST', 'REMOTE_ADDR' => '127.0.0.1']))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
+            ->makeAction();
     }
 
     public function testResponseContainsNewJwtAndRefreshToken()
@@ -252,6 +323,55 @@ class RefreshTokenServiceTest extends TestCase
         $this->assertArrayHasKey('jwt', $capturedResponse['data']);
         $this->assertArrayHasKey('refresh_token', $capturedResponse['data']);
         $this->assertNotEmpty($capturedResponse['data']['refresh_token']);
+    }
+
+    /**
+     * A payload hook that copies request data must not plant a nested login-by claim (data.id).
+     */
+    public function testPayloadHookCannotPlantANestedLoginByClaim(): void
+    {
+        $tokenData          = new stdClass();
+        $tokenData->user_id = 1;
+        $capturedResponse   = null;
+
+        $this->wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication'    => true,
+                'allow_refresh_token'     => true,
+                'auth_requires_auth_code' => false,
+                'decryption_key'          => 'test-secret',
+                'jwt_auth_refresh_ttl'    => 1440,
+                'jwt_login_by_parameter'  => 'data.id',
+                'enabled_hooks'           => [SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME],
+            ]));
+        $this->refreshTokenRepoMock->method('getByToken')->willReturn($tokenData);
+        $this->wordPressDataMock->method('getUserDetailsById')->willReturn('user-object');
+        $this->wordPressDataMock->method('isInstanceOfuser')->willReturn(true);
+        $this->refreshTokenRepoMock->method('deleteByToken')->willReturn(true);
+        $this->refreshTokenRepoMock->method('insert')->willReturn(true);
+        $this->wordPressDataMock->method('applyFilters')
+            ->willReturnCallback(static function ($hookName, $value) {
+                return $hookName === SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME
+                    ? $value + ['data' => ['id' => 'victim', 'note' => 'kept']]
+                    : $value;
+            });
+        $this->wordPressDataMock->method('createResponse')
+            ->willReturnCallback(function ($response) use (&$capturedResponse) {
+                $capturedResponse = $response;
+                return true;
+            });
+
+        (new RefreshTokenService())
+            ->withRequest(['refresh_token' => 'valid-token'])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'POST', 'REMOTE_ADDR' => '127.0.0.1']))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
+            ->makeAction();
+
+        $payload = $this->decodeJwtPayload($capturedResponse['data']['jwt']);
+        $this->assertSame(['note' => 'kept'], $payload['data']);
     }
 
     private function decodeJwtPayload(string $jwt): array

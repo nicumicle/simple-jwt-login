@@ -98,6 +98,40 @@ class DeleteUserServiceTest extends TestCase
         $deleteUserService->makeAction();
     }
 
+    /**
+     * The repository lookups return null for an unknown user; nothing may be deleted then.
+     */
+    public function testUserLookupReturningNullDeletesNothing()
+    {
+        $settings = [
+            'allow_delete' => true,
+            'require_delete_auth' => false,
+            'decryption_key' => 'test',
+            'jwt_login_by' => LoginSettings::JWT_LOGIN_BY_EMAIL,
+            'jwt_login_by_parameter' => 'email',
+        ];
+        $wordPressData = $this->createMock(WordPressDataInterface::class);
+        $wordPressData->method('getOptionFromDatabase')->willReturn(json_encode($settings));
+        $wordPressData->method('getUserDetailsByEmail')->willReturn(null);
+        $wordPressData->expects($this->never())->method('deleteUser');
+        $tokenRepository = $this->createMock(RefreshTokenRepository::class);
+        $tokenRepository->expects($this->never())->method('deleteByUserId');
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('User not found.');
+
+        (new DeleteUserService())
+            ->withRequest([
+                'JWT' => JWT::encode(['email' => 'ghost@example.com'], $settings['decryption_key'], 'HS256')
+            ])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSettings(new SimpleJWTLoginSettings($wordPressData))
+            ->withRefreshTokenRepository($tokenRepository)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
+            ->makeAction();
+    }
+
     public function testUnableToDeleteUser()
     {
         $this->expectException(Exception::class);
@@ -157,6 +191,8 @@ class DeleteUserServiceTest extends TestCase
             ->willReturn($useMock);
         $this->wordPressDataMock->method('getUserByUserLogin')
             ->willReturn($useMock);
+        $this->wordPressDataMock->method('isInstanceOfuser')
+            ->willReturn(true);
         $this->wordPressDataMock->method('deleteUser')
             ->willReturn(true);
         $this->wordPressDataMock->method('doAction')

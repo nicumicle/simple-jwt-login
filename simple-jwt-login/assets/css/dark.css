@@ -169,6 +169,16 @@
     color: var(--sjl-text-muted);
 }
 
+/* ── Dashboard support banner ── */
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-support-banner {
+    background: #1e2330;
+}
+
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-support-banner a.sjl-support-button:hover,
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-support-banner a.sjl-support-button:focus {
+    color: #141820 !important;
+}
+
 /* ── Shared cards ── */
 #simple-jwt-login[data-sjl-theme="dark"] .sjl-gen-card {
     background: #1e2330;

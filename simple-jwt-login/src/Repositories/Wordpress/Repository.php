@@ -50,6 +50,16 @@ interface Repository
     public function redirect($url);
 
     /**
+     * Set an HttpOnly cookie for the site paths. The response is marked as not cacheable.
+     *
+     * @param string $name
+     * @param string $value
+     * @param int $expire Unix time; a past time deletes the cookie.
+     * @return void
+     */
+    public function setCookie($name, $value, $expire);
+
+    /**
      * @param string $url
      */
     public function redirectSafe($url);
@@ -269,13 +279,36 @@ interface Repository
     public function wordpressUserToArray($user);
 
     /**
+     * Check the user's credentials. A password goes through wp_authenticate(), so the
+     * "authenticate" filters (brute-force / user-block plugins) and "wp_login_failed" run.
+     * A password_hash can only be compared, and a mismatch fires "wp_login_failed".
+     *
      * @param string|null $password
      * @param string|null $passwordHash
-     * @param string $dbPassword
+     * @param WP_User $user
+     * @param array<string,callable> $loginFilters Filters (hook => callback) applied only during wp_authenticate().
      *
      * @return boolean
      */
-    public function checkPassword($password, $passwordHash, $dbPassword);
+    public function checkPassword($password, $passwordHash, $user, $loginFilters = array());
+
+    /**
+     * Fire "wp_login_failed", so brute-force plugins count the attempt.
+     *
+     * @param string $username
+     *
+     * @return void
+     */
+    public function loginFailed($username);
+
+    /**
+     * Hash the password like a real check would, so an unknown login takes as long as a wrong password.
+     *
+     * @param string $password
+     *
+     * @return void
+     */
+    public function simulatePasswordCheck($password);
 
     /**
      * @param WP_User $user

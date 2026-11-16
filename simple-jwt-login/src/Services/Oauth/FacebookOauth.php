@@ -13,6 +13,7 @@ use SimpleJWTLogin\Libraries\ServerCall;
  *  1. Browser OAuth redirect - exchange authorization code via the WP login page button.
  *  2. Code exchange (API)   - POST ?provider=facebook&code={code} -> returns raw token response.
  *  3. Token exchange (API)  - POST ?provider=facebook&access_token={token} -> returns a WP JWT.
+ *     The token must have been issued for the configured Facebook app.
  */
 class FacebookOauth extends AbstractOauth
 {
@@ -20,6 +21,7 @@ class FacebookOauth extends AbstractOauth
     const AUTH_URL               = 'https://www.facebook.com/v19.0/dialog/oauth';
     const TOKEN_ENDPOINT         = 'https://graph.facebook.com/v19.0/oauth/access_token';
     const USERINFO_ENDPOINT      = 'https://graph.facebook.com/me';
+    const DEBUG_TOKEN_ENDPOINT   = 'https://graph.facebook.com/v19.0/debug_token';
     const GRAPH_API_VERSION      = 'v19.0';
 
     // -------------------------------------------------------------------------
@@ -34,6 +36,11 @@ class FacebookOauth extends AbstractOauth
     public function getAuthUrl()
     {
         return self::AUTH_URL;
+    }
+
+    protected function getAuthScope()
+    {
+        return 'email';
     }
 
     protected function getClientId()
@@ -79,7 +86,9 @@ class FacebookOauth extends AbstractOauth
     }
 
     /**
-     * Validate a Facebook access_token by calling the Graph API /me endpoint.
+     * Validate a Facebook access_token with the Graph API debug_token endpoint.
+     * A token that is valid for Facebook is not enough: it must have been issued
+     * for the app configured here, or any other app could log its users in.
      *
      * @param string $token
      * @return void
@@ -87,16 +96,7 @@ class FacebookOauth extends AbstractOauth
      */
     protected function validateProviderToken($token)
     {
-        $statusCode  = 400;
-        $plainResult = '';
-        ServerCall::get(
-            self::USERINFO_ENDPOINT . '?access_token=' . rawurlencode($token),
-            [],
-            $statusCode,
-            $plainResult
-        );
-
-        if ($statusCode !== 200) {
+        if (!$this->hasAppCredentials() || !$this->isTokenIssuedForThisApp($token)) {
             throw new Exception(
                 esc_html(__('The provided Facebook access_token is invalid.', 'simple-jwt-login')),
                 absint(ErrorCodes::ERR_FACEBOOK_INVALID_TOKEN)
@@ -142,6 +142,31 @@ class FacebookOauth extends AbstractOauth
     // -------------------------------------------------------------------------
     // Facebook-specific helpers
     // -------------------------------------------------------------------------
+
+    /**
+     * Inspect the token with the app access token (app_id|app_secret).
+     *
+     * @param string $token
+     * @return bool
+     */
+    private function isTokenIssuedForThisApp($token)
+    {
+        $statusCode  = 400;
+        $plainResult = '';
+        $debug = ServerCall::get(
+            self::DEBUG_TOKEN_ENDPOINT
+                . '?input_token=' . rawurlencode($token)
+                . '&access_token=' . rawurlencode($this->getClientId() . '|' . $this->getClientSecret()),
+            [],
+            $statusCode,
+            $plainResult
+        );
+
+        return $statusCode === 200
+            && isset($debug['data']['is_valid'], $debug['data']['app_id'])
+            && $debug['data']['is_valid'] === true
+            && (string) $debug['data']['app_id'] === (string) $this->getClientId();
+    }
 
     /**
      * Retrieve the user's email from Facebook's Graph API /me endpoint.

@@ -52,10 +52,7 @@ class RefreshTokenService extends AuthenticateService
 
         try {
             $this->jwt = $jwt;
-            $userValue = $this->validateJWTAndGetUserValueFromPayload(
-                $this->jwtSettings->getLoginSettings()->getJwtLoginByParameter()
-            );
-            $user = $this->getUserDetails($userValue);
+            $user = $this->getUserFromCurrentJwt();
             if ($user !== null) {
                 $this->validateJwtRevoked(
                     $this->wordPressData->getUserProperty($user, 'ID'),
@@ -113,6 +110,14 @@ class RefreshTokenService extends AuthenticateService
             throw new Exception(esc_html(__('User not found.', 'simple-jwt-login')), absint(ErrorCodes::ERR_REVOKED_TOKEN));
         }
 
+        // Claim the token before issuing anything: a parallel request with the same token loses here.
+        if (!$this->tokenRepository->deleteByToken($encryptedToken)) {
+            throw new Exception(
+                esc_html(__('Invalid refresh token.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH)
+            );
+        }
+
         $authSettings = $this->jwtSettings->getAuthenticationSettings();
 
         $requestPayload = [];
@@ -128,40 +133,13 @@ class RefreshTokenService extends AuthenticateService
             $user
         );
 
-        if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME)) {
-            $trustedPayload = $newPayload;
-
-            $newPayload = $this->wordPressData->applyFilters(
-                SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME,
-                $newPayload,
-                $this->request
-            );
-
-            // The filter above receives $this->request (attacker-controlled), so a
-            // malicious or misconfigured hook could otherwise overwrite reserved
-            // identity claims (email, id, ...) to impersonate another account.
-            // Re-enforce the trusted values computed before the filter ran.
-            $reservedParameters = self::getReservedPayloadParameters($authSettings, $this->jwtSettings);
-            foreach ($reservedParameters as $reservedParameter) {
-                if (array_key_exists($reservedParameter, $trustedPayload)) {
-                    $newPayload[$reservedParameter] = $trustedPayload[$reservedParameter];
-                    continue;
-                }
-                unset($newPayload[$reservedParameter]);
-            }
-        }
+        $newPayload = $this->applyPayloadHook($newPayload);
 
         // Generate new refresh token
         $newRefreshToken = $this->generateRefreshToken();
-        $newTokenExpiresAt = time() + ($authSettings->getAuthJwtRefreshTtl() * 60);
 
-        // Rotate: delete old token, persist new one
-        $this->tokenRepository->deleteByToken($encryptedToken);
-        $this->tokenRepository->insert(
-            $tokenData->user_id,
-            $this->encryptRefreshToken($newRefreshToken),
-            $newTokenExpiresAt
-        );
+        // Rotate: the old token was claimed above, persist the new one
+        $this->storeRefreshToken((int) $tokenData->user_id, $newRefreshToken);
 
         if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_REFRESH_TOKEN_SUCCESS)) {
             $userId    = (int) $this->wordPressData->getUserProperty($user, 'ID');

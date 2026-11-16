@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SimpleJwtLoginTests\Feature\ProtectEndpoints;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestDox;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Modules\Settings\ProtectEndpointSettings;
@@ -103,6 +104,39 @@ class ActiveOnSpecificEndpointsTest extends TestBase
                 ErrorCodes::ERR_PROTECT_ENDPOINTS_MISSING_JWT
             ),
             $contentsArr
+        );
+    }
+
+    /**
+     * Every URL form WordPress resolves to a protected route.
+     *
+     * @return array<string, array{string}>
+     */
+    public static function protectedRouteUrlProvider(): array
+    {
+        return [
+            'pretty permalink'               => ['/wp-json/wp/v2/users'],
+            'index.php before wp-json'       => ['/index.php/wp-json/wp/v2/users'],
+            'index.php before wp-json, comments' => ['/index.php/wp-json/wp/v2/comments'],
+            'index.php with rest_route'      => ['/index.php?rest_route=/wp/v2/users'],
+            'trailing slash'                 => ['/wp-json/wp/v2/users/'],
+            'child route'                    => ['/index.php/wp-json/wp/v2/users/1'],
+        ];
+    }
+
+    #[DataProvider('protectedRouteUrlProvider')]
+    #[TestDox("Protected endpoint can't be reached through another URL form")]
+    public function testProtectedEndpointCanNotBeReachedThroughAnotherUrl(string $path): void
+    {
+        $resp = $this->client->get(self::API_URL . $path);
+
+        $this->assertSame(401, $resp->getStatusCode());
+        $this->assertSame(
+            $this->generateErrorJson(
+                "You are not authorized to access this endpoint.",
+                ErrorCodes::ERR_PROTECT_ENDPOINTS_MISSING_JWT
+            ),
+            json_decode($resp->getBody()->getContents(), true)
         );
     }
 

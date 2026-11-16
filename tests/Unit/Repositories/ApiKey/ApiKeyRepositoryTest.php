@@ -184,4 +184,33 @@ class ApiKeyRepositoryTest extends TestCase
 
         $this->assertSame($expected, $result);
     }
+
+    /**
+     * @return array<string, array{int|false, bool}>
+     */
+    public static function deleteByUserIdProvider()
+    {
+        return [
+            'keys deleted'    => [2, true],
+            'no keys to drop' => [0, true],
+            'db error'        => [false, false],
+        ];
+    }
+
+    /**
+     * @param int|false $dbResult
+     * @param bool $expected
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('deleteByUserIdProvider')]
+    public function testDeleteByUserId($dbResult, $expected)
+    {
+        $wpdbMock         = $this->createMock(\wpdb::class);
+        $wpdbMock->prefix = 'wp_';
+        $wpdbMock->expects($this->once())
+            ->method('delete')
+            ->with('wp_simple_jwt_login_api_keys', ['user_id' => 7], ['%d'])
+            ->willReturn($dbResult);
+
+        $this->assertSame($expected, (new ApiKeyRepository($wpdbMock))->deleteByUserId(7));
+    }
 }

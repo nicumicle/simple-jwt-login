@@ -315,6 +315,80 @@ class ApiKeyUsageTest extends FeatureTestCase
         $this->assertPluginApiKeyError($response);
     }
 
+    // ─── Tests: HTTP method override ──────────────────────────────────────────
+
+    /**
+     * WordPress REST dispatches the method from ?_method= or X-HTTP-Method-Override
+     * for any verb, so the permission must be checked against that method.
+     *
+     * @return array<string, array{array<string>, string, string, array<string,string>}>
+     */
+    public static function methodOverrideProvider(): array
+    {
+        return [
+            'read-only key, GET with ?_method=DELETE'       => [['read'], 'GET', '&_method=DELETE', []],
+            'read-only key, GET with override header'       => [['read'], 'GET', '', ['X-HTTP-Method-Override' => 'DELETE']],
+            'create-only key, POST with ?_method=DELETE'    => [['create'], 'POST', '&_method=DELETE', []],
+            'create-only key, POST with override header'    => [['create'], 'POST', '', ['X-HTTP-Method-Override' => 'DELETE']],
+            'read-only key, GET with lowercase ?_method'    => [['read'], 'GET', '&_method=delete', []],
+        ];
+    }
+
+    /**
+     * @param array<string>        $permissions
+     * @param array<string,string> $headers
+     */
+    #[DataProvider('methodOverrideProvider')]
+    #[TestDox('Key cannot use a method override to reach a method it has no permission for')]
+    public function testKeyCannotBypassPermissionWithMethodOverride(
+        array $permissions,
+        string $method,
+        string $query,
+        array $headers
+    ): void {
+        [, , $userId]  = $this->createAdminUser();
+        [, $createKey] = $this->createApiKey($userId, ['create']);
+        [, $rawKey]    = $this->createApiKey($userId, $permissions);
+        $postId        = $this->createPost($createKey, 'Override target');
+
+        $response = $this->request(
+            $method,
+            self::POSTS_ROUTE . '/' . $postId . $query,
+            [],
+            array_merge([self::API_KEY_HEADER => $rawKey], $headers)
+        );
+
+        $this->assertPluginApiKeyError($response);
+
+        [, $readKey] = $this->createApiKey($userId, ['read']);
+        $check = $this->request(
+            'GET',
+            self::POSTS_ROUTE . '/' . $postId . '&context=edit',
+            [],
+            [self::API_KEY_HEADER => $readKey]
+        );
+        $this->assertSame(200, $check->getStatusCode(), 'The post must still exist');
+        $this->assertSame('draft', json_decode($check->getBody()->getContents(), true)['status']);
+    }
+
+    #[TestDox('Key with "delete" permission can still delete through ?_method=DELETE')]
+    public function testDeleteKeyCanUseMethodOverride(): void
+    {
+        [, , $userId]  = $this->createAdminUser();
+        [, $createKey] = $this->createApiKey($userId, ['create']);
+        [, $deleteKey] = $this->createApiKey($userId, ['delete']);
+        $postId        = $this->createPost($createKey, 'Override delete');
+
+        $response = $this->request(
+            'POST',
+            self::POSTS_ROUTE . '/' . $postId . '&_method=DELETE',
+            [],
+            [self::API_KEY_HEADER => $deleteKey]
+        );
+
+        $this->assertSame(200, $response->getStatusCode());
+    }
+
     // ─── Tests: WP capability check ───────────────────────────────────────────
 
     #[TestDox('Subscriber with "create" key is denied by WordPress (lacks edit_posts)')]

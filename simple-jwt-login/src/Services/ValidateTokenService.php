@@ -53,11 +53,7 @@ class ValidateTokenService extends AuthenticateService
             );
         }
 
-        $loginParameter = $this->validateJWTAndGetUserValueFromPayload(
-            $this->jwtSettings->getLoginSettings()->getJwtLoginByParameter()
-        );
-
-        $user = $this->getUserDetails($loginParameter);
+        $user = $this->getUserFromCurrentJwt();
         if ($user === null) {
             throw new Exception(
                 esc_html(__('User not found.', 'simple-jwt-login')),
@@ -71,7 +67,8 @@ class ValidateTokenService extends AuthenticateService
         );
 
         $userArray = $this->wordPressData->wordpressUserToArray($user);
-        unset($userArray['user_pass']);
+        // user_activation_key holds the hashed password reset key.
+        unset($userArray['user_pass'], $userArray['user_activation_key']);
         $jwtData                  = $this->extractJwtData($this->jwt);
         $jwtParameters            = [];
         $jwtParameters['token']   = $this->jwt;

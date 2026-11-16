@@ -14,6 +14,15 @@ interface OauthInterface
      * @param WordPressDataInterface $wordPressData
      */
     public function __construct($request, $requestMethod, SimpleJWTLoginSettings $settings, WordPressDataInterface $wordPressData);
+
+    /**
+     * Request cookies (the browser flow reads its OAuth state cookie from them).
+     *
+     * @param array|null $cookies
+     * @return $this
+     */
+    public function withCookies($cookies);
+
     public function validate();
     /**
      * @return array

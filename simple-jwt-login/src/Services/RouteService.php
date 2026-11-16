@@ -182,10 +182,7 @@ class RouteService extends BaseService
     public function getUserFromJwt($jwt)
     {
         $this->jwt = $jwt;
-        $userValue = $this->validateJWTAndGetUserValueFromPayload(
-            $this->jwtSettings->getLoginSettings()->getJwtLoginByParameter()
-        );
-        $user = $this->getUserDetails($userValue);
+        $user = $this->getUserFromCurrentJwt();
         if ($user === null) {
             throw new Exception(
                 esc_html(__('WordPress User not found.', 'simple-jwt-login')),

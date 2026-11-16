@@ -6,7 +6,7 @@ Tags: jwt, authentication, rest api, oauth, headless wordpress
 Requires at least: 4.4.0
 Tested up to: 7.1
 Requires PHP: 5.5
-Stable tag: 4.1.1
+Stable tag: 4.2.0
 License: GPLv3
 License URI: https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE
 
@@ -378,6 +378,29 @@ Make sure you are passing a valid, non-expired JWT either as a Bearer token in t
 
 A complete changelog is available on the [GitHub repository](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md).
 
+= 4.2.0 (15 November 2026) =
+- Security: Fixed multiple security vulnerabilities affecting authentication, authorization, and REST API endpoints.
+- Security: Added security regression tests reproducing previously identified vulnerabilities to prevent regressions.
+- Security: Strengthened validation and authorization mechanisms across affected endpoints.
+- Security: Improved overall security and robustness.
+- New option "Revoke sessions on password change" (Authentication, off by default). When on, changing a password deletes the user's refresh tokens and rejects every JWT issued before the change. JWTs without an `iat` claim are then also rejected for that user
+- New optional "Expected audience (aud)" setting for the plugin's own JWTs and for each JWT Rule. When set, new JWTs carry that `aud` and only JWTs whose `aud` contains it are accepted (new error code 130)
+- `/auth` now checks the password with `wp_authenticate()`, so brute-force and user-block plugins (Limit Login Attempts, Wordfence, ...) protect it like `wp-login.php`. Application passwords can not be exchanged for a JWT
+- The security report now warns when authentication with `password_hash` is enabled
+- Admin: optional support banner with a donation link at the top of the settings page. It can be dismissed for 6 months and no features are locked behind donations
+- Breaking: The OAuth login buttons (Google, Auth0, Facebook, GitHub) now go through the plugin, which redirects to the provider. Custom login buttons or links that send visitors straight to the provider with the plugin's callback as `redirect_uri` stop working. Link to `GET /oauth/token?provider=<provider>` instead
+- Breaking: A Facebook or GitHub `access_token` sent to the OAuth endpoint must be issued for the app configured in the plugin. GitHub personal access tokens are no longer accepted. Auth0 requires the Auth0 Client ID to be configured
+- Breaking: `POST /user/reset_password` with an unknown email now answers 200 instead of 404 "Wrong user."
+- Breaking: With "Trust reverse proxy IP headers" on, the client IP is read from the last `X-Forwarded-For` entry only. Sites whose proxy sends the client IP only in `Client-IP` must switch the proxy to `X-Forwarded-For`
+- Breaking: After too many wrong two-factor codes (30 by default, Two Factor filter `two_factor_failed_attempt_limit`) sent to `POST /auth/2fa` or the OAuth two-factor form, the user's password is reset and the user and admin are emailed, as on `wp-login.php`
+- Breaking: API keys used on `/batch/v1` need the create, update and delete permissions, otherwise they get 401
+- Fix the Facebook browser login returning a 500 error instead of the login page with the error message when Facebook rejects the code
+- Fix two parallel `/auth/refresh` calls with the same refresh token both getting a new JWT: a refresh token can now be used once only
+- Fix API keys and refresh tokens staying in the database when a user is deleted in wp-admin, and an API key of a deleted user causing a 500 error instead of 401
+- Fix `/auth` rejecting base64 passwords that contain `'`, `"` or `\`. Invalid base64 now answers "Wrong user credentials."
+- Fix `/auth` and `/auth/refresh` returning a refresh token that could not be saved: they now answer 500 (new error code 131)
+- Fix API key `expires_at` accepting any text: it must be a date, a date time or an ISO 8601 date (new error code 132), is read as UTC and stored as UTC. The admin form now sends the browser's local time converted to UTC
+
 = 4.1.1 (15 November 2026) =
 - Security: a JWT read from a cookie, the session or the Authorization header no longer authenticates cross-site requests (including sibling subdomains and other ports), fixing CSRF on cookie-authenticated REST requests when the API middleware is enabled (Reported via Patchstack)
 - Breaking: cross-origin browser apps that send the JWT must have their origin listed in the CORS "Allow origin" setting. A "*" entry trusts the Authorization header only, never the cookie or session
@@ -518,6 +541,9 @@ A complete changelog is available on the [GitHub repository](https://github.com/
 For the full history back to 1.0.0 (2019), see the [Changelog on GitHub](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md).
 
 == Upgrade Notice ==
+
+= 4.2.0 (15 November 2026) =
+Important security release. Fixes multiple security vulnerabilities affecting authentication, authorization and REST API endpoints. All users are strongly encouraged to upgrade to this version as soon as possible. Review the Breaking changes in the changelog before upgrading.
 
 = 4.1.1 (15 November 2026) =
 Security fix (CSRF): a JWT no longer authenticates requests from other sites. Cross-origin browser apps must be listed in the CORS "Allow origin" setting - update recommended.

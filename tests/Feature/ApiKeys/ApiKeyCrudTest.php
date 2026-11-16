@@ -147,7 +147,7 @@ class ApiKeyCrudTest extends FeatureTestCase
             $this->authHeader($jwt)
         );
 
-        $this->assertNotSame(200, $response->getStatusCode());
+        $this->assertSame(422, $response->getStatusCode());
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
         $this->assertSame(ErrorCodes::ERR_API_KEY_MISSING_NAME, $body['data']['error_code']);
@@ -166,7 +166,7 @@ class ApiKeyCrudTest extends FeatureTestCase
             $this->authHeader($jwt)
         );
 
-        $this->assertNotSame(200, $response->getStatusCode());
+        $this->assertSame(422, $response->getStatusCode());
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
         $this->assertSame(ErrorCodes::ERR_API_KEY_MISSING_PERMISSIONS, $body['data']['error_code']);
@@ -185,7 +185,7 @@ class ApiKeyCrudTest extends FeatureTestCase
             $this->authHeader($jwt)
         );
 
-        $this->assertNotSame(200, $response->getStatusCode());
+        $this->assertSame(422, $response->getStatusCode());
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
         $this->assertSame(ErrorCodes::ERR_API_KEY_INVALID_PERMISSION, $body['data']['error_code']);
@@ -433,6 +433,79 @@ class ApiKeyCrudTest extends FeatureTestCase
         $body = json_decode($updateResponse->getBody()->getContents(), true);
         $this->assertFalse($body['success']);
         $this->assertSame(ErrorCodes::ERR_API_KEY_UNAUTHORIZED, $body['data']['error_code']);
+    }
+
+    #[TestDox('Subscriber cannot delete an API key owned by another user')]
+    public function testSubscriberCannotDeleteOtherUsersKey(): void
+    {
+        [$adminEmail, $adminPassword] = $this->createAdminUser();
+        $adminJwt = $this->getJWTForUser($adminEmail, $adminPassword);
+        $keyId    = $this->createKeyViaApi($adminJwt, 'admin-key-for-delete', ['read'])['id'];
+
+        [$subEmail, $subPassword, $subStatus] = $this->createUser();
+        $this->assertSame(200, $subStatus, 'register failed');
+        $subJwt = $this->getJWTForUser($subEmail, $subPassword);
+
+        $deleteResponse = $this->request('DELETE', self::API_KEYS_BASE . '/' . $keyId, [], $this->authHeader($subJwt));
+
+        $this->assertSame(403, $deleteResponse->getStatusCode());
+        $body = json_decode($deleteResponse->getBody()->getContents(), true);
+        $this->assertFalse($body['success']);
+        $this->assertSame(ErrorCodes::ERR_API_KEY_UNAUTHORIZED, $body['data']['error_code']);
+        $this->assertContains($keyId, $this->listKeyIds($adminJwt), 'the key must still exist');
+    }
+
+    #[TestDox('Subscriber list only contains their own keys, the admin list contains every user')]
+    public function testOnlyAdministratorListsOtherUsersKeys(): void
+    {
+        [$adminEmail, $adminPassword] = $this->createAdminUser();
+        $adminJwt   = $this->getJWTForUser($adminEmail, $adminPassword);
+        $adminKeyId = $this->createKeyViaApi($adminJwt, 'admin-listed-key', ['read'])['id'];
+
+        [$subEmail, $subPassword, $subStatus] = $this->createUser();
+        $this->assertSame(200, $subStatus, 'register failed');
+        $subJwt   = $this->getJWTForUser($subEmail, $subPassword);
+        $subKeyId = $this->createKeyViaApi($subJwt, 'sub-listed-key', ['read'])['id'];
+
+        $subKeyIds = $this->listKeyIds($subJwt);
+        $this->assertContains($subKeyId, $subKeyIds);
+        $this->assertNotContains($adminKeyId, $subKeyIds);
+
+        $adminKeyIds = $this->listKeyIds($adminJwt);
+        $this->assertContains($subKeyId, $adminKeyIds);
+        $this->assertContains($adminKeyId, $adminKeyIds);
+    }
+
+    #[TestDox('Administrator can delete an API key owned by another user')]
+    public function testAdministratorCanDeleteOtherUsersKey(): void
+    {
+        [$subEmail, $subPassword, $subStatus] = $this->createUser();
+        $this->assertSame(200, $subStatus, 'register failed');
+        $subJwt = $this->getJWTForUser($subEmail, $subPassword);
+        $keyId  = $this->createKeyViaApi($subJwt, 'sub-key-for-admin-delete', ['read'])['id'];
+
+        [$adminEmail, $adminPassword] = $this->createAdminUser();
+        $adminJwt = $this->getJWTForUser($adminEmail, $adminPassword);
+
+        $deleteResponse = $this->request('DELETE', self::API_KEYS_BASE . '/' . $keyId, [], $this->authHeader($adminJwt));
+
+        $this->assertSame(200, $deleteResponse->getStatusCode());
+        $this->assertNotContains($keyId, $this->listKeyIds($adminJwt));
+    }
+
+    /**
+     * Ids of the newest API keys the user can see (new keys are listed first).
+     *
+     * @param string $jwt
+     * @return array<int>
+     */
+    private function listKeyIds(string $jwt): array
+    {
+        $response = $this->request('GET', self::API_KEYS_BASE . '&per_page=100', [], $this->authHeader($jwt));
+        $this->assertSame(200, $response->getStatusCode());
+        $body = json_decode($response->getBody()->getContents(), true);
+
+        return array_column($body['data']['items'], 'id');
     }
 
     #[TestDox('Subscriber can manage their own API key')]

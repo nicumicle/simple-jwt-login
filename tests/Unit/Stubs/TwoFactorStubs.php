@@ -13,6 +13,9 @@
 if (!class_exists('Two_Factor_Core')) {
     class Two_Factor_Core
     {
+        const USER_RATE_LIMIT_KEY = '_two_factor_last_login_failure';
+        const USER_FAILED_LOGIN_ATTEMPTS_KEY = '_two_factor_failed_login_attempts';
+
         public static $usingTwoFactor = true;
         public static $primaryProvider = 'Two_Factor_Totp';
         public static $nonce = array('key' => 'abc');
@@ -20,6 +23,24 @@ if (!class_exists('Two_Factor_Core')) {
         public static $rateLimited = false;
         public static $timeDelay = 5;
         public static $deletedNonceFor = null;
+        public static $shouldResetPassword = false;
+        public static $passwordResetFor = null;
+        public static $resetEmailsSentFor = null;
+
+        public static function should_reset_password($userId)
+        {
+            return self::$shouldResetPassword;
+        }
+
+        public static function reset_compromised_password($user)
+        {
+            self::$passwordResetFor = $user;
+        }
+
+        public static function send_password_reset_emails($user)
+        {
+            self::$resetEmailsSentFor = $user;
+        }
 
         public static function is_user_using_two_factor($user)
         {

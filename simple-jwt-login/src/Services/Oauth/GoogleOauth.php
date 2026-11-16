@@ -28,6 +28,11 @@ class GoogleOauth extends AbstractOauth
         return self::AUTH_URL;
     }
 
+    protected function getAuthScope()
+    {
+        return 'email';
+    }
+
     protected function getClientId()
     {
         return $this->settings->getIntegrationsSettings()->google()->getClientId();

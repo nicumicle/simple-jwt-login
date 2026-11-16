@@ -137,12 +137,13 @@ class RouteHandler
     public function __invoke($wpRequest = null)
     {
         $request = $this->request;
-        if ($this->apiKeyRepository !== null && $wpRequest !== null && is_object($wpRequest)) {
+        // Path parameters such as {id} (api-keys, revoked-tokens) are not in $_REQUEST.
+        if (is_object($wpRequest) && method_exists($wpRequest, 'get_url_params')) {
             $urlParams = (array) $wpRequest->get_url_params();
             $request = array_merge($request, $urlParams);
         }
 
-        $keyId = isset($request['id']) ? (int) $request['id'] : null;
+        $keyId = $this->apiKeyRepository !== null && isset($request['id']) ? (int) $request['id'] : null;
 
         // Use the actual HTTP method of the request rather than the registered one,
         // so a single route registered for several methods dispatches correctly.

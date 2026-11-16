@@ -21,9 +21,7 @@ class CreateApiKeyService extends BaseApiKeyService
         );
         $this->requireCapabilityForPermissions($permissions);
 
-        $expiresAt = !empty($this->request['expires_at'])
-            ? (string) $this->request['expires_at']
-            : null;
+        $expiresAt = $this->requireValidExpiry();
 
         $rawKey    = 'sjl_' . bin2hex(openssl_random_pseudo_bytes(16));
         $keyHash   = hash('sha256', $rawKey);

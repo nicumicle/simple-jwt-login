@@ -6,12 +6,14 @@ use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Exceptions\ValidationException as ExceptionsValidationException;
 use SimpleJWTLogin\Helpers\CrossSiteRequestHelper;
+use SimpleJWTLogin\Helpers\Jwt\JwtAudience;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
+use SimpleJWTLogin\Helpers\Jwt\JwtLoginBy;
+use SimpleJWTLogin\Helpers\Jwt\PasswordChangeCutoff;
 use SimpleJWTLogin\Helpers\JwtPayloadHelper;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Modules\Jwt\JwtInterface;
 use SimpleJWTLogin\Modules\Jwt\JwtWrapper;
-use SimpleJWTLogin\Modules\AuthCodeBuilder;
 use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepositoryInterface;
 use SimpleJWTLogin\Repositories\RevokedToken\Repository as RevokedTokenRepositoryInterface;
 use SimpleJWTLogin\Repositories\WebhookLog\Repository as WebhookLogRepositoryInterface;
@@ -86,6 +88,18 @@ abstract class BaseService
      * @var JwtInterface|null
      */
     protected $jwtWrapper;
+
+    /**
+     * The JWT last split by extractJwtData(), and its parts.
+     *
+     * @var string|null
+     */
+    private $extractedJwt;
+
+    /**
+     * @var array
+     */
+    private $extractedData = [];
 
     /**
      * @param string $requestMethod
@@ -211,6 +225,14 @@ abstract class BaseService
      */
     protected function getUserParameterValueFromPayload($payload, $parameter)
     {
+        // Checked before any claim is read, so no login-by parameter (flat or dotted) can skip it.
+        if (!empty($payload[AuthenticateService::TFA_PENDING_CLAIM])) {
+            throw new Exception(
+                esc_html(__('This JWT requires two-factor verification before it can be used.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REJECTED)
+            );
+        }
+
         if (strpos($parameter, '.') !== false) {
             $array = explode('.', $parameter);
             foreach ($array as $value) {
@@ -232,13 +254,6 @@ abstract class BaseService
             }
 
             return (string)$payload;
-        }
-
-        if (!empty($payload['tfa_pending'])) {
-            throw new Exception(
-                esc_html(__('This JWT requires two-factor verification before it can be used.', 'simple-jwt-login')),
-                absint(ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REJECTED)
-            );
         }
 
         if (!isset($payload[$parameter])) {
@@ -401,7 +416,16 @@ abstract class BaseService
     protected function validateJwtRevoked($userId, $jwt)
     {
         $tokenHash = hash('sha256', $jwt);
-        if ($this->revokedTokenRepo->existsForUser($userId, $tokenHash)) {
+        $jwtParts  = $this->extractJwtData($jwt);
+        $payload   = isset($jwtParts['payload']) ? (array) $jwtParts['payload'] : [];
+        if ($this->revokedTokenRepo->existsForUser($userId, $tokenHash)
+            || PasswordChangeCutoff::isRevokedByPasswordChange(
+                $this->jwtSettings->getAuthenticationSettings(),
+                $this->wordPressData,
+                $userId,
+                $payload
+            )
+        ) {
             throw new Exception(esc_html(__('This JWT is invalid.', 'simple-jwt-login')), absint(ErrorCodes::ERR_REVOKED_TOKEN));
         }
 
@@ -455,17 +479,44 @@ abstract class BaseService
             [$algorithm]
         );
 
-        return $this->getUserParameterValueFromPayload($decoded, $parameter);
+        $userValue = $this->getUserParameterValueFromPayload($decoded, $parameter);
+        JwtAudience::assertAccepted(
+            $decoded,
+            JwtAudience::expected($this->jwtSettings->getAuthenticationSettings(), $ruleConfig)
+        );
+
+        return $userValue;
+    }
+
+    /**
+     * Validates the current JWT and returns its WordPress user, looked up with the login-by
+     * settings of the JWT Rule it matches (else the global ones).
+     *
+     * @return object|null
+     * @throws Exception
+     */
+    protected function getUserFromCurrentJwt()
+    {
+        $loginBy = JwtLoginBy::resolve(
+            $this->jwtSettings->getLoginSettings(),
+            $this->jwtSettings->getJwtRulesSettings()->findMatchingRuleConfig($this->extractJwtData($this->jwt))
+        );
+
+        return $this->getUserDetails(
+            $this->validateJWTAndGetUserValueFromPayload($loginBy['parameter']),
+            $loginBy['login_by']
+        );
     }
 
     /**
      * @param string $userData
+     * @param int    $loginBy LoginSettings::JWT_LOGIN_BY_*
      *
      * @return object|null
      */
-    protected function getUserDetails($userData)
+    protected function getUserDetails($userData, $loginBy)
     {
-        switch ($this->jwtSettings->getLoginSettings()->getJWTLoginBy()) {
+        switch ((int) $loginBy) {
             case LoginSettings::JWT_LOGIN_BY_EMAIL:
                 $user = $this->wordPressData->getUserDetailsByEmail($userData);
                 break;
@@ -491,7 +542,8 @@ abstract class BaseService
      */
     protected function validateAuthKey()
     {
-        $authCodeKey = $this->jwtSettings->getAuthCodesSettings()->getAuthCodeKey();
+        $authCodesSettings = $this->jwtSettings->getAuthCodesSettings();
+        $authCodeKey       = $authCodesSettings->getAuthCodeKey();
         if (!isset($this->request[$authCodeKey])) {
             throw new ExceptionsValidationException(
                 esc_html(__('Auth Code is required.', 'simple-jwt-login')),
@@ -499,7 +551,7 @@ abstract class BaseService
             );
         }
 
-        if (!$this->hasCorrectAuthCode($authCodeKey)) {
+        if ($authCodesSettings->findValidAuthCode($this->request[$authCodeKey]) === null) {
             throw new Exception(
                 esc_html(
                     sprintf(
@@ -514,34 +566,18 @@ abstract class BaseService
     }
 
     /**
-     * @param string $authCodeKey
-     * @return bool
-    */
-    private function hasCorrectAuthCode($authCodeKey)
-    {
-        $authCodes = $this->jwtSettings->getAuthCodesSettings()->getAuthCodes();
-        foreach ($authCodes as $code) {
-            $authCodeBuilder = new AuthCodeBuilder($code);
-            if (!empty($authCodeBuilder->getExpirationDate())
-                && (strtotime($authCodeBuilder->getExpirationDate()) < time())
-            ) {
-                continue;
-            }
-            if ($authCodeBuilder->getCode() === $this->request[$authCodeKey]) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * @param string $jwt
      * @return array
      */
     protected function extractJwtData($jwt)
     {
-        return $this->getJwtWrapper()->extractDataFromJwt($jwt);
+        // One request checks the same JWT several times (rule lookup, decode, revocation).
+        if ($this->extractedJwt !== $jwt) {
+            $this->extractedData = $this->getJwtWrapper()->extractDataFromJwt($jwt);
+            $this->extractedJwt = $jwt;
+        }
+
+        return $this->extractedData;
     }
 
     /**
@@ -560,15 +596,16 @@ abstract class BaseService
     protected function includeRequestParameters($url)
     {
         if ($this->jwtSettings->getLoginSettings()->isRequestParametersIncluded()) {
-            $requestParams = $this->request;
-
             $dangerousKeys = array_map(function ($value) {
-                return trim($value);
+                return strtolower(trim($value));
             }, explode(',', $this->jwtSettings->getLoginSettings()->getDangerousQueryParameters()));
+            // The JWT is read from its URL key in any letter case: never copy it into a redirect.
+            $dangerousKeys[] = strtolower($this->jwtSettings->getGeneralSettings()->getRequestKeyUrl());
 
-            foreach ($dangerousKeys as $key) {
-                if (isset($requestParams[$key])) {
-                    unset($requestParams[$key]);
+            $requestParams = [];
+            foreach ((array) $this->request as $key => $value) {
+                if (!in_array(strtolower((string) $key), $dangerousKeys, true)) {
+                    $requestParams[$key] = $value;
                 }
             }
             if (empty($requestParams)) {

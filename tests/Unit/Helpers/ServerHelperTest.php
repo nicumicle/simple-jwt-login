@@ -64,13 +64,38 @@ class ServerHelperTest extends TestCase
                 'useProxyHeaders' => false,
                 'expectedResult' => '127.0.0.1',
             ],
-            'client-ip header used when proxy headers are trusted' => [
+            'client-ip header is ignored even when proxy headers are trusted' => [
                 'server' => [
                     'HTTP_CLIENT_IP' => '10.0.0.1',
                     'REMOTE_ADDR' => '127.0.0.1',
                 ],
                 'useProxyHeaders' => true,
-                'expectedResult' => '10.0.0.1',
+                'expectedResult' => '127.0.0.1',
+            ],
+            'client-ip header does not win over x-forwarded-for' => [
+                'server' => [
+                    'HTTP_CLIENT_IP' => '10.0.0.1',
+                    'HTTP_X_FORWARDED_FOR' => '10.0.0.2',
+                    'REMOTE_ADDR' => '127.0.0.1',
+                ],
+                'useProxyHeaders' => true,
+                'expectedResult' => '10.0.0.2',
+            ],
+            'x-forwarded-for hop that is not an IP falls back to remote addr' => [
+                'server' => [
+                    'HTTP_X_FORWARDED_FOR' => '10.0.0.1, not-an-ip',
+                    'REMOTE_ADDR' => '127.0.0.1',
+                ],
+                'useProxyHeaders' => true,
+                'expectedResult' => '127.0.0.1',
+            ],
+            'x-forwarded-for ipv6 hop' => [
+                'server' => [
+                    'HTTP_X_FORWARDED_FOR' => '10.0.0.1, 2001:db8::1',
+                    'REMOTE_ADDR' => '127.0.0.1',
+                ],
+                'useProxyHeaders' => true,
+                'expectedResult' => '2001:db8::1',
             ],
             'x-forwarded-for used when proxy headers are trusted' => [
                 'server' => [
@@ -277,6 +302,51 @@ class ServerHelperTest extends TestCase
     {
         $serverHelper = new ServerHelper([]);
         $this->assertNull($serverHelper->getRequestMethod());
+    }
+
+    #[DataProvider('restRequestMethodProvider')]
+    /**
+     * @param array $server
+     * @param string|null $expectedResult
+     */
+    public function testGetRestRequestMethod($server, $expectedResult)
+    {
+        $serverHelper = new ServerHelper($server);
+        $this->assertSame($expectedResult, $serverHelper->getRestRequestMethod());
+    }
+
+    public static function restRequestMethodProvider()
+    {
+        return [
+            'no override' => [
+                ['REQUEST_METHOD' => 'GET', 'QUERY_STRING' => 'rest_route=/wp/v2/posts'],
+                'GET',
+            ],
+            'query override on GET' => [
+                ['REQUEST_METHOD' => 'GET', 'QUERY_STRING' => 'rest_route=/wp/v2/posts/1&_method=delete'],
+                'DELETE',
+            ],
+            'header override on POST' => [
+                ['REQUEST_METHOD' => 'POST', 'HTTP_X_HTTP_METHOD_OVERRIDE' => 'put'],
+                'PUT',
+            ],
+            'query override wins over the header' => [
+                [
+                    'REQUEST_METHOD'              => 'POST',
+                    'QUERY_STRING'                => '_method=PATCH',
+                    'HTTP_X_HTTP_METHOD_OVERRIDE' => 'DELETE',
+                ],
+                'PATCH',
+            ],
+            'array query override is not a method' => [
+                ['REQUEST_METHOD' => 'GET', 'QUERY_STRING' => '_method[]=DELETE'],
+                '',
+            ],
+            'missing request method' => [
+                [],
+                null,
+            ],
+        ];
     }
 
     #[DataProvider('getHeaderProvider')]

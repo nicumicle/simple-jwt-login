@@ -40,13 +40,14 @@ class ApiKeyAuthMiddleware
      * Returns the key row as an array on success, null on any failure.
      *
      * @param ServerHelper $serverHelper
-     * @param string       $requiredPermission
+     * @param string|string[] $requiredPermission One permission, or several that the key must all hold.
      * @param string       $headerName         Header to read the raw key from (default: x-api-key)
      * @return array|null
      */
     public function validate(ServerHelper $serverHelper, $requiredPermission, $headerName = 'x-api-key')
     {
-        if (!ApiKeyPermissions::isValid($requiredPermission)) {
+        $required = (array) $requiredPermission;
+        if (empty($required) || array_filter($required, [ApiKeyPermissions::class, 'isValid']) !== $required) {
             return null;
         }
 
@@ -66,7 +67,7 @@ class ApiKeyAuthMiddleware
         }
 
         $permissions = json_decode($key->permissions, true);
-        if (!is_array($permissions) || !in_array($requiredPermission, $permissions, true)) {
+        if (!is_array($permissions) || array_diff($required, $permissions) !== []) {
             return null;
         }
 

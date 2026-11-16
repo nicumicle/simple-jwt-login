@@ -46,12 +46,10 @@ class ProtectEndpointServiceTest extends TestCase
     /**
      * @param bool $expectedResult
      * @param string $requestMethod
-     * @param string $currentUrl
-     * @param string $documentRoot
      * @param array $request
      * @param array $settings
      */
-    public function testHasAccess($expectedResult, $requestMethod, $currentUrl, $documentRoot, $request, $settings)
+    public function testHasAccess($expectedResult, $requestMethod, $request, $settings)
     {
         $this->wordPressData->method('getOptionFromDatabase')
             ->willReturn(json_encode([
@@ -81,7 +79,7 @@ class ProtectEndpointServiceTest extends TestCase
             )
             ->withSession([]);
 
-        $result = $service->hasAccess($currentUrl, $documentRoot);
+        $result = $service->hasAccess($request['rest_route']);
         $this->assertSame($expectedResult, $result);
     }
 
@@ -94,8 +92,6 @@ class ProtectEndpointServiceTest extends TestCase
             'test-not-enabled' => [
                 'expectedResult' => true,
                 'requestMethod' => 'GET',
-                'currentUrl' => '/wp-json/v2/posts',
-                'documentRoot' => '/var/www/html',
                 'request' => [
                     'rest_route' => 'test/'
                 ],
@@ -112,8 +108,6 @@ class ProtectEndpointServiceTest extends TestCase
             'test-enabled-all-endpoints' => [
                 'expectedResult' => true,
                 'requestMethod' => 'GET',
-                'currentUrl' => '/wp-json/v2/posts',
-                'documentRoot' => '/var/www/html',
                 'request' => [
                     'rest_route' => '/v2/posts/'
                 ],
@@ -128,8 +122,6 @@ class ProtectEndpointServiceTest extends TestCase
             'test-enabled-all-endpoints-with-method' => [
                 'expectedResult' => true,
                 'requestMethod' => 'GET',
-                'currentUrl' => '/wp-json/v2/posts',
-                'documentRoot' => '/var/www/html',
                 'request' => [
                     'rest_route' => '/v2/posts/'
                 ],
@@ -147,8 +139,6 @@ class ProtectEndpointServiceTest extends TestCase
             'test-enabled-all-endpoints-with-no-whitelist' => [
                 'expectedResult' => false,
                 'requestMethod' => 'GET',
-                'currentUrl' => '/wp-json/v2/posts',
-                'documentRoot' => '/var/www/html',
                 'request' => [
                     'rest_route' => '/v2/posts/'
                 ],
@@ -162,8 +152,6 @@ class ProtectEndpointServiceTest extends TestCase
             'test-enabled-specific-endpoints' => [
                 'expectedResult' => false,
                 'requestMethod' => 'GET',
-                'currentUrl' => '/wp-json/v2/posts',
-                'documentRoot' => '/var/www/html',
                 'request' => [
                     'rest_route' => '/wp/v2/posts/'
                 ],
@@ -178,8 +166,6 @@ class ProtectEndpointServiceTest extends TestCase
             'test-enabled-specific-endpoints-with-method' => [
                 'expectedResult' => false,
                 'requestMethod' => 'GET',
-                'currentUrl' => '/wp-json/v2/posts',
-                'documentRoot' => '/var/www/html',
                 'request' => [
                     'rest_route' => '/wp/v2/posts/'
                 ],
@@ -197,8 +183,6 @@ class ProtectEndpointServiceTest extends TestCase
             'test-enabled-specific-endpoints-with-method-all' => [
                 'expectedResult' => false,
                 'requestMethod' => 'GET',
-                'currentUrl' => '/wp-json/v2/posts',
-                'documentRoot' => '/var/www/html',
                 'request' => [
                     'rest_route' => '/wp/v2/posts/'
                 ],
@@ -216,8 +200,6 @@ class ProtectEndpointServiceTest extends TestCase
             'test-enabled-specific-endpoints-with-different-method' => [
                 'expectedResult' => true,
                 'requestMethod' => 'GET',
-                'currentUrl' => '/wp-json/v2/posts',
-                'documentRoot' => '/var/www/html',
                 'request' => [
                     'rest_route' => '/wp/v2/posts/'
                 ],
@@ -235,8 +217,6 @@ class ProtectEndpointServiceTest extends TestCase
             'test-enabled-specific-endpoints-2' => [
                 'expectedResult' => false,
                 'requestMethod' => 'GET',
-                'currentUrl' => '/wp-json/v2/posts',
-                'documentRoot' => '/var/www/html',
                 'request' => [
                     'rest_route' => '/wp/v2/posts/'
                 ],
@@ -251,8 +231,6 @@ class ProtectEndpointServiceTest extends TestCase
             'test-enabled-all-endpoints_on_wp_admin' => [
                 'expectedResult' => true,
                 'requestMethod' => 'GET',
-                'currentUrl' => '/wp-admin/something',
-                'documentRoot' => '/var/www/html',
                 'request' => [
                     'rest_route' => '/wp-admin/something'
                 ],
@@ -268,8 +246,6 @@ class ProtectEndpointServiceTest extends TestCase
             'test_allow_all_with_no_matching_rule' => [
                 'expectedResult' => true,
                 'requestMethod' => 'GET',
-                'currentUrl' => '/wp-json/wp/v2/other',
-                'documentRoot' => '/var/www/html',
                 'request' => [
                     'rest_route' => '/wp/v2/other'
                 ],
@@ -283,8 +259,6 @@ class ProtectEndpointServiceTest extends TestCase
             'test_empty_endpoint' => [
                 'expectedResult' => false,
                 'requestMethod' => 'GET',
-                'currentUrl' => 'wp-json',
-                'documentRoot' => '/var/www/html',
                 'request' => [
                     'rest_route' => 'wp-json'
                 ],
@@ -346,11 +320,23 @@ class ProtectEndpointServiceTest extends TestCase
             )
             ->withSession([]);
 
-        $result = $service->hasAccess('/wp-json/v2/posts', '/var/www/html');
+        $result = $service->hasAccess('/wp/v2/posts/');
         $this->assertFalse($result);
     }
 
-    public function testApiKeyGrantsAccessWhenJwtMissing()
+    /**
+     * @return array<string, array{bool}>
+     */
+    public static function apiKeyOwnerProvider()
+    {
+        return [
+            'owner exists' => [true],
+            'owner was deleted in wp-admin' => [false],
+        ];
+    }
+
+    #[DataProvider('apiKeyOwnerProvider')]
+    public function testApiKeyGrantsAccessWhenJwtMissing($ownerExists)
     {
         $rawKey = 'test-api-key-value';
         $keyHash = hash('sha256', $rawKey);
@@ -385,9 +371,14 @@ class ProtectEndpointServiceTest extends TestCase
         $this->wordPressData->method('isUserLoggedIn')
             ->willReturn(false);
         $this->wordPressData->method('getUserDetailsById')
-            ->willReturn($userStub);
+            ->willReturn($ownerExists ? $userStub : false);
+        $this->wordPressData->method('isInstanceOfuser')
+            ->willReturn($ownerExists);
         $this->wordPressData->method('setCurrentUser')
-            ->willReturn(null);
+            ->willReturnCallback(function ($user) {
+                // The real repository fatals on anything but a WP_User.
+                $this->assertNotFalse($user);
+            });
 
         $routeService = (new RouteService())
             ->withRevokedTokenRepository($this->revokedTokenRepoMock)
@@ -412,8 +403,8 @@ class ProtectEndpointServiceTest extends TestCase
             ->withSession([])
             ->withApiKeyRepository($apiKeyRepo);
 
-        $result = $service->hasAccess('/wp-json/wp/v2/posts', '/var/www/html');
-        $this->assertTrue($result);
+        $result = $service->hasAccess('/wp/v2/posts');
+        $this->assertSame($ownerExists, $result);
     }
 
     public function testApiKeyAuthSkippedWhenRepositoryNotSet()
@@ -458,7 +449,7 @@ class ProtectEndpointServiceTest extends TestCase
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressData))
             ->withSession([]);
 
-        $result = $service->hasAccess('/wp-json/wp/v2/posts', '/var/www/html');
+        $result = $service->hasAccess('/wp/v2/posts');
         $this->assertFalse($result);
     }
 
@@ -507,7 +498,7 @@ class ProtectEndpointServiceTest extends TestCase
             )
             ->withSession([]);
 
-        $result = $service->hasAccess('/wp-json/simple-jwt-login/v1/auth', '/var/www/html');
+        $result = $service->hasAccess('/simple-jwt-login/v1/auth');
         $this->assertTrue($result);
     }
 
@@ -550,7 +541,7 @@ class ProtectEndpointServiceTest extends TestCase
             ->withSettings($jwtSettings)
             ->withSession([]);
 
-        $result = $service->hasAccess('/wp-json/wp/v2/posts', '/var/www/html');
+        $result = $service->hasAccess('/wp/v2/posts');
         $this->assertTrue($result);
     }
 
@@ -595,7 +586,7 @@ class ProtectEndpointServiceTest extends TestCase
 
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('You do not have the required role to access this endpoint.');
-        $service->hasAccess('/wp-json/wp/v2/posts', '/var/www/html');
+        $service->hasAccess('/wp/v2/posts');
     }
 
     public function testNoRolesRequiredAllowsAnyAuthenticatedUser()
@@ -637,7 +628,7 @@ class ProtectEndpointServiceTest extends TestCase
             ->withSettings($jwtSettings)
             ->withSession([]);
 
-        $result = $service->hasAccess('/wp-json/wp/v2/posts', '/var/www/html');
+        $result = $service->hasAccess('/wp/v2/posts');
         $this->assertTrue($result);
     }
 
@@ -682,7 +673,7 @@ class ProtectEndpointServiceTest extends TestCase
             ->withSettings($jwtSettings)
             ->withSession([]);
 
-        $result = $service->hasAccess('/wp-json/wp/v2/posts', '/var/www/html');
+        $result = $service->hasAccess('/wp/v2/posts');
         $this->assertTrue($result);
     }
 
@@ -763,7 +754,7 @@ class ProtectEndpointServiceTest extends TestCase
             ->withSettings(new SimpleJWTLoginSettings($this->wordPressData))
             ->withSession([]);
 
-        $result = $service->hasAccess('/wp-json/example/v1/admin-only', '/var/www/html');
+        $result = $service->hasAccess('/example/v1/admin-only');
         $this->assertSame($expectedResult, $result);
     }
 
@@ -816,6 +807,7 @@ class ProtectEndpointServiceTest extends TestCase
             ->willReturn(json_encode($settings));
         $this->wordPressData->method('isUserLoggedIn')->willReturn(false);
         $this->wordPressData->method('getUserDetailsById')->willReturn($owner);
+        $this->wordPressData->method('isInstanceOfuser')->willReturn(true);
         $this->wordPressData->method('getUserRoles')->willReturn($ownerRoles);
 
         $routeServiceMock = $this->createStub(RouteService::class);
@@ -832,7 +824,7 @@ class ProtectEndpointServiceTest extends TestCase
             ->withSession([])
             ->withApiKeyRepository($apiKeyRepo);
 
-        $result = $service->hasAccess('/wp-json/example/v1/admin-only', '/var/www/html');
+        $result = $service->hasAccess('/example/v1/admin-only');
         $this->assertSame($expectedResult, $result);
     }
 
@@ -888,6 +880,6 @@ class ProtectEndpointServiceTest extends TestCase
             ->withSettings($jwtSettings)
             ->withSession([]);
 
-        $this->assertTrue($service->hasAccess('/wp-json/wp/v2/posts', '/var/www/html'));
+        $this->assertTrue($service->hasAccess('/wp/v2/posts'));
     }
 }

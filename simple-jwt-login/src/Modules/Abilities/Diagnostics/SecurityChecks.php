@@ -88,6 +88,13 @@ class SecurityChecks
                 ['auth_codes.codes']
             ),
             $this->finding(
+                $this->flag($settings, 'authorization.enabled') && $this->flag($settings, 'authorization.password_hash_enabled'),
+                ConfigurationChecks::SEVERITY_WARNING,
+                'password_hash_login',
+                __('/auth accepts the stored password hash instead of the password, so anyone holding a database dump can get JWTs without cracking it, and lockouts from login protection plugins are not applied. Disable authentication with password_hash.', 'simple-jwt-login'),
+                ['authorization.password_hash_enabled']
+            ),
+            $this->finding(
                 $this->flag($settings, 'authorization.enabled') && !$this->flag($settings, 'authorization.revoke_token_enabled'),
                 ConfigurationChecks::SEVERITY_INFO,
                 'revoke_endpoint_disabled',

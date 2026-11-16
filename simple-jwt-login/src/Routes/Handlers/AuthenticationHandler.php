@@ -113,24 +113,28 @@ class AuthenticationHandler
             $apiKeyHeader     = trim((string) $this->serverHelper->getHeader($configuredHeader));
 
             if ($apiKeyHeader !== '') {
-                $requiredPermission = ApiKeyPermissions::httpMethodToPermission(
-                    $this->serverHelper->getRequestMethod()
+                $required = ApiKeyPermissions::requiredForRequest(
+                    $this->serverHelper->getRestRequestMethod(),
+                    $this->wordPressData->getResolvedRestRoute()
                 );
                 $keyData = null;
-                if ($requiredPermission !== null) {
+                $keyOwner = null;
+                if (!empty($required)) {
                     $keyData = (new ApiKeyAuthMiddleware($this->apiKeyRepository, $apiKeysSettings))
-                        ->validate($this->serverHelper, $requiredPermission, $configuredHeader);
+                        ->validate($this->serverHelper, $required, $configuredHeader);
                 }
-                if ($keyData === null) {
+                if ($keyData !== null) {
+                    $keyOwner = $this->wordPressData->getUserDetailsById((int) $keyData['user_id']);
+                }
+                // The owner may have been deleted in wp-admin after the key was created.
+                if ($keyData === null || !$this->wordPressData->isInstanceOfuser($keyOwner)) {
                     return new WP_Error(
                         'simple_jwt_login_api_key_error',
                         __('Invalid or unauthorized API key.', 'simple-jwt-login'),
                         ['status' => 401, 'error_code' => ErrorCodes::ERR_API_KEY_UNAUTHORIZED]
                     );
                 }
-                $this->wordPressData->setCurrentUser(
-                    $this->wordPressData->getUserDetailsById((int) $keyData['user_id'])
-                );
+                $this->wordPressData->setCurrentUser($keyOwner);
                 $endpointWithoutQuery = strtok($currentURL, '?');
                 $message = json_encode([
                     'url' => $endpointWithoutQuery !== false ? $endpointWithoutQuery : $currentURL,

@@ -104,7 +104,7 @@ $permissionLabels = [
                         <th><?php echo esc_html__('Name', 'simple-jwt-login'); ?></th>
                         <th><?php echo esc_html__('Prefix', 'simple-jwt-login'); ?></th>
                         <th><?php echo esc_html__('Permissions', 'simple-jwt-login'); ?></th>
-                        <th><?php echo esc_html__('Expires', 'simple-jwt-login'); ?></th>
+                        <th><?php echo esc_html__('Expires (UTC)', 'simple-jwt-login'); ?></th>
                         <th><?php echo esc_html__('Last Used', 'simple-jwt-login'); ?></th>
                         <th><?php echo esc_html__('Action', 'simple-jwt-login'); ?></th>
                     </tr>

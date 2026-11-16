@@ -116,21 +116,8 @@ class UserProperties
                 'description' => __('(bool) Whether the user should always access the admin over https. Default false.', 'simple-jwt-login'),
                 'updateable' => true,
             ],
-            'user_registered' => [
-                'type' => $typeString,
-                'description' => __("(string) Date the user registered. Format is 'Y-m-d H:m:s'.", 'simple-jwt-login'),
-                'updateable' => true,
-            ],
-            'user_activation_key' => [
-                'type' => $typeString,
-                'description' => __('(string) Password reset key. Default empty.', 'simple-jwt-login'),
-                'updateable' => true,
-            ],
-            'spam' => [
-                'type' => $typeBool,
-                'description' => __('(bool) Multisite only. Whether the user is marked as spam. Default false.', 'simple-jwt-login'),
-                'updateable' => true,
-            ],
+            // user_registered, user_activation_key (a password reset key) and spam are managed by WordPress:
+            // a registrant must never set them.
             'show_admin_bar_front' => [
                 'type' => $typeString,
                 'description' => __(

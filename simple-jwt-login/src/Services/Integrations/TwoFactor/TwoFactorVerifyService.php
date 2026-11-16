@@ -111,19 +111,26 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
         }
 
         if (!$this->verifyCodeForProvider($provider, $user, $code, $userId)) {
+            $message = $bridge->recordFailedAttempt($user, $userId)
+                ? __('Too many invalid two-factor codes. Your password was reset, check your email to set a new one.', 'simple-jwt-login')
+                : __('Invalid two-factor code.', 'simple-jwt-login');
             if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_2FA_VERIFY_FAILED)) {
                 $this->wordPressData->doAction(
                     SimpleJWTLoginHooks::AUDIT_2FA_VERIFY_FAILED,
                     $userId,
                     $userEmail,
-                    __('Invalid two-factor code.', 'simple-jwt-login')
+                    $message
                 );
             }
             throw new Exception(
-                esc_html(__('Invalid two-factor code.', 'simple-jwt-login')),
+                esc_html($message),
                 absint(ErrorCodes::ERR_TWO_FACTOR_INVALID_CODE)
             );
         }
+
+        $bridge->resetFailedAttempts($userId);
+        // One use only: otherwise the same interim JWT and code could mint more JWTs.
+        $bridge->deleteNonce($userId);
 
         $payload = self::generatePayload([], $this->wordPressData, $this->jwtSettings, $user);
 

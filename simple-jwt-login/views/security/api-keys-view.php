@@ -218,7 +218,7 @@ $akPages  = $akTotal > 0 ? (int) ceil($akTotal / $akPerPage) : 1;
                         <?php endif; ?>
                         <th><?php echo esc_html__('Prefix', 'simple-jwt-login'); ?></th>
                         <th><?php echo esc_html__('Permissions', 'simple-jwt-login'); ?></th>
-                        <th><?php echo esc_html__('Expires', 'simple-jwt-login'); ?></th>
+                        <th><?php echo esc_html__('Expires (UTC)', 'simple-jwt-login'); ?></th>
                         <th><?php echo esc_html__('Last Used', 'simple-jwt-login'); ?></th>
                         <th><?php echo esc_html__('Action', 'simple-jwt-login'); ?></th>
                     </tr>

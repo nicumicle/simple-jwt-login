@@ -66,14 +66,6 @@ class ValidationTest extends FeatureTestCase
                     ErrorCodes::ERR_INVALID_EMAIL_FOR_RESET_PASSWORD
                 ),
             ],
-            'user does not exist' => [
-                'payload'        => ['email' => 'nonexistent@example.com'],
-                'expectedStatus' => 404,
-                'expectedError'  => self::generateErrorJson(
-                    'Wrong user.',
-                    ErrorCodes::ERR_USER_NOT_FOUND_FOR_RESET_PASSWORD
-                ),
-            ],
         ];
     }
 

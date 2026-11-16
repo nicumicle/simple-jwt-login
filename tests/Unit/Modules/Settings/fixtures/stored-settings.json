@@ -70,6 +70,8 @@
         "ip_whitelist": "",
         "password_base64": false,
         "iss": "tests",
+        "aud": "",
+        "revoke_on_password_change": false,
         "password_hash_enabled": false,
         "refresh_token_enabled": "0",
         "refresh_token_key": "",

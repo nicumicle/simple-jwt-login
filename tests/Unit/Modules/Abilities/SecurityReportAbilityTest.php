@@ -46,6 +46,7 @@ class SecurityReportAbilityTest extends AbilityTestCase
             'open autologin'        => [['login' => ['enabled' => true]], 'autologin_unrestricted'],
             'autologin no safe redirect' => [['login' => ['enabled' => true, 'auth_code' => true], 'general' => ['security' => ['safe_redirect' => false]]], 'unsafe_redirect'],
             'admin auth code'       => [['auth_codes' => ['codes' => [['code' => 'x', 'role' => 'administrator', 'expiration_date' => '']]]], 'auth_code_creates_admins'],
+            'password_hash login'   => [['authorization' => ['enabled' => true, 'password_hash_enabled' => true]], 'password_hash_login'],
             'revoke endpoint off'   => [['authorization' => ['revoke_token_enabled' => '0']], 'revoke_endpoint_disabled'],
             'ai sees secrets'       => [['integrations' => ['3rdparty' => ['ai_abilities' => ['enabled' => true, 'allow_view_secrets' => true]]]], 'ai_can_view_secrets'],
         ];

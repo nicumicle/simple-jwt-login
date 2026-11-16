@@ -151,6 +151,10 @@ class RestErrorCatalog
 
         return [
             ErrorCodes::ERR_OAUTH_INVALID_PROVIDER => ['The provider parameter is not one of google, auth0, facebook, github.', []],
+            ErrorCodes::ERR_JWT_AUDIENCE_MISMATCH => ['The JWT "aud" claim (a string or a list) does not contain the expected audience: authorization.aud for the plugin\'s own JWTs, or the audience of the JWT Rule the token matched. JWTs issued before the audience was set have no "aud": log in again.', ['authorization.aud', 'jwt_rules.rules']],
+            ErrorCodes::ERR_API_KEY_INVALID_EXPIRY => ['The API key expires_at is not a valid date. Send a UTC date such as 2030-01-31, 2030-01-31 23:59:00 or an ISO 8601 date with a zone (2030-01-31T23:59:00Z), or null for no expiry.', []],
+            ErrorCodes::ERR_REFRESH_TOKEN_STORE_FAILED => ['The new refresh token could not be saved in the database, so no tokens were issued. Check the database and that the refresh tokens table exists, then log in again.', []],
+            ErrorCodes::ERR_OAUTH_INVALID_STATE => ['The browser OAuth callback has no state, or its state differs from the state cookie set when the login button was clicked (expired after 10 minutes, another browser, or a forged login link). Start the login from the login button again.', []],
             ErrorCodes::ERR_OAUTH_PROVIDER_NOT_ACTIVE => ['This OAuth provider is disabled. Enable integrations.oauth.<provider>.enabled and the flow used (oauth / exchange code / exchange token).', ['integrations.oauth']],
             ErrorCodes::ERR_MISSING_GOOGLE_PARAM => ['The Google request is missing code or id_token.', $google],
             ErrorCodes::ERR_GOOGLE_INVALID_CODE => ['Google rejected the authorization code: it expired, was used twice, or the redirect URI differs from the one registered in Google.', $google],
@@ -196,6 +200,7 @@ class RestErrorCatalog
             ErrorCodes::ERR_TWO_FACTOR_NOT_ACTIVE => ['Two-factor is enabled in the plugin but no supported 2FA plugin is active.', $twoFa],
             ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REQUIRED => ['The 2FA verify call needs the interim JWT returned by /auth.', $twoFa],
             ErrorCodes::ERR_TWO_FACTOR_INVALID_NONCE => ['The two-factor session expired. Authenticate again (interim_ttl controls its lifetime).', ['integrations.3rdparty.two_factor.interim_ttl']],
+            ErrorCodes::ERR_TWO_FACTOR_NONCE_CREATE_FAILED => ['The two-factor session could not be stored (database or object cache write failed). Retry, and check the server error log.', $twoFa],
             ErrorCodes::ERR_TWO_FACTOR_RATE_LIMITED => ['Too many wrong 2FA codes; wait before retrying.', []],            ErrorCodes::ERR_TWO_FACTOR_INVALID_CODE => ['The two-factor code is missing or wrong.', []],
             ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REJECTED => ['An interim (pre-2FA) JWT was used as a normal JWT. Complete the 2FA verify step first.', $twoFa],
             ErrorCodes::ERR_REVOKED_TOKEN_UNAUTHORIZED => ['Only administrators can manage revoked tokens.', []],

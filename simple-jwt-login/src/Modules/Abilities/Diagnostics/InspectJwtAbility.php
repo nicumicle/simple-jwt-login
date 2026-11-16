@@ -4,7 +4,10 @@ namespace SimpleJWTLogin\Modules\Abilities\Diagnostics;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Helpers\Jwt\JwtAudience;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
+use SimpleJWTLogin\Helpers\Jwt\JwtLoginBy;
+use SimpleJWTLogin\Helpers\Jwt\PasswordChangeCutoff;
 use SimpleJWTLogin\Modules\Abilities\AbstractAbility;
 use SimpleJWTLogin\Modules\Jwt\JwtWrapper;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
@@ -157,14 +160,34 @@ class InspectJwtAbility extends AbstractAbility
             return $report;
         }
 
-        $report['user'] = $this->findUser($decoded);
+        $expectedAudience = JwtAudience::expected($this->jwtSettings->getAuthenticationSettings(), $rule);
+        if (!JwtAudience::isAccepted($decoded, $expectedAudience)) {
+            $report['stage']      = 'audience';
+            $report['error_code'] = ErrorCodes::ERR_JWT_AUDIENCE_MISMATCH;
+            $report['error']      = sprintf(
+                // translators: %s = expected audience
+                __('The JWT "aud" claim does not contain the expected audience "%s".', 'simple-jwt-login'),
+                $expectedAudience
+            );
+
+            return $report;
+        }
+
+        $report['user'] = $this->findUser($decoded, $rule);
         if (!$report['user']['found']) {
             $report['stage'] = 'user';
             $report['error'] = __('The JWT is valid but no WordPress user matches the configured claim.', 'simple-jwt-login');
 
             return $report;
         }
-        if ($this->revokedTokens->existsForUser($report['user']['id'], hash('sha256', $jwt))) {
+        if ($this->revokedTokens->existsForUser($report['user']['id'], hash('sha256', $jwt))
+            || PasswordChangeCutoff::isRevokedByPasswordChange(
+                $this->jwtSettings->getAuthenticationSettings(),
+                $this->jwtSettings->getWordPressData(),
+                $report['user']['id'],
+                $decoded
+            )
+        ) {
             $report['stage']      = 'revoked';
             $report['error_code'] = ErrorCodes::ERR_REVOKED_TOKEN;
             $report['error']      = __('This JWT was revoked.', 'simple-jwt-login');
@@ -178,15 +201,16 @@ class InspectJwtAbility extends AbstractAbility
     }
 
     /**
-     * @param array $payload
+     * @param array      $payload
+     * @param array|null $rule the matched JWT Rule
      * @return array
      */
-    private function findUser(array $payload)
+    private function findUser(array $payload, $rule)
     {
-        $loginSettings = $this->jwtSettings->getLoginSettings();
-        $loginBy       = (int) $loginSettings->getJWTLoginBy();
-        $claim         = (string) $loginSettings->getJwtLoginByParameter();
-        $value         = $this->claimValue($payload, $claim);
+        $resolved = JwtLoginBy::resolve($this->jwtSettings->getLoginSettings(), $rule);
+        $loginBy  = $resolved['login_by'];
+        $claim    = $resolved['parameter'];
+        $value    = $this->claimValue($payload, $claim);
         $user          = [
             'lookup_by' => isset(self::$loginByNames[$loginBy]) ? self::$loginByNames[$loginBy] : (string) $loginBy,
             'claim'     => $claim,

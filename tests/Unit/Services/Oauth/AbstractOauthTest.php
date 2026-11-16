@@ -3,6 +3,7 @@
 namespace SimpleJwtLoginTests\Unit\Services\Oauth;
 
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\AuditLogSettings;
 use SimpleJWTLogin\Modules\Settings\GeneralSettings;
@@ -66,11 +67,29 @@ class AbstractOauthTest extends TestCase
         $this->makeOauth(['access_token' => 'tok'])->validate();
     }
 
-    public function testValidateThrowsWhenBothCodeAndTokenAreMissing()
+    /**
+     * @return array<string, array{array<string, string>, string}>
+     */
+    public static function missingCodeAndTokenProvider()
+    {
+        return [
+            'POST without code or token'     => [[], 'POST'],
+            'GET provider error callback'    => [['error' => 'access_denied', 'state' => 'x'], 'GET'],
+        ];
+    }
+
+    #[DataProvider('missingCodeAndTokenProvider')]
+    public function testValidateThrowsWhenBothCodeAndTokenAreMissing($request, $method)
     {
         $this->expectException(Exception::class);
         $this->expectExceptionCode(9003);
-        $this->makeOauth([])->validate();
+        $this->makeOauth($request, $method)->validate();
+    }
+
+    public function testValidatePassesForTheBrowserLoginStart()
+    {
+        $this->expectNotToPerformAssertions();
+        $this->makeOauth([], 'GET')->validate();
     }
 
     public function testCallWithPostCodeReturnsSuccessOn200()

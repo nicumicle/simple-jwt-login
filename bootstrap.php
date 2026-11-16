@@ -1,6 +1,8 @@
 <?php
 define('ABSPATH', 'PHPunit');
 define('WP_PLUGIN_DIR', 'PHPunit/plugins');
+define('COOKIEPATH', '/');
+define('COOKIE_DOMAIN', '');
 error_reporting(E_ALL);
 
 require_once "simple-jwt-login/autoload.php";
@@ -212,6 +214,27 @@ if (!function_exists('esc_url_raw')) {
     }
 }
 
+if (!function_exists('wp_parse_str')) {
+    /**
+     * @param string $input
+     * @param array $result
+     * @return void
+     */
+    function wp_parse_str($input, &$result)
+    {
+        parse_str((string) $input, $result);
+    }
+}
+
+if (!function_exists('nocache_headers')) {
+    /**
+     * @return void
+     */
+    function nocache_headers()
+    {
+    }
+}
+
 if (!function_exists('wp_parse_url')) {
     function wp_parse_url($url, $component = -1)
     {
@@ -289,6 +312,13 @@ if (!function_exists('wp_check_password')) {
     function wp_check_password($password, $dbPassword)
     {
         return true;
+    }
+}
+
+if (!function_exists('wp_hash_password')) {
+    function wp_hash_password($password)
+    {
+        return $password;
     }
 }
 
@@ -658,6 +688,51 @@ if (!function_exists('add_filter')) {
     }
 }
 
+if (!function_exists('remove_filter')) {
+    /**
+     * @param string $hook_name
+     * @param callable $callback
+     * @param int $priority
+     * @return bool
+     */
+    function remove_filter($hook_name, $callback, $priority = 10)
+    {
+        return true;
+    }
+}
+
+if (!function_exists('__return_true')) {
+    /**
+     * @return true
+     */
+    function __return_true()
+    {
+        return true;
+    }
+}
+
+if (!function_exists('__return_false')) {
+    /**
+     * @return false
+     */
+    function __return_false()
+    {
+        return false;
+    }
+}
+
+if (!function_exists('wp_authenticate')) {
+    /**
+     * @param string $username
+     * @param string $password
+     * @return WP_User|WP_Error
+     */
+    function wp_authenticate($username, $password)
+    {
+        return new WP_Error('authentication_failed', '');
+    }
+}
+
 if (!function_exists('plugins_url')) {
     /**
      * @param string $path
@@ -1010,8 +1085,21 @@ if (!function_exists('get_current_user_id')) {
 }
 
 if (!function_exists('wp_remote_request')) {
+    /**
+     * Unit tests can fake remote calls by setting $GLOBALS['sjl_test_http'] to a
+     * callable($url, $args) that returns a core-shaped response array.
+     *
+     * @param string $url
+     * @param array $args
+     * @return array|null
+     */
     function wp_remote_request($url, $args)
     {
+        if (isset($GLOBALS['sjl_test_http']) && is_callable($GLOBALS['sjl_test_http'])) {
+            return call_user_func($GLOBALS['sjl_test_http'], $url, $args);
+        }
+
+        return null;
     }
 }
 
@@ -1024,13 +1112,14 @@ if (!function_exists('wp_safe_remote_request')) {
 if (!function_exists('wp_remote_retrieve_response_code')) {
     function wp_remote_retrieve_response_code($response)
     {
+        return isset($response['response']['code']) ? $response['response']['code'] : '';
     }
 }
 
 if (!function_exists('wp_remote_retrieve_body')) {
     function wp_remote_retrieve_body($response)
     {
-        return '';
+        return isset($response['body']) ? $response['body'] : '';
     }
 }
 
@@ -1091,6 +1180,49 @@ if (!class_exists('WP_REST_Response')) {
         public function get_data()
         {
             return $this->data;
+        }
+    }
+}
+
+if (!class_exists('WP_REST_Request')) {
+    class WP_REST_Request
+    {
+        /** @var string */
+        private $method;
+        /** @var string */
+        private $route;
+        /** @var array */
+        private $urlParams;
+
+        public function __construct($method = '', $route = '', $urlParams = [])
+        {
+            $this->method = $method;
+            $this->route = $route;
+            $this->urlParams = $urlParams;
+        }
+
+        /**
+         * @return array
+         */
+        public function get_url_params()
+        {
+            return $this->urlParams;
+        }
+
+        /**
+         * @return string
+         */
+        public function get_method()
+        {
+            return $this->method;
+        }
+
+        /**
+         * @return string
+         */
+        public function get_route()
+        {
+            return $this->route;
         }
     }
 }

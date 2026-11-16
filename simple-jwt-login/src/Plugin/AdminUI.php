@@ -16,6 +16,8 @@ use SimpleJWTLogin\Services\AuditLoggerService;
 
 class AdminUI
 {
+    const DONATE_URL = 'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PK9BCD6AYF58Y&source=url';
+
     /**
      * @var array
      */
@@ -215,7 +217,7 @@ class AdminUI
     {
         $links['donate'] = sprintf(
             '<a href="%1$s" target="_blank" style="color: rgb(166, 146, 25); font-weight: bold;">%2$s</a>',
-            'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PK9BCD6AYF58Y&source=url',
+            self::DONATE_URL,
             'Buy me a coffee'
         );
 

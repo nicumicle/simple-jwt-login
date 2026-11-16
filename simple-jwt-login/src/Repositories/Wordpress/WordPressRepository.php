@@ -5,6 +5,7 @@ namespace SimpleJWTLogin\Repositories\Wordpress;
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Modules\UserProperties;
+use WP_Error;
 use WP_REST_Response;
 use WP_User;
 
@@ -132,6 +133,12 @@ class WordPressRepository implements Repository
     {
         wp_redirect($url);
         exit;
+    }
+
+    public function setCookie($name, $value, $expire)
+    {
+        nocache_headers();
+        setcookie($name, $value, $expire, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true);
     }
 
     /**
@@ -519,20 +526,72 @@ class WordPressRepository implements Repository
     /**
      * @param string|null $password
      * @param string|null $passwordHash
-     * @param string $dbPassword
+     * @param WP_User $user
+     * @param array<string,callable> $loginFilters
      *
      * @return bool
      */
-    public function checkPassword($password, $passwordHash, $dbPassword)
+    public function checkPassword($password, $passwordHash, $user, $loginFilters = array())
     {
         if ($password !== null) {
-            return wp_check_password($password, $dbPassword);
+            return $this->authenticateWithPassword($user, $password, $loginFilters);
         }
-        if ($passwordHash !== null) {
-            return hash_equals($dbPassword, $passwordHash);
+        if ($passwordHash !== null && hash_equals((string) $this->getUserPassword($user), (string) $passwordHash)) {
+            return true;
         }
+        $this->loginFailed($user->user_login);
 
         return false;
+    }
+
+    /**
+     * @param string $username
+     *
+     * @return void
+     */
+    public function loginFailed($username)
+    {
+        do_action(
+            'wp_login_failed',
+            $username,
+            new WP_Error('authentication_failed', __('Wrong user credentials.', 'simple-jwt-login'))
+        );
+    }
+
+    /**
+     * @param string $password
+     *
+     * @return void
+     */
+    public function simulatePasswordCheck($password)
+    {
+        // Same algorithm and cost as the hash a real user's password is checked against.
+        wp_hash_password((string) $password);
+    }
+
+    /**
+     * @param WP_User $user
+     * @param string $password
+     * @param array<string,callable> $loginFilters
+     *
+     * @return bool
+     */
+    protected function authenticateWithPassword($user, $password, $loginFilters)
+    {
+        // An application password must never be exchanged for a JWT.
+        $loginFilters['application_password_is_api_request'] = '__return_false';
+        foreach ($loginFilters as $hookName => $callback) {
+            add_filter($hookName, $callback, PHP_INT_MAX);
+        }
+        try {
+            $result = wp_authenticate($user->user_login, $password);
+        } finally {
+            foreach ($loginFilters as $hookName => $callback) {
+                remove_filter($hookName, $callback, PHP_INT_MAX);
+            }
+        }
+
+        return $result instanceof WP_User && (int) $result->ID === (int) $user->ID;
     }
 
     /**

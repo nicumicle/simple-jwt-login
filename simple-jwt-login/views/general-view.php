@@ -304,7 +304,7 @@ if (!defined('ABSPATH')) {
                 </label>
                 <p class="sjl-gen-feature-desc">
                     <?php echo esc_html__(
-                        'Detect the client IP from the Client-IP / X-Forwarded-For headers, and the scheme (http / https) from X-Forwarded-Proto. Enable this only when the site runs behind a trusted reverse proxy or load balancer. When disabled, IP restrictions use the connection address (REMOTE_ADDR), which cannot be spoofed.',
+                        'Detect the client IP from the last X-Forwarded-For entry, the one added by your proxy, and the scheme (http / https) from X-Forwarded-Proto. Enable this only when the site runs behind a trusted reverse proxy or load balancer that appends to X-Forwarded-For, and not when the web server already rewrites the client IP (e.g. Apache mod_remoteip). When disabled, IP restrictions use the connection address (REMOTE_ADDR), which cannot be spoofed.',
                         'simple-jwt-login'
                     ); ?>
                 </p>

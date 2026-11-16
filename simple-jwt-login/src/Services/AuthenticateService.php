@@ -5,6 +5,7 @@ namespace SimpleJWTLogin\Services;
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Exceptions\ValidationException;
+use SimpleJWTLogin\Helpers\Jwt\JwtAudience;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
 use SimpleJWTLogin\Modules\AuditEvents;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
@@ -41,7 +42,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
     protected function getTwoFactorBridge()
     {
         if ($this->twoFactorBridge === null) {
-            $this->twoFactorBridge = new TwoFactorBridge();
+            $this->twoFactorBridge = new TwoFactorBridge($this->wordPressData);
         }
         return $this->twoFactorBridge;
     }
@@ -110,6 +111,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
                 $payload[$claimKey] = $claimValue;
             }
         }
+        $payload = JwtAudience::addToPayload($payload, $authSettings);
 
         // Allow developers to create their own payload values inside of the returned JWT
         if ($jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::HOOK_GENERATE_PAYLOAD)) {
@@ -137,8 +139,45 @@ class AuthenticateService extends BaseService implements ServiceInterface
         if (!empty($jwtLoginByParameter)) {
             $reservedParameters[] = $jwtLoginByParameter;
         }
+        if ($authSettings->getJwtAudience() !== '') {
+            $reservedParameters[] = JwtAudience::CLAIM;
+        }
 
         return $reservedParameters;
+    }
+
+    /**
+     * Run the JWT payload hook, then put back the trusted reserved claims.
+     *
+     * The hook receives $this->request (attacker-controlled), so a malicious or
+     * misconfigured hook could otherwise overwrite reserved identity claims
+     * (email, id, a nested login-by parameter, ...) to impersonate another account.
+     *
+     * @param array $payload
+     * @return array
+     */
+    protected function applyPayloadHook($payload)
+    {
+        if (!$this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME)) {
+            return $payload;
+        }
+        $trustedPayload = $payload;
+        $payload = $this->wordPressData->applyFilters(
+            SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME,
+            $payload,
+            $this->request
+        );
+
+        $authSettings = $this->jwtSettings->getAuthenticationSettings();
+        foreach (self::getReservedPayloadParameters($authSettings, $this->jwtSettings) as $reservedParameter) {
+            if (array_key_exists($reservedParameter, $trustedPayload)) {
+                $payload[$reservedParameter] = $trustedPayload[$reservedParameter];
+                continue;
+            }
+            $payload = self::unsetPayloadParameter($payload, $reservedParameter);
+        }
+
+        return $payload;
     }
 
     /**
@@ -270,6 +309,16 @@ class AuthenticateService extends BaseService implements ServiceInterface
             $attemptedEmail = isset($this->request['email'])
                 ? $this->request['email']
                 : (isset($this->request['username']) ? $this->request['username'] : null);
+            if (isset($this->request['password'])) {
+                // Spend the time of a real password check, so response times do not reveal unknown logins.
+                $this->wordPressData->simulatePasswordCheck($this->request['password']);
+            }
+            // Unknown logins count too, or brute-force plugins never see username guessing.
+            $this->wordPressData->loginFailed(
+                $this->wordPressData->sanitizeTextField(
+                    $attemptedEmail !== null ? $attemptedEmail : $this->request['login']
+                )
+            );
             if ($auditLogSettings->isAuditEventEnabled(AuditEvents::AUTH_LOGIN_FAILED)) {
                 $this->wordPressData->doAction(
                     SimpleJWTLoginHooks::AUDIT_AUTH_LOGIN_FAILED,
@@ -287,24 +336,30 @@ class AuthenticateService extends BaseService implements ServiceInterface
         $userId    = (int) $this->wordPressData->getUserProperty($user, 'ID');
         $userEmail = (string) $this->wordPressData->getUserProperty($user, 'user_email');
 
-        $password = isset($this->request['password'])
-            ? $this->wordPressData->wpSlash($this->request['password'])
-            : null;
+        $password = isset($this->request['password']) ? (string) $this->request['password'] : null;
         $passwordHash = isset($this->request['password_hash'])
             ? $this->request['password_hash']
             : null;
 
         if ($authSettings->isAuthPasswordBase64Encoded()) {
-            if ($password !== null) {
-                $password = base64_decode($password);
-            }
-            if ($passwordHash !== null) {
-                $passwordHash = base64_decode($passwordHash);
-            }
+            // Invalid base64 becomes null, so it fails as wrong credentials below.
+            $password = $this->decodeBase64OrNull($password);
+            $passwordHash = $this->decodeBase64OrNull($passwordHash);
+        }
+        // Slash the decoded password, the same as WordPress' own login forms do.
+        if ($password !== null) {
+            $password = $this->wordPressData->wpSlash($password);
         }
 
-        $dbPassword = $this->wordPressData->getUserPassword($user);
-        $passwordMatch = $this->wordPressData->checkPassword($password, $passwordHash, $dbPassword);
+        // The Two Factor plugin blocks API logins of its users. /auth follows this plugin's Two-Factor
+        // integration instead: when it is on, the 2FA challenge runs right after this check; when it is off,
+        // 2FA is skipped.
+        $passwordMatch = $this->wordPressData->checkPassword(
+            $password,
+            $passwordHash,
+            $user,
+            array('two_factor_user_api_login_enable' => '__return_true')
+        );
 
         if (!$passwordMatch) {
             if ($auditLogSettings->isAuditEventEnabled(AuditEvents::AUTH_LOGIN_FAILED)) {
@@ -338,28 +393,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
             $user
         );
 
-        if ($hooksSettings->isHookEnabled(SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME)) {
-            $trustedPayload = $payload;
-
-            $payload = $this->wordPressData->applyFilters(
-                SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME,
-                $payload,
-                $this->request
-            );
-
-            // The filter above receives $this->request (attacker-controlled), so a
-            // malicious or misconfigured hook could otherwise overwrite reserved
-            // identity claims (email, id, ...) to impersonate another account.
-            // Re-enforce the trusted values computed before the filter ran.
-            $reservedParameters = self::getReservedPayloadParameters($authSettings, $this->jwtSettings);
-            foreach ($reservedParameters as $reservedParameter) {
-                if (array_key_exists($reservedParameter, $trustedPayload)) {
-                    $payload[$reservedParameter] = $trustedPayload[$reservedParameter];
-                    continue;
-                }
-                $payload = self::unsetPayloadParameter($payload, $reservedParameter);
-            }
-        }
+        $payload = $this->applyPayloadHook($payload);
 
         $customHeaderClaims = $authSettings->getCustomHeaderClaims();
         $jwt = $this->getJwtWrapper()->encode(
@@ -373,13 +407,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
 
         if ($authSettings->isRefreshTokenEnabled()) {
             $refreshToken = $this->generateRefreshToken();
-            $tokenExpiresAt = time() + ($authSettings->getAuthJwtRefreshTtl() * 60);
-
-            $this->tokenRepository->insert(
-                $userId,
-                $this->encryptRefreshToken($refreshToken),
-                $tokenExpiresAt
-            );
+            $this->storeRefreshToken($userId, $refreshToken);
 
             $responseData['refresh_token'] = $refreshToken;
         }
@@ -459,7 +487,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
         if ($nonce === false) {
             throw new Exception(
                 esc_html(__('Unable to create two-factor nonce.', 'simple-jwt-login')),
-                absint(ErrorCodes::ERR_TWO_FACTOR_INVALID_NONCE)
+                absint(ErrorCodes::ERR_TWO_FACTOR_NONCE_CREATE_FAILED)
             );
         }
 
@@ -518,12 +546,45 @@ class AuthenticateService extends BaseService implements ServiceInterface
     }
 
     /**
+     * @param string|null $value
+     * @return string|null
+     */
+    protected function decodeBase64OrNull($value)
+    {
+        if ($value === null) {
+            return null;
+        }
+        $decoded = base64_decode((string) $value, true);
+
+        return $decoded === false ? null : $decoded;
+    }
+
+    /**
      * Generate a cryptographically secure random refresh token
      * @return string
      */
     protected function generateRefreshToken()
     {
         return bin2hex(openssl_random_pseudo_bytes(32));
+    }
+
+    /**
+     * Save a new refresh token. A token that was not saved can never be used, so it is never returned.
+     *
+     * @param int $userId
+     * @param string $refreshToken
+     * @return void
+     * @throws Exception
+     */
+    protected function storeRefreshToken($userId, $refreshToken)
+    {
+        $expiresAt = time() + ($this->jwtSettings->getAuthenticationSettings()->getAuthJwtRefreshTtl() * 60);
+        if (!$this->tokenRepository->insert($userId, $this->encryptRefreshToken($refreshToken), $expiresAt)) {
+            throw new Exception(
+                esc_html(__('Unable to save the refresh token.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_REFRESH_TOKEN_STORE_FAILED)
+            );
+        }
     }
 
     /**

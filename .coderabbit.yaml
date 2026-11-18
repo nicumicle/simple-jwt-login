@@ -1,0 +1,151 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# CodeRabbit config - reviewer persona: security-focused senior PHP/WordPress engineer.
+language: en-US
+
+tone_instructions: >-
+  You are a senior PHP/WordPress security engineer reviewing an auth plugin. Be direct and terse.
+  Lead with exploitable issues and a concrete attack path. Skip praise, style nits and generic advice.
+
+reviews:
+  profile: assertive
+  request_changes_workflow: true
+  high_level_summary: true
+  review_status: true
+  collapse_walkthrough: true
+  poem: false
+  in_progress_fortune: false
+  sequence_diagrams: true
+  estimate_code_review_effort: true
+  suggested_labels: true
+
+  auto_review:
+    enabled: true
+    drafts: false
+    # default branch (master) is always reviewed
+    base_branches:
+      - "v3"
+
+  path_filters:
+    - "!vendor/**"
+    - "!download/**"
+    - "!wordpress.org/assets/**"
+    - "!**/*.pot"
+    - "!**/*.min.js"
+    - "!**/*.min.css"
+    - "!clover.xml"
+    - "!tests/CrossSite/package-lock.json"
+
+  security_risk_instructions: >-
+    WordPress plugin exposing public, unauthenticated REST routes under /wp-json/simple-jwt-login/v1
+    (auth, refresh, validate, revoke, register, delete user, reset password, OAuth callbacks).
+    It issues and verifies JWTs that log users into WordPress, so any bypass is an account takeover,
+    often of an administrator. Auth codes, API keys, the JWT signing key and OAuth client secrets
+    are stored in the simple_jwt_login_settings option. AI abilities (WordPress Abilities API / MCP)
+    can read and write settings and are gated by manage_options plus opt-in permissions.
+
+  path_instructions:
+    - path: "**/*.php"
+      instructions: |
+        Review as a security-focused senior PHP/WordPress engineer. Priorities, in order:
+        1. Authentication and authorization: JWT verification (alg confusion, "none", missing exp/nbf/iat/iss/aud
+           checks, kid/key selection, signature compared with hash_equals), token revocation and refresh token reuse,
+           login-by user id/email/login mapping, auth code checks, API key scope checks, capability checks
+           (current_user_can) and permission_callback on every REST route. Never accept '__return_true' on a
+           route that changes state or returns private data without an explicit reason.
+        2. Injection: $wpdb queries must use $wpdb->prepare() with placeholders; never interpolate input into SQL,
+           ORDER BY or column names (use a hard-coded allow-list). Flag unserialize() on input, dynamic include,
+           call_user_func with input, and header injection.
+        3. Output: escape at output with esc_html/esc_attr/esc_url/wp_kses, sanitize at input with the right
+           sanitize_* function. Passwords must NOT go through sanitize_text_field (use wp_slash).
+        4. CSRF / CORS: state-changing admin actions need a nonce + capability check; cookie-authenticated REST calls
+           must not be usable cross-site; CORS must not reflect arbitrary origins with credentials.
+        5. Secrets: never log, return, or echo signing keys, auth codes, API keys, OAuth secrets or tokens; compare
+           secrets with hash_equals; generate them with a CSPRNG (openssl_random_pseudo_bytes / wp_generate_password),
+           never rand/mt_rand/uniqid.
+        6. SSRF / outbound calls: webhook and OAuth URLs must use wp_safe_remote_* or validated hosts; check TLS is not disabled.
+        7. Information leaks: error messages must not reveal whether a user exists, stack traces, or setting values.
+        8. Rate limiting / brute force on auth, reset password and auth code checks.
+        Also enforce project rules: PHP 5.5 compatible in production code (no ??, scalar type hints, return types,
+        array class constants, random_bytes), strict comparisons (===, in_array(..., true)), protected methods by
+        default, catch variable named $exception, no var_dump/print_r/die/exit/eval/exec, no superglobals outside
+        views/ and routes. Fix PHPMD warnings in code, never with @SuppressWarnings.
+        For every finding give: severity, the concrete attack scenario, and a minimal fix.
+
+    - path: "simple-jwt-login/src/Libraries/JWT/**"
+      instructions: |
+        Vendored JWT library - the most security-critical code in the repo. Scrutinise algorithm handling
+        (reject alg mismatch and "none"), key type vs algorithm (HMAC key used as RSA public key), base64url
+        decoding, timing-safe signature comparison, and leeway handling. Any change here needs a matching test.
+
+    - path: "simple-jwt-login/src/Modules/Abilities/**"
+      instructions: |
+        AI abilities run with the permissions of an administrator acting through an AI agent. Verify every ability:
+        checks the AI access mode and capability on each call (canExecute), honours AbilitySettingsPolicy
+        (secrets masked unless allow_view_secrets, read-only paths such as integrations.3rdparty.ai_abilities and
+        webhooks.items never writable, secret lists never gain items), and cannot escalate its own access.
+        Flag any prompt-injection path where data read from logs or settings is returned unmasked.
+
+    - path: "simple-jwt-login/views/**"
+      instructions: |
+        Admin templates. Every dynamic value must be escaped for its context (esc_html, esc_attr, esc_url,
+        esc_textarea, wp_json_encode for inline JS). Forms need a nonce field. Secrets shown in the UI must be
+        masked by default. No inline <style> or <script> blocks - CSS goes in assets/css/style.css.
+
+    - path: "simple-jwt-login/assets/js/**"
+      instructions: |
+        Admin JS (jQuery). Flag DOM XSS: .html(), .append() or innerHTML with values from inputs, AJAX
+        responses or URLs; prefer .text() / .val(). Do not store tokens or secrets in localStorage.
+
+    - path: "tests/**"
+      instructions: |
+        Tests may use modern PHP. Check security fixes come with a regression test that proves the attack
+        fails. Use data providers with descriptive string keys, assertSame over assertEquals, createStub for
+        doubles without expectations, expectNotToPerformAssertions instead of assertTrue(true).
+
+    - path: "openapi/openapi.yaml"
+      instructions: |
+        Must match the REST routes and services. Flag endpoints whose auth requirements, parameters, response
+        fields or error codes changed in the PR without a matching spec update.
+
+    - path: ".github/workflows/**"
+      instructions: |
+        Flag pull_request_target with checkout of PR code, unpinned third-party actions, secrets exposed to
+        forks, and missing least-privilege permissions blocks.
+
+  tools:
+    phpstan:
+      enabled: true
+      level: "5"
+    phpcs:
+      enabled: true
+    phpmd:
+      enabled: true
+    gitleaks:
+      enabled: true
+    semgrep:
+      enabled: true
+    osvScanner:
+      enabled: true
+    actionlint:
+      enabled: true
+    zizmor:
+      enabled: true
+    shellcheck:
+      enabled: true
+    yamllint:
+      enabled: true
+    markdownlint:
+      enabled: false
+    languagetool:
+      enabled: false
+
+chat:
+  auto_reply: true
+
+knowledge_base:
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - "CONTRIBUTING.md"
+      - "README.md"
+      - "openapi/openapi.yaml"

@@ -1,19 +1,6 @@
 # Changelog - Releases
 
-## Unreleased
-- Fix the Delete button in Security > Revoked Tokens, which always failed with "Invalid revoked token ID.": `DELETE /revoked-tokens/{id}` now receives the id from the URL path (it answered 500, `error_code` 116)
-- Security: improved the data returned by REST API endpoints
-- Behavior change: client errors that answered HTTP 500 now answer their real status (`error_code` values are unchanged):
-  - 401: 2FA session expired / interim JWT missing claims / wrong 2FA code (106, 107, 109), interim 2FA JWT used as a normal JWT (110), JWT without the "JWT login by" claim (29, 30), Facebook and GitHub invalid code or token (98, 99, 102, 103), Google `id_token` issued for another client (118)
-  - 403: revoked token endpoints called by a non-administrator (115), OAuth account email not verified (111 Auth0, 112 GitHub, 119 Google)
-  - 404: Facebook and GitHub user not found (100, 104), revoked token id not found (116)
-  - 422: invalid OAuth provider or missing OAuth code/token (69, 71, 77, 97, 101), missing reset password code (60), API key without name or permissions, or with an unknown permission (85, 86, 87)
-  - 429: too many wrong 2FA codes (108)
-- Failing to store the 2FA session now has its own error code 133 (HTTP 500); it used to share code 107 with "2FA session expired"
-- OpenAPI: the endpoints used by the plugin admin screens (`/api-keys*`, `/revoked-tokens*`) are tagged `internal`, with their access rules (revoked tokens: administrators only; API keys: own keys, administrators manage every user's keys)
-- OpenAPI: every endpoint now documents its real request parameters, status codes and error codes, with examples taken from the plugin messages
-
-## 4.2.0 (15 November 2026)
+## 4.2.0 (18 November 2026)
 
 **Upgrade notice:** Important security release. Fixes multiple security vulnerabilities affecting authentication, authorization and REST API endpoints. All users are strongly encouraged to upgrade to this version as soon as possible. Review the Breaking changes in the changelog before upgrading.
 
@@ -22,6 +9,7 @@
 - Added security regression tests reproducing previously identified vulnerabilities to prevent regressions.
 - Strengthened validation and authorization mechanisms across affected endpoints.
 - Improved overall security and robustness.
+- Improved the data returned by REST API endpoints.
 
 ### New
 - New option "Revoke sessions on password change" (Authentication, off by default). When on, changing a password deletes the user's refresh tokens and rejects every JWT issued before the change. JWTs without an `iat` claim are then also rejected for that user
@@ -29,6 +17,8 @@
 - `/auth` now checks the password with `wp_authenticate()`, so brute-force and user-block plugins (Limit Login Attempts, Wordfence, ...) protect it like `wp-login.php`. Application passwords can not be exchanged for a JWT
 - The security report now warns when authentication with `password_hash` is enabled
 - Admin: optional support banner with a donation link at the top of the settings page. It can be dismissed for 6 months and no features are locked behind donations
+- OpenAPI: the endpoints used by the plugin admin screens (`/api-keys*`, `/revoked-tokens*`) are tagged `internal`, with their access rules (revoked tokens: administrators only; API keys: own keys, administrators manage every user's keys)
+- OpenAPI: every endpoint now documents its real request parameters, status codes and error codes, with examples taken from the plugin messages
 
 ### Breaking changes
 - The OAuth login buttons (Google, Auth0, Facebook, GitHub) now go through the plugin, which redirects to the provider. Custom login buttons or links that send visitors straight to the provider with the plugin's callback as `redirect_uri` stop working. Link to `GET /oauth/token?provider=<provider>` instead
@@ -37,6 +27,13 @@
 - With "Trust reverse proxy IP headers" on, the client IP is read from the last `X-Forwarded-For` entry only. Sites whose proxy sends the client IP only in `Client-IP` must switch the proxy to `X-Forwarded-For`
 - After too many wrong two-factor codes (30 by default, Two Factor filter `two_factor_failed_attempt_limit`) sent to `POST /auth/2fa` or the OAuth two-factor form, the user's password is reset and the user and admin are emailed, as on `wp-login.php`
 - API keys used on `/batch/v1` need the create, update and delete permissions, otherwise they get 401
+- Client errors that answered HTTP 500 now answer their real status (`error_code` values are unchanged):
+  - 401: 2FA session expired / interim JWT missing claims / wrong 2FA code (106, 107, 109), interim 2FA JWT used as a normal JWT (110), JWT without the "JWT login by" claim (29, 30), Facebook and GitHub invalid code or token (98, 99, 102, 103), Google `id_token` issued for another client (118)
+  - 403: revoked token endpoints called by a non-administrator (115), OAuth account email not verified (111 Auth0, 112 GitHub, 119 Google)
+  - 404: Facebook and GitHub user not found (100, 104), revoked token id not found (116)
+  - 422: invalid OAuth provider or missing OAuth code/token (69, 71, 77, 97, 101), missing reset password code (60), API key without name or permissions, or with an unknown permission (85, 86, 87)
+  - 429: too many wrong 2FA codes (108)
+- Failing to store the 2FA session now has its own error code 133 (HTTP 500); it used to share code 107 with "2FA session expired"
 
 ### Fixes
 - Fix the Facebook browser login returning a 500 error instead of the login page with the error message when Facebook rejects the code
@@ -45,6 +42,7 @@
 - Fix `/auth` rejecting base64 passwords that contain `'`, `"` or `\`. Invalid base64 now answers "Wrong user credentials."
 - Fix `/auth` and `/auth/refresh` returning a refresh token that could not be saved: they now answer 500 (new error code 131)
 - Fix API key `expires_at` accepting any text: it must be a date, a date time or an ISO 8601 date (new error code 132), is read as UTC and stored as UTC. The admin form now sends the browser's local time converted to UTC
+- Fix the Delete button in Security > Revoked Tokens, which always failed with "Invalid revoked token ID.": `DELETE /revoked-tokens/{id}` now receives the id from the URL path (it answered 500, `error_code` 116)
 
 ## 4.1.1 (15 November 2026)
 - Security: a JWT read from a cookie, the session or the Authorization header no longer authenticates cross-site requests (including sibling subdomains and other ports), fixing CSRF on cookie-authenticated REST requests when the API middleware is enabled (Reported via Patchstack)

@@ -555,16 +555,14 @@ Thanks to all our contributors!
 This project is supported by:
 
 <a href="https://www.digitalocean.com/">
-    <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/SVG/DO_Logo_horizontal_blue.svg" height="40" alt="DigitalOcean">
-</a>
+  <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/SVG/DO_Logo_horizontal_blue.svg" height="40" alt="DigitalOcean"></a>
 &nbsp;&nbsp;
 <a href="https://coderabbit.link/nicumicle">
-    <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://www.coderabbit.ai/press-kit/coderabbit-reverse-white.svg">
-        <source media="(prefers-color-scheme: light)" srcset="https://www.coderabbit.ai/press-kit/coderabbit-primary-black.svg">
-        <img src="https://www.coderabbit.ai/press-kit/coderabbit-primary-black.svg" height="40" alt="CodeRabbit">
-    </picture>
-</a>
+  <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://www.coderabbit.ai/press-kit/coderabbit-reverse-white.svg">
+      <source media="(prefers-color-scheme: light)" srcset="https://www.coderabbit.ai/press-kit/coderabbit-primary-black.svg">
+      <img src="https://www.coderabbit.ai/press-kit/coderabbit-primary-black.svg" height="40" alt="CodeRabbit">
+  </picture></a>
 
 ## Copyright
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Name: Simple JWT Login - test login guard
  * Description: Feature test fixture copied to mu-plugins by LoginProtectionTest. Behaves like a

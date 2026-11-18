@@ -10,6 +10,7 @@ use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepositoryInterface;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Modules\Settings\HooksSettings;
+use SimpleJWTLogin\Modules\Settings\JwtRulesSettings;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -686,6 +687,10 @@ class AuthenticateServiceTest extends TestCase
             ->method('checkPassword')
             ->with($this->identicalTo($expected), $this->isNull(), $this->anything())
             ->willReturn($expected !== null);
+        // Invalid base64 must cost a hash like an unknown user, or the timing reveals that the user exists.
+        $wordPressDataMock->expects($expected === null ? $this->once() : $this->never())
+            ->method('simulatePasswordCheck')
+            ->with($sentPassword);
 
         $authService = (new AuthenticateService())
             ->withRequest(['username' => 'testuser', 'password' => $sentPassword])
@@ -1120,6 +1125,9 @@ class AuthenticateServiceTest extends TestCase
         $jwtSettingsMock->method('getAuthenticationSettings')->willReturn($authSettings);
         $jwtSettingsMock->method('getHooksSettings')->willReturn($hooksSettings);
         $jwtSettingsMock->method('getLoginSettings')->willReturn($loginSettings);
+        $jwtSettingsMock->method('getJwtRulesSettings')->willReturn(
+            (new JwtRulesSettings())->withWordPressData($wordPressDataStub)->withSettings([])
+        );
 
         return $jwtSettingsMock;
     }

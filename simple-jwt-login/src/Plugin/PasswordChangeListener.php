@@ -89,7 +89,8 @@ class PasswordChangeListener
         if (!$this->authSettings->isRevokeOnPasswordChangeEnabled()) {
             return;
         }
-        $this->refreshTokenRepo->deleteByUserId($userId);
+        // Cutoff first: it also rejects refresh tokens, so a failed delete below leaves none usable.
         PasswordChangeCutoff::markPasswordChanged($this->wordPressData, $userId);
+        $this->refreshTokenRepo->deleteByUserId($userId);
     }
 }

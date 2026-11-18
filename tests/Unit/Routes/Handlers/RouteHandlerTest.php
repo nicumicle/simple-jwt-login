@@ -45,7 +45,8 @@ class RouteHandlerTest extends TestCase
 
     public function testUrlParamsReachServiceWithoutApiKeyRepository()
     {
-        $wpRequest = new WP_REST_Request('DELETE', '/simple-jwt-login/v1/revoked-tokens/7', ['id' => '7']);
+        $wpRequest = new WP_REST_Request('DELETE', '/simple-jwt-login/v1/revoked-tokens/7');
+        $wpRequest->set_url_params(['id' => '7']);
 
         $response = $this->buildHandler(RouteHandlerTestEchoIdService::class)->__invoke($wpRequest);
 

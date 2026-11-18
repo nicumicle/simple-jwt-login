@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-18T04:48:02+00:00\n"
+"POT-Creation-Date: 2026-11-18T06:43:03+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -1254,7 +1254,7 @@ msgstr ""
 #: src/Services/LoginService.php:73
 #: src/Services/Oauth/AbstractOauth.php:326
 #: src/Services/Oauth/AbstractOauth.php:330
-#: src/Services/RefreshTokenService.php:110
+#: src/Services/RefreshTokenService.php:111
 #: src/Services/RevokeTokenService.php:66
 #: src/Services/ValidateTokenService.php:59
 msgid "User not found."
@@ -1312,10 +1312,10 @@ msgid "My API Keys"
 msgstr ""
 
 #: src/Repositories/Wordpress/WordPressRepository.php:557
-#: src/Services/AuthenticateService.php:327
-#: src/Services/AuthenticateService.php:331
-#: src/Services/AuthenticateService.php:370
-#: src/Services/AuthenticateService.php:374
+#: src/Services/AuthenticateService.php:340
+#: src/Services/AuthenticateService.php:344
+#: src/Services/AuthenticateService.php:387
+#: src/Services/AuthenticateService.php:391
 #: src/Services/Oauth/AbstractOauth.php:493
 #: src/Services/Oauth/AbstractOauth.php:497
 msgid "Wrong user credentials."
@@ -1343,24 +1343,24 @@ msgstr ""
 msgid "You do not have permission to assign the \"%1$s\" permission to an API key."
 msgstr ""
 
-#: src/Services/ApiKeys/BaseApiKeyService.php:132
+#: src/Services/ApiKeys/BaseApiKeyService.php:135
 msgid "The expires_at value must be a date such as 2030-01-31 or 2030-01-31 23:59:00 (UTC)."
 msgstr ""
 
-#: src/Services/ApiKeys/BaseApiKeyService.php:142
+#: src/Services/ApiKeys/BaseApiKeyService.php:145
 msgid "Invalid API key ID."
 msgstr ""
 
-#: src/Services/ApiKeys/BaseApiKeyService.php:161
+#: src/Services/ApiKeys/BaseApiKeyService.php:164
 msgid "API key name is required."
 msgstr ""
 
-#: src/Services/ApiKeys/BaseApiKeyService.php:173
+#: src/Services/ApiKeys/BaseApiKeyService.php:176
 msgid "At least one permission is required."
 msgstr ""
 
 #. translators: %s = permission name
-#: src/Services/ApiKeys/BaseApiKeyService.php:186
+#: src/Services/ApiKeys/BaseApiKeyService.php:189
 #, php-format
 msgid "Invalid permission: %1$s"
 msgstr ""
@@ -1393,35 +1393,35 @@ msgstr ""
 msgid "API key updated successfully."
 msgstr ""
 
-#: src/Services/AuthenticateService.php:263
+#: src/Services/AuthenticateService.php:276
 msgid "The email, username, or login parameter is missing from the request."
 msgstr ""
 
-#: src/Services/AuthenticateService.php:269
+#: src/Services/AuthenticateService.php:282
 msgid "The password or password_hash parameter is missing from request."
 msgstr ""
 
-#: src/Services/AuthenticateService.php:279
+#: src/Services/AuthenticateService.php:292
 msgid "Authentication with password_hash is not enabled."
 msgstr ""
 
-#: src/Services/AuthenticateService.php:489
+#: src/Services/AuthenticateService.php:506
 #: src/Services/Oauth/AbstractOauth.php:590
 #: src/Services/Oauth/AbstractOauth.php:651
 msgid "Unable to create two-factor nonce."
 msgstr ""
 
-#: src/Services/AuthenticateService.php:584
+#: src/Services/AuthenticateService.php:601
 msgid "Unable to save the refresh token."
 msgstr ""
 
 #. translators: %s: client IP address
-#: src/Services/AuthenticateService.php:617
+#: src/Services/AuthenticateService.php:634
 #, php-format
 msgid "You are not allowed to Authenticate from this IP: %s"
 msgstr ""
 
-#: src/Services/AuthenticateService.php:633
+#: src/Services/AuthenticateService.php:650
 msgid "Authentication is not enabled."
 msgstr ""
 
@@ -1445,12 +1445,12 @@ msgstr ""
 msgid "This JWT is invalid."
 msgstr ""
 
-#: src/Services/BaseService.php:549
+#: src/Services/BaseService.php:555
 msgid "Auth Code is required."
 msgstr ""
 
 #. translators: %s: auth code key name
-#: src/Services/BaseService.php:559
+#: src/Services/BaseService.php:565
 #, php-format
 msgid "Invalid Auth Code ( %s ) provided."
 msgstr ""
@@ -1554,23 +1554,19 @@ msgstr ""
 msgid "Auth0 did not return an access_token."
 msgstr ""
 
-#: src/Services/Oauth/Auth0Oauth.php:112
-msgid "The provided Auth0 access_token is invalid."
-msgstr ""
-
-#: src/Services/Oauth/Auth0Oauth.php:183
+#: src/Services/Oauth/Auth0Oauth.php:169
 msgid "The provided Auth0 token is invalid."
 msgstr ""
 
-#: src/Services/Oauth/Auth0Oauth.php:192
+#: src/Services/Oauth/Auth0Oauth.php:178
 msgid "The provided Auth0 token was not issued for this application"
 msgstr ""
 
-#: src/Services/Oauth/Auth0Oauth.php:256
+#: src/Services/Oauth/Auth0Oauth.php:242
 msgid "Unable to retrieve user email from Auth0."
 msgstr ""
 
-#: src/Services/Oauth/Auth0Oauth.php:266
+#: src/Services/Oauth/Auth0Oauth.php:252
 msgid "Email address is not verified."
 msgstr ""
 
@@ -1644,17 +1640,21 @@ msgstr ""
 msgid "User was logged in."
 msgstr ""
 
-#: src/Services/RefreshTokenService.php:77
+#: src/Services/RefreshTokenService.php:78
 msgid "Refresh Token endpoint is not enabled."
 msgstr ""
 
-#: src/Services/RefreshTokenService.php:92
+#: src/Services/RefreshTokenService.php:93
 msgid "Refresh token is missing."
 msgstr ""
 
-#: src/Services/RefreshTokenService.php:103
-#: src/Services/RefreshTokenService.php:116
+#: src/Services/RefreshTokenService.php:104
+#: src/Services/RefreshTokenService.php:151
 msgid "Invalid refresh token."
+msgstr ""
+
+#: src/Services/RefreshTokenService.php:122
+msgid "Refresh token has been revoked."
 msgstr ""
 
 #: src/Services/RegisterUserService.php:62

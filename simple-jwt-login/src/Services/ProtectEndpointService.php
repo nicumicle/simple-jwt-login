@@ -246,14 +246,27 @@ class ProtectEndpointService extends BaseService
     }
 
     /**
+     * The REST route of a rule URL, however it was saved: /wp-json/..., /index.php/wp-json/...,
+     * /subdir/wp-json/..., a full URL or ?rest_route=..., matching WP_REST_Request::get_route().
+     *
      * @param string $endpoint
      * @return string
      */
     private function removeWpJsonFromEndpoint($endpoint)
     {
-        $endpoint = str_replace('/wp-json', '', $endpoint);
+        $endpoint = (string) $endpoint;
+        $restRoutePos = strpos($endpoint, 'rest_route=');
+        if ($restRoutePos !== false) {
+            $route = strtok(urldecode(substr($endpoint, $restRoutePos + strlen('rest_route='))), '&');
 
-        return $this->removeLastSlash($endpoint);
+            return $this->removeLastSlash((string) $route);
+        }
+        $wpJsonPos = strpos($endpoint, '/wp-json');
+        if ($wpJsonPos !== false) {
+            $endpoint = substr($endpoint, $wpJsonPos + strlen('/wp-json'));
+        }
+
+        return $this->removeLastSlash((string) $endpoint);
     }
 
     /**

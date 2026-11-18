@@ -217,8 +217,6 @@ x-tags:
     externalDocs:
       description: Find out more
       url: https://simplejwtlogin.com/docs/api-keys
-  - name: internal
-    description: Internal endpoints used by the plugin admin screens
   - name: revoked_tokens
     description: Revoked token management
 paths:
@@ -2153,7 +2151,9 @@ paths:
         be issued for the configured client ID and carry a verified email.
 
         **Auth0** - supply `code` (returns the raw Auth0 token response) or `access_token`
-        (returns a WordPress JWT). The account email must be verified.
+        (returns a WordPress JWT). The `access_token` must be a JWT issued for the configured
+        Auth0 Client ID (`azp` or `aud`), so opaque access tokens are rejected (error code 79).
+        The account email must be verified.
 
         The `code` flow sends the provider the "exchange code" Redirect URI saved in the
         provider settings, so the code must have been issued for that URI.
@@ -2996,7 +2996,7 @@ components:
         API key endpoint error. A `WP_Error` (`code: simple_jwt_login_api_key_error`) by
         default; rewritten into the plugin envelope (`ResponseError`) when the API middleware
         or API keys are enabled in the plugin settings.
-      oneOf:
+      anyOf:
         - $ref: '#/components/schemas/WpRestError'
         - $ref: '#/components/schemas/ResponseError'
     ApiKeyActionResponse:

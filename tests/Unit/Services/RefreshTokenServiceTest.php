@@ -2,6 +2,7 @@
 
 namespace SimpleJwtLoginTests\Unit\Services;
 
+use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\ErrorCodes;
@@ -163,6 +164,78 @@ class RefreshTokenServiceTest extends TestCase
             ->withRefreshTokenRepository($this->refreshTokenRepoMock)
             ->withRevokedTokenRepository($this->revokedTokenRepoMock);
         $result = $refreshService->makeAction();
+
+        $this->assertTrue($result);
+    }
+
+    public static function passwordChangeProvider()
+    {
+        $cutoff = 1700000000;
+
+        return [
+            'token created before the change is rejected' => [
+                $cutoff, gmdate('Y-m-d H:i:s', $cutoff - 60), true, false,
+            ],
+            'token without creation time is rejected' => [$cutoff, null, true, false],
+            'token created after the change is accepted' => [
+                $cutoff, gmdate('Y-m-d H:i:s', $cutoff + 60), true, true,
+            ],
+            'setting off accepts an old token' => [
+                $cutoff, gmdate('Y-m-d H:i:s', $cutoff - 60), false, true,
+            ],
+        ];
+    }
+
+    /**
+     * The row survives when deleteByUserId() failed on the password change: the cutoff must still block it.
+     */
+    #[DataProvider('passwordChangeProvider')]
+    public function testRefreshTokenIssuedBeforePasswordChange($cutoff, $createdAt, $revokeEnabled, $accepted)
+    {
+        $tokenData          = new stdClass();
+        $tokenData->user_id = 1;
+        if ($createdAt !== null) {
+            $tokenData->created_at = $createdAt;
+        }
+
+        $this->wordPressDataMock->method('getOptionFromDatabase')
+            // Nested format: the legacy flat format has no "revoke on password change" key.
+            ->willReturn(json_encode([
+                '_schema_version' => 2,
+                'general'         => ['decryption_key' => 'test-secret'],
+                'authorization'   => [
+                    'enabled'                   => true,
+                    'refresh_token_enabled'     => true,
+                    'auth_code'                 => false,
+                    'revoke_on_password_change' => $revokeEnabled,
+                ],
+            ]));
+        $this->wordPressDataMock->method('getUserMeta')->willReturn([(string) $cutoff]);
+        $this->wordPressDataMock->method('getUserDetailsById')->willReturn('user-object');
+        $this->wordPressDataMock->method('isInstanceOfuser')->willReturn(true);
+        $this->wordPressDataMock->method('createResponse')->willReturn(true);
+        $refreshTokenRepo = $this->createMock(RefreshTokenRepositoryInterface::class);
+        $refreshTokenRepo->method('getByToken')->willReturn($tokenData);
+        $refreshTokenRepo->method('insert')->willReturn(true);
+        $refreshTokenRepo->expects($accepted ? $this->once() : $this->never())
+            ->method('deleteByToken')->willReturn(true);
+
+        if (!$accepted) {
+            $this->expectException(\Exception::class);
+            $this->expectExceptionCode(ErrorCodes::ERR_REVOKED_TOKEN);
+        }
+
+        $result = (new RefreshTokenService())
+            ->withRequest(['refresh_token' => 'stolen-refresh-token'])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([
+                'REQUEST_METHOD' => 'POST',
+                'REMOTE_ADDR' => '127.0.0.1',
+            ]))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($refreshTokenRepo)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
+            ->makeAction();
 
         $this->assertTrue($result);
     }
@@ -372,6 +445,40 @@ class RefreshTokenServiceTest extends TestCase
 
         $payload = $this->decodeJwtPayload($capturedResponse['data']['jwt']);
         $this->assertSame(['note' => 'kept'], $payload['data']);
+    }
+
+    public function testFailingPayloadHookKeepsTheRefreshTokenUsable(): void
+    {
+        $tokenData          = new stdClass();
+        $tokenData->user_id = 1;
+
+        $this->wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication'    => true,
+                'allow_refresh_token'     => true,
+                'auth_requires_auth_code' => false,
+                'decryption_key'          => 'test-secret',
+                'enabled_hooks'           => [SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME],
+            ]));
+        $this->wordPressDataMock->method('getUserDetailsById')->willReturn('user-object');
+        $this->wordPressDataMock->method('isInstanceOfuser')->willReturn(true);
+        $this->wordPressDataMock->method('applyFilters')
+            ->willThrowException(new Exception('hook failed'));
+        $refreshTokenRepo = $this->createMock(RefreshTokenRepositoryInterface::class);
+        $refreshTokenRepo->method('getByToken')->willReturn($tokenData);
+        // The token is claimed only once the replacement is ready, so a retry can still use it.
+        $refreshTokenRepo->expects($this->never())->method('deleteByToken');
+        $refreshTokenRepo->expects($this->never())->method('insert');
+
+        $this->expectExceptionMessage('hook failed');
+        (new RefreshTokenService())
+            ->withRequest(['refresh_token' => 'valid-token'])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'POST', 'REMOTE_ADDR' => '127.0.0.1']))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($refreshTokenRepo)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
+            ->makeAction();
     }
 
     private function decodeJwtPayload(string $jwt): array

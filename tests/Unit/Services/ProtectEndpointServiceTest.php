@@ -84,6 +84,24 @@ class ProtectEndpointServiceTest extends TestCase
     }
 
     /**
+     * @param string $ruleUrl
+     * @return array
+     */
+    private static function specificRuleCase($ruleUrl)
+    {
+        return [
+            'expectedResult' => false,
+            'requestMethod' => 'GET',
+            'request' => ['rest_route' => '/wp/v2/users'],
+            'settings' => [
+                'enabled' => true,
+                'action' => ProtectEndpointSettings::SPECIFIC_ENDPOINTS,
+                'protect' => [$ruleUrl],
+            ],
+        ];
+    }
+
+    /**
      * @return array[]
      */
     public static function accessProvider()
@@ -163,6 +181,11 @@ class ProtectEndpointServiceTest extends TestCase
                     ]
                 ]
             ],
+            // Rules saved with the URL form the request came in, not the dispatched route.
+            'specific endpoint saved with index.php' => self::specificRuleCase('/index.php/wp-json/wp/v2/users'),
+            'specific endpoint saved with a subdirectory' => self::specificRuleCase('/blog/wp-json/wp/v2/users'),
+            'specific endpoint saved as a full url' => self::specificRuleCase('https://test.com/wp-json/wp/v2/users'),
+            'specific endpoint saved as rest_route' => self::specificRuleCase('/index.php?rest_route=/wp/v2/users'),
             'test-enabled-specific-endpoints-with-method' => [
                 'expectedResult' => false,
                 'requestMethod' => 'GET',

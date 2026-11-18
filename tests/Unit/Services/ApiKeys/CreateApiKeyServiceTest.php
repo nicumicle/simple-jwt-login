@@ -231,6 +231,9 @@ class CreateApiKeyServiceTest extends TestCase
             'impossible day' => ['2030-02-30 10:00:00'],
             'month 13'       => ['2030-13-01'],
             'garbage'        => ['2030-01-02 xx'],
+            'hour 24'        => ['2030-01-31 24:30:00'],
+            'minute 60'      => ['2030-01-31 23:60:00'],
+            'second 60'      => ['2030-01-31 23:59:60'],
         ];
     }
 

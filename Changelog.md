@@ -21,8 +21,9 @@
 - OpenAPI: every endpoint now documents its real request parameters, status codes and error codes, with examples taken from the plugin messages
 
 ### Breaking changes
+- WordPress 6.2 or newer is required (was 4.4). The plugin's database queries use the `%i` identifier placeholder added in WordPress 6.2
 - The OAuth login buttons (Google, Auth0, Facebook, GitHub) now go through the plugin, which redirects to the provider. Custom login buttons or links that send visitors straight to the provider with the plugin's callback as `redirect_uri` stop working. Link to `GET /oauth/token?provider=<provider>` instead
-- A Facebook or GitHub `access_token` sent to the OAuth endpoint must be issued for the app configured in the plugin. GitHub personal access tokens are no longer accepted. Auth0 requires the Auth0 Client ID to be configured
+- A Facebook or GitHub `access_token` sent to the OAuth endpoint must be issued for the app configured in the plugin. GitHub personal access tokens are no longer accepted. Auth0 requires the Auth0 Client ID to be configured, and an Auth0 `access_token` must be a JWT issued for that client (`azp` or `aud`): opaque Auth0 access tokens are rejected
 - `POST /user/reset_password` with an unknown email now answers 200 instead of 404 "Wrong user."
 - With "Trust reverse proxy IP headers" on, the client IP is read from the last `X-Forwarded-For` entry only. Sites whose proxy sends the client IP only in `Client-IP` must switch the proxy to `X-Forwarded-For`
 - After too many wrong two-factor codes (30 by default, Two Factor filter `two_factor_failed_attempt_limit`) sent to `POST /auth/2fa` or the OAuth two-factor form, the user's password is reset and the user and admin are emailed, as on `wp-login.php`

@@ -142,8 +142,21 @@ class AuthenticateService extends BaseService implements ServiceInterface
         if ($authSettings->getJwtAudience() !== '') {
             $reservedParameters[] = JwtAudience::CLAIM;
         }
+        // A rule sharing the plugin's key would map its own claim to a user, so neither that claim
+        // nor a payload claim that makes the rule match may come from the client.
+        foreach ($jwtSettings->getJwtRulesSettings()->getRules() as $rule) {
+            if (!empty($rule['login_by_parameter'])) {
+                $reservedParameters[] = (string) $rule['login_by_parameter'];
+            }
+            if (isset($rule['condition_type'], $rule['condition_key'])
+                && $rule['condition_type'] === 'payload'
+                && trim((string) $rule['condition_key']) !== ''
+            ) {
+                $reservedParameters[] = trim((string) $rule['condition_key']);
+            }
+        }
 
-        return $reservedParameters;
+        return array_values(array_unique($reservedParameters));
     }
 
     /**
@@ -345,6 +358,10 @@ class AuthenticateService extends BaseService implements ServiceInterface
             // Invalid base64 becomes null, so it fails as wrong credentials below.
             $password = $this->decodeBase64OrNull($password);
             $passwordHash = $this->decodeBase64OrNull($passwordHash);
+            if ($password === null && $passwordHash === null && isset($this->request['password'])) {
+                // checkPassword() fails without hashing: spend the time an unknown user costs.
+                $this->wordPressData->simulatePasswordCheck($this->request['password']);
+            }
         }
         // Slash the decoded password, the same as WordPress' own login forms do.
         if ($password !== null) {

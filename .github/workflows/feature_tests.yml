@@ -52,6 +52,11 @@ jobs:
             # opening the runner's sess_* files in a sticky dir. SJL_SESSION_DIR in the test step must match.
             sudo mkdir -p /var/lib/sjl-sessions && sudo chmod 0777 /var/lib/sjl-sessions
             echo "session.save_path = /var/lib/sjl-sessions" | sudo tee /etc/php/${{ matrix.php_version }}/apache2/conf.d/99-sjl-tests.ini
+            # Pretty permalinks (/wp-json/..., /index.php/wp-json/...) need mod_rewrite and .htaccess,
+            # like the local docker setup. ProtectEndpoints tests hit every URL form.
+            sudo a2enmod rewrite
+            printf '<Directory /var/www/html>\n    AllowOverride All\n</Directory>\n' | sudo tee /etc/apache2/conf-available/sjl-tests.conf
+            sudo a2enconf sjl-tests
             sudo /etc/init.d/apache2 start
       -   name: "🚧 Install WordPress"
           run: |
@@ -80,7 +85,21 @@ jobs:
             # Errors go to wp-content/debug.log (shown by "Server logs" on failure). Displaying them
             # would prepend HTML notices (e.g. WooCommerce's early textdomain notice) to JSON responses.
             wp config set --raw WP_DEBUG_DISPLAY false --path=/var/www/html
-            
+            wp rewrite structure '/%postname%/' --path=/var/www/html
+            cat > /var/www/html/.htaccess <<'HTACCESS'
+            # BEGIN WordPress
+            <IfModule mod_rewrite.c>
+            RewriteEngine On
+            RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+            RewriteBase /
+            RewriteRule ^index\.php$ - [L]
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteCond %{REQUEST_FILENAME} !-d
+            RewriteRule . /index.php [L]
+            </IfModule>
+            # END WordPress
+            HTACCESS
+
             echo "127.0.0.1 $SITE_URL" | sudo tee -a /etc/hosts
       -   name: "🚧 Init the plugin"
           run: |

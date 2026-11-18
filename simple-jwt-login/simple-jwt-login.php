@@ -11,6 +11,7 @@
     License: GPLv3
     License URI: https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE
     Version: 4.2.0
+    Requires at least: 6.2
 */
 
 use SimpleJWTLogin\Helpers\ServerHelper;

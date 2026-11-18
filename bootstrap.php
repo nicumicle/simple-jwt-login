@@ -1192,13 +1192,29 @@ if (!class_exists('WP_REST_Request')) {
         /** @var string */
         private $route;
         /** @var array */
-        private $urlParams;
+        private $urlParams = [];
 
-        public function __construct($method = '', $route = '', $urlParams = [])
+        /**
+         * Same signature as WordPress: the third argument is the route attributes, not URL parameters.
+         *
+         * @param string $method
+         * @param string $route
+         * @param array $attributes
+         */
+        public function __construct($method = '', $route = '', $attributes = [])
         {
+            unset($attributes);
             $this->method = $method;
             $this->route = $route;
-            $this->urlParams = $urlParams;
+        }
+
+        /**
+         * @param array $params
+         * @return void
+         */
+        public function set_url_params($params)
+        {
+            $this->urlParams = $params;
         }
 
         /**

@@ -41,8 +41,10 @@ class RefreshTokenRepository implements Repository
                 'user_id'       => $userId,
                 'refresh_token' => $refreshToken,
                 'expires_at'    => gmdate('Y-m-d H:i:s', $expiresAt),
+                // UTC from PHP's clock, the one the password change cutoff uses (CURRENT_TIMESTAMP follows the DB time zone).
+                'created_at'    => gmdate('Y-m-d H:i:s'),
             ],
-            ['%d', '%s', '%s']
+            ['%d', '%s', '%s', '%s']
         );
 
         return $result !== false;
@@ -100,9 +102,9 @@ class RefreshTokenRepository implements Repository
      */
     public function cleanupExpired()
     {
-        $escapedTable = esc_sql($this->tableName());
+        $sql = $this->wpdb->prepare('DELETE FROM %i WHERE expires_at <= UTC_TIMESTAMP()', $this->tableName());
         //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-        $result = $this->wpdb->query('DELETE FROM `' . $escapedTable . '` WHERE expires_at <= UTC_TIMESTAMP()');
+        $result = $this->wpdb->query($sql);
 
         return $result !== false;
     }

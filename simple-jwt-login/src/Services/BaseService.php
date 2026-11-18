@@ -433,12 +433,14 @@ abstract class BaseService
     }
 
     /**
-     * @param string $parameter
+     * Validates the current JWT and returns the user value with the lookup mode that applies to it.
      *
-     * @return mixed|string
+     * @param array{login_by: int, parameter: string} $loginBy the matched JWT Rule's mapping, else the global one
+     *
+     * @return array{value: mixed, login_by: int}
      * @throws Exception
      */
-    protected function validateJWTAndGetUserValueFromPayload($parameter)
+    protected function validateJWTAndGetUserValueFromPayload(array $loginBy)
     {
         $jwtParts = $this->extractJwtData($this->jwt);
         $iss = isset($jwtParts['payload']['iss']) ? (string)$jwtParts['payload']['iss'] : null;
@@ -449,7 +451,8 @@ abstract class BaseService
                 // Use the claims Google validated, never the ones decoded from the raw token.
                 $tokenInfo = GoogleOauth::validateIdToken($this->jwt, $googleSettings->getClientId());
 
-                return $tokenInfo['email'];
+                // Google proves the email only: never apply a JWT Rule's ID / login lookup to it.
+                return ['value' => $tokenInfo['email'], 'login_by' => LoginSettings::JWT_LOGIN_BY_EMAIL];
             }
         }
         $auth0Settings = $this->jwtSettings->getIntegrationsSettings()->auth0();
@@ -460,7 +463,11 @@ abstract class BaseService
         ) {
             Auth0Oauth::validateIdToken($this->jwt, $this->jwtSettings);
 
-            return $jwtParts['payload']['sub'];
+            // Validated by Auth0, not by a JWT Rule: keep the global lookup mode.
+            return [
+                'value'    => $jwtParts['payload']['sub'],
+                'login_by' => (int) $this->jwtSettings->getLoginSettings()->getJWTLoginBy(),
+            ];
         }
 
         $ruleConfig = $this->jwtSettings->getJwtRulesSettings()->findMatchingRuleConfig($jwtParts);
@@ -479,13 +486,13 @@ abstract class BaseService
             [$algorithm]
         );
 
-        $userValue = $this->getUserParameterValueFromPayload($decoded, $parameter);
+        $userValue = $this->getUserParameterValueFromPayload($decoded, $loginBy['parameter']);
         JwtAudience::assertAccepted(
             $decoded,
             JwtAudience::expected($this->jwtSettings->getAuthenticationSettings(), $ruleConfig)
         );
 
-        return $userValue;
+        return ['value' => $userValue, 'login_by' => $loginBy['login_by']];
     }
 
     /**
@@ -502,10 +509,9 @@ abstract class BaseService
             $this->jwtSettings->getJwtRulesSettings()->findMatchingRuleConfig($this->extractJwtData($this->jwt))
         );
 
-        return $this->getUserDetails(
-            $this->validateJWTAndGetUserValueFromPayload($loginBy['parameter']),
-            $loginBy['login_by']
-        );
+        $userValue = $this->validateJWTAndGetUserValueFromPayload($loginBy);
+
+        return $this->getUserDetails($userValue['value'], $userValue['login_by']);
     }
 
     /**

@@ -120,8 +120,11 @@ abstract class BaseApiKeyService extends BaseService implements ApiKeyServiceInt
         ) {
             try {
                 $date = new DateTime($value, new DateTimeZone('UTC'));
-
-                return $date->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s');
+                // Out of range times (24:30, 23:59:60) are rolled over with a warning instead of throwing.
+                $errors = DateTime::getLastErrors();
+                if (!is_array($errors) || $errors['warning_count'] + $errors['error_count'] === 0) {
+                    return $date->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s');
+                }
             } catch (Exception $exception) {
                 // Falls through to the validation error below (e.g. hour 25).
                 unset($exception);

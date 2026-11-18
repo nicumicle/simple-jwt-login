@@ -89,8 +89,8 @@ class Auth0Oauth extends AbstractOauth
     }
 
     /**
-     * Validate an Auth0 access_token by calling the userinfo endpoint.
-     * Throws when the token is rejected (non-200 response).
+     * Validate a direct Auth0 token: accepted by /userinfo and issued for the configured
+     * client (azp or aud). /userinfo alone accepts tokens of any application in the tenant.
      *
      * @param string $token
      * @return void
@@ -98,21 +98,7 @@ class Auth0Oauth extends AbstractOauth
      */
     protected function validateProviderToken($token)
     {
-        $statusCode  = 400;
-        $plainResult = '';
-        ServerCall::get(
-            $this->userinfoEndpoint(),
-            ['headers' => ['Authorization' => 'Bearer ' . $token]],
-            $statusCode,
-            $plainResult
-        );
-
-        if ($statusCode !== 200) {
-            throw new Exception(
-                esc_html(__('The provided Auth0 access_token is invalid.', 'simple-jwt-login')),
-                absint(ErrorCodes::ERR_AUTH0_INVALID_TOKEN)
-            );
-        }
+        self::validateIdToken($token, $this->settings);
     }
 
     protected function getInvalidTokenErrorCode()

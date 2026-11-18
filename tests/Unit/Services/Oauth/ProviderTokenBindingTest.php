@@ -199,8 +199,52 @@ class ProviderTokenBindingTest extends TestCase
             $this->expectExceptionCode($expectedErrorCode);
         }
 
-        $jwt = 'header.' . rtrim(strtr(base64_encode(json_encode($payload)), '+/', '-_'), '=') . '.signature';
-        Auth0Oauth::validateIdToken($jwt, $this->makeSettings($clientId));
+        Auth0Oauth::validateIdToken(self::auth0Token($payload), $this->makeSettings($clientId));
+    }
+
+    /**
+     * POST /oauth/token with an Auth0 access_token: the client binding runs before the user lookup.
+     *
+     * @param array $payload
+     * @param int $expectedErrorCode
+     */
+    #[DataProvider('auth0DirectTokenProvider')]
+    public function testAuth0DirectTokenMustBelongToTheConfiguredClient($payload, $expectedErrorCode)
+    {
+        $this->fakeHttp(['/userinfo' => [200, ['email' => 'victim@example.com', 'email_verified' => true]]]);
+        $this->expectExceptionCode($expectedErrorCode);
+
+        $oauth = new Auth0Oauth(
+            ['access_token' => self::auth0Token($payload)],
+            'POST',
+            $this->makeSettings(self::CLIENT_ID),
+            $this->createStub(WordPressDataInterface::class)
+        );
+        $oauth->call();
+    }
+
+    /**
+     * @return array<string, array>
+     */
+    public static function auth0DirectTokenProvider()
+    {
+        return [
+            'token issued for another client' => [['azp' => 'other-client'], ErrorCodes::ERR_AUTH0_INVALID_TOKEN],
+            'token without azp or aud' => [['sub' => 'auth0|1'], ErrorCodes::ERR_AUTH0_INVALID_TOKEN],
+            'token issued for this client reaches the user lookup' => [
+                ['azp' => self::CLIENT_ID],
+                ErrorCodes::ERR_AUTH0_USER_NOT_FOUND,
+            ],
+        ];
+    }
+
+    /**
+     * @param array $payload
+     * @return string An unsigned JWT: Auth0 /userinfo (faked) is what vouches for it.
+     */
+    private static function auth0Token(array $payload)
+    {
+        return 'header.' . rtrim(strtr(base64_encode(json_encode($payload)), '+/', '-_'), '=') . '.signature';
     }
 
     /**
@@ -232,7 +276,7 @@ class ProviderTokenBindingTest extends TestCase
         $this->expectExceptionCode($expectedErrorCode);
 
         $oauth = new Auth0Oauth(
-            ['access_token' => 'provider-token'],
+            ['access_token' => self::auth0Token(['azp' => self::CLIENT_ID])],
             'POST',
             $this->makeSettings(self::CLIENT_ID),
             $this->createStub(WordPressDataInterface::class)

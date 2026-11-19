@@ -449,7 +449,7 @@ abstract class BaseService
             $googleSettings = $this->jwtSettings->getIntegrationsSettings()->google();
             if ($googleSettings->isEnabled() && $googleSettings->isAllowedOnAllEndpoints()) {
                 // Use the claims Google validated, never the ones decoded from the raw token.
-                $tokenInfo = GoogleOauth::validateIdToken($this->jwt, $googleSettings->getClientId());
+                $tokenInfo = GoogleOauth::validateIdToken($this->jwt, $googleSettings->getAcceptedTokenClientId());
 
                 // Google proves the email only: never apply a JWT Rule's ID / login lookup to it.
                 return ['value' => $tokenInfo['email'], 'login_by' => LoginSettings::JWT_LOGIN_BY_EMAIL];

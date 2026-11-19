@@ -339,5 +339,28 @@ $facebook = $jwtSettings->getIntegrationsSettings()->facebook();
             </div>
         </div>
 
+        <div class="sjl-gen-feature-toggle">
+            <div class="sjl-gen-feature-toggle-check">
+                <input type="checkbox" name="facebook[allow_tokens_from_other_apps]" id="facebook_allow_tokens_from_other_apps" value="1"
+                    <?php echo $facebook->allowTokensFromOtherApps() ? 'checked="checked"' : ''; ?>
+                />
+            </div>
+            <div class="sjl-gen-feature-toggle-text">
+                <label for="facebook_allow_tokens_from_other_apps" class="sjl-gen-feature-label">
+                    <?php echo esc_html__('Allow tokens issued for other Facebook apps', 'simple-jwt-login'); ?>
+                </label>
+                <p class="sjl-gen-feature-desc">
+                    <?php echo esc_html__('When disabled (default), an access_token must be issued for this Facebook App ID (checked with debug_token).', 'simple-jwt-login'); ?>
+                </p>
+            </div>
+        </div>
+        <div id="facebook_allow_tokens_from_other_apps_alert"
+             class="sjl-gen-warning-banner"
+             style="<?php echo $facebook->allowTokensFromOtherApps() ? '' : 'display:none;'; ?>"
+        >
+            <span class="dashicons dashicons-warning"></span>
+            <?php echo esc_html__('Security risk: any Facebook app, including one you do not own, can send a token of its users and get a WordPress JWT for the matching account. Only the Facebook Graph /me check remains. Enable this only for backward compatibility, until your clients send tokens issued for this App ID.', 'simple-jwt-login'); ?>
+        </div>
+
     </div>
 </div>

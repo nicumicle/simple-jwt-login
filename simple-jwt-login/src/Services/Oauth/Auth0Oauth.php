@@ -91,6 +91,8 @@ class Auth0Oauth extends AbstractOauth
     /**
      * Validate a direct Auth0 token: accepted by /userinfo and issued for the configured
      * client (azp or aud). /userinfo alone accepts tokens of any application in the tenant.
+     * Opaque (non-JWT) tokens carry no client claim: they pass only when the admin opted in,
+     * and then /userinfo (called by getEmailFromDirectToken) is the only check.
      *
      * @param string $token
      * @return void
@@ -98,6 +100,11 @@ class Auth0Oauth extends AbstractOauth
      */
     protected function validateProviderToken($token)
     {
+        $isOpaque = !is_array(JwtPayloadHelper::decode($token));
+        if ($isOpaque && $this->settings->getIntegrationsSettings()->auth0()->allowOpaqueAccessToken()) {
+            return;
+        }
+
         self::validateIdToken($token, $this->settings);
     }
 

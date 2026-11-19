@@ -378,7 +378,7 @@ Make sure you are passing a valid, non-expired JWT either as a Bearer token in t
 
 A complete changelog is available on the [GitHub repository](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md).
 
-= 4.2.0 (18 November 2026) =
+= 4.2.0 (19 November 2026) =
 - Security: Fixed multiple security vulnerabilities affecting authentication, authorization, and REST API endpoints.
 - Security: Added security regression tests reproducing previously identified vulnerabilities to prevent regressions.
 - Security: Strengthened validation and authorization mechanisms across affected endpoints.
@@ -386,6 +386,8 @@ A complete changelog is available on the [GitHub repository](https://github.com/
 - Security: Improved the data returned by REST API endpoints.
 - New option "Revoke sessions on password change" (Authentication, off by default). When on, changing a password deletes the user's refresh tokens and rejects every JWT issued before the change. JWTs without an `iat` claim are then also rejected for that user
 - New optional "Expected audience (aud)" setting for the plugin's own JWTs and for each JWT Rule. When set, new JWTs carry that `aud` and only JWTs whose `aud` contains it are accepted (new error code 130)
+- New OAuth options, off by default, to accept tokens that are not bound to the configured app, for backward compatibility: "Allow tokens issued for other Google clients", "Allow tokens issued for other Facebook apps", "Allow tokens issued for other GitHub apps" (also accepts personal access tokens) and Auth0 "Allow opaque access tokens". The admin screen shows a security warning while one is on: any app on that provider could then log its users into the matching WordPress accounts
+- Dashboard: new "Security notices" section listing the enabled options and settings that weaken security (critical and warning findings of the security report), most severe first. Clicking a notice opens the matching settings tab. The dashboard and the AI `security-report` ability also report the OAuth options above when they are on
 - `/auth` now checks the password with `wp_authenticate()`, so brute-force and user-block plugins (Limit Login Attempts, Wordfence, ...) protect it like `wp-login.php`. Application passwords can not be exchanged for a JWT
 - The security report now warns when authentication with `password_hash` is enabled
 - Admin: optional support banner with a donation link at the top of the settings page. It can be dismissed for 6 months and no features are locked behind donations
@@ -393,7 +395,7 @@ A complete changelog is available on the [GitHub repository](https://github.com/
 - OpenAPI: every endpoint now documents its real request parameters, status codes and error codes, with examples taken from the plugin messages
 - Breaking: WordPress 6.2 or newer is required (was 4.4). The plugin's database queries use the `%i` identifier placeholder added in WordPress 6.2
 - Breaking: The OAuth login buttons (Google, Auth0, Facebook, GitHub) now go through the plugin, which redirects to the provider. Custom login buttons or links that send visitors straight to the provider with the plugin's callback as `redirect_uri` stop working. Link to `GET /oauth/token?provider=<provider>` instead
-- Breaking: A Facebook or GitHub `access_token` sent to the OAuth endpoint must be issued for the app configured in the plugin. GitHub personal access tokens are no longer accepted. Auth0 requires the Auth0 Client ID to be configured, and an Auth0 `access_token` must be a JWT issued for that client (`azp` or `aud`): opaque Auth0 access tokens are rejected
+- Breaking: Tokens sent to the OAuth endpoint (and Google `id_token`s used on all endpoints) must be issued for the app configured in the plugin: a Facebook or GitHub `access_token` must belong to the configured app (GitHub personal access tokens are rejected), a Google `id_token` must have the configured Client ID as `aud`, and an Auth0 `access_token` must be a JWT issued for the configured Auth0 Client ID (`azp` or `aud`), so opaque Auth0 access tokens are rejected. Sites that need the old behavior can turn on the matching new option (see New)
 - Breaking: `POST /user/reset_password` with an unknown email now answers 200 instead of 404 "Wrong user."
 - Breaking: With "Trust reverse proxy IP headers" on, the client IP is read from the last `X-Forwarded-For` entry only. Sites whose proxy sends the client IP only in `Client-IP` must switch the proxy to `X-Forwarded-For`
 - Breaking: After too many wrong two-factor codes (30 by default, Two Factor filter `two_factor_failed_attempt_limit`) sent to `POST /auth/2fa` or the OAuth two-factor form, the user's password is reset and the user and admin are emailed, as on `wp-login.php`
@@ -549,7 +551,7 @@ For the full history back to 1.0.0 (2019), see the [Changelog on GitHub](https:/
 
 == Upgrade Notice ==
 
-= 4.2.0 (15 November 2026) =
+= 4.2.0 (19 November 2026) =
 Important security release. Fixes multiple security vulnerabilities affecting authentication, authorization and REST API endpoints. All users are strongly encouraged to upgrade to this version as soon as possible. Review the Breaking changes in the changelog before upgrading.
 
 = 4.1.1 (15 November 2026) =

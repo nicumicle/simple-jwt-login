@@ -175,6 +175,17 @@ jQuery(document).ready(
             });
         });
 
+        [
+            'auth0_allow_opaque_access_token',
+            'facebook_allow_tokens_from_other_apps',
+            'google_allow_tokens_from_other_clients',
+            'github_allow_tokens_from_other_apps'
+        ].forEach(function (inputId) {
+            $('#simple-jwt-login #' + inputId).on('change', function () {
+                $('#simple-jwt-login #' + inputId + '_alert').toggle($(this).is(':checked'));
+            });
+        });
+
         $('#simple-jwt-login .generated-code .btn').on(
             'click',
             function (e) {

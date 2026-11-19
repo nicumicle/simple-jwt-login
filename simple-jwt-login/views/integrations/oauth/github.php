@@ -355,5 +355,28 @@ $github = $jwtSettings->getIntegrationsSettings()->github();
             </div>
         </div>
 
+        <div class="sjl-gen-feature-toggle">
+            <div class="sjl-gen-feature-toggle-check">
+                <input type="checkbox" name="github[allow_tokens_from_other_apps]" id="github_allow_tokens_from_other_apps" value="1"
+                    <?php echo $github->allowTokensFromOtherApps() ? 'checked="checked"' : ''; ?>
+                />
+            </div>
+            <div class="sjl-gen-feature-toggle-text">
+                <label for="github_allow_tokens_from_other_apps" class="sjl-gen-feature-label">
+                    <?php echo esc_html__('Allow tokens issued for other GitHub apps', 'simple-jwt-login'); ?>
+                </label>
+                <p class="sjl-gen-feature-desc">
+                    <?php echo esc_html__('When disabled (default), an access_token must be issued for this GitHub OAuth app. Personal access tokens and tokens of other apps are rejected.', 'simple-jwt-login'); ?>
+                </p>
+            </div>
+        </div>
+        <div id="github_allow_tokens_from_other_apps_alert"
+             class="sjl-gen-warning-banner"
+             style="<?php echo $github->allowTokensFromOtherApps() ? '' : 'display:none;'; ?>"
+        >
+            <span class="dashicons dashicons-warning"></span>
+            <?php echo esc_html__('Security risk: any GitHub OAuth app, including one you do not own, and any personal access token with the user:email scope can be exchanged for a WordPress JWT of the matching user. Only the GitHub /user/emails check remains. Enable this only for backward compatibility, until your clients send tokens issued for this OAuth app.', 'simple-jwt-login'); ?>
+        </div>
+
     </div>
 </div>

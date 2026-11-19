@@ -79,13 +79,29 @@ class GithubOauthSettingsTest extends TestCase
         $this->assertSame($expected, $this->make()->withSettings($data)->allowUnverifiedEmail());
     }
 
+    public static function allowTokensFromOtherAppsProvider(): array
+    {
+        return [
+            'enabled'  => [['allow_tokens_from_other_apps' => true], true],
+            'disabled' => [['allow_tokens_from_other_apps' => false], false],
+            'missing'  => [[], false],
+        ];
+    }
+
+    #[DataProvider('allowTokensFromOtherAppsProvider')]
+    public function testAllowTokensFromOtherApps(array $data, bool $expected): void
+    {
+        $this->assertSame($expected, $this->make()->withSettings($data)->allowTokensFromOtherApps());
+    }
+
     public function testProcessPostIncludesAllowUnverifiedEmailField(): void
     {
-        $post   = ['github' => ['allow_unverified_email' => '1']];
+        $post   = ['github' => ['allow_unverified_email' => '1', 'allow_tokens_from_other_apps' => '1']];
         $result = $this->make()->processPost($post, $this->wpData());
 
         $this->assertArrayHasKey('allow_unverified_email', $result);
         $this->assertSame(true, $result['allow_unverified_email']);
+        $this->assertSame(true, $result['allow_tokens_from_other_apps']);
     }
 
     public function testProcessPostAllowUnverifiedEmailDefaultsFalseWhenMissing(): void
@@ -93,6 +109,7 @@ class GithubOauthSettingsTest extends TestCase
         $result = $this->make()->processPost(['github' => []], $this->wpData());
 
         $this->assertSame(false, $result['allow_unverified_email']);
+        $this->assertSame(false, $result['allow_tokens_from_other_apps']);
     }
 
     public function testValidatePassesWhenNotEnabled(): void

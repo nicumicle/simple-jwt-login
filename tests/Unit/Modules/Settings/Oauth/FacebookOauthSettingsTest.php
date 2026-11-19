@@ -48,13 +48,29 @@ class FacebookOauthSettingsTest extends TestCase
         $this->assertSame($expected, $this->make()->withSettings($data)->isExchangeTokenEnabled());
     }
 
+    public static function allowTokensFromOtherAppsProvider(): array
+    {
+        return [
+            'enabled'  => [['allow_tokens_from_other_apps' => true], true],
+            'disabled' => [['allow_tokens_from_other_apps' => false], false],
+            'missing'  => [[], false],
+        ];
+    }
+
+    #[DataProvider('allowTokensFromOtherAppsProvider')]
+    public function testAllowTokensFromOtherApps(array $data, bool $expected): void
+    {
+        $this->assertSame($expected, $this->make()->withSettings($data)->allowTokensFromOtherApps());
+    }
+
     public function testProcessPostIncludesEnableExchangeTokenField(): void
     {
-        $post   = ['facebook' => ['enable_exchange_token' => '1']];
+        $post   = ['facebook' => ['enable_exchange_token' => '1', 'allow_tokens_from_other_apps' => '1']];
         $result = $this->make()->processPost($post, $this->wpData());
 
         $this->assertArrayHasKey('enable_exchange_token', $result);
         $this->assertSame(true, $result['enable_exchange_token']);
+        $this->assertSame(true, $result['allow_tokens_from_other_apps']);
     }
 
     public function testProcessPostExchangeTokenDefaultsFalseWhenMissing(): void
@@ -62,6 +78,7 @@ class FacebookOauthSettingsTest extends TestCase
         $result = $this->make()->processPost(['facebook' => []], $this->wpData());
 
         $this->assertSame(false, $result['enable_exchange_token']);
+        $this->assertSame(false, $result['allow_tokens_from_other_apps']);
     }
 
     public function testValidatePassesWhenNotEnabled(): void

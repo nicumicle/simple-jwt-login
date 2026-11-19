@@ -77,6 +77,21 @@ class Auth0OauthSettingsTest extends TestCase
         $this->assertSame($expected, $this->make()->withSettings($data)->allowUnverifiedEmail());
     }
 
+    public static function allowOpaqueAccessTokenProvider(): array
+    {
+        return [
+            'enabled'  => [['allow_opaque_access_token' => true], true],
+            'disabled' => [['allow_opaque_access_token' => false], false],
+            'missing'  => [[], false],
+        ];
+    }
+
+    #[DataProvider('allowOpaqueAccessTokenProvider')]
+    public function testAllowOpaqueAccessToken(array $data, bool $expected): void
+    {
+        $this->assertSame($expected, $this->make()->withSettings($data)->allowOpaqueAccessToken());
+    }
+
     public function testProcessPostIncludesExtraFields(): void
     {
         $post = [
@@ -103,6 +118,7 @@ class Auth0OauthSettingsTest extends TestCase
         $this->assertSame('', $result['domain']);
         $this->assertSame(false, $result['enable_exchange_token']);
         $this->assertSame(false, $result['allow_unverified_email']);
+        $this->assertSame(false, $result['allow_opaque_access_token']);
     }
 
     public function testValidatePassesWhenNotEnabled(): void

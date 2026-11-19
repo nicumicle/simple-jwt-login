@@ -307,6 +307,75 @@
     margin: 0 0 10px 0;
 }
 
+/* Dashboard security notices: one row per finding, clicking opens the settings tab */
+#simple-jwt-login .sjl-security-notice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    background: var(--sjl-bg-card);
+    border: 1px solid var(--sjl-border);
+    border-left-width: 3px;
+    border-radius: var(--sjl-radius-sm);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--sjl-text);
+}
+
+#simple-jwt-login .sjl-security-notice[data-sjl-tab] {
+    cursor: pointer;
+}
+
+#simple-jwt-login .sjl-security-notice[data-sjl-tab]:hover {
+    background: #fafafa;
+}
+
+#simple-jwt-login .sjl-security-notice-critical {
+    border-left-color: #d63638;
+}
+
+#simple-jwt-login .sjl-security-notice-warning {
+    border-left-color: #f0c33c;
+}
+
+#simple-jwt-login .sjl-security-notice-ok {
+    border-left-color: #1a7a32;
+}
+
+#simple-jwt-login .sjl-security-notice .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    line-height: 1;
+    flex-shrink: 0;
+    color: var(--sjl-text-meta);
+}
+
+#simple-jwt-login .sjl-security-notice-ok .dashicons {
+    color: #1a7a32;
+}
+
+#simple-jwt-login .sjl-security-notice .sjl-badge {
+    flex-shrink: 0;
+}
+
+#simple-jwt-login .sjl-security-notice-message {
+    flex: 1;
+}
+
+#simple-jwt-login .sjl-badge-critical {
+    background: #fcf0f1;
+    color: #b32d2e;
+    border: 1px solid #f1adad;
+}
+
+#simple-jwt-login .sjl-badge-warning {
+    background: #fff8e5;
+    color: #7a5800;
+    border: 1px solid #f0c33c;
+}
+
 #simple-jwt-login .sjl-support-banner {
     display: flex;
     flex-wrap: wrap;

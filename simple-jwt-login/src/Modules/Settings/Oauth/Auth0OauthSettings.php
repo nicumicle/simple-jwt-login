@@ -23,6 +23,7 @@ class Auth0OauthSettings extends AbstractOauthSettings
             ['domain',                  BaseSettings::SETTINGS_TYPE_STRING],
             ['enable_exchange_token',   BaseSettings::SETTINGS_TYPE_BOL],
             ['allow_unverified_email',  BaseSettings::SETTINGS_TYPE_BOL],
+            ['allow_opaque_access_token', BaseSettings::SETTINGS_TYPE_BOL],
         ];
     }
 
@@ -70,5 +71,11 @@ class Auth0OauthSettings extends AbstractOauthSettings
     public function allowUnverifiedEmail()
     {
         return $this->isFieldEnabled('allow_unverified_email');
+    }
+
+    /** @return bool */
+    public function allowOpaqueAccessToken()
+    {
+        return $this->isFieldEnabled('allow_opaque_access_token');
     }
 }

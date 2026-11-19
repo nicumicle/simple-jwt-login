@@ -1,5 +1,6 @@
 echo "Create zip for plugin"
 
+rm -rf download/simple-jwt-login/
 cp -R simple-jwt-login download/
 
 cd download/
@@ -7,6 +8,7 @@ cd download/
 rm -f simple-jwt-login.zip
 zip -r simple-jwt-login.zip simple-jwt-login
 
+# Cleanup after creating the zip
 rm -rf simple-jwt-login/
 
 echo "done."

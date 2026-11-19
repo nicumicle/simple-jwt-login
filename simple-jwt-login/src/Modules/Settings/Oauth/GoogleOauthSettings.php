@@ -4,6 +4,7 @@ namespace SimpleJWTLogin\Modules\Settings\Oauth;
 
 use SimpleJWTLogin\Modules\Settings\BaseSettings;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
+use SimpleJWTLogin\Services\Oauth\GoogleOauth;
 
 class GoogleOauthSettings extends AbstractOauthSettings
 {
@@ -21,6 +22,7 @@ class GoogleOauthSettings extends AbstractOauthSettings
     {
         return [
             ['enable_exchange_id_token', BaseSettings::SETTINGS_TYPE_BOL],
+            ['allow_tokens_from_other_clients', BaseSettings::SETTINGS_TYPE_BOL],
         ];
     }
 
@@ -55,5 +57,21 @@ class GoogleOauthSettings extends AbstractOauthSettings
     public function isExchangeIdTokenEnabled()
     {
         return $this->isFieldEnabled('enable_exchange_id_token');
+    }
+
+    /** @return bool */
+    public function allowTokensFromOtherClients()
+    {
+        return $this->isFieldEnabled('allow_tokens_from_other_clients');
+    }
+
+    /**
+     * Client ID a sent id_token must be issued for, or GoogleOauth::ANY_CLIENT when the admin opted out.
+     *
+     * @return string|null
+     */
+    public function getAcceptedTokenClientId()
+    {
+        return $this->allowTokensFromOtherClients() ? GoogleOauth::ANY_CLIENT : $this->getClientId();
     }
 }

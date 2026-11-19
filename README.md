@@ -93,9 +93,6 @@ If you want to make sure you have a stable version, please download this plugin 
 
 ### Install from Zip
 
-> [!NOTE]
->  Please note that this plugin version is not fully tested.
-
 If you want to upload the simple-jwt-login plugin to your website:
 - Download [downloads/simple-jwt-login.zip](https://github.com/nicumicle/simple-jwt-login/blob/master/download/simple-jwt-login.zip)
 - Upload the zip file into your WordPress website

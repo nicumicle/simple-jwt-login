@@ -49,6 +49,10 @@ class SecurityReportAbilityTest extends AbilityTestCase
             'password_hash login'   => [['authorization' => ['enabled' => true, 'password_hash_enabled' => true]], 'password_hash_login'],
             'revoke endpoint off'   => [['authorization' => ['revoke_token_enabled' => '0']], 'revoke_endpoint_disabled'],
             'ai sees secrets'       => [['integrations' => ['3rdparty' => ['ai_abilities' => ['enabled' => true, 'allow_view_secrets' => true]]]], 'ai_can_view_secrets'],
+            'google other clients'  => [['integrations' => ['oauth' => ['google' => ['enabled' => 1, 'allow_tokens_from_other_clients' => true]]]], 'google_unbound_tokens'],
+            'facebook other apps'   => [['integrations' => ['oauth' => ['facebook' => ['enabled' => 1, 'allow_tokens_from_other_apps' => true]]]], 'facebook_unbound_tokens'],
+            'github other apps'     => [['integrations' => ['oauth' => ['github' => ['enabled' => 1, 'allow_tokens_from_other_apps' => true]]]], 'github_unbound_tokens'],
+            'auth0 opaque tokens'   => [['integrations' => ['oauth' => ['auth0' => ['enabled' => 1, 'allow_opaque_access_token' => true]]]], 'auth0_unbound_tokens'],
         ];
     }
 
@@ -140,6 +144,16 @@ class SecurityReportAbilityTest extends AbilityTestCase
         $this->assertSame('critical', $report['findings'][0]['severity']);
         $this->assertLessThan(100, $report['score']);
         $this->assertStringNotContainsString('fixture-secret', (string) json_encode($report));
+    }
+
+    public function testOauthOptionOfADisabledProviderIsNotReported()
+    {
+        $stored = array_replace_recursive(
+            $this->storedSettings($this->hardenedOverrides()),
+            ['integrations' => ['oauth' => ['google' => ['enabled' => 0, 'allow_tokens_from_other_clients' => true]]]]
+        );
+
+        $this->assertSame([], (new SecurityChecks($this->makeSettings($this->makeWordPressDataStub($stored))))->run());
     }
 
     public function testHardenedSetupScoresFullMarks()

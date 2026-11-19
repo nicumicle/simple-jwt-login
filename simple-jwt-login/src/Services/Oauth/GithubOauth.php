@@ -125,6 +125,7 @@ class GithubOauth extends AbstractOauth
      * Validate a GitHub access_token with the "check a token" endpoint of the
      * configured OAuth app. It only answers 200 for tokens issued for that app,
      * so tokens of other apps (and personal access tokens) are rejected.
+     * Admins can opt out; then the /user/emails call (getEmailFromDirectToken) is the only check.
      *
      * @param string $token
      * @return void
@@ -132,6 +133,10 @@ class GithubOauth extends AbstractOauth
      */
     protected function validateProviderToken($token)
     {
+        if ($this->settings->getIntegrationsSettings()->github()->allowTokensFromOtherApps()) {
+            return;
+        }
+
         if (!$this->hasAppCredentials() || !$this->isTokenIssuedForThisApp($token)) {
             throw new Exception(
                 esc_html(__('The provided GitHub access_token is invalid.', 'simple-jwt-login')),

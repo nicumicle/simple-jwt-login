@@ -2148,11 +2148,13 @@ paths:
         **Google** - supply `code` (authorization code) or `id_token` (Google Sign-In ID
         token). The `id_token` path returns a WordPress JWT directly; the `code` path
         returns the raw Google token response for the client to handle. The `id_token` must
-        be issued for the configured client ID and carry a verified email.
+        be issued for the configured client ID (unless "Allow tokens issued for other Google
+        clients" is enabled in the Google settings) and carry a verified email.
 
         **Auth0** - supply `code` (returns the raw Auth0 token response) or `access_token`
         (returns a WordPress JWT). The `access_token` must be a JWT issued for the configured
-        Auth0 Client ID (`azp` or `aud`), so opaque access tokens are rejected (error code 79).
+        Auth0 Client ID (`azp` or `aud`). Opaque access tokens are rejected (error code 79)
+        unless "Allow opaque access tokens" is enabled in the Auth0 settings.
         The account email must be verified.
 
         The `code` flow sends the provider the "exchange code" Redirect URI saved in the
@@ -2160,12 +2162,14 @@ paths:
 
         **Facebook** - supply `access_token` (Facebook user access token). Returns a
         WordPress JWT. The token must have been issued for the configured Facebook app
-        (checked with `debug_token`), and the App ID and App Secret must be set.
+        (checked with `debug_token`), and the App ID and App Secret must be set, unless
+        "Allow tokens issued for other Facebook apps" is enabled in the Facebook settings.
 
         **GitHub** - supply `access_token` (GitHub user access token). Returns a
         WordPress JWT. The token must have been issued for the configured GitHub OAuth
         app (personal access tokens are rejected), and the Client ID and Client Secret
-        must be set.
+        must be set, unless "Allow tokens issued for other GitHub apps" is enabled in the
+        GitHub settings.
 
         If the OAuth identity matches an existing WordPress user (by email), a WordPress
         JWT is returned. If no match is found and "Register on OAuth login" is enabled, a

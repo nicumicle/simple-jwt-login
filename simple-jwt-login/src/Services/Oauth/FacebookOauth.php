@@ -89,6 +89,7 @@ class FacebookOauth extends AbstractOauth
      * Validate a Facebook access_token with the Graph API debug_token endpoint.
      * A token that is valid for Facebook is not enough: it must have been issued
      * for the app configured here, or any other app could log its users in.
+     * Admins can opt out; then the Graph /me call (getEmailFromDirectToken) is the only check.
      *
      * @param string $token
      * @return void
@@ -96,6 +97,10 @@ class FacebookOauth extends AbstractOauth
      */
     protected function validateProviderToken($token)
     {
+        if ($this->settings->getIntegrationsSettings()->facebook()->allowTokensFromOtherApps()) {
+            return;
+        }
+
         if (!$this->hasAppCredentials() || !$this->isTokenIssuedForThisApp($token)) {
             throw new Exception(
                 esc_html(__('The provided Facebook access_token is invalid.', 'simple-jwt-login')),

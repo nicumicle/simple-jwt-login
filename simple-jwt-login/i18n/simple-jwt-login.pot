@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-18T06:43:03+00:00\n"
+"POT-Creation-Date: 2026-11-19T05:48:14+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: simple-jwt-login\n"
@@ -339,36 +339,52 @@ msgstr ""
 msgid "This JWT was revoked."
 msgstr ""
 
-#: src/Modules/Abilities/Diagnostics/SecurityChecks.php:58
+#: src/Modules/Abilities/Diagnostics/SecurityChecks.php:71
 msgid "The JWT signing key is shorter than the output of the selected HMAC algorithm, which makes it easier to brute-force. Set a longer key on the settings page."
 msgstr ""
 
-#: src/Modules/Abilities/Diagnostics/SecurityChecks.php:65
+#: src/Modules/Abilities/Diagnostics/SecurityChecks.php:78
 msgid "JWTs stay valid for more than a day, so a stolen token can be used for a long time. Use a short TTL and enable refresh tokens."
 msgstr ""
 
-#: src/Modules/Abilities/Diagnostics/SecurityChecks.php:73
+#: src/Modules/Abilities/Diagnostics/SecurityChecks.php:86
 msgid "Autologin turns any valid JWT into a WordPress login session, without an auth code or IP whitelist. Require an auth code or restrict the IPs."
 msgstr ""
 
-#: src/Modules/Abilities/Diagnostics/SecurityChecks.php:80
+#: src/Modules/Abilities/Diagnostics/SecurityChecks.php:93
 msgid "Autologin is enabled without safe redirects, so a redirect URL can send users to any external site (open redirect). Enable safe redirects."
 msgstr ""
 
-#: src/Modules/Abilities/Diagnostics/SecurityChecks.php:87
+#: src/Modules/Abilities/Diagnostics/SecurityChecks.php:100
 msgid "An auth code registers users as administrators. Anyone who learns that code can create an administrator account."
 msgstr ""
 
-#: src/Modules/Abilities/Diagnostics/SecurityChecks.php:94
+#: src/Modules/Abilities/Diagnostics/SecurityChecks.php:107
 msgid "/auth accepts the stored password hash instead of the password, so anyone holding a database dump can get JWTs without cracking it, and lockouts from login protection plugins are not applied. Disable authentication with password_hash."
 msgstr ""
 
-#: src/Modules/Abilities/Diagnostics/SecurityChecks.php:101
+#: src/Modules/Abilities/Diagnostics/SecurityChecks.php:114
 msgid "Clients cannot revoke their own JWTs (logout) because the revoke endpoint is off."
 msgstr ""
 
-#: src/Modules/Abilities/Diagnostics/SecurityChecks.php:108
+#: src/Modules/Abilities/Diagnostics/SecurityChecks.php:121
 msgid "AI agents can read signing keys and other secrets, which may be sent to the AI provider."
+msgstr ""
+
+#: src/Modules/Abilities/Diagnostics/SecurityChecks.php:134
+msgid "Google accepts id_tokens issued for other Google clients. Any Google OAuth client, including one created by an attacker, can exchange a token for a WordPress JWT of the matching user."
+msgstr ""
+
+#: src/Modules/Abilities/Diagnostics/SecurityChecks.php:135
+msgid "Facebook accepts access tokens issued for other Facebook apps. Any Facebook app can exchange a token of its users for a WordPress JWT of the matching user."
+msgstr ""
+
+#: src/Modules/Abilities/Diagnostics/SecurityChecks.php:136
+msgid "GitHub accepts tokens issued for other GitHub apps and personal access tokens. Any GitHub app can exchange a token of its users for a WordPress JWT of the matching user."
+msgstr ""
+
+#: src/Modules/Abilities/Diagnostics/SecurityChecks.php:137
+msgid "Auth0 accepts opaque access tokens, which can not be bound to the configured Client ID. Any application in the Auth0 tenant can exchange a token for a WordPress JWT of the matching user."
 msgstr ""
 
 #: src/Modules/Abilities/Diagnostics/SecurityReportAbility.php:67
@@ -886,17 +902,17 @@ msgid "General"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:56
-#: views/dashboard-view.php:229
+#: views/dashboard-view.php:297
 msgid "Routes"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:62
-#: views/dashboard-view.php:18
+#: views/dashboard-view.php:21
 msgid "Login"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:70
-#: views/dashboard-view.php:25
+#: views/dashboard-view.php:28
 msgid "Register User"
 msgstr ""
 
@@ -905,7 +921,7 @@ msgid "Register"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:79
-#: views/dashboard-view.php:32
+#: views/dashboard-view.php:35
 #: views/routes/delete-view.php:22
 msgid "Delete User"
 msgstr ""
@@ -918,12 +934,12 @@ msgid "Delete"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:88
-#: views/dashboard-view.php:39
+#: views/dashboard-view.php:42
 msgid "Reset Password"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:96
-#: views/dashboard-view.php:46
+#: views/dashboard-view.php:49
 msgid "Authentication"
 msgstr ""
 
@@ -933,31 +949,31 @@ msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:105
 #: src/Modules/Settings/SettingsTabRegistry.php:109
-#: views/dashboard-view.php:53
+#: views/dashboard-view.php:56
 msgid "Refresh Token"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:114
 #: src/Modules/Settings/SettingsTabRegistry.php:118
-#: views/dashboard-view.php:60
+#: views/dashboard-view.php:63
 msgid "Validate Token"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:123
 #: src/Modules/Settings/SettingsTabRegistry.php:127
-#: views/dashboard-view.php:67
+#: views/dashboard-view.php:70
 msgid "Revoke Token"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:133
-#: views/dashboard-view.php:244
+#: views/dashboard-view.php:312
 #: views/general-view.php:266
 #: views/integrations/3rd-party/ai-abilities.php:300
 msgid "Security"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:139
-#: views/dashboard-view.php:91
+#: views/dashboard-view.php:94
 #: views/security/auth-codes-view.php:73
 msgid "Auth Codes"
 msgstr ""
@@ -967,19 +983,19 @@ msgid "Protect endpoints"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:151
-#: views/dashboard-view.php:84
+#: views/dashboard-view.php:87
 #: views/security/protect-endpoints-view.php:135
 msgid "Protect Endpoints"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:156
-#: views/dashboard-view.php:77
+#: views/dashboard-view.php:80
 msgid "CORS"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:164
 #: src/Modules/Settings/SettingsTabRegistry.php:168
-#: views/dashboard-view.php:98
+#: views/dashboard-view.php:101
 #: views/security/api-keys-view.php:52
 msgid "API Keys"
 msgstr ""
@@ -996,19 +1012,19 @@ msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:189
 #: src/Modules/Settings/SettingsTabRegistry.php:193
-#: views/dashboard-view.php:124
+#: views/dashboard-view.php:127
 msgid "OAuth"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:198
 #: src/Modules/Settings/SettingsTabRegistry.php:202
-#: views/dashboard-view.php:131
+#: views/dashboard-view.php:134
 msgid "Third Party Integrations"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:208
 #: src/Modules/Settings/SettingsTabRegistry.php:214
-#: views/dashboard-view.php:148
+#: views/dashboard-view.php:151
 #: views/webhooks/config.php:25
 msgid "Webhooks"
 msgstr ""
@@ -1019,7 +1035,7 @@ msgid "Config"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:223
-#: views/dashboard-view.php:156
+#: views/dashboard-view.php:159
 msgid "Webhook Logs"
 msgstr ""
 
@@ -1030,18 +1046,18 @@ msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:233
 #: src/Modules/Settings/SettingsTabRegistry.php:239
-#: views/dashboard-view.php:164
+#: views/dashboard-view.php:167
 msgid "Audit Logs"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:248
-#: views/dashboard-view.php:171
+#: views/dashboard-view.php:174
 msgid "Audit Log Entries"
 msgstr ""
 
 #: src/Modules/Settings/SettingsTabRegistry.php:259
 #: src/Modules/Settings/SettingsTabRegistry.php:263
-#: views/dashboard-view.php:138
+#: views/dashboard-view.php:141
 msgid "Hooks"
 msgstr ""
 
@@ -1554,19 +1570,19 @@ msgstr ""
 msgid "Auth0 did not return an access_token."
 msgstr ""
 
-#: src/Services/Oauth/Auth0Oauth.php:169
+#: src/Services/Oauth/Auth0Oauth.php:176
 msgid "The provided Auth0 token is invalid."
 msgstr ""
 
-#: src/Services/Oauth/Auth0Oauth.php:178
+#: src/Services/Oauth/Auth0Oauth.php:185
 msgid "The provided Auth0 token was not issued for this application"
 msgstr ""
 
-#: src/Services/Oauth/Auth0Oauth.php:242
+#: src/Services/Oauth/Auth0Oauth.php:249
 msgid "Unable to retrieve user email from Auth0."
 msgstr ""
 
-#: src/Services/Oauth/Auth0Oauth.php:252
+#: src/Services/Oauth/Auth0Oauth.php:259
 msgid "Email address is not verified."
 msgstr ""
 
@@ -1574,11 +1590,11 @@ msgstr ""
 msgid "Facebook did not return an access_token."
 msgstr ""
 
-#: src/Services/Oauth/FacebookOauth.php:101
+#: src/Services/Oauth/FacebookOauth.php:106
 msgid "The provided Facebook access_token is invalid."
 msgstr ""
 
-#: src/Services/Oauth/FacebookOauth.php:191
+#: src/Services/Oauth/FacebookOauth.php:196
 msgid "Unable to retrieve user email from Facebook. Ensure the email permission is granted."
 msgstr ""
 
@@ -1586,37 +1602,37 @@ msgstr ""
 msgid "GitHub did not return an access_token."
 msgstr ""
 
-#: src/Services/Oauth/GithubOauth.php:137
+#: src/Services/Oauth/GithubOauth.php:142
 msgid "The provided GitHub access_token is invalid."
 msgstr ""
 
-#: src/Services/Oauth/GithubOauth.php:237
+#: src/Services/Oauth/GithubOauth.php:242
 msgid "Unable to retrieve user email from GitHub."
 msgstr ""
 
-#: src/Services/Oauth/GithubOauth.php:254
+#: src/Services/Oauth/GithubOauth.php:259
 msgid "No verified primary email found in the GitHub account."
 msgstr ""
 
-#: src/Services/Oauth/GithubOauth.php:260
+#: src/Services/Oauth/GithubOauth.php:265
 msgid "No primary email found in the GitHub account."
 msgstr ""
 
-#: src/Services/Oauth/GoogleOauth.php:74
-#: src/Services/Oauth/GoogleOauth.php:165
-#: src/Services/Oauth/GoogleOauth.php:186
+#: src/Services/Oauth/GoogleOauth.php:76
+#: src/Services/Oauth/GoogleOauth.php:176
+#: src/Services/Oauth/GoogleOauth.php:197
 msgid "The provided id_token is invalid"
 msgstr ""
 
-#: src/Services/Oauth/GoogleOauth.php:195
+#: src/Services/Oauth/GoogleOauth.php:206
 msgid "The provided id_token has an invalid issuer"
 msgstr ""
 
-#: src/Services/Oauth/GoogleOauth.php:203
+#: src/Services/Oauth/GoogleOauth.php:216
 msgid "The provided id_token was not issued for this website."
 msgstr ""
 
-#: src/Services/Oauth/GoogleOauth.php:212
+#: src/Services/Oauth/GoogleOauth.php:225
 msgid "The email address of this Google account is not verified."
 msgstr ""
 
@@ -1979,112 +1995,112 @@ msgstr ""
 msgid "Page %1$d of %2$d (%3$d entries total)"
 msgstr ""
 
-#: views/dashboard-view.php:19
+#: views/dashboard-view.php:22
 msgid "Allows users to authenticate automatically using a valid JWT token."
 msgstr ""
 
-#: views/dashboard-view.php:26
+#: views/dashboard-view.php:29
 msgid "Enables user registration through the JWT register endpoint."
 msgstr ""
 
-#: views/dashboard-view.php:33
+#: views/dashboard-view.php:36
 msgid "Allows users to delete their account using a JWT-authenticated request."
 msgstr ""
 
-#: views/dashboard-view.php:40
+#: views/dashboard-view.php:43
 msgid "Allows users to reset their password using a secure JWT endpoint."
 msgstr ""
 
-#: views/dashboard-view.php:47
+#: views/dashboard-view.php:50
 msgid "Enables JWT authentication for protected REST API endpoints."
 msgstr ""
 
-#: views/dashboard-view.php:54
+#: views/dashboard-view.php:57
 msgid "Allows clients to exchange a refresh token for a new JWT without re-authenticating."
 msgstr ""
 
-#: views/dashboard-view.php:61
+#: views/dashboard-view.php:64
 msgid "Provides an endpoint to verify whether a given JWT is valid."
 msgstr ""
 
-#: views/dashboard-view.php:68
+#: views/dashboard-view.php:71
 msgid "Allows clients to invalidate a JWT or refresh token before it expires."
 msgstr ""
 
-#: views/dashboard-view.php:78
+#: views/dashboard-view.php:81
 msgid "Controls whether cross-origin requests are allowed for JWT endpoints."
 msgstr ""
 
-#: views/dashboard-view.php:85
+#: views/dashboard-view.php:88
 msgid "Restricts selected REST API endpoints to authenticated JWT requests only."
 msgstr ""
 
-#: views/dashboard-view.php:92
+#: views/dashboard-view.php:95
 msgid "Displays the total number of active authentication codes."
 msgstr ""
 
-#: views/dashboard-view.php:99
+#: views/dashboard-view.php:102
 msgid "Allow external clients to authenticate using scoped API keys instead of JWTs."
 msgstr ""
 
-#: views/dashboard-view.php:117
+#: views/dashboard-view.php:120
 msgid "General Settings"
 msgstr ""
 
-#: views/dashboard-view.php:118
+#: views/dashboard-view.php:121
 msgid "Configure JWT decryption key, algorithm, and other global plugin settings."
 msgstr ""
 
-#: views/dashboard-view.php:121
-#: views/dashboard-view.php:185
+#: views/dashboard-view.php:124
+#: views/dashboard-view.php:221
 msgid "Configure"
 msgstr ""
 
-#: views/dashboard-view.php:125
+#: views/dashboard-view.php:128
 msgid "Configure OAuth providers such as Google, Facebook, GitHub, and Auth0."
 msgstr ""
 
-#: views/dashboard-view.php:132
+#: views/dashboard-view.php:135
 msgid "Configure third-party plugin integrations such as WPGraphQL and Two-Factor."
 msgstr ""
 
-#: views/dashboard-view.php:139
+#: views/dashboard-view.php:142
 msgid "Shows how many Simple-JWT-Login hooks are currently enabled."
 msgstr ""
 
-#: views/dashboard-view.php:149
+#: views/dashboard-view.php:152
 msgid "Fire HTTP callbacks on plugin events such as login, register, or auth."
 msgstr ""
 
-#: views/dashboard-view.php:153
+#: views/dashboard-view.php:156
 msgid "configured"
 msgstr ""
 
-#: views/dashboard-view.php:157
+#: views/dashboard-view.php:160
 msgid "View the history of outbound webhook calls and their results."
 msgstr ""
 
-#: views/dashboard-view.php:161
+#: views/dashboard-view.php:164
 msgid "View Logs"
 msgstr ""
 
-#: views/dashboard-view.php:165
+#: views/dashboard-view.php:168
 msgid "Record plugin events such as logins, registrations, and settings changes for auditing."
 msgstr ""
 
-#: views/dashboard-view.php:172
+#: views/dashboard-view.php:175
 msgid "Browse recorded audit log entries for this plugin."
 msgstr ""
 
-#: views/dashboard-view.php:176
+#: views/dashboard-view.php:179
 msgid "View Entries"
 msgstr ""
 
-#: views/dashboard-view.php:187
+#: views/dashboard-view.php:223
 msgid "active"
 msgstr ""
 
-#: views/dashboard-view.php:210
+#: views/dashboard-view.php:246
 #: views/routes/auth-view.php:40
 #: views/routes/delete-view.php:41
 #: views/routes/login-view.php:43
@@ -2100,7 +2116,7 @@ msgstr ""
 msgid "Enabled"
 msgstr ""
 
-#: views/dashboard-view.php:210
+#: views/dashboard-view.php:246
 #: views/routes/auth-view.php:34
 #: views/routes/delete-view.php:35
 #: views/routes/login-view.php:37
@@ -2116,28 +2132,48 @@ msgstr ""
 msgid "Disabled"
 msgstr ""
 
-#: views/dashboard-view.php:232
+#: views/dashboard-view.php:265
+msgid "Security notices"
+msgstr ""
+
+#: views/dashboard-view.php:268
+msgid "Enabled options and settings that weaken the security of your site. Click a notice to open the setting."
+msgstr ""
+
+#: views/dashboard-view.php:273
+msgid "No security issues found in the current configuration."
+msgstr ""
+
+#: views/dashboard-view.php:284
+msgid "Critical"
+msgstr ""
+
+#: views/dashboard-view.php:285
+msgid "Warning"
+msgstr ""
+
+#: views/dashboard-view.php:300
 msgid "REST API endpoints exposed by this plugin."
 msgstr ""
 
-#: views/dashboard-view.php:247
+#: views/dashboard-view.php:315
 msgid "Access control, CORS policy, and authentication codes."
 msgstr ""
 
-#: views/dashboard-view.php:259
+#: views/dashboard-view.php:327
 #: views/security/auth-codes-view.php:39
 msgid "Configuration"
 msgstr ""
 
-#: views/dashboard-view.php:262
+#: views/dashboard-view.php:330
 msgid "Global plugin settings, third-party integrations, and WordPress hooks."
 msgstr ""
 
-#: views/dashboard-view.php:274
+#: views/dashboard-view.php:342
 msgid "Monitoring & Logs"
 msgstr ""
 
-#: views/dashboard-view.php:277
+#: views/dashboard-view.php:345
 msgid "Webhooks and audit logging for plugin events."
 msgstr ""
 
@@ -3021,6 +3057,18 @@ msgstr ""
 msgid "When disabled (default), users with an unverified email address returned by Auth0 will be rejected. Enable this only if you accept unverified emails."
 msgstr ""
 
+#: views/integrations/oauth/auth0.php:385
+msgid "Allow opaque access tokens"
+msgstr ""
+
+#: views/integrations/oauth/auth0.php:388
+msgid "When disabled (default), an Auth0 access_token must be a JWT issued for this Client ID. Auth0 issues opaque tokens when no API audience is requested."
+msgstr ""
+
+#: views/integrations/oauth/auth0.php:397
+msgid "Security risk: opaque access tokens can not be bound to this Client ID. Any application in your Auth0 tenant, including a third-party or compromised one, can send a token of its users and get a WordPress JWT for the matching account. Only the Auth0 /userinfo check remains. Enable this only if you trust every application in the tenant."
+msgstr ""
+
 #: views/integrations/oauth/facebook-form.php:28
 msgid "Continue with Facebook"
 msgstr ""
@@ -3109,6 +3157,18 @@ msgstr ""
 msgid "Automatically create a new WordPress user if no account is found matching the email returned by Facebook."
 msgstr ""
 
+#: views/integrations/oauth/facebook.php:350
+msgid "Allow tokens issued for other Facebook apps"
+msgstr ""
+
+#: views/integrations/oauth/facebook.php:353
+msgid "When disabled (default), an access_token must be issued for this Facebook App ID (checked with debug_token)."
+msgstr ""
+
+#: views/integrations/oauth/facebook.php:362
+msgid "Security risk: any Facebook app, including one you do not own, can send a token of its users and get a WordPress JWT for the matching account. Only the Facebook Graph /me check remains. Enable this only for backward compatibility, until your clients send tokens issued for this App ID."
+msgstr ""
+
 #: views/integrations/oauth/github-form.php:28
 msgid "Continue with GitHub"
 msgstr ""
@@ -3191,6 +3251,18 @@ msgstr ""
 msgid "When disabled (default), users with an unverified email address returned by GitHub will be rejected. Enable this only if you accept unverified emails."
 msgstr ""
 
+#: views/integrations/oauth/github.php:366
+msgid "Allow tokens issued for other GitHub apps"
+msgstr ""
+
+#: views/integrations/oauth/github.php:369
+msgid "When disabled (default), an access_token must be issued for this GitHub OAuth app. Personal access tokens and tokens of other apps are rejected."
+msgstr ""
+
+#: views/integrations/oauth/github.php:378
+msgid "Security risk: any GitHub OAuth app, including one you do not own, and any personal access token with the user:email scope can be exchanged for a WordPress JWT of the matching user. Only the GitHub /user/emails check remains. Enable this only for backward compatibility, until your clients send tokens issued for this OAuth app."
+msgstr ""
+
 #: views/integrations/oauth/google-form.php:27
 msgid "Continue with Google"
 msgstr ""
@@ -3271,6 +3343,18 @@ msgstr ""
 
 #: views/integrations/oauth/google.php:336
 msgid "Automatically create a new WordPress user if no account is found matching the email in the Google JWT payload."
+msgstr ""
+
+#: views/integrations/oauth/google.php:349
+msgid "Allow tokens issued for other Google clients"
+msgstr ""
+
+#: views/integrations/oauth/google.php:352
+msgid "When disabled (default), an id_token must be issued for this Google Client ID (aud claim). Applies to the id_token exchange and to \"Allow usage on all endpoints\"."
+msgstr ""
+
+#: views/integrations/oauth/google.php:361
+msgid "Security risk: any Google OAuth client, including one created by an attacker, can get a valid id_token for a Google account and exchange it for a WordPress JWT of the matching user. Only the Google signature, issuer and verified email checks remain. Enable this only for backward compatibility, until your apps send id_tokens issued for this Client ID."
 msgstr ""
 
 #: views/integrations/oauth/oauth-apps.php:48

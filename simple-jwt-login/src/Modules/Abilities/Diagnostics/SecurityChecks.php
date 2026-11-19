@@ -30,6 +30,19 @@ class SecurityChecks
     );
 
     /**
+     * OAuth options that accept tokens not bound to the configured app: provider => [option, severity].
+     * Auth0 is only a warning: opaque tokens still come from the site's own Auth0 tenant.
+     *
+     * @var array<string, array{0: string, 1: string}>
+     */
+    public static $unboundTokenOptions = array(
+        'google'   => array('allow_tokens_from_other_clients', 'critical'),
+        'facebook' => array('allow_tokens_from_other_apps', 'critical'),
+        'github'   => array('allow_tokens_from_other_apps', 'critical'),
+        'auth0'    => array('allow_opaque_access_token', 'warning'),
+    );
+
+    /**
      * @var SimpleJWTLoginSettings
      */
     private $jwtSettings;
@@ -50,7 +63,7 @@ class SecurityChecks
         $settings = $this->jwtSettings->getStoredSettings();
         $autologin = $this->flag($settings, 'login.enabled');
 
-        return array_values(array_filter([
+        return array_values(array_filter(array_merge([
             $this->finding(
                 $this->isSigningKeyWeak(),
                 ConfigurationChecks::SEVERITY_WARNING,
@@ -108,7 +121,34 @@ class SecurityChecks
                 __('AI agents can read signing keys and other secrets, which may be sent to the AI provider.', 'simple-jwt-login'),
                 ['integrations.3rdparty.ai_abilities']
             ),
-        ]));
+        ], $this->checkOauthUnboundTokens($settings))));
+    }
+
+    /**
+     * @param array $settings
+     * @return array
+     */
+    private function checkOauthUnboundTokens(array $settings)
+    {
+        $messages = [
+            'google'   => __('Google accepts id_tokens issued for other Google clients. Any Google OAuth client, including one created by an attacker, can exchange a token for a WordPress JWT of the matching user.', 'simple-jwt-login'),
+            'facebook' => __('Facebook accepts access tokens issued for other Facebook apps. Any Facebook app can exchange a token of its users for a WordPress JWT of the matching user.', 'simple-jwt-login'),
+            'github'   => __('GitHub accepts tokens issued for other GitHub apps and personal access tokens. Any GitHub app can exchange a token of its users for a WordPress JWT of the matching user.', 'simple-jwt-login'),
+            'auth0'    => __('Auth0 accepts opaque access tokens, which can not be bound to the configured Client ID. Any application in the Auth0 tenant can exchange a token for a WordPress JWT of the matching user.', 'simple-jwt-login'),
+        ];
+        $findings = [];
+        foreach (self::$unboundTokenOptions as $provider => $option) {
+            $prefix     = 'integrations.oauth.' . $provider . '.';
+            $findings[] = $this->finding(
+                $this->flag($settings, $prefix . 'enabled') && $this->flag($settings, $prefix . $option[0]),
+                $option[1],
+                $provider . '_unbound_tokens',
+                $messages[$provider],
+                [$prefix . $option[0]]
+            );
+        }
+
+        return $findings;
     }
 
     /**

@@ -48,13 +48,32 @@ class GoogleOauthSettingsTest extends TestCase
         $this->assertSame($expected, $this->make()->withSettings($data)->isExchangeIdTokenEnabled());
     }
 
+    public static function acceptedTokenClientIdProvider(): array
+    {
+        return [
+            'other clients allowed' => [['client_id' => 'cid', 'allow_tokens_from_other_clients' => true], null],
+            'other clients rejected' => [['client_id' => 'cid', 'allow_tokens_from_other_clients' => false], 'cid'],
+            'option missing' => [['client_id' => 'cid'], 'cid'],
+        ];
+    }
+
+    #[DataProvider('acceptedTokenClientIdProvider')]
+    public function testGetAcceptedTokenClientId(array $data, ?string $expected): void
+    {
+        $settings = $this->make()->withSettings($data);
+
+        $this->assertSame($expected, $settings->getAcceptedTokenClientId());
+        $this->assertSame($expected === null, $settings->allowTokensFromOtherClients());
+    }
+
     public function testProcessPostIncludesEnableExchangeIdTokenField(): void
     {
-        $post   = ['google' => ['enable_exchange_id_token' => '1']];
+        $post   = ['google' => ['enable_exchange_id_token' => '1', 'allow_tokens_from_other_clients' => '1']];
         $result = $this->make()->processPost($post, $this->wpData());
 
         $this->assertArrayHasKey('enable_exchange_id_token', $result);
         $this->assertSame(true, $result['enable_exchange_id_token']);
+        $this->assertSame(true, $result['allow_tokens_from_other_clients']);
     }
 
     public function testProcessPostExchangeIdTokenDefaultsFalseWhenMissing(): void
@@ -62,6 +81,7 @@ class GoogleOauthSettingsTest extends TestCase
         $result = $this->make()->processPost(['google' => []], $this->wpData());
 
         $this->assertSame(false, $result['enable_exchange_id_token']);
+        $this->assertSame(false, $result['allow_tokens_from_other_clients']);
     }
 
     public function testValidatePassesWhenNotEnabled(): void

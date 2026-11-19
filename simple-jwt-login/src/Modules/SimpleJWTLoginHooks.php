@@ -200,7 +200,7 @@ class SimpleJWTLoginHooks
                 ],
                 'return' => 'array $response',
                 'description' => __(
-                    'Allows customization of the send reset password endpoint response.',
+                    'Allows customization of the send reset password endpoint response. Runs only for emails that belong to a user: if it changes the response, callers can tell which emails have an account.',
                     'simple-jwt-login'
                 ),
             ],

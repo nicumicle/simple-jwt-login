@@ -142,6 +142,22 @@ class GoogleOauthTest extends TestCase
         ];
     }
 
+    public function testAnyClientSkipsOnlyTheAudienceCheck()
+    {
+        $tokenInfo = [
+            'iss' => 'https://accounts.google.com',
+            'aud' => 'other-client',
+            'email' => 'test@example.com',
+            'email_verified' => 'true',
+        ];
+
+        $result = GoogleOauth::validateTokenInfoClaims($tokenInfo, GoogleOauth::ANY_CLIENT);
+        $this->assertSame('test@example.com', $result['email']);
+
+        $this->expectExceptionCode(ErrorCodes::ERR_GOOGLE_ID_TOKEN_EMAIL_NOT_VERIFIED);
+        GoogleOauth::validateTokenInfoClaims(['email_verified' => 'false'] + $tokenInfo, GoogleOauth::ANY_CLIENT);
+    }
+
     public function testValidateTokenInfoClaimsAcceptsBareIssuer()
     {
         $tokenInfo = [

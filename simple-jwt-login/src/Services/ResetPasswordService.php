@@ -180,23 +180,21 @@ class ResetPasswordService extends BaseService implements ServiceInterface
         $this->validateSendResetPassword();
         $email = $this->wordPressData->sanitizeTextField($this->request['email']);
 
+        $flowType = $this->jwtSettings->getResetPasswordSettings()->getFlowType();
+        $message  = $this->getFlowMessage($flowType);
+
         $user = $this->wordPressData->getUserDetailsByEmail($email);
         if (empty($user)) {
-            throw new Exception(
-                esc_html(__('Wrong user.', 'simple-jwt-login')),
-                absint(ErrorCodes::ERR_USER_NOT_FOUND_FOR_RESET_PASSWORD)
-            );
+            return $this->respondToUnknownEmail($email, $message);
         }
-        switch ($this->jwtSettings->getResetPasswordSettings()->getFlowType()) {
+        switch ($flowType) {
             case ResetPasswordSettings::FLOW_JUST_SAVE_IN_DB:
                 $this->wordPressData->generateAndGetPasswordResetKey($user);
-                $message = __('The Code has been saved into the database.', 'simple-jwt-login');
                 break;
             case ResetPasswordSettings::FLOW_SEND_DEFAULT_WP_EMAIL:
                 $this->wordPressData->sendDefaultWordPressResetPassword(
                     $this->wordPressData->getUserProperty($user, 'user_login')
                 );
-                $message = __('Reset password email has been sent.', 'simple-jwt-login');
                 break;
             case ResetPasswordSettings::FLOW_SEND_CUSTOM_EMAIL:
                 $code = $this->wordPressData->generateAndGetPasswordResetKey($user);
@@ -222,14 +220,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
 
                 $sendAsHtml = $emailType === ResetPasswordSettings::EMAIL_TYPE_HTML;
                 $this->wordPressData->sendEmail($sendTo, $emailSubject, $emailBody, $sendAsHtml);
-
-                $message = __('Reset password email has been sent.', 'simple-jwt-login');
                 break;
-            default:
-                throw new Exception(
-                    esc_html(__('Invalid flow type.', 'simple-jwt-login')),
-                    absint(ErrorCodes::ERR_RESET_PASSWORD_INVALID_FLOW)
-                );
         }
 
         $userId    = (int) $this->wordPressData->getUserProperty($user, 'ID');
@@ -271,6 +262,54 @@ class ResetPasswordService extends BaseService implements ServiceInterface
         }
 
         return $this->wordPressData->createResponse($response);
+    }
+
+    /**
+     * @param int $flowType
+     * @return string
+     * @throws Exception
+     */
+    private function getFlowMessage($flowType)
+    {
+        switch ($flowType) {
+            case ResetPasswordSettings::FLOW_JUST_SAVE_IN_DB:
+                return __('The Code has been saved into the database.', 'simple-jwt-login');
+            case ResetPasswordSettings::FLOW_SEND_DEFAULT_WP_EMAIL:
+            case ResetPasswordSettings::FLOW_SEND_CUSTOM_EMAIL:
+                return __('Reset password email has been sent.', 'simple-jwt-login');
+            default:
+                throw new Exception(
+                    esc_html(__('Invalid flow type.', 'simple-jwt-login')),
+                    absint(ErrorCodes::ERR_RESET_PASSWORD_INVALID_FLOW)
+                );
+        }
+    }
+
+    /**
+     * Answer like for a real user, so the endpoint can not be used to find which emails have an account.
+     * The attempt is still audited; webhooks and the response hook only run for real users.
+     *
+     * @param string $email
+     * @param string $message
+     * @return WP_REST_Response
+     */
+    private function respondToUnknownEmail($email, $message)
+    {
+        if ($this->jwtSettings->getAuditLogSettings()->isAuditEventEnabled(AuditEvents::AUTH_PASSWORD_RESET_FAILED)) {
+            $this->wordPressData->doAction(
+                SimpleJWTLoginHooks::AUDIT_AUTH_PASSWORD_RESET_FAILED,
+                null,
+                $email,
+                __('Wrong user.', 'simple-jwt-login')
+            );
+        }
+
+        return $this->wordPressData->createResponse([
+            'success' => true,
+            'data'    => [
+                'message' => $message,
+            ],
+        ]);
     }
 
     /**
@@ -366,10 +405,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
                     absint(ErrorCodes::ERR_MISSING_JWT_AUTH_VALIDATE)
                 );
             }
-            $loginParameter = $this->validateJWTAndGetUserValueFromPayload(
-                $this->jwtSettings->getLoginSettings()->getJwtLoginByParameter()
-            );
-            $user = $this->getUserDetails($loginParameter);
+            $user = $this->getUserFromCurrentJwt();
             if (empty($user)
                 || $this->wordPressData->getUserProperty($user, 'user_email') !== $this->request['email']
             ) {

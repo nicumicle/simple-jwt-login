@@ -2,8 +2,36 @@
 
 namespace SimpleJWTLogin\Services\Integrations\TwoFactor;
 
+use SimpleJWTLogin\Repositories\Wordpress\Repository;
+use SimpleJWTLogin\Repositories\Wordpress\WordPressRepository;
+
 class TwoFactorBridge
 {
+    /**
+     * @var Repository|null
+     */
+    private $wordPressData;
+
+    /**
+     * @param Repository|null $wordPressData
+     */
+    public function __construct($wordPressData = null)
+    {
+        $this->wordPressData = $wordPressData;
+    }
+
+    /**
+     * @return Repository
+     */
+    protected function getWordPressData()
+    {
+        if ($this->wordPressData === null) {
+            $this->wordPressData = WordPressRepository::getInstance();
+        }
+
+        return $this->wordPressData;
+    }
+
     /**
      * @return bool
      */
@@ -65,6 +93,65 @@ class TwoFactorBridge
     public function getTimeDelay($user)
     {
         return \Two_Factor_Core::get_user_time_delay($user);
+    }
+
+    /**
+     * Record a failed 2FA code like Two_Factor_Core::process_provider() does:
+     * is_user_rate_limited() then applies its backoff, wp_login_failed lets brute-force
+     * plugins block the client, and after too many failures (30 by default, filter
+     * two_factor_failed_attempt_limit) the password is reset and the user is emailed.
+     *
+     * @param mixed $user
+     * @param int $userId
+     * @return bool True when the password was reset.
+     */
+    public function recordFailedAttempt($user, $userId)
+    {
+        $wordPressData = $this->getWordPressData();
+        $attemptsKey   = \Two_Factor_Core::USER_FAILED_LOGIN_ATTEMPTS_KEY;
+        $attempts      = $this->toInt($wordPressData->getUserMeta($userId, $attemptsKey));
+
+        $wordPressData->updateUserMeta($userId, \Two_Factor_Core::USER_RATE_LIMIT_KEY, (string) time());
+        $wordPressData->updateUserMeta($userId, $attemptsKey, (string) ($attempts + 1));
+        $wordPressData->loginFailed((string) $wordPressData->getUserProperty($user, 'user_login'));
+
+        if (!\Two_Factor_Core::should_reset_password($userId)) {
+            return false;
+        }
+
+        // Also deletes the login nonce, so the interim JWT stops working.
+        \Two_Factor_Core::reset_compromised_password($user);
+        \Two_Factor_Core::send_password_reset_emails($user);
+
+        return true;
+    }
+
+    /**
+     * Clear the failed 2FA attempts after a successful verification.
+     *
+     * @param int $userId
+     * @return void
+     */
+    public function resetFailedAttempts($userId)
+    {
+        $wordPressData = $this->getWordPressData();
+        $wordPressData->deleteUserMeta($userId, \Two_Factor_Core::USER_RATE_LIMIT_KEY, '');
+        $wordPressData->deleteUserMeta($userId, \Two_Factor_Core::USER_FAILED_LOGIN_ATTEMPTS_KEY, '');
+    }
+
+    /**
+     * get_user_meta() returns a list of values when $single is false.
+     *
+     * @param mixed $metaValue
+     * @return int
+     */
+    protected function toInt($metaValue)
+    {
+        if (is_array($metaValue)) {
+            return isset($metaValue[0]) ? (int) $metaValue[0] : 0;
+        }
+
+        return (int) $metaValue;
     }
 
     /**

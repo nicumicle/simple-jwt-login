@@ -10,7 +10,8 @@
     Domain Path: /i18n
     License: GPLv3
     License URI: https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE
-    Version: 4.1.1
+    Version: 4.2.0
+    Requires at least: 6.2
 */
 
 use SimpleJWTLogin\Helpers\ServerHelper;
@@ -22,8 +23,10 @@ use SimpleJWTLogin\Plugin\CronCleanup;
 use SimpleJWTLogin\Plugin\Lifecycle;
 use SimpleJWTLogin\Plugin\LoginPageIntegration;
 use SimpleJWTLogin\Plugin\OAuthTwoFactorLoginHandler;
+use SimpleJWTLogin\Plugin\PasswordChangeListener;
 use SimpleJWTLogin\Plugin\Shortcodes;
 use SimpleJWTLogin\Plugin\UserApiKeysPage;
+use SimpleJWTLogin\Plugin\UserDeletionListener;
 use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepository;
 use SimpleJWTLogin\Repositories\AuditLog\AuditLogRepository;
 use SimpleJWTLogin\Repositories\RefreshToken\RefreshTokenRepository;
@@ -39,7 +42,7 @@ if (! defined('ABSPATH')) {
     exit;
 } // Exit if accessed directly
 
-define('SIMPLE_JWT_LOGIN_VERSION', '4.1.1');
+define('SIMPLE_JWT_LOGIN_VERSION', '4.2.0');
 define('SIMPLE_JWT_LOGIN_DB_VERSION', '1.10');
 define('SIMPLE_JWT_LOGIN_PLUGIN_FILE', __FILE__);
 
@@ -85,6 +88,20 @@ $simpleJwtLoginAuditLogRepo = new AuditLogRepository($wpdb);
 $simpleJwtLoginWebhookLogRepo = new WebhookLogRepository($wpdb);
 $simpleJwtLoginApiKeyRepo = new ApiKeyRepository($wpdb);
 $simpleJwtLoginRevokedTokenRepo = new RevokedTokenRepository($wpdb);
+
+// When enabled, a password change revokes the user's refresh tokens and every JWT issued before it.
+$simpleJwtLoginPasswordChange = new PasswordChangeListener(
+    $simpleJwtLoginWordPressRepository,
+    $simpleJwtLoginRefreshTokenRepo,
+    $simpleJwtLoginJwtSettings->getAuthenticationSettings()
+);
+add_action('after_password_reset', array($simpleJwtLoginPasswordChange, 'onPasswordReset'));
+add_action('profile_update', array($simpleJwtLoginPasswordChange, 'onProfileUpdate'), 10, 3);
+add_action('wp_set_password', array($simpleJwtLoginPasswordChange, 'onPasswordSet'), 10, 2);
+
+// A user deleted in wp-admin must not keep working API keys or refresh tokens.
+$simpleJwtLoginUserDeletion = new UserDeletionListener($simpleJwtLoginApiKeyRepo, $simpleJwtLoginRefreshTokenRepo);
+add_action('deleted_user', array($simpleJwtLoginUserDeletion, 'onUserDeleted'));
 
 // Admin UI - only needed inside wp-admin, so skip building it on front-end/REST/cron requests.
 if (is_admin()) {

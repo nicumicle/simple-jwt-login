@@ -70,6 +70,8 @@
         "ip_whitelist": "",
         "password_base64": false,
         "iss": "tests",
+        "aud": "",
+        "revoke_on_password_change": false,
         "password_hash_enabled": false,
         "refresh_token_enabled": "0",
         "refresh_token_key": "",
@@ -144,7 +146,8 @@
                 "enable_oauth": false,
                 "enable_exchange_code": false,
                 "redirect_uri_exchange_code": "",
-                "enable_exchange_id_token": false
+                "enable_exchange_id_token": false,
+                "allow_tokens_from_other_clients": false
             },
             "auth0": {
                 "enabled": 0,
@@ -157,7 +160,8 @@
                 "redirect_uri_exchange_code": "",
                 "domain": "",
                 "enable_exchange_token": false,
-                "allow_unverified_email": false
+                "allow_unverified_email": false,
+                "allow_opaque_access_token": false
             },
             "facebook": {
                 "enabled": 0,
@@ -168,7 +172,8 @@
                 "enable_oauth": false,
                 "enable_exchange_code": false,
                 "redirect_uri_exchange_code": "",
-                "enable_exchange_token": false
+                "enable_exchange_token": false,
+                "allow_tokens_from_other_apps": false
             },
             "github": {
                 "enabled": 0,
@@ -180,7 +185,8 @@
                 "enable_exchange_code": false,
                 "redirect_uri_exchange_code": "",
                 "enable_exchange_token": false,
-                "allow_unverified_email": false
+                "allow_unverified_email": false,
+                "allow_tokens_from_other_apps": false
             },
             "login_button_layout": "stacked"
         },

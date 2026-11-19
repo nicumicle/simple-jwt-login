@@ -38,6 +38,11 @@ class ConcreteOauth extends AbstractOauth
         return 'https://provider.example.com/oauth/authorize';
     }
 
+    protected function getAuthScope()
+    {
+        return 'email';
+    }
+
     protected function getTokenEndpoint()
     {
         return 'https://provider.example.com/oauth/token';

@@ -390,6 +390,7 @@ class RegisterUserServiceTest extends TestCase
         $this->wordPressDataMock->method('wordpressUserToArray')
             ->willReturn([
                 'user_pass' => '123',
+                'user_activation_key' => '1700000000:$P$hash',
                 'email' => 'user@test.com',
                 'some_param' => 'test',
             ]);
@@ -417,6 +418,8 @@ class RegisterUserServiceTest extends TestCase
         $this->assertTrue($result['success']);
         $this->assertArrayHasKey('data', $result);
         $this->assertArrayHasKey('jwt', $result['data']);
+        $this->assertArrayNotHasKey('activation_key', $result['data']);
+        $this->assertArrayNotHasKey('pass', $result['data']);
     }
 
     #[DataProvider('specialCharsPasswordProvider')]

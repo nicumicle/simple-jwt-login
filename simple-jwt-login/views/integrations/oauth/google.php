@@ -338,5 +338,28 @@ $google = $jwtSettings->getIntegrationsSettings()->google();
             </div>
         </div>
 
+        <div class="sjl-gen-feature-toggle">
+            <div class="sjl-gen-feature-toggle-check">
+                <input type="checkbox" name="google[allow_tokens_from_other_clients]" id="google_allow_tokens_from_other_clients" value="1"
+                    <?php echo $google->allowTokensFromOtherClients() ? 'checked="checked"' : ''; ?>
+                />
+            </div>
+            <div class="sjl-gen-feature-toggle-text">
+                <label for="google_allow_tokens_from_other_clients" class="sjl-gen-feature-label">
+                    <?php echo esc_html__('Allow tokens issued for other Google clients', 'simple-jwt-login'); ?>
+                </label>
+                <p class="sjl-gen-feature-desc">
+                    <?php echo esc_html__('When disabled (default), an id_token must be issued for this Google Client ID (aud claim). Applies to the id_token exchange and to "Allow usage on all endpoints".', 'simple-jwt-login'); ?>
+                </p>
+            </div>
+        </div>
+        <div id="google_allow_tokens_from_other_clients_alert"
+             class="sjl-gen-warning-banner"
+             style="<?php echo $google->allowTokensFromOtherClients() ? '' : 'display:none;'; ?>"
+        >
+            <span class="dashicons dashicons-warning"></span>
+            <?php echo esc_html__('Security risk: any Google OAuth client, including one created by an attacker, can get a valid id_token for a Google account and exchange it for a WordPress JWT of the matching user. Only the Google signature, issuer and verified email checks remain. Enable this only for backward compatibility, until your apps send id_tokens issued for this Client ID.', 'simple-jwt-login'); ?>
+        </div>
+
     </div>
 </div>

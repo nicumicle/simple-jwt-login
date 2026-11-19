@@ -30,7 +30,7 @@ class DiagnosticsAbilitiesTest extends AbilityTestCase
     }
 
     /**
-     * @return array<string, array{0: string, 1: string, 2: bool, 3: int|null, 4: bool}>
+     * @return array<string, array{0: string, 1: string, 2: bool, 3: int|null, 4: bool, 5?: string[]}>
      */
     public static function jwtProvider()
     {
@@ -46,13 +46,18 @@ class DiagnosticsAbilitiesTest extends AbilityTestCase
             'unknown user'        => [self::token(['email' => 'ghost@example.com', 'exp' => $future]), 'user', false, null, false],
             'two factor pending'  => [self::token(['email' => 'admin@example.com', 'exp' => $future, 'tfa_pending' => true]), 'two_factor_pending', false, ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REJECTED, false],
             'revoked'             => [self::token(['email' => 'admin@example.com', 'exp' => $future]), 'revoked', false, ErrorCodes::ERR_REVOKED_TOKEN, true],
+            'issued before password change' => [self::token(['email' => 'admin@example.com', 'exp' => $future, 'iat' => time() - 60]), 'revoked', false, ErrorCodes::ERR_REVOKED_TOKEN, false, [(string) time()]],
+            'issued after password change'  => [self::token(['email' => 'admin@example.com', 'exp' => $future, 'iat' => time()]), 'ok', true, null, false, [(string) (time() - 60)]],
         ];
     }
 
     #[DataProvider('jwtProvider')]
-    public function testInspectJwt($jwt, $stage, $valid, $errorCode, $revoked)
+    public function testInspectJwt($jwt, $stage, $valid, $errorCode, $revoked, array $passwordChangedAt = [])
     {
-        $wordPressData = $this->makeWordPressDataStub($this->storedSettings());
+        $wordPressData = $this->makeWordPressDataStub(
+            $this->storedSettings(['authorization' => ['revoke_on_password_change' => true]])
+        );
+        $wordPressData->method('getUserMeta')->willReturn($passwordChangedAt);
         $user          = (object) ['ID' => 1, 'user_login' => 'admin'];
         $wordPressData->method('getUserDetailsByEmail')->willReturnCallback(function ($email) use ($user) {
             return $email === 'admin@example.com' ? $user : null;
@@ -76,6 +81,84 @@ class DiagnosticsAbilitiesTest extends AbilityTestCase
             $this->assertSame(['administrator'], $result['user']['roles']);
             $this->assertSame('HS256', $result['expected_algorithm']);
         }
+    }
+
+    /**
+     * @return array<string, array{array<string, mixed>, string}>
+     */
+    public static function audienceProvider()
+    {
+        $claims = ['email' => 'admin@example.com', 'exp' => time() + 3600];
+
+        return [
+            'other audience'    => [$claims + ['aud' => 'site-b'], 'audience'],
+            'no audience'       => [$claims, 'audience'],
+            'matching audience' => [$claims + ['aud' => 'site-a'], 'ok'],
+            'audience in list'  => [$claims + ['aud' => ['x', 'site-a']], 'ok'],
+        ];
+    }
+
+    /**
+     * inspect-jwt reports the same audience check as the plugin endpoints.
+     *
+     * @param array<string, mixed> $claims
+     */
+    #[DataProvider('audienceProvider')]
+    public function testInspectJwtChecksTheAudience(array $claims, string $stage)
+    {
+        $wordPressData = $this->makeWordPressDataStub($this->storedSettings(['authorization' => ['aud' => 'site-a']]));
+        $wordPressData->method('getUserDetailsByEmail')->willReturn((object) ['ID' => 1, 'user_login' => 'admin']);
+        $wordPressData->method('isInstanceOfuser')->willReturnCallback('is_object');
+        $wordPressData->method('getUserProperty')->willReturnCallback(function ($wpUser, $property) {
+            return $wpUser->$property;
+        });
+        $revokedTokens = $this->createStub(RevokedTokenRepositoryInterface::class);
+
+        $result = (new InspectJwtAbility($this->makeSettings($wordPressData), $revokedTokens))
+            ->execute(['jwt' => self::token($claims)]);
+
+        $this->assertSame($stage, $result['stage']);
+        $this->assertSame($stage === 'ok' ? null : ErrorCodes::ERR_JWT_AUDIENCE_MISMATCH, $result['error_code']);
+    }
+
+    /**
+     * A JWT matched by a JWT Rule is looked up with the rule's login-by settings, like on the endpoints.
+     */
+    public function testInspectJwtUsesTheMatchedRuleLoginBy()
+    {
+        $wordPressData = $this->makeWordPressDataStub($this->storedSettings([
+            'login'     => ['login_by' => 1, 'login_by_parameter' => 'id'],
+            'jwt_rules' => ['rules' => [[
+                'condition_type'        => 'iss',
+                'condition_key'         => 'iss',
+                'condition_operator'    => 'equals',
+                'condition_value'       => 'external-idp',
+                'iss'                   => 'external-idp',
+                'algorithm'             => 'HS256',
+                'decryption_key'        => 'rule-secret',
+                'decryption_key_base64' => false,
+                'login_by'              => 0,
+                'login_by_parameter'    => 'email',
+            ]]],
+        ]));
+        $wordPressData->method('getUserDetailsByEmail')->willReturn((object) ['ID' => 7, 'user_login' => 'idp-user']);
+        $wordPressData->method('getUserDetailsById')->willReturn((object) ['ID' => 1, 'user_login' => 'admin']);
+        $wordPressData->method('isInstanceOfuser')->willReturnCallback('is_object');
+        $wordPressData->method('getUserProperty')->willReturnCallback(function ($wpUser, $property) {
+            return $wpUser->$property;
+        });
+        $revokedTokens = $this->createStub(RevokedTokenRepositoryInterface::class);
+        $jwt           = self::token(
+            ['iss' => 'external-idp', 'id' => 1, 'email' => 'idp@example.com', 'exp' => time() + 3600],
+            'rule-secret'
+        );
+
+        $result = (new InspectJwtAbility($this->makeSettings($wordPressData), $revokedTokens))
+            ->execute(['jwt' => $jwt]);
+
+        $this->assertSame('ok', $result['stage']);
+        $this->assertSame('email', $result['user']['claim']);
+        $this->assertSame(7, $result['user']['id']);
     }
 
     public function testDiagnoseReportsEndpointsRolesAndWarnings()

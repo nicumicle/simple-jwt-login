@@ -1,6 +1,7 @@
 <?php
 
 use SimpleJWTLogin\Helpers\ViewLoader;
+use SimpleJWTLogin\Plugin\AdminUI;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\Settings\SettingsTabRegistry;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -116,6 +117,34 @@ $sidebarGroups = SettingsTabRegistry::sidebar();
                 </div>
             </div>
             <hr/>
+            <div class="sjl-support-banner" id="sjl-support-banner">
+                <span class="dashicons dashicons-heart sjl-support-heart" aria-hidden="true"></span>
+                <div class="sjl-support-text">
+                    <strong><?php echo esc_html__('Enjoying Simple JWT Login?', 'simple-jwt-login'); ?></strong>
+                    <?php echo esc_html__('Help keep this project free, secure and actively maintained.', 'simple-jwt-login'); ?>
+                    <span class="sjl-support-note">
+                        <?php echo esc_html__('Completely optional. No features are locked behind donations.', 'simple-jwt-login'); ?>
+                    </span>
+                </div>
+                <a
+                    class="sjl-support-button"
+                    href="<?php echo esc_url(AdminUI::DONATE_URL); ?>"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <span class="dashicons dashicons-heart" aria-hidden="true"></span>
+                    <?php echo esc_html__('Donate to the project', 'simple-jwt-login'); ?>
+                </a>
+                <button
+                    type="button"
+                    id="sjl-support-dismiss"
+                    class="sjl-support-dismiss"
+                    title="<?php echo esc_attr__('Dismiss for 6 months', 'simple-jwt-login'); ?>"
+                    aria-label="<?php echo esc_attr__('Dismiss for 6 months', 'simple-jwt-login'); ?>"
+                >
+                    <span class="dashicons dashicons-no-alt" aria-hidden="true"></span>
+                </button>
+            </div>
             <div class="row">
                 <div class="col-md-2 mb-3 sjl-sidebar-col">
                     <ul class="nav nav-pills flex-column nav-tabs" id="simple-jwt-login-tabs" role="tablist">

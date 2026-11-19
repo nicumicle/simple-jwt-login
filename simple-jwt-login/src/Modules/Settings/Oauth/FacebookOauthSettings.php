@@ -21,6 +21,7 @@ class FacebookOauthSettings extends AbstractOauthSettings
     {
         return [
             ['enable_exchange_token', BaseSettings::SETTINGS_TYPE_BOL],
+            ['allow_tokens_from_other_apps', BaseSettings::SETTINGS_TYPE_BOL],
         ];
     }
 
@@ -55,5 +56,11 @@ class FacebookOauthSettings extends AbstractOauthSettings
     public function isExchangeTokenEnabled()
     {
         return $this->isFieldEnabled('enable_exchange_token');
+    }
+
+    /** @return bool */
+    public function allowTokensFromOtherApps()
+    {
+        return $this->isFieldEnabled('allow_tokens_from_other_apps');
     }
 }

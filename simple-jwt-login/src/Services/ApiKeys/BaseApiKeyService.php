@@ -2,8 +2,11 @@
 
 namespace SimpleJWTLogin\Services\ApiKeys;
 
+use DateTime;
+use DateTimeZone;
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\Helpers\ApiKeyPermissions;
 use SimpleJWTLogin\Repositories\ApiKey\ApiKeyRepositoryInterface;
 use SimpleJWTLogin\Services\BaseService;
@@ -96,6 +99,44 @@ abstract class BaseApiKeyService extends BaseService implements ApiKeyServiceInt
      * @return int
      * @throws Exception
      */
+    /**
+     * The optional "expires_at" as a UTC "Y-m-d H:i:s", the form the expiry query compares
+     * with UTC_TIMESTAMP(). Accepts a date or date time with an optional zone (Z or +02:00);
+     * a value without a zone is read as UTC.
+     *
+     * @return string|null
+     * @throws ValidationException
+     */
+    protected function requireValidExpiry()
+    {
+        if (empty($this->request['expires_at'])) {
+            return null;
+        }
+        $value = trim((string) $this->request['expires_at']);
+        $parts = [];
+        $pattern = '/^(\d{4})-(\d{2})-(\d{2})(?:[ T]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?)?(?:Z|[+-]\d{2}:?\d{2})?$/';
+        if (preg_match($pattern, $value, $parts) === 1
+            && checkdate((int) $parts[2], (int) $parts[3], (int) $parts[1])
+        ) {
+            try {
+                $date = new DateTime($value, new DateTimeZone('UTC'));
+                // Out of range times (24:30, 23:59:60) are rolled over with a warning instead of throwing.
+                $errors = DateTime::getLastErrors();
+                if (!is_array($errors) || $errors['warning_count'] + $errors['error_count'] === 0) {
+                    return $date->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s');
+                }
+            } catch (Exception $exception) {
+                // Falls through to the validation error below (e.g. hour 25).
+                unset($exception);
+            }
+        }
+
+        throw new ValidationException(
+            esc_html(__('The expires_at value must be a date such as 2030-01-31 or 2030-01-31 23:59:00 (UTC).', 'simple-jwt-login')),
+            absint(ErrorCodes::ERR_API_KEY_INVALID_EXPIRY)
+        );
+    }
+
     protected function requireValidKeyId()
     {
         $keyId = (int) (isset($this->request['id']) ? $this->request['id'] : 0);

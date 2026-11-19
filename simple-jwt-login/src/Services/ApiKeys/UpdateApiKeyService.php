@@ -22,9 +22,7 @@ class UpdateApiKeyService extends BaseApiKeyService
         );
         $this->requireCapabilityForPermissions($permissions);
 
-        $expiresAt = !empty($this->request['expires_at'])
-            ? (string) $this->request['expires_at']
-            : null;
+        $expiresAt = $this->requireValidExpiry();
 
         $updated = $this->apiKeyRepository->updateById(
             $keyId,

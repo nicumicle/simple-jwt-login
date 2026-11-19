@@ -70,7 +70,7 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
             'SELECT * FROM %i
              WHERE key_hash = %s
                AND revoked_at IS NULL
-               AND (expires_at IS NULL OR expires_at > NOW())',
+               AND (expires_at IS NULL OR expires_at > UTC_TIMESTAMP())',
             $this->tableName(),
             $keyHash
         );
@@ -211,6 +211,22 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
         $result = $this->wpdb->delete(
             $this->tableName(),
             ['id' => $keyId],
+            ['%d']
+        );
+
+        return $result !== false;
+    }
+
+    /**
+     * @param int $userId
+     * @return bool
+     */
+    public function deleteByUserId($userId)
+    {
+        //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+        $result = $this->wpdb->delete(
+            $this->tableName(),
+            ['user_id' => $userId],
             ['%d']
         );
 

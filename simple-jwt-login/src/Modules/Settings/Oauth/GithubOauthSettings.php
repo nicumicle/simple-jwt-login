@@ -22,6 +22,7 @@ class GithubOauthSettings extends AbstractOauthSettings
         return [
             ['enable_exchange_token',  BaseSettings::SETTINGS_TYPE_BOL],
             ['allow_unverified_email', BaseSettings::SETTINGS_TYPE_BOL],
+            ['allow_tokens_from_other_apps', BaseSettings::SETTINGS_TYPE_BOL],
         ];
     }
 
@@ -62,5 +63,11 @@ class GithubOauthSettings extends AbstractOauthSettings
     public function allowUnverifiedEmail()
     {
         return $this->isFieldEnabled('allow_unverified_email');
+    }
+
+    /** @return bool */
+    public function allowTokensFromOtherApps()
+    {
+        return $this->isFieldEnabled('allow_tokens_from_other_apps');
     }
 }

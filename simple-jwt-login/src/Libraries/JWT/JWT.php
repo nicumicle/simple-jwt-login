@@ -115,7 +115,7 @@ class JWT
                 absint(ErrorCodes::ERR_ALGORITHM_NOT_SUPPORTED)
             );
         }
-        if (! in_array($header->alg, $allowedAlgs)) {
+        if (! in_array($header->alg, $allowedAlgs, true)) {
             throw new Exception(
                 esc_html__('Algorithm not allowed', 'simple-jwt-login'),
                 absint(ErrorCodes::ERR_ALGORITHM_NOT_ALLOWED)

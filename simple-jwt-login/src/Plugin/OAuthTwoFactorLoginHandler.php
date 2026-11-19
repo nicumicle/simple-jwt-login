@@ -56,7 +56,7 @@ class OAuthTwoFactorLoginHandler
 
     protected function getBridge()
     {
-        return new TwoFactorBridge();
+        return new TwoFactorBridge($this->settings->getWordPressData());
     }
 
     public function handleAction()
@@ -103,10 +103,11 @@ class OAuthTwoFactorLoginHandler
         $nonce         = (string) $payload['tfa_nonce'];
         $providerClass = (string) $payload['tfa_provider'];
 
-        $bridge = $this->getBridge();
+        $bridge        = $this->getBridge();
+        $wordPressData = $this->settings->getWordPressData();
 
-        $user = get_user_by('id', $userId);
-        if (!$user) {
+        $user = $wordPressData->getUserDetailsById($userId);
+        if (!$wordPressData->isInstanceOfuser($user)) {
             throw new Exception(esc_html(__('User not found.', 'simple-jwt-login')));
         }
 
@@ -125,12 +126,18 @@ class OAuthTwoFactorLoginHandler
         }
 
         if (!$bridge->verifyCode($providerClass, $user, $code, $userId)) {
+            if ($bridge->recordFailedAttempt($user, $userId)) {
+                throw new Exception(esc_html(__(
+                    'Too many invalid two-factor codes. Your password was reset, check your email to set a new one.',
+                    'simple-jwt-login'
+                )));
+            }
             $this->renderForm($jwt, $redirectTo, __('Invalid two-factor code. Please try again.', 'simple-jwt-login'));
             return;
         }
 
+        $bridge->resetFailedAttempts($userId);
         $bridge->deleteNonce($userId);
-        $wordPressData = $this->settings->getWordPressData();
 
         $wordPressData->loginUser($user, null);
         if ($this->settings->getGeneralSettings()->isSafeRedirectEnabled()) {

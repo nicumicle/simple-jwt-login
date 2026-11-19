@@ -20,6 +20,7 @@ class OAuthService extends BaseService implements ServiceInterface
             $this->jwtSettings,
             $this->wordPressData
         );
+        $app->withCookies($this->cookie);
 
         $app->validate();
 

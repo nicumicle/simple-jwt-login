@@ -307,6 +307,159 @@
     margin: 0 0 10px 0;
 }
 
+/* Dashboard security notices: one row per finding, clicking opens the settings tab */
+#simple-jwt-login .sjl-security-notice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    background: var(--sjl-bg-card);
+    border: 1px solid var(--sjl-border);
+    border-left-width: 3px;
+    border-radius: var(--sjl-radius-sm);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--sjl-text);
+}
+
+#simple-jwt-login .sjl-security-notice[data-sjl-tab] {
+    cursor: pointer;
+}
+
+#simple-jwt-login .sjl-security-notice[data-sjl-tab]:hover {
+    background: #fafafa;
+}
+
+#simple-jwt-login .sjl-security-notice-critical {
+    border-left-color: #d63638;
+}
+
+#simple-jwt-login .sjl-security-notice-warning {
+    border-left-color: #f0c33c;
+}
+
+#simple-jwt-login .sjl-security-notice-ok {
+    border-left-color: #1a7a32;
+}
+
+#simple-jwt-login .sjl-security-notice .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    line-height: 1;
+    flex-shrink: 0;
+    color: var(--sjl-text-meta);
+}
+
+#simple-jwt-login .sjl-security-notice-ok .dashicons {
+    color: #1a7a32;
+}
+
+#simple-jwt-login .sjl-security-notice .sjl-badge {
+    flex-shrink: 0;
+}
+
+#simple-jwt-login .sjl-security-notice-message {
+    flex: 1;
+}
+
+#simple-jwt-login .sjl-badge-critical {
+    background: #fcf0f1;
+    color: #b32d2e;
+    border: 1px solid #f1adad;
+}
+
+#simple-jwt-login .sjl-badge-warning {
+    background: #fff8e5;
+    color: #7a5800;
+    border: 1px solid #f0c33c;
+}
+
+#simple-jwt-login .sjl-support-banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+    padding: 10px 14px;
+    margin-bottom: 20px;
+    background: var(--sjl-bg-card);
+    border: 1px solid var(--sjl-border);
+    border-left: 3px solid var(--sjl-primary);
+    border-radius: var(--sjl-radius-md);
+    color: var(--sjl-text);
+    font-size: 13px;
+}
+
+#simple-jwt-login .sjl-support-heart {
+    color: var(--sjl-primary);
+}
+
+#simple-jwt-login .sjl-support-text {
+    flex: 1 1 300px;
+}
+
+#simple-jwt-login .sjl-support-note {
+    display: block;
+    font-size: 11px;
+    color: var(--sjl-text-muted);
+}
+
+#simple-jwt-login .sjl-support-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--sjl-primary);
+    border: 1px solid var(--sjl-primary);
+    border-radius: var(--sjl-radius-sm);
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+}
+
+#simple-jwt-login .sjl-support-dismiss {
+    -webkit-appearance: none;
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    background: none;
+    border: none;
+    border-radius: var(--sjl-radius-sm);
+    color: var(--sjl-text-muted);
+    cursor: pointer;
+}
+
+#simple-jwt-login .sjl-support-dismiss:hover,
+#simple-jwt-login .sjl-support-dismiss:focus {
+    color: var(--sjl-text);
+    background: var(--sjl-bg-muted);
+}
+
+#simple-jwt-login .sjl-support-dismiss .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 1;
+}
+
+/* !important: the dark theme forces every a:hover colour with !important. */
+#simple-jwt-login .sjl-support-banner a.sjl-support-button:hover,
+#simple-jwt-login .sjl-support-banner a.sjl-support-button:focus {
+    background: var(--sjl-primary);
+    color: #fff !important;
+}
+
+#simple-jwt-login .sjl-support-button .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    line-height: 1;
+}
+
 #simple-jwt-login .sjl-dash-card {
     display: flex;
     flex-direction: column;

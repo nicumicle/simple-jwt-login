@@ -6,6 +6,7 @@ namespace SimpleJwtLoginTests\Unit\Services\Integrations\TwoFactor {
 
     use PHPUnit\Framework\Attributes\DataProvider;
     use PHPUnit\Framework\TestCase;
+    use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
     use SimpleJWTLogin\Services\Integrations\TwoFactor\TwoFactorBridge;
     use Two_Factor_Backup_Codes;
     use Two_Factor_Core;
@@ -81,6 +82,105 @@ namespace SimpleJwtLoginTests\Unit\Services\Integrations\TwoFactor {
             $bridge = new TwoFactorBridge();
             $bridge->deleteNonce(42);
             $this->assertSame(42, Two_Factor_Core::$deletedNonceFor);
+        }
+
+        #[DataProvider('failedAttemptsProvider')]
+        /**
+         * @param mixed $storedValue
+         * @param int $expectedCount
+         */
+        public function testRecordFailedAttemptStoresTimestampAndIncrementsCounter($storedValue, $expectedCount)
+        {
+            $wordPressData = $this->createMock(WordPressDataInterface::class);
+            $wordPressData->method('getUserMeta')
+                ->with(7, '_two_factor_failed_login_attempts')
+                ->willReturn($storedValue);
+
+            $written = [];
+            $wordPressData->expects($this->exactly(2))
+                ->method('updateUserMeta')
+                ->willReturnCallback(function ($userId, $metaKey, $value) use (&$written) {
+                    $written[$metaKey] = [$userId, $value];
+                    return true;
+                });
+            $wordPressData->method('getUserProperty')->willReturnMap([['user', 'user_login', 'jdoe']]);
+            $wordPressData->expects($this->once())->method('loginFailed')->with('jdoe');
+
+            $before = time();
+            (new TwoFactorBridge($wordPressData))->recordFailedAttempt('user', 7);
+
+            $this->assertSame([7, (string) $expectedCount], $written['_two_factor_failed_login_attempts']);
+            $this->assertSame(7, $written['_two_factor_last_login_failure'][0]);
+            $this->assertGreaterThanOrEqual($before, (int) $written['_two_factor_last_login_failure'][1]);
+            $this->assertLessThanOrEqual(time(), (int) $written['_two_factor_last_login_failure'][1]);
+        }
+
+        /**
+         * @return array[]
+         */
+        public static function failedAttemptsProvider()
+        {
+            return [
+                'no previous failures (empty meta list)' => [[], 1],
+                'no previous failures (empty string)' => [[''], 1],
+                'one previous failure' => [['1'], 2],
+                'three previous failures' => [['3'], 4],
+                'scalar meta value' => ['5', 6],
+            ];
+        }
+
+        #[DataProvider('passwordResetProvider')]
+        public function testRecordFailedAttemptResetsThePasswordAfterTooManyFailures(bool $limitReached)
+        {
+            Two_Factor_Core::$shouldResetPassword = $limitReached;
+            Two_Factor_Core::$passwordResetFor    = null;
+            Two_Factor_Core::$resetEmailsSentFor  = null;
+
+            $wordPressData = $this->createStub(WordPressDataInterface::class);
+            $wordPressData->method('getUserMeta')->willReturn(['29']);
+
+            $passwordWasReset = (new TwoFactorBridge($wordPressData))->recordFailedAttempt('user', 7);
+            $expectedUser     = $limitReached ? 'user' : null;
+
+            Two_Factor_Core::$shouldResetPassword = false;
+
+            $this->assertSame($limitReached, $passwordWasReset);
+            $this->assertSame($expectedUser, Two_Factor_Core::$passwordResetFor);
+            $this->assertSame($expectedUser, Two_Factor_Core::$resetEmailsSentFor);
+        }
+
+        /**
+         * @return array[]
+         */
+        public static function passwordResetProvider()
+        {
+            return [
+                'limit reached' => [true],
+                'limit not reached' => [false],
+            ];
+        }
+
+        public function testResetFailedAttemptsDeletesBothCounters()
+        {
+            $wordPressData = $this->createMock(WordPressDataInterface::class);
+
+            $deleted = [];
+            $wordPressData->expects($this->exactly(2))
+                ->method('deleteUserMeta')
+                ->willReturnCallback(function ($userId, $metaKey) use (&$deleted) {
+                    $deleted[] = [$userId, $metaKey];
+                    return true;
+                });
+
+            (new TwoFactorBridge($wordPressData))->resetFailedAttempts(7);
+
+            $this->assertSame(
+                [
+                    [7, '_two_factor_last_login_failure'],
+                    [7, '_two_factor_failed_login_attempts'],
+                ],
+                $deleted
+            );
         }
 
         #[DataProvider('verifyCodeProvider')]

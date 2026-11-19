@@ -5,6 +5,7 @@
 ## Types of changes
 - [ ] Bug fix
 - [ ] New feature
+- [ ] Security fix
 
 ## Description
 <!-- Please describe what you have changed or added -->

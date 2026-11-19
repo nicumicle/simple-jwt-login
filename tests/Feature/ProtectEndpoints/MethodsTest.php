@@ -86,6 +86,23 @@ class MethodsTest extends TestBase
                 'method' => 'GET',
                 'expectedStatusCode' => 401,
             ],
+            'should not bypass a GET rule with POST and ?_method=GET' => [
+                'settings' => [
+                    'enabled' => true,
+                    'action' => ProtectEndpointSettings::SPECIFIC_ENDPOINTS,
+                    'protect' => [
+                        '/wp/v2/users'
+                    ],
+                    'protect_method' => [
+                        'GET',
+                    ],
+                    'whitelist' => [],
+                ],
+                'useJWT' => false,
+                'endpoint' => '/wp/v2/users&_method=GET',
+                'method' => 'POST',
+                'expectedStatusCode' => 401,
+            ],
             'should be able to call protected endpoint with JWT' => [
                 'settings' => [
                     'enabled' => true,

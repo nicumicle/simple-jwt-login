@@ -80,6 +80,14 @@ interface ApiKeyRepositoryInterface
     public function deleteById($keyId);
 
     /**
+     * Remove every key of a user (used when the user is deleted).
+     *
+     * @param int $userId
+     * @return bool
+     */
+    public function deleteByUserId($userId);
+
+    /**
      * Stamp last_used_at on a key to track usage.
      *
      * @param int    $keyId

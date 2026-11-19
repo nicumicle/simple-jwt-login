@@ -24,7 +24,7 @@ class ServerHelper
 
     /**
      * Named constructor for sites behind a trusted reverse proxy:
-     * the Client-IP / X-Forwarded-For headers are used to detect the client IP.
+     * the right-most X-Forwarded-For hop is used to detect the client IP.
      *
      * @param array $server
      * @return ServerHelper
@@ -119,15 +119,15 @@ class ServerHelper
      */
     private function getClientIpFromProxyHeaders()
     {
-        if (!empty($this->server['HTTP_CLIENT_IP'])) {
-            return trim($this->server['HTTP_CLIENT_IP']);
+        // Client-IP is never used: most proxies pass it through from the client untouched.
+        if (empty($this->server['HTTP_X_FORWARDED_FOR'])) {
+            return null;
         }
-        if (!empty($this->server['HTTP_X_FORWARDED_FOR'])) {
-            // The right-most entry is the hop appended by the trusted proxy
-            $forwardedIps = explode(',', $this->server['HTTP_X_FORWARDED_FOR']);
-            return trim(end($forwardedIps));
-        }
-        return null;
+        // Only the right-most entry is the hop appended by the trusted proxy; the rest come from the client.
+        $forwardedIps = explode(',', (string) $this->server['HTTP_X_FORWARDED_FOR']);
+        $proxyHop     = trim(end($forwardedIps));
+
+        return filter_var($proxyHop, FILTER_VALIDATE_IP) !== false ? $proxyHop : null;
     }
 
     /**
@@ -185,6 +185,28 @@ class ServerHelper
         return isset($this->server['REQUEST_METHOD'])
             ? $this->server['REQUEST_METHOD']
             : null;
+    }
+
+    /**
+     * The method the REST API dispatches: WP_REST_Server::serve_request() replaces
+     * REQUEST_METHOD with ?_method= or the X-HTTP-Method-Override header, for any
+     * verb, before authentication runs. Authorize by this method, never by
+     * REQUEST_METHOD alone.
+     *
+     * @return string|null
+     */
+    public function getRestRequestMethod()
+    {
+        $query = [];
+        parse_str(isset($this->server['QUERY_STRING']) ? (string) $this->server['QUERY_STRING'] : '', $query);
+        if (isset($query['_method'])) {
+            return is_string($query['_method']) ? strtoupper($query['_method']) : '';
+        }
+        if (isset($this->server['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
+            return strtoupper((string) $this->server['HTTP_X_HTTP_METHOD_OVERRIDE']);
+        }
+
+        return $this->getRequestMethod();
     }
 
     /**

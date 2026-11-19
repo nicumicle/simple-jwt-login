@@ -30,6 +30,8 @@ class StatusCodeHelper
         ErrorCodes::ERR_JWT_REFRESH_JWT_TOO_OLD,
         // Revoked
         ErrorCodes::ERR_REVOKED_TOKEN,
+        // Issued for another audience
+        ErrorCodes::ERR_JWT_AUDIENCE_MISMATCH,
         // Missing / invalid JWT
         ErrorCodes::ERR_LOGIN_INVALID_JWT,
         ErrorCodes::ERR_DELETE_MISSING_JWT,
@@ -53,6 +55,21 @@ class StatusCodeHelper
         ErrorCodes::ERR_INVALID_IIS_LOGIN,
         // JWT cannot be used to change password
         ErrorCodes::ERR_JWT_CANNOT_CHANGE_PASSWORD,
+        // Facebook / GitHub OAuth invalid code or token
+        ErrorCodes::ERR_FACEBOOK_INVALID_CODE,
+        ErrorCodes::ERR_FACEBOOK_INVALID_TOKEN,
+        ErrorCodes::ERR_GITHUB_INVALID_CODE,
+        ErrorCodes::ERR_GITHUB_INVALID_TOKEN,
+        // Two-factor verification
+        ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REQUIRED,
+        ErrorCodes::ERR_TWO_FACTOR_INVALID_NONCE,
+        ErrorCodes::ERR_TWO_FACTOR_INVALID_CODE,
+        ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REJECTED,
+        // JWT without the claim used to find the user
+        ErrorCodes::ERR_UNABLE_TO_FIND_PROPERTY_FOR_USER_IN_JWT,
+        ErrorCodes::ERR_JWT_PARAMETER_FOR_USER_NOT_FOUND,
+        // Google id_token issued for another client
+        ErrorCodes::ERR_GOOGLE_ID_TOKEN_INVALID_AUDIENCE,
     ];
 
     /** @var list<int> */
@@ -78,6 +95,12 @@ class StatusCodeHelper
         ErrorCodes::ERR_API_KEY_UNAUTHORIZED,
         // Endpoint role restriction
         ErrorCodes::ERR_PROTECT_ENDPOINTS_INSUFFICIENT_ROLE,
+        // Revoked token management is administrator only
+        ErrorCodes::ERR_REVOKED_TOKEN_UNAUTHORIZED,
+        // OAuth account email not verified
+        ErrorCodes::ERR_AUTH0_EMAIL_NOT_VERIFIED,
+        ErrorCodes::ERR_GITHUB_EMAIL_NOT_VERIFIED,
+        ErrorCodes::ERR_GOOGLE_ID_TOKEN_EMAIL_NOT_VERIFIED,
     ];
 
     /** @var list<int> */
@@ -87,6 +110,9 @@ class StatusCodeHelper
         ErrorCodes::ERR_GOOGLE_USER_NOT_FOUND,
         ErrorCodes::ERR_AUTH0_USER_NOT_FOUND,
         ErrorCodes::ERR_API_KEY_NOT_FOUND,
+        ErrorCodes::ERR_FACEBOOK_USER_NOT_FOUND,
+        ErrorCodes::ERR_GITHUB_USER_NOT_FOUND,
+        ErrorCodes::ERR_REVOKED_TOKEN_NOT_FOUND,
     ];
 
     /** @var list<int> */
@@ -108,6 +134,21 @@ class StatusCodeHelper
         ErrorCodes::ERR_EMPTY_CUSTOM_EMAIL_SUBJECT,
         ErrorCodes::ERR_JWT_IS_MISSING,
         ErrorCodes::ERR_AUTH_CODE_REQUIRED,
+        // Missing or invalid request parameters
+        ErrorCodes::ERR_MISSING_CODE_FOR_CHANGE_PASSWORD,
+        ErrorCodes::ERR_OAUTH_INVALID_PROVIDER,
+        ErrorCodes::ERR_MISSING_GOOGLE_PARAM,
+        ErrorCodes::ERR_MISSING_AUTH0_PARAM,
+        ErrorCodes::ERR_MISSING_FACEBOOK_PARAM,
+        ErrorCodes::ERR_MISSING_GITHUB_PARAM,
+        ErrorCodes::ERR_API_KEY_MISSING_NAME,
+        ErrorCodes::ERR_API_KEY_MISSING_PERMISSIONS,
+        ErrorCodes::ERR_API_KEY_INVALID_PERMISSION,
+    ];
+
+    /** @var list<int> */
+    private static $codes429 = [
+        ErrorCodes::ERR_TWO_FACTOR_RATE_LIMITED,
     ];
 
     /** @var list<int> */
@@ -124,6 +165,9 @@ class StatusCodeHelper
         ErrorCodes::ERR_API_KEY_UPDATE_FAILED,
         ErrorCodes::ERR_API_KEY_REVOKE_FAILED,
         ErrorCodes::ERR_API_KEY_DELETE_FAILED,
+        ErrorCodes::ERR_REFRESH_TOKEN_STORE_FAILED,
+        ErrorCodes::ERR_REVOKED_TOKEN_DELETE_FAILED,
+        ErrorCodes::ERR_TWO_FACTOR_NONCE_CREATE_FAILED,
         // Unknown
         ErrorCodes::ERR_UNKNOWN_ERROR,
     ];
@@ -154,6 +198,7 @@ class StatusCodeHelper
             405 => self::$codes405,
             409 => self::$codes409,
             422 => self::$codes422,
+            429 => self::$codes429,
             500 => self::$codes500,
         ];
 

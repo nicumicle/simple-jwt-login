@@ -80,6 +80,17 @@ export const createUser = (login, password, role) =>
 
 export const createAdministrator = (login, password) => createUser(login, password, 'administrator');
 
+/**
+ * One user meta value (e.g. first_name), read with WP-CLI. '' only when the key is not set:
+ * "meta list" then returns no row, while "meta get" fails the same way as a CLI or database error.
+ * Those errors throw, so a security test cannot pass without reading the value.
+ */
+export const userMeta = (login, key) => {
+  const rows = JSON.parse(wpCli('user', 'meta', 'list', login, `--keys=${key}`, '--format=json'));
+  const row = rows.find((item) => item.meta_key === key);
+  return row ? String(row.meta_value) : '';
+};
+
 export const passwordMatches = (login, password) => {
   try {
     wpCli('user', 'check-password', login, password);

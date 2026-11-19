@@ -5,9 +5,9 @@ namespace SimpleJWTLogin\Services;
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Exceptions\ValidationException;
+use SimpleJWTLogin\Helpers\Jwt\JwtAudience;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyFactory;
 use SimpleJWTLogin\Modules\AuditEvents;
-use SimpleJWTLogin\Modules\AuthCodeBuilder;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
@@ -73,16 +73,11 @@ class RegisterUserService extends BaseService implements ServiceInterface
         $newUserRoles = $registerSettings->getNewUserRoles();
         $authCodesSettings = $this->jwtSettings->getAuthCodesSettings();
         $authCodeKey = $authCodesSettings->getAuthCodeKey();
-        if (isset($this->request[$authCodeKey])) {
-            foreach ($authCodesSettings->getAuthCodes() as $code) {
-                $authCodeBuilder = new AuthCodeBuilder($code);
-                if ($authCodeBuilder->getCode() === $this->request[$authCodeKey]
-                    && !empty($authCodeBuilder->getRole())
-                ) {
-                    $newUserRoles = array($authCodeBuilder->getRole());
-                    break;
-                }
-            }
+        $authCode    = isset($this->request[$authCodeKey])
+            ? $authCodesSettings->findValidAuthCode($this->request[$authCodeKey])
+            : null;
+        if ($authCode !== null && !empty($authCode->getRole())) {
+            $newUserRoles = array($authCode->getRole());
         }
 
         $user = $this->wordPressData->createUser(
@@ -162,7 +157,8 @@ class RegisterUserService extends BaseService implements ServiceInterface
         }
 
         $raw = $this->wordPressData->wordpressUserToArray($user);
-        unset($raw['user_pass'], $raw['ID']);
+        // user_activation_key holds the hashed password reset key.
+        unset($raw['user_pass'], $raw['user_activation_key'], $raw['ID']);
 
         $userArray = ['id' => $userId];
         foreach ($raw as $key => $value) {
@@ -346,12 +342,12 @@ class RegisterUserService extends BaseService implements ServiceInterface
             ->getUserProperty($user, 'user_login');
         $iss = $authSettings->getAuthIss();
 
-        return [
+        return JwtAudience::addToPayload([
             AuthenticationSettings::JWT_PAYLOAD_PARAM_EMAIL    => $userEmail,
             AuthenticationSettings::JWT_PAYLOAD_PARAM_ID       => $userId,
             AuthenticationSettings::JWT_PAYLOAD_PARAM_USERNAME => $username,
             AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT      => time(),
             AuthenticationSettings::JWT_PAYLOAD_PARAM_ISS      => $iss,
-        ];
+        ], $authSettings);
     }
 }

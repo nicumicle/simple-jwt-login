@@ -94,24 +94,6 @@ class ResetPasswordServiceTest extends TestCase
                 ],
                 'exceptionMessage' => 'Missing email parameter.'
             ],
-            [
-                'settings'  => [
-                    'allow_reset_password'              => 1,
-                    'reset_password_requires_auth_code' => 1,
-                    'auth_codes'                        => [
-                        [
-                            'code'            => 123,
-                            'role'            => '',
-                            'expiration_date' => '',
-                        ]
-                    ]
-                ],
-                'request'   => [
-                    'AUTH_KEY' => 123,
-                    'email'    => 'userdoesnotexst@test.com'
-                ],
-                'exceptionMessage' => 'Wrong user.'
-            ],
             'invalid_email_for_reset_password' => [
                 'settings'  => [
                     'allow_reset_password'              => 1,
@@ -123,6 +105,40 @@ class ResetPasswordServiceTest extends TestCase
                 'exceptionMessage' => 'Invalid email parameter.'
             ],
         ];
+    }
+
+    #[DataProvider('flowTypeProvider')]
+    public function testSendResetPasswordForUnknownEmailAnswersLikeForAUser($flowType)
+    {
+        $this->wordPressDataMock = $this->createMock(WordPressDataInterface::class);
+        $settings = [
+            'allow_reset_password'    => 1,
+            'jwt_reset_password_flow' => $flowType,
+        ];
+        $this->wordPressDataMock->method('getOptionFromDatabase')->willReturn(json_encode($settings));
+        $this->wordPressDataMock->method('isEmail')->willReturn(true);
+        $this->wordPressDataMock->method('getUserDetailsByEmail')->willReturn(null);
+        $this->wordPressDataMock->expects($this->never())->method('generateAndGetPasswordResetKey');
+        $this->wordPressDataMock->expects($this->never())->method('sendDefaultWordPressResetPassword');
+        $this->wordPressDataMock->expects($this->never())->method('sendEmail');
+        $this->wordPressDataMock->expects($this->once())
+            ->method('createResponse')
+            ->with($this->callback(static function ($response) use ($flowType) {
+                $expected = $flowType === ResetPasswordSettings::FLOW_JUST_SAVE_IN_DB
+                    ? 'The Code has been saved into the database.'
+                    : 'Reset password email has been sent.';
+
+                return $response === ['success' => true, 'data' => ['message' => $expected]];
+            }))
+            ->willReturn(true);
+
+        (new ResetPasswordService())
+            ->withRequest(['email' => 'nobody@test.com'])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper(['REQUEST_METHOD' => 'POST']))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
+            ->makeAction();
     }
 
     #[DataProvider('flowTypeProvider')]

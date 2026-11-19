@@ -57,6 +57,24 @@ class ApiKeyPermissions
      * @param string $permission
      * @return bool
      */
+    /**
+     * Permissions an API key needs for a REST call. A /batch/v1 call can hold POST, PUT,
+     * PATCH and DELETE sub-requests, so it needs every write permission.
+     *
+     * @param string $method Effective HTTP method.
+     * @param string|null $restRoute Route WordPress dispatches.
+     * @return string[] Empty when the method is not allowed for API keys.
+     */
+    public static function requiredForRequest($method, $restRoute)
+    {
+        if (RestRouteHelper::isNamespaceRoute($restRoute, 'batch/v1')) {
+            return [self::CREATE, self::UPDATE, self::DELETE];
+        }
+        $permission = self::httpMethodToPermission($method);
+
+        return $permission === null ? [] : [$permission];
+    }
+
     public static function isValid($permission)
     {
         return in_array($permission, self::$all, true);

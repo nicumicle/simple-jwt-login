@@ -14,6 +14,11 @@ Calls from **another site** to the WordPress site, with [Playwright Test](https:
 - `specs/cors.spec.mjs` - the CORS settings: exact response headers for `*`, one origin, several
   origins (comma / new line), lookalikes, preflight methods and headers; and what a real page on
   three origins (`127.0.0.1:8090`, `127.0.0.1:8091`, `localhost:8090`) may read.
+- `specs/batch.spec.mjs` - `/batch/v1` from the other site with `/wp/v2/users` protected by
+  Protect Endpoints: each sub-request is checked (no JWT = refused by the plugin, error 75), a CSRF
+  form with the JWT cookie changes nothing, an app with the JWT in the header works.
+- `specs/base64-password.spec.mjs` - `/auth` with "password is base64" on, from an app on the
+  other site: passwords with quotes and backslashes log in, a raw password does not (error 48).
 
 Each case tries to have an effect (create an administrator, delete a user, revoke a JWT, log in,
 read an answer...). `BLOCKED` = no effect, `WORKS` = the effect happened. The "works" cases prove that the "blocked" ones are blocked by the plugin, not by the setup.

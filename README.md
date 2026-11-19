@@ -93,9 +93,6 @@ If you want to make sure you have a stable version, please download this plugin 
 
 ### Install from Zip
 
-> [!NOTE]
->  Please note that this plugin version is not fully tested.
-
 If you want to upload the simple-jwt-login plugin to your website:
 - Download [downloads/simple-jwt-login.zip](https://github.com/nicumicle/simple-jwt-login/blob/master/download/simple-jwt-login.zip)
 - Upload the zip file into your WordPress website
@@ -555,8 +552,14 @@ Thanks to all our contributors!
 This project is supported by:
 
 <a href="https://www.digitalocean.com/">
-    <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/SVG/DO_Logo_horizontal_blue.svg" width="201px" alt="DigitalOcean">
-</a>
+  <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/SVG/DO_Logo_horizontal_blue.svg" height="40" alt="DigitalOcean"></a>
+&nbsp;&nbsp;
+<a href="https://coderabbit.link/nicumicle">
+  <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://www.coderabbit.ai/press-kit/coderabbit-reverse-white.svg">
+      <source media="(prefers-color-scheme: light)" srcset="https://www.coderabbit.ai/press-kit/coderabbit-primary-black.svg">
+      <img src="https://www.coderabbit.ai/press-kit/coderabbit-primary-black.svg" height="40" alt="CodeRabbit">
+  </picture></a>
 
 ## Copyright
 

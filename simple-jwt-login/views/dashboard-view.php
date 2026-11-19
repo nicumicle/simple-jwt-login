@@ -1,7 +1,10 @@
 <?php
 
+use SimpleJWTLogin\Modules\Abilities\Diagnostics\ConfigurationChecks;
+use SimpleJWTLogin\Modules\Abilities\Diagnostics\SecurityReportAbility;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use SimpleJWTLogin\Services\Integrations\TwoFactor\TwoFactorBridge;
 
 if (! defined('ABSPATH')) {
     /** @phpstan-ignore-next-line  */
@@ -177,6 +180,39 @@ $monitoringCards = [
     ],
 ];
 
+// Same findings as the AI security report; info-level notes are left out of the dashboard.
+$securityNotices = (new SecurityReportAbility($jwtSettings, new TwoFactorBridge()))
+    ->execute(['min_severity' => ConfigurationChecks::SEVERITY_WARNING]);
+$securityNotices = $securityNotices['findings'];
+
+/**
+ * Settings tab that holds a settings path (e.g. "integrations.oauth.google.enabled").
+ *
+ * @param string $path
+ * @return int
+ */
+function simple_jwt_login_settings_path_tab($path)
+{
+    $tabs = [
+        'login'                 => SettingsErrors::PREFIX_LOGIN,
+        'register'              => SettingsErrors::PREFIX_REGISTER,
+        'delete_user'           => SettingsErrors::PREFIX_DELETE,
+        'authorization'         => SettingsErrors::PREFIX_AUTHENTICATION,
+        'auth_codes'            => SettingsErrors::PREFIX_AUTH_CODES,
+        'cors'                  => SettingsErrors::PREFIX_CORS,
+        'audit_log'             => SettingsErrors::PREFIX_AUDIT_LOGS,
+        'integrations.oauth'    => SettingsErrors::PREFIX_APPLICATIONS,
+        'integrations.3rdparty' => SettingsErrors::PREFIX_3RD_PARTY_APPS,
+    ];
+    foreach ($tabs as $prefix => $tab) {
+        if (strpos($path . '.', $prefix . '.') === 0) {
+            return $tab;
+        }
+    }
+
+    return SettingsErrors::PREFIX_GENERAL;
+}
+
 /**
  * @param array{title: string, tooltip: string, icon: string, tab: int, enabled?: bool, count?: int, count_label?: string, link?: string} $card
  */
@@ -222,6 +258,38 @@ function simple_jwt_login_render_dash_card(array $card)
 ?>
 
 <div class="sjl-dashboard">
+
+    <div class="sjl-dash-section sjl-security-notices">
+        <h3 class="sjl-dash-section-title">
+            <span class="dashicons dashicons-warning"></span>
+            <?php echo esc_html(__('Security notices', 'simple-jwt-login')); ?>
+        </h3>
+        <p class="sjl-dash-section-desc">
+            <?php echo esc_html(__('Enabled options and settings that weaken the security of your site. Click a notice to open the setting.', 'simple-jwt-login')); ?>
+        </p>
+        <?php if (empty($securityNotices)) : ?>
+            <div class="sjl-security-notice sjl-security-notice-ok">
+                <span class="dashicons dashicons-yes-alt"></span>
+                <?php echo esc_html(__('No security issues found in the current configuration.', 'simple-jwt-login')); ?>
+            </div>
+        <?php endif; ?>
+        <?php foreach ($securityNotices as $notice) : ?>
+            <div
+                class="sjl-security-notice sjl-security-notice-<?php echo esc_attr($notice['severity']); ?>"
+                data-sjl-tab="<?php echo esc_attr((string) simple_jwt_login_settings_path_tab($notice['settings'][0])); ?>"
+            >
+                <span class="sjl-badge sjl-badge-<?php echo esc_attr($notice['severity']); ?>">
+                    <?php
+                    echo esc_html($notice['severity'] === ConfigurationChecks::SEVERITY_CRITICAL
+                        ? __('Critical', 'simple-jwt-login')
+                        : __('Warning', 'simple-jwt-login'));
+                    ?>
+                </span>
+                <span class="sjl-security-notice-message"><?php echo esc_html($notice['message']); ?></span>
+                <span class="dashicons dashicons-arrow-right-alt2"></span>
+            </div>
+        <?php endforeach; ?>
+    </div>
 
     <div class="sjl-dash-section">
         <h3 class="sjl-dash-section-title">

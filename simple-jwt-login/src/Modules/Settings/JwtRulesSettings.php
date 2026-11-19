@@ -87,6 +87,9 @@ class JwtRulesSettings extends BaseSettings implements SettingsInterface
                 'algorithm'           => $algorithm,
                 'login_by'            => $loginBy,
                 'login_by_parameter'  => $loginByParameter,
+                'audience'            => $this->wordPressData->sanitizeTextField(
+                    isset($entry['audience']) ? (string)$entry['audience'] : ''
+                ),
             ];
 
             if ($conditionType === 'iss') {

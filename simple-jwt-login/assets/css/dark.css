@@ -169,6 +169,16 @@
     color: var(--sjl-text-muted);
 }
 
+/* ── Dashboard support banner ── */
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-support-banner {
+    background: #1e2330;
+}
+
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-support-banner a.sjl-support-button:hover,
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-support-banner a.sjl-support-button:focus {
+    color: #141820 !important;
+}
+
 /* ── Shared cards ── */
 #simple-jwt-login[data-sjl-theme="dark"] .sjl-gen-card {
     background: #1e2330;
@@ -356,6 +366,27 @@
     background: #1e2330;
     color: var(--sjl-text-muted);
     border-color: var(--sjl-border);
+}
+
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-badge-critical {
+    background: #3a0f10;
+    color: #f87171;
+    border-color: #7f1d1d;
+}
+
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-badge-warning {
+    background: #2a1f00;
+    color: #f59e0b;
+    border-color: #7a5800;
+}
+
+/* ── Dashboard security notices ── */
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-security-notice[data-sjl-tab]:hover {
+    background: var(--sjl-bg-muted);
+}
+
+#simple-jwt-login[data-sjl-theme="dark"] .sjl-security-notice-ok .dashicons {
+    color: #4ade80;
 }
 
 #simple-jwt-login[data-sjl-theme="dark"] .sjl-gen-source-session {

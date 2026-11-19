@@ -19,6 +19,12 @@ class BaseOauth
      * @var array
      */
     protected $request = [];
+
+    /**
+     * @var array
+     */
+    protected $cookies = [];
+
     /**
      * @var WordPressDataInterface
      */
@@ -58,6 +64,16 @@ class BaseOauth
     public function withTwoFactorBridge(TwoFactorBridge $bridge)
     {
         $this->twoFactorBridge = $bridge;
+        return $this;
+    }
+
+    /**
+     * @param array|null $cookies
+     * @return $this
+     */
+    public function withCookies($cookies)
+    {
+        $this->cookies = is_array($cookies) ? $cookies : [];
         return $this;
     }
 

@@ -6,7 +6,6 @@ use Exception;
 use SimpleJWTLogin\Exceptions\ValidationException;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Modules\AuditEvents;
-use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\Settings\WebhooksSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 
@@ -73,33 +72,8 @@ class DeleteUserService extends BaseService implements ServiceInterface
             );
         }
 
-        $jwtParts = $this->extractJwtData($this->jwt);
-        $ruleConfig = $this->jwtSettings->getJwtRulesSettings()->findMatchingRuleConfig($jwtParts);
-
-        $getUserBy = $this->jwtSettings->getLoginSettings()->getJWTLoginBy();
-        $loginByParameter = $this->jwtSettings->getLoginSettings()->getJwtLoginByParameter();
-        if ($ruleConfig !== null) {
-            $getUserBy = isset($ruleConfig['login_by']) ? (int)$ruleConfig['login_by'] : LoginSettings::JWT_LOGIN_BY_EMAIL;
-            $loginByParameter = isset($ruleConfig['login_by_parameter']) ? $ruleConfig['login_by_parameter'] : '';
-        }
-
-        $registerParameter = $this->validateJWTAndGetUserValueFromPayload($loginByParameter);
-
-        switch ($getUserBy) {
-            case LoginSettings::JWT_LOGIN_BY_EMAIL:
-                $user = $this->wordPressData->getUserDetailsByEmail($registerParameter);
-                break;
-            case LoginSettings::JWT_LOGIN_BY_WORDPRESS_USER_ID:
-                $user = $this->wordPressData->getUserDetailsById($registerParameter);
-                break;
-            case LoginSettings::JWT_LOGIN_BY_USER_LOGIN:
-                $user = $this->wordPressData->getUserByUserLogin($registerParameter);
-                break;
-            default:
-                $user = false;
-        }
-
-        if ($user === false) {
+        $user = $this->getUserFromCurrentJwt();
+        if ($user === null) {
             throw new Exception(
                 esc_html(__('User not found.', 'simple-jwt-login')),
                 absint(ErrorCodes::ERR_DO_LOGIN_USER_NOT_FOUND)

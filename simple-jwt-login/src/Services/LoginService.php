@@ -66,12 +66,8 @@ class LoginService extends BaseService implements ServiceInterface
     private function doLogin()
     {
         $this->validateDoLogin();
-        $loginParameter = $this->validateJWTAndGetUserValueFromPayload(
-            $this->jwtSettings->getLoginSettings()->getJwtLoginByParameter()
-        );
-
         /** @var WP_User|null $user */
-        $user = $this->getUserDetails($loginParameter);
+        $user = $this->getUserFromCurrentJwt();
         if ($user === null) {
             throw new Exception(
                 esc_html(__('User not found.', 'simple-jwt-login')),

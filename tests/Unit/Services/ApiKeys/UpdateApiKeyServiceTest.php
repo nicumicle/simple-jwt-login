@@ -210,4 +210,32 @@ class UpdateApiKeyServiceTest extends TestCase
 
         $this->assertInstanceOf(WP_REST_Response::class, $result);
     }
+
+    public function testUpdatedExpiryIsStoredInUtc()
+    {
+        $repository = $this->createMock(ApiKeyRepositoryInterface::class);
+        $repository->expects($this->once())
+            ->method('updateById')
+            ->with(1, 'My Key', '["read"]', '2030-01-02 03:04:00')
+            ->willReturn(true);
+
+        (new UpdateApiKeyService())
+            ->withRequest(['id' => 1, 'name' => 'My Key', 'permissions' => ['read'], 'expires_at' => '2030-01-02T03:04Z'])
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withApiKeyRepository($repository)
+            ->makeAction();
+    }
+
+    public function testInvalidUpdatedExpiryIsRejected()
+    {
+        $this->expectExceptionCode(ErrorCodes::ERR_API_KEY_INVALID_EXPIRY);
+        $repository = $this->createMock(ApiKeyRepositoryInterface::class);
+        $repository->expects($this->never())->method('updateById');
+
+        (new UpdateApiKeyService())
+            ->withRequest(['id' => 1, 'name' => 'My Key', 'permissions' => ['read'], 'expires_at' => 'next week'])
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withApiKeyRepository($repository)
+            ->makeAction();
+    }
 }

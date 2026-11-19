@@ -146,7 +146,8 @@ class RevokedTokenRepository implements Repository
     public function deleteExpired()
     {
         $sql = $this->wpdb->prepare(
-            'DELETE FROM %i WHERE expires_at IS NOT NULL AND expires_at <= NOW()',
+            // expires_at is stored in UTC; NOW() would use the database session time zone.
+            'DELETE FROM %i WHERE expires_at IS NOT NULL AND expires_at <= UTC_TIMESTAMP()',
             $this->tableName()
         );
         //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared

@@ -13,6 +13,8 @@ class GoogleOauth extends AbstractOauth
     const AUTH_URL        = 'https://accounts.google.com/o/oauth2/auth';
     const TOKEN_ENDPOINT  = 'https://accounts.google.com/o/oauth2/token';
     const CHECK_TOKEN_URL = 'https://oauth2.googleapis.com/tokeninfo?id_token=%s';
+    // Client ID value that skips the aud check ("Allow tokens issued for other Google clients").
+    const ANY_CLIENT      = null;
 
     // -------------------------------------------------------------------------
     // AbstractOauth hooks
@@ -26,6 +28,11 @@ class GoogleOauth extends AbstractOauth
     public function getAuthUrl()
     {
         return self::AUTH_URL;
+    }
+
+    protected function getAuthScope()
+    {
+        return 'email';
     }
 
     protected function getClientId()
@@ -83,7 +90,15 @@ class GoogleOauth extends AbstractOauth
      */
     protected function validateProviderToken($token)
     {
-        self::validateIdToken($token, $this->getClientId());
+        self::validateIdToken($token, $this->getAcceptedTokenClientId());
+    }
+
+    /**
+     * @return string|null
+     */
+    private function getAcceptedTokenClientId()
+    {
+        return $this->settings->getIntegrationsSettings()->google()->getAcceptedTokenClientId();
     }
 
     protected function getInvalidTokenErrorCode()
@@ -121,7 +136,7 @@ class GoogleOauth extends AbstractOauth
      */
     protected function getEmailFromDirectToken($token)
     {
-        $tokenInfo = self::validateIdToken($token, $this->getClientId());
+        $tokenInfo = self::validateIdToken($token, $this->getAcceptedTokenClientId());
 
         return $tokenInfo['email'];
     }
@@ -140,7 +155,8 @@ class GoogleOauth extends AbstractOauth
      * to this website.
      *
      * @param string $idToken
-     * @param string $clientId Configured Google OAuth client ID to assert against the token's aud claim.
+     * @param string|null $clientId Configured Google OAuth client ID to assert against the token's aud claim,
+     *                              or self::ANY_CLIENT to accept any client.
      * @return array The claims returned by Google, already validated.
      * @throws Exception
      */
@@ -170,7 +186,7 @@ class GoogleOauth extends AbstractOauth
      * website, carry an email and mark that email as verified.
      *
      * @param array|null $tokenInfo Claims returned by the Google tokeninfo endpoint.
-     * @param string $clientId
+     * @param string|null $clientId self::ANY_CLIENT skips the aud check.
      * @return array
      * @throws Exception
      */
@@ -193,7 +209,9 @@ class GoogleOauth extends AbstractOauth
         }
 
         $tokenAud = isset($tokenInfo['aud']) ? $tokenInfo['aud'] : '';
-        if ($clientId === '' || $tokenAud === '' || (string)$tokenAud !== (string)$clientId) {
+        $isBoundToClient = $clientId === self::ANY_CLIENT
+            || ($clientId !== '' && $tokenAud !== '' && (string)$tokenAud === (string)$clientId);
+        if (!$isBoundToClient) {
             throw new Exception(
                 esc_html(__('The provided id_token was not issued for this website.', 'simple-jwt-login')),
                 absint(ErrorCodes::ERR_GOOGLE_ID_TOKEN_INVALID_AUDIENCE)

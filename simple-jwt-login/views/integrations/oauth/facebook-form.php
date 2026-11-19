@@ -2,8 +2,7 @@
 
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
-use SimpleJWTLogin\Services\Oauth\FacebookOauth;
-use SimpleJWTLogin\Services\RouteService;
+use SimpleJWTLogin\Services\Oauth\AbstractOauth;
 
 if (! defined('ABSPATH')) {
     /**
@@ -18,13 +17,11 @@ if (! defined('ABSPATH')) {
  * @var SimpleJWTLoginSettings $jwtSettings
  * @var string $pluginDirUrl
  */
+$loginForm = AbstractOauth::getLoginFormTarget($jwtSettings, 'facebook');
 ?>
-<form method="GET" action="<?php echo esc_url(FacebookOauth::AUTH_URL); ?>"
+<form method="GET" action="<?php echo esc_url($loginForm['action']); ?>"
       class="simple-jwt-login-oauth-app facebook">
-    <input type="hidden" name="client_id" value="<?php echo esc_attr($jwtSettings->getIntegrationsSettings()->facebook()->getClientId()); ?>" />
-    <input type="hidden" name="response_type" value="code" />
-    <input type="hidden" name="scope" value="email" />
-    <input type="hidden" name="redirect_uri" value="<?php echo esc_url($jwtSettings->generateExampleLink(RouteService::OAUTH_TOKEN, ['provider' => 'facebook'])); ?>" />
+    <?php include __DIR__ . '/login-form-fields.php'; ?>
     <button name="facebook-auth" class="simple-jwt-login-auth-btn">
         <img src="<?php echo esc_url($pluginDirUrl . 'assets/images/integrations/facebook-icon.svg'); ?>" alt="Facebook logo"/>
         <span class="simple-jwt-login-auth-txt">

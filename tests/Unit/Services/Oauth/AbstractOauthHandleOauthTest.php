@@ -2,6 +2,7 @@
 
 namespace SimpleJwtLoginTests\Unit\Services\Oauth;
 
+use SimpleJWTLogin\ErrorCodes;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\Modules\Settings\AuditLogSettings;
@@ -57,9 +58,22 @@ class AbstractOauthHandleOauthTest extends TestCase
         return $registerSettings;
     }
 
-    private function makeOauth($request = [], $method = 'GET')
+    private const STATE = 'browser-state';
+
+    /**
+     * A browser callback carries the state that the login start stored in this browser's cookie.
+     */
+    private function makeOauth($request = [], $method = 'GET', $settings = null)
     {
-        return new ConcreteOauth($request, $method, $this->settings, $this->wpData);
+        $oauth = new ConcreteOauth(
+            $request + ['state' => self::STATE],
+            $method,
+            $settings !== null ? $settings : $this->settings,
+            $this->wpData
+        );
+        $oauth->withCookies(['sjl_oauth_state_testprovider' => self::STATE]);
+
+        return $oauth;
     }
 
     public static function errorResponseProvider()
@@ -105,7 +119,89 @@ class AbstractOauthHandleOauthTest extends TestCase
                 ],
                 'errorFragment' => 'The client_id and/or client_secret passed are incorrect.',
             ],
+            'non-200 with a Graph API error object (Facebook)' => [
+                'exchangeResult' => [
+                    'status_code' => 400,
+                    'response'    => [
+                        'error' => ['message' => 'Invalid verification code format.', 'type' => 'OAuthException'],
+                    ],
+                ],
+                'errorFragment' => 'Invalid verification code format.',
+            ],
         ];
+    }
+
+    /**
+     * @return array<string, array{array<string, string>, array<string, string>}>
+     */
+    public static function invalidStateProvider()
+    {
+        $cookie = 'sjl_oauth_state_testprovider';
+
+        return [
+            'no state, no cookie'         => [[], []],
+            'state, no cookie'            => [['state' => 'attacker'], []],
+            'cookie, no state'            => [[], [$cookie => 'victim']],
+            'state differs from cookie'   => [['state' => 'attacker'], [$cookie => 'victim']],
+            'cookie of another provider'  => [['state' => 'victim'], ['sjl_oauth_state_google' => 'victim']],
+        ];
+    }
+
+    #[DataProvider('invalidStateProvider')]
+    public function testHandleOauthRejectsCallbackWithoutMatchingStateBeforeExchange($request, $cookies)
+    {
+        $capturedUrl = null;
+        $this->wpData->method('getLoginURL')
+            ->willReturnCallback(function ($params) {
+                return 'http://localhost/wp-login.php?' . http_build_query($params);
+            });
+        $this->wpData->expects($this->once())
+            ->method('redirect')
+            ->willReturnCallback(function ($url) use (&$capturedUrl) {
+                $capturedUrl = $url;
+            });
+
+        $oauth = new ConcreteOauth(['code' => 'attacker-code'] + $request, 'GET', $this->settings, $this->wpData);
+        $oauth->withCookies($cookies);
+        $oauth->handleOauth('attacker-code');
+
+        $this->assertSame('', $oauth->lastExchangeCall['code'], 'The code must not be exchanged.');
+        $this->assertStringContainsString(urlencode('The OAuth state is invalid.'), (string) $capturedUrl);
+    }
+
+    public function testHandleOauthClearsTheStateCookie()
+    {
+        $this->wpData->method('getLoginURL')->willReturn('http://localhost/wp-login.php');
+        $this->wpData->expects($this->once())
+            ->method('setCookie')
+            ->with('sjl_oauth_state_testprovider', '', $this->lessThan(time()));
+
+        $this->makeOauth(['code' => 'some-code'])->handleOauth('some-code');
+    }
+
+    public function testCallStartsTheBrowserLoginWithAStateCookie()
+    {
+        $this->settings->method('generateExampleLink')
+            ->willReturn('http://localhost/?rest_route=/simple-jwt-login/v1/oauth/token&amp;provider=testprovider');
+        $this->wpData->method('generatePassword')->willReturn('random-state');
+
+        $cookieExpiry = null;
+        $this->wpData->expects($this->once())
+            ->method('setCookie')
+            ->willReturnCallback(function ($name, $value, $expire) use (&$cookieExpiry) {
+                $this->assertSame('sjl_oauth_state_testprovider', $name);
+                $this->assertSame('random-state', $value);
+                $cookieExpiry = $expire;
+            });
+        $this->wpData->expects($this->once())->method('redirect');
+        $this->wpData->expects($this->never())->method('redirectSafe');
+
+        $oauth = new ConcreteOauth([], 'GET', $this->settings, $this->wpData);
+        $oauth->call();
+
+        $this->assertSame('', $oauth->lastExchangeCall['code']);
+        $this->assertGreaterThan(time(), $cookieExpiry);
+        $this->assertLessThanOrEqual(time() + 600, $cookieExpiry);
     }
 
     #[DataProvider('errorResponseProvider')]
@@ -250,12 +346,7 @@ class AbstractOauthHandleOauthTest extends TestCase
         $bridge->method('createNonce')->willReturn(['key' => 'test-nonce-key', 'expiration' => time() + 300]);
         $bridge->method('getPrimaryProvider')->willReturn(null);
 
-        $oauth = new ConcreteOauth(
-            ['code' => 'valid-code'],
-            'GET',
-            $this->settings,
-            $this->wpData
-        );
+        $oauth = $this->makeOauth(['code' => 'valid-code']);
         $oauth->withTwoFactorBridge($bridge);
         $oauth->exchangeStub = [
             'status_code' => 200,
@@ -291,12 +382,7 @@ class AbstractOauthHandleOauthTest extends TestCase
         $bridge->method('isAvailable')->willReturn(true);
         $bridge->method('isUserUsing2FA')->willReturn(false);
 
-        $oauth = new ConcreteOauth(
-            ['code' => 'valid-code'],
-            'GET',
-            $this->makeSettingsWith2FAEnabled(),
-            $this->wpData
-        );
+        $oauth = $this->makeOauth(['code' => 'valid-code'], 'GET', $this->makeSettingsWith2FAEnabled());
         $oauth->withTwoFactorBridge($bridge);
         $oauth->exchangeStub = [
             'status_code' => 200,
@@ -347,6 +433,39 @@ class AbstractOauthHandleOauthTest extends TestCase
         $this->assertArrayHasKey('jwt', $result['data']);
     }
 
+    public function testTwoFactorNonceCreateFailureIsAServerError()
+    {
+        $user = new stdClass();
+        $user->ID = 99;
+        $user->user_email = 'user@example.com';
+
+        $this->wpData->method('getUserDetailsByEmail')->willReturn($user);
+        $this->wpData->method('sanitizeTextField')->willReturnArgument(0);
+        $this->wpData->method('getUserProperty')
+            ->willReturnCallback(function ($u, $prop) {
+                return $u->$prop;
+            });
+        $this->wpData->expects($this->never())->method('createUser');
+
+        $bridge = $this->createStub(TwoFactorBridge::class);
+        $bridge->method('isAvailable')->willReturn(true);
+        $bridge->method('isUserUsing2FA')->willReturn(true);
+        $bridge->method('createNonce')->willReturn(false);
+
+        $oauth = new ConcreteOauth(
+            ['access_token' => 'some-token'],
+            'POST',
+            $this->makeSettingsWith2FAEnabled(),
+            $this->wpData
+        );
+        $oauth->withTwoFactorBridge($bridge);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionCode(ErrorCodes::ERR_TWO_FACTOR_NONCE_CREATE_FAILED);
+
+        $oauth->call();
+    }
+
     public function testHandleOauthCreatesUserWhenNotFoundAndCreateEnabled()
     {
         $createdUser = new stdClass();
@@ -369,12 +488,7 @@ class AbstractOauthHandleOauthTest extends TestCase
         $bridge = $this->createStub(TwoFactorBridge::class);
         $bridge->method('isAvailable')->willReturn(false);
 
-        $oauth = new ConcreteOauth(
-            ['code' => 'valid-code'],
-            'GET',
-            $this->settings,
-            $this->wpData
-        );
+        $oauth = $this->makeOauth(['code' => 'valid-code']);
         $oauth->createUserEnabled = true;
         $oauth->withTwoFactorBridge($bridge);
         $oauth->exchangeStub = [

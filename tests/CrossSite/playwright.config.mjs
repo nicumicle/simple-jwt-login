@@ -9,9 +9,10 @@ export default defineConfig({
   retries: 0,
   timeout: 30_000,
   globalSetup: './support/global-setup.mjs',
+  // "line": progress as [n/total], failures printed as soon as they happen.
   reporter: process.env.CI
-    ? [['list'], ['github'], ['html', { open: 'never' }]]
-    : [['list'], ['html', { open: 'never' }]],
+    ? [['line'], ['github'], ['html', { open: 'never' }]]
+    : [['line'], ['html', { open: 'never' }]],
   use: {
     // The installed Google Chrome (nothing to download). PW_CHANNEL=chromium uses Playwright's own.
     channel: process.env.PW_CHANNEL || 'chrome',

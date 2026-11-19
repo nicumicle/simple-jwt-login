@@ -374,5 +374,28 @@ $auth0 = $jwtSettings->getIntegrationsSettings()->auth0();
             </div>
         </div>
 
+        <div class="sjl-gen-feature-toggle">
+            <div class="sjl-gen-feature-toggle-check">
+                <input type="checkbox" name="auth0[allow_opaque_access_token]" id="auth0_allow_opaque_access_token" value="1"
+                    <?php echo $auth0->allowOpaqueAccessToken() ? 'checked="checked"' : ''; ?>
+                />
+            </div>
+            <div class="sjl-gen-feature-toggle-text">
+                <label for="auth0_allow_opaque_access_token" class="sjl-gen-feature-label">
+                    <?php echo esc_html__('Allow opaque access tokens', 'simple-jwt-login'); ?>
+                </label>
+                <p class="sjl-gen-feature-desc">
+                    <?php echo esc_html__('When disabled (default), an Auth0 access_token must be a JWT issued for this Client ID. Auth0 issues opaque tokens when no API audience is requested.', 'simple-jwt-login'); ?>
+                </p>
+            </div>
+        </div>
+        <div id="auth0_allow_opaque_access_token_alert"
+             class="sjl-gen-warning-banner"
+             style="<?php echo $auth0->allowOpaqueAccessToken() ? '' : 'display:none;'; ?>"
+        >
+            <span class="dashicons dashicons-warning"></span>
+            <?php echo esc_html__('Security risk: opaque access tokens can not be bound to this Client ID. Any application in your Auth0 tenant, including a third-party or compromised one, can send a token of its users and get a WordPress JWT for the matching account. Only the Auth0 /userinfo check remains. Enable this only if you trust every application in the tenant.', 'simple-jwt-login'); ?>
+        </div>
+
     </div>
 </div>

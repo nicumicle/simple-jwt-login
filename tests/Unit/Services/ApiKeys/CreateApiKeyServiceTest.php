@@ -3,6 +3,7 @@
 namespace SimpleJwtLoginTests\Unit\Services\ApiKeys;
 
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -185,5 +186,68 @@ class CreateApiKeyServiceTest extends TestCase
         $result = $service->makeAction();
 
         $this->assertInstanceOf(WP_REST_Response::class, $result);
+    }
+
+    /**
+     * Expiry dates are stored and compared in UTC. A value without a zone is read as UTC.
+     *
+     * @return array<string, array{string|null, string|null}>
+     */
+    public static function validExpiryProvider()
+    {
+        return [
+            'no expiry'               => [null, null],
+            'utc date time'           => ['2030-01-02 03:04:05', '2030-01-02 03:04:05'],
+            'date only'               => ['2030-01-02', '2030-01-02 00:00:00'],
+            'browser iso string'      => ['2030-01-02T03:04:05.000Z', '2030-01-02 03:04:05'],
+            'datetime-local value'    => ['2030-01-02T03:04', '2030-01-02 03:04:00'],
+            'with an offset'          => ['2030-01-02T05:04:05+02:00', '2030-01-02 03:04:05'],
+        ];
+    }
+
+    #[DataProvider('validExpiryProvider')]
+    public function testExpiryIsStoredInUtc($sent, $stored)
+    {
+        $repository = $this->createMock(ApiKeyRepositoryInterface::class);
+        $repository->expects($this->once())
+            ->method('insert')
+            ->with(1, 'My Key', $this->isString(), $this->isString(), '["read"]', $stored, $this->isString())
+            ->willReturn(5);
+
+        (new CreateApiKeyService())
+            ->withRequest(['name' => 'My Key', 'permissions' => ['read'], 'expires_at' => $sent])
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withApiKeyRepository($repository)
+            ->makeAction();
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function invalidExpiryProvider()
+    {
+        return [
+            'relative text'  => ['tomorrow'],
+            'impossible day' => ['2030-02-30 10:00:00'],
+            'month 13'       => ['2030-13-01'],
+            'garbage'        => ['2030-01-02 xx'],
+            'hour 24'        => ['2030-01-31 24:30:00'],
+            'minute 60'      => ['2030-01-31 23:60:00'],
+            'second 60'      => ['2030-01-31 23:59:60'],
+        ];
+    }
+
+    #[DataProvider('invalidExpiryProvider')]
+    public function testInvalidExpiryIsRejected($sent)
+    {
+        $this->expectExceptionCode(ErrorCodes::ERR_API_KEY_INVALID_EXPIRY);
+        $repository = $this->createMock(ApiKeyRepositoryInterface::class);
+        $repository->expects($this->never())->method('insert');
+
+        (new CreateApiKeyService())
+            ->withRequest(['name' => 'My Key', 'permissions' => ['read'], 'expires_at' => $sent])
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withApiKeyRepository($repository)
+            ->makeAction();
     }
 }

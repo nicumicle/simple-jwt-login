@@ -46,33 +46,23 @@ class ProtectEndpointService extends BaseService
     }
 
     /**
-     * @param string $currentUrl
-     * @param string $documentRoot
+     * @param string $route The route WordPress dispatches (WP_REST_Request::get_route()).
+     *                      Never derive it from the URL: /index.php/wp-json/..., ?rest_route=
+     *                      and /wp-json/... all reach the same route.
      *
      * @throws Exception
      * @return bool
      */
-    public function hasAccess($currentUrl, $documentRoot)
+    public function hasAccess($route)
     {
         if (!$this->jwtSettings->getProtectEndpointsSettings()->isEnabled()) {
             return true;
         }
 
-        $parsed = $this->wordPressData->parseUrl($currentUrl);
-
-        // Initialize $path safely: parse_url() may not include 'path' for some URL forms.
-        $basePath  = rtrim(str_replace($documentRoot, '', ABSPATH), '/');
-        $path = isset($parsed['path']) ? str_replace($basePath . '/wp-json', '', $parsed['path']) : '';
-
         $isEndpointsProtected = true;
         $requiredRoles = [];
-        if (!empty(trim($path, '/'))) {
-            $endpointInfo = $this->isEndpointProtected($path);
-            $isEndpointsProtected = $endpointInfo['protected'];
-            $requiredRoles = $endpointInfo['roles'];
-        }
-        if (!empty($this->request['rest_route'])) {
-            $endpointInfo = $this->isEndpointProtected($this->request['rest_route']);
+        if (!empty(trim((string) $route, '/'))) {
+            $endpointInfo = $this->isEndpointProtected((string) $route);
             $isEndpointsProtected = $endpointInfo['protected'];
             $requiredRoles = $endpointInfo['roles'];
         }
@@ -174,7 +164,8 @@ class ProtectEndpointService extends BaseService
         }
 
         $user = $this->wordPressData->getUserDetailsById((int) $keyData['user_id']);
-        if (!$this->userHasRequiredRole($user, $requiredRoles)) {
+        // The owner may have been deleted in wp-admin after the key was created.
+        if (!$this->wordPressData->isInstanceOfuser($user) || !$this->userHasRequiredRole($user, $requiredRoles)) {
             return false;
         }
         $this->wordPressData->setCurrentUser($user);
@@ -255,14 +246,27 @@ class ProtectEndpointService extends BaseService
     }
 
     /**
+     * The REST route of a rule URL, however it was saved: /wp-json/..., /index.php/wp-json/...,
+     * /subdir/wp-json/..., a full URL or ?rest_route=..., matching WP_REST_Request::get_route().
+     *
      * @param string $endpoint
      * @return string
      */
     private function removeWpJsonFromEndpoint($endpoint)
     {
-        $endpoint = str_replace('/wp-json', '', $endpoint);
+        $endpoint = (string) $endpoint;
+        $restRoutePos = strpos($endpoint, 'rest_route=');
+        if ($restRoutePos !== false) {
+            $route = strtok(urldecode(substr($endpoint, $restRoutePos + strlen('rest_route='))), '&');
 
-        return $this->removeLastSlash($endpoint);
+            return $this->removeLastSlash((string) $route);
+        }
+        $wpJsonPos = strpos($endpoint, '/wp-json');
+        if ($wpJsonPos !== false) {
+            $endpoint = substr($endpoint, $wpJsonPos + strlen('/wp-json'));
+        }
+
+        return $this->removeLastSlash((string) $endpoint);
     }
 
     /**

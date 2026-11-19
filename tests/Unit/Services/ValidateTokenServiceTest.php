@@ -5,6 +5,7 @@ namespace SimpleJwtLoginTests\Unit\Services;
 use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Libraries\JWT\JWT;
 use SimpleJWTLogin\Modules\Settings\LoginSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
@@ -94,6 +95,52 @@ class ValidateTokenServiceTest extends TestCase
         ];
     }
 
+    /**
+     * An interim two-factor JWT is rejected before the login-by claim is read, dotted path or not.
+     */
+    #[DataProvider('loginByParameterProvider')]
+    public function testInterimTwoFactorJwtIsRejectedForEveryLoginByParameter(string $loginByParameter)
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionCode(ErrorCodes::ERR_TWO_FACTOR_INTERIM_JWT_REJECTED);
+        $this->wordPressDataMock
+            ->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication'   => '1',
+                'allow_validate_token'   => '1',
+                'request_jwt_header'     => '0',
+                'request_jwt_url'        => '1',
+                'decryption_key'         => '123',
+                'jwt_login_by'           => LoginSettings::JWT_LOGIN_BY_WORDPRESS_USER_ID,
+                'jwt_login_by_parameter' => $loginByParameter,
+                'request_keys'           => ['url' => 'JWT'],
+            ]));
+        $interimJwt = JWT::encode(
+            ['tfa_pending' => 1, 'id' => 1, 'data' => ['id' => 1], 'exp' => time() + 300],
+            '123',
+            'HS256'
+        );
+
+        (new ValidateTokenService())
+            ->withSession([])
+            ->withCookies([])
+            ->withRequest(['JWT' => $interimJwt])
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock)
+            ->makeAction();
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function loginByParameterProvider(): array
+    {
+        return [
+            'flat parameter'   => ['id'],
+            'dotted parameter' => ['data.id'],
+        ];
+    }
+
     public function testUserNotFound()
     {
         $this->expectException(Exception::class);
@@ -161,15 +208,22 @@ class ValidateTokenServiceTest extends TestCase
             ->willReturn(
                 [
                     'user_pass' => 123,
+                    'user_activation_key' => '1700000000:$P$hash',
                     'test' => 123,
                 ]
             );
         $this->wordPressDataMock
             ->method('createResponse')
             ->willReturn(['success' => true]);
+        $filteredResponse = null;
         $this->wordPressDataMock
             ->method('applyFilters')
-            ->willReturn([]);
+            ->willReturnCallback(function ($hook, $response) use (&$filteredResponse) {
+                if ($hook === SimpleJWTLoginHooks::HOOK_RESPONSE_VALIDATE_TOKEN) {
+                    $filteredResponse = $response;
+                }
+                return $response;
+            });
         $validateTokenService = (new ValidateTokenService())
             ->withSession([])
             ->withCookies([])
@@ -179,5 +233,6 @@ class ValidateTokenServiceTest extends TestCase
 
         $result  = $validateTokenService->makeAction();
         $this->assertSame(['success' => true], $result);
+        $this->assertSame(['test' => 123], $filteredResponse['data']['user']);
     }
 }

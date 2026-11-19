@@ -254,6 +254,17 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                                     placeholder="<?php echo esc_attr(__('e.g. email', 'simple-jwt-login')); ?>"
                                 />
                             </div>
+                            <div class="sjl-rule-field sjl-rule-field--grow">
+                                <label class="sjl-rule-field-label">
+                                    <?php echo esc_html__('Expected audience (aud)', 'simple-jwt-login'); ?>
+                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control sjl-rule-audience"
+                                    value="<?php echo esc_attr(isset($rule['audience']) ? $rule['audience'] : ''); ?>"
+                                    placeholder="<?php echo esc_attr(__('Recommended, e.g. your app client ID', 'simple-jwt-login')); ?>"
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -607,6 +618,17 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                         class="form-control sjl-rule-login-by-param"
                         value=""
                         placeholder="<?php echo esc_attr(__('e.g. email', 'simple-jwt-login')); ?>"
+                    />
+                </div>
+                <div class="sjl-rule-field sjl-rule-field--grow">
+                    <label class="sjl-rule-field-label">
+                        <?php echo esc_html__('Expected audience (aud)', 'simple-jwt-login'); ?>
+                    </label>
+                    <input
+                        type="text"
+                        class="form-control sjl-rule-audience"
+                        value=""
+                        placeholder="<?php echo esc_attr(__('Recommended, e.g. your app client ID', 'simple-jwt-login')); ?>"
                     />
                 </div>
             </div>

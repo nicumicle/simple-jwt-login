@@ -13,6 +13,7 @@ use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepositor
 use SimpleJWTLogin\Repositories\RevokedToken\Repository as RevokedTokenRepositoryInterface;
 use SimpleJWTLogin\Routes\Handlers\RouteHandler;
 use SimpleJWTLogin\Services\BaseService;
+use WP_REST_Request;
 use WP_REST_Response;
 
 class RouteHandlerTest extends TestCase
@@ -40,6 +41,16 @@ class RouteHandlerTest extends TestCase
         $response = $this->buildHandler(RouteHandlerTestSuccessService::class)->__invoke();
 
         $this->assertSame(['success' => true], $response);
+    }
+
+    public function testUrlParamsReachServiceWithoutApiKeyRepository()
+    {
+        $wpRequest = new WP_REST_Request('DELETE', '/simple-jwt-login/v1/revoked-tokens/7');
+        $wpRequest->set_url_params(['id' => '7']);
+
+        $response = $this->buildHandler(RouteHandlerTestEchoIdService::class)->__invoke($wpRequest);
+
+        $this->assertSame(['id' => '7'], $response);
     }
 
     /**
@@ -84,5 +95,13 @@ class RouteHandlerTestSuccessService extends BaseService
     public function makeAction()
     {
         return ['success' => true];
+    }
+}
+
+class RouteHandlerTestEchoIdService extends BaseService
+{
+    public function makeAction()
+    {
+        return ['id' => isset($this->request['id']) ? $this->request['id'] : null];
     }
 }

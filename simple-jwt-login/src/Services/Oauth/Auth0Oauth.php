@@ -4,6 +4,7 @@ namespace SimpleJWTLogin\Services\Oauth;
 
 use Exception;
 use SimpleJWTLogin\ErrorCodes;
+use SimpleJWTLogin\Helpers\JwtPayloadHelper;
 use SimpleJWTLogin\Libraries\ServerCall;
 
 /**
@@ -35,6 +36,11 @@ class Auth0Oauth extends AbstractOauth
     public function getAuthUrl()
     {
         return sprintf(self::AUTH_URL_TPL, $this->getAuth0Domain());
+    }
+
+    protected function getAuthScope()
+    {
+        return 'openid email profile';
     }
 
     protected function getClientId()
@@ -83,8 +89,10 @@ class Auth0Oauth extends AbstractOauth
     }
 
     /**
-     * Validate an Auth0 access_token by calling the userinfo endpoint.
-     * Throws when the token is rejected (non-200 response).
+     * Validate a direct Auth0 token: accepted by /userinfo and issued for the configured
+     * client (azp or aud). /userinfo alone accepts tokens of any application in the tenant.
+     * Opaque (non-JWT) tokens carry no client claim: they pass only when the admin opted in,
+     * and then /userinfo (called by getEmailFromDirectToken) is the only check.
      *
      * @param string $token
      * @return void
@@ -92,21 +100,12 @@ class Auth0Oauth extends AbstractOauth
      */
     protected function validateProviderToken($token)
     {
-        $statusCode  = 400;
-        $plainResult = '';
-        ServerCall::get(
-            $this->userinfoEndpoint(),
-            ['headers' => ['Authorization' => 'Bearer ' . $token]],
-            $statusCode,
-            $plainResult
-        );
-
-        if ($statusCode !== 200) {
-            throw new Exception(
-                esc_html(__('The provided Auth0 access_token is invalid.', 'simple-jwt-login')),
-                absint(ErrorCodes::ERR_AUTH0_INVALID_TOKEN)
-            );
+        $isOpaque = !is_array(JwtPayloadHelper::decode($token));
+        if ($isOpaque && $this->settings->getIntegrationsSettings()->auth0()->allowOpaqueAccessToken()) {
+            return;
         }
+
+        self::validateIdToken($token, $this->settings);
     }
 
     protected function getInvalidTokenErrorCode()
@@ -180,7 +179,8 @@ class Auth0Oauth extends AbstractOauth
         }
 
         $clientId = $settings->getIntegrationsSettings()->auth0()->getClientId();
-        if (!empty($clientId) && !self::tokenBelongsToClient($jwt, $clientId)) {
+        // Without a client ID the token can not be bound to this application.
+        if (empty($clientId) || !self::tokenBelongsToClient($jwt, $clientId)) {
             throw new Exception(
                 esc_html(__('The provided Auth0 token was not issued for this application', 'simple-jwt-login')),
                 absint(ErrorCodes::ERR_AUTH0_INVALID_TOKEN)
@@ -199,16 +199,7 @@ class Auth0Oauth extends AbstractOauth
      */
     private static function tokenBelongsToClient($jwt, $clientId)
     {
-        $parts = explode('.', $jwt);
-        if (!isset($parts[1])) {
-            return false;
-        }
-        $segment   = $parts[1];
-        $remainder = strlen($segment) % 4;
-        if ($remainder !== 0) {
-            $segment .= str_repeat('=', 4 - $remainder);
-        }
-        $payload = json_decode(base64_decode(strtr($segment, '-_', '+/')), true);
+        $payload = JwtPayloadHelper::decode($jwt);
         if (!is_array($payload)) {
             return false;
         }
@@ -260,8 +251,10 @@ class Auth0Oauth extends AbstractOauth
             );
         }
 
-        if ($this->settings->getIntegrationsSettings()->auth0()->allowUnverifiedEmail() === false
-            && $userinfo['email_verified'] === false) {
+        // A missing email_verified is not a verified email.
+        $verified = isset($userinfo['email_verified'])
+            && filter_var($userinfo['email_verified'], FILTER_VALIDATE_BOOLEAN);
+        if ($this->settings->getIntegrationsSettings()->auth0()->allowUnverifiedEmail() === false && !$verified) {
             throw new Exception(
                 esc_html(__('Email address is not verified.', 'simple-jwt-login')),
                 absint(ErrorCodes::ERR_AUTH0_EMAIL_NOT_VERIFIED)

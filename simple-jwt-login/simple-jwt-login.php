@@ -1,7 +1,7 @@
 <?php
 
 /*
-    Plugin Name: Simple JWT Login
+    Plugin Name: Simple JWT Login - JWT Authentication for REST API
     Plugin URI: https://simplejwtlogin.com
     Description: Simple-JWT-Login REST API Plugin. Allows you to login / register to WordPress using JWT.
     Author: Nicu Micle

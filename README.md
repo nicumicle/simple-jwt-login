@@ -53,6 +53,38 @@
     The main purpose of this plugin is to allow Mobile apps, or other websites to access the content from a WordPress website via REST endpoints in a secure way.
 </p>
 
+<h2 align="center">⚡ Try it live - no install, no account</h2>
+
+<p align="center">
+  <a href="https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/nicumicle/simple-jwt-login/master/wordpress.org/assets/blueprints/blueprint.json">
+    <img src="https://img.shields.io/badge/Launch%20Live%20Demo-WordPress%20Playground-3858e9?style=for-the-badge&logo=wordpress&logoColor=white" alt="Launch the live demo in WordPress Playground" />
+  </a>
+</p>
+
+<p align="center">
+  Spin up a real WordPress site with Simple JWT Login <b>right in your browser</b>, in about 15 seconds.<br/>
+  It runs entirely on your machine with <a href="https://wordpress.org/playground/">WordPress Playground</a>, and disappears when you close the tab.
+</p>
+
+<table align="center">
+  <tr>
+    <td>🔐 <b>Ready to use</b></td>
+    <td>A signing key is generated, and the <code>/auth</code>, refresh, validate and revoke endpoints are enabled</td>
+  </tr>
+  <tr>
+    <td>👤 <b>Logged in</b></td>
+    <td>You land on the plugin dashboard as <code>admin</code> / <code>password</code></td>
+  </tr>
+  <tr>
+    <td>🧪 <b>Try every endpoint</b></td>
+    <td>Endpoint tabs have a <b>Try</b> button that sends a real request and shows the response</td>
+  </tr>
+  <tr>
+    <td>🛡️ <b>Explore it all</b></td>
+    <td>OAuth, API keys, protected endpoints, webhooks and audit logs - change anything, nothing can break</td>
+  </tr>
+</table>
+
 ## Overview
 <p align="center">
     <img src="https://github.com/nicumicle/simple-jwt-login/blob/master/wordpress.org/assets/schema.png?raw=true" alt="Simple-JWT-Login schema" />

@@ -1,0 +1,29 @@
+{
+    "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+    "landingPage": "/wp-admin/admin.php?page=main-page-simple-jwt-login-plugin",
+    "preferredVersions": {
+        "php": "8.3",
+        "wp": "latest"
+    },
+    "steps": [
+        {
+            "step": "login",
+            "username": "admin",
+            "password": "password"
+        },
+        {
+            "step": "installPlugin",
+            "pluginData": {
+                "resource": "wordpress.org/plugins",
+                "slug": "simple-jwt-login"
+            },
+            "options": {
+                "activate": true
+            }
+        },
+        {
+            "step": "runPHP",
+            "code": "<?php require_once '/wordpress/wp-load.php'; update_option('simple_jwt_login_settings', wp_json_encode(array('_schema_version' => 2, 'general' => array('decryption_key' => wp_generate_password(64, false), 'jwt_algorithm' => 'HS256', 'route_namespace' => 'simple-jwt-login/v1/', 'request_jwt_url' => 0, 'request_jwt_header' => 1, 'api_middleware' => array('enabled' => true)), 'login' => array('login_by' => 0, 'login_by_parameter' => 'email'), 'authorization' => array('enabled' => '1', 'ttl' => '60', 'refresh_ttl' => '20160', 'refresh_token_enabled' => '1', 'refresh_token_key' => wp_generate_password(64, false), 'validate_token_enabled' => '1', 'revoke_token_enabled' => '1', 'jwt_payload' => array('email', 'exp', 'id', 'iss', 'site', 'username')))));"
+        }
+    ]
+}

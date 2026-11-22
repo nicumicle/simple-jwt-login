@@ -6,7 +6,7 @@ Tags: jwt, rest api, headless, oauth, woocommerce
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 5.5
-Stable tag: 4.2.0
+Stable tag: 4.2.1
 License: GPLv3
 License URI: https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE
 
@@ -189,6 +189,10 @@ Every response includes an `error_code`. Look it up in the [error codes list](ht
 
 A complete changelog is available on the [GitHub repository](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md).
 
+= 4.2.1 (22 November 2026) =
+- Security: Security hardening.
+- Security: Added more security regression tests.
+
 = 4.2.0 (19 November 2026) =
 - Security: Fixed multiple security vulnerabilities affecting authentication, authorization, and REST API endpoints.
 - Security: Added security regression tests reproducing previously identified vulnerabilities to prevent regressions.
@@ -361,6 +365,9 @@ A complete changelog is available on the [GitHub repository](https://github.com/
 For the full history back to 1.0.0 (2019), see the [Changelog on GitHub](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md).
 
 == Upgrade Notice ==
+
+= 4.2.1 (22 November 2026) =
+Security release. All users are encouraged to upgrade.
 
 = 4.2.0 (19 November 2026) =
 Important security release. Fixes multiple security vulnerabilities affecting authentication, authorization and REST API endpoints. All users are strongly encouraged to upgrade to this version as soon as possible. Review the Breaking changes in the changelog before upgrading.

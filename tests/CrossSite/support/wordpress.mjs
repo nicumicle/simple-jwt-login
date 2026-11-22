@@ -55,6 +55,17 @@ export const applySettings = (corsSettings, extra = {}) => {
   wpCli('option', 'update', 'simple_jwt_login_settings', JSON.stringify({ ...settings, cors: corsSettings }));
 };
 
+// --- mu-plugins ------------------------------------------------------------------------------
+
+const muPluginsDir = () => `${config.wpPath}/wp-content/mu-plugins`;
+
+/** Copies a local PHP file to the site's mu-plugins (piped, so it works through docker exec and sudo). */
+export const installMuPlugin = (localFile, name) => run(config.wpExec,
+  ['sh', '-c', `mkdir -p "${muPluginsDir()}" && cat > "${muPluginsDir()}/${name}"`],
+  { input: readFileSync(localFile, 'utf8') });
+
+export const removeMuPlugin = (name) => run(config.wpExec, ['rm', '-f', `${muPluginsDir()}/${name}`]);
+
 export const getSettings = () => wpCli('option', 'get', 'simple_jwt_login_settings');
 export const restoreSettings = (raw) => wpCli('option', 'update', 'simple_jwt_login_settings', raw);
 

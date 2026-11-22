@@ -4,6 +4,10 @@ Calls from **another site** to the WordPress site, with [Playwright Test](https:
 
 - `specs/server-calls.spec.mjs` - raw HTTP calls with curl from the other site's container to the
   WordPress container (any header combination a server can send).
+- `specs/force-login.spec.mjs` - anonymous curl calls with the Force Login integration on: a
+  duplicated `rest_route` (plugin route first, core route last) must not skip Force Login.
+  `tests/Feature/fixtures/sjl-test-force-login.php` plays the Force Login plugin (installed as a
+  mu-plugin for this file, acts only on calls with the `X-Sjl-Test-Force-Login` header).
 - `specs/browser-calls.spec.mjs` - pages of the other site (`other-site/`) opened in a real Chrome
   whose user is logged in to WordPress (JWT cookie), for CSRF and CORS, plus a control (the same
   form from WordPress itself must work).

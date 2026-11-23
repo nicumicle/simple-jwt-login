@@ -85,7 +85,7 @@ That's the whole integration. Everything else - refresh, auto-login, social logi
 
 = 🛠️ Built for developers =
 
-[Hooks](https://simplejwtlogin.com/docs/hooks/) · [PHP SDK](https://simplejwtlogin.com/ecosystem/php-sdk) · [JavaScript SDK](https://simplejwtlogin.com/ecosystem/js-sdk) · [CLI](https://simplejwtlogin.com/ecosystem/cli) · [Code examples](https://simplejwtlogin.com/docs/code-examples/) · [Error codes](https://simplejwtlogin.com/docs/error-codes/)
+[Hooks](https://simplejwtlogin.com/docs/hooks/) · [PHP SDK](https://simplejwtlogin.com/ecosystem/php-sdk) · [JavaScript SDK](https://simplejwtlogin.com/ecosystem/js-sdk) · [CLI](https://simplejwtlogin.com/ecosystem/cli) · [Postman collection](https://www.postman.com/simple-jwt-login/simple-jwt-login/overview) · [Code examples](https://simplejwtlogin.com/docs/code-examples/) · [Error codes](https://simplejwtlogin.com/docs/error-codes/)
 
 = 🔒 Security you can verify =
 

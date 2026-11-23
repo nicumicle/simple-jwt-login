@@ -132,15 +132,9 @@ class TwoFactorVerifyService extends AuthenticateService implements ServiceInter
         // One use only: otherwise the same interim JWT and code could mint more JWTs.
         $bridge->deleteNonce($userId);
 
-        $payload = self::generatePayload([], $this->wordPressData, $this->jwtSettings, $user);
-
-        if ($this->jwtSettings->getHooksSettings()->isHookEnabled(SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME)) {
-            $payload = $this->wordPressData->applyFilters(
-                SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME,
-                $payload,
-                $this->request
-            );
-        }
+        $payload = $this->applyPayloadHook(
+            self::generatePayload([], $this->wordPressData, $this->jwtSettings, $user)
+        );
 
         $authSettings = $this->jwtSettings->getAuthenticationSettings();
         $customHeaderClaims = $authSettings->getCustomHeaderClaims();

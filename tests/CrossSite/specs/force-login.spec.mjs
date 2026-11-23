@@ -1,6 +1,4 @@
-// Anonymous Force Login bypass: before 4.1.0 the Force Login integration matched the raw
-// REQUEST_URI against the plugin namespace, so a duplicated `rest_route` (plugin route first,
-// core route last) let an anonymous visitor read core routes that Force Login blocks.
+// Force Login integration: anonymous calls must not skip Force Login.
 // tests/Feature/fixtures/sjl-test-force-login.php plays the Force Login plugin: it is installed
 // as a mu-plugin for this file and only acts on calls carrying the X-Sjl-Test-Force-Login header.
 //
@@ -35,7 +33,7 @@ test.describe('Force Login integration, anonymous calls from the other site\'s c
   test.beforeAll(() => {
     installMuPlugin(fixture, FORCE_LOGIN);
     applySettings(CORS_OFF, { integrations: { '3rdparty': { force_login: { enabled: true } } } });
-    // The pre-4.1.0 check compared HTTP_HOST + REQUEST_URI with the site URL, so send the real Host.
+    // Send the real Host, like a browser would.
     siteHost = new URL(wpCli('option', 'get', 'siteurl')).host;
   });
 

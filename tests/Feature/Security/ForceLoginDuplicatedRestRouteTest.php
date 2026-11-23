@@ -7,10 +7,7 @@ use PHPUnit\Framework\Attributes\TestDox;
 use SimpleJwtLoginTests\Feature\FeatureTestCase;
 
 /**
- * Anonymous Force Login bypass: before 4.1.0 the integration matched the raw REQUEST_URI
- * against the plugin namespace and returned `true`. With two `rest_route` values (plugin
- * namespace first, core route last) WordPress dispatches the last one, so an anonymous
- * visitor read core routes that Force Login blocks.
+ * Force Login integration: anonymous requests must not skip Force Login.
  *
  * tests/Feature/fixtures/sjl-test-force-login.php plays the Force Login plugin.
  */
@@ -77,7 +74,7 @@ class ForceLoginDuplicatedRestRouteTest extends FeatureTestCase
             'integrations'    => ['3rdparty' => ['force_login' => ['enabled' => $integrationEnabled]]],
         ]);
 
-        // The pre-4.1.0 check compared HTTP_HOST + REQUEST_URI with the site URL, so send the real Host.
+        // Send the real Host, like a browser would.
         $response = $this->client->request('GET', self::API_URL . $path, [
             'http_errors' => false,
             'headers'     => ['X-Sjl-Test-Force-Login' => '1', 'Host' => self::siteHost()],

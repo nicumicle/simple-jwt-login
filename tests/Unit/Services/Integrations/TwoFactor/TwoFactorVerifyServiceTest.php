@@ -278,7 +278,6 @@ class TwoFactorVerifyServiceTest extends TestCase
                 unset($user);
                 return $property === 'ID' ? 42 : 'subscriber@test.com';
             });
-        // The hook gets the request, so a callback could copy attacker input into identity claims.
         $this->wordPressDataMock->method('applyFilters')
             ->willReturnCallback(function ($hookName, $payload, $request) {
                 if ($hookName === SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME) {

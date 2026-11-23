@@ -8,6 +8,8 @@ use PHPUnit\Framework\TestCase;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Libraries\JWT\JWT;
+use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
+use SimpleJWTLogin\Modules\SimpleJWTLoginHooks;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\RefreshToken\Repository as RefreshTokenRepositoryInterface;
 use SimpleJWTLogin\Repositories\Wordpress\Repository as WordPressDataInterface;
@@ -258,6 +260,63 @@ class TwoFactorVerifyServiceTest extends TestCase
             ->makeAction();
 
         $this->assertTrue($result);
+    }
+
+    public function testJwtPayloadActionHookCannotOverwriteReservedClaims(): void
+    {
+        /** @var array|null $capturedResponse */
+        $capturedResponse = null;
+
+        $this->bridgeMock->method('isAvailable')->willReturn(true);
+        $this->bridgeMock->method('isRateLimited')->willReturn(false);
+        $this->bridgeMock->method('verifyNonce')->willReturn(true);
+
+        $this->wordPressDataMock->method('getUserDetailsById')->willReturn('user');
+        $this->wordPressDataMock->method('isInstanceOfuser')->willReturn(true);
+        $this->wordPressDataMock->method('getUserProperty')
+            ->willReturnCallback(function ($user, $property) {
+                unset($user);
+                return $property === 'ID' ? 42 : 'subscriber@test.com';
+            });
+        $this->wordPressDataMock->method('applyFilters')
+            ->willReturnCallback(function ($hookName, $payload, $request) {
+                if ($hookName === SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME) {
+                    $payload['email']    = $request['claim_email'];
+                    $payload['id']       = 1;
+                    $payload['injected'] = 'custom';
+                }
+                return $payload;
+            });
+        $this->wordPressDataMock->method('createResponse')
+            ->willReturnCallback(function ($response) use (&$capturedResponse) {
+                $capturedResponse = $response;
+                return true;
+            });
+
+        $this->makeServiceWithCodeResult(true)
+            ->withRequest([
+                'JWT'         => $this->makeInterimJwt(),
+                'code'        => '123456',
+                'claim_email' => 'admin@test.com',
+            ])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([]))
+            ->withSettings($this->makeSettings([
+                'jwt_payload'   => [
+                    AuthenticationSettings::JWT_PAYLOAD_PARAM_EMAIL,
+                    AuthenticationSettings::JWT_PAYLOAD_PARAM_ID,
+                ],
+                'enabled_hooks' => [SimpleJWTLoginHooks::JWT_PAYLOAD_ACTION_NAME],
+            ]))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+            ->withTwoFactorBridge($this->bridgeMock)
+            ->makeAction();
+
+        $jwtParts = explode('.', $capturedResponse['data']['jwt']);
+        $payload  = json_decode(base64_decode(strtr($jwtParts[1], '-_', '+/')), true);
+        $this->assertSame('subscriber@test.com', $payload['email']);
+        $this->assertSame(42, $payload['id']);
+        $this->assertSame('custom', $payload['injected']);
     }
 
     /**

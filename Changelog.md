@@ -1,5 +1,15 @@
 # Changelog - Releases
 
+## Unreleased
+
+## 4.2.1 (22 November 2026)
+
+**Upgrade notice:** Security release. All users are encouraged to upgrade.
+
+### Security
+- Security hardening.
+- Added more security regression tests.
+
 ## 4.2.0 (19 November 2026)
 
 **Upgrade notice:** Important security release. Fixes multiple security vulnerabilities affecting authentication, authorization and REST API endpoints. All users are strongly encouraged to upgrade to this version as soon as possible. Review the Breaking changes in the changelog before upgrading.

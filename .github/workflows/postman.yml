@@ -1,0 +1,64 @@
+name: Publish OpenAPI to Postman
+
+# On every tag, converts openapi/openapi.yaml to a Postman collection and replaces the content of
+# the existing public collection (same UID, so its public link stays the same).
+#
+# One-time setup:
+#   1. In Postman, create the collection in a public workspace (or import openapi.yaml once).
+#   2. Repository secrets:
+#      - POSTMAN_API_KEY: a Postman API key with write access to that workspace.
+#      - POSTMAN_COLLECTION_UID: the collection UID (collection > Info > ID, "<owner>-<uuid>").
+
+on:
+  push:
+    tags: '**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ♻️ Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 🔖 Check the spec version matches the tag
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        run: |
+          SPEC_VERSION=$(grep -m1 -E '^  version: ' openapi/openapi.yaml | awk '{print $2}')
+          if [ "$SPEC_VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::openapi/openapi.yaml info.version is '$SPEC_VERSION', tag is '$GITHUB_REF_NAME'"
+            exit 1
+          fi
+
+      - name: 🔄 Convert OpenAPI to a Postman collection
+        run: |
+          npx --yes openapi-to-postmanv2@6.4.2 \
+            -s openapi/openapi.yaml \
+            -o "$RUNNER_TEMP/collection.json" \
+            -p -O folderStrategy=Tags
+          jq -e '.item | length > 0' "$RUNNER_TEMP/collection.json" > /dev/null
+
+      - name: 🚀 Update the Postman collection
+        env:
+          POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+          POSTMAN_COLLECTION_UID: ${{ secrets.POSTMAN_COLLECTION_UID }}
+        run: |
+          if [ -z "$POSTMAN_API_KEY" ] || [ -z "$POSTMAN_COLLECTION_UID" ]; then
+            echo "::error::Set the POSTMAN_API_KEY and POSTMAN_COLLECTION_UID repository secrets"
+            exit 1
+          fi
+          jq '{collection: .}' "$RUNNER_TEMP/collection.json" > "$RUNNER_TEMP/body.json"
+          curl --silent --show-error --fail-with-body -X PUT \
+            "https://api.getpostman.com/collections/$POSTMAN_COLLECTION_UID" \
+            -H "X-Api-Key: $POSTMAN_API_KEY" \
+            -H "Content-Type: application/json" \
+            --data @"$RUNNER_TEMP/body.json" \
+            | jq '{uid: .collection.uid, name: .collection.name}'

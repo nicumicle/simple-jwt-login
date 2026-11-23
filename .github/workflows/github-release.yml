@@ -1,0 +1,58 @@
+name: GitHub Release
+
+# On every tag, creates (or updates, on a re-run) the GitHub Release for that tag:
+# notes = the tag's section of Changelog.md, asset = the plugin zip built from the tagged code.
+
+on:
+  push:
+    tags: '**'
+
+permissions:
+  contents: write # create the release and upload the asset
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ♻️ Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🔖 Check the plugin version matches the tag
+        run: |
+          PLUGIN_VERSION=$(grep -m1 -E '^\s*Version:' simple-jwt-login/simple-jwt-login.php | awk '{print $2}')
+          if [ "$PLUGIN_VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::simple-jwt-login.php Version is '$PLUGIN_VERSION', tag is '$GITHUB_REF_NAME'"
+            exit 1
+          fi
+
+      - name: 📝 Extract the release notes from Changelog.md
+        run: |
+          awk -v header="## $GITHUB_REF_NAME (" '
+            index($0, header) == 1 { found = 1; next }
+            found && /^## / { exit }
+            found { print }
+          ' Changelog.md > "$RUNNER_TEMP/notes.md"
+          if ! grep -q '[^[:space:]]' "$RUNNER_TEMP/notes.md"; then
+            echo "::error::No '## $GITHUB_REF_NAME (...)' section in Changelog.md"
+            exit 1
+          fi
+          cat "$RUNNER_TEMP/notes.md"
+
+      - name: 📦 Build the plugin zip
+        run: |
+          bash createZip.sh
+          unzip -p download/simple-jwt-login.zip simple-jwt-login/simple-jwt-login.php | grep -E "^\s*Version: $GITHUB_REF_NAME$"
+
+      - name: 🚀 Create or update the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release edit "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file "$RUNNER_TEMP/notes.md"
+            gh release upload "$GITHUB_REF_NAME" download/simple-jwt-login.zip --clobber
+            exit 0
+          fi
+          gh release create "$GITHUB_REF_NAME" download/simple-jwt-login.zip \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file "$RUNNER_TEMP/notes.md" \
+            --verify-tag

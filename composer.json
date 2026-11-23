@@ -39,6 +39,7 @@
     "phpmd": "vendor/bin/phpmd simple-jwt-login/,tests/ text phpmd.xml",
     "phpstan": "vendor/bin/phpstan analyse simple-jwt-login/ -c phpstan.neon --memory-limit=256M",
     "check-plugin": [
+        "bash syncChangelog.sh --check",
         "@phpcs",
         "@phpmd",
         "@phpstan",
@@ -46,10 +47,14 @@
         "vendor/bin/phpunit --testsuite 'Feature' --no-coverage"
     ],
     "gen-i18n": "wp i18n make-pot simple-jwt-login/ simple-jwt-login/i18n/simple-jwt-login.pot --allow-root",
+    "sync-changelog": "bash syncChangelog.sh",
+    "prepare-release": "bash prepareRelease.sh",
     "lint": "vendor/bin/phpcbf --standard=.phpcs.xml.dist --severity=1 -p simple-jwt-login/ --extensions=.php"
   },
   "scripts-descriptions": {
-    "check-plugin": "Check plugin code and run tests"
+    "check-plugin": "Check plugin code and run tests",
+    "sync-changelog": "Copy the newest Changelog.md release into the WordPress.org readme",
+    "prepare-release": "Prepare release X.Y.Z: changelog, versions, readme, i18n and zip (composer prepare-release X.Y.Z)"
   },
   "support": {
     "issues": "https://github.com/nicumicle/simple-jwt-login/issues",

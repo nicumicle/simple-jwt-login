@@ -89,7 +89,7 @@ That's the whole integration. Everything else - refresh, auto-login, social logi
 
 = 🔒 Security you can verify =
 
-Authentication is only as good as its maintenance. Security reports are handled through responsible disclosure (Patchstack) and fixed within days, and every fix ships with a regression test that reproduces the original issue.
+Authentication is only as good as its maintenance. Security reports are handled through responsible disclosure ([GitHub private vulnerability reporting](https://github.com/nicumicle/simple-jwt-login/security/advisories/new)) and fixed within days, and every fix ships with a regression test that reproduces the original issue.
 
 * Unit, integration and real-browser cross-site (CSRF and CORS) test suites run on every change
 * Static analysis with PHPStan and PHPMD, and WordPress coding standards
@@ -211,7 +211,12 @@ A complete changelog is available on the [GitHub repository](https://github.com/
 - Breaking: With "Trust reverse proxy IP headers" on, the client IP is read from the last `X-Forwarded-For` entry only. Sites whose proxy sends the client IP only in `Client-IP` must switch the proxy to `X-Forwarded-For`
 - Breaking: After too many wrong two-factor codes (30 by default, Two Factor filter `two_factor_failed_attempt_limit`) sent to `POST /auth/2fa` or the OAuth two-factor form, the user's password is reset and the user and admin are emailed, as on `wp-login.php`
 - Breaking: API keys used on `/batch/v1` need the create, update and delete permissions, otherwise they get 401
-- Breaking: Client errors that answered HTTP 500 now answer their real status (`error_code` values are unchanged): 401 for 2FA session/code errors (106, 107, 109, 110), JWT without the "JWT login by" claim (29, 30), Facebook and GitHub invalid code or token (98, 99, 102, 103) and Google `id_token` for another client (118); 403 for revoked token endpoints called by a non-administrator (115) and unverified OAuth emails (111, 112, 119); 404 for Facebook and GitHub user not found (100, 104) and unknown revoked token id (116); 422 for invalid OAuth provider or missing code/token (69, 71, 77, 97, 101), missing reset password code (60) and invalid API key name or permissions (85, 86, 87); 429 for too many wrong 2FA codes (108)
+- Breaking: Client errors that answered HTTP 500 now answer their real status (`error_code` values are unchanged):
+  - 401: 2FA session expired / interim JWT missing claims / wrong 2FA code (106, 107, 109), interim 2FA JWT used as a normal JWT (110), JWT without the "JWT login by" claim (29, 30), Facebook and GitHub invalid code or token (98, 99, 102, 103), Google `id_token` issued for another client (118)
+  - 403: revoked token endpoints called by a non-administrator (115), OAuth account email not verified (111 Auth0, 112 GitHub, 119 Google)
+  - 404: Facebook and GitHub user not found (100, 104), revoked token id not found (116)
+  - 422: invalid OAuth provider or missing OAuth code/token (69, 71, 77, 97, 101), missing reset password code (60), API key without name or permissions, or with an unknown permission (85, 86, 87)
+  - 429: too many wrong 2FA codes (108)
 - Breaking: Failing to store the 2FA session now has its own error code 133 (HTTP 500); it used to share code 107 with "2FA session expired"
 - Fix the Facebook browser login returning a 500 error instead of the login page with the error message when Facebook rejects the code
 - Fix two parallel `/auth/refresh` calls with the same refresh token both getting a new JWT: a refresh token can now be used once only

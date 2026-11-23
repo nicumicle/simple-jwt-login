@@ -11,7 +11,7 @@ name: Publish OpenAPI to Postman
 
 on:
   push:
-    branches: [ master ]
+    tags: '**'
   workflow_dispatch:
 
 permissions:

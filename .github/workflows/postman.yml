@@ -10,8 +10,8 @@ name: Publish OpenAPI to Postman
 #      - POSTMAN_COLLECTION_UID: the collection UID (collection > Info > ID, "<owner>-<uuid>").
 
 on:
+  # TEMPORARY: publishes on every push (all branches and tags). Restore "tags: '**'" under push.
   push:
-    tags: '**'
   workflow_dispatch:
 
 permissions:

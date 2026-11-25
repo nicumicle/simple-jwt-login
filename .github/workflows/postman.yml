@@ -1,6 +1,6 @@
 name: Publish OpenAPI to Postman
 
-# On every tag, converts openapi/openapi.yaml to a Postman collection and replaces the content of
+# On every tag whose openapi/openapi.yaml differs from the previous tag, validates it, converts it to a Postman collection and replaces the content of
 # the existing public collection (same UID, so its public link stays the same).
 #
 # One-time setup:
@@ -10,8 +10,8 @@ name: Publish OpenAPI to Postman
 #      - POSTMAN_COLLECTION_UID: the collection UID (collection > Info > ID, "<owner>-<uuid>").
 
 on:
-  # TEMPORARY: publishes on every push (all branches and tags). Restore "tags: '**'" under push.
   push:
+    tags: '**'
   workflow_dispatch:
 
 permissions:
@@ -22,7 +22,36 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # GitHub ignores "paths" filters on tag pushes, so compare with the previous tag here.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      openapi: ${{ steps.diff.outputs.openapi }}
+    steps:
+      - name: ♻️ Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history and tags
+
+      - name: 🔍 Check if the spec changed since the previous tag
+        id: diff
+        run: |
+          openapi=true # manual runs and the first tag always publish
+          if [ "$GITHUB_REF_TYPE" = tag ] && previous=$(git describe --tags --abbrev=0 "$GITHUB_SHA^"); then
+            if git diff --quiet "$previous" "$GITHUB_SHA" -- openapi/openapi.yaml; then
+              openapi=false
+              echo "::notice::openapi.yaml is unchanged since $previous, nothing to publish"
+            fi
+          fi
+          echo "openapi=$openapi" >> "$GITHUB_OUTPUT"
+
+  validate:
+    needs: changes
+    if: ${{ needs.changes.outputs.openapi == 'true' }}
+    uses: ./.github/workflows/openapi-validate.yml
+
   publish:
+    needs: validate
     runs-on: ubuntu-latest
     steps:
       - name: ♻️ Checkout repository

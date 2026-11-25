@@ -32,7 +32,7 @@ servers:
         enum:
           - "wp-json"
           - "?rest_route="
-        default: '/wp-json'
+        default: 'wp-json'
       simplejwtloginprefix:
         default: "simple-jwt-login/v1"
 info:

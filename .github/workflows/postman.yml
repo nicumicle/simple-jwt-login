@@ -47,6 +47,7 @@ jobs:
           jq -e '.item | length > 0' "$RUNNER_TEMP/collection.json" > /dev/null
 
       - name: 🚀 Update the Postman collection
+        shell: bash # enables pipefail, so a rejected upload fails the step
         env:
           POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
           POSTMAN_COLLECTION_UID: ${{ secrets.POSTMAN_COLLECTION_UID }}
@@ -61,4 +62,4 @@ jobs:
             -H "X-Api-Key: $POSTMAN_API_KEY" \
             -H "Content-Type: application/json" \
             --data @"$RUNNER_TEMP/body.json" \
-            | jq '{uid: .collection.uid, name: .collection.name}'
+            | jq '.error // {uid: .collection.uid, name: .collection.name}'

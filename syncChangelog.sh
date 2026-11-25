@@ -26,6 +26,8 @@ awk -v notice_file="$tmp_dir/notice.txt" '
         next
     }
     !in_release { next }
+    # Headings, blank lines and the upgrade notice end a bullet.
+    /^#+ / || /^[[:space:]]*$/ || /^\*\*Upgrade notice:\*\*/ { in_bullet = 0 }
     /^### / {
         section = substr($0, 5)
         prefix = ""
@@ -42,9 +44,10 @@ awk -v notice_file="$tmp_dir/notice.txt" '
         text = substr($0, 3)
         if (prefix != "" && index(text, prefix) != 1) { text = prefix text }
         print "- " text
+        in_bullet = 1
         next
     }
-    /^[[:space:]]+[^[:space:]]/ { print }
+    /^[[:space:]]+[^[:space:]]/ || in_bullet { print }
 ' "$CHANGELOG" > "$tmp_dir/entry.txt"
 
 title=$(head -n 1 "$tmp_dir/entry.txt")

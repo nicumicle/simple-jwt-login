@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
 echo "Create zip for plugin"
 
 rm -rf download/simple-jwt-login/

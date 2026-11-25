@@ -17,6 +17,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: postman-publish
+  cancel-in-progress: false
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -43,7 +47,7 @@ jobs:
           npx --yes openapi-to-postmanv2@6.4.2 \
             -s openapi/openapi.yaml \
             -o "$RUNNER_TEMP/collection.json" \
-            -p -O folderStrategy=Tags
+            -p -O folderStrategy=Tags,parametersResolution=Example
           jq -e '.item | length > 0' "$RUNNER_TEMP/collection.json" > /dev/null
 
       - name: 🚀 Update the Postman collection
@@ -56,7 +60,14 @@ jobs:
             echo "::error::Set the POSTMAN_API_KEY and POSTMAN_COLLECTION_UID repository secrets"
             exit 1
           fi
-          jq '{collection: .}' "$RUNNER_TEMP/collection.json" > "$RUNNER_TEMP/body.json"
+          # - IDs: random on every conversion, they do not belong to the target collection.
+          # - Saved examples: named by status ("400 Bad Request") instead of the long spec description.
+          jq '{collection: (del(.info._postman_id) | walk(
+            if type != "object" then .
+            elif has("originalRequest") then del(.id) | .name = "\(.code) \(.status | sub(" \\(.*"; ""))"
+            elif has("request") or has("item") then del(.id)
+            else . end
+          ))}' "$RUNNER_TEMP/collection.json" > "$RUNNER_TEMP/body.json"
           curl --silent --show-error --fail-with-body -X PUT \
             "https://api.getpostman.com/collections/$POSTMAN_COLLECTION_UID" \
             -H "X-Api-Key: $POSTMAN_API_KEY" \

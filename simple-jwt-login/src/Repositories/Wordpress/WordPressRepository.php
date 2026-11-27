@@ -454,11 +454,12 @@ class WordPressRepository implements Repository
     /**
      * @param WP_User $user
      *
-     * @return mixed
+     * @return int
      */
     public function getUserIdFromUser($user)
     {
-        return $user->get('ID');
+        // WP_User::get('ID') returns the raw DB string; the API documents an integer.
+        return (int) $user->ID;
     }
 
     /**

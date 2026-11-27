@@ -454,11 +454,12 @@ class WordPressRepository implements Repository
     /**
      * @param WP_User $user
      *
-     * @return mixed
+     * @return int
      */
     public function getUserIdFromUser($user)
     {
-        return $user->get('ID');
+        // WP_User::get('ID') returns the raw DB string; the API documents an integer.
+        return (int) $user->ID;
     }
 
     /**
@@ -848,7 +849,10 @@ class WordPressRepository implements Repository
      */
     public function unregisterAbility($name)
     {
-        if (!function_exists('wp_has_ability') || !wp_has_ability($name)) {
+        if (!function_exists('wp_has_ability')
+            || !function_exists('wp_unregister_ability')
+            || !wp_has_ability($name)
+        ) {
             return;
         }
 
@@ -861,7 +865,10 @@ class WordPressRepository implements Repository
      */
     public function unregisterAbilityCategory($slug)
     {
-        if (!function_exists('wp_has_ability_category') || !wp_has_ability_category($slug)) {
+        if (!function_exists('wp_has_ability_category')
+            || !function_exists('wp_unregister_ability_category')
+            || !wp_has_ability_category($slug)
+        ) {
             return;
         }
 

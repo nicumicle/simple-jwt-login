@@ -4,7 +4,8 @@ RUN apt-get update
 
 RUN apt-get -y install \
     vim \
-    git
+    git \
+    zip
 
 # Install wp-cli
 RUN curl -o /bin/wp-cli.phar https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
@@ -13,6 +14,12 @@ RUN cd /bin && mv wp-cli.phar wp
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Install Node + npx (composer run validate-openapi)
+COPY --from=node:22-slim /usr/local/bin/node /usr/local/bin/node
+COPY --from=node:22-slim /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/npm
+RUN ln -s ../lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
+    && ln -s ../lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
 
 # Install and configure xDebug
 RUN yes | pecl install xdebug \

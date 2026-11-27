@@ -48,6 +48,8 @@ class SecurityReportAbilityTest extends AbilityTestCase
             'admin auth code'       => [['auth_codes' => ['codes' => [['code' => 'x', 'role' => 'administrator', 'expiration_date' => '']]]], 'auth_code_creates_admins'],
             'password_hash login'   => [['authorization' => ['enabled' => true, 'password_hash_enabled' => true]], 'password_hash_login'],
             'revoke endpoint off'   => [['authorization' => ['revoke_token_enabled' => '0']], 'revoke_endpoint_disabled'],
+            // The fixture payload list ends with "jti" (index 6); lists merge by index.
+            'jti unchecked'         => [['authorization' => ['jwt_payload' => [6 => 'exp']]], 'jti_disabled'],
             'ai sees secrets'       => [['integrations' => ['3rdparty' => ['ai_abilities' => ['enabled' => true, 'allow_view_secrets' => true]]]], 'ai_can_view_secrets'],
             'google other clients'  => [['integrations' => ['oauth' => ['google' => ['enabled' => 1, 'allow_tokens_from_other_clients' => true]]]], 'google_unbound_tokens'],
             'facebook other apps'   => [['integrations' => ['oauth' => ['facebook' => ['enabled' => 1, 'allow_tokens_from_other_apps' => true]]]], 'facebook_unbound_tokens'],

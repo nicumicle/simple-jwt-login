@@ -371,6 +371,9 @@ if (! defined('ABSPATH')) {
                                 case AuthenticationSettings::JWT_PAYLOAD_PARAM_ISS:
                                     $sampleValue = $jwtSettings->getAuthenticationSettings()->getAuthIss();
                                     break;
+                                case AuthenticationSettings::JWT_PAYLOAD_PARAM_JTI:
+                                    $sampleValue = '9f86d081884c7d659a2feaa0c55ad015';
+                                    break;
                                 default:
                                     $sampleValue = '';
                             }
@@ -405,6 +408,17 @@ if (! defined('ABSPATH')) {
                 </li>
                 <li>}</li>
             </ul>
+        </div>
+        <div id="jwt_payload_jti_alert"
+             class="sjl-gen-warning-banner"
+             style="<?php
+                echo $jwtSettings->getAuthenticationSettings()->isPayloadDataEnabled(
+                    AuthenticationSettings::JWT_PAYLOAD_PARAM_JTI
+                ) ? 'display:none;' : '';
+                ?>"
+        >
+            <span class="dashicons dashicons-warning"></span>
+            <?php echo esc_html__('Without "jti", two JWTs issued for the same user in the same second are identical: revoking one revokes the other, and a token can not be told apart from its copies. Keep "jti" enabled unless a client rejects unknown claims.', 'simple-jwt-login'); ?>
         </div>
 
         <div class="sjl-webhook-subsection">

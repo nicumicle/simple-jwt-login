@@ -1,4 +1,4 @@
-name: "Check plugin code"
+name: "Linting and Static Analysis"
 
 on:
   push:

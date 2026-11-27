@@ -1,8 +1,13 @@
 name: Feature Tests
 
 on:
-  # Called by tests.yml (unit + feature, then cross-site).
+  # Called by tests.yml (unit + feature, then cross-site) and openapi_tests.yml (openapi: true).
   workflow_call:
+    inputs:
+      openapi:
+        description: 'Check the live responses against the OpenAPI spec instead of running the feature tests'
+        type: boolean
+        default: false
 
 env:
   SITE_URL: simplejwtlogin.local
@@ -17,10 +22,10 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-24.04
-    name: Simple-JWT-Login Feature tests
+    name: ${{ inputs.openapi && 'Simple-JWT-Login OpenAPI tests' || 'Simple-JWT-Login Feature tests' }}
     strategy:
       matrix:
-        php_version: [ 8.4, 8.5 ]
+        php_version: ${{ fromJSON(inputs.openapi && '[8.4]' || '[8.4, 8.5]') }}
     steps:
       - name: "Checkout"
         uses: actions/checkout@v4
@@ -108,6 +113,7 @@ jobs:
             # Bridges covered by tests/Feature/Security/AmbientJwtEntryPointsTest.
             wp plugin install woocommerce wp-graphql --activate --path=/var/www/html
       -   name: "🚧 Prepare Feature tests"
+          if: ${{ !inputs.openapi }}
           run: |
             cp phpunit.xml.actions.dist /var/www/html/wp-content/plugins/phpunit.xml
             cp composer.json /var/www/html/wp-content/plugins/           
@@ -132,6 +138,7 @@ jobs:
             curl -X POST -v "http://$SITE_URL/index.php?rest_route=/simple-jwt-login/v1/users"
 
       -   name: "🧪 Run the Feature tests"
+          if: ${{ !inputs.openapi }}
           run: |
             cd /var/www/html
             echo "🔖 WordPress Version:  $(wp core version)"
@@ -142,6 +149,16 @@ jobs:
             # Run as www-data: PHP only opens sess_* files owned by its own uid, and the session JWT
             # tests write them for Apache (www-data) to read.
             sudo -u www-data env SJL_SESSION_DIR=/var/lib/sjl-sessions "$(command -v php)" vendor/bin/phpunit --testsuite "Feature" --testdox --no-coverage
+      -   name: "🔧 Setup uv"
+          if: inputs.openapi
+          uses: astral-sh/setup-uv@v6
+      -   name: "📜 Check responses against the OpenAPI spec"
+          if: inputs.openapi
+          # wp-config.php belongs to www-data.
+          env:
+            SJL_API_URL: http://${{ env.SITE_URL }}/wp-json/simple-jwt-login/v1
+            WP_CLI: sudo -u www-data wp --path=/var/www/html
+          run: bash tests/OpenApi/run.sh
       -   name: "🩻 Server logs"
           if: failure()
           run: |

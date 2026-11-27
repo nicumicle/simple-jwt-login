@@ -2,8 +2,12 @@
 
 namespace SimpleJWTLogin\Repositories\RevokedToken;
 
+use SimpleJWTLogin\Repositories\PaginationTrait;
+
 class RevokedTokenRepository implements Repository
 {
+    use PaginationTrait;
+
     const TABLE_SUFFIX = 'simple_jwt_login_revoked_tokens';
 
     /**
@@ -117,7 +121,7 @@ class RevokedTokenRepository implements Repository
      */
     public function findAll($page, $perPage)
     {
-        $offset = ($page - 1) * $perPage;
+        $offset = $this->pageOffset($page, $perPage);
 
         //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared
         $total = (int) $this->wpdb->get_var($this->wpdb->prepare('SELECT COUNT(*) FROM %i', $this->tableName()));

@@ -370,6 +370,64 @@ class AuthenticateServiceTest extends TestCase
     }
 
     /**
+     * @param array<string,mixed> $authorization
+     */
+    private function generatePayloadWithAuthorization(array $authorization, array $requestPayload = []): array
+    {
+        $this->wordPressDataMock
+            ->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                '_schema_version' => SimpleJWTLoginSettings::SCHEMA_VERSION,
+                'authorization'   => $authorization,
+            ]));
+
+        return AuthenticateService::generatePayload(
+            $requestPayload,
+            $this->wordPressDataMock,
+            new SimpleJWTLoginSettings($this->wordPressDataMock),
+            'user'
+        );
+    }
+
+    public function testGeneratePayloadAddsAUniqueRandomJti(): void
+    {
+        $authorization = ['enabled' => '1', 'jwt_payload' => [AuthenticationSettings::JWT_PAYLOAD_PARAM_JTI]];
+
+        $first  = $this->generatePayloadWithAuthorization($authorization);
+        $second = $this->generatePayloadWithAuthorization($authorization);
+
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{32}$/', $first['jti']);
+        $this->assertNotSame($first['jti'], $second['jti']);
+    }
+
+    public function testGeneratePayloadEnablesJtiWhenThePayloadWasNeverConfigured(): void
+    {
+        $payload = $this->generatePayloadWithAuthorization(['enabled' => '1']);
+
+        $this->assertArrayHasKey('jti', $payload);
+    }
+
+    public function testGeneratePayloadOmitsJtiWhenUnchecked(): void
+    {
+        $payload = $this->generatePayloadWithAuthorization([
+            'enabled'     => '1',
+            'jwt_payload' => [AuthenticationSettings::JWT_PAYLOAD_PARAM_EXP],
+        ]);
+
+        $this->assertArrayNotHasKey('jti', $payload);
+    }
+
+    public function testGeneratePayloadIgnoresAClientSuppliedJti(): void
+    {
+        $payload = $this->generatePayloadWithAuthorization(
+            ['enabled' => '1', 'jwt_payload' => [AuthenticationSettings::JWT_PAYLOAD_PARAM_JTI]],
+            ['jti' => 'attacker-chosen']
+        );
+
+        $this->assertNotSame('attacker-chosen', $payload['jti']);
+    }
+
+    /**
      * @param string $loginByParameter The admin-configured jwt_login_by_parameter.
      * @param array $attackerPayload The claims an attacker POSTs to /auth.
      * @param array $leafPath Dot-exploded path whose leaf must be absent after stripping.

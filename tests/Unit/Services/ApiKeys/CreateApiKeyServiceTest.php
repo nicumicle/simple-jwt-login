@@ -250,4 +250,36 @@ class CreateApiKeyServiceTest extends TestCase
             ->withApiKeyRepository($repository)
             ->makeAction();
     }
+
+    public static function arrayInputProvider()
+    {
+        return [
+            'name is an array' => [
+                ['name' => ['My Key'], 'permissions' => ['read']],
+                ErrorCodes::ERR_API_KEY_MISSING_NAME,
+            ],
+            'permission is a nested array' => [
+                ['name' => 'My Key', 'permissions' => [['read']]],
+                ErrorCodes::ERR_API_KEY_INVALID_PERMISSION,
+            ],
+            'expires_at is an array' => [
+                ['name' => 'My Key', 'permissions' => ['read'], 'expires_at' => ['2030-01-31']],
+                ErrorCodes::ERR_API_KEY_INVALID_EXPIRY,
+            ],
+        ];
+    }
+
+    #[DataProvider('arrayInputProvider')]
+    public function testArrayInputIsRejectedWithoutWarnings($request, $errorCode)
+    {
+        $this->expectExceptionCode($errorCode);
+        $repository = $this->createMock(ApiKeyRepositoryInterface::class);
+        $repository->expects($this->never())->method('insert');
+
+        (new CreateApiKeyService())
+            ->withRequest($request)
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withApiKeyRepository($repository)
+            ->makeAction();
+    }
 }

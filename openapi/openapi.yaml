@@ -32,25 +32,37 @@ servers:
         enum:
           - "wp-json"
           - "?rest_route="
-        default: '/wp-json'
+        default: 'wp-json'
       simplejwtloginprefix:
         default: "simple-jwt-login/v1"
 info:
   title: Simple-JWT-Login
   description: |
-    This is the Simple-JWT-Login WordPress plugin API Documentation.
+    **Simple-JWT-Login** is a free, open-source WordPress plugin that adds JSON Web Token (JWT)
+    authentication to the WordPress REST API. It lets mobile apps, single-page applications, and
+    external services securely interact with your WordPress site - without exposing admin credentials.
 
-    ## Introduction
+    With Simple-JWT-Login you can:
+    - **Authenticate** users and receive a signed JWT
+    - **Auto-login** users via a tokenized link
+    - **Register** and **delete** users programmatically
+    - **Reset and change passwords** through the REST API
+    - **Protect any REST endpoint** so it requires a valid JWT
+    - **Refresh, validate, and revoke** tokens to manage session lifecycle
 
-    This API is documented in **OpenAPI format**. You can either open it in [swagger editor](https://editor.swagger.io/) or you can view it on this website.
+    Whether you're building a headless WordPress site, a React/Vue front-end, a mobile app, or a
+    third-party integration, Simple-JWT-Login provides a clean, standards-based authentication layer.
 
-    Also, you open it in postman, and you will be able to do local tests.
+    ## API Format
+
+    This API is documented in **OpenAPI format**. You can open it in [Swagger Editor](https://editor.swagger.io/),
+    view it on this website, or import it into Postman for local testing.
 
     ## Server
 
     You can access the Simple-JWT-Login API in two modes:
-      - using permalink: https://{domain}/wp-json/simple-jwt-login/v1/{endpoint}
-      - using rest_route: https://{domain}/?rest_route=/simple-jwt-login/v1/{endpoint}
+      - using permalink: `https://{domain}/wp-json/simple-jwt-login/v1/{endpoint}`
+      - using `rest_route`: `https://{domain}/?rest_route=/simple-jwt-login/v1/{endpoint}`
 
     ## Authentication
 
@@ -68,16 +80,30 @@ info:
 
     ## Status codes
 
-    - All JWT library errors (malformed token, bad signature, expired, ...: `error_code` 1-21)
+    - All JWT library errors (such as a malformed token, a bad signature, or an expired JWT: `error_code` 1-21)
       answer `400`.
     - Validation errors answer `422`.
     - Errors with no status of their own answer `500`. Each endpoint lists the
       `error_code` values it returns this way.
 
+    ### Cross-site requests (CSRF protection)
+
+    A JWT sent in the `Authorization` header, a cookie or the session only authenticates requests that come
+    from the site itself or from an origin listed in the CORS "Allow origin" setting. On a cross-site request
+    (`Sec-Fetch-Site: cross-site`, or an `Origin` / `Referer` naming another site, including sibling subdomains
+    and other ports) that JWT is ignored.
+
+    - A `*` entry in "Allow origin" trusts the `Authorization` header JWT only - cookie and session JWTs are never trusted.
+    - With CORS disabled (or "Allow origin" off), a browser page on another site can't authenticate with a JWT,
+      even in the `Authorization` header.
+    - Requests without these headers (server-to-server calls, mobile apps, CLI tools) and JWTs passed in the URL
+      (for example, autologin links) are not affected.
+
     ## Cross-Origin Resource Sharing
-    This API features Cross-Origin Resource Sharing (CORS) implemented in compliance with  [W3C spec](https://www.w3.org/TR/cors/).
-    And that allows cross-domain communication from the browser.
-    All responses have a wildcard same-origin which makes them completely public and accessible to everyone, including any code on any site.
+
+    This API features Cross-Origin Resource Sharing (CORS) implemented in compliance with [W3C spec](https://www.w3.org/TR/cors/).
+    Allowed origins, methods, and headers are configured in the plugin's CORS settings. Browser apps on another
+    origin that send a JWT must have their origin listed in **Allow origin**.
 
     ## Error Response Format
 
@@ -99,8 +125,8 @@ info:
     url: https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE
   version: 4.2.1
   x-logo:
-    url: 'https://redocly.github.io/redoc/petstore-logo.png'
-    altText: Simple-Jwt-Login Logo
+    url: 'https://simplejwtlogin.com/assets/favicons/android-chrome-192x192.png'
+    altText: Simple JWT Login Logo
 externalDocs:
   description: Find out more about Simple-JWT-Login
   url: https://simplejwtlogin.com/docs
@@ -242,7 +268,7 @@ paths:
         - `Authorization: Bearer <token>` header (when enabled in plugin General Settings)
         - Cookie or session (when enabled in plugin General Settings)
 
-        A header, cookie or session JWT is ignored on cross-site requests (`Sec-Fetch-Site: cross-site`,
+        A header, cookie, or session JWT is ignored on cross-site requests (`Sec-Fetch-Site: cross-site`,
         or an `Origin` / `Referer` naming another site) to prevent CSRF. Cross-origin browser apps must be
         listed in the CORS "Allow origin" setting; a `*` entry trusts the header JWT only, never the
         cookie or session JWT. Requests without these headers (mobile apps, servers) are not affected.
@@ -284,7 +310,7 @@ paths:
       responses:
         '200':
           description: |
-            Login successful and the "Redirect after auto-login" setting is "No redirect".
+            Login successful and the "Redirect after auto-login" setting is "No redirect."
             The body can be changed with the `simple_jwt_login_no_redirect_message` filter.
           content:
             application/json:
@@ -392,6 +418,7 @@ paths:
                 $ref: '#/components/schemas/ResponseError'
   /users:
     post:
+      operationId: registerUser
       tags:
         - register_user
       summary: Register a new WordPress user
@@ -486,7 +513,7 @@ paths:
               example: "https://example.com/wp-admin/"
         '400':
           description: |
-            The JWT for the new user could not be signed (JWT library error, e.g. OpenSSL
+            The JWT for the new user could not be signed (JWT library error, for example, OpenSSL
             signing failure `error_code` 16). Only when "Generate JWT on register" is enabled.
           content:
             application/json:
@@ -601,7 +628,7 @@ paths:
           in: query
           description: |
             A valid signed JWT identifying the WordPress user to delete. Can also be sent in the
-            `Authorization` header, cookie or session (when enabled in General Settings).
+            `Authorization` header, cookie, or session (when enabled in General Settings).
           required: false
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
           schema:
@@ -780,6 +807,8 @@ paths:
                     success: true
                     data:
                       message: "The Code has been saved into the database."
+        '400':
+          $ref: '#/components/responses/RestInvalidJson'
         '401':
           description: |
             Unauthorized. The provided auth code is wrong (`error_code` 27).
@@ -830,7 +859,7 @@ paths:
                       error_code: 96
         '500':
           description: |
-            Internal server error, e.g. WordPress could not send the reset email. The message
+            Internal server error, for example, WordPress could not send the reset email. The message
             is the one of the underlying error.
           content:
             application/json:
@@ -898,7 +927,7 @@ paths:
         '400':
           description: |
             JWT mode only. The JWT could not be decoded or validated (JWT library errors,
-            e.g. expired `error_code` 14, bad signature `error_code` 11).
+            for example, expired `error_code` 14, bad signature `error_code` 11).
           content:
             application/json:
               schema:
@@ -1036,8 +1065,8 @@ paths:
             Authentication successful. Returns a signed JWT and an optional refresh token.
 
             **Two-Factor challenge**: when the user has 2FA enabled, this response is
-            returned instead of a regular JWT. `two_factor_required` will be `true` and
-            `jwt` will contain a short-lived interim token. Submit it with the 2FA code
+            returned instead of a regular JWT. `two_factor_required` is `true` and
+            `jwt` contains a short-lived interim token. Submit it with the 2FA code
             to `POST /auth/2fa` to obtain the final JWT.
           content:
             application/json:
@@ -1077,7 +1106,7 @@ paths:
                         type: string
                         nullable: true
                         description: |
-                          Fully-qualified class name of the user's primary 2FA provider.
+                          Fully qualified class name of the user's primary 2FA provider.
                           Only present when `two_factor_required` is `true`.
                         example: "Two_Factor_Totp"
               examples:
@@ -1098,7 +1127,7 @@ paths:
                       provider: "Two_Factor_Totp"
         '400':
           description: |
-            The JWT could not be signed (JWT library error, e.g. OpenSSL signing failure
+            The JWT could not be signed (JWT library error, for example, OpenSSL signing failure
             `error_code` 16, or a bad private key / algorithm `error_code` 1, 7, 17).
           content:
             application/json:
@@ -1188,7 +1217,7 @@ paths:
         - Authentication must be enabled in the plugin settings.
         - If "Refresh Token Requires Auth Code" is enabled, `AUTH_KEY` must be provided.
         - If a JWT is also sent (header, cookie, session or `JWT` parameter) and it has been
-          revoked, the request is rejected. Any other problem with that JWT (e.g. expired) is ignored.
+          revoked, the request is rejected. Any other problem with that JWT (for example, expired) is ignored.
 
         **Custom payload claims**
         Optionally supply `payload` as a JSON-encoded object to add extra claims to the
@@ -1233,7 +1262,7 @@ paths:
                         example: "f6e7a8b9c0d123456789012345678901234567890123456789012345678901234567"
         '400':
           description: |
-            The new JWT could not be signed (JWT library error, e.g. OpenSSL signing failure
+            The new JWT could not be signed (JWT library error, for example, OpenSSL signing failure
             `error_code` 16).
           content:
             application/json:
@@ -1327,7 +1356,7 @@ paths:
         - `Authorization: Bearer <token>` header (when enabled in plugin General Settings)
         - Cookie or session (when enabled in plugin General Settings)
 
-        A header, cookie or session JWT is ignored on cross-site requests (`Sec-Fetch-Site: cross-site`,
+        A header, cookie, or session JWT is ignored on cross-site requests (`Sec-Fetch-Site: cross-site`,
         or an `Origin` / `Referer` naming another site) to prevent CSRF. Cross-origin browser apps must be
         listed in the CORS "Allow origin" setting; a `*` entry trusts the header JWT only, never the
         cookie or session JWT. Requests without these headers (mobile apps, servers) are not affected.
@@ -1438,10 +1467,10 @@ paths:
                                 description: User email. Present only when enabled in plugin settings.
                                 example: "myuser@simplejwtlogin.com"
                               id:
-                                type: number
+                                type: string
                                 nullable: true
-                                description: WordPress user ID. Present only when enabled in plugin settings.
-                                example: 1
+                                description: WordPress user ID, as a numeric string (as WordPress stores it). Present only when enabled in plugin settings.
+                                example: "1"
                               site:
                                 type: string
                                 nullable: true
@@ -1457,6 +1486,11 @@ paths:
                                 nullable: true
                                 description: Issuer claim. Present only when enabled in plugin settings.
                                 example: "https://simplejwtlogin.com"
+                              jti:
+                                type: string
+                                nullable: true
+                                description: Unique, random JWT ID (32 hexadecimal characters), new for every issued token. Enabled by default; present unless turned off in plugin settings.
+                                example: "9f86d081884c7d659a2feaa0c55ad015"
                           expire_in:
                             type: integer
                             nullable: true
@@ -1910,7 +1944,7 @@ paths:
                         example: "a1b2c3d4e5f678901234567890123456789012345678901234567890123456789012"
         '400':
           description: |
-            The interim JWT could not be decoded or validated (JWT library error), e.g. it
+            The interim JWT could not be decoded or validated (JWT library error), for example, it
             expired (`error_code` 14) or its signature is wrong (`error_code` 11). Also returned
             when the final JWT cannot be signed (`error_code` 16).
           content:
@@ -2044,7 +2078,7 @@ paths:
         WordPress login page.
 
         > **Note**: this endpoint is designed for browser redirect callbacks (OAuth consent
-        > screen redirect_uri). To obtain a JWT programmatically, use `POST /oauth/token`
+        > screen `redirect_uri`). To obtain a JWT programmatically, use `POST /oauth/token`
         > instead.
       operationId: oauthTokenGet
       parameters:
@@ -2071,7 +2105,7 @@ paths:
         - name: error
           in: query
           description: |
-            Sent by the provider instead of `code` when the login failed (e.g. `access_denied`).
+            Sent by the provider instead of `code` when the login failed (for example, `access_denied`).
             A request with `error` is not treated as a login start.
           schema:
             type: string
@@ -2092,8 +2126,8 @@ paths:
               `Set-Cookie: sjl_oauth_state_<provider>` header.
             - Callback success: the user is logged in (created first when "Register on OAuth
               login" is on) and redirected to the WordPress admin.
-            - Callback failure (invalid `state`, code rejected by the provider, user not found,
-              ...): redirect to `wp-login.php` with an `error` query parameter.
+            - Callback failure (invalid `state`, code rejected by the provider, or user not found):
+              redirect to `wp-login.php` with an `error` query parameter.
           headers:
             Location:
               schema:
@@ -2114,7 +2148,7 @@ paths:
           description: |
             Unprocessable entity. One of:
             - `provider` is missing or unknown (`error_code` 69).
-            - The provider sent back an `error` without a `code` (e.g. the user denied
+            - The provider sent back an `error` without a `code` (for example, the user denied
               consent): the request has neither `code` nor the token parameter
               (`error_code` 71 Google, 77 Auth0, 97 Facebook, 101 GitHub).
           content:
@@ -2226,7 +2260,7 @@ paths:
                       token_type: "Bearer"
                       id_token: "eyJhbGciOiJSUzI1NiIs..."
         '400':
-          description: The WordPress JWT could not be signed (JWT library error, e.g. `error_code` 16).
+          description: The WordPress JWT could not be signed (JWT library error, for example, `error_code` 16).
           content:
             application/json:
               schema:
@@ -2278,7 +2312,7 @@ paths:
           description: |
             Forbidden. One of:
             - The requested OAuth provider is not enabled in the plugin settings (`error_code` 70).
-            - The account email is not verified: Auth0 (`error_code` 111), GitHub (`error_code` 112),
+            - The account email is not verified, for Auth0 (`error_code` 111), GitHub (`error_code` 112),
               Google `id_token` (`error_code` 119).
           content:
             application/json:
@@ -2490,7 +2524,7 @@ paths:
         '200':
           description: |
             API key created. The `key` field contains the full plaintext key - save it now
-            as it will not be returned again.
+            as it isn't returned again.
           content:
             application/json:
               schema:
@@ -2528,6 +2562,24 @@ paths:
                         nullable: true
                         description: Expiry in UTC `Y-m-d H:i:s`, or null for no expiry.
                         example: "2027-01-01 00:00:00"
+          links:
+            UpdateApiKey:
+              operationId: updateApiKey
+              description: Update the key that was just created.
+              parameters:
+                id: '$response.body#/data/id'
+            RevokeApiKey:
+              operationId: revokeApiKey
+              description: Revoke the key that was just created.
+              parameters:
+                id: '$response.body#/data/id'
+            DeleteApiKey:
+              operationId: deleteApiKey
+              description: Delete the key that was just created.
+              parameters:
+                id: '$response.body#/data/id'
+        '400':
+          $ref: '#/components/responses/RestInvalidJson'
         '401':
           $ref: '#/components/responses/RestForbidden'
         '403':
@@ -2588,6 +2640,8 @@ paths:
               example:
                 success: true
                 message: "API key updated successfully."
+        '400':
+          $ref: '#/components/responses/RestInvalidJson'
         '401':
           $ref: '#/components/responses/RestForbidden'
         '403':
@@ -2784,6 +2838,12 @@ paths:
                   total: 1
                   page: 1
                   per_page: 20
+          links:
+            DeleteRevokedToken:
+              operationId: deleteRevokedToken
+              description: Delete the first revoked-token record of the page.
+              parameters:
+                id: '$response.body#/data/items/0/id'
         '401':
           $ref: '#/components/responses/RestForbidden'
         '403':
@@ -2876,6 +2936,19 @@ components:
         minimum: 1
       example: 7
   responses:
+    RestInvalidJson:
+      description: |
+        WordPress core error: the `application/json` body is not valid JSON (for example,
+        malformed UTF-8). The plugin is not called.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WpRestError'
+          example:
+            code: rest_invalid_json
+            message: "Invalid JSON body passed."
+            data:
+              status: 400
     RestForbidden:
       description: |
         WordPress core error: the request is not authenticated (no logged-in session with a
@@ -2957,14 +3030,14 @@ components:
       description: |
         JWT passed in the `Authorization` header as `Bearer <token>`.
         The header key name is configurable in plugin General Settings (default: `Authorization`).
-        This scheme must be enabled in the plugin General Settings under "JWT from Header".
+        This scheme must be enabled in the plugin General Settings under **JWT from Header**.
     QueryJWT:
       type: apiKey
       in: query
       name: JWT
       description: |
         JWT passed as a URL query parameter. The parameter name defaults to `JWT` but is
-        configurable in plugin General Settings under "Request Keys".
+        configurable in plugin General Settings under **Request Keys**.
     WordPressSession:
       type: apiKey
       in: cookie
@@ -3108,7 +3181,7 @@ components:
         admin_color:
           type: string
           nullable: true
-          description: Admin colour scheme for the user. Defaults to `'fresh'`.
+          description: Admin color scheme for the user. Defaults to `'fresh'`.
           example: fresh
         use_ssl:
           type: boolean
@@ -3126,7 +3199,6 @@ components:
           description: User's locale. Defaults to empty (inherits site locale).
           example: "en_US"
         user_meta:
-          nullable: true
           description: |
             Optional user meta to set on the new account. Accepted as a JSON-encoded
             object string or as a plain object. Only keys listed in "Allowed user meta"
@@ -3134,6 +3206,7 @@ components:
           example: '{"billing_city":"New York"}'
           oneOf:
             - type: string
+              nullable: true
             - type: object
               additionalProperties:
                 type: string
@@ -3172,7 +3245,7 @@ components:
           description: |
             User plaintext password. Required when `password_hash` is not provided.
             When "Base64-encoded password" is enabled in the plugin settings, supply the
-            password base64-encoded and it will be decoded server-side before verification.
+            password base64-encoded and it is decoded server-side before verification.
         password_hash:
           type: string
           nullable: true
@@ -3190,9 +3263,9 @@ components:
             name defaults to `AUTH_KEY` but is configurable in the plugin's Auth Codes
             settings.
         payload:
-          nullable: true
           oneOf:
             - type: string
+              nullable: true
               example: '{"department":"engineering","region":"eu"}'
             - type: object
               example: {"department": "engineering", "region": "eu"}
@@ -3200,7 +3273,7 @@ components:
             Optional extra claims merged into the JWT payload. Accepted either as a
             JSON-encoded string (form-encoded/query-string requests) or as a native
             JSON object (JSON body requests).
-            Reserved identity claims configured in the plugin's payload settings (e.g.
+            Reserved identity claims configured in the plugin's payload settings (for example,
             `email`, `id`, `username`, `site`, `iss`, `exp`, `iat`) and the custom
             "Login by parameter" claim, if configured, are always stripped from this
             value and set from the authenticated user instead - they cannot be
@@ -3223,9 +3296,9 @@ components:
             name defaults to `AUTH_KEY` but is configurable in the plugin's Auth Codes
             settings.
         payload:
-          nullable: true
           oneOf:
             - type: string
+              nullable: true
               example: '{"department":"engineering","region":"eu"}'
             - type: object
               example: {"department": "engineering", "region": "eu"}
@@ -3233,7 +3306,7 @@ components:
             Optional extra claims merged into the newly issued JWT payload. Accepted
             either as a JSON-encoded string (form-encoded/query-string requests) or as a
             native JSON object (JSON body requests).
-            Reserved identity claims configured in the plugin's payload settings (e.g.
+            Reserved identity claims configured in the plugin's payload settings (for example,
             `email`, `id`, `username`, `site`, `iss`, `exp`, `iat`) and the custom
             "Login by parameter" claim, if configured, are always stripped from this
             value and set from the authenticated user instead - they cannot be
@@ -3246,7 +3319,7 @@ components:
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
           description: |
             The JWT to validate. Optional when the JWT is sent in the `Authorization` header,
-            cookie or session instead.
+            cookie, or session instead.
         AUTH_KEY:
           type: string
           nullable: true
@@ -3263,7 +3336,7 @@ components:
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
           description: |
             The JWT to revoke. It must be valid and not expired. Optional when the JWT is sent
-            in the `Authorization` header, cookie or session instead.
+            in the `Authorization` header, cookie, or session instead.
         AUTH_KEY:
           type: string
           nullable: true
@@ -3320,7 +3393,7 @@ components:
           description: |
             Valid JWT for the user. Used only when "Allow Reset Password with JWT" is enabled
             and `code` is empty; the JWT user email must equal `email`. Can also be sent in the
-            `Authorization` header, cookie or session.
+            `Authorization` header, cookie, or session.
         AUTH_KEY:
           type: string
           nullable: true
@@ -3371,7 +3444,7 @@ components:
           type: object
           description: |
             For the `code` flow, `data` is the provider's token response as returned by the
-            provider (e.g. `access_token`, `id_token`, `expires_in`, `token_type`).
+            provider (for example, `access_token`, `id_token`, `expires_in`, `token_type`).
           properties:
             jwt:
               type: string
@@ -3465,7 +3538,7 @@ components:
           type: string
           description: |
             The 2FA verification code. Accepted formats depend on the user's configured
-            provider: TOTP code (6-digit), email token, or backup code.
+            provider: a TOTP code (6-digit), an email token, or a backup code.
           example: "123456"
     ApiKeyItem:
       type: object

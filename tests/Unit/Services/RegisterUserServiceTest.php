@@ -164,6 +164,40 @@ class RegisterUserServiceTest extends TestCase
                 ],
                 'exceptionMessage' => 'Username must be less than 60 characters.',
             ],
+            'user_login sent as an array' => [
+                'request' => [
+                    'email'      => 'test@test.com',
+                    'password'   => 'test',
+                    'user_login' => [null, null],
+                ],
+                'settings' => [
+                    'allow_register'        => true,
+                    'require_register_auth' => false,
+                ],
+                'exceptionMessage' => 'The user_login parameter must be a text value.',
+            ],
+            'email sent as an array' => [
+                'request' => [
+                    'email'    => ['test@test.com'],
+                    'password' => 'test',
+                ],
+                'settings' => [
+                    'allow_register'        => true,
+                    'require_register_auth' => false,
+                ],
+                'exceptionMessage' => 'Invalid email address.',
+            ],
+            'password sent as an array' => [
+                'request' => [
+                    'email'    => 'test@test.com',
+                    'password' => ['test'],
+                ],
+                'settings' => [
+                    'allow_register'        => true,
+                    'require_register_auth' => false,
+                ],
+                'exceptionMessage' => 'Missing password.',
+            ],
             'test_email_too_long' => [
                 'request' => [
                     'email'    => str_repeat('a', 55) . '@t.com',

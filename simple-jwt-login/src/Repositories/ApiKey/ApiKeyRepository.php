@@ -2,8 +2,12 @@
 
 namespace SimpleJWTLogin\Repositories\ApiKey;
 
+use SimpleJWTLogin\Repositories\PaginationTrait;
+
 class ApiKeyRepository implements ApiKeyRepositoryInterface
 {
+    use PaginationTrait;
+
     const TABLE_SUFFIX = 'simple_jwt_login_api_keys';
 
     /**
@@ -85,7 +89,7 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
      */
     public function findAll($page, $perPage)
     {
-        $offset = ($page - 1) * $perPage;
+        $offset = $this->pageOffset($page, $perPage);
 
         //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared
         $total = (int) $this->wpdb->get_var($this->wpdb->prepare('SELECT COUNT(*) FROM %i', $this->tableName()));
@@ -116,7 +120,7 @@ class ApiKeyRepository implements ApiKeyRepositoryInterface
      */
     public function findByUserId($userId, $page, $perPage)
     {
-        $offset = ($page - 1) * $perPage;
+        $offset = $this->pageOffset($page, $perPage);
 
         $countSql = $this->wpdb->prepare('SELECT COUNT(*) FROM %i WHERE user_id = %d', $this->tableName(), $userId);
         //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared

@@ -1,0 +1,99 @@
+name: Publish OpenAPI to Postman
+
+# On every tag whose openapi/openapi.yaml differs from the previous tag, validates it, converts it to a Postman collection and replaces the content of
+# the existing public collection (same UID, so its public link stays the same).
+
+on:
+  push:
+    tags: '**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: postman-publish
+  cancel-in-progress: false
+
+jobs:
+  # GitHub ignores "paths" filters on tag pushes, so compare with the previous tag here.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      openapi: ${{ steps.diff.outputs.openapi }}
+    steps:
+      - name: ♻️ Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history and tags
+
+      - name: 🔍 Check if the spec changed since the previous tag
+        id: diff
+        run: |
+          openapi=true # manual runs and the first tag always publish
+          if [ "$GITHUB_REF_TYPE" = tag ] && previous=$(git describe --tags --abbrev=0 "$GITHUB_SHA^"); then
+            if git diff --quiet "$previous" "$GITHUB_SHA" -- openapi/openapi.yaml; then
+              openapi=false
+              echo "::notice::openapi.yaml is unchanged since $previous, nothing to publish"
+            fi
+          fi
+          echo "openapi=$openapi" >> "$GITHUB_OUTPUT"
+
+  validate:
+    needs: changes
+    if: ${{ needs.changes.outputs.openapi == 'true' }}
+    uses: ./.github/workflows/openapi-validate.yml
+
+  publish:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: ♻️ Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 🔖 Check the spec version matches the tag
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        run: |
+          SPEC_VERSION=$(grep -m1 -E '^  version: ' openapi/openapi.yaml | awk '{print $2}')
+          if [ "$SPEC_VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::openapi/openapi.yaml info.version is '$SPEC_VERSION', tag is '$GITHUB_REF_NAME'"
+            exit 1
+          fi
+
+      - name: 🔄 Convert OpenAPI to a Postman collection
+        run: |
+          npx --yes openapi-to-postmanv2@6.4.2 \
+            -s openapi/openapi.yaml \
+            -o "$RUNNER_TEMP/collection.json" \
+            -p -O folderStrategy=Tags,parametersResolution=Example
+          jq -e '.item | length > 0' "$RUNNER_TEMP/collection.json" > /dev/null
+
+      - name: 🚀 Update the Postman collection
+        shell: bash # enables pipefail, so a rejected upload fails the step
+        env:
+          POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+          POSTMAN_COLLECTION_UID: ${{ secrets.POSTMAN_COLLECTION_UID }}
+        run: |
+          if [ -z "$POSTMAN_API_KEY" ] || [ -z "$POSTMAN_COLLECTION_UID" ]; then
+            echo "::error::Set the POSTMAN_API_KEY and POSTMAN_COLLECTION_UID repository secrets"
+            exit 1
+          fi
+          # - IDs: random on every conversion, they do not belong to the target collection.
+          # - Saved examples: named by status ("400 Bad Request") instead of the long spec description.
+          jq '{collection: (del(.info._postman_id) | walk(
+            if type != "object" then .
+            elif has("originalRequest") then del(.id) | .name = "\(.code) \(.status | sub(" \\(.*"; ""))"
+            elif has("request") or has("item") then del(.id)
+            else . end
+          ))}' "$RUNNER_TEMP/collection.json" > "$RUNNER_TEMP/body.json"
+          curl --silent --show-error --fail-with-body -X PUT \
+            "https://api.getpostman.com/collections/$POSTMAN_COLLECTION_UID" \
+            -H "X-Api-Key: $POSTMAN_API_KEY" \
+            -H "Content-Type: application/json" \
+            --data @"$RUNNER_TEMP/body.json" \
+            | jq '.error // {uid: .collection.uid, name: .collection.name}'

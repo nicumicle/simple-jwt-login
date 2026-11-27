@@ -134,7 +134,17 @@ class UserPropertiesTest extends TestCase
                     'password' => 1,
                     'password123' => 1,
                 ],
-            ]
+            ],
+            'arrays and objects are dropped' => [
+                'expected' => [
+                    'nickname' => 'nick',
+                ],
+                'request' => [
+                    'user_login' => [null, null],
+                    'display_name' => ['key' => 'value'],
+                    'nickname' => 'nick',
+                ],
+            ],
         ];
     }
 }

@@ -13,11 +13,12 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
     const JWT_PAYLOAD_PARAM_SITE = 'site';
     const JWT_PAYLOAD_PARAM_USERNAME = 'username';
     const JWT_PAYLOAD_PARAM_ISS = 'iss';
+    const JWT_PAYLOAD_PARAM_JTI = 'jti';
 
     /**
      * @var string[]
      */
-    public static $protectedPayloadKeys = array('iat', 'exp', 'email', 'id', 'site', 'username', 'iss');
+    public static $protectedPayloadKeys = array('iat', 'exp', 'email', 'id', 'site', 'username', 'iss', 'jti');
 
     /**
      * @var string[]
@@ -207,6 +208,11 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
      */
     public function isPayloadDataEnabled($name)
     {
+        // jti is on by default: only a saved payload list (admin form, or the v3 migration) can leave it out.
+        if (!isset($this->settings['jwt_payload']) && $name === self::JWT_PAYLOAD_PARAM_JTI) {
+            return true;
+        }
+
         return !empty($this->settings['jwt_payload'])
             && in_array($name, $this->settings['jwt_payload'], true);
     }
@@ -224,6 +230,7 @@ class AuthenticationSettings extends BaseSettings implements SettingsInterface
             self::JWT_PAYLOAD_PARAM_SITE,
             self::JWT_PAYLOAD_PARAM_USERNAME,
             self::JWT_PAYLOAD_PARAM_ISS,
+            self::JWT_PAYLOAD_PARAM_JTI,
         ];
     }
 

@@ -88,7 +88,7 @@ class RefreshTokenService extends AuthenticateService
     private function refreshJwt()
     {
         $refreshToken = isset($this->request['refresh_token']) ? $this->request['refresh_token'] : null;
-        if (empty($refreshToken)) {
+        if (empty($refreshToken) || !is_string($refreshToken)) {
             throw new ValidationException(
                 esc_html(__('Refresh token is missing.', 'simple-jwt-login')),
                 absint(ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH)

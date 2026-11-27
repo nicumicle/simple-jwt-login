@@ -515,6 +515,10 @@ The Simple JWT Login CLI lets you interact with the plugin from the command line
 
 You can check this [GitHub repository](https://github.com/simple-jwt-login/simple-jwt-login-cli) for installation instructions and usage examples.
 
+### Postman
+
+Explore and test the REST endpoints with the public [Postman collection](https://www.postman.com/simple-jwt-login/simple-jwt-login/overview).
+
 
 ## :ledger: Documentation
 

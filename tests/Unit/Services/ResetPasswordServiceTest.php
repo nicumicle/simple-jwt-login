@@ -104,6 +104,16 @@ class ResetPasswordServiceTest extends TestCase
                 ],
                 'exceptionMessage' => 'Invalid email parameter.'
             ],
+            'email sent as an array for reset password' => [
+                'settings'  => [
+                    'allow_reset_password'              => 1,
+                    'reset_password_requires_auth_code' => 0,
+                ],
+                'request'   => [
+                    'email' => ['email@email.com'],
+                ],
+                'exceptionMessage' => 'Invalid email parameter.'
+            ],
         ];
     }
 
@@ -366,6 +376,18 @@ class ResetPasswordServiceTest extends TestCase
                 ],
                 'request'   => [
                     'email'        => '---',
+                    'code'         => '123',
+                    'new_password' => 'abc',
+                ],
+                'exceptionMessage' => 'Invalid email parameter.'
+            ],
+            'email sent as an array for change password' => [
+                'settings'  => [
+                    'allow_reset_password'              => 1,
+                    'reset_password_requires_auth_code' => 0,
+                ],
+                'request'   => [
+                    'email'        => ['email@email.com'],
                     'code'         => '123',
                     'new_password' => 'abc',
                 ],

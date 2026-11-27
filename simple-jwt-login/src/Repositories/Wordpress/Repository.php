@@ -25,7 +25,7 @@ interface Repository
     /**
      * @param WP_User $user
      *
-     * @return mixed
+     * @return int
      */
     public function getUserIdFromUser($user);
 

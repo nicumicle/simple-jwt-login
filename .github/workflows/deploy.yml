@@ -18,7 +18,7 @@ jobs:
       - name: ♻️ Checkout repository
         uses: actions/checkout@v4
       - name: 🦺 Validate Deploy to WordPress.org
-        uses: simple-jwt-login/deployer@main
+        uses: simple-jwt-login/deployer@1.0.1
         with:
           plugin_folder: "/simple-jwt-login"
           slug: ${{ env.plugin_slug }}
@@ -35,7 +35,7 @@ jobs:
       - name: ♻️ Checkout repository
         uses: actions/checkout@v4
       - name: 🚀 Deploy ${{ github.ref_name }} to WordPress.org
-        uses: simple-jwt-login/deployer@main
+        uses: simple-jwt-login/deployer@1.0.1
         with:
           plugin_folder: "/simple-jwt-login"
           slug: ${{ env.plugin_slug }}

@@ -100,6 +100,33 @@ class RefreshTokenServiceTest extends TestCase
         $refreshService->makeAction();
     }
 
+    public function testRefreshTokenSentAsAnArrayIsRejected()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Refresh token is missing.');
+        $this->expectExceptionCode(ErrorCodes::ERR_JWT_NOT_FOUND_ON_AUTH_REFRESH);
+
+        $this->wordPressDataMock->method('getOptionFromDatabase')
+            ->willReturn(json_encode([
+                'allow_authentication'    => true,
+                'allow_refresh_token'     => true,
+                'auth_requires_auth_code' => false,
+                'decryption_key'          => 'test-secret',
+            ]));
+
+        $refreshService = (new RefreshTokenService())
+            ->withRequest(['refresh_token' => [null, null]])
+            ->withCookies([])
+            ->withServerHelper(new ServerHelper([
+                'REQUEST_METHOD' => 'POST',
+                'REMOTE_ADDR' => '127.0.0.1',
+            ]))
+            ->withSettings(new SimpleJWTLoginSettings($this->wordPressDataMock))
+            ->withRefreshTokenRepository($this->refreshTokenRepoMock)
+            ->withRevokedTokenRepository($this->revokedTokenRepoMock);
+        $refreshService->makeAction();
+    }
+
     public function testUserNotFound()
     {
         $this->expectException(\Exception::class);

@@ -1,0 +1,28 @@
+name: Validate OpenAPI
+
+# Runs on pull requests that change the spec.
+
+on:
+  pull_request:
+    branches: [ v3 ]
+    paths:
+      - 'openapi/**'
+      - .github/workflows/openapi-validate.yml
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ♻️ Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: ✅ Validate the OpenAPI spec
+        run: npx --yes @redocly/cli@2.83.0 lint --extends=spec openapi/openapi.yaml

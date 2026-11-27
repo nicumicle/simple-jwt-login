@@ -1,0 +1,69 @@
+name: Sync OpenAPI to the website
+
+# On every merge into v3 that changes the spec, opens (or updates) a pull request on
+# simple-jwt-login/website with the new openapi.yaml. The website generates its API pages at build time.
+#
+
+on:
+  push:
+    branches: [ v3 ]
+    paths:
+      - openapi/openapi.yaml
+      - .github/workflows/sync-website.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: website-openapi-sync-v3
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🔑 Check the website token is set
+        env:
+          WEBSITE_TOKEN: ${{ secrets.WEBSITE_TOKEN }}
+        run: |
+          if [ -z "$WEBSITE_TOKEN" ]; then
+            echo "::error::Set the WEBSITE_TOKEN repository secret"
+            exit 1
+          fi
+
+      - name: ♻️ Checkout plugin (always v3, so a re-run cannot sync an older spec)
+        uses: actions/checkout@v4
+        with:
+          ref: v3
+
+      - name: ♻️ Checkout website
+        uses: actions/checkout@v4
+        with:
+          repository: simple-jwt-login/website
+          ref: main
+          token: ${{ secrets.WEBSITE_TOKEN }}
+          path: website
+          persist-credentials: false
+
+      - name: 🔄 Copy the spec
+        id: generate
+        run: |
+          echo "version=$(grep -m1 -E '^  version: ' openapi/openapi.yaml | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+          cp openapi/openapi.yaml website/static/openapi/v3.yaml
+
+      - name: 🚀 Open or update the pull request
+        uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8.1.3
+        with:
+          token: ${{ secrets.WEBSITE_TOKEN }}
+          path: website
+          base: main
+          branch: openapi-sync-v3
+          delete-branch: true
+          add-paths: static/openapi/v3.yaml
+          commit-message: "docs: sync v3 OpenAPI ${{ steps.generate.outputs.version }} (${{ steps.generate.outputs.sha }})"
+          title: "docs: sync v3 OpenAPI ${{ steps.generate.outputs.version }}"
+          body: |
+            Generated from `openapi/openapi.yaml` on the v3 branch of nicumicle/simple-jwt-login at ${{ steps.generate.outputs.sha }}.
+            Do not edit the spec here: change it in the plugin repository (v3 branch).

@@ -1,4 +1,22 @@
-openapi: 3.1.0
+openapi: 3.0.1
+servers:
+  - url: "{protocol}://{domain}/{APIPath}/{simplejwtloginprefix}"
+    variables:
+      protocol:
+        enum:
+          - 'http'
+          - 'https'
+        default: 'http'
+      domain:
+        default: 'localhost'
+        description: Website Domain
+      APIPath:
+        enum:
+          - "wp-json"
+          - "?rest_route="
+        default: 'wp-json'
+      simplejwtloginprefix:
+        default: "simple-jwt-login/v1"
 info:
   title: Simple-JWT-Login
   description: |
@@ -22,18 +40,33 @@ info:
     And that allows cross-domain communication from the browser.
 
     All responses have a wildcard same-origin which makes them public and accessible to everyone, including any code on any site.
+  contact:
+    email: contact@simplejwtlogin.com
   license:
     name: GPL 3.0
     url: https://github.com/nicumicle/simple-jwt-login/blob/v3/LICENSE
-  version: 3.6.5
+  version: 3.6.9
   x-logo:
     url: https://raw.githubusercontent.com/nicumicle/simple-jwt-login/refs/heads/v3/wordpress.org/assets/icon-128x128.png
     altText: Simple-Jwt-Login Logo
 externalDocs:
   description: Find out more about Simple-JWT-Login
   url: https://simplejwtlogin.com/docs
+tags:
+  - name: login_user
+    description: Log a user in to WordPress with a JWT and redirect the browser.
+  - name: register_user
+    description: Register a new WordPress user.
+  - name: delete_user
+    description: Delete the WordPress user identified by a JWT.
+  - name: reset_password
+    description: Request a reset code by email, then set a new password with that code or a JWT.
+  - name: authenticate_user
+    description: Get, refresh, validate, and revoke JWTs.
+  - name: oauth
+    description: Sign in with Google. Google must be enabled in the plugin settings.
 paths:
-  /simple-jwt-login/v1/autologin:
+  /autologin:
     get:
       tags:
         - login_user
@@ -48,7 +81,7 @@ paths:
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
           schema:
             type: string
-        - name: AUTH_CODE
+        - name: AUTH_KEY
           in: query
           example: MY_SUPER_SECRET_AUTH_CODE
           description: Required if "Auto-Login Requires Auth Code" is enabled in the plugin settings.
@@ -72,7 +105,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/400'
-  /simple-jwt-login/v1/users:
+        '401':
+          description: The JWT is expired, revoked, or not valid yet.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400'
+  /users:
     post:
       tags:
         - register_user
@@ -97,11 +136,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/400'
-                examples:
-                  - success: false
-                    data:
-                      message: Missing email or passowrd
-                      errorCode: 35
+              example:
+                success: false
+                data:
+                  message: Missing email or password.
+                  errorCode: 35
     delete:
       tags:
         - delete_user
@@ -115,7 +154,7 @@ paths:
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
           schema:
             type: string
-        - name: AUTH_CODE
+        - name: AUTH_KEY
           in: query
           example: MY_SUPER_SECRET_AUTH_CODE
           description: Required when "Delete User Requires Auth Code" is enabled
@@ -134,7 +173,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/400'
-  /simple-jwt-login/v1/users/reset_password:
+        '401':
+          description: The JWT is expired, revoked, or not valid yet.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400'
+  /register:
+    post:
+      tags:
+        - register_user
+      summary: Register user (old route)
+      description: Same as `POST /users`. Use `POST /users` instead.
+      operationId: registerUserOld
+      deprecated: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/create-user-body'
+        required: true
+      responses:
+        '200':
+          description: User Registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/create-user-response'
+        '400':
+          description: Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400'
+              example:
+                success: false
+                data:
+                  message: Missing email or password.
+                  errorCode: 35
+  /user/reset_password:
     post:
       tags:
         - reset_password
@@ -185,7 +262,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/400'
-  /simple-jwt-login/v1/auth:
+        '401':
+          description: The JWT is expired, revoked, or not valid yet.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400'
+  /auth:
     post:
       tags:
         - authenticate_user
@@ -211,7 +294,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/400'
-  /simple-jwt-login/v1/auth/refresh:
+  /auth/refresh:
     post:
       tags:
         - authenticate_user
@@ -237,7 +320,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/400'
-  /simple-jwt-login/v1/auth/validate:
+        '401':
+          description: The JWT is revoked or not valid yet.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400'
+  /auth/validate:
     get:
       tags:
         - authenticate_user
@@ -249,12 +338,6 @@ paths:
           description: JWT
           required: true
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
-          schema:
-            type: string
-        - name: AUTH_CODE
-          in: query
-          example: MY_SUPER_SECRET_AUTH_CODE
-          description: Required when "Authentication Requires Auth Code" is enabled
           schema:
             type: string
       responses:
@@ -270,7 +353,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/400'
-  /simple-jwt-login/v1/auth/revoke:
+        '401':
+          description: The JWT is expired, revoked, or not valid yet.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400'
+    post:
+      tags:
+        - authenticate_user
+      summary: Validate JWT (POST)
+      operationId: validateJWTPost
+      requestBody:
+        description: Validate a JWT and get the details of its user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/validate-token-body'
+        required: true
+      responses:
+        '200':
+          description: Validate token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/validate-token-response'
+        '400':
+          description: Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400'
+        '401':
+          description: The JWT is expired, revoked, or not valid yet.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400'
+  /auth/revoke:
     post:
       tags:
         - authenticate_user
@@ -291,7 +411,68 @@ paths:
               schema:
                 $ref: '#/components/schemas/revoke-token-response'
         '400':
-          description: Error
+          description: Error. Also returned when the JWT was already revoked.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400'
+        '401':
+          description: The JWT is expired or not valid yet.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400'
+  /oauth/token:
+    get:
+      tags:
+        - oauth
+      summary: OAuth callback
+      description: Google redirects the browser here with an authorization code. The plugin exchanges the code, logs the user in to WordPress and redirects. If the sign-in fails, the browser is redirected to the WordPress login page.
+      operationId: oauthTokenGet
+      parameters:
+        - name: provider
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - google
+        - name: code
+          in: query
+          description: Authorization code received from Google.
+          required: true
+          schema:
+            type: string
+      responses:
+        '302':
+          description: Redirect to the WordPress dashboard, or to the login page if the sign-in failed.
+        '400':
+          description: Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400'
+    post:
+      tags:
+        - oauth
+      summary: Exchange a Google code or ID token
+      description: Send `code` to get the token response from Google, or `id_token` to get a WordPress JWT. If both are sent, `code` is used.
+      operationId: oauthTokenPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/oauth-token-body'
+        required: true
+      responses:
+        '200':
+          description: The token response from Google (for `code`), or a WordPress JWT (for `id_token`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/oauth-token-response'
+        '400':
+          description: Error.
           content:
             application/json:
               schema:
@@ -371,7 +552,7 @@ components:
         comment_shortcuts:
           type: string
           description: Whether to enable comment moderation keyboard shortcuts for the user. Accepts 'true' or 'false' as a string literal, not boolean. Default 'false'.
-          example: falsec
+          example: 'false'
         admin_color:
           type: string
           description: Admin color scheme for the user. Default 'fresh'.
@@ -486,7 +667,7 @@ components:
         JWT:
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
           description: To reset the password with a JWT, enable **Allow Reset password with JWT**. If a JWT is provided, the `code` parameter is no longer required.
-        AUTH_CODE:
+        AUTH_KEY:
           type: string
           example: MY_SUPER_SECRET_AUTH_CODE
           description: Required when "AuthenticationReset Password Requires Auth Code" is enabled
@@ -505,7 +686,7 @@ components:
         email:
           type: string
           example: contact@simplejwtlogin.com
-        AUTH_CODE:
+        AUTH_KEY:
           type: string
           example: MY_SUPER_SECRET_AUTH_CODE
           description: Required when "AuthenticationReset Password Requires Auth Code" is enabled
@@ -539,14 +720,13 @@ components:
         password_hash:
           type: string
           description: User hashed password from Database. Required when password is not provided.
-        AUTH_CODE:
+        AUTH_KEY:
           type: string
           example: MY_SUPER_SECRET_AUTH_CODE
           description: Required when "Authentication Requires Auth Code" is enabled
         payload:
-          type:
-            - string
-            - 'null'
+          type: string
+          nullable: true
           example: '{"department":"engineering","region":"eu"}'
           description: |
             Optional extra claims to merge into the JWT payload, as a JSON-encoded
@@ -573,8 +753,8 @@ components:
         JWT:
           type: string
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
-          description: Expired JWT.
-        AUTH_CODE:
+          description: The JWT to refresh. It can be expired, within the refresh time configured in the plugin settings.
+        AUTH_KEY:
           type: string
           example: MY_SUPER_SECRET_AUTH_CODE
           description: Required when "Authentication Requires Auth Code" is enabled
@@ -594,6 +774,14 @@ components:
               type: string
               description: New refreshed JWT
               example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+    validate-token-body:
+      type: object
+      properties:
+        JWT:
+          type: string
+          description: The JWT to validate.
+      required:
+        - JWT
     validate-token-response:
       type: object
       properties:
@@ -679,8 +867,8 @@ components:
         JWT:
           type: string
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
-          description: Expired JWT.
-        AUTH_CODE:
+          description: The JWT to revoke. It must not be expired.
+        AUTH_KEY:
           type: string
           example: MY_SUPER_SECRET_AUTH_CODE
           description: Required when "Authentication Requires Auth Code" is enabled
@@ -693,10 +881,43 @@ components:
           type: boolean
           description: Action status
           example: true
+        message:
+          type: string
+          example: Token was revoked.
         data:
           type: object
           properties:
             jwt:
-              type: string
+              type: array
               description: Revoked token
-              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+              items:
+                type: string
+                example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+    oauth-token-body:
+      type: object
+      properties:
+        provider:
+          type: string
+          enum:
+            - google
+        code:
+          type: string
+          description: Google authorization code. Required when `id_token` is not provided.
+        id_token:
+          type: string
+          description: Google ID token issued for this website. Required when `code` is not provided.
+      required:
+        - provider
+    oauth-token-response:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          description: Contains `jwt` for an `id_token` request, or the fields returned by Google for a `code` request.
+          properties:
+            jwt:
+              type: string
+              description: WordPress JWT

@@ -807,6 +807,8 @@ paths:
                     success: true
                     data:
                       message: "The Code has been saved into the database."
+        '400':
+          $ref: '#/components/responses/RestInvalidJson'
         '401':
           description: |
             Unauthorized. The provided auth code is wrong (`error_code` 27).
@@ -2576,6 +2578,8 @@ paths:
               description: Delete the key that was just created.
               parameters:
                 id: '$response.body#/data/id'
+        '400':
+          $ref: '#/components/responses/RestInvalidJson'
         '401':
           $ref: '#/components/responses/RestForbidden'
         '403':
@@ -2636,6 +2640,8 @@ paths:
               example:
                 success: true
                 message: "API key updated successfully."
+        '400':
+          $ref: '#/components/responses/RestInvalidJson'
         '401':
           $ref: '#/components/responses/RestForbidden'
         '403':
@@ -2930,6 +2936,19 @@ components:
         minimum: 1
       example: 7
   responses:
+    RestInvalidJson:
+      description: |
+        WordPress core error: the `application/json` body is not valid JSON (for example,
+        malformed UTF-8). The plugin is not called.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WpRestError'
+          example:
+            code: rest_invalid_json
+            message: "Invalid JSON body passed."
+            data:
+              status: 400
     RestForbidden:
       description: |
         WordPress core error: the request is not authenticated (no logged-in session with a

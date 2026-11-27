@@ -112,7 +112,7 @@ abstract class BaseApiKeyService extends BaseService implements ApiKeyServiceInt
         if (empty($this->request['expires_at'])) {
             return null;
         }
-        $value = trim((string) $this->request['expires_at']);
+        $value = is_scalar($this->request['expires_at']) ? trim((string) $this->request['expires_at']) : '';
         $parts = [];
         $pattern = '/^(\d{4})-(\d{2})-(\d{2})(?:[ T]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?)?(?:Z|[+-]\d{2}:?\d{2})?$/';
         if (preg_match($pattern, $value, $parts) === 1
@@ -158,7 +158,9 @@ abstract class BaseApiKeyService extends BaseService implements ApiKeyServiceInt
      */
     protected function requireName()
     {
-        $name = trim((string) (isset($this->request['name']) ? $this->request['name'] : ''));
+        $name = isset($this->request['name']) && is_scalar($this->request['name'])
+            ? trim((string) $this->request['name'])
+            : '';
         if ($name === '') {
             throw new Exception(
                 esc_html(__('API key name is required.', 'simple-jwt-login')),
@@ -183,7 +185,9 @@ abstract class BaseApiKeyService extends BaseService implements ApiKeyServiceInt
         }
 
         foreach ((array) $permissions as $permission) {
-            if (!ApiKeyPermissions::isValid((string) $permission)) {
+            // A nested array (for example permissions[0][]=read) is not a permission name.
+            $permission = is_scalar($permission) ? (string) $permission : '';
+            if (!ApiKeyPermissions::isValid($permission)) {
                 throw new Exception(
                     // translators: %s = permission name
                     esc_html(sprintf(__('Invalid permission: %1$s', 'simple-jwt-login'), $permission)),

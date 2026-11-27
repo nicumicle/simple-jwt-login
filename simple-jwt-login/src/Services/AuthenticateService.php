@@ -595,7 +595,7 @@ class AuthenticateService extends BaseService implements ServiceInterface
             }
         }
 
-        return md5(uniqid((string) mt_rand(), true));
+        return md5(uniqid((string) wp_rand(), true));
     }
 
     /**

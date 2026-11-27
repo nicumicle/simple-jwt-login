@@ -409,6 +409,18 @@ if (!function_exists('wp_generate_password')) {
     }
 }
 
+if (!function_exists('wp_rand')) {
+    /**
+     * @param int $min
+     * @param int $max
+     * @return int
+     */
+    function wp_rand($min = 0, $max = 0)
+    {
+        return 0;
+    }
+}
+
 if (!function_exists('role_exists')) {
     /**
      * @param string $role

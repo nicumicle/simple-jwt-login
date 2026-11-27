@@ -1,0 +1,28 @@
+name: OpenAPI Tests
+
+# Checks the live REST responses against openapi/openapi.yaml (Schemathesis), only when the
+# spec or its test harness changes. Reuses the feature tests' WordPress setup.
+
+on:
+  push:
+    branches: [ master, v3 ]
+    paths:
+      - 'openapi/**'
+      - 'tests/OpenApi/**'
+      - .github/workflows/openapi_tests.yml
+  pull_request:
+    branches: [ master, v3 ]
+    paths:
+      - 'openapi/**'
+      - 'tests/OpenApi/**'
+      - .github/workflows/openapi_tests.yml
+
+permissions:
+  contents: read
+
+jobs:
+  openapi:
+    name: OpenAPI Tests
+    uses: ./.github/workflows/feature_tests.yml
+    with:
+      openapi: true

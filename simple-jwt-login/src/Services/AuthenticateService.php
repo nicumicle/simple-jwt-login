@@ -102,6 +102,9 @@ class AuthenticateService extends BaseService implements ServiceInterface
                 case AuthenticationSettings::JWT_PAYLOAD_PARAM_ISS:
                     $payload[$parameter] = $authSettings->getAuthIss();
                     break;
+                case AuthenticationSettings::JWT_PAYLOAD_PARAM_JTI:
+                    $payload[$parameter] = self::generateJti();
+                    break;
             }
         }
         
@@ -574,6 +577,25 @@ class AuthenticateService extends BaseService implements ServiceInterface
         $decoded = base64_decode((string) $value, true);
 
         return $decoded === false ? null : $decoded;
+    }
+
+    /**
+     * Unique, random JWT ID: two tokens issued in the same second for the same user still differ.
+     *
+     * @return string
+     */
+    public static function generateJti()
+    {
+        // openssl_random_pseudo_bytes() exists since PHP 5.3 (random_bytes() needs 7.0), but the
+        // OpenSSL extension can be missing: a jti needs to be unique, not secret, so fall back.
+        if (function_exists('openssl_random_pseudo_bytes')) {
+            $bytes = openssl_random_pseudo_bytes(16);
+            if ($bytes !== false) {
+                return bin2hex($bytes);
+            }
+        }
+
+        return md5(uniqid((string) mt_rand(), true));
     }
 
     /**

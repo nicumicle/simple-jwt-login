@@ -45,6 +45,9 @@ class SettingsMigrationService
         if ($fromVersion === 1) {
             return new V1ToV2Migration();
         }
+        if ($fromVersion === 2) {
+            return new V2ToV3Migration();
+        }
 
         throw new Exception(
             esc_html(sprintf('No settings migration found from version %d.', $fromVersion))

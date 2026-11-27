@@ -33,7 +33,7 @@ class OAuthService extends BaseService implements ServiceInterface
      */
     private function resolveProvider()
     {
-        $raw = isset($this->request['provider'])
+        $raw = isset($this->request['provider']) && is_string($this->request['provider'])
             ? strtolower($this->request['provider'])
             : '';
 

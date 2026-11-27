@@ -269,16 +269,24 @@ class RegisterUserService extends BaseService implements ServiceInterface
             );
         }
 
-        if (empty($this->request['password']) && !$registerSettings->isRandomPasswordForCreateUserEnabled()) {
+        $password = isset($this->request['password']) ? $this->request['password'] : null;
+        if ((empty($password) || !is_scalar($password)) && !$registerSettings->isRandomPasswordForCreateUserEnabled()) {
             throw new ValidationException(
                 esc_html(__('Missing password.', 'simple-jwt-login')),
                 absint(ErrorCodes::ERR_REGISTER_MISSING_EMAIL_OR_PASSWORD)
             );
         }
 
-        if (!$this->wordPressData->isEmail($this->request['email'])) {
+        if (!is_string($this->request['email']) || !$this->wordPressData->isEmail($this->request['email'])) {
             throw new ValidationException(
                 esc_html(__('Invalid email address.', 'simple-jwt-login')),
+                absint(ErrorCodes::ERR_REGISTER_INVALID_EMAIL_ADDRESS)
+            );
+        }
+
+        if (isset($this->request['user_login']) && !is_scalar($this->request['user_login'])) {
+            throw new ValidationException(
+                esc_html(__('The user_login parameter must be a text value.', 'simple-jwt-login')),
                 absint(ErrorCodes::ERR_REGISTER_INVALID_EMAIL_ADDRESS)
             );
         }
@@ -348,6 +356,7 @@ class RegisterUserService extends BaseService implements ServiceInterface
             AuthenticationSettings::JWT_PAYLOAD_PARAM_USERNAME => $username,
             AuthenticationSettings::JWT_PAYLOAD_PARAM_IAT      => time(),
             AuthenticationSettings::JWT_PAYLOAD_PARAM_ISS      => $iss,
+            AuthenticationSettings::JWT_PAYLOAD_PARAM_JTI      => AuthenticateService::generateJti(),
         ], $authSettings);
     }
 }

@@ -135,7 +135,13 @@ jQuery(document).ready(
             $payloadCheckboxes.prop('checked', $(this).is(':checked'));
         });
 
+        function syncJtiAlert() {
+            $('#simple-jwt-login #jwt_payload_jti_alert').toggle(!$('#simple-jwt-login #jwt_payload_jti').is(':checked'));
+        }
+
         $payloadCheckboxes.on('change', syncCheckAll);
+        $payloadCheckboxes.on('change', syncJtiAlert);
+        $checkAll.on('change', syncJtiAlert);
 
         syncCheckAll();
 

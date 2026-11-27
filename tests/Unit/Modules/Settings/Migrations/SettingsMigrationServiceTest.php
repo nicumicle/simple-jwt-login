@@ -30,9 +30,19 @@ class SettingsMigrationServiceTest extends TestCase
 
         $result = SettingsMigrationService::migrate($v2Settings);
 
-        $this->assertSame(2, $result['_schema_version']);
+        $this->assertSame(SimpleJWTLoginSettings::SCHEMA_VERSION, $result['_schema_version']);
         $this->assertSame('1', $result['login']['enabled']);
         $this->assertSame(60, $result['authorization']['ttl']);
+    }
+
+    public function testCurrentVersionDataIsNotMigratedAgain(): void
+    {
+        $current = [
+            '_schema_version' => SimpleJWTLoginSettings::SCHEMA_VERSION,
+            'authorization'   => ['jwt_payload' => ['exp']],
+        ];
+
+        $this->assertSame($current, SettingsMigrationService::migrate($current));
     }
 
     public function testEmptyArrayProducesV2Structure(): void

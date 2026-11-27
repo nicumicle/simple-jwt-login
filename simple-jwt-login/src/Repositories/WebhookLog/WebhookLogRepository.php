@@ -3,10 +3,12 @@
 namespace SimpleJWTLogin\Repositories\WebhookLog;
 
 use SimpleJWTLogin\Repositories\DateFilterTrait;
+use SimpleJWTLogin\Repositories\PaginationTrait;
 
 class WebhookLogRepository implements Repository
 {
     use DateFilterTrait;
+    use PaginationTrait;
 
     const TABLE_SUFFIX = 'simple_jwt_login_webhook_logs';
 
@@ -93,7 +95,7 @@ class WebhookLogRepository implements Repository
 
         $whereClause = empty($where) ? '' : 'WHERE ' . implode(' AND ', $where);
 
-        $offset = ($page - 1) * $perPage;
+        $offset = $this->pageOffset($page, $perPage);
 
         $countSql    = 'SELECT COUNT(*) FROM %i ' . $whereClause;
         $dataSql     = 'SELECT * FROM %i ' . $whereClause . ' ORDER BY created_at DESC LIMIT %d OFFSET %d';

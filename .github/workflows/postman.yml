@@ -2,12 +2,6 @@ name: Publish OpenAPI to Postman
 
 # On every tag whose openapi/openapi.yaml differs from the previous tag, validates it, converts it to a Postman collection and replaces the content of
 # the existing public collection (same UID, so its public link stays the same).
-#
-# One-time setup:
-#   1. In Postman, create the collection in a public workspace (or import openapi.yaml once).
-#   2. Repository secrets:
-#      - POSTMAN_API_KEY: a Postman API key with write access to that workspace.
-#      - POSTMAN_COLLECTION_UID: the collection UID (collection > Info > ID, "<owner>-<uuid>").
 
 on:
   push:

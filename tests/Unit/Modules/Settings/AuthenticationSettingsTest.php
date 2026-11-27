@@ -82,9 +82,13 @@ class AuthenticationSettingsTest extends TestCase
             AuthenticationSettings::JWT_PAYLOAD_PARAM_SITE,
             AuthenticationSettings::JWT_PAYLOAD_PARAM_USERNAME,
             AuthenticationSettings::JWT_PAYLOAD_PARAM_ISS,
+            AuthenticationSettings::JWT_PAYLOAD_PARAM_JTI,
         ];
 
-        $cases = ['no payload set returns false' => [[], 'email', false]];
+        $cases = [
+            'no payload set returns false' => [[], 'email', false],
+            'no payload set enables jti by default' => [[], 'jti', true],
+        ];
         foreach ($allParams as $param) {
             $cases["$param present in payload"] = [['jwt_payload' => $allParams], $param, true];
             $cases["$param absent from payload"] = [['jwt_payload' => []], $param, false];
@@ -108,6 +112,7 @@ class AuthenticationSettingsTest extends TestCase
                 AuthenticationSettings::JWT_PAYLOAD_PARAM_SITE,
                 AuthenticationSettings::JWT_PAYLOAD_PARAM_USERNAME,
                 AuthenticationSettings::JWT_PAYLOAD_PARAM_ISS,
+                AuthenticationSettings::JWT_PAYLOAD_PARAM_JTI,
             ],
             $params
         );

@@ -142,6 +142,16 @@ jobs:
             # Run as www-data: PHP only opens sess_* files owned by its own uid, and the session JWT
             # tests write them for Apache (www-data) to read.
             sudo -u www-data env SJL_SESSION_DIR=/var/lib/sjl-sessions "$(command -v php)" vendor/bin/phpunit --testsuite "Feature" --testdox --no-coverage
+      -   name: "🔧 Setup uv"
+          if: matrix.php_version == '8.4'
+          uses: astral-sh/setup-uv@v6
+      -   name: "📜 Check responses against the OpenAPI spec"
+          if: matrix.php_version == '8.4'
+          # After the feature tests: it replaces the plugin settings. wp-config.php belongs to www-data.
+          env:
+            SJL_API_URL: http://${{ env.SITE_URL }}/wp-json/simple-jwt-login/v1
+            WP_CLI: sudo -u www-data wp --path=/var/www/html
+          run: bash tests/OpenApi/run.sh
       -   name: "🩻 Server logs"
           if: failure()
           run: |

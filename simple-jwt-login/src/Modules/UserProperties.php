@@ -149,7 +149,8 @@ class UserProperties
                 && $requestParameters[$key]['updateable'] === false) {
                 continue;
             }
-            if (isset($request[$key])) {
+            // Every user property is a string or a bool: arrays would reach WordPress functions as-is.
+            if (isset($request[$key]) && is_scalar($request[$key])) {
                 $return[$key] = $request[$key];
             }
         }

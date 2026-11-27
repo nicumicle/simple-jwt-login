@@ -1,5 +1,5 @@
 {
-    "_schema_version": 2,
+    "_schema_version": 3,
     "general": {
         "decryption_key": "fixture-secret",
         "route_namespace": "simple-jwt-login/v1/",
@@ -63,7 +63,8 @@
             "id",
             "iss",
             "site",
-            "username"
+            "username",
+            "jti"
         ],
         "ttl": "60",
         "refresh_ttl": "20160",

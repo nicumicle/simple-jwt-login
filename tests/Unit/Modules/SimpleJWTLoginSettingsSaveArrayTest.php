@@ -18,7 +18,7 @@ class SimpleJWTLoginSettingsSaveArrayTest extends TestCase
     private function storedSettings()
     {
         return [
-            '_schema_version' => 2,
+            '_schema_version' => SimpleJWTLoginSettings::SCHEMA_VERSION,
             'general' => [
                 'route_namespace' => 'simple-jwt-login/v1/',
                 'request_jwt_url' => 1,

@@ -3,10 +3,12 @@
 namespace SimpleJWTLogin\Repositories\AuditLog;
 
 use SimpleJWTLogin\Repositories\DateFilterTrait;
+use SimpleJWTLogin\Repositories\PaginationTrait;
 
 class AuditLogRepository implements Repository
 {
     use DateFilterTrait;
+    use PaginationTrait;
 
     const TABLE_SUFFIX = 'simple_jwt_login_audit_logs';
 
@@ -117,7 +119,7 @@ class AuditLogRepository implements Repository
         $whereClause = empty($where) ? '' : 'WHERE ' . implode(' AND ', $where);
         $fromClause  = 'FROM %i logs LEFT JOIN %i users ON logs.user_id = users.ID ' . $whereClause;
 
-        $offset = ($page - 1) * $perPage;
+        $offset = $this->pageOffset($page, $perPage);
 
         $countSql    = 'SELECT COUNT(*) ' . $fromClause;
         $dataSql     = 'SELECT logs.*, users.user_email AS user_email ' . $fromClause

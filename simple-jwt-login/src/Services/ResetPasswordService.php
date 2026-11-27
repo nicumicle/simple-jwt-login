@@ -163,7 +163,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
                 absint(ErrorCodes::ERR_MISSING_CODE_FOR_CHANGE_PASSWORD)
             );
         }
-        if (!$this->wordPressData->isEmail($this->request['email'])) {
+        if (!is_string($this->request['email']) || !$this->wordPressData->isEmail($this->request['email'])) {
             throw new ValidationException(
                 esc_html(__('Invalid email parameter.', 'simple-jwt-login')),
                 absint(ErrorCodes::ERR_INVALID_EMAIL_FOR_CHANGE_PASSWORD)
@@ -324,7 +324,7 @@ class ResetPasswordService extends BaseService implements ServiceInterface
                 absint(ErrorCodes::ERR_MISSING_NEW_PASSWORD_FOR_RESET_PASSWORD)
             );
         }
-        if (!$this->wordPressData->isEmail($this->request['email'])) {
+        if (!is_string($this->request['email']) || !$this->wordPressData->isEmail($this->request['email'])) {
             throw new ValidationException(
                 esc_html(__('Invalid email parameter.', 'simple-jwt-login')),
                 absint(ErrorCodes::ERR_INVALID_EMAIL_FOR_RESET_PASSWORD)

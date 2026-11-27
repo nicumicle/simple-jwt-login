@@ -1,10 +1,8 @@
 name: Sync OpenAPI to the website
 
 # On every merge into master that changes the spec, opens (or updates) a pull request on
-# simple-jwt-login/website with the new openapi.yaml and the API pages generated from it.
+# simple-jwt-login/website with the new openapi.yaml. The website generates its API pages at build time.
 #
-# One-time setup: repository secret WEBSITE_TOKEN, a fine-grained token limited to
-# simple-jwt-login/website with "Contents" and "Pull requests" read and write access.
 
 on:
   push:
@@ -39,11 +37,6 @@ jobs:
         with:
           ref: master
 
-      - name: 🔧 Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
       - name: ♻️ Checkout website
         uses: actions/checkout@v4
         with:
@@ -51,17 +44,14 @@ jobs:
           ref: main
           token: ${{ secrets.WEBSITE_TOKEN }}
           path: website
-          persist-credentials: false # dependency install scripts must not read the token
+          persist-credentials: false
 
-      - name: 🔄 Copy the spec and regenerate the API pages
+      - name: 🔄 Copy the spec
         id: generate
         run: |
           echo "version=$(grep -m1 -E '^  version: ' openapi/openapi.yaml | awk '{print $2}')" >> "$GITHUB_OUTPUT"
           echo "sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
           cp openapi/openapi.yaml website/static/openapi/v4.yaml
-          cd website
-          yarn install --frozen-lockfile
-          yarn gen-api-v4
 
       - name: 🚀 Open or update the pull request
         uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8.1.3
@@ -71,9 +61,7 @@ jobs:
           base: main
           branch: openapi-sync
           delete-branch: true
-          add-paths: |
-            static/openapi/v4.yaml
-            api/v4
+          add-paths: static/openapi/v4.yaml
           commit-message: "docs: sync OpenAPI ${{ steps.generate.outputs.version }} (${{ steps.generate.outputs.sha }})"
           title: "docs: sync OpenAPI ${{ steps.generate.outputs.version }}"
           body: |

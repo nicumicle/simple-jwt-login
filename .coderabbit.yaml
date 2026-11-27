@@ -19,7 +19,8 @@ reviews:
   suggested_labels: true
 
   auto_review:
-    enabled: true
+    # manual only: comment "@coderabbitai review" on the PR to start a review
+    enabled: false
     drafts: false
     # default branch (master) is always reviewed
     base_branches:

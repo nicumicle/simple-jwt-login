@@ -3,6 +3,7 @@
 namespace SimpleJWTLogin\Modules\Abilities\Diagnostics;
 
 use SimpleJWTLogin\Modules\Abilities\SettingsPath;
+use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
 use SimpleJWTLogin\Modules\Settings\GeneralSettings;
 use SimpleJWTLogin\Modules\Settings\ThirdParty\AiAbilitiesSettings;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
@@ -106,6 +107,14 @@ class SecurityChecks
                 'password_hash_login',
                 __('/auth accepts the stored password hash instead of the password, so anyone holding a database dump can get JWTs without cracking it, and lockouts from login protection plugins are not applied. Disable authentication with password_hash.', 'simple-jwt-login'),
                 ['authorization.password_hash_enabled']
+            ),
+            $this->finding(
+                !$this->jwtSettings->getAuthenticationSettings()->isPayloadDataEnabled(AuthenticationSettings::JWT_PAYLOAD_PARAM_JTI),
+                // Info, not a warning: identical tokens fail safe (revoking one revokes both), so the dashboard does not list it.
+                ConfigurationChecks::SEVERITY_INFO,
+                'jti_disabled',
+                __('The "jti" claim is off, so two JWTs issued for the same user in the same second are identical: revoking one revokes the other, and sessions can not be told apart.', 'simple-jwt-login'),
+                ['authorization.jwt_payload']
             ),
             $this->finding(
                 $this->flag($settings, 'authorization.enabled') && !$this->flag($settings, 'authorization.revoke_token_enabled'),

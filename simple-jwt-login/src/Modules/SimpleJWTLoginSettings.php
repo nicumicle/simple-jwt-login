@@ -35,7 +35,7 @@ class SimpleJWTLoginSettings
 {
     const REVOKE_TOKEN_KEY = 'simple_jwt_login_revoked_token';
     const OPTIONS_KEY = 'simple_jwt_login_settings';
-    const SCHEMA_VERSION = 2;
+    const SCHEMA_VERSION = 3;
 
     /**
      * @var null|array

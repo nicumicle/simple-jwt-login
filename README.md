@@ -15,7 +15,7 @@
 
 <p align="center">
   <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/tests.yml"><img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/tests.yml/badge.svg" alt="Tests" /></a>
-  <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/php.yml"><img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/php.yml/badge.svg" alt="Check plugin" /></a>
+  <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/lint.yml"><img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/lint.yml/badge.svg" alt="Linting and static analysis" /></a>
   <a href="https://github.com/nicumicle/simple-jwt-login/actions/workflows/multiple-php.yml"><img src="https://github.com/nicumicle/simple-jwt-login/actions/workflows/multiple-php.yml/badge.svg" alt="Multiple PHP versions"/></a>
   <a href="https://app.codecov.io/gh/nicumicle/simple-jwt-login"><img src="https://codecov.io/gh/nicumicle/simple-jwt-login/branch/master/graph/badge.svg?token=dVOwuGQoY3" alt="Coverage"/></a>
   <a href="https://github.com/nicumicle/simple-jwt-login/tags"><img src="https://img.shields.io/github/v/tag/nicumicle/simple-jwt-login" alt="Current tag" /></a>

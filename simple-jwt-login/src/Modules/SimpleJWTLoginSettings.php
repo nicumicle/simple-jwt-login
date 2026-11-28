@@ -340,7 +340,27 @@ class SimpleJWTLoginSettings
     {
         $oldSettings = $this->getStoredSettings();
         $newSettings['_schema_version'] = self::SCHEMA_VERSION;
+        $this->validateSettingsArray($newSettings);
 
+        $this->settings = $newSettings;
+        self::$settingsInstances = [];
+        $this->persistSettings();
+        $this->needUpdateOnOptions = true;
+
+        $this->lastSettingsDiff = $this->buildSettingsDiff($oldSettings, $this->settings);
+
+        return $this->lastSettingsDiff;
+    }
+
+    /**
+     * Run the validation of an admin form save on a complete settings array, without saving it.
+     *
+     * @param array $newSettings Complete settings array.
+     * @return void
+     * @throws Exception When a setting is not valid.
+     */
+    public function validateSettingsArray(array $newSettings)
+    {
         $parsers = (new SettingsFactory())->getAll();
         $post    = [];
         foreach ($parsers as $oneParser) {
@@ -353,15 +373,6 @@ class SimpleJWTLoginSettings
         foreach ($parsers as $oneParser) {
             $oneParser->withPost($post)->validateSettings();
         }
-
-        $this->settings = $newSettings;
-        self::$settingsInstances = [];
-        $this->persistSettings();
-        $this->needUpdateOnOptions = true;
-
-        $this->lastSettingsDiff = $this->buildSettingsDiff($oldSettings, $this->settings);
-
-        return $this->lastSettingsDiff;
     }
 
     /**

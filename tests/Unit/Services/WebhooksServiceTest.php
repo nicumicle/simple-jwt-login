@@ -134,6 +134,35 @@ class WebhooksServiceTest extends TestCase
         $service->dispatch(WebhooksSettings::EVENT_LOGIN, ['user_id' => 42, 'user_email' => 'test@example.com']);
     }
 
+    public static function bodyProvider(): array
+    {
+        $template = '{"id":"{{user_id}}","ev":"{{event}}"}';
+
+        return [
+            // WordPress sends GET data as a query string: a string body is a fatal error there.
+            'GET sends the fields as query parameters' => ['GET', $template, ['user_id' => 7, 'event' => 'login']],
+            'POST renders the template' => ['POST', $template, '{"id":"7","ev":"login"}'],
+            'DELETE renders the template' => ['DELETE', $template, '{"id":"7","ev":"login"}'],
+            'POST without template sends JSON' => ['POST', '', '{"user_id":7,"event":"login"}'],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('bodyProvider')]
+    public function testBuildBody(string $method, string $template, $expected)
+    {
+        $service = new class ($this->makeSettings([])) extends WebhooksService {
+            public function body($webhook, $event, array $payload, $method)
+            {
+                return $this->buildBody($webhook, $event, $payload, $method);
+            }
+        };
+
+        $this->assertSame(
+            $expected,
+            $service->body(['payload_template' => $template], 'login', ['user_id' => 7], $method)
+        );
+    }
+
     public function testDispatchWithEmptyPayloadTemplateUsesDefaultPayload()
     {
         $this->expectNotToPerformAssertions();
@@ -188,6 +217,25 @@ class WebhooksServiceTest extends TestCase
         $service = new WebhooksService($this->makeSettings($webhooks), $this->logRepoMock);
         $service->dispatch(WebhooksSettings::EVENT_LOGIN, ['user_id' => 1]);
         $service->runPendingJobs();
+    }
+
+    public function testSendNowCallsADisabledWebhookAndLogsIt()
+    {
+        $this->logRepoMock = $this->createMock(WebhookLogRepositoryInterface::class);
+        $this->logRepoMock->expects($this->once())
+            ->method('insert')
+            ->with('https://example.com/hook', WebhooksSettings::EVENT_LOGIN, 'PUT', $this->anything(), $this->anything());
+        $webhook = ['url' => 'https://example.com/hook', 'enabled' => false, 'method' => 'PUT', 'events' => ['login'], 'headers' => []];
+
+        $service = new WebhooksService($this->makeSettings([$webhook]), $this->logRepoMock);
+        $service->sendNow($webhook, WebhooksSettings::EVENT_LOGIN, ['user_id' => 0]);
+    }
+
+    public function testSendNowSkipsAWebhookWithoutUrl()
+    {
+        $service = new WebhooksService($this->makeSettings([]));
+
+        $this->assertNull($service->sendNow(['url' => ''], WebhooksSettings::EVENT_LOGIN, []));
     }
 
     public function testDispatchDoesNotLogWhenNoRepository()

@@ -99,6 +99,7 @@ class Lifecycle
         (new ApiKeyRepository($wpdb))->dropTable();
         (new RevokedTokenRepository($wpdb))->dropTable();
         delete_metadata('user', 0, PasswordChangeCutoff::META_KEY, '', true);
+        delete_metadata('user', 0, PasswordChangeCutoff::REVOKE_ALL_META_KEY, '', true);
     }
 
     public function checkDbVersion()

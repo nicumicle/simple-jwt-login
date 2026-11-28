@@ -74,6 +74,7 @@ That's the whole integration. Everything else - refresh, auto-login, social logi
 * **CORS** - let your frontend's domain call the API safely. [Learn more](https://simplejwtlogin.com/docs/cors/)
 * **API keys** - credentials with their own permissions and expiry for servers and scripts. [Learn more](https://simplejwtlogin.com/docs/api-keys/)
 * **Audit logs and webhooks** - see every login attempt and notify your other systems. [Audit logs](https://simplejwtlogin.com/docs/audit-logs/) · [Webhooks](https://simplejwtlogin.com/docs/webhooks/)
+* **WP-CLI** - set up the plugin, issue, refresh, validate and revoke JWTs (also every token of a user), rotate the signing key, manage API keys, auth codes and settings, run the security report and diagnostics, and read the logs with `wp jwt` commands. Built in, no add-on needed. [Learn more](https://simplejwtlogin.com/ecosystem/cli)
 
 = 🧩 Plays well with your favorite plugins =
 
@@ -154,6 +155,10 @@ Yes. Restrict registration to specific email domains or IP addresses, and use au
 = Can I accept JWTs issued by another service? =
 
 Yes. Any token signed with the key and algorithm you configure is accepted, and JWT rules let you trust several issuers with different keys. See the [Configuration guide](https://simplejwtlogin.com/docs/configuration).
+
+= Do I still need the Simple-JWT-Login CLI plugin? =
+
+No. The `wp jwt` commands are now part of Simple JWT Login (General > CLI, enabled by default). While the old Simple-JWT-Login CLI plugin is active, the built-in commands stay off, so deactivate and delete it.
 
 = I get an error. Where do I start? =
 

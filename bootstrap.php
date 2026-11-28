@@ -7,6 +7,7 @@ error_reporting(E_ALL);
 
 require_once "simple-jwt-login/autoload.php";
 require_once "vendor/autoload.php";
+require_once "tests/Unit/Stubs/WpCliStubs.php";
 
 if (! function_exists('__')) {
     function __($text, $domain)
@@ -1251,6 +1252,40 @@ if (!class_exists('WP_REST_Request')) {
         public function get_route()
         {
             return $this->route;
+        }
+    }
+}
+
+if (!class_exists('WP_Filesystem_Direct')) {
+    class WP_Filesystem_Direct
+    {
+        /**
+         * @param mixed $arg
+         */
+        public function __construct($arg)
+        {
+        }
+
+        /**
+         * @param string $file
+         * @param string $contents
+         * @param int|false $mode
+         * @return bool
+         */
+        public function put_contents($file, $contents, $mode = false)
+        {
+            return file_put_contents($file, $contents) !== false;
+        }
+
+        /**
+         * @param string $file
+         * @param int|false $mode
+         * @param bool $recursive
+         * @return bool
+         */
+        public function chmod($file, $mode = false, $recursive = false)
+        {
+            return true;
         }
     }
 }

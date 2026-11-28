@@ -63,6 +63,7 @@ class SettingsErrorCatalog
 
         return [
             $this->code(SettingsErrors::PREFIX_GENERAL, SettingsErrors::ERR_GENERAL_EMPTY_NAMESPACE) => ['The route namespace is empty.', ['general.route_namespace']],
+            $this->code(SettingsErrors::PREFIX_GENERAL, SettingsErrors::ERR_GENERAL_UNSUPPORTED_ALGORITHM) => ['The JWT algorithm is not one of HS256, HS384, HS512, RS256, RS384, RS512.', ['general.jwt_algorithm']],
             $this->code(SettingsErrors::PREFIX_GENERAL, SettingsErrors::ERR_GENERAL_REQUEST_KEYS) => ['Every JWT input source needs a parameter/header name.', ['general.request_keys']],
             $this->code(SettingsErrors::PREFIX_GENERAL, SettingsErrors::ERR_GENERAL_PRIVATE_KEY_MISSING_FROM_CODE_RS) => ['Keys are read from code, but the RS public/private key constants are not defined in wp-config.php.', $keys],
             $this->code(SettingsErrors::PREFIX_GENERAL, SettingsErrors::ERR_GENERAL_PRIVATE_KEY_NOT_PRESENT_IN_CODE_HS) => ['Keys are read from code, but the HS key constant is not defined in wp-config.php.', $keys],

@@ -6,6 +6,17 @@ use Exception;
 
 class JwtRulesSettings extends BaseSettings implements SettingsInterface
 {
+    const OPERATOR_EQUALS = 'equals';
+    const OPERATOR_CONTAINS = 'contains';
+    /**
+     * Whole numbers: the claim (0 when missing) is lower than the expected value.
+     */
+    const OPERATOR_LESS_THAN = 'less_than';
+
+    /**
+     * The claim a key rotation rule compares (`wp jwt key rotate`).
+     */
+    const ROTATION_CLAIM = 'iat';
     protected function getSectionKey()
     {
         return 'jwt_rules';
@@ -174,6 +185,16 @@ class JwtRulesSettings extends BaseSettings implements SettingsInterface
                 );
             }
 
+            if ($conditionOperator === self::OPERATOR_LESS_THAN && !ctype_digit($conditionValue)) {
+                throw new Exception(
+                    esc_html(sprintf(
+                        // translators: %d = rule number
+                        __('JWT Rule #%1$d: "less than" needs a whole number, for example a Unix time.', 'simple-jwt-login'),
+                        $i + 1
+                    ))
+                );
+            }
+
             $signature = sprintf('%s|%s|%s|%s', $conditionType, $conditionKey, $conditionOperator, $conditionValue);
             if (in_array($signature, $seen, true)) {
                 throw new Exception(
@@ -276,13 +297,30 @@ class JwtRulesSettings extends BaseSettings implements SettingsInterface
      */
     public function findMatchingRuleConfig(array $jwtParts)
     {
-        foreach ($this->getRules() as $rule) {
-            if ($this->matchesRuleCondition($rule, $jwtParts)) {
-                return $rule;
+        // Key rotation rules last: older tokens of another issuer must still reach their own rule.
+        foreach (array(false, true) as $rotationRules) {
+            foreach ($this->getRules() as $rule) {
+                if (self::isKeyRotationRule($rule) === $rotationRules && $this->matchesRuleCondition($rule, $jwtParts)) {
+                    return $rule;
+                }
             }
         }
 
         return null;
+    }
+
+    /**
+     * A rule that keeps a rotated signing key for tokens issued before the rotation: `iat` less than a time.
+     *
+     * @param array $rule
+     * @return bool
+     */
+    public static function isKeyRotationRule(array $rule)
+    {
+        return isset($rule['condition_type'], $rule['condition_key'], $rule['condition_operator'])
+            && $rule['condition_type'] === 'payload'
+            && $rule['condition_key'] === self::ROTATION_CLAIM
+            && $rule['condition_operator'] === self::OPERATOR_LESS_THAN;
     }
 
     /**
@@ -334,8 +372,11 @@ class JwtRulesSettings extends BaseSettings implements SettingsInterface
             $valueToCheck = isset($jwtParts['header'][$conditionKey]) ? (string)$jwtParts['header'][$conditionKey] : '';
         }
 
-        if ($conditionOperator === 'contains') {
+        if ($conditionOperator === self::OPERATOR_CONTAINS) {
             return $conditionValue !== '' && strpos($valueToCheck, $conditionValue) !== false;
+        }
+        if ($conditionOperator === self::OPERATOR_LESS_THAN) {
+            return ctype_digit($conditionValue) && (int) $valueToCheck < (int) $conditionValue;
         }
 
         return $valueToCheck === $conditionValue;

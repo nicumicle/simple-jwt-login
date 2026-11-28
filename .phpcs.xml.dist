@@ -47,6 +47,7 @@
     <!-- Exclude Two Factor plugin test doubles - intentionally use snake_case and group several
          doubles in one file to mirror the external plugin's static API. -->
     <exclude-pattern>/tests/Unit/Stubs/TwoFactorStubs.php</exclude-pattern>
+    <exclude-pattern>/tests/Unit/Stubs/WpCliStubs.php</exclude-pattern>
 
     <rule ref="Generic.Files.LineEndings">
         <exclude name="Generic.Files.LineEndings.InvalidEOLChar"/>

@@ -49,6 +49,7 @@ class SettingsErrors extends \Exception
     const ERR_GENERAL_GET_JWT_FROM = 7;
     const ERR_GENERAL_REQUEST_KEYS = 8;
     const ERR_GENERAL_MISSING_JWT_PAYLOAD_KEY = 9;
+    const ERR_GENERAL_UNSUPPORTED_ALGORITHM = 10;
 
     #auth-codes
     const ERR_EMPTY_AUTH_CODES = 1;

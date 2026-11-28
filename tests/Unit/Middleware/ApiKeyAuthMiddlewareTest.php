@@ -72,24 +72,25 @@ class ApiKeyAuthMiddlewareTest extends TestCase
     }
 
     /**
-     * @return array<string,array{0:string|null,1:bool,2:bool}>
+     * Last-used values are relative offsets (seconds ago): providers run at suite start,
+     * so an absolute timestamp would be stale by the time a slow (coverage) run gets here.
+     *
+     * @return array<string,array{0:int|string|null,1:bool,2:bool}>
      */
     public static function lastUsedProvider()
     {
-        $recently = gmdate('Y-m-d H:i:s', time() - 10);
-
         return [
             'never used'                         => [null, true, true],
-            'used 2 minutes ago'                 => [gmdate('Y-m-d H:i:s', time() - 120), true, true],
-            'used 10 seconds ago'                => [$recently, true, false],
+            'used 2 minutes ago'                 => [120, true, true],
+            'used 10 seconds ago'                => [10, true, false],
             'invalid last used at'               => ['not-a-date', true, true],
-            'used 10 seconds ago, every request' => [$recently, false, true],
+            'used 10 seconds ago, every request' => [10, false, true],
             'never used, every request'          => [null, false, true],
         ];
     }
 
     /**
-     * @param string|null $lastUsedAt
+     * @param int|string|null $lastUsedAt Seconds ago, a raw value, or null.
      * @param bool $throttleLastUsed
      * @param bool $expectTouch
      */
@@ -102,7 +103,7 @@ class ApiKeyAuthMiddlewareTest extends TestCase
         $key               = new stdClass();
         $key->id           = 7;
         $key->permissions  = json_encode(['read']);
-        $key->last_used_at = $lastUsedAt;
+        $key->last_used_at = is_int($lastUsedAt) ? gmdate('Y-m-d H:i:s', time() - $lastUsedAt) : $lastUsedAt;
 
         $repositoryMock = $this->createMock(ApiKeyRepositoryInterface::class);
         $repositoryMock->method('getByKeyHash')->willReturn($key);

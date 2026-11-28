@@ -52,12 +52,17 @@ class WebhooksService
      * @param array  $webhook
      * @param string $event
      * @param array  $payload
-     * @return string
+     * @param string $method
+     * @return string|array Array for GET: the fields become query parameters, the template is not used.
      */
-    protected function buildBody($webhook, $event, array $payload)
+    protected function buildBody($webhook, $event, array $payload, $method)
     {
         $template = isset($webhook['payload_template']) ? trim((string)$webhook['payload_template']) : '';
         $vars = array_merge($payload, ['event' => $event]);
+        // WordPress sends GET data as a query string, which must be an array (a string is a fatal error).
+        if ($method === 'GET') {
+            return $vars;
+        }
 
         if (empty($template)) {
             return wp_json_encode($vars);
@@ -132,43 +137,68 @@ class WebhooksService
     protected function process(array $webhooks, $event, array $payload)
     {
         foreach ($webhooks as $webhook) {
-            $url = isset($webhook['url']) ? $webhook['url'] : '';
-            if (empty($url)) {
-                continue;
-            }
+            $this->send($webhook, $event, $payload, $this->logRepository !== null);
+        }
+    }
 
-            $method = isset($webhook['method']) && in_array($webhook['method'], WebhooksSettings::$allowedMethods, true)
-                ? $webhook['method']
-                : WebhooksSettings::DEFAULT_METHOD;
+    /**
+     * Call one webhook now and wait for the answer (`wp jwt webhook test`). Logged when logs are on.
+     *
+     * @param array  $webhook
+     * @param string $event
+     * @param array  $payload
+     * @return array|\WP_Error|null Null when the webhook has no URL.
+     */
+    public function sendNow(array $webhook, $event, array $payload)
+    {
+        return $this->send($webhook, $event, $payload, true);
+    }
 
-            $headers = [];
-            if (isset($webhook['headers']) && is_array($webhook['headers'])) {
-                foreach ($webhook['headers'] as $header) {
-                    if (!empty($header['key'])) {
-                        $headers[$header['key']] = isset($header['value']) ? $header['value'] : '';
-                    }
+    /**
+     * @param array  $webhook
+     * @param string $event
+     * @param array  $payload
+     * @param bool   $blocking
+     * @return array|\WP_Error|null
+     */
+    private function send(array $webhook, $event, array $payload, $blocking)
+    {
+        $url = isset($webhook['url']) ? $webhook['url'] : '';
+        if (empty($url)) {
+            return null;
+        }
+
+        $method = isset($webhook['method']) && in_array($webhook['method'], WebhooksSettings::$allowedMethods, true)
+            ? $webhook['method']
+            : WebhooksSettings::DEFAULT_METHOD;
+
+        $headers = [];
+        if (isset($webhook['headers']) && is_array($webhook['headers'])) {
+            foreach ($webhook['headers'] as $header) {
+                if (!empty($header['key'])) {
+                    $headers[$header['key']] = isset($header['value']) ? $header['value'] : '';
                 }
             }
-
-            $timeout = isset($webhook['timeout']) ? (int)$webhook['timeout'] : WebhooksSettings::DEFAULT_TIMEOUT;
-            if ($timeout <= 0 || $timeout > WebhooksSettings::MAX_TIMEOUT) {
-                $timeout = WebhooksSettings::MAX_TIMEOUT;
-            }
-
-            $blocking = $this->logRepository !== null;
-
-            $response = wp_safe_remote_request($url, [
-                'method'   => $method,
-                'body'     => $this->buildBody($webhook, $event, $payload),
-                'headers'  => $headers,
-                'timeout'  => $timeout,
-                'blocking' => $blocking,
-            ]);
-
-            if ($blocking) {
-                $this->logResponse($url, $event, $method, $response);
-            }
         }
+
+        $timeout = isset($webhook['timeout']) ? (int)$webhook['timeout'] : WebhooksSettings::DEFAULT_TIMEOUT;
+        if ($timeout <= 0 || $timeout > WebhooksSettings::MAX_TIMEOUT) {
+            $timeout = WebhooksSettings::MAX_TIMEOUT;
+        }
+
+        $response = wp_safe_remote_request($url, [
+            'method'   => $method,
+            'body'     => $this->buildBody($webhook, $event, $payload, $method),
+            'headers'  => $headers,
+            'timeout'  => $timeout,
+            'blocking' => $blocking,
+        ]);
+
+        if ($blocking) {
+            $this->logResponse($url, $event, $method, $response);
+        }
+
+        return $response;
     }
 
     /**

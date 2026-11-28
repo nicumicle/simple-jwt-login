@@ -12,7 +12,7 @@ class AuditEventsTest extends TestCase
     {
         $events = AuditEvents::all();
 
-        $this->assertCount(34, $events);
+        $this->assertCount(36, $events);
     }
 
     #[DataProvider('allEventsProvider')]
@@ -61,6 +61,8 @@ class AuditEventsTest extends TestCase
             'revoked_token_delete_failed'  => [AuditEvents::REVOKED_TOKEN_DELETE_FAILED],
             'ai_ability_success'          => [AuditEvents::AI_ABILITY_SUCCESS],
             'ai_ability_failed'           => [AuditEvents::AI_ABILITY_FAILED],
+            'cli_command_success'         => [AuditEvents::CLI_COMMAND_SUCCESS],
+            'cli_command_failed'          => [AuditEvents::CLI_COMMAND_FAILED],
         ];
     }
 
@@ -110,6 +112,8 @@ class AuditEventsTest extends TestCase
             'REVOKED_TOKEN_DELETE_FAILED'  => ['revoked_token.delete.failed',  AuditEvents::REVOKED_TOKEN_DELETE_FAILED],
             'AI_ABILITY_SUCCESS'          => ['ai.ability.success',          AuditEvents::AI_ABILITY_SUCCESS],
             'AI_ABILITY_FAILED'           => ['ai.ability.failed',           AuditEvents::AI_ABILITY_FAILED],
+            'CLI_COMMAND_SUCCESS'         => ['cli.command.success',         AuditEvents::CLI_COMMAND_SUCCESS],
+            'CLI_COMMAND_FAILED'          => ['cli.command.failed',          AuditEvents::CLI_COMMAND_FAILED],
         ];
     }
 
@@ -117,7 +121,7 @@ class AuditEventsTest extends TestCase
     {
         $labels = AuditEvents::labels();
 
-        $this->assertCount(34, $labels);
+        $this->assertCount(36, $labels);
         $this->assertArrayHasKey(AuditEvents::AUTH_LOGIN_SUCCESS, $labels);
         $this->assertArrayHasKey(AuditEvents::AUTH_LOGIN_FAILED, $labels);
         $this->assertArrayHasKey(AuditEvents::AUTH_LOGOUT_FAILED, $labels);
@@ -148,5 +152,7 @@ class AuditEventsTest extends TestCase
         $this->assertArrayHasKey(AuditEvents::REVOKED_TOKEN_DELETE_FAILED, $labels);
         $this->assertArrayHasKey(AuditEvents::AI_ABILITY_SUCCESS, $labels);
         $this->assertArrayHasKey(AuditEvents::AI_ABILITY_FAILED, $labels);
+        $this->assertArrayHasKey(AuditEvents::CLI_COMMAND_SUCCESS, $labels);
+        $this->assertArrayHasKey(AuditEvents::CLI_COMMAND_FAILED, $labels);
     }
 }

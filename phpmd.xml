@@ -42,5 +42,6 @@
     <!-- Exclude Two Factor plugin test doubles - intentionally mirror the external plugin's
          snake_case static API. -->
     <exclude-pattern>tests/Unit/Stubs/TwoFactorStubs.php</exclude-pattern>
+    <exclude-pattern>tests/Unit/Stubs/WpCliStubs.php</exclude-pattern>
 
 </ruleset>

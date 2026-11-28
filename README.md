@@ -80,7 +80,7 @@
 ## Overview
 
 <p align="center">
-    <img src="https://github.com/nicumicle/simple-jwt-login/blob/master/wordpress.org/assets/schema.png?raw=true" alt="Simple JWT Login schema" />
+    <img src="https://github.com/nicumicle/simple-jwt-login/blob/master/wordpress.org/schema.png?raw=true" alt="Simple JWT Login schema" />
 </p>
 
 ## Table of contents

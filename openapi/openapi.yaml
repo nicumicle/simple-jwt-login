@@ -123,7 +123,7 @@ info:
   license:
     name: GPL 3.0
     url: https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE
-  version: 4.2.1
+  version: 4.3.0
   x-logo:
     url: 'https://simplejwtlogin.com/assets/favicons/android-chrome-192x192.png'
     altText: Simple JWT Login Logo

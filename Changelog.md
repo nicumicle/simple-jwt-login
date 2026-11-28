@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 4.3.0 (28 November 2026)
+
 ### New
 - New `jti` JWT payload claim (Authentication > JWT payload): a unique, random ID in every issued JWT, so two tokens issued for the same user in the same second are no longer identical (revoking one no longer revokes the other). Enabled by default, also on existing sites (settings schema version 3). The admin page shows a warning when it is turned off.
 

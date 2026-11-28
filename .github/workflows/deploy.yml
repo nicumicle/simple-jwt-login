@@ -22,7 +22,7 @@ jobs:
         with:
           plugin_folder: "/simple-jwt-login"
           slug: ${{ env.plugin_slug }}
-          assets_folder: "wordpress.org"
+          assets_folder: "wordpress.org/assets"
           # username: ${{secrets.SVN_USERNAME}} # Not required in dry_run mode
           # password: ${{secrets.SVN_PASSWORD}} # Not required in dry_run mode
           # tag: ${{ github.ref_name }} # Don't create a tag in /tags folder
@@ -39,7 +39,7 @@ jobs:
         with:
           plugin_folder: "/simple-jwt-login"
           slug: ${{ env.plugin_slug }}
-          assets_folder: "wordpress.org"
+          assets_folder: "wordpress.org/assets"
           username: ${{secrets.SVN_USERNAME}}
           password: ${{secrets.SVN_PASSWORD}}
           tag: ${{ github.ref_name }}

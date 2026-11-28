@@ -53,6 +53,7 @@ class GeneralSettingsTest extends TestCase
                 'safe_redirect' => '1',
                 'trust_ip_headers' => '1',
             ],
+            'cli' => ['enabled' => '1'],
         ];
         $generalSettings = (new GeneralSettings())
             ->withSettings([])
@@ -80,6 +81,7 @@ class GeneralSettingsTest extends TestCase
         $this->assertTrue($generalSettings->isMiddlewareEnabled());
         $this->assertTrue($generalSettings->isSafeRedirectEnabled());
         $this->assertTrue($generalSettings->isTrustIpHeadersEnabled());
+        $this->assertTrue($generalSettings->isCliEnabled());
     }
 
     public function testBearerRequiredDefaultsFalse()
@@ -110,6 +112,17 @@ class GeneralSettingsTest extends TestCase
         $this->assertTrue($generalSettings->isJwtFromHeaderBearerRequired());
     }
 
+    public function testCliIsEnabledUntilSaved()
+    {
+        $generalSettings = (new GeneralSettings())->withSettings([]);
+
+        $this->assertFalse($generalSettings->hasCliSetting());
+        $this->assertTrue($generalSettings->isCliEnabled());
+        $this->assertFalse(
+            (new GeneralSettings())->withSettings(['general' => ['cli' => ['enabled' => false]]])->isCliEnabled()
+        );
+    }
+
     public function testSecurityTogglesDefaultToFalse()
     {
         $generalSettings = (new GeneralSettings())
@@ -120,6 +133,7 @@ class GeneralSettingsTest extends TestCase
 
         $this->assertFalse($generalSettings->isSafeRedirectEnabled());
         $this->assertFalse($generalSettings->isTrustIpHeadersEnabled());
+        $this->assertFalse($generalSettings->isCliEnabled());
     }
 
     public function testValidationFailsEmptyNamespace()
@@ -278,6 +292,28 @@ class GeneralSettingsTest extends TestCase
                     'jwt_algorithm' => 'HS256',
                     'decryption_key' => ''
 
+                ]
+            );
+        $generalSettings->initSettingsFromPost();
+        $generalSettings->validateSettings();
+    }
+
+    #[\PHPUnit\Framework\Attributes\TestWith(['XX999'])]
+    #[\PHPUnit\Framework\Attributes\TestWith(['hs256'])]
+    #[\PHPUnit\Framework\Attributes\TestWith(['none'])]
+    public function testValidationRejectsUnsupportedAlgorithm(string $algorithm)
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Unsupported JWT algorithm.');
+        $generalSettings = (new GeneralSettings())
+            ->withSettings([])
+            ->withWordPressData($this->wordPressData)
+            ->withPost(
+                [
+                    'route_namespace' => 'v1/',
+                    'decryption_source' => GeneralSettings::DECRYPTION_SOURCE_SETTINGS,
+                    'jwt_algorithm' => $algorithm,
+                    'decryption_key' => 'secret',
                 ]
             );
         $generalSettings->initSettingsFromPost();

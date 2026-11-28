@@ -4,6 +4,7 @@ namespace SimpleJWTLogin\Modules\Settings;
 
 use Exception;
 use SimpleJWTLogin\Helpers\Jwt\JwtKeyWpConfig;
+use SimpleJWTLogin\Libraries\JWT\JWT;
 
 class GeneralSettings extends BaseSettings implements SettingsInterface
 {
@@ -39,6 +40,7 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
             [null, 'request_jwt_header_require_bearer', null, 'request_jwt_header_require_bearer', self::SETTINGS_TYPE_BOL, false],
             ['security', 'safe_redirect',    'security', 'safe_redirect',    self::SETTINGS_TYPE_BOL],
             ['security', 'trust_ip_headers', 'security', 'trust_ip_headers', self::SETTINGS_TYPE_BOL],
+            ['cli', 'enabled', 'cli', 'enabled', self::SETTINGS_TYPE_BOL, false],
         ];
     }
 
@@ -76,6 +78,15 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
             }
         }
         if (!empty($this->post['jwt_algorithm'])) {
+            if (!in_array($this->post['jwt_algorithm'], array_keys(JWT::$supportedAlgs), true)) {
+                throw new Exception(
+                    esc_html__('Unsupported JWT algorithm.', 'simple-jwt-login'),
+                    absint($this->settingsErrors->generateCode(
+                        SettingsErrors::PREFIX_GENERAL,
+                        SettingsErrors::ERR_GENERAL_UNSUPPORTED_ALGORITHM
+                    ))
+                );
+            }
             if (isset($this->post['decryption_source'])
                 && $this->post['decryption_source'] === self::DECRYPTION_SOURCE_CODE
             ) {
@@ -327,5 +338,23 @@ class GeneralSettings extends BaseSettings implements SettingsInterface
     public function isTrustIpHeadersEnabled()
     {
         return !empty($this->settings['security']['trust_ip_headers']);
+    }
+
+    /**
+     * @return bool True once the General > CLI setting was saved.
+     */
+    public function hasCliSetting()
+    {
+        return isset($this->settings['cli']['enabled']);
+    }
+
+    /**
+     * WP-CLI commands (wp jwt ...). On until the setting is saved.
+     *
+     * @return bool
+     */
+    public function isCliEnabled()
+    {
+        return !$this->hasCliSetting() || !empty($this->settings['cli']['enabled']);
     }
 }

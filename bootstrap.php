@@ -7,6 +7,7 @@ error_reporting(E_ALL);
 
 require_once "simple-jwt-login/autoload.php";
 require_once "vendor/autoload.php";
+require_once "tests/Unit/Stubs/WpCliStubs.php";
 
 if (! function_exists('__')) {
     function __($text, $domain)

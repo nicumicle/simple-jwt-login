@@ -31,6 +31,7 @@ class AuditLogFindings
         'auth.refresh_token.failed',
         'api_key.used',
         'ai.ability.failed',
+        'cli.command.failed',
     );
 
     /**
@@ -212,7 +213,7 @@ class AuditLogFindings
         $actions = [];
         foreach ($byEvent as $event) {
             $action = preg_replace('/[._](success|failed|request|challenge_issued)$/', '', $event['event_type']);
-            if ($action === 'ai.ability') {
+            if (in_array($action, array('ai.ability', 'cli.command'), true)) {
                 continue;
             }
             if (!isset($actions[$action])) {

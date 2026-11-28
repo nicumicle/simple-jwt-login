@@ -4,10 +4,19 @@
 
 ### New
 - New `jti` JWT payload claim (Authentication > JWT payload): a unique, random ID in every issued JWT, so two tokens issued for the same user in the same second are no longer identical (revoking one no longer revokes the other). Enabled by default, also on existing sites (settings schema version 3). The admin page shows a warning when it is turned off.
+- WP-CLI commands are now part of the plugin (General > CLI, enabled by default): `wp jwt login`, `decode`, `validate`, `revoke` and `wp jwt config get|set|list|export|import`. `wp jwt config set` and `import` now run the same validation as an admin save (skip it with `--force`). While the separate Simple-JWT-Login CLI plugin is active, the built-in commands stay disabled (and the setting defaults to off) and the CLI card shows a warning: deactivate and delete that plugin.
+- New WP-CLI commands: `wp jwt setup`, `generate` (a JWT for a user, without the password), `refresh`, `revoke-all` (every JWT and refresh token of a user, whether or not "Revoke tokens on password change" is on), `key generate|rotate` (`--algorithm=random` picks a random algorithm with a matching key), `api-key create|list|revoke`, `auth-code list|add|remove`, `doctor`, `security-report`, `explain-error`, `log list|analyze`, `webhook list|test|logs` and `cleanup`. Lists support `--format=table|csv|json|yaml|count` and `--fields`.
+- `wp jwt key rotate` does not break issued tokens: the old key is kept in a JWT Rule for the tokens issued before the rotation and removed by the daily cleanup once they expire. Use `--immediate` for a leaked key. Also used by `wp jwt setup` when it replaces a key.
+- JWT Rules: new *less than* operator, for whole-number claims such as `iat`.
+- `wp jwt login` no longer needs `--password` on the command line: it asks for it (hidden) or reads it from STDIN.
+- `wp jwt validate` exits with 1 when the token is not valid.
+- Audit log: new `cli.command.success` and `cli.command.failed` events record the WP-CLI commands that change something. A command that turns the audit log off is still recorded.
 
 ### Fixes
 - Fixed a database error on `/revoked-tokens`, `/api-keys` and the audit / webhook logs when a very large `page` is requested: the SQL offset overflowed into a negative number. Such pages now return an empty list.
 - Fixed a 500 error on `/users`, `/user/reset_password`, `/auth/refresh` and `/oauth/token` when a parameter is sent as an array or an object; these requests now get the usual validation error.
+- Fixed a PHP fatal error when a webhook with the `GET` method was called. `GET` webhooks now send the event fields as query parameters (the payload template is not used for them).
+- The settings save now rejects an unsupported JWT algorithm (settings error code 2010) instead of storing it and failing on every token.
 - API documentation: the `id` in the decoded JWT payload of `/auth/validate` is documented as a numeric string, as it is returned.
 - Added a Schemathesis check (`composer run test-openapi`, also in CI) that the live REST responses match the OpenAPI spec.
 

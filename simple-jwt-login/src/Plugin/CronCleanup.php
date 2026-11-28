@@ -2,6 +2,8 @@
 
 namespace SimpleJWTLogin\Plugin;
 
+use Exception;
+use SimpleJWTLogin\Helpers\Jwt\KeyRotation;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 use SimpleJWTLogin\Repositories\RefreshToken\RefreshTokenRepository;
 use SimpleJWTLogin\Repositories\AuditLog\AuditLogRepository;
@@ -77,5 +79,26 @@ class CronCleanup
         }
         $before = gmdate('Y-m-d H:i:s', strtotime("-{$retentionDays} days"));
         $this->webhookLogRepository->deleteOlderThan($before);
+    }
+
+    /**
+     * Remove the signing keys kept by `wp jwt key rotate` once every token they signed has expired.
+     *
+     * @return void
+     */
+    public function cleanupRotatedKeys()
+    {
+        $settings = $this->jwtSettings->getStoredSettings();
+        $kept = KeyRotation::removeExpired($settings, KeyRotation::graceSeconds($this->jwtSettings), time());
+        if ($kept === $settings) {
+            return;
+        }
+        try {
+            $this->jwtSettings->saveSettingsArray($kept);
+        } catch (Exception $exception) {
+            // Only when the stored settings are already invalid (an admin save fails the same way and
+            // shows why). A cron run must not fail: the keys are removed by the next run that can save.
+            return;
+        }
     }
 }

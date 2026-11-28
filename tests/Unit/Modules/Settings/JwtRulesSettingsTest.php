@@ -467,4 +467,78 @@ class JwtRulesSettingsTest extends TestCase
         $sut->validateSettings();
         $this->assertCount(1, $sut->getRules());
     }
+
+    /**
+     * @param array<string, mixed> $payload
+     */
+    #[DataProvider('lessThanProvider')]
+    public function testLessThanComparesWholeNumbers(string $expected, array $payload, bool $matches): void
+    {
+        $rule = [
+            'condition_type'     => 'payload',
+            'condition_key'      => 'iat',
+            'condition_operator' => JwtRulesSettings::OPERATOR_LESS_THAN,
+            'condition_value'    => $expected,
+        ];
+        $sut = (new JwtRulesSettings())->withSettings(['jwt_rules' => ['rules' => [$rule]]]);
+
+        $this->assertSame($matches ? $rule : null, $sut->findMatchingRuleConfig(['header' => [], 'payload' => $payload]));
+    }
+
+    public static function lessThanProvider(): array
+    {
+        return [
+            'lower'                    => ['1000', ['iat' => 999], true],
+            'equal'                    => ['1000', ['iat' => 1000], false],
+            'higher'                   => ['1000', ['iat' => 1001], false],
+            'missing claim counts as 0' => ['1000', [], true],
+            'not a number never matches' => ['abc', ['iat' => 1], false],
+        ];
+    }
+
+    public function testKeyRotationRulesAreCheckedAfterTheOtherRules(): void
+    {
+        $rotation = [
+            'condition_type' => 'payload', 'condition_key' => 'iat',
+            'condition_operator' => JwtRulesSettings::OPERATOR_LESS_THAN, 'condition_value' => '2000',
+        ];
+        $partner = ['condition_type' => 'iss', 'condition_key' => 'iss', 'condition_value' => 'partner'];
+        // Stored first, as the admin page saves rules in the order shown.
+        $sut = (new JwtRulesSettings())->withSettings(['jwt_rules' => ['rules' => [$rotation, $partner]]]);
+
+        $this->assertSame($partner, $sut->findMatchingRuleConfig(['header' => [], 'payload' => ['iss' => 'partner', 'iat' => 100]]));
+        $this->assertSame($rotation, $sut->findMatchingRuleConfig(['header' => [], 'payload' => ['iss' => 'site', 'iat' => 100]]));
+    }
+
+    public function testLessThanNeedsAWholeNumber(): void
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('JWT Rule #1: "less than" needs a whole number, for example a Unix time.');
+
+        (new JwtRulesSettings())
+            ->withSettings(['jwt_rules' => ['rules' => [[
+                'condition_type' => 'payload', 'condition_key' => 'iat', 'condition_operator' => 'less_than',
+                'condition_value' => 'yesterday', 'algorithm' => 'HS256', 'decryption_key' => 'k', 'login_by_parameter' => 'email',
+            ]]]])
+            ->withWordPressData($this->wordPressData)
+            ->withPost([])
+            ->validateSettings();
+    }
+
+    public function testAdminSaveKeepsAKeyRotationRule(): void
+    {
+        $sut = (new JwtRulesSettings())
+            ->withSettings([])
+            ->withWordPressData($this->wordPressData)
+            ->withPost(['jwt_rules' => json_encode([[
+                'condition_type' => 'payload', 'condition_key' => 'iat', 'condition_operator' => 'less_than',
+                'condition_value' => '1795777964', 'algorithm' => 'HS256', 'decryption_key' => 'old-key',
+                'login_by' => 0, 'login_by_parameter' => 'email',
+            ]])]);
+
+        $sut->initSettingsFromPost();
+
+        $this->assertTrue(JwtRulesSettings::isKeyRotationRule($sut->getRules()[0]));
+        $this->assertSame('old-key', $sut->getRules()[0]['decryption_key']);
+    }
 }

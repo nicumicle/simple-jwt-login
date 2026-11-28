@@ -122,6 +122,9 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                                     <option value="contains" <?php echo $conditionOperator === 'contains' ? 'selected' : ''; ?>>
                                         <?php echo esc_html__('contains', 'simple-jwt-login'); ?>
                                     </option>
+                                    <option value="less_than" <?php echo $conditionOperator === 'less_than' ? 'selected' : ''; ?>>
+                                        <?php echo esc_html__('less than', 'simple-jwt-login'); ?>
+                                    </option>
                                 </select>
                             </div>
                             <div class="sjl-rule-field sjl-rule-field--grow">
@@ -505,6 +508,7 @@ $elseSource    = $jwtSettings->getGeneralSettings()->getDecryptionSource();
                     <select class="form-control sjl-rule-condition-operator">
                         <option value="equals"><?php echo esc_html__('equals', 'simple-jwt-login'); ?></option>
                         <option value="contains"><?php echo esc_html__('contains', 'simple-jwt-login'); ?></option>
+                        <option value="less_than"><?php echo esc_html__('less than', 'simple-jwt-login'); ?></option>
                     </select>
                 </div>
                 <div class="sjl-rule-field sjl-rule-field--grow">

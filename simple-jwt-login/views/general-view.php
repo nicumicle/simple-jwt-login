@@ -1,5 +1,6 @@
 <?php
 
+use SimpleJWTLogin\Cli\CliRegistrar;
 use SimpleJWTLogin\Modules\Settings\SettingsErrors;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
 
@@ -250,6 +251,54 @@ if (!defined('ABSPATH')) {
                 <p class="sjl-gen-feature-desc">
                     <?php echo esc_html__(
                         'When enabled, any WordPress REST API call that includes a JWT will automatically authenticate the user before processing the request.',
+                        'simple-jwt-login'
+                    ); ?>
+                </p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="sjl-gen-card">
+    <div class="sjl-gen-card-header">
+        <span class="dashicons dashicons-editor-code"></span>
+        <div>
+            <h3 class="sjl-gen-card-title"><?php echo esc_html__('CLI', 'simple-jwt-login'); ?></h3>
+            <p class="sjl-gen-card-desc">
+                <?php echo esc_html__('Manage tokens, keys and plugin settings from the command line with WP-CLI.', 'simple-jwt-login'); ?>
+            </p>
+        </div>
+    </div>
+    <div class="sjl-gen-card-body">
+
+        <?php $cliRegistrar = new CliRegistrar($jwtSettings->getGeneralSettings()); ?>
+        <?php if ($cliRegistrar->isAddonActive()) : ?>
+        <div class="notice notice-warning inline">
+            <p>
+                <?php echo esc_html__(
+                    'The Simple-JWT-Login CLI plugin is active, so these built-in WP-CLI commands are disabled. Simple JWT Login now includes them: deactivate and delete the Simple-JWT-Login CLI plugin.',
+                    'simple-jwt-login'
+                ); ?>
+            </p>
+        </div>
+        <?php endif; ?>
+
+        <div class="sjl-gen-feature-toggle">
+            <div class="sjl-gen-feature-toggle-check">
+                <input type="hidden" name="cli[enabled]" value="0">
+                <input type="checkbox" name="cli[enabled]" id="cli_enabled"
+                       value="1"
+                    <?php echo $cliRegistrar->isEnabled() ? 'checked="checked"' : ''; ?>
+                />
+            </div>
+            <div class="sjl-gen-feature-toggle-text">
+                <label for="cli_enabled" class="sjl-gen-feature-label">
+                    <?php echo esc_html__('Enable WP-CLI commands', 'simple-jwt-login'); ?>
+                </label>
+                <p class="sjl-gen-feature-desc">
+                    <?php echo esc_html__(
+                        'Adds the wp jwt commands: set up the plugin, issue, validate and revoke tokens, rotate the signing key, manage API keys, auth codes and settings, and run diagnostics. Run wp jwt --help for the list.',
                         'simple-jwt-login'
                     ); ?>
                 </p>

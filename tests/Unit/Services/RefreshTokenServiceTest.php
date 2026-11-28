@@ -5,6 +5,7 @@ namespace SimpleJwtLoginTests\Unit\Services;
 use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use SimpleJWTLogin\Helpers\Jwt\PasswordChangeCutoff;
 use SimpleJWTLogin\ErrorCodes;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Modules\Settings\AuthenticationSettings;
@@ -237,7 +238,10 @@ class RefreshTokenServiceTest extends TestCase
                     'revoke_on_password_change' => $revokeEnabled,
                 ],
             ]));
-        $this->wordPressDataMock->method('getUserMeta')->willReturn([(string) $cutoff]);
+        $this->wordPressDataMock->method('getUserMeta')->willReturnCallback(function () use ($cutoff) {
+            // Only the password change cutoff: the revoke-all cutoff is not set.
+            return func_get_arg(1) === PasswordChangeCutoff::META_KEY ? [(string) $cutoff] : [];
+        });
         $this->wordPressDataMock->method('getUserDetailsById')->willReturn('user-object');
         $this->wordPressDataMock->method('isInstanceOfuser')->willReturn(true);
         $this->wordPressDataMock->method('createResponse')->willReturn(true);

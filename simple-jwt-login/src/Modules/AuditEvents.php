@@ -42,6 +42,9 @@ class AuditEvents
     const AI_ABILITY_SUCCESS = 'ai.ability.success';
     const AI_ABILITY_FAILED  = 'ai.ability.failed';
 
+    const CLI_COMMAND_SUCCESS = 'cli.command.success';
+    const CLI_COMMAND_FAILED  = 'cli.command.failed';
+
     /**
      * @return string[]
      */
@@ -82,6 +85,8 @@ class AuditEvents
             self::REVOKED_TOKEN_DELETE_FAILED,
             self::AI_ABILITY_SUCCESS,
             self::AI_ABILITY_FAILED,
+            self::CLI_COMMAND_SUCCESS,
+            self::CLI_COMMAND_FAILED,
         ];
     }
 
@@ -125,6 +130,8 @@ class AuditEvents
             self::REVOKED_TOKEN_DELETE_FAILED  => __('Revoked Token Entry Delete Failed', 'simple-jwt-login'),
             self::AI_ABILITY_SUCCESS          => __('AI Ability Executed', 'simple-jwt-login'),
             self::AI_ABILITY_FAILED           => __('AI Ability Failed', 'simple-jwt-login'),
+            self::CLI_COMMAND_SUCCESS         => __('WP-CLI Command Executed', 'simple-jwt-login'),
+            self::CLI_COMMAND_FAILED          => __('WP-CLI Command Failed', 'simple-jwt-login'),
         ];
     }
 }

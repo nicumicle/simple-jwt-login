@@ -14,6 +14,7 @@
     Requires at least: 6.2
 */
 
+use SimpleJWTLogin\Cli\CliRegistrar;
 use SimpleJWTLogin\Helpers\ServerHelper;
 use SimpleJWTLogin\Modules\Abilities\AbilitiesRegistrar;
 use SimpleJWTLogin\Modules\Abilities\AbilityCatalog;
@@ -146,6 +147,7 @@ $simpleJwtLoginCron = new CronCleanup(
     $simpleJwtLoginRevokedTokenRepo
 );
 add_action('simple_jwt_login_cleanup_refresh_tokens', array($simpleJwtLoginCron, 'cleanupRefreshTokens'));
+add_action('simple_jwt_login_cleanup_refresh_tokens', array($simpleJwtLoginCron, 'cleanupRotatedKeys'));
 add_action('simple_jwt_login_cleanup_audit_logs', array($simpleJwtLoginCron, 'cleanupAuditLogs'));
 add_action('simple_jwt_login_cleanup_webhook_logs', array($simpleJwtLoginCron, 'cleanupWebhookLogs'));
 add_action('simple_jwt_login_cleanup_revoked_tokens', array($simpleJwtLoginCron, 'cleanupRevokedTokens'));
@@ -201,6 +203,10 @@ add_action('wp_abilities_api_categories_init', array($simpleJwtLoginAbilities, '
 add_action('wp_abilities_api_init', array($simpleJwtLoginAbilities, 'registerAbilities'));
 // Non-administrators must not see (list, describe or probe) abilities they cannot run.
 add_filter('rest_pre_dispatch', array($simpleJwtLoginAbilities, 'filterRestPreDispatch'));
+
+// WP-CLI commands (wp jwt ...), when enabled in General > CLI and the old CLI add-on is not active.
+$simpleJwtLoginCli = new CliRegistrar($simpleJwtLoginJwtSettings->getGeneralSettings());
+add_action('plugins_loaded', array($simpleJwtLoginCli, 'register'));
 
 // 3rd-party integrations
 include_once '3rd-party/force_login.php';

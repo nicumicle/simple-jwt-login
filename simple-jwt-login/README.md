@@ -6,7 +6,7 @@ Tags: jwt, rest api, headless, oauth, woocommerce
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 5.5
-Stable tag: 4.2.1
+Stable tag: 4.3.0
 License: GPLv3
 License URI: https://github.com/nicumicle/simple-jwt-login/blob/master/LICENSE
 
@@ -193,6 +193,13 @@ Every response includes an `error_code`. Look it up in the [error codes list](ht
 == Changelog ==
 
 A complete changelog is available on the [GitHub repository](https://github.com/nicumicle/simple-jwt-login/blob/master/Changelog.md).
+
+= 4.3.0 (28 November 2026) =
+- New `jti` JWT payload claim (Authentication > JWT payload): a unique, random ID in every issued JWT, so two tokens issued for the same user in the same second are no longer identical (revoking one no longer revokes the other). Enabled by default, also on existing sites (settings schema version 3). The admin page shows a warning when it is turned off.
+- Fixed a database error on `/revoked-tokens`, `/api-keys` and the audit / webhook logs when a very large `page` is requested: the SQL offset overflowed into a negative number. Such pages now return an empty list.
+- Fixed a 500 error on `/users`, `/user/reset_password`, `/auth/refresh` and `/oauth/token` when a parameter is sent as an array or an object; these requests now get the usual validation error.
+- API documentation: the `id` in the decoded JWT payload of `/auth/validate` is documented as a numeric string, as it is returned.
+- Added a Schemathesis check (`composer run test-openapi`, also in CI) that the live REST responses match the OpenAPI spec.
 
 = 4.2.1 (22 November 2026) =
 - Security: Security hardening.

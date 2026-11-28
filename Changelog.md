@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 4.3.0 (28 November 2026)
+
 ### New
 - New `jti` JWT payload claim (Authentication > JWT payload): a unique, random ID in every issued JWT, so two tokens issued for the same user in the same second are no longer identical (revoking one no longer revokes the other). Enabled by default, also on existing sites (settings schema version 3). The admin page shows a warning when it is turned off.
 - WP-CLI commands are now part of the plugin (General > CLI, enabled by default): `wp jwt login`, `decode`, `validate`, `revoke` and `wp jwt config get|set|list|export|import`. `wp jwt config set` and `import` now run the same validation as an admin save (skip it with `--force`). While the separate Simple-JWT-Login CLI plugin is active, the built-in commands stay disabled (and the setting defaults to off) and the CLI card shows a warning: deactivate and delete that plugin.

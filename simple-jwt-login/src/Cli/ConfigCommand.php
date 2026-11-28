@@ -6,6 +6,7 @@ use Exception;
 use SimpleJWTLogin\Modules\Abilities\AbilitySettingsPolicy;
 use SimpleJWTLogin\Modules\Abilities\SettingsRedactor;
 use SimpleJWTLogin\Modules\SimpleJWTLoginSettings;
+use WP_Filesystem_Direct;
 
 /**
  * Read and write Simple JWT Login plugin configuration.
@@ -651,8 +652,17 @@ class ConfigCommand extends AbstractCommand
             );
         }
 
+        if (!class_exists('WP_Filesystem_Direct')) {
+            require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
+            require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
+        }
+        $filesystem = new WP_Filesystem_Direct(null);
+
         // The export holds the signing keys: owner-only, before the content is written (also for an existing file).
-        if (file_put_contents($path, '') === false || !chmod($path, 0600) || file_put_contents($path, $content) === false) {
+        $written = $filesystem->put_contents($path, '', 0600)
+            && $filesystem->chmod($path, 0600)
+            && $filesystem->put_contents($path, $content, 0600);
+        if (!$written) {
             throw new Exception(
                 /* translators: %s is the file path */
                 sprintf(esc_html__('Failed to write file: %s', 'simple-jwt-login'), esc_html($path))

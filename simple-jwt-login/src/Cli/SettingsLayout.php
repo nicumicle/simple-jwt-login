@@ -101,7 +101,7 @@ class SettingsLayout
             throw new Exception(sprintf(
                 /* translators: %s is the setting key */
                 esc_html__('The file has sectioned settings, but no %s.', 'simple-jwt-login'),
-                self::VERSION_KEY
+                esc_html(self::VERSION_KEY)
             ));
         }
 

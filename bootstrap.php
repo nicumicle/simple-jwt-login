@@ -1256,6 +1256,40 @@ if (!class_exists('WP_REST_Request')) {
     }
 }
 
+if (!class_exists('WP_Filesystem_Direct')) {
+    class WP_Filesystem_Direct
+    {
+        /**
+         * @param mixed $arg
+         */
+        public function __construct($arg)
+        {
+        }
+
+        /**
+         * @param string $file
+         * @param string $contents
+         * @param int|false $mode
+         * @return bool
+         */
+        public function put_contents($file, $contents, $mode = false)
+        {
+            return file_put_contents($file, $contents) !== false;
+        }
+
+        /**
+         * @param string $file
+         * @param int|false $mode
+         * @param bool $recursive
+         * @return bool
+         */
+        public function chmod($file, $mode = false, $recursive = false)
+        {
+            return true;
+        }
+    }
+}
+
 if (!class_exists('WP_Error')) {
     class WP_Error
     {

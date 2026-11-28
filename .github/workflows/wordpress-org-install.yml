@@ -1,0 +1,44 @@
+name: WordPress.org Install
+
+on:
+  schedule:
+    - cron: '0 6 * * *' # every day at 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    runs-on: ubuntu-24.04
+    name: Install simple-jwt-login from WordPress.org
+    env:
+      DB_PASSWORD: root
+      WP_PATH: /tmp/wordpress
+    steps:
+      - name: "🔧 Setup PHP"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+          tools: wp-cli
+
+      - name: "🚧 MySQL Setup"
+        run: |
+          sudo /etc/init.d/mysql start
+          mysql --user=root --password=root --execute="ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASSWORD';"
+
+      - name: "🚧 Install WordPress"
+        run: |
+          wp core download --path="$WP_PATH"
+          wp config create --path="$WP_PATH" --dbname=wordpress --dbuser=root --dbpass="$DB_PASSWORD" --dbhost=127.0.0.1
+          wp db create --path="$WP_PATH"
+          wp core install --path="$WP_PATH" --url=localhost --title=SJL --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email
+
+      - name: "📦 Install simple-jwt-login from WordPress.org"
+        run: |
+          wp plugin install simple-jwt-login --activate --path="$WP_PATH"
+          wp plugin is-active simple-jwt-login --path="$WP_PATH"
+          version=$(wp plugin get simple-jwt-login --field=version --path="$WP_PATH")
+          echo "simple-jwt-login version: $version"
+          echo "Installed **simple-jwt-login $version** from WordPress.org" >> "$GITHUB_STEP_SUMMARY"
